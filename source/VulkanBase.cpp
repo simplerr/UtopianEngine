@@ -34,6 +34,7 @@ namespace VulkanLib
 		vkGetDeviceQueue(mDevice, 0, 0, &mQueue);	// Note that queueFamilyIndex is hard coded to 0
 
 		// Gather physical device memory properties
+		// [TODO] This should be moved to a VulkanDevice struct
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
 
 		// Setup function pointers for the swap chain
@@ -110,7 +111,7 @@ namespace VulkanLib
 		appInfo.pNext = nullptr;									// Must be NULL
 		appInfo.pApplicationName = appName;
 		appInfo.pEngineName = appName;
-		appInfo.apiVersion = VK_MAKE_VERSION(1, 0, 2);				// All drivers support this, but use VK_API_VERSION in the future
+		appInfo.apiVersion = VK_API_VERSION_1_0;				// All drivers support this, but use VK_API_VERSION in the future
 
 		std::vector<const char*> enabledExtensions = { VK_KHR_SURFACE_EXTENSION_NAME };
 
@@ -171,6 +172,7 @@ namespace VulkanLib
 		// Some implementations use vkGetPhysicalDeviceQueueFamilyProperties and uses the result to find out
 		// the first queue that support graphic operations (queueFlags & VK_QUEUE_GRAPHICS_BIT)
 		// Here I simply set queueInfo.queueFamilyIndex = 0 and (hope) it works
+		// In Sascha Willems examples he has a compute queue with queueFamilyIndex = 1
 
 		std::array<float, 1> queuePriorities = { 1.0f };
 		VkDeviceQueueCreateInfo queueInfo = {};
@@ -181,6 +183,8 @@ namespace VulkanLib
 		queueInfo.pQueuePriorities = queuePriorities.data();
 		queueInfo.queueCount = 1;
 
+		// Use the VK_KHR_SWAPCHAIN_EXTENSION_NAME extension
+		// [NOTE] There is another VK_EXT_DEBUG_MARKER_EXTENSION_NAME extension that might be good to add later.
 		std::vector<const char*> enabledExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 		VkDeviceCreateInfo deviceInfo = {};
 		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -189,7 +193,7 @@ namespace VulkanLib
 		deviceInfo.queueCreateInfoCount = 1;
 		deviceInfo.pQueueCreateInfos = &queueInfo;
 		deviceInfo.pEnabledFeatures = nullptr;
-		deviceInfo.enabledExtensionCount = enabledExtensions.size();			// Extensions
+		deviceInfo.enabledExtensionCount = enabledExtensions.size();				// Extensions
 		deviceInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 		if (enableValidation)
@@ -265,7 +269,12 @@ namespace VulkanLib
 		VkSemaphoreCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
+		// Create a semaphore used to synchronize image presentation
+		// Ensures that the image is displayed before we start submitting new commands to the queu
 		VulkanDebug::ErrorCheck(vkCreateSemaphore(mDevice, &createInfo, nullptr, &mPresentComplete));
+
+		// Create a semaphore used to synchronize command submission
+		// Ensures that the image is not presented until all commands have been sumbitted and executed
 		VulkanDebug::ErrorCheck(vkCreateSemaphore(mDevice, &createInfo, nullptr, &mRenderComplete));
 	}
 
@@ -312,6 +321,7 @@ namespace VulkanLib
 		res = vkBindImageMemory(mDevice, mDepthStencil.image, mDepthStencil.memory, 0);
 		assert(!res);
 
+		// [NOTE] This is removed in the latest Sascha Willems code
 		vkTools::setImageLayout(mSetupCmdBuffer, mDepthStencil.image, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 		viewCreateInfo.image = mDepthStencil.image;	// Connect the view with the image
@@ -370,6 +380,9 @@ namespace VulkanLib
 		createInfo.subpassCount = 1;
 		createInfo.pSubpasses = &subpass;
 		createInfo.pAttachments = attachments;
+		
+		// [TODO] Major modifications here 
+		// It seems like the memory barrier transitions are replaced with render pass dependencies
 
 		VkResult res = vkCreateRenderPass(mDevice, &createInfo, nullptr, &mRenderPass);
 		assert(!res);
@@ -563,6 +576,7 @@ namespace VulkanLib
 		return true;
 	}
 
+	// [NOTE] This entire function is removed in the latest Sascha Willems code
 	void VulkanBase::BuildPresentCommandBuffers()
 	{
 		VkCommandBufferBeginInfo cmdBufInfo = vkTools::initializers::commandBufferBeginInfo();

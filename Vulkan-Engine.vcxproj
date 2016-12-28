@@ -104,6 +104,7 @@
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />
     <None Include="docs\system_requirements.md" />
+    <None Include="source\notes.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
