@@ -1,0 +1,8 @@
+###############################################################################
+# Set default behavior to automatically normalize line endings.
+###############################################################################
+* text=auto
+
+# Exclude dirs from githug language statis
+data/* linguist-vendored=true
+external/* linguist-vendored=true
