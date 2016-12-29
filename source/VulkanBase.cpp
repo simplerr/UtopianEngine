@@ -331,61 +331,83 @@ namespace VulkanLib
 
 	void VulkanBase::SetupRenderPass()
 	{
-		// Subpass creation, standard code 100% from Vulkan samples
-		// Also specifices which attachments from pSubpasses to use
-		VkAttachmentReference colorReference = {};
-		colorReference.attachment = 0;
-		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		// Descriptors for the attachments used by this renderpass
+		std::array<VkAttachmentDescription, 2> attachments = {};
 
-		VkAttachmentReference depthReference = {};
-		depthReference.attachment = 1;
-		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		VkSubpassDescription subpass = {};
-		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass.flags = 0;
-		subpass.inputAttachmentCount = 0;
-		subpass.pInputAttachments = NULL;
-		subpass.colorAttachmentCount = 1;
-		subpass.pColorAttachments = &colorReference;
-		subpass.pResolveAttachments = NULL;
-		subpass.pDepthStencilAttachment = &depthReference;
-		subpass.preserveAttachmentCount = 0;
-		subpass.pPreserveAttachments = NULL;
-
-		// Attachments creation, standard code 100% from Vulkan samples
-		// Basically creates one color attachment and one depth stencil attachment
-		VkAttachmentDescription attachments[2];
+		// Color attachment
 		attachments[0].format = mColorFormat;
-		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
+		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;									
+		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;							
+		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;						
+		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;			
+		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;	
+		attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;		
+		attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+																	
+		// Depth attachment											
 		attachments[1].format = mDepthFormat;
 		attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[1].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;						
+		attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;				
+		attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;		
+		attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;		
+		attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;			
+		attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;	
 
-		VkRenderPassCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		createInfo.attachmentCount = 2;
-		createInfo.subpassCount = 1;
-		createInfo.pSubpasses = &subpass;
-		createInfo.pAttachments = attachments;
-		
-		// [TODO] Major modifications here 
-		// It seems like the memory barrier transitions are replaced with render pass dependencies
+		// Setup attachment references																			
+		VkAttachmentReference colorReference = {};
+		colorReference.attachment = 0;											
+		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
 
-		VkResult res = vkCreateRenderPass(mDevice, &createInfo, nullptr, &mRenderPass);
-		assert(!res);
+		VkAttachmentReference depthReference = {};
+		depthReference.attachment = 1;									
+		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;		
+
+		// Setup a single subpass reference																			
+		VkSubpassDescription subpassDescription = {};
+		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpassDescription.colorAttachmentCount = 1;							
+		subpassDescription.pColorAttachments = &colorReference;				
+		subpassDescription.pDepthStencilAttachment = &depthReference;	
+		subpassDescription.inputAttachmentCount = 0;				
+		subpassDescription.pInputAttachments = nullptr;			
+		subpassDescription.preserveAttachmentCount = 0;		
+		subpassDescription.pPreserveAttachments = nullptr;								
+		subpassDescription.pResolveAttachments = nullptr;							
+
+		std::array<VkSubpassDependency, 2> dependencies;
+
+		// First dependency at the start of the renderpass
+		// Does the transition from final to initial layout 
+		dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;						
+		dependencies[0].dstSubpass = 0;										
+		dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+		// Second dependency at the end the renderpass
+		// Does the transition from the initial to the final layout
+		dependencies[1].srcSubpass = 0;									
+		dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;			
+		dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependencies[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+		// Create the actual renderpass
+		VkRenderPassCreateInfo renderPassInfo = {};
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());	
+		renderPassInfo.pAttachments = attachments.data();						
+		renderPassInfo.subpassCount = 1;									
+		renderPassInfo.pSubpasses = &subpassDescription;				
+		renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());	
+		renderPassInfo.pDependencies = dependencies.data();							
+
+		VulkanDebug::ErrorCheck(vkCreateRenderPass(mDevice, &renderPassInfo, nullptr, &mRenderPass));
 	}
 
 	void VulkanBase::SetupFrameBuffer()
@@ -574,73 +596,6 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkBindBufferMemory(mDevice, *buffer, *memory, 0));
 
 		return true;
-	}
-
-	// [NOTE] This entire function is removed in the latest Sascha Willems code
-	void VulkanBase::BuildPresentCommandBuffers()
-	{
-		VkCommandBufferBeginInfo cmdBufInfo = vkTools::initializers::commandBufferBeginInfo();
-
-		for (uint32_t i = 0; i < mSwapChain.imageCount; i++)
-		{
-			// Command buffer for post present barrier
-
-			// Insert a post present image barrier to transform the image back to a
-			// color attachment that our render pass can write to
-			// We always use undefined image layout as the source as it doesn't actually matter
-			// what is done with the previous image contents
-
-			VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mPostPresentCmdBuffers[i], &cmdBufInfo));
-
-			VkImageMemoryBarrier postPresentBarrier = vkTools::initializers::imageMemoryBarrier();
-			postPresentBarrier.srcAccessMask = 0;
-			postPresentBarrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-			postPresentBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			postPresentBarrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			postPresentBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			postPresentBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			postPresentBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-			postPresentBarrier.image = mSwapChain.buffers[i].image;
-
-			vkCmdPipelineBarrier(
-				mPostPresentCmdBuffers[i],
-				VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-				VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-				0,
-				0, nullptr,
-				0, nullptr,
-				1, &postPresentBarrier);
-
-			VulkanDebug::ErrorCheck(vkEndCommandBuffer(mPostPresentCmdBuffers[i]));
-
-			// Command buffers for pre present barrier
-
-			// Submit a pre present image barrier to the queue
-			// Transforms the (framebuffer) image layout from color attachment to present(khr) for presenting to the swap chain
-
-			VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mPrePresentCmdBuffers[i], &cmdBufInfo));
-
-			VkImageMemoryBarrier prePresentBarrier = vkTools::initializers::imageMemoryBarrier();
-			prePresentBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-			prePresentBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-			prePresentBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			prePresentBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-			prePresentBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			prePresentBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-			prePresentBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-			prePresentBarrier.image = mSwapChain.buffers[i].image;
-
-			vkCmdPipelineBarrier(
-				mPrePresentCmdBuffers[i],
-				VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-				VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-				VK_FLAGS_NONE,
-				0, nullptr, // No memory barriers,
-				0, nullptr, // No buffer barriers,
-				1, &prePresentBarrier);
-
-			VulkanDebug::ErrorCheck(vkEndCommandBuffer(mPrePresentCmdBuffers[i]));
-		}
 	}
 
 	void VulkanBase::InitSwapchain(Window* window)

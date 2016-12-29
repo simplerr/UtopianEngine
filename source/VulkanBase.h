@@ -61,8 +61,6 @@ namespace VulkanLib
 		void SetupDepthStencil();
 		void SetupRenderPass();
 		void SetupFrameBuffer();
-		void BuildPresentCommandBuffers();
-		// Don't need pipeline cache
 
 		void InitSwapchain(Window* window);
 		void SetupSwapchain();
@@ -147,11 +145,6 @@ namespace VulkanLib
 
 		// Wrapper class for the platform dependet window code
 		Window*							mWindow;
-
-		// Command buffer for submitting a post present image barrier
-		std::vector<VkCommandBuffer>	mPostPresentCmdBuffers = { VK_NULL_HANDLE };
-		// Command buffers for submitting a pre present image barrier
-		std::vector<VkCommandBuffer>	mPrePresentCmdBuffers = { VK_NULL_HANDLE };
 	};
 }	// VulkanLib namespace
 #pragma once
