@@ -83,8 +83,15 @@
     <ClCompile Include="base\vulkandebug.cpp" />
     <ClCompile Include="base\vulkanexamplebase.cpp" />
     <ClCompile Include="base\vulkantools.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\DescriptorSet.cpp" />
+    <ClCompile Include="source\Game.cpp" />
+    <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\Object.cpp" />
+    <ClCompile Include="source\StaticModel.h" />
     <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\VulkanApp.cpp" />
     <ClCompile Include="source\VulkanBase.cpp" />
     <ClCompile Include="source\VulkanDebug.cpp" />
     <ClCompile Include="source\VulkanHelpers.cpp" />
@@ -94,11 +101,21 @@
     <ClInclude Include="base\vulkandebug.h" />
     <ClInclude Include="base\vulkanexamplebase.h" />
     <ClInclude Include="base\vulkantools.h" />
+    <ClInclude Include="source\BigUniformBuffer.h" />
+    <ClInclude Include="source\Camera.h" />
+    <ClInclude Include="source\DescriptorSet.h" />
+    <ClInclude Include="source\Game.h" />
+    <ClInclude Include="source\Light.h" />
+    <ClInclude Include="source\ModelLoader.h" />
+    <ClInclude Include="source\Object.h" />
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\Timer.h" />
+    <ClInclude Include="source\UniformBuffer.h" />
+    <ClInclude Include="source\VertexDescription.h" />
     <ClInclude Include="source\VulkanBase.h" />
     <ClInclude Include="source\VulkanDebug.h" />
     <ClInclude Include="source\VulkanHelpers.h" />
+    <ClInclude Include="source\VulkanApp.h" />
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
