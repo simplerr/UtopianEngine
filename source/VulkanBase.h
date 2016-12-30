@@ -26,7 +26,7 @@ Intel Vulkan tutorial: https://software.intel.com/en-us/api-without-secrets-intr
 Shader resource bindings: https://developer.nvidia.com/vulkan-shader-resource-binding
 Installation on Ubuntu: http://www.trentreed.net/blog/installing-nvidia-vulkan-driver-and-lunarg-sdk-on-ubuntu/
 
-https://github.com/jcouv/dotfiles/blob/master/vsvimrc
+Vulkan Tutorial: https://vulkan-tutorial.com/
 */
 
 
@@ -54,9 +54,11 @@ namespace VulkanLib
 		virtual void Render() = 0;
 
 		void CreateCommandPool();
-		void CreateSetupCommandBuffer();
 		void CreateCommandBuffers();
 		void CreateSemaphores();
+
+		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);
+		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
 
 		void SetupDepthStencil();
 		void SetupRenderPass();
@@ -64,8 +66,6 @@ namespace VulkanLib
 
 		void InitSwapchain(Window* window);
 		void SetupSwapchain();
-
-		void ExecuteSetupCommandBuffer();
 
 		VkPipelineShaderStageCreateInfo LoadShader(std::string fileName, VkShaderStageFlagBits stage);
 
@@ -98,13 +98,6 @@ namespace VulkanLib
 		// Command buffer
 		VkCommandPool					mCommandPool;
 		std::vector<VkCommandBuffer>	mRenderingCommandBuffers;
-
-		// Command buffer used for setup
-		VkCommandBuffer					mSetupCmdBuffer = VK_NULL_HANDLE;
-
-		// Command buffers used to change the swapchains image format
-		//VkCommandBuffer					mPostPresentCmdBuffer		= VK_NULL_HANDLE;
-		//VkCommandBuffer					mPrePresentCmdBuffer		= VK_NULL_HANDLE;
 
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;

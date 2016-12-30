@@ -51,7 +51,7 @@ namespace VulkanLib
 		vkDestroySemaphore(mDevice, mPresentComplete, nullptr);
 		vkDestroySemaphore(mDevice, mRenderComplete, nullptr);
 
-		delete mTextureLoader;
+		//delete mTextureLoader;
 
 		vkDestroyCommandPool(mDevice, mCommandPool, nullptr);
 
@@ -83,18 +83,15 @@ namespace VulkanLib
 	{
 		CompileShaders();				// Compile shaders using batch files
 		CreateCommandPool();			// Create a command pool to allocate command buffers from
-		CreateSetupCommandBuffer();		// Create the setup command buffer used for queuing initialization command, also starts recording to the setup command buffer with vkBeginCommandBuffer
 		SetupSwapchain();				// Setup the swap chain with the helper class
 		CreateSemaphores();
 		CreateCommandBuffers();			// Create the command buffers used for drawing and the image format transitions
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
 		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
-		ExecuteSetupCommandBuffer();	// Submit all commands so far to the queue, end and free the setup command buffer
-		CreateSetupCommandBuffer();		// The derived class will also record initialization commands to the setup command buffer
 
-										// Create a simple texture loader class
-		mTextureLoader = new vkTools::VulkanTextureLoader(mDevice, mQueue, mCommandPool);
+		// Create a simple texture loader class
+		//mTextureLoader = new vkTools::VulkanTextureLoader(mDevice, mQueue, mCommandPool);
 
 		// The derived class initializes:
 		// Pipeline
@@ -215,24 +212,6 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkCreateCommandPool(mDevice, &createInfo, nullptr, &mCommandPool));
 	}
 
-	void VulkanBase::CreateSetupCommandBuffer()
-	{
-		VkCommandBufferAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool;
-		allocateInfo.commandBufferCount = 1;
-		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, &mSetupCmdBuffer));
-
-		VkCommandBufferBeginInfo beginInfo = {};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		//beginInfo.flags = Default is OK, change this if multiple command buffers (primary & secondary)
-
-		// Begin recording commands to the setup command buffer
-		VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mSetupCmdBuffer, &beginInfo));
-	}
-
 	void VulkanBase::CreateCommandBuffers()
 	{
 		VkCommandBufferAllocateInfo allocateInfo = {};
@@ -261,6 +240,52 @@ namespace VulkanLib
 		// Create a semaphore used to synchronize command submission
 		// Ensures that the image is not presented until all commands have been sumbitted and executed
 		VulkanDebug::ErrorCheck(vkCreateSemaphore(mDevice, &createInfo, nullptr, &mRenderComplete));
+	}
+
+	VkCommandBuffer VulkanBase::CreateCommandBuffer(VkCommandBufferLevel level, bool begin)
+	{
+		VkCommandBuffer cmdBuffer;
+		VkCommandBufferAllocateInfo allocateInfo = {};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocateInfo.commandPool = mCommandPool;
+		allocateInfo.commandBufferCount = 1;
+		allocateInfo.level = level;
+
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, &cmdBuffer));
+
+		// If requested, also start the new command buffer
+		if (begin)
+		{
+			VkCommandBufferBeginInfo beginInfo = {};
+			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+			VulkanDebug::ErrorCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
+		}
+
+		return cmdBuffer;
+	}
+
+	void VulkanBase::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free)
+	{
+		if (commandBuffer == VK_NULL_HANDLE)
+		{
+			return;
+		}
+
+		VulkanDebug::ErrorCheck(vkEndCommandBuffer(commandBuffer));
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		VulkanDebug::ErrorCheck(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
+		VulkanDebug::ErrorCheck(vkQueueWaitIdle(queue));
+
+		if (free)
+		{
+			vkFreeCommandBuffers(mDevice, mCommandPool, 1, &commandBuffer);
+		}
 	}
 
 	void VulkanBase::SetupDepthStencil()
@@ -297,13 +322,11 @@ namespace VulkanLib
 		VkMemoryRequirements memRequirments;
 		vkGetImageMemoryRequirements(mDevice, mDepthStencil.image, &memRequirments);
 		allocateInfo.allocationSize = memRequirments.size;
+		allocateInfo.memoryTypeIndex = 0; // [NOTE] 0 seems to do fine, but proper way is to use getMemoryTypeIndex()
 		GetMemoryType(memRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &allocateInfo.memoryTypeIndex);
 
 		VulkanDebug::ErrorCheck(vkAllocateMemory(mDevice, &allocateInfo, nullptr, &mDepthStencil.memory));
 		VulkanDebug::ErrorCheck(vkBindImageMemory(mDevice, mDepthStencil.image, mDepthStencil.memory, 0));
-
-		// [NOTE] This is removed in the latest Sascha Willems code
-		vkTools::setImageLayout(mSetupCmdBuffer, mDepthStencil.image, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 		// Connect the view with the image
 		viewCreateInfo.image = mDepthStencil.image;	
@@ -418,31 +441,9 @@ namespace VulkanLib
 
 	void VulkanBase::SetupSwapchain()
 	{
-		// Note that we use the same command buffer for everything right now!
-		// Uses the setup command buffer
 		uint32_t width = GetWindowWidth();
 		uint32_t height = GetWindowHeight();
 		mSwapChain.create(&width, &height);
-	}
-
-	void VulkanBase::ExecuteSetupCommandBuffer()
-	{
-		if (mSetupCmdBuffer == VK_NULL_HANDLE)
-			return;
-
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mSetupCmdBuffer));
-
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &mSetupCmdBuffer;
-
-		VulkanDebug::ErrorCheck(vkQueueSubmit(mQueue, 1, &submitInfo, VK_NULL_HANDLE));
-
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(mQueue));
-
-		vkFreeCommandBuffers(mDevice, mCommandPool, 1, &mSetupCmdBuffer);
-		mSetupCmdBuffer = VK_NULL_HANDLE;
 	}
 
 	void VulkanBase::PrepareFrame()

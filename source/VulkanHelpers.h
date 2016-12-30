@@ -13,7 +13,6 @@ namespace VulkanLib
 		VkDescriptorSetAllocateInfo DescriptorSet(VkDescriptorPool descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts);
 		VkDescriptorSetLayoutCreateInfo DescriptorSetLayout(uint32_t bindingCount, const VkDescriptorSetLayoutBinding* pBindings);
 		VkPipelineLayoutCreateInfo PipelineLayout(uint32_t setLayoutCount, const VkDescriptorSetLayout* pSetLayouts);
-
 	};
 
 	VkDescriptorImageInfo GetTextureDescriptorInfo(vkTools::VulkanTexture texture);

@@ -13,4 +13,4 @@
 ‒ Images must be moved to the right layout before usage.
 	‒ This can be requested by:
 	‒ injecting image barriers into command buffers
-	‒ correct renderpass & subpass configuration
+	‒ correct renderpass & subpass configuration
