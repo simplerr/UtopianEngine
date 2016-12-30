@@ -25,12 +25,12 @@
     <Filter Include="Header Files\model">
       <UniqueIdentifier>{820d0bbe-823e-4a2f-af05-53de236907b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\model">
+      <UniqueIdentifier>{dc8908bd-669a-478b-b3aa-cc4a7d61975d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\vulkandebug.cpp">
-      <Filter>Source Files\base</Filter>
-    </ClCompile>
-    <ClCompile Include="base\vulkanexamplebase.cpp">
       <Filter>Source Files\base</Filter>
     </ClCompile>
     <ClCompile Include="base\vulkantools.cpp">
@@ -75,12 +75,18 @@
     <ClCompile Include="source\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\ModelLoader.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StaticModel.cpp">
+      <Filter>Source Files\model</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BigUniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\vulkandebug.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
-    <ClInclude Include="base\vulkanexamplebase.h">
       <Filter>Header Files\base</Filter>
     </ClInclude>
     <ClInclude Include="base\vulkantools.h">
@@ -133,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="source\Object.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="base\vulkanswapchain.hpp">
+      <Filter>Header Files\base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

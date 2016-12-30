@@ -1,6 +1,7 @@
 #pragma once
 #include "Platform.h"
 #include "Timer.h"
+#include "ModelLoader.h"
 
 namespace VulkanLib
 {
@@ -23,6 +24,7 @@ namespace VulkanLib
 		VulkanApp* mRenderer;
 		Window* mWindow;
 		Camera* mCamera;
+		ModelLoader	mModelLoader;
 		Timer mTimer;
 		std::string mTestCaseName;
 	};

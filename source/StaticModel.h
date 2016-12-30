@@ -3,7 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <vulkan\vulkan.h>
-#include "base/vulkanTextureLoader.hpp"
+#include "../base/vulkanTextureLoader.hpp"
 
 using namespace glm;
 

@@ -40,9 +40,6 @@ namespace VulkanLib
 		vkDestroyPipeline(mDevice, mPipelines.colored, nullptr);
 		vkDestroyPipeline(mDevice, mPipelines.starsphere, nullptr);
 
-		// The model loader is responsible for cleaning up the model data
-		//mModelLoader.CleanupModels(mDevice);
-
 		// Free the testing texture
 		//mTextureLoader->destroyTexture(mTestTexture);
 

@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Window.h"
 #include "Camera.h"
+#include "VulkanApp.h"
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -9,6 +10,13 @@ namespace VulkanLib
 {
 	Game::Game(Window* window)
 	{
+		mRenderer = new VulkanApp();
+
+		mRenderer->mTestModel = mModelLoader.LoadModel(mRenderer, "data/models/teapot.obj");
+
+		mRenderer->InitSwapchain(window);
+		mRenderer->Prepare();
+
 		mRenderer = nullptr;
 		mWindow = window;
 
@@ -19,6 +27,8 @@ namespace VulkanLib
 
 	Game::~Game()
 	{
+		mModelLoader.CleanupModels(mRenderer->GetDevice());
+
 		delete mRenderer;
 		delete mCamera;
 	}
@@ -26,9 +36,6 @@ namespace VulkanLib
 	void Game::InitScene()
 	{
 		mRenderer->SetCamera(mCamera);
-
-		// Creates the instancing array from all the objects
-		mRenderer->Init();
 	}
 
 #if defined(_WIN32)
@@ -66,8 +73,7 @@ namespace VulkanLib
 				if (fps != -1)
 				{
 					std::stringstream ss;
-					ss << "Project Vulkan: " << mRenderer->GetName() << " [" << fps << " fps] [" << mRenderer->GetNumVertices() << " vertices] [" << mRenderer->GetNumTriangles() << " triangles] [" << mRenderer->GetNumObjects() << " objects]";
-					ss << " [" << mRenderer->GetNumThreads() << " threads]";
+					ss << "Utopian Engine (alpha)";
 					std::string windowTitle = ss.str();
 					SetWindowText(mWindow->GetHwnd(), windowTitle.c_str());
 				}
