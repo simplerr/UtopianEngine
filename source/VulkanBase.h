@@ -69,10 +69,6 @@ namespace VulkanLib
 
 		VkPipelineShaderStageCreateInfo LoadShader(std::string fileName, VkShaderStageFlagBits stage);
 
-		// To transition the swap chain image layout
-		void SubmitPrePresentMemoryBarrier(VkImage image);
-		void SubmitPostPresentMemoryBarrier(VkImage image);
-
 		VkBool32 CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory);
 
 		void PrepareFrame();
