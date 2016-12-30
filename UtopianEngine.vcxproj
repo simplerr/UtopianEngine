@@ -121,6 +121,8 @@
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\shaders\phong\phong.frag" />
+    <None Include="data\shaders\phong\phong.vert" />
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />
     <None Include="docs\system_requirements.md" />

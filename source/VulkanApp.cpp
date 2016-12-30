@@ -172,7 +172,7 @@ namespace VulkanLib
 	{
 		mDescriptorSet.AllocateDescriptorSets(mDevice, mDescriptorPool.GetVkDescriptorPool());
 		mDescriptorSet.BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
-		mDescriptorSet.BindCombinedImage(1, &GetTextureDescriptorInfo(mTestTexture));
+		//mDescriptorSet.BindCombinedImage(1, &GetTextureDescriptorInfo(mTestTexture));
 		mDescriptorSet.UpdateDescriptorSets(mDevice);
 	}
 

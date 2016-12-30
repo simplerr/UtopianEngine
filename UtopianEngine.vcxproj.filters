@@ -28,6 +28,9 @@
     <Filter Include="Source Files\model">
       <UniqueIdentifier>{dc8908bd-669a-478b-b3aa-cc4a7d61975d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{4b9640ab-3ca8-4181-a8a4-b43faf1930f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\vulkandebug.cpp">
@@ -159,6 +162,12 @@
     </None>
     <None Include="README.md">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="data\shaders\phong\phong.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="data\shaders\phong\phong.vert">
+      <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
