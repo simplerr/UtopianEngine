@@ -1,7 +1,6 @@
 #pragma once
 #include "VulkanBase.h"
 #include "ModelLoader.h"
-#include "ThreadPool.h"
 #include "StaticModel.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -54,18 +53,6 @@ namespace VulkanLib
 		VkPipeline pipeline;
 	};
 
-	struct ThreadData {
-		VkCommandBuffer commandBuffer;
-		VkCommandPool commandPool;
-		std::vector<VulkanModel> threadObjects;
-
-		DescriptorPool descriptorPool1;
-		DescriptorSet descriptorSet;
-		PushConstantBlock pushConstants;
-
-		StaticModel model;
-	};
-
 	class VulkanApp : public VulkanBase
 	{
 	public:
@@ -83,15 +70,7 @@ namespace VulkanLib
 		void PrepareCommandBuffers();						// Custom
 		void SetupVertexDescriptions();
 
-		void SetupMultithreading(int numThreads);			// Custom
-		void EnableInstancing(bool useInstancing);
-		void EnableStaticCommandBuffers(bool useStaticCommandBuffers);
-		void PrepareInstancing();
-
-		void RecordStaticCommandBuffers();
-		void BuildInstancingCommandBuffer(VkFramebuffer frameBuffer);
 		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
-		void ThreadRecordCommandBuffer(int threadId, VkCommandBufferInheritanceInfo inheritanceInfo);
 
 		virtual void Render();
 		virtual void Update();
@@ -114,7 +93,6 @@ namespace VulkanLib
 		// This gets regenerated each frame so there is no need for command buffer per frame buffer
 		VkCommandBuffer					mPrimaryCommandBuffer;
 		VkCommandBuffer					mSecondaryCommandBuffer;
-		std::vector<VkCommandBuffer>	mStaticCommandBuffers;
 
 		VkFence							mRenderFence = {};
 
@@ -124,8 +102,7 @@ namespace VulkanLib
 
 		PushConstantBlock				mPushConstants;						// Gets updated with new push constants for each object
 
-		vkTools::VulkanTexture			mTestTexture;						// NOTE: just for testing
-		vkTools::VulkanTexture			mTerrainTexture;					// Testing for the terrain
+		vkTools::VulkanTexture			mTestTexture;						
 
 		bool							mPrepared = false;
 
@@ -135,19 +112,13 @@ namespace VulkanLib
 
 		Camera*							mCamera;
 
-		// Threads
-		std::vector<ThreadData>			mThreadData;
-		int								mNumThreads;
-		int								mNumObjects;
-		ThreadPool						mThreadPool;
-
 		std::vector<VulkanModel>		mModels;
 
 		int								mNextThreadId = 0;					// The thread to add new objects to
 
-																			// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
-																			// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
-																			// inputState is the pVertexInputState when creating the graphics pipeline
+		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
+		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
+		// inputState is the pVertexInputState when creating the graphics pipeline
 		VertexDescription				mVertexDescription;
 		BigUniformBuffer				mUniformBuffer;
 		DescriptorPool					mDescriptorPool;
