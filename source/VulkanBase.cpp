@@ -460,16 +460,7 @@ namespace VulkanLib
 
 	VkBool32 VulkanBase::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory)
 	{
-		//VkBufferCreateInfo createInfo = {};
-		//VkMemoryAllocateInfo allocInfo = {};
-		//VkMemoryRequirements memoryRequirments = {};
-
-		//allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		//allocInfo.allocationSize = 0;								// Gets assigned with vkGetBufferMemoryRequirements
-		//allocInfo.memoryTypeIndex = 0;
-
-		//createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-
+		// [TODO] Remove use of vkTools::initializers
 		VkMemoryRequirements memReqs;
 		VkMemoryAllocateInfo memAlloc = vkTools::initializers::memoryAllocateInfo();
 		VkBufferCreateInfo bufferCreateInfo = vkTools::initializers::bufferCreateInfo(usageFlags, size);
@@ -520,46 +511,6 @@ namespace VulkanLib
 		mShaderModules.push_back(shaderStage.module);		// Add them to the vector so they can be cleaned up
 		return shaderStage;
 	}
-
-#if defined(_WIN32)
-	void VulkanBase::RenderLoop()
-	{
-		int a = 1;
-		/*MSG msg;
-		<<
-		while (true)
-		{
-		// Frame begin
-		mTimer.FrameBegin();
-
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-		if (msg.message == WM_QUIT)
-		{
-		break;
-		}
-		else
-		{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-		}
-		}
-
-		Update();
-		Render();
-
-		// Frame end
-		auto fps = mTimer.FrameEnd();
-
-		// Only display fps when 1.0s have passed
-		if (fps != -1)
-		{
-		std::string windowTitle = "Project Vulkan: " + std::to_string(fps) + " fps";
-		SetWindowText(mWindow->GetHwnd(), windowTitle.c_str());
-		}
-		}*/
-	}
-#endif
 
 	VkDevice VulkanBase::GetDevice()
 	{

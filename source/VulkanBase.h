@@ -78,8 +78,6 @@ namespace VulkanLib
 
 		virtual void CompileShaders() = 0;
 
-		void RenderLoop();
-
 		VkDevice GetDevice();
 		int GetWindowWidth();
 		int GetWindowHeight();

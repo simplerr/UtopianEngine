@@ -77,12 +77,7 @@ void main()
 
 	vec3 pos = InPosL;
 
-	if(per_frame.useInstancing) {
-		pos = pos * InInstanceScale + InInstancePosW;
-		OutColor = InInstanceColor;
-	}
-	else
-		OutColor = vec3(1, 1, 0);
+	OutColor = vec3(1, 0, 0);
 
 	OutTex = InTex;
 
@@ -90,6 +85,6 @@ void main()
 	
     vec4 PosW = pushConsts.world  * vec4(pos, 1.0);
     OutNormalW = mat3(pushConsts.world ) * InNormalL;
-	OutLightDirW = per_frame.light[0].dir; //per_frame.lightDir.xyz;
+	OutLightDirW = per_frame.light[0].dir; 
     OutEyeDirW = per_frame.eyePos - PosW.xyz;	
 }

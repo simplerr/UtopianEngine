@@ -33,9 +33,6 @@ namespace VulkanLib
 		// Cleanup pipeline layout
 		vkDestroyPipelineLayout(mDevice, mPipelineLayout, nullptr);
 
-		vkDestroyBuffer(mDevice, mInstanceBuffer.buffer, nullptr);
-		vkFreeMemory(mDevice, mInstanceBuffer.memory, nullptr);
-
 		vkDestroyPipeline(mDevice, mPipelines.textured, nullptr);
 		vkDestroyPipeline(mDevice, mPipelines.colored, nullptr);
 		vkDestroyPipeline(mDevice, mPipelines.starsphere, nullptr);
@@ -61,10 +58,9 @@ namespace VulkanLib
 		VkFenceCreateInfo fenceCreateInfo = vkTools::initializers::fenceCreateInfo(VK_FLAGS_NONE);
 		vkCreateFence(mDevice, &fenceCreateInfo, NULL, &mRenderFence);
 
-		SetupVertexDescriptions();			// Custom
+		SetupVertexDescriptions();			
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
 		PreparePipelines();
-		LoadModels();						// Must run before SetupDescriptorSet() (Loads textures)
 		PrepareUniformBuffers();			// Must run before SetupDescriptorSet() (Creates the uniform buffer)
 		SetupDescriptorPool();
 		SetupDescriptorSet();
@@ -97,20 +93,14 @@ namespace VulkanLib
 
 	void VulkanApp::AddModel(VulkanModel model)
 	{
-		if (mUseInstancing || mUseStaticCommandBuffer)
-			mModels.push_back(model);
-	}
-
-	void VulkanApp::LoadModels()
-	{
-		// Load a random testing texture
-		//mTextureLoader->loadTexture("data/textures/crate_bc3.dds", VK_FORMAT_BC3_UNORM_BLOCK, &mTestTexture);
+		mModels.push_back(model);
 	}
 
 	void VulkanApp::PrepareUniformBuffers()
 	{
 		// Light
 		Light light;
+		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 1));
 		light.SetPosition(150, 150, 150);
 		light.SetDirection(1, -1, 0);
 		light.SetAtt(1, 1, 0);
@@ -136,8 +126,6 @@ namespace VulkanLib
 			mUniformBuffer.camera.projectionMatrix = mCamera->GetProjection();
 			mUniformBuffer.camera.eyePos = mCamera->GetPosition();
 		}
-
-		mUniformBuffer.constants.useInstancing = mUseInstancing;
 
 		mUniformBuffer.UpdateMemory(GetDevice());
 	}
@@ -271,9 +259,6 @@ namespace VulkanLib
 	{
 		// First tell Vulkan about how large each vertex is, the binding ID and the inputRate
 		mVertexDescription.AddBinding(VERTEX_BUFFER_BIND_ID, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);					// Per vertex
-
-		if (mUseInstancing)
-			mVertexDescription.AddBinding(INSTANCE_BUFFER_BIND_ID, sizeof(InstanceData), VK_VERTEX_INPUT_RATE_INSTANCE);	// Per instance
 
 		// We need to tell Vulkan about the memory layout for each attribute
 		// 5 attributes: position, normal, texture coordinates, tangent and color

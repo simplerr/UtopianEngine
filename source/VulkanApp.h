@@ -67,7 +67,7 @@ namespace VulkanLib
 		void SetupDescriptorSet();
 		void PreparePipelines();
 		void UpdateUniformBuffers();
-		void PrepareCommandBuffers();						// Custom
+		void PrepareCommandBuffers();						
 		void SetupVertexDescriptions();
 
 		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
@@ -81,10 +81,8 @@ namespace VulkanLib
 		// 
 		//	High level code
 		//
-		void LoadModels();
 		void CompileShaders();
 		void SetCamera(Camera* camera);
-
 		void AddModel(VulkanModel model);
 
 		Pipelines						mPipelines;
@@ -106,15 +104,9 @@ namespace VulkanLib
 
 		bool							mPrepared = false;
 
-		Buffer							mInstanceBuffer;
-		bool							mUseInstancing = false;
-		bool							mUseStaticCommandBuffer = false;
-
 		Camera*							mCamera;
 
 		std::vector<VulkanModel>		mModels;
-
-		int								mNextThreadId = 0;					// The thread to add new objects to
 
 		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
 		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
@@ -125,6 +117,5 @@ namespace VulkanLib
 		DescriptorSet					mDescriptorSet;
 
 	public:
-		StaticModel*					mTestModel;
 	};
 }	// VulkanLib namespace
