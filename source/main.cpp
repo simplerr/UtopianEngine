@@ -46,7 +46,7 @@ int main(const int argc, const char *argv[])
 	/*
 	Create the window
 	*/
-	VulkanLib::Window window = VulkanLib::Window(1280, 1024);
+	VulkanLib::Window window = VulkanLib::Window(1600, 1200);
 
 #if defined(_WIN32)			// Win32
 	window.SetupWindow(hInstance, WndProc);
@@ -61,7 +61,6 @@ int main(const int argc, const char *argv[])
 	gGame->RenderLoop();
 
 	delete gGame;
-	//delete renderer;
 
 	return 0;
 }

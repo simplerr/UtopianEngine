@@ -20,6 +20,7 @@ namespace VulkanLib
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		void InitScene();	
+		bool IsClosing();
 
 		VulkanApp* mRenderer;
 		Window* mWindow;
@@ -27,5 +28,6 @@ namespace VulkanLib
 		ModelLoader	mModelLoader;
 		Timer mTimer;
 		std::string mTestCaseName;
+		bool mIsClosing;
 	};
 }

@@ -69,9 +69,6 @@
     <ClCompile Include="source\DescriptorSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\StaticModel.h">
-      <Filter>Header Files\model</Filter>
-    </ClCompile>
     <ClCompile Include="source\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -145,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="base\vulkanswapchain.hpp">
       <Filter>Header Files\base</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StaticModel.h">
+      <Filter>Header Files\model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

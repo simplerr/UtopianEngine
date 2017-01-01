@@ -11,6 +11,7 @@ namespace VulkanLib
 {
 	Game::Game(Window* window)
 	{
+		mIsClosing = false;
 		mRenderer = new VulkanApp();
 
 		mRenderer->InitSwapchain(window);
@@ -48,8 +49,13 @@ namespace VulkanLib
 		VulkanModel model;
 		model.object = object;
 		model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
-		model.pipeline = mRenderer->mPipelines.colored;		
+		model.pipeline = mRenderer->mPipelines.phong;		
 		mRenderer->AddModel(model);
+	}
+
+	bool Game::IsClosing()
+	{
+		return mIsClosing;
 	}
 
 #if defined(_WIN32)
@@ -75,7 +81,7 @@ namespace VulkanLib
 				}
 			}
 
-			if (mRenderer != nullptr)
+			if (mRenderer != nullptr && IsClosing() == false)
 			{
 				mRenderer->Update();
 				mRenderer->Render();
@@ -106,6 +112,7 @@ namespace VulkanLib
 		case WM_CLOSE:
 			DestroyWindow(mWindow->GetHwnd());
 			PostQuitMessage(0);
+			mIsClosing = true;
 			break;
 		}
 	}

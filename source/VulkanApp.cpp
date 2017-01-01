@@ -33,9 +33,7 @@ namespace VulkanLib
 		// Cleanup pipeline layout
 		vkDestroyPipelineLayout(mDevice, mPipelineLayout, nullptr);
 
-		vkDestroyPipeline(mDevice, mPipelines.textured, nullptr);
-		vkDestroyPipeline(mDevice, mPipelines.colored, nullptr);
-		vkDestroyPipeline(mDevice, mPipelines.starsphere, nullptr);
+		vkDestroyPipeline(mDevice, mPipelines.phong, nullptr);
 
 		// Free the testing texture
 		//mTextureLoader->destroyTexture(mTestTexture);
@@ -252,7 +250,7 @@ namespace VulkanLib
 
 		// Create the colored pipeline	
 		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(mDevice, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mPipelines.colored));
+		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(mDevice, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mPipelines.phong));
 	}
 
 	void VulkanApp::SetupVertexDescriptions()

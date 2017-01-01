@@ -91,7 +91,7 @@
     <ClCompile Include="source\ModelLoader.cpp" />
     <ClCompile Include="source\Object.cpp" />
     <ClCompile Include="source\StaticModel.cpp" />
-    <ClCompile Include="source\StaticModel.h" />
+    <ClInclude Include="source\StaticModel.h" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\VulkanApp.cpp" />
     <ClCompile Include="source\VulkanBase.cpp" />

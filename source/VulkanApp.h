@@ -35,10 +35,7 @@ namespace VulkanLib
 	};
 
 	struct Pipelines {
-		VkPipeline textured;
-		VkPipeline colored;
-		VkPipeline starsphere;
-		VkPipeline instanced;
+		VkPipeline phong;
 	};
 
 	struct PushConstantBlock {
