@@ -18,6 +18,7 @@ namespace VulkanLib
 			vkFreeMemory(device, mMemory, nullptr);
 		}
 
+		// [NOTE] This has to be called after elements have been added to vectors, since GetSize() needs to return the correct size
 		void CreateBuffer(VulkanBase* vulkanBase, VkMemoryPropertyFlagBits propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
 		{
 			vulkanBase->CreateBuffer(

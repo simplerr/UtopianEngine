@@ -9,7 +9,41 @@ layout (location = 0) in vec3 InNormalW;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec2 InTex;
 layout (location = 3) in vec3 InEyeDirW;
-layout (location = 4) in vec3 InLightDirW;
+
+//! Corresponds to the C++ class Material. Stores the ambient, diffuse and specular colors for a material.
+struct Material
+{
+	vec4 ambient;
+	vec4 diffuse;
+	vec4 specular; // w = SpecPower
+};
+
+struct Light
+{
+	// Color
+	Material material;
+
+	vec3 pos;
+	float range;
+
+	vec3 dir;
+	float spot;
+
+	vec3 att;
+	float type;
+
+	vec3 intensity;
+	float id;
+};
+
+layout (std140, binding = 1) uniform UBO 
+{
+	Light light[1];
+
+	// Constants
+	float numLights;
+	vec3 garbage;
+} per_frame;
 
 layout (location = 0) out vec4 OutFragColor;
 
@@ -17,10 +51,10 @@ void main()
 {
 	// Ambient factor
 	vec3 color = 0.2 * InColor;	// Ambient
-	vec3 Color = InColor;	
+	vec3 Color = per_frame.light[0].material.ambient.rgb;	
 
 	vec3 normal = normalize(InNormalW);
-	vec3 lightDir = normalize(InLightDirW);
+	vec3 lightDir = normalize(per_frame.light[0].dir);
 	vec3 V = normalize(InEyeDirW);
 	vec3 R = reflect(-lightDir, normal);
 

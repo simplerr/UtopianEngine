@@ -9,37 +9,6 @@ layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec4 InTangent;
 
-// Instanced
-layout (location = 5) in vec3 InInstancePosW;
-layout (location = 6) in vec3 InInstanceScale;
-layout (location = 7) in vec3 InInstanceColor;
-
-//! Corresponds to the C++ class Material. Stores the ambient, diffuse and specular colors for a material.
-struct Material
-{
-	vec4 ambient;
-	vec4 diffuse;
-	vec4 specular; // w = SpecPower
-};
-
-struct Light
-{
-	// Color
-	Material material;
-
-	vec3 pos;
-	float range;
-
-	vec3 dir;
-	float spot;
-
-	vec3 att;
-	float type;
-
-	vec3 intensity;
-	float id;
-};
-
 layout (std140, binding = 0) uniform UBO 
 {
 	// Camera 
@@ -51,10 +20,9 @@ layout (std140, binding = 0) uniform UBO
 
 	float t;
 	
-	Light light[1];
-	float numLights;
+	// Constans
 	bool useInstancing;
-	vec2 garbage;
+	vec3 garbage;
 } per_frame;
 
 layout(push_constant) uniform PushConsts {
@@ -66,18 +34,14 @@ layout (location = 0) out vec3 OutNormalW;		// Normal in world coordinate system
 layout (location = 1) out vec3 OutColor;
 layout (location = 2) out vec2 OutTex;
 layout (location = 3) out vec3 OutEyeDirW;		// Direction to the eye in world coordinate system
-layout (location = 4) out vec3 OutLightDirW;
 
-//
-// w/ Instancing
-//
 void main() 
 {
-	OutColor = pushConsts.color; //InColor;
+	OutColor = pushConsts.color; 
 
 	vec3 pos = InPosL;
 
-	OutColor = vec3(1, 0, 0);
+	OutColor = vec3(1, 1, 1);
 
 	OutTex = InTex;
 
@@ -85,6 +49,5 @@ void main()
 	
     vec4 PosW = pushConsts.world  * vec4(pos, 1.0);
     OutNormalW = mat3(pushConsts.world ) * InNormalL;
-	OutLightDirW = per_frame.light[0].dir; 
     OutEyeDirW = per_frame.eyePos - PosW.xyz;	
 }

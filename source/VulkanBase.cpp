@@ -537,13 +537,7 @@ namespace VulkanLib
 
 	void VulkanBase::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
-		switch (msg)
-		{
-		case WM_CLOSE:
-			DestroyWindow(mWindow->GetHwnd());
-			PostQuitMessage(0);
-			break;
-		}
+		// Game::HandleMessages() handles the closing of the window
 	}
 
 	int VulkanBase::GetWindowWidth()

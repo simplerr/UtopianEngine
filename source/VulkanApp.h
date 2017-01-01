@@ -1,4 +1,5 @@
 #pragma once
+#include "FragmentUniformBuffer.h"
 #include "VulkanBase.h"
 #include "ModelLoader.h"
 #include "StaticModel.h"
@@ -6,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "VertexDescription.h"
 #include "UniformBuffer.h"
-#include "BigUniformBuffer.h"
+#include "VertexUniformBuffer.h"
 #include "DescriptorSet.h"
 
 #define GLM_FORCE_RADIANS
@@ -109,7 +110,8 @@ namespace VulkanLib
 		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
 		// inputState is the pVertexInputState when creating the graphics pipeline
 		VertexDescription				mVertexDescription;
-		BigUniformBuffer				mUniformBuffer;
+		VertexUniformBuffer				mVertexUniformBuffer;
+		FragmentUniformBuffer			mFragmentUniformBuffer;
 		DescriptorPool					mDescriptorPool;
 		DescriptorSet					mDescriptorSet;
 

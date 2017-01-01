@@ -26,7 +26,8 @@ namespace VulkanLib
 
 	VulkanApp::~VulkanApp()
 	{
-		mUniformBuffer.Cleanup(GetDevice());
+		mVertexUniformBuffer.Cleanup(GetDevice());
+		mFragmentUniformBuffer.Cleanup(GetDevice());
 		mDescriptorPool.Cleanup(GetDevice());
 		mDescriptorSet.Cleanup(GetDevice());
 
@@ -96,20 +97,23 @@ namespace VulkanLib
 
 	void VulkanApp::PrepareUniformBuffers()
 	{
-		// Light
+		// Create the fragment shader uniform buffer
 		Light light;
-		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 1));
+		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 1));
 		light.SetPosition(150, 150, 150);
 		light.SetDirection(1, -1, 0);
 		light.SetAtt(1, 1, 0);
 		light.SetIntensity(0, 0, 1);
-		mUniformBuffer.lights.push_back(light);
+		mFragmentUniformBuffer.lights.push_back(light);
 
 		// Important to call this before CreateBuffer() since # lights affects the total size
-		mUniformBuffer.constants.numLights = mUniformBuffer.lights.size();
+		mFragmentUniformBuffer.constants.numLights = mFragmentUniformBuffer.lights.size();
 
 		// Creates a VkBuffer and maps it to a VkMemory (VulkanBase::CreateBuffer())
-		mUniformBuffer.CreateBuffer(this, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		mFragmentUniformBuffer.CreateBuffer(this, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+		// Create the vertex shader uniform buffer
+		mVertexUniformBuffer.CreateBuffer(this, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		UpdateUniformBuffers();
 	}
@@ -119,19 +123,21 @@ namespace VulkanLib
 	{
 		if (mCamera != nullptr)
 		{
-			mUniformBuffer.camera.projectionMatrix = mCamera->GetProjection();
-			mUniformBuffer.camera.viewMatrix = mCamera->GetView();
-			mUniformBuffer.camera.projectionMatrix = mCamera->GetProjection();
-			mUniformBuffer.camera.eyePos = mCamera->GetPosition();
+			mVertexUniformBuffer.camera.projectionMatrix = mCamera->GetProjection();
+			mVertexUniformBuffer.camera.viewMatrix = mCamera->GetView();
+			mVertexUniformBuffer.camera.projectionMatrix = mCamera->GetProjection();
+			mVertexUniformBuffer.camera.eyePos = mCamera->GetPosition();
 		}
 
-		mUniformBuffer.UpdateMemory(GetDevice());
+		mVertexUniformBuffer.UpdateMemory(GetDevice());
+		mFragmentUniformBuffer.UpdateMemory(GetDevice());
 	}
 
 	void VulkanApp::SetupDescriptorSetLayout()
 	{
 		mDescriptorSet.AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);				// Uniform buffer binding: 0
-		mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 1
+		mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
+		//mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 1
 		mDescriptorSet.CreateLayout(mDevice);
 
 		VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = CreateInfo::PipelineLayout(1, &mDescriptorSet.setLayout);
@@ -157,7 +163,8 @@ namespace VulkanLib
 	void VulkanApp::SetupDescriptorSet()
 	{
 		mDescriptorSet.AllocateDescriptorSets(mDevice, mDescriptorPool.GetVkDescriptorPool());
-		mDescriptorSet.BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
+		mDescriptorSet.BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
+		mDescriptorSet.BindUniformBuffer(1, &mFragmentUniformBuffer.GetDescriptor());
 		//mDescriptorSet.BindCombinedImage(1, &GetTextureDescriptorInfo(mTestTexture));
 		mDescriptorSet.UpdateDescriptorSets(mDevice);
 	}
@@ -274,7 +281,7 @@ namespace VulkanLib
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
 		VkClearValue clearValues[2];
-		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
+		clearValues[0].color = { 0.2f, 0.2f, 0.8f, 0.0f };
 		clearValues[1].depthStencil = { 1.0f, 0 };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
@@ -298,7 +305,6 @@ namespace VulkanLib
 		inheritanceInfo.renderPass = mRenderPass;
 		inheritanceInfo.framebuffer = frameBuffer;
 
-		// Secondary command buffer for the sky sphere
 		VkCommandBufferBeginInfo commandBufferBeginInfo = {};
 		commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
@@ -334,7 +340,7 @@ namespace VulkanLib
 			vkCmdBindDescriptorSets(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
 
 			// Push the world matrix constant
-			mPushConstants.world = object.object->GetWorldMatrix(); // camera->GetProjection() * camera->GetView() * 
+			mPushConstants.world = object.object->GetWorldMatrix();
 			mPushConstants.color = object.object->GetColor();
 			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, sizeof(PushConstantBlock), &mPushConstants);
 
@@ -436,8 +442,7 @@ namespace VulkanLib
 
 	void VulkanApp::Update()
 	{
-		return;
-
+		//return;
 		// Rotate the objects
 		for (auto& object : mModels)
 		{

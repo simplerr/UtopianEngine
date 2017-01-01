@@ -81,7 +81,10 @@
     <ClCompile Include="source\StaticModel.cpp">
       <Filter>Source Files\model</Filter>
     </ClCompile>
-    <ClCompile Include="source\BigUniformBuffer.cpp">
+    <ClCompile Include="source\FragmentUniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\VertexUniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,9 +131,6 @@
     <ClInclude Include="source\DescriptorSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\BigUniformBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\ModelLoader.h">
       <Filter>Header Files\model</Filter>
     </ClInclude>
@@ -145,6 +145,12 @@
     </ClInclude>
     <ClInclude Include="source\StaticModel.h">
       <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FragmentUniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\VertexUniformBuffer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

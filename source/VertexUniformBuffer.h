@@ -6,7 +6,7 @@
 /*
 The big uniform buffer that contains everything
 */
-class BigUniformBuffer : public VulkanLib::UniformBuffer
+class VertexUniformBuffer : public VulkanLib::UniformBuffer
 {
 public:
 	virtual void UpdateMemory(VkDevice device);
@@ -21,11 +21,8 @@ public:
 		float t;
 	} camera;
 
-	std::vector<VulkanLib::Light> lights;
-
 	struct {
-		float numLights;
 		bool useInstancing;
-		glm::vec2 garbage;
-	} constants;
+		glm::vec3 garbage;
+	} constants; // Currently unused
 };
