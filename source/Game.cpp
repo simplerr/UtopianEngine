@@ -93,7 +93,8 @@ namespace VulkanLib
 				if (fps != -1)
 				{
 					std::stringstream ss;
-					ss << "Utopian Engine (alpha)";
+					ss << "Utopian Engine (alpha) ";
+					ss << "FPS: " << mTimer.GetFPS();
 					std::string windowTitle = ss.str();
 					SetWindowText(mWindow->GetHwnd(), windowTitle.c_str());
 				}
