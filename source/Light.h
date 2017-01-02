@@ -28,26 +28,9 @@ namespace VulkanLib
 			this->specular = specular;
 		}
 
-		/*Material(aiColor4D ambient, aiColor4D diffuse, aiColor4D specular) {
-		this->ambient.x = ambient.r;
-		this->ambient.y = ambient.g;
-		this->ambient.z = ambient.b;
-		this->ambient.w = ambient.a;
-
-		this->diffuse.x = diffuse.r;
-		this->diffuse.y = diffuse.g;
-		this->diffuse.z = diffuse.b;
-		this->diffuse.w = diffuse.a;
-
-		this->specular.x = specular.r;
-		this->specular.y = specular.g;
-		this->specular.z = specular.b;
-		this->specular.w = specular.a;
-		}*/
-
 		vec4 ambient;
 		vec4 diffuse;
-		vec4 specular; // w = SpecPower
+		vec4 specular; 
 	};
 
 

@@ -42,6 +42,7 @@ namespace VulkanLib
 		vec3 GetScale();
 		vec3 GetColor();
 		mat4 GetWorldMatrix();
+		mat4 GetWorldInverseTransposeMatrix();
 		int GetId();
 
 		PipelineEnum GetPipeline();

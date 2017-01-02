@@ -7,7 +7,7 @@ layout (location = 0) in vec3 InPosL;			// Vertex in local coordinate system
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec4 InTangent;
+layout (location = 4) in vec4 InTangentL;
 
 layout (std140, binding = 0) uniform UBO 
 {
@@ -26,28 +26,30 @@ layout (std140, binding = 0) uniform UBO
 } per_frame;
 
 layout(push_constant) uniform PushConsts {
-	 mat4 world;	// Model View Projection
-	 vec3 color;	// Color
+	 mat4 world;		
+	 mat4 worldInvTranspose;
+	 vec3 color;	
 } pushConsts;
 
-layout (location = 0) out vec3 OutNormalW;		// Normal in world coordinate system
-layout (location = 1) out vec3 OutColor;
-layout (location = 2) out vec2 OutTex;
-layout (location = 3) out vec3 OutEyeDirW;		// Direction to the eye in world coordinate system
+layout (location = 0) out vec3 OutPosW;
+layout (location = 1) out vec3 OutNormalW;
+layout (location = 2) out vec3 OutEyePosW;
+layout (location = 3) out vec3 OutColor;
+layout (location = 4) out vec2 OutTex;
 
 void main() 
 {
 	OutColor = pushConsts.color; 
+	OutEyePosW = per_frame.eyePos;
 
-	vec3 pos = InPosL;
+	// Transform to world space.
+	OutPosW     = (vec4(InPosL, 1.0f) * pushConsts.world).xyz;
+	OutNormalW  = InNormalL * mat3(pushConsts.worldInvTranspose);
+	//OutTangentW = mul(InTangentL, pushConsts.world);
 
-	OutColor = vec3(1, 1, 1);
-
+	// Pass on the texture coordinates.
 	OutTex = InTex;
 
-	gl_Position = per_frame.projection * per_frame.view * pushConsts.world * vec4(pos.xyz, 1.0);
-	
-    vec4 PosW = pushConsts.world  * vec4(pos, 1.0);
-    OutNormalW = mat3(pushConsts.world ) * InNormalL;
-    OutEyeDirW = per_frame.eyePos - PosW.xyz;	
+	// Transform to homogeneous clip space.
+	gl_Position = per_frame.projection * per_frame.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

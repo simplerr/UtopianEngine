@@ -1,6 +1,7 @@
 #include "Object.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 namespace VulkanLib
 {
@@ -91,6 +92,11 @@ namespace VulkanLib
 	mat4 Object::GetWorldMatrix()
 	{
 		return mWorld;
+	}
+
+	mat4 Object::GetWorldInverseTransposeMatrix()
+	{
+		return glm::inverseTranspose(mWorld);
 	}
 
 	int Object::GetId()

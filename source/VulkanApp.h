@@ -41,6 +41,7 @@ namespace VulkanLib
 
 	struct PushConstantBlock {
 		mat4 world;
+		mat4 worldInvTranspose;
 		vec3 color;
 	};
 

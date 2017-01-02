@@ -99,11 +99,12 @@ namespace VulkanLib
 	{
 		// Create the fragment shader uniform buffer
 		Light light;
-		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 1));
+		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 1));
 		light.SetPosition(150, 150, 150);
-		light.SetDirection(1, -1, 0);
+		light.SetDirection(0, -1, 0);
 		light.SetAtt(1, 1, 0);
-		light.SetIntensity(0, 0, 1);
+		light.SetIntensity(0.2f, 0.5f, 0.5f);
+		light.SetType(LightType::DIRECTIONAL_LIGHT);
 		mFragmentUniformBuffer.lights.push_back(light);
 
 		// Important to call this before CreateBuffer() since # lights affects the total size
@@ -341,6 +342,7 @@ namespace VulkanLib
 
 			// Push the world matrix constant
 			mPushConstants.world = object.object->GetWorldMatrix();
+			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
 			mPushConstants.color = object.object->GetColor();
 			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, sizeof(PushConstantBlock), &mPushConstants);
 
@@ -442,7 +444,7 @@ namespace VulkanLib
 
 	void VulkanApp::Update()
 	{
-		//return;
+		return;
 		// Rotate the objects
 		for (auto& object : mModels)
 		{

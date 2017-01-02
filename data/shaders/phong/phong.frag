@@ -5,17 +5,18 @@
 
 layout (binding = 1) uniform sampler2D samplerColorMap;
 
-layout (location = 0) in vec3 InNormalW;
-layout (location = 1) in vec3 InColor;
-layout (location = 2) in vec2 InTex;
-layout (location = 3) in vec3 InEyeDirW;
+layout (location = 0) in vec3 InPosW;
+layout (location = 1) in vec3 InNormalW;
+layout (location = 2) in vec3 InEyePosW;
+layout (location = 3) in vec3 InColor;
+layout (location = 4) in vec2 InTex;
 
 //! Corresponds to the C++ class Material. Stores the ambient, diffuse and specular colors for a material.
 struct Material
 {
 	vec4 ambient;
 	vec4 diffuse;
-	vec4 specular; // w = SpecPower
+	vec4 specular; 
 };
 
 struct Light
@@ -38,7 +39,7 @@ struct Light
 
 layout (std140, binding = 1) uniform UBO 
 {
-	Light light[1];
+	Light lights[1];
 
 	// Constants
 	float numLights;
@@ -47,28 +48,95 @@ layout (std140, binding = 1) uniform UBO
 
 layout (location = 0) out vec4 OutFragColor;
 
+//! Computes the colors for directional light.
+void ComputeDirectionalLight(Material material, Light light, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+{
+	// Initialize outputs.
+	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// The light vector aims opposite the direction the light rays travel.
+	vec3 lightVec = light.dir;
+
+	// Add ambient term.
+	ambient = material.ambient * light.material.ambient * light.intensity.x;	
+
+	// Add diffuse and specular term, provided the surface is in 
+	// the line of site of the light.
+	
+	float diffuseFactor = dot(lightVec, normal);
+
+	// Flatten to avoid dynamic branching.
+	if(diffuseFactor > 0.0f)
+	{
+		vec3 v = reflect(-lightVec, normal);
+		float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+					
+		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+	}
+}
+
+//! Computes the colors for a point light.
+void ComputePointLight(Material material, Light light, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+{
+
+}
+
+//! Computes the colors for a spot light.
+void ComputeSpotLight(Material material, Light light, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+{
+
+}
+
+//! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
+void ApplyLighting(float numLights, Light lights[1], Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
+				   float shadow, out vec4 litColor)
+{
+	// Start with a sum of zero. 
+	vec4 ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	vec4 diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	vec4 spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Loop through all lights
+	for(int i = 0; i < numLights; i++)
+	{
+		// Sum the light contribution from each light source.
+		vec4 A, D, S;
+
+		if(lights[i].type == 0.0f)			// Directional light
+			ComputeDirectionalLight(material, lights[i], normalW, toEyeW, A, D, S);
+		else if(lights[i].type == 1.0f)	// Point light
+			ComputePointLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
+		else if(lights[i].type == 2.0f)	// Spot light
+			ComputeSpotLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
+
+		ambient += A;  
+		diffuse += shadow*D;
+		spec    += shadow*S;
+	}
+	   
+	litColor = texColor*(ambient + diffuse) + spec;
+}
+
 void main() 
 {
-	// Ambient factor
-	vec3 color = 0.2 * InColor;	// Ambient
-	vec3 Color = per_frame.light[0].material.ambient.rgb;	
+	// Interpolating normal can unnormalize it, so normalize it.
+    vec3 normalW = normalize(InNormalW); 
 
-	vec3 normal = normalize(InNormalW);
-	vec3 lightDir = normalize(per_frame.light[0].dir);
-	vec3 V = normalize(InEyeDirW);
-	vec3 R = reflect(-lightDir, normal);
+	vec3 toEyeW = normalize(InEyePosW - InPosW);
 
-	// Diffuse
-	float shade = clamp(dot(normal, lightDir), 0.0f, 1.0f);
-	vec3 diffuse = shade * Color;
-	color += diffuse;
+	float shadow = 1.0f;
+	vec4 texColor = vec4(1.0f);
 
-	// Specular
-	shade = pow(max(dot(R, V), 0.0), 512.0);
-	vec3 specular = shade * Color;
-	color += specular;	
+	Material material;
+	material.ambient = vec4(1.0f, 0.0f, 0.0f, 1.0f); 
+	material.diffuse = vec4(1.0f, 0.0f, 0.0f, 1.0f); 
+	material.specular = vec4(1.0f, 0.0f, 0.0f, 1.0f); 
 
-	OutFragColor = vec4(color, 1.0f);
+	vec4 litColor;
+	ApplyLighting(per_frame.numLights, per_frame.lights, material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
 
-	//OutFragColor = vec4(InColor, 1.0f);
+	OutFragColor = litColor;
 }
