@@ -70,8 +70,8 @@ void ComputeDirectionalLight(Material material, Light light, vec3 normal, vec3 t
 	// Flatten to avoid dynamic branching.
 	if(diffuseFactor > 0.0f)
 	{
-		vec3 v = reflect(-lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+		vec3 v = reflect(lightVec, normal);
+		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);
 					
 		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
 		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;

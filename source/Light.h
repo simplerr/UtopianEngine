@@ -30,7 +30,7 @@ namespace VulkanLib
 
 		vec4 ambient;
 		vec4 diffuse;
-		vec4 specular; 
+		vec4 specular;	// w = SpecPower
 	};
 
 

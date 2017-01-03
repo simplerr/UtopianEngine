@@ -39,11 +39,11 @@ namespace VulkanLib
 	{
 		// Add a test object to the scene
 		Object* object = new Object(glm::vec3(150, 150, 150));
-		object->SetModel("data/models/box.obj");
+		object->SetModel("data/models/teapot.obj");
 		object->SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
 		object->SetId(OBJECT_ID_PROP);
 		object->SetRotation(glm::vec3(180, 0, 0));
-		object->SetScale(glm::vec3(3.0f));
+		object->SetScale(glm::vec3(9.0f));
 		object->SetPipeline(PipelineEnum::COLORED);
 
 		VulkanModel model;

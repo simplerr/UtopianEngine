@@ -94,16 +94,16 @@ namespace VulkanLib
 	{
 		mModels.push_back(model);
 	}
-
+	
 	void VulkanApp::PrepareUniformBuffers()
 	{
 		// Create the fragment shader uniform buffer
 		Light light;
-		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 1));
+		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
 		light.SetPosition(150, 150, 150);
 		light.SetDirection(0, -1, 0);
 		light.SetAtt(1, 1, 0);
-		light.SetIntensity(0.2f, 0.5f, 0.5f);
+		light.SetIntensity(0.2f, 0.5f, 1.0f);
 		light.SetType(LightType::DIRECTIONAL_LIGHT);
 		mFragmentUniformBuffer.lights.push_back(light);
 
@@ -444,12 +444,12 @@ namespace VulkanLib
 
 	void VulkanApp::Update()
 	{
-		return;
+		//return;
 		// Rotate the objects
 		for (auto& object : mModels)
 		{
 			// [NOTE] Just for testing
-			float speed = 5.0f;
+			float speed = 1.0f;
 			if (object.object->GetId() == OBJECT_ID_PROP)
 				object.object->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
 		}
