@@ -43,8 +43,8 @@ void main()
 	OutEyePosW = per_frame.eyePos;
 
 	// Transform to world space.
-	OutPosW     = (vec4(InPosL, 1.0f) * pushConsts.world).xyz;
-	OutNormalW  = InNormalL * mat3(pushConsts.worldInvTranspose);
+	OutPosW     = (pushConsts.world * vec4(InPosL, 1.0f)).xyz;
+	OutNormalW  = mat3(pushConsts.worldInvTranspose) * InNormalL;
 	//OutTangentW = mul(InTangentL, pushConsts.world);
 
 	// Pass on the texture coordinates.

@@ -100,11 +100,12 @@ namespace VulkanLib
 		// Create the fragment shader uniform buffer
 		Light light;
 		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
-		light.SetPosition(150, 150, 150);
+		light.SetPosition(600, -800, 600);
 		light.SetDirection(0, -1, 0);
-		light.SetAtt(1, 1, 0);
+		light.SetAtt(1, 1, 1);
 		light.SetIntensity(0.2f, 0.5f, 1.0f);
-		light.SetType(LightType::DIRECTIONAL_LIGHT);
+		light.SetType(LightType::POINT_LIGHT);
+		light.SetRange(100000);
 		mFragmentUniformBuffer.lights.push_back(light);
 
 		// Important to call this before CreateBuffer() since # lights affects the total size
@@ -444,7 +445,7 @@ namespace VulkanLib
 
 	void VulkanApp::Update()
 	{
-		//return;
+		return;
 		// Rotate the objects
 		for (auto& object : mModels)
 		{

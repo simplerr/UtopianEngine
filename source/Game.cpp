@@ -37,20 +37,48 @@ namespace VulkanLib
 
 	void Game::InitScene()
 	{
-		// Add a test object to the scene
-		Object* object = new Object(glm::vec3(150, 150, 150));
+		Object* object = new Object(glm::vec3(600, -800, 600));
 		object->SetModel("data/models/teapot.obj");
-		object->SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
+		object->SetColor(glm::vec3(0.0f, 0.0f, 1.0f));
 		object->SetId(OBJECT_ID_PROP);
 		object->SetRotation(glm::vec3(180, 0, 0));
-		object->SetScale(glm::vec3(9.0f));
+		object->SetScale(glm::vec3(3.0f));
 		object->SetPipeline(PipelineEnum::COLORED);
 
 		VulkanModel model;
 		model.object = object;
 		model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
-		model.pipeline = mRenderer->mPipelines.phong;		
+		model.pipeline = mRenderer->mPipelines.phong;
 		mRenderer->AddModel(model);
+
+
+		// Add a test object to the scene
+		// Add objects
+		int size = 5;
+		int i = 0;
+		for (int x = 0; x < size; x++)
+		{
+			for (int y = 0; y < size; y++)
+			{
+				for (int z = 0; z < size; z++)
+				{
+					int space = 300;
+					Object* object = new Object(glm::vec3(x * space, -100 - y * space, z * space));
+					object->SetModel("data/models/teapot.obj");
+					object->SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
+					object->SetId(OBJECT_ID_PROP);
+					object->SetRotation(glm::vec3(180, 0, 0));
+					object->SetScale(glm::vec3(3.0f));
+					object->SetPipeline(PipelineEnum::COLORED);
+
+					VulkanModel model;
+					model.object = object;
+					model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
+					model.pipeline = mRenderer->mPipelines.phong;
+					mRenderer->AddModel(model);
+				}
+			}
+		}
 	}
 
 	bool Game::IsClosing()

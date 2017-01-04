@@ -81,7 +81,47 @@ void ComputeDirectionalLight(Material material, Light light, vec3 normal, vec3 t
 //! Computes the colors for a point light.
 void ComputePointLight(Material material, Light light, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
+	// Initialize outputs.
+	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
+	// The vector from the surface to the light.
+	vec3 lightVec = light.pos - pos;
+		
+	// The distance from surface to light.
+	float d = length(lightVec);
+	
+	// Range test.
+	if( d > light.range )
+		return;
+		
+	// Normalize the light vector.
+	lightVec /= d; 
+	
+	// Ambient term.
+	ambient = material.ambient * light.material.ambient * light.intensity.x;	
+
+	// Add diffuse and specular term, provided the surface is in 
+	// the line of site of the light.
+
+	float diffuseFactor = dot(lightVec, normal);
+
+	// Flatten to avoid dynamic branching.
+	if(diffuseFactor > 0.0f)
+	{
+		vec3 v         = reflect(-lightVec, normal);
+		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);
+
+		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+	}
+
+	// Attenuate
+	float att = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
+
+	//diffuse *= att;
+	//spec    *= att;
 }
 
 //! Computes the colors for a spot light.
@@ -131,9 +171,9 @@ void main()
 	vec4 texColor = vec4(1.0f);
 
 	Material material;
-	material.ambient = vec4(1.0f, 0.0f, 0.0f, 1.0f); 
-	material.diffuse = vec4(1.0f, 0.0f, 0.0f, 1.0f); 
-	material.specular = vec4(1.0f, 0.0f, 0.0f, 1.0f); 
+	material.ambient = vec4(InColor, 1.0f); 
+	material.diffuse = vec4(InColor, 1.0f); 
+	material.specular = vec4(InColor, 1.0f); 
 
 	vec4 litColor;
 	ApplyLighting(per_frame.numLights, per_frame.lights, material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
