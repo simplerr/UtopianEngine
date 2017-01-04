@@ -71,7 +71,7 @@ void ComputeDirectionalLight(Material material, Light light, vec3 normal, vec3 t
 	if(diffuseFactor > 0.0f)
 	{
 		vec3 v = reflect(lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);
+		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);	// [TODO] Should use the models material reflection value instead
 					
 		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
 		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
@@ -127,7 +127,51 @@ void ComputePointLight(Material material, Light light, vec3 pos, vec3 normal, ve
 //! Computes the colors for a spot light.
 void ComputeSpotLight(Material material, Light light, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
+	// Initialize outputs.
+	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
+	// The vector from the surface to the light.
+	vec3 lightVec = light.pos - pos;
+		
+	// The distance from surface to light.
+	float d = length(lightVec);
+	
+	// Range test.
+	if(d > light.range)
+		return;
+		
+	// Normalize the light vector.
+	lightVec /= d; 
+	
+	// Ambient term.
+	ambient = material.ambient * light.material.ambient * light.intensity.x;	
+
+	// Add diffuse and specular term, provided the surface is in 
+	// the line of site of the light.
+
+	float diffuseFactor = dot(lightVec, normal);
+
+	// Flatten to avoid dynamic branching.
+	if(diffuseFactor > 0.0f)
+	{
+		vec3 v         = reflect(-lightVec, normal);
+		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);
+					
+		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+	}
+	
+	// Scale by spotlight factor and attenuate.
+	float spot = pow(max(dot(lightVec, light.dir), 0.0f), light.spot);
+
+	// Scale by spotlight factor and attenuate.
+	float att = spot / dot(light.att, vec3(1.0f, d, d*d));
+
+	ambient *= spot;
+	diffuse *= att;
+	spec    *= att;
 }
 
 //! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
@@ -147,9 +191,9 @@ void ApplyLighting(float numLights, Light lights[1], Material material, vec3 pos
 
 		if(lights[i].type == 0.0f)			// Directional light
 			ComputeDirectionalLight(material, lights[i], normalW, toEyeW, A, D, S);
-		else if(lights[i].type == 1.0f)	// Point light
+		else if(lights[i].type == 1.0f)		// Point light
 			ComputePointLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
-		else if(lights[i].type == 2.0f)	// Spot light
+		else if(lights[i].type == 2.0f)		// Spot light
 			ComputeSpotLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
 
 		ambient += A;  

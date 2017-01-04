@@ -101,11 +101,12 @@ namespace VulkanLib
 		Light light;
 		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
 		light.SetPosition(600, -800, 600);
-		light.SetDirection(0, -1, 0);
-		light.SetAtt(1, 1, 1);
+		light.SetDirection(1, -1, 1);
+		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.5f, 1.0f);
-		light.SetType(LightType::POINT_LIGHT);
+		light.SetType(LightType::SPOT_LIGHT);
 		light.SetRange(100000);
+		light.SetSpot(4.0f);
 		mFragmentUniformBuffer.lights.push_back(light);
 
 		// Important to call this before CreateBuffer() since # lights affects the total size
