@@ -9,6 +9,7 @@
 #include "UniformBuffer.h"
 #include "VertexUniformBuffer.h"
 #include "DescriptorSet.h"
+#include "TextureLoader.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -99,8 +100,6 @@ namespace VulkanLib
 
 		PushConstantBlock				mPushConstants;						// Gets updated with new push constants for each object
 
-		vkTools::VulkanTexture			mTestTexture;						
-
 		bool							mPrepared = false;
 
 		Camera*							mCamera;
@@ -115,6 +114,9 @@ namespace VulkanLib
 		FragmentUniformBuffer			mFragmentUniformBuffer;
 		DescriptorPool					mDescriptorPool;
 		DescriptorSet					mDescriptorSet;
+		
+		TextureLoader*					mTextureLoader;
+		VulkanTexture					mTestTexture;
 
 	public:
 	};

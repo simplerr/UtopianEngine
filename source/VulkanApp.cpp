@@ -9,6 +9,7 @@
 #include "Object.h"
 #include "VulkanHelpers.h"
 #include "Light.h"
+#include "TextureLoader.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define INSTANCE_BUFFER_BIND_ID 1
@@ -47,6 +48,8 @@ namespace VulkanLib
 
 		// [TODO] Cleanup rendering command buffers
 		//vkFreeCommandBuffers(mDevice, mCommandPool, mStaticCommandBuffers.size(), mStaticCommandBuffers.data());
+
+		delete mTextureLoader;
 	}
 
 	void VulkanApp::Prepare()
@@ -64,6 +67,10 @@ namespace VulkanLib
 		SetupDescriptorPool();
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
+
+		mTextureLoader = new TextureLoader(mVulkanDevice, mQueue);
+
+		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
 
 		mPrepared = true;
 	}
@@ -102,6 +109,16 @@ namespace VulkanLib
 		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
 		light.SetPosition(600, -800, 600);
 		light.SetDirection(1, -1, 1);
+		light.SetAtt(1, 0, 0);
+		light.SetIntensity(0.2f, 0.5f, 1.0f);
+		light.SetType(LightType::SPOT_LIGHT);
+		light.SetRange(100000);
+		light.SetSpot(4.0f);
+		mFragmentUniformBuffer.lights.push_back(light);
+
+		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
+		light.SetPosition(600, -800, 600);
+		light.SetDirection(-1, -1, -1);
 		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.5f, 1.0f);
 		light.SetType(LightType::SPOT_LIGHT);
@@ -446,12 +463,12 @@ namespace VulkanLib
 
 	void VulkanApp::Update()
 	{
-		return;
+		//return;
 		// Rotate the objects
 		for (auto& object : mModels)
 		{
 			// [NOTE] Just for testing
-			float speed = 1.0f;
+			float speed = 5.0f;
 			if (object.object->GetId() == OBJECT_ID_PROP)
 				object.object->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
 		}

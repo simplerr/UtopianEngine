@@ -32,6 +32,8 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 
 namespace VulkanLib
 {
+	class VulkanDevice;
+
 	struct DepthStencil {
 		VkImage image;
 		VkDeviceMemory memory;
@@ -92,6 +94,8 @@ namespace VulkanLib
 		VkPhysicalDevice				mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice						mDevice = VK_NULL_HANDLE;
 		VkQueue							mQueue = VK_NULL_HANDLE;
+
+		VulkanDevice*					mVulkanDevice;
 
 		// Command buffer
 		VkCommandPool					mCommandPool;

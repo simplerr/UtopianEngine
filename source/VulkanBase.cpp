@@ -7,6 +7,7 @@
 #include <chrono>
 
 #include "VulkanBase.h"
+#include "VulkanDevice.h"
 #include "VulkanDebug.h"
 #include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
@@ -40,6 +41,7 @@ namespace VulkanLib
 		// Setup function pointers for the swap chain
 		mSwapChain.connect(mInstance, mPhysicalDevice, mDevice);
 
+		mVulkanDevice = new VulkanDevice(mPhysicalDevice, mDevice);
 		// Synchronization code missing here, VkSemaphore etc.
 	}
 
@@ -77,6 +79,8 @@ namespace VulkanLib
 		VulkanDebug::CleanupDebugging(mInstance);
 
 		vkDestroyInstance(mInstance, nullptr);
+
+		delete mVulkanDevice;
 	}
 
 	void VulkanBase::Prepare()

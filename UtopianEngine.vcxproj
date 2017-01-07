@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="base\vulkandebug.cpp" />
     <ClCompile Include="base\vulkantools.cpp" />
+    <ClCompile Include="source\TextureLoader.cpp" />
     <ClCompile Include="source\VertexUniformBuffer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\DescriptorSet.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="source\VulkanApp.cpp" />
     <ClCompile Include="source\VulkanBase.cpp" />
     <ClCompile Include="source\VulkanDebug.cpp" />
+    <ClCompile Include="source\VulkanDevice.cpp" />
     <ClCompile Include="source\VulkanHelpers.cpp" />
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
@@ -105,6 +107,7 @@
     <ClInclude Include="base\vulkandebug.h" />
     <ClInclude Include="base\vulkanswapchain.hpp" />
     <ClInclude Include="base\vulkantools.h" />
+    <ClInclude Include="source\TextureLoader.h" />
     <ClInclude Include="source\VertexUniformBuffer.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\DescriptorSet.h" />
@@ -118,6 +121,7 @@
     <ClInclude Include="source\VertexDescription.h" />
     <ClInclude Include="source\VulkanBase.h" />
     <ClInclude Include="source\VulkanDebug.h" />
+    <ClInclude Include="source\VulkanDevice.h" />
     <ClInclude Include="source\VulkanHelpers.h" />
     <ClInclude Include="source\VulkanApp.h" />
     <ClInclude Include="source\Window.h" />
@@ -130,6 +134,9 @@
     <None Include="docs\system_requirements.md" />
     <None Include="README.md" />
     <None Include="source\notes.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="docs\todo.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
