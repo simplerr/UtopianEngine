@@ -13,7 +13,7 @@
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define INSTANCE_BUFFER_BIND_ID 1
-#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
 
 #define NUM_OBJECTS 10 // 64 * 4 * 4 * 2
 

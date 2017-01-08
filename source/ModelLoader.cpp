@@ -63,7 +63,6 @@ namespace VulkanLib
 				// Get the diffuse color
 				aiColor3D color(0.f, 0.f, 0.f);
 				scene->mMaterials[assimpMesh->mMaterialIndex]->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-
 				Mesh mesh;
 
 				// Load vertices
@@ -87,6 +86,21 @@ namespace VulkanLib
 				{
 					for (int indexId = 0; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId++)
 						mesh.indices.push_back(assimpMesh->mFaces[faceId].mIndices[indexId]);
+				}
+
+				// Get texture path
+				aiMaterial* material = scene->mMaterials[assimpMesh->mMaterialIndex];
+				int numTextures = material->GetTextureCount(aiTextureType_DIFFUSE);
+				if (numTextures > 0)
+				{
+					aiString texturePath;
+					material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
+					FindValidPath(&texturePath, filename);
+					mesh.texturePath = texturePath.C_Str();
+				}
+				else
+				{
+					mesh.texturePath = "NO_TEXTURE";
 				}
 
 				model->AddMesh(mesh);
@@ -226,5 +240,187 @@ namespace VulkanLib
 		//mModelMap[filename] = terrain;
 
 		//return terrain;
+	}
+
+	// From /assimp/assimp/tools/assimp_view/Material.cpp
+	int ModelLoader::FindValidPath(aiString* texturePath, std::string modelPath)
+	{
+		ai_assert(NULL != texturePath);
+		aiString pcpy = *texturePath;
+		if ('*' == texturePath->data[0]) {
+			// '*' as first character indicates an embedded file
+			return 5;
+		}
+
+		// first check whether we can directly load the file
+		FILE* pFile = fopen(texturePath->data, "rb");
+		if (pFile)fclose(pFile);
+		else
+		{
+			// check whether we can use the directory of  the asset as relative base
+			char szTemp[MAX_PATH * 2], tmp2[MAX_PATH * 2];
+			strcpy(szTemp, modelPath.c_str());
+			strcpy(tmp2, szTemp);
+
+			char* szData = texturePath->data;
+			if (*szData == '\\' || *szData == '/')++szData;
+
+			char* szEnd = strrchr(szTemp, '\\');
+			if (!szEnd)
+			{
+				szEnd = strrchr(szTemp, '/');
+				if (!szEnd)szEnd = szTemp;
+			}
+			szEnd++;
+			*szEnd = 0;
+			strcat(szEnd, szData);
+
+
+			pFile = fopen(szTemp, "rb");
+			if (!pFile)
+			{
+				// convert the string to lower case
+				for (unsigned int i = 0;; ++i)
+				{
+					if ('\0' == szTemp[i])break;
+					szTemp[i] = (char)tolower(szTemp[i]);
+				}
+
+				if (TryLongerPath(szTemp, texturePath))return 1;
+				*szEnd = 0;
+
+				// search common sub directories
+				strcat(szEnd, "tex\\");
+				strcat(szEnd, szData);
+
+				pFile = fopen(szTemp, "rb");
+				if (!pFile)
+				{
+					if (TryLongerPath(szTemp, texturePath))return 1;
+
+					*szEnd = 0;
+
+					strcat(szEnd, "textures\\");
+					strcat(szEnd, szData);
+
+					pFile = fopen(szTemp, "rb");
+					if (!pFile)
+					{
+						if (TryLongerPath(szTemp, texturePath))return 1;
+					}
+
+					// patch by mark sibly to look for textures files in the asset's base directory.
+					const char *path = pcpy.data;
+					const char *p = strrchr(path, '/');
+					if (!p) p = strrchr(path, '\\');
+					if (p) {
+						char *q = strrchr(tmp2, '/');
+						if (!q) q = strrchr(tmp2, '\\');
+						if (q) {
+							strcpy(q + 1, p + 1);
+							if (pFile = fopen(tmp2, "r")) {
+								fclose(pFile);
+								strcpy(texturePath->data, tmp2);
+								texturePath->length = strlen(tmp2);
+								return 1;
+							}
+						}
+					}
+					return 0;
+				}
+			}
+			fclose(pFile);
+
+			// copy the result string back to the aiString
+			const size_t iLen = strlen(szTemp);
+			size_t iLen2 = iLen + 1;
+			iLen2 = iLen2 > MAXLEN ? MAXLEN : iLen2;
+			memcpy(texturePath->data, szTemp, iLen2);
+			texturePath->length = iLen;
+
+		}
+		return 1;
+	}
+
+	// From /assimp/assimp/tools/assimp_view/Material.cpp
+	bool ModelLoader::TryLongerPath(char* szTemp, aiString* p_szString)
+	{
+		char szTempB[MAX_PATH];
+		strcpy(szTempB, szTemp);
+
+		// go to the beginning of the file name
+		char* szFile = strrchr(szTempB, '\\');
+		if (!szFile)szFile = strrchr(szTempB, '/');
+
+		char* szFile2 = szTemp + (szFile - szTempB) + 1;
+		szFile++;
+		char* szExt = strrchr(szFile, '.');
+		if (!szExt)return false;
+		szExt++;
+		*szFile = 0;
+
+		strcat(szTempB, "*.*");
+		const unsigned int iSize = (const unsigned int)(szExt - 1 - szFile);
+
+		HANDLE          h;
+		WIN32_FIND_DATA info;
+
+		// build a list of files
+		h = FindFirstFile(szTempB, &info);
+		if (h != INVALID_HANDLE_VALUE)
+		{
+			do
+			{
+				if (!(strcmp(info.cFileName, ".") == 0 || strcmp(info.cFileName, "..") == 0))
+				{
+					char* szExtFound = strrchr(info.cFileName, '.');
+					if (szExtFound)
+					{
+						++szExtFound;
+						if (0 == _stricmp(szExtFound, szExt))
+						{
+							const unsigned int iSizeFound = (const unsigned int)(
+								szExtFound - 1 - info.cFileName);
+
+							for (unsigned int i = 0; i < iSizeFound; ++i)
+								info.cFileName[i] = (CHAR)tolower(info.cFileName[i]);
+
+							if (0 == memcmp(info.cFileName, szFile2, min(iSizeFound, iSize)))
+							{
+								// we have it. Build the full path ...
+								char* sz = strrchr(szTempB, '*');
+								*(sz - 2) = 0x0;
+
+								strcat(szTempB, info.cFileName);
+
+								// copy the result string back to the aiString
+								const size_t iLen = strlen(szTempB);
+								size_t iLen2 = iLen + 1;
+								iLen2 = iLen2 > MAXLEN ? MAXLEN : iLen2;
+								memcpy(p_szString->data, szTempB, iLen2);
+								p_szString->length = iLen;
+								return true;
+							}
+						}
+						// check whether the 8.3 DOS name is matching
+						if (0 == _stricmp(info.cAlternateFileName, p_szString->data))
+						{
+							strcat(szTempB, info.cAlternateFileName);
+
+							// copy the result string back to the aiString
+							const size_t iLen = strlen(szTempB);
+							size_t iLen2 = iLen + 1;
+							iLen2 = iLen2 > MAXLEN ? MAXLEN : iLen2;
+							memcpy(p_szString->data, szTempB, iLen2);
+							p_szString->length = iLen;
+							return true;
+						}
+					}
+				}
+			} while (FindNextFile(h, &info));
+
+			FindClose(h);
+		}
+		return false;
 	}
 }	// VulkanLib namespace

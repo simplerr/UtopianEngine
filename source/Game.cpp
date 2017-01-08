@@ -37,7 +37,7 @@ namespace VulkanLib
 
 	void Game::InitScene()
 	{
-		Object* object = new Object(glm::vec3(600, -800, 600));
+		/*Object* object = new Object(glm::vec3(600, -800, 600));
 		object->SetModel("data/models/teapot.obj");
 		object->SetColor(glm::vec3(0.0f, 0.0f, 1.0f));
 		object->SetId(OBJECT_ID_PROP);
@@ -49,7 +49,7 @@ namespace VulkanLib
 		model.object = object;
 		model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
 		model.pipeline = mRenderer->mPipelines.phong;
-		mRenderer->AddModel(model);
+		mRenderer->AddModel(model);*/
 
 
 		// Add a test object to the scene
@@ -64,7 +64,7 @@ namespace VulkanLib
 				{
 					int space = 300;
 					Object* object = new Object(glm::vec3(x * space, -100 - y * space, z * space));
-					object->SetModel("data/models/teapot.obj");
+					object->SetModel("data/models/Crate/Crate1.obj");
 					object->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
 					object->SetId(OBJECT_ID_PROP);
 					object->SetRotation(glm::vec3(180, 0, 0));

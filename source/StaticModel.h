@@ -34,6 +34,7 @@ namespace VulkanLib
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
+		std::string texturePath;
 	};
 
 	class StaticModel
@@ -62,7 +63,6 @@ namespace VulkanLib
 
 		std::vector<Mesh> mMeshes;
 	private:
-
 		uint32_t mIndicesCount;
 		uint32_t mVerticesCount;
 	};
