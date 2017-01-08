@@ -7,6 +7,7 @@ namespace VulkanLib
 	{
 	public:
 		VulkanDevice(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
+		~VulkanDevice();
 
 		// [TODO] Add creation of the logical device
 		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);

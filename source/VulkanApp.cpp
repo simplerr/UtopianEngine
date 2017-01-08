@@ -38,7 +38,7 @@ namespace VulkanLib
 		vkDestroyPipeline(mDevice, mPipelines.phong, nullptr);
 
 		// Free the testing texture
-		//mTextureLoader->destroyTexture(mTestTexture);
+		mTextureLoader->DestroyTexture(mTestTexture);
 
 		for (int i = 0; i < mModels.size(); i++) {
 			delete mModels[i].object;
@@ -47,7 +47,7 @@ namespace VulkanLib
 		vkDestroyFence(mDevice, mRenderFence, nullptr);
 
 		// [TODO] Cleanup rendering command buffers
-		//vkFreeCommandBuffers(mDevice, mCommandPool, mStaticCommandBuffers.size(), mStaticCommandBuffers.data());
+		vkFreeCommandBuffers(mDevice, mCommandPool, 1, &mPrimaryCommandBuffer);
 
 		delete mTextureLoader;
 	}

@@ -90,9 +90,18 @@ namespace VulkanLib
 		// Create the sampler
 		CreateImageSampler(&texture->sampler);
 
-//		texture->
+		vkDestroyImage(device, stagingImage, nullptr);
+		vkFreeMemory(device, stagingMemory, nullptr);
 
 		return false;
+	}
+
+	void TextureLoader::DestroyTexture(VulkanTexture texture)
+	{
+		vkDestroyImageView(mVulkanDevice->GetLogicalDevice(), texture.imageView, nullptr);
+		vkDestroyImage(mVulkanDevice->GetLogicalDevice(), texture.image, nullptr);
+		vkDestroySampler(mVulkanDevice->GetLogicalDevice(), texture.sampler, nullptr);
+		vkFreeMemory(mVulkanDevice->GetLogicalDevice(), texture.deviceMemory, nullptr);
 	}
 
 	void TextureLoader::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)

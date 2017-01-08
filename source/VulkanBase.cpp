@@ -48,12 +48,11 @@ namespace VulkanLib
 	VulkanBase::~VulkanBase()
 	{
 		mSwapChain.cleanup();
+		delete mVulkanDevice;
 
 		// Destroy semaphores
 		vkDestroySemaphore(mDevice, mPresentComplete, nullptr);
 		vkDestroySemaphore(mDevice, mRenderComplete, nullptr);
-
-		//delete mTextureLoader;
 
 		vkDestroyCommandPool(mDevice, mCommandPool, nullptr);
 
@@ -79,8 +78,6 @@ namespace VulkanLib
 		VulkanDebug::CleanupDebugging(mInstance);
 
 		vkDestroyInstance(mInstance, nullptr);
-
-		delete mVulkanDevice;
 	}
 
 	void VulkanBase::Prepare()

@@ -12,6 +12,11 @@ namespace VulkanLib
 		mCommandPool = CreateCommandPool(0); // [NOTE] Hardcoded
 	}
 
+	VulkanDevice::~VulkanDevice()
+	{
+		vkDestroyCommandPool(mLogicalDevice, mCommandPool, nullptr);
+	}
+
 	uint32_t VulkanDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &memProperties);
