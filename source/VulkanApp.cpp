@@ -64,13 +64,13 @@ namespace VulkanLib
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
 		PreparePipelines();
 		PrepareUniformBuffers();			// Must run before SetupDescriptorSet() (Creates the uniform buffer)
+
+		mTextureLoader = new TextureLoader(mVulkanDevice, mQueue);
+		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
+
 		SetupDescriptorPool();
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
-
-		mTextureLoader = new TextureLoader(mVulkanDevice, mQueue);
-
-		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
 
 		mPrepared = true;
 	}
@@ -111,10 +111,10 @@ namespace VulkanLib
 		light.SetDirection(1, -1, 1);
 		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.5f, 1.0f);
-		light.SetType(LightType::SPOT_LIGHT);
+		light.SetType(LightType::DIRECTIONAL_LIGHT);
 		light.SetRange(100000);
 		light.SetSpot(4.0f);
-		mFragmentUniformBuffer.lights.push_back(light);
+		//mFragmentUniformBuffer.lights.push_back(light);
 
 		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
 		light.SetPosition(600, -800, 600);
@@ -157,7 +157,7 @@ namespace VulkanLib
 	{
 		mDescriptorSet.AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);				// Uniform buffer binding: 0
 		mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
-		//mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 1
+		mDescriptorSet.AddLayoutBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
 		mDescriptorSet.CreateLayout(mDevice);
 
 		VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = CreateInfo::PipelineLayout(1, &mDescriptorSet.setLayout);
@@ -185,7 +185,7 @@ namespace VulkanLib
 		mDescriptorSet.AllocateDescriptorSets(mDevice, mDescriptorPool.GetVkDescriptorPool());
 		mDescriptorSet.BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
 		mDescriptorSet.BindUniformBuffer(1, &mFragmentUniformBuffer.GetDescriptor());
-		//mDescriptorSet.BindCombinedImage(1, &GetTextureDescriptorInfo(mTestTexture));
+		mDescriptorSet.BindCombinedImage(2, &mTestTexture.GetTextureDescriptorInfo());
 		mDescriptorSet.UpdateDescriptorSets(mDevice);
 	}
 

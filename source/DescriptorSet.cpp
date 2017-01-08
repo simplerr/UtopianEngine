@@ -58,7 +58,7 @@ namespace VulkanLib
 		writeDescriptorSet.descriptorCount = 1;
 		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		writeDescriptorSet.pImageInfo = imageInfo;
-		writeDescriptorSet.dstBinding = binding;				// Binds this combined image to binding point 1
+		writeDescriptorSet.dstBinding = binding;				
 
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}

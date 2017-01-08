@@ -3,7 +3,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (binding = 1) uniform sampler2D samplerColorMap;
+layout (binding = 2) uniform sampler2D texSampler;
 
 layout (location = 0) in vec3 InPosW;
 layout (location = 1) in vec3 InNormalW;
@@ -212,7 +212,7 @@ void main()
 	vec3 toEyeW = normalize(InEyePosW - InPosW);
 
 	float shadow = 1.0f;
-	vec4 texColor = vec4(1.0f);
+	vec4 texColor = texture(texSampler, InTex);
 
 	Material material;
 	material.ambient = vec4(InColor, 1.0f); 
@@ -223,4 +223,5 @@ void main()
 	ApplyLighting(per_frame.numLights, per_frame.lights, material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
 
 	OutFragColor = litColor;
+	//OutFragColor = texture(texSampler, InTex);
 }
