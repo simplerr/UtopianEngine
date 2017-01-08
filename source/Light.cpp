@@ -17,6 +17,11 @@ namespace VulkanLib
 		SetIntensity(1.0f, 0.0f, 0.0f);
 	}
 
+	void Light::SetMaterial(vec4 color)
+	{
+		mMaterial = Material(color);
+	}
+
 	void Light::SetPosition(vec3 position)
 	{
 		mPosition = position;

@@ -41,6 +41,7 @@ namespace VulkanLib
 
 		// Setters
 		void SetMaterials(vec4 ambient, vec4 diffuse, vec4 specular);
+		void SetMaterial(vec4 color);
 		void SetPosition(vec3 position);
 		void SetPosition(float x, float y, float z);
 		void SetDirection(vec3 direction);

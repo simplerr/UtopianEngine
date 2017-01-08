@@ -49,6 +49,7 @@ namespace VulkanLib
 		{
 			inputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			inputState.pNext = NULL;
+			inputState.flags = 0;
 
 			// Neither the bindingDescriptions or the attributeDescriptions is used directly
 			// When creating a graphics pipeline a VkPipelineVertexInputStateCreateInfo structure is sent as an argument and this structure

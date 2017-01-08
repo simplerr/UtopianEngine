@@ -39,7 +39,7 @@ struct Light
 
 layout (std140, binding = 1) uniform UBO 
 {
-	Light lights[1];
+	Light lights[2];
 
 	// Constants
 	float numLights;
@@ -49,8 +49,10 @@ layout (std140, binding = 1) uniform UBO
 layout (location = 0) out vec4 OutFragColor;
 
 //! Computes the colors for directional light.
-void ComputeDirectionalLight(Material material, Light light, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
+	Light light = per_frame.lights[lightIndex];
+
 	// Initialize outputs.
 	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -79,8 +81,10 @@ void ComputeDirectionalLight(Material material, Light light, vec3 normal, vec3 t
 }
 
 //! Computes the colors for a point light.
-void ComputePointLight(Material material, Light light, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
+	Light light = per_frame.lights[lightIndex];
+
 	// Initialize outputs.
 	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -125,8 +129,10 @@ void ComputePointLight(Material material, Light light, vec3 pos, vec3 normal, ve
 }
 
 //! Computes the colors for a spot light.
-void ComputeSpotLight(Material material, Light light, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
+	Light light = per_frame.lights[lightIndex];
+
 	// Initialize outputs.
 	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -175,7 +181,7 @@ void ComputeSpotLight(Material material, Light light, vec3 pos, vec3 normal, vec
 }
 
 //! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
-void ApplyLighting(float numLights, Light lights[1], Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
+void ApplyLighting(Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
 				   float shadow, out vec4 litColor)
 {
 	// Start with a sum of zero. 
@@ -184,17 +190,17 @@ void ApplyLighting(float numLights, Light lights[1], Material material, vec3 pos
 	vec4 spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Loop through all lights
-	for(int i = 0; i < numLights; i++)
+	for(int i = 0; i < per_frame.numLights; i++)
 	{
 		// Sum the light contribution from each light source.
 		vec4 A, D, S;
 
-		if(lights[i].type == 0.0f)			// Directional light
-			ComputeDirectionalLight(material, lights[i], normalW, toEyeW, A, D, S);
-		else if(lights[i].type == 1.0f)		// Point light
-			ComputePointLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
-		else if(lights[i].type == 2.0f)		// Spot light
-			ComputeSpotLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
+		if(per_frame.lights[i].type == 0.0f)			// Directional light
+			ComputeDirectionalLight(material, i, normalW, toEyeW, A, D, S);
+		else if(per_frame.lights[i].type == 1.0f)		// Point light
+			ComputePointLight(material, i, posW, normalW, toEyeW, A, D, S);
+		else if(per_frame.lights[i].type == 2.0f)		// Spot light
+			ComputeSpotLight(material, i, posW, normalW, toEyeW, A, D, S);
 
 		ambient += A;  
 		diffuse += shadow*D;
@@ -220,7 +226,7 @@ void main()
 	material.specular = vec4(InColor, 1.0f); 
 
 	vec4 litColor;
-	ApplyLighting(per_frame.numLights, per_frame.lights, material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
+	ApplyLighting(material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
 
 	OutFragColor = litColor;
 	//OutFragColor = texture(texSampler, InTex);

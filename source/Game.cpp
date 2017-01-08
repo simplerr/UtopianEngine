@@ -65,7 +65,7 @@ namespace VulkanLib
 					int space = 300;
 					Object* object = new Object(glm::vec3(x * space, -100 - y * space, z * space));
 					object->SetModel("data/models/teapot.obj");
-					object->SetColor(glm::vec3(1.0f, 1.0f, 0.0f));
+					object->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
 					object->SetId(OBJECT_ID_PROP);
 					object->SetRotation(glm::vec3(180, 0, 0));
 					object->SetScale(glm::vec3(3.0f));

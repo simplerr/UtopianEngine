@@ -13,7 +13,7 @@
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define INSTANCE_BUFFER_BIND_ID 1
-#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
 
 #define NUM_OBJECTS 10 // 64 * 4 * 4 * 2
 
@@ -110,11 +110,11 @@ namespace VulkanLib
 		light.SetPosition(600, -800, 600);
 		light.SetDirection(1, -1, 1);
 		light.SetAtt(1, 0, 0);
-		light.SetIntensity(0.2f, 0.5f, 1.0f);
+		light.SetIntensity(0.2f, 0.8f, 1.0f);
 		light.SetType(LightType::DIRECTIONAL_LIGHT);
 		light.SetRange(100000);
 		light.SetSpot(4.0f);
-		//mFragmentUniformBuffer.lights.push_back(light);
+		mFragmentUniformBuffer.lights.push_back(light);
 
 		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
 		light.SetPosition(600, -800, 600);
@@ -362,7 +362,7 @@ namespace VulkanLib
 			// Push the world matrix constant
 			mPushConstants.world = object.object->GetWorldMatrix();
 			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
-			mPushConstants.color = object.object->GetColor();
+			//mPushConstants.color = object.object->GetColor();
 			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, sizeof(PushConstantBlock), &mPushConstants);
 
 			// Bind triangle vertices
@@ -371,7 +371,7 @@ namespace VulkanLib
 			vkCmdBindIndexBuffer(mSecondaryCommandBuffer, object.mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 			// Draw indexed triangle	
-			vkCmdSetLineWidth(mSecondaryCommandBuffer, 1.0f);
+			//vkCmdSetLineWidth(mSecondaryCommandBuffer, 1.0f);
 			vkCmdDrawIndexed(mSecondaryCommandBuffer, object.mesh->GetNumIndices(), 1, 0, 0, 0);
 		}
 
