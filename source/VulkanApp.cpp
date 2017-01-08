@@ -164,7 +164,7 @@ namespace VulkanLib
 
 		// Add push constants for the MVP matrix
 		VkPushConstantRange pushConstantRanges = {};
-		pushConstantRanges.stageFlags = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+		pushConstantRanges.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 		pushConstantRanges.offset = 0;
 		pushConstantRanges.size = sizeof(PushConstantBlock);
 
@@ -209,6 +209,7 @@ namespace VulkanLib
 		rasterizationState.depthClampEnable = VK_FALSE;
 		rasterizationState.rasterizerDiscardEnable = VK_FALSE;
 		rasterizationState.depthBiasEnable = VK_FALSE;
+		rasterizationState.lineWidth = 1.0f;
 
 		// Color blend state
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
@@ -363,7 +364,7 @@ namespace VulkanLib
 			mPushConstants.world = object.object->GetWorldMatrix();
 			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
 			//mPushConstants.color = object.object->GetColor();
-			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, sizeof(PushConstantBlock), &mPushConstants);
+			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
 
 			// Bind triangle vertices
 			VkDeviceSize offsets[1] = { 0 };
