@@ -2,6 +2,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
+#include <map>
 
 namespace VulkanLib
 {
@@ -93,7 +94,7 @@ namespace VulkanLib
 			offsets[binding] += attribute.GetSize();
 		}
 
-		VkPipelineVertexInputStateCreateInfo GetInputState()
+		VkPipelineVertexInputStateCreateInfo GetInputState() const
 		{
 			return inputState;
 		}

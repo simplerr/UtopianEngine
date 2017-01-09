@@ -23,7 +23,6 @@ namespace VulkanLib
 		mCamera = new VulkanLib::Camera(glm::vec3(500, 4700, 500), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
-
 		InitScene();
 	}
 
@@ -48,7 +47,6 @@ namespace VulkanLib
 		VulkanModel model;
 		model.object = object;
 		model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
-		model.pipeline = mRenderer->mPipelines.phong;
 		mRenderer->AddModel(model);*/
 
 
@@ -64,7 +62,7 @@ namespace VulkanLib
 				{
 					int space = 300;
 					Object* object = new Object(glm::vec3(x * space, -100 - y * space, z * space));
-					object->SetModel("data/models/Crate/Crate1.obj");
+					object->SetModel("data/models/teapot.obj");
 					object->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
 					object->SetId(OBJECT_ID_PROP);
 					object->SetRotation(glm::vec3(180, 0, 0));
@@ -74,7 +72,6 @@ namespace VulkanLib
 					VulkanModel model;
 					model.object = object;
 					model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
-					model.pipeline = mRenderer->mPipelines.phong;
 					mRenderer->AddModel(model);
 				}
 			}

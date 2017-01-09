@@ -82,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="base\vulkandebug.cpp" />
     <ClCompile Include="base\vulkantools.cpp" />
+    <ClCompile Include="source\Pipeline.cpp" />
     <ClCompile Include="source\TextureLoader.cpp" />
     <ClCompile Include="source\VertexUniformBuffer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="source\Object.cpp" />
     <ClCompile Include="source\StaticModel.cpp" />
     <ClInclude Include="source\FragmentUniformBuffer.h" />
+    <ClInclude Include="source\Pipeline.h" />
     <ClInclude Include="source\StaticModel.h" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\VulkanApp.cpp" />
