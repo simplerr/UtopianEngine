@@ -95,6 +95,7 @@
     <ClCompile Include="source\Object.cpp" />
     <ClCompile Include="source\StaticModel.cpp" />
     <ClInclude Include="source\FragmentUniformBuffer.h" />
+    <ClInclude Include="source\Handle.h" />
     <ClInclude Include="source\Pipeline.h" />
     <ClInclude Include="source\StaticModel.h" />
     <ClCompile Include="source\Timer.cpp" />

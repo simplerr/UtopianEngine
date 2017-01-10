@@ -118,7 +118,7 @@ namespace VulkanLib
 		
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
-		Pipeline						mPipeline;
+		Pipeline*						mPipeline;
 
 	public:
 	};

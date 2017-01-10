@@ -170,6 +170,9 @@
     <ClInclude Include="source\Pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\Handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">

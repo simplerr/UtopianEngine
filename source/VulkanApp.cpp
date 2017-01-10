@@ -33,7 +33,7 @@ namespace VulkanLib
 		// Cleanup pipeline layout
 		vkDestroyPipelineLayout(mDevice, mPipelineLayout, nullptr);
 
-		mPipeline.Cleanup(mVulkanDevice->GetLogicalDevice());
+		delete mPipeline;
 
 		// Free the testing texture
 		mTextureLoader->DestroyTexture(mTestTexture);
@@ -189,12 +189,14 @@ namespace VulkanLib
 
 	void VulkanApp::PreparePipelines()
 	{
+		mPipeline = new Pipeline(mVulkanDevice->GetLogicalDevice());
+
 		// Load shader
 		std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
 		shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
 		shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 			
-		mPipeline.CreatePipeline(mVulkanDevice->GetLogicalDevice(), mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
+		mPipeline->CreatePipeline(mVulkanDevice->GetLogicalDevice(), mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -271,7 +273,7 @@ namespace VulkanLib
 		for (auto& object : mModels)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline.GetVkPipeline());
+			vkCmdBindPipeline(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
 			vkCmdBindDescriptorSets(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);

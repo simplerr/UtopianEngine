@@ -4,9 +4,9 @@
 
 namespace VulkanLib
 {
-	Pipeline::Pipeline()
+	Pipeline::Pipeline(VkDevice device)
+		: Handle(device, vkDestroyPipeline)
 	{
-		mVkPipeline = VK_NULL_HANDLE;
 	}
 
 	void Pipeline::CreatePipeline(VkDevice device, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
@@ -98,16 +98,6 @@ namespace VulkanLib
 
 		// Create the colored pipeline	
 		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mVkPipeline));
-	}
-
-	void Pipeline::Cleanup(VkDevice device)
-	{
-		vkDestroyPipeline(device, mVkPipeline, nullptr);
-	}
-
-	VkPipeline Pipeline::GetVkPipeline()
-	{
-		return mVkPipeline;
+		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 	}
 }
