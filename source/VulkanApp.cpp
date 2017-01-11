@@ -31,9 +31,7 @@ namespace VulkanLib
 		mDescriptorSet.Cleanup(GetDevice());
 
 		// Cleanup pipeline layout
-		vkDestroyPipelineLayout(mDevice, mPipelineLayout, nullptr);
-
-		delete mPipeline;
+		vkDestroyPipelineLayout(GetDevice(), mPipelineLayout, nullptr);
 
 		// Free the testing texture
 		mTextureLoader->DestroyTexture(mTestTexture);
@@ -42,10 +40,10 @@ namespace VulkanLib
 			delete mModels[i].object;
 		}
 
-		vkDestroyFence(mDevice, mRenderFence, nullptr);
+		vkDestroyFence(GetDevice(), mRenderFence, nullptr);
 
 		// [TODO] Cleanup rendering command buffers
-		vkFreeCommandBuffers(mDevice, mCommandPool, 1, &mPrimaryCommandBuffer);
+		vkFreeCommandBuffers(GetDevice(), mCommandPool, 1, &mPrimaryCommandBuffer);
 
 		delete mTextureLoader;
 	}
@@ -56,7 +54,7 @@ namespace VulkanLib
 
 		// Create a fence for synchronization
 		VkFenceCreateInfo fenceCreateInfo = vkTools::initializers::fenceCreateInfo(VK_FLAGS_NONE);
-		vkCreateFence(mDevice, &fenceCreateInfo, NULL, &mRenderFence);
+		vkCreateFence(GetDevice(), &fenceCreateInfo, NULL, &mRenderFence);
 
 		SetupVertexDescriptions();			
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
@@ -78,11 +76,11 @@ namespace VulkanLib
 		VkCommandBufferAllocateInfo allocateInfo = CreateInfo::CommandBuffer(mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
 
 		// Create the primary command buffer
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, &mPrimaryCommandBuffer));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mPrimaryCommandBuffer));
 
 		// Create the secondary command buffer
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, &mSecondaryCommandBuffer));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mSecondaryCommandBuffer));
 	}
 
 	void VulkanApp::CompileShaders()
@@ -156,7 +154,7 @@ namespace VulkanLib
 		mDescriptorSet.AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);				// Uniform buffer binding: 0
 		mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
 		mDescriptorSet.AddLayoutBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
-		mDescriptorSet.CreateLayout(mDevice);
+		mDescriptorSet.CreateLayout(GetDevice());
 
 		VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = CreateInfo::PipelineLayout(1, &mDescriptorSet.setLayout);
 
@@ -169,34 +167,32 @@ namespace VulkanLib
 		pPipelineLayoutCreateInfo.pushConstantRangeCount = 1;
 		pPipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRanges;
 
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(mDevice, &pPipelineLayoutCreateInfo, nullptr, &mPipelineLayout));
+		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &pPipelineLayoutCreateInfo, nullptr, &mPipelineLayout));
 	}
 
 	void VulkanApp::SetupDescriptorPool()
 	{
-		mDescriptorPool.CreatePoolFromLayout(mDevice, mDescriptorSet.GetLayoutBindings());
+		mDescriptorPool.CreatePoolFromLayout(GetDevice(), mDescriptorSet.GetLayoutBindings());
 	}
 
 	// [TODO] Let each thread have a seperate descriptor set!!
 	void VulkanApp::SetupDescriptorSet()
 	{
-		mDescriptorSet.AllocateDescriptorSets(mDevice, mDescriptorPool.GetVkDescriptorPool());
+		mDescriptorSet.AllocateDescriptorSets(GetDevice(), mDescriptorPool.GetVkDescriptorPool());
 		mDescriptorSet.BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
 		mDescriptorSet.BindUniformBuffer(1, &mFragmentUniformBuffer.GetDescriptor());
 		mDescriptorSet.BindCombinedImage(2, &mTestTexture.GetTextureDescriptorInfo());
-		mDescriptorSet.UpdateDescriptorSets(mDevice);
+		mDescriptorSet.UpdateDescriptorSets(GetDevice());
 	}
 
 	void VulkanApp::PreparePipelines()
 	{
-		mPipeline = new Pipeline(mVulkanDevice->GetLogicalDevice());
-
 		// Load shader
 		std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
 		shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
 		shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 			
-		mPipeline->CreatePipeline(mVulkanDevice->GetLogicalDevice(), mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
+		mPipeline.Create(GetDevice(), mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -273,7 +269,7 @@ namespace VulkanLib
 		for (auto& object : mModels)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline->GetVkHandle());
+			vkCmdBindPipeline(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline.GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
 			vkCmdBindDescriptorSets(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
@@ -349,11 +345,11 @@ namespace VulkanLib
 		VkResult fenceRes;
 		do
 		{
-			fenceRes = vkWaitForFences(mDevice, 1, &mRenderFence, VK_TRUE, 100000000);
+			fenceRes = vkWaitForFences(GetDevice(), 1, &mRenderFence, VK_TRUE, 100000000);
 		} while (fenceRes == VK_TIMEOUT);
 
 		VulkanDebug::ErrorCheck(fenceRes);
-		vkResetFences(mDevice, 1, &mRenderFence);
+		vkResetFences(GetDevice(), 1, &mRenderFence);
 
 
 		//
@@ -368,7 +364,7 @@ namespace VulkanLib
 		//if (!prepared)
 		//	return;
 
-		vkDeviceWaitIdle(mDevice);		// [NOTE] Is this really needed? - Yes, the validation layer complains otherwise!
+		vkDeviceWaitIdle(GetDevice());		// [NOTE] Is this really needed? - Yes, the validation layer complains otherwise!
 
 		mCamera->Update();
 
@@ -377,7 +373,7 @@ namespace VulkanLib
 			Draw();
 		}
 
-		vkDeviceWaitIdle(mDevice);		// [NOTE] Is this really needed? - Yes, the validation layer complains otherwise!
+		vkDeviceWaitIdle(GetDevice());		// [NOTE] Is this really needed? - Yes, the validation layer complains otherwise!
 	}
 
 	void VulkanApp::Update()

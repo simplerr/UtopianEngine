@@ -4,13 +4,19 @@
 
 namespace VulkanLib
 {
+	Pipeline::Pipeline()
+		: Handle(VK_NULL_HANDLE, vkDestroyPipeline)
+	{
+	}
 	Pipeline::Pipeline(VkDevice device)
 		: Handle(device, vkDestroyPipeline)
 	{
 	}
 
-	void Pipeline::CreatePipeline(VkDevice device, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
+	void Pipeline::Create(VkDevice device, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
 	{
+		SetDevice(device);
+
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
 		// ...

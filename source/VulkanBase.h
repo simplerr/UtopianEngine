@@ -45,7 +45,7 @@ namespace VulkanLib
 	{
 	public:
 		VulkanBase(bool enableValidation);
-		~VulkanBase();
+		virtual ~VulkanBase();
 
 		VkResult CreateInstance(const char* appName, bool enableValidation);
 		VkResult CreateDevice(bool enableValidation);

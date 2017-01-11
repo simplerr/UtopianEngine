@@ -1,4 +1,5 @@
 #pragma once
+#include <cassert>
 #include <functional>
 #include <vulkan/vulkan.h>
 
@@ -8,15 +9,36 @@ namespace VulkanLib
 	class Handle
 	{
 	public:
+		Handle()
+		{
+			mDevice = VK_NULL_HANDLE;
+			mHandle = VK_NULL_HANDLE;
+			mDestroyFunc = nullptr;
+		}
+
 		Handle(VkDevice device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
 		{
 			mDevice = device;
 			mDestroyFunc = destroyFunction;
 		}
 
-		~Handle()
+		virtual ~Handle()
 		{
+			Cleanup();
+		}
+		
+		virtual void Cleanup()
+		{
+			assert(mDevice);
+			assert(mHandle);
+			assert(mDestroyFunc);
+
 			mDestroyFunc(mDevice, mHandle, nullptr);
+		}
+
+		void SetDevice(VkDevice device)
+		{
+			mDevice = device;
 		}
 
 		T GetVkHandle()
