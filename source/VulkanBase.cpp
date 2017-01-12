@@ -11,6 +11,7 @@
 #include "VulkanDebug.h"
 #include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
+#include "CommandPool.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -54,7 +55,8 @@ namespace VulkanLib
 		vkDestroySemaphore(mDevice, mPresentComplete, nullptr);
 		vkDestroySemaphore(mDevice, mRenderComplete, nullptr);
 
-		vkDestroyCommandPool(mDevice, mCommandPool, nullptr);
+		mCommandPool->Cleanup(mVulkanDevice);
+		delete mCommandPool;
 
 		// Cleanup depth stencil data
 		vkDestroyImageView(mDevice, mDepthStencil.view, nullptr);
@@ -206,18 +208,14 @@ namespace VulkanLib
 
 	void VulkanBase::CreateCommandPool()
 	{
-		VkCommandPoolCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		createInfo.queueFamilyIndex = 0;									// NOTE: TODO: Need to store this as a member (Use Swapchain)!!!!!
-		createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		VulkanDebug::ErrorCheck(vkCreateCommandPool(mDevice, &createInfo, nullptr, &mCommandPool));
+		mCommandPool = new CommandPool(mVulkanDevice, 0);
 	}
 
 	void VulkanBase::CreateCommandBuffers()
 	{
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool;
+		allocateInfo.commandPool = mCommandPool->GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
@@ -248,7 +246,7 @@ namespace VulkanLib
 		VkCommandBuffer cmdBuffer;
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool;
+		allocateInfo.commandPool = mCommandPool->GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
@@ -285,7 +283,7 @@ namespace VulkanLib
 
 		if (free)
 		{
-			vkFreeCommandBuffers(mDevice, mCommandPool, 1, &commandBuffer);
+			vkFreeCommandBuffers(mDevice, mCommandPool->GetVkHandle(), 1, &commandBuffer);
 		}
 	}
 

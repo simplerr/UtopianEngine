@@ -33,6 +33,7 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 namespace VulkanLib
 {
 	class VulkanDevice;
+	class CommandPool;
 
 	struct DepthStencil {
 		VkImage image;
@@ -98,7 +99,7 @@ namespace VulkanLib
 		VulkanDevice*					mVulkanDevice;
 
 		// Command buffer
-		VkCommandPool					mCommandPool;
+		CommandPool*					mCommandPool;
 		std::vector<VkCommandBuffer>	mRenderingCommandBuffers;
 
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)

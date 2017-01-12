@@ -11,6 +11,8 @@
 #include "Light.h"
 #include "TextureLoader.h"
 #include "VulkanDevice.h"
+#include "CommandBuffer.h"
+#include "CommandPool.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
@@ -43,7 +45,8 @@ namespace VulkanLib
 		vkDestroyFence(GetDevice(), mRenderFence, nullptr);
 
 		// [TODO] Cleanup rendering command buffers
-		vkFreeCommandBuffers(GetDevice(), mCommandPool, 1, &mPrimaryCommandBuffer);
+		mPrimaryCommandBuffer->Cleanup(mVulkanDevice, mCommandPool);
+		delete mPrimaryCommandBuffer;
 
 		delete mTextureLoader;
 	}
@@ -73,10 +76,10 @@ namespace VulkanLib
 
 	void VulkanApp::PrepareCommandBuffers()
 	{
-		VkCommandBufferAllocateInfo allocateInfo = CreateInfo::CommandBuffer(mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
+		VkCommandBufferAllocateInfo allocateInfo = CreateInfo::CommandBuffer(mCommandPool->GetVkHandle(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
 
 		// Create the primary command buffer
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mPrimaryCommandBuffer));
+		mPrimaryCommandBuffer = new CommandBuffer(mVulkanDevice, mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 		// Create the secondary command buffer
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
@@ -212,9 +215,6 @@ namespace VulkanLib
 
 	void VulkanApp::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
 	{
-		VkCommandBufferBeginInfo beginInfo = {};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
 		VkClearValue clearValues[2];
 		clearValues[0].color = { 0.2f, 0.2f, 0.8f, 0.0f };
 		clearValues[1].depthStencil = { 1.0f, 0 };
@@ -229,8 +229,8 @@ namespace VulkanLib
 		renderPassBeginInfo.framebuffer = frameBuffer;
 
 		// Begin command buffer recording & the render pass
-		VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mPrimaryCommandBuffer, &beginInfo));
-		vkCmdBeginRenderPass(mPrimaryCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
+		mPrimaryCommandBuffer->Begin();
+		vkCmdBeginRenderPass(mPrimaryCommandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
 		//
 		// Secondary command buffer
@@ -300,11 +300,11 @@ namespace VulkanLib
 		// ...
 
 		// Execute render commands from the secondary command buffer
-		vkCmdExecuteCommands(mPrimaryCommandBuffer, commandBuffers.size(), commandBuffers.data());
+		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), commandBuffers.size(), commandBuffers.data());
 
 		// End command buffer recording & the render pass
-		vkCmdEndRenderPass(mPrimaryCommandBuffer);
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mPrimaryCommandBuffer));
+		vkCmdEndRenderPass(mPrimaryCommandBuffer->GetVkHandle());
+		mPrimaryCommandBuffer->End();
 	}
 
 	void VulkanApp::Draw()
@@ -328,7 +328,7 @@ namespace VulkanLib
 		// Submit the recorded draw command buffer to the queue
 		VkSubmitInfo submitInfo = {};
 
-		submitInfo.pCommandBuffers = &mPrimaryCommandBuffer;					// Draw commands for the current command buffer
+		submitInfo.pCommandBuffers = &mPrimaryCommandBuffer->mHandle;					// Draw commands for the current command buffer
 
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;

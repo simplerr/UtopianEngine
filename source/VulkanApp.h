@@ -24,6 +24,7 @@ namespace VulkanLib
 	class Object;
 	class TextureData;
 	class Light;
+	class CommandBuffer;
 
 	struct Buffer {
 		VkBuffer buffer;
@@ -86,11 +87,9 @@ namespace VulkanLib
 		void SetCamera(Camera* camera);
 		void AddModel(VulkanModel model);
 
-		//Pipelines						mPipelines;
 		VkPipelineLayout				mPipelineLayout;
 
 		// This gets regenerated each frame so there is no need for command buffer per frame buffer
-		VkCommandBuffer					mPrimaryCommandBuffer;
 		VkCommandBuffer					mSecondaryCommandBuffer;
 
 		VkFence							mRenderFence = {};
@@ -119,6 +118,7 @@ namespace VulkanLib
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
 		Pipeline						mPipeline;
+		CommandBuffer*					mPrimaryCommandBuffer;
 
 	public:
 	};

@@ -46,9 +46,9 @@ namespace VulkanLib
 			return mHandle;
 		}
 
+		T mHandle = VK_NULL_HANDLE;
 	protected:
 		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;
-		T mHandle = VK_NULL_HANDLE;
 		VkDevice mDevice;
 	};
 }

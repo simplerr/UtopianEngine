@@ -82,6 +82,8 @@
   <ItemGroup>
     <ClCompile Include="base\vulkandebug.cpp" />
     <ClCompile Include="base\vulkantools.cpp" />
+    <ClCompile Include="source\CommandBuffer.cpp" />
+    <ClCompile Include="source\CommandPool.cpp" />
     <ClCompile Include="source\Pipeline.cpp" />
     <ClCompile Include="source\TextureLoader.cpp" />
     <ClCompile Include="source\VertexUniformBuffer.cpp" />
@@ -94,6 +96,8 @@
     <ClCompile Include="source\ModelLoader.cpp" />
     <ClCompile Include="source\Object.cpp" />
     <ClCompile Include="source\StaticModel.cpp" />
+    <ClInclude Include="source\CommandBuffer.h" />
+    <ClInclude Include="source\CommandPool.h" />
     <ClInclude Include="source\FragmentUniformBuffer.h" />
     <ClInclude Include="source\Handle.h" />
     <ClInclude Include="source\Pipeline.h" />
