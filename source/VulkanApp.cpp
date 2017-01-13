@@ -81,8 +81,7 @@ namespace VulkanLib
 		mPrimaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
 
 		// Create the secondary command buffer
-		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mSecondaryCommandBuffer));
+		mSecondaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void VulkanApp::CompileShaders()
@@ -234,7 +233,8 @@ namespace VulkanLib
 		commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		commandBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
 
-		VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mSecondaryCommandBuffer, &commandBufferBeginInfo));
+		mSecondaryCommandBuffer.Begin(mRenderPass, frameBuffer);
+		VkCommandBuffer secondaryCommandBuffer = mSecondaryCommandBuffer.GetVkHandle();
 
 		// Update dynamic viewport state
 		VkViewport viewport = {};
@@ -242,7 +242,7 @@ namespace VulkanLib
 		viewport.height = (float)GetWindowHeight();
 		viewport.minDepth = (float) 0.0f;
 		viewport.maxDepth = (float) 1.0f;
-		vkCmdSetViewport(mSecondaryCommandBuffer, 0, 1, &viewport);
+		vkCmdSetViewport(secondaryCommandBuffer, 0, 1, &viewport);
 
 		// Update dynamic scissor state
 		VkRect2D scissor = {};
@@ -250,7 +250,7 @@ namespace VulkanLib
 		scissor.extent.height = GetWindowHeight();
 		scissor.offset.x = 0;
 		scissor.offset.y = 0;
-		vkCmdSetScissor(mSecondaryCommandBuffer, 0, 1, &scissor);
+		vkCmdSetScissor(secondaryCommandBuffer, 0, 1, &scissor);
 
 		//
 		// Testing push constant rendering with different matrices
@@ -258,32 +258,32 @@ namespace VulkanLib
 		for (auto& object : mModels)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline.GetVkHandle());
+			vkCmdBindPipeline(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline.GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-			vkCmdBindDescriptorSets(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout.GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
+			vkCmdBindDescriptorSets(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout.GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
 
 			// Push the world matrix constant
 			mPushConstants.world = object.object->GetWorldMatrix();
 			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
 			//mPushConstants.color = object.object->GetColor();
-			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout.GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
+			vkCmdPushConstants(secondaryCommandBuffer, mPipelineLayout.GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
 
 			// Bind triangle vertices
 			VkDeviceSize offsets[1] = { 0 };
-			vkCmdBindVertexBuffers(mSecondaryCommandBuffer, VERTEX_BUFFER_BIND_ID, 1, &object.mesh->vertices.buffer, offsets);		// [TODO] The renderer should group the same object models together
-			vkCmdBindIndexBuffer(mSecondaryCommandBuffer, object.mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdBindVertexBuffers(secondaryCommandBuffer, VERTEX_BUFFER_BIND_ID, 1, &object.mesh->vertices.buffer, offsets);		// [TODO] The renderer should group the same object models together
+			vkCmdBindIndexBuffer(secondaryCommandBuffer, object.mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 			// Draw indexed triangle	
-			//vkCmdSetLineWidth(mSecondaryCommandBuffer, 1.0f);
-			vkCmdDrawIndexed(mSecondaryCommandBuffer, object.mesh->GetNumIndices(), 1, 0, 0, 0);
+			//vkCmdSetLineWidth(secondaryCommandBuffer, 1.0f);
+			vkCmdDrawIndexed(secondaryCommandBuffer, object.mesh->GetNumIndices(), 1, 0, 0, 0);
 		}
 
 		// End secondary command buffer
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mSecondaryCommandBuffer));
+		mSecondaryCommandBuffer.End();
 
 		std::vector<VkCommandBuffer> commandBuffers;
-		commandBuffers.push_back(mSecondaryCommandBuffer);
+		commandBuffers.push_back(mSecondaryCommandBuffer.GetVkHandle());
 
 		// This is where multithreaded command buffers can be added
 		// ...

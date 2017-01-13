@@ -89,10 +89,6 @@ namespace VulkanLib
 		void SetCamera(Camera* camera);
 		void AddModel(VulkanModel model);
 
-
-		// This gets regenerated each frame so there is no need for command buffer per frame buffer
-		VkCommandBuffer					mSecondaryCommandBuffer;
-
 		VkFence							mRenderFence = {};
 
 		// 
@@ -119,9 +115,10 @@ namespace VulkanLib
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
 		Pipeline						mPipeline;
-		CommandBuffer					mPrimaryCommandBuffer;
 		PipelineLayout					mPipelineLayout;
 
+		CommandBuffer					mPrimaryCommandBuffer;
+		CommandBuffer					mSecondaryCommandBuffer; // This gets regenerated each frame so there is no need for command buffer per frame buffer
 	public:
 	};
 }	// VulkanLib namespace

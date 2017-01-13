@@ -71,7 +71,7 @@ namespace VulkanLib
 
 	void CommandBuffer::End()
 	{
-		vkEndCommandBuffer(mHandle);
+		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
 	}
 
 	void CommandBuffer::Flush(VkDevice device, VkQueue queue, CommandPool* commandPool, bool free)
