@@ -19,6 +19,7 @@ namespace VulkanLib
 		}
 
 		// [NOTE] This has to be called after elements have been added to vectors, since GetSize() needs to return the correct size
+		// Creates a VkBuffer and maps it to a VkMemory (VulkanBase::CreateBuffer())
 		void CreateBuffer(VulkanBase* vulkanBase, VkMemoryPropertyFlagBits propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
 		{
 			vulkanBase->CreateBuffer(

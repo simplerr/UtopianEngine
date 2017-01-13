@@ -43,7 +43,6 @@ namespace VulkanLib
 			delete mModels[i].object;
 		}
 
-		// [TODO] Cleanup rendering command buffers
 		mPrimaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
 		mSecondaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
 
@@ -121,7 +120,6 @@ namespace VulkanLib
 		// Important to call this before CreateBuffer() since # lights affects the total size
 		mFragmentUniformBuffer.constants.numLights = mFragmentUniformBuffer.lights.size();
 
-		// Creates a VkBuffer and maps it to a VkMemory (VulkanBase::CreateBuffer())
 		mFragmentUniformBuffer.CreateBuffer(this, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		// Create the vertex shader uniform buffer

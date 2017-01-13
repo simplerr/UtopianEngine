@@ -88,7 +88,6 @@ namespace VulkanLib
 		CreateCommandPool();			// Create a command pool to allocate command buffers from
 		SetupSwapchain();				// Setup the swap chain with the helper class
 		CreateSemaphores();
-		CreateCommandBuffers();			// Create the command buffers used for drawing and the image format transitions
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
 		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
@@ -209,22 +208,6 @@ namespace VulkanLib
 	void VulkanBase::CreateCommandPool()
 	{
 		mCommandPool.Create(GetDevice(), 0);
-	}
-
-	void VulkanBase::CreateCommandBuffers()
-	{
-		VkCommandBufferAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool.GetVkHandle();
-		allocateInfo.commandBufferCount = 1;
-		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-
-		// Allocate a command buffer for each swap chain image
-		mRenderingCommandBuffers.resize(mSwapChain.imageCount);
-
-		allocateInfo.commandBufferCount = mRenderingCommandBuffers.size();
-
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, mRenderingCommandBuffers.data()));
 	}
 
 	void VulkanBase::CreateSemaphores()

@@ -58,7 +58,6 @@ namespace VulkanLib
 		virtual void Render() = 0;
 
 		void CreateCommandPool();
-		void CreateCommandBuffers();
 		void CreateSemaphores();
 
 		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);
