@@ -60,9 +60,6 @@ namespace VulkanLib
 		void CreateCommandPool();
 		void CreateSemaphores();
 
-		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);
-		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
-
 		void SetupDepthStencil();
 		void SetupRenderPass();
 		void SetupFrameBuffer();

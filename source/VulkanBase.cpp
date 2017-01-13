@@ -224,52 +224,6 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkCreateSemaphore(mDevice, &createInfo, nullptr, &mRenderComplete));
 	}
 
-	VkCommandBuffer VulkanBase::CreateCommandBuffer(VkCommandBufferLevel level, bool begin)
-	{
-		VkCommandBuffer cmdBuffer;
-		VkCommandBufferAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool.GetVkHandle();
-		allocateInfo.commandBufferCount = 1;
-		allocateInfo.level = level;
-
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, &cmdBuffer));
-
-		// If requested, also start the new command buffer
-		if (begin)
-		{
-			VkCommandBufferBeginInfo beginInfo = {};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-			VulkanDebug::ErrorCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-		}
-
-		return cmdBuffer;
-	}
-
-	void VulkanBase::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free)
-	{
-		if (commandBuffer == VK_NULL_HANDLE)
-		{
-			return;
-		}
-
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(commandBuffer));
-
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
-
-		VulkanDebug::ErrorCheck(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(queue));
-
-		if (free)
-		{
-			vkFreeCommandBuffers(mDevice, mCommandPool.GetVkHandle(), 1, &commandBuffer);
-		}
-	}
-
 	void VulkanBase::SetupDepthStencil()
 	{
 		VkImageCreateInfo imageCreateInfo = {};
