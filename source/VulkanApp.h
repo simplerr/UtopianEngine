@@ -11,6 +11,8 @@
 #include "DescriptorSet.h"
 #include "TextureLoader.h"
 #include "Pipeline.h"
+#include "CommandBuffer.h"
+#include "PipelineLayout.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -87,7 +89,6 @@ namespace VulkanLib
 		void SetCamera(Camera* camera);
 		void AddModel(VulkanModel model);
 
-		VkPipelineLayout				mPipelineLayout;
 
 		// This gets regenerated each frame so there is no need for command buffer per frame buffer
 		VkCommandBuffer					mSecondaryCommandBuffer;
@@ -118,7 +119,8 @@ namespace VulkanLib
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
 		Pipeline						mPipeline;
-		CommandBuffer*					mPrimaryCommandBuffer;
+		CommandBuffer					mPrimaryCommandBuffer;
+		PipelineLayout					mPipelineLayout;
 
 	public:
 	};

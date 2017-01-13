@@ -9,9 +9,10 @@ namespace VulkanLib
 	class CommandPool : public Handle<VkCommandPool>
 	{
 	public:
-		CommandPool(VulkanDevice* device, uint32_t queueFamilyIndex = 0);
+		CommandPool();
+		CommandPool(VkDevice device, uint32_t queueFamilyIndex = 0);
 
-		void Cleanup(VulkanDevice* device);
+		void Create(VkDevice device, uint32_t queueFamilyIndex = 0);
 	private:
 	};
 }

@@ -9,6 +9,7 @@
 #include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
 #include "Timer.h"
+#include "CommandPool.h"
 
 #include <vulkan/vulkan.h>
 
@@ -99,7 +100,7 @@ namespace VulkanLib
 		VulkanDevice*					mVulkanDevice;
 
 		// Command buffer
-		CommandPool*					mCommandPool;
+		CommandPool						mCommandPool;
 		std::vector<VkCommandBuffer>	mRenderingCommandBuffers;
 
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)

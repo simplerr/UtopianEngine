@@ -13,6 +13,7 @@
 #include "VulkanDevice.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "PipelineLayout.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
@@ -31,9 +32,8 @@ namespace VulkanLib
 		mFragmentUniformBuffer.Cleanup(GetDevice());
 		mDescriptorPool.Cleanup(GetDevice());
 		mDescriptorSet.Cleanup(GetDevice());
-
-		// Cleanup pipeline layout
-		vkDestroyPipelineLayout(GetDevice(), mPipelineLayout, nullptr);
+		mPipeline.Cleanup(GetDevice());
+		mPipelineLayout.Cleanup(GetDevice());
 
 		// Free the testing texture
 		mTextureLoader->DestroyTexture(mTestTexture);
@@ -45,8 +45,7 @@ namespace VulkanLib
 		vkDestroyFence(GetDevice(), mRenderFence, nullptr);
 
 		// [TODO] Cleanup rendering command buffers
-		mPrimaryCommandBuffer->Cleanup(mVulkanDevice, mCommandPool);
-		delete mPrimaryCommandBuffer;
+		mPrimaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
 
 		delete mTextureLoader;
 	}
@@ -76,10 +75,10 @@ namespace VulkanLib
 
 	void VulkanApp::PrepareCommandBuffers()
 	{
-		VkCommandBufferAllocateInfo allocateInfo = CreateInfo::CommandBuffer(mCommandPool->GetVkHandle(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
+		VkCommandBufferAllocateInfo allocateInfo = CreateInfo::CommandBuffer(mCommandPool.GetVkHandle(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
 
 		// Create the primary command buffer
-		mPrimaryCommandBuffer = new CommandBuffer(mVulkanDevice, mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		mPrimaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
 
 		// Create the secondary command buffer
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
@@ -159,18 +158,8 @@ namespace VulkanLib
 		mDescriptorSet.AddLayoutBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
 		mDescriptorSet.CreateLayout(GetDevice());
 
-		VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo = CreateInfo::PipelineLayout(1, &mDescriptorSet.setLayout);
-
-		// Add push constants for the MVP matrix
-		VkPushConstantRange pushConstantRanges = {};
-		pushConstantRanges.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-		pushConstantRanges.offset = 0;
-		pushConstantRanges.size = sizeof(PushConstantBlock);
-
-		pPipelineLayoutCreateInfo.pushConstantRangeCount = 1;
-		pPipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRanges;
-
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &pPipelineLayoutCreateInfo, nullptr, &mPipelineLayout));
+		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
+		mPipelineLayout.Create(GetDevice(), &mDescriptorSet.setLayout, &pushConstantRange);
 	}
 
 	void VulkanApp::SetupDescriptorPool()
@@ -195,7 +184,7 @@ namespace VulkanLib
 		shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
 		shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 			
-		mPipeline.Create(GetDevice(), mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
+		mPipeline.Create(GetDevice(), mPipelineLayout.GetVkHandle(), mRenderPass, &mVertexDescription, shaderStages);
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -229,8 +218,8 @@ namespace VulkanLib
 		renderPassBeginInfo.framebuffer = frameBuffer;
 
 		// Begin command buffer recording & the render pass
-		mPrimaryCommandBuffer->Begin();
-		vkCmdBeginRenderPass(mPrimaryCommandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
+		mPrimaryCommandBuffer.Begin();
+		vkCmdBeginRenderPass(mPrimaryCommandBuffer.GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
 		//
 		// Secondary command buffer
@@ -272,13 +261,13 @@ namespace VulkanLib
 			vkCmdBindPipeline(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline.GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-			vkCmdBindDescriptorSets(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
+			vkCmdBindDescriptorSets(mSecondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout.GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
 
 			// Push the world matrix constant
 			mPushConstants.world = object.object->GetWorldMatrix();
 			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
 			//mPushConstants.color = object.object->GetColor();
-			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
+			vkCmdPushConstants(mSecondaryCommandBuffer, mPipelineLayout.GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
 
 			// Bind triangle vertices
 			VkDeviceSize offsets[1] = { 0 };
@@ -300,11 +289,11 @@ namespace VulkanLib
 		// ...
 
 		// Execute render commands from the secondary command buffer
-		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), commandBuffers.size(), commandBuffers.data());
+		vkCmdExecuteCommands(mPrimaryCommandBuffer.GetVkHandle(), commandBuffers.size(), commandBuffers.data());
 
 		// End command buffer recording & the render pass
-		vkCmdEndRenderPass(mPrimaryCommandBuffer->GetVkHandle());
-		mPrimaryCommandBuffer->End();
+		vkCmdEndRenderPass(mPrimaryCommandBuffer.GetVkHandle());
+		mPrimaryCommandBuffer.End();
 	}
 
 	void VulkanApp::Draw()
@@ -328,7 +317,7 @@ namespace VulkanLib
 		// Submit the recorded draw command buffer to the queue
 		VkSubmitInfo submitInfo = {};
 
-		submitInfo.pCommandBuffers = &mPrimaryCommandBuffer->mHandle;					// Draw commands for the current command buffer
+		submitInfo.pCommandBuffers = &mPrimaryCommandBuffer.mHandle;					// Draw commands for the current command buffer
 
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submitInfo.commandBufferCount = 1;

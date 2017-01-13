@@ -11,7 +11,6 @@ namespace VulkanLib
 	{
 	public:
 		Pipeline();
-		Pipeline(VkDevice device);
 
 		void Create(VkDevice device, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages);
 	private:

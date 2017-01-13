@@ -2,43 +2,35 @@
 #include <cassert>
 #include <functional>
 #include <vulkan/vulkan.h>
+#include "VulkanDevice.h"
 
 namespace VulkanLib
 {
+	class VulkanDevice;
+
 	template<typename T>
 	class Handle
 	{
 	public:
 		Handle()
 		{
-			mDevice = VK_NULL_HANDLE;
 			mHandle = VK_NULL_HANDLE;
 			mDestroyFunc = nullptr;
 		}
 
-		Handle(VkDevice device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
+		Handle(std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
 		{
-			mDevice = device;
 			mDestroyFunc = destroyFunction;
 		}
-
-		virtual ~Handle()
-		{
-			Cleanup();
-		}
 		
-		virtual void Cleanup()
+		virtual void Cleanup(VkDevice device)
 		{
-			assert(mDevice);
-			assert(mHandle);
 			assert(mDestroyFunc);
+			assert(mHandle);
 
-			mDestroyFunc(mDevice, mHandle, nullptr);
-		}
+			mDestroyFunc(device, mHandle, nullptr);
 
-		void SetDevice(VkDevice device)
-		{
-			mDevice = device;
+			mHandle = VK_NULL_HANDLE;
 		}
 
 		T GetVkHandle()
@@ -49,6 +41,5 @@ namespace VulkanLib
 		T mHandle = VK_NULL_HANDLE;
 	protected:
 		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;
-		VkDevice mDevice;
 	};
 }

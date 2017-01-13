@@ -49,14 +49,14 @@ namespace VulkanLib
 	VulkanBase::~VulkanBase()
 	{
 		mSwapChain.cleanup();
-		delete mVulkanDevice;
 
 		// Destroy semaphores
 		vkDestroySemaphore(mDevice, mPresentComplete, nullptr);
 		vkDestroySemaphore(mDevice, mRenderComplete, nullptr);
 
-		mCommandPool->Cleanup(mVulkanDevice);
-		delete mCommandPool;
+		mCommandPool.Cleanup(GetDevice());
+
+		delete mVulkanDevice;
 
 		// Cleanup depth stencil data
 		vkDestroyImageView(mDevice, mDepthStencil.view, nullptr);
@@ -208,14 +208,14 @@ namespace VulkanLib
 
 	void VulkanBase::CreateCommandPool()
 	{
-		mCommandPool = new CommandPool(mVulkanDevice, 0);
+		mCommandPool.Create(GetDevice(), 0);
 	}
 
 	void VulkanBase::CreateCommandBuffers()
 	{
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool->GetVkHandle();
+		allocateInfo.commandPool = mCommandPool.GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 
@@ -246,7 +246,7 @@ namespace VulkanLib
 		VkCommandBuffer cmdBuffer;
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool->GetVkHandle();
+		allocateInfo.commandPool = mCommandPool.GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
@@ -283,7 +283,7 @@ namespace VulkanLib
 
 		if (free)
 		{
-			vkFreeCommandBuffers(mDevice, mCommandPool->GetVkHandle(), 1, &commandBuffer);
+			vkFreeCommandBuffers(mDevice, mCommandPool.GetVkHandle(), 1, &commandBuffer);
 		}
 	}
 

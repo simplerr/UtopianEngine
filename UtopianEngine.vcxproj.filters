@@ -99,13 +99,19 @@
     <ClCompile Include="source\VulkanDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Pipeline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\CommandBuffer.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
     <ClCompile Include="source\CommandPool.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Pipeline.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Handle.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PipelineLayout.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
   </ItemGroup>
@@ -179,16 +185,19 @@
     <ClInclude Include="source\VulkanDevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Pipeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Handle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\CommandBuffer.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\CommandPool.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Pipeline.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Handle.h">
+      <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PipelineLayout.h">
       <Filter>Header Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>

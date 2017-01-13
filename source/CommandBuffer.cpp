@@ -1,11 +1,15 @@
 #include "CommandBuffer.h"
 #include "VulkanDebug.h"
-#include "VulkanDevice.h"
 #include "CommandPool.h"
 
 namespace VulkanLib
 {
-	CommandBuffer::CommandBuffer(VulkanDevice* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+	CommandBuffer::CommandBuffer()
+	{
+
+	}
+
+	CommandBuffer::CommandBuffer(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
 	{
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -13,7 +17,24 @@ namespace VulkanLib
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(device->GetLogicalDevice(), &allocateInfo, &mHandle));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(device, &allocateInfo, &mHandle));
+
+		// If requested, also start the new command buffer
+		if (begin)
+		{
+			Begin();
+		}
+	}
+
+	void CommandBuffer::Create(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+	{
+		VkCommandBufferAllocateInfo allocateInfo = {};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		allocateInfo.commandPool = commandPool->GetVkHandle();
+		allocateInfo.commandBufferCount = 1;
+		allocateInfo.level = level;
+
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(device, &allocateInfo, &mHandle));
 
 		// If requested, also start the new command buffer
 		if (begin)
@@ -53,7 +74,7 @@ namespace VulkanLib
 		vkEndCommandBuffer(mHandle);
 	}
 
-	void CommandBuffer::Flush(VulkanDevice* device, VkQueue queue, CommandPool* commandPool, bool free)
+	void CommandBuffer::Flush(VkDevice device, VkQueue queue, CommandPool* commandPool, bool free)
 	{
 		if (mHandle == VK_NULL_HANDLE)
 		{
@@ -75,8 +96,8 @@ namespace VulkanLib
 			Cleanup(device, commandPool);
 		}
 	}
-	void CommandBuffer::Cleanup(VulkanDevice* device, CommandPool* commandPool)
+	void CommandBuffer::Cleanup(VkDevice device, CommandPool* commandPool)
 	{
-		vkFreeCommandBuffers(device->GetLogicalDevice(), commandPool->GetVkHandle(), 1, &mHandle);
+		vkFreeCommandBuffers(device, commandPool->GetVkHandle(), 1, &mHandle);
 	}
 }
