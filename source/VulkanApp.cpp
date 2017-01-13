@@ -34,6 +34,7 @@ namespace VulkanLib
 		mDescriptorSet.Cleanup(GetDevice());
 		mPipeline.Cleanup(GetDevice());
 		mPipelineLayout.Cleanup(GetDevice());
+		mRenderFence.Cleanup(GetDevice());
 
 		// Free the testing texture
 		mTextureLoader->DestroyTexture(mTestTexture);
@@ -42,10 +43,9 @@ namespace VulkanLib
 			delete mModels[i].object;
 		}
 
-		vkDestroyFence(GetDevice(), mRenderFence, nullptr);
-
 		// [TODO] Cleanup rendering command buffers
 		mPrimaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
+		mSecondaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
 
 		delete mTextureLoader;
 	}
@@ -55,8 +55,7 @@ namespace VulkanLib
 		VulkanBase::Prepare();
 
 		// Create a fence for synchronization
-		VkFenceCreateInfo fenceCreateInfo = vkTools::initializers::fenceCreateInfo(VK_FLAGS_NONE);
-		vkCreateFence(GetDevice(), &fenceCreateInfo, NULL, &mRenderFence);
+		mRenderFence.Create(GetDevice(), VK_FLAGS_NONE);
 
 		SetupVertexDescriptions();			
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
@@ -75,12 +74,8 @@ namespace VulkanLib
 
 	void VulkanApp::PrepareCommandBuffers()
 	{
-		VkCommandBufferAllocateInfo allocateInfo = CreateInfo::CommandBuffer(mCommandPool.GetVkHandle(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, 1);
-
-		// Create the primary command buffer
-		mPrimaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-
-		// Create the secondary command buffer
+		// Create the primary and secondary command buffers
+		mPrimaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 		mSecondaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
@@ -328,18 +323,17 @@ namespace VulkanLib
 		VkPipelineStageFlags stageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 		submitInfo.pWaitDstStageMask = &stageFlags;
 
-		VulkanDebug::ErrorCheck(vkQueueSubmit(mQueue, 1, &submitInfo, mRenderFence));
+		VulkanDebug::ErrorCheck(vkQueueSubmit(mQueue, 1, &submitInfo, mRenderFence.GetVkHandle()));
 
 		// Wait for fence to signal that all command buffers are ready
 		VkResult fenceRes;
 		do
 		{
-			fenceRes = vkWaitForFences(GetDevice(), 1, &mRenderFence, VK_TRUE, 100000000);
+			fenceRes = vkWaitForFences(GetDevice(), 1, &mRenderFence.mHandle, VK_TRUE, 100000000);
 		} while (fenceRes == VK_TIMEOUT);
 
 		VulkanDebug::ErrorCheck(fenceRes);
-		vkResetFences(GetDevice(), 1, &mRenderFence);
-
+		mRenderFence.Reset(GetDevice());
 
 		//
 		// Transition image format to VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL

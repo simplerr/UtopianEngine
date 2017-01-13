@@ -84,6 +84,7 @@
     <ClCompile Include="base\vulkantools.cpp" />
     <ClCompile Include="source\CommandBuffer.cpp" />
     <ClCompile Include="source\CommandPool.cpp" />
+    <ClCompile Include="source\Fence.cpp" />
     <ClCompile Include="source\Handle.cpp" />
     <ClCompile Include="source\Pipeline.cpp" />
     <ClCompile Include="source\PipelineLayout.cpp" />
@@ -100,6 +101,7 @@
     <ClCompile Include="source\StaticModel.cpp" />
     <ClInclude Include="source\CommandBuffer.h" />
     <ClInclude Include="source\CommandPool.h" />
+    <ClInclude Include="source\Fence.h" />
     <ClInclude Include="source\FragmentUniformBuffer.h" />
     <ClInclude Include="source\Handle.h" />
     <ClInclude Include="source\Pipeline.h" />

@@ -13,6 +13,7 @@
 #include "Pipeline.h"
 #include "CommandBuffer.h"
 #include "PipelineLayout.h"
+#include "Fence.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -89,7 +90,6 @@ namespace VulkanLib
 		void SetCamera(Camera* camera);
 		void AddModel(VulkanModel model);
 
-		VkFence							mRenderFence = {};
 
 		// 
 		//	High level code
@@ -119,6 +119,7 @@ namespace VulkanLib
 
 		CommandBuffer					mPrimaryCommandBuffer;
 		CommandBuffer					mSecondaryCommandBuffer; // This gets regenerated each frame so there is no need for command buffer per frame buffer
+		Fence							mRenderFence;
 	public:
 	};
 }	// VulkanLib namespace
