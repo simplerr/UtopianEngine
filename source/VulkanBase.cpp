@@ -32,9 +32,6 @@ namespace VulkanLib
 		// Create VkDevice
 		VulkanDebug::ErrorCheck(CreateDevice(enableValidation));
 
-		// Get the graphics queue
-		vkGetDeviceQueue(mDevice, 0, 0, &mQueue);	// Note that queueFamilyIndex is hard coded to 0
-
 		// Gather physical device memory properties
 		// [TODO] This should be moved to a VulkanDevice struct
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
@@ -43,6 +40,7 @@ namespace VulkanLib
 		mSwapChain.connect(mInstance, mPhysicalDevice, mDevice);
 
 		mVulkanDevice = new VulkanDevice(mPhysicalDevice, mDevice);
+
 		// Synchronization code missing here, VkSemaphore etc.
 	}
 
@@ -88,6 +86,9 @@ namespace VulkanLib
 		CreateCommandPool();			// Create a command pool to allocate command buffers from
 		SetupSwapchain();				// Setup the swap chain with the helper class
 		CreateSemaphores();
+
+		mQueue.Create(mDevice, &mPresentComplete, &mRenderComplete);
+
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
 		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
@@ -390,8 +391,8 @@ namespace VulkanLib
 
 	void VulkanBase::SubmitFrame()
 	{
-		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue, mCurrentBuffer, mRenderComplete));
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(mQueue));
+		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue.GetVkHandle(), mCurrentBuffer, mRenderComplete));
+		mQueue.WaitIdle();
 	}
 
 	VkBool32 VulkanBase::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory)

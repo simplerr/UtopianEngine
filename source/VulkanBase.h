@@ -10,6 +10,7 @@
 #include "Window.h"
 #include "Timer.h"
 #include "CommandPool.h"
+#include "Queue.h"
 
 #include <vulkan/vulkan.h>
 
@@ -91,7 +92,7 @@ namespace VulkanLib
 		VkInstance						mInstance = VK_NULL_HANDLE;
 		VkPhysicalDevice				mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice						mDevice = VK_NULL_HANDLE;
-		VkQueue							mQueue = VK_NULL_HANDLE;
+		Queue							mQueue;
 
 		VulkanDevice*					mVulkanDevice;
 

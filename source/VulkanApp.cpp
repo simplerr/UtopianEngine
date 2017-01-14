@@ -61,7 +61,7 @@ namespace VulkanLib
 		PreparePipelines();
 		PrepareUniformBuffers();			// Must run before SetupDescriptorSet() (Creates the uniform buffer)
 
-		mTextureLoader = new TextureLoader(mVulkanDevice, mQueue);
+		mTextureLoader = new TextureLoader(mVulkanDevice, mQueue.GetVkHandle());
 		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
 
 		SetupDescriptorPool();
@@ -307,21 +307,7 @@ namespace VulkanLib
 		// Do rendering
 		//
 
-		// Submit the recorded draw command buffer to the queue
-		VkSubmitInfo submitInfo = {};
-
-		submitInfo.pCommandBuffers = &mPrimaryCommandBuffer.mHandle;					// Draw commands for the current command buffer
-
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pWaitSemaphores = &mPresentComplete;							// Waits for swapChain.acquireNextImage to complete
-		submitInfo.pSignalSemaphores = &mRenderComplete;						// swapChain.queuePresent will wait for this submit to complete
-		VkPipelineStageFlags stageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		submitInfo.pWaitDstStageMask = &stageFlags;
-
-		VulkanDebug::ErrorCheck(vkQueueSubmit(mQueue, 1, &submitInfo, mRenderFence.GetVkHandle()));
+		mQueue.Submit(&mPrimaryCommandBuffer, &mRenderFence);
 
 		// Wait for fence to signal that all command buffers are ready
 		VkResult fenceRes;
@@ -342,19 +328,12 @@ namespace VulkanLib
 
 	void VulkanApp::Render()
 	{
-		//if (!prepared)
-		//	return;
-
-		vkDeviceWaitIdle(GetDevice());		// [NOTE] Is this really needed? - Yes, the validation layer complains otherwise!
-
 		mCamera->Update();
 
 		if (mPrepared) {
 			UpdateUniformBuffers();
 			Draw();
 		}
-
-		vkDeviceWaitIdle(GetDevice());		// [NOTE] Is this really needed? - Yes, the validation layer complains otherwise!
 	}
 
 	void VulkanApp::Update()
