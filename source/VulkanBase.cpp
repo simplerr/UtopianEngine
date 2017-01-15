@@ -46,6 +46,7 @@ namespace VulkanLib
 		vkDestroySemaphore(GetDevice(), mRenderComplete, nullptr);
 
 		delete mCommandPool;
+		delete mQueue;
 
 		// Cleanup depth stencil data
 		vkDestroyImageView(GetDevice(), mDepthStencil.view, nullptr);
@@ -78,7 +79,7 @@ namespace VulkanLib
 		SetupSwapchain();				// Setup the swap chain with the helper class
 		CreateSemaphores();
 
-		mQueue.Create(GetDevice(), &mPresentComplete, &mRenderComplete);
+		mQueue = new Queue(GetDevice(), &mPresentComplete, &mRenderComplete);
 
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
@@ -310,8 +311,8 @@ namespace VulkanLib
 
 	void VulkanBase::SubmitFrame()
 	{
-		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue.GetVkHandle(), mCurrentBuffer, mRenderComplete));
-		mQueue.WaitIdle();
+		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mCurrentBuffer, mRenderComplete));
+		mQueue->WaitIdle();
 	}
 
 	VkBool32 VulkanBase::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory)

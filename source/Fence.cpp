@@ -3,36 +3,41 @@
 
 namespace VulkanLib
 {
-	Fence::Fence()
-		: Handle(vkDestroyFence)
-	{
-
-	}
-
-	void Fence::Create(VkDevice device, VkFenceCreateFlags flags)
+	Fence::Fence(VkDevice device, VkFenceCreateFlags flags)
+		: Handle(device, vkDestroyFence)
 	{
 		VkFenceCreateInfo fenceCreateInfo = {};
 		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceCreateInfo.flags = flags;
 
-		vkCreateFence(device, &fenceCreateInfo, NULL, &mHandle);
+		vkCreateFence(GetDevice(), &fenceCreateInfo, NULL, &mHandle);
 	}
 
-	void Fence::Wait(VkDevice device)
+	void Fence::Create(VkFenceCreateFlags flags)
+	{
+		VkFenceCreateInfo fenceCreateInfo = {};
+		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceCreateInfo.flags = flags;
+
+		vkCreateFence(GetDevice(), &fenceCreateInfo, NULL, &mHandle);
+	}
+
+	void Fence::Wait()
 	{
 		// Wait for fence to signal that all command buffers are ready
 		VkResult fenceRes;
 		do
 		{
-			fenceRes = vkWaitForFences(device, 1, &mHandle, VK_TRUE, 100000000);
+			fenceRes = vkWaitForFences(GetDevice(), 1, &mHandle, VK_TRUE, 100000000);
 		} while (fenceRes == VK_TIMEOUT);
 
 		VulkanDebug::ErrorCheck(fenceRes);
-		Reset(device);
+
+		Reset();
 	}
 
-	void Fence::Reset(VkDevice device)
+	void Fence::Reset()
 	{
-		vkResetFences(device, 1, &mHandle);
+		vkResetFences(GetDevice(), 1, &mHandle);
 	}
 }

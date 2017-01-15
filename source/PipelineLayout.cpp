@@ -3,13 +3,13 @@
 
 namespace VulkanLib
 {
-	PipelineLayout::PipelineLayout()
-		: Handle(vkDestroyPipelineLayout)
+	PipelineLayout::PipelineLayout(VkDevice device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
+		: Handle(device, vkDestroyPipelineLayout)
 	{
-
+		Create(setLayout, pushConstantRage);
 	}
 
-	void PipelineLayout::Create(VkDevice device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
+	void PipelineLayout::Create(VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
 	{
 		VkPipelineLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -19,6 +19,6 @@ namespace VulkanLib
 		createInfo.pushConstantRangeCount = 1;
 		createInfo.pPushConstantRanges = &pushConstantRage->pushConstantRange;
 
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(device, &createInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

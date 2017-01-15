@@ -10,8 +10,8 @@ namespace VulkanLib
 	class Queue : public Handle<VkQueue>
 	{
 	public:
-		Queue();
-		void Create(VkDevice device, VkSemaphore* waitSemaphore, VkSemaphore* signalSemaphore);
+		Queue(VkDevice device, VkSemaphore* waitSemaphore, VkSemaphore* signalSemaphore);
+		void Create(VkSemaphore* waitSemaphore, VkSemaphore* signalSemaphore);
 		void Submit(CommandBuffer* commandBuffer, Fence* renderFence);
 		void WaitIdle();
 	protected:

@@ -90,7 +90,7 @@ namespace VulkanLib
 
 	protected:
 		VkInstance						mInstance = VK_NULL_HANDLE;
-		Queue							mQueue;
+		Queue*							mQueue;
 
 		Device*							mDevice;
 

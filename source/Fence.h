@@ -7,11 +7,11 @@ namespace VulkanLib
 	class Fence : public Handle<VkFence>
 	{
 	public:
-		Fence();
+		Fence(VkDevice device, VkFenceCreateFlags flags);
 
-		void Create(VkDevice device, VkFenceCreateFlags flags);
-		void Wait(VkDevice device);
-		void Reset(VkDevice device);
+		void Create(VkFenceCreateFlags flags);
+		void Wait();
+		void Reset();
 	private:
 	};
 }

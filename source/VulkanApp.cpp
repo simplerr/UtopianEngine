@@ -32,9 +32,11 @@ namespace VulkanLib
 		mFragmentUniformBuffer.Cleanup(GetDevice());
 		mDescriptorPool.Cleanup(GetDevice());
 		mDescriptorSet.Cleanup(GetDevice());
-		mPipeline.Cleanup(GetDevice());
-		mPipelineLayout.Cleanup(GetDevice());
-		mRenderFence.Cleanup(GetDevice());
+
+		delete mPipeline;
+		delete mPipelineLayout;
+
+		delete mRenderFence;
 
 		// Free the testing texture
 		mTextureLoader->DestroyTexture(mTestTexture);
@@ -57,14 +59,14 @@ namespace VulkanLib
 		VulkanBase::Prepare();
 
 		// Create a fence for synchronization
-		mRenderFence.Create(GetDevice(), VK_FLAGS_NONE);
+		mRenderFence = new Fence(GetDevice(), VK_FLAGS_NONE);
 
 		SetupVertexDescriptions();			
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
 		PreparePipelines();
 		PrepareUniformBuffers();			// Must run before SetupDescriptorSet() (Creates the uniform buffer)
 
-		mTextureLoader = new TextureLoader(mDevice, mQueue.GetVkHandle());
+		mTextureLoader = new TextureLoader(mDevice, mQueue->GetVkHandle());
 		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
 
 		SetupDescriptorPool();
@@ -154,7 +156,7 @@ namespace VulkanLib
 		mDescriptorSet.CreateLayout(GetDevice());
 
 		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout.Create(GetDevice(), &mDescriptorSet.setLayout, &pushConstantRange);
+		mPipelineLayout = new PipelineLayout(GetDevice(), &mDescriptorSet.setLayout, &pushConstantRange);
 	}
 
 	void VulkanApp::SetupDescriptorPool()
@@ -179,7 +181,7 @@ namespace VulkanLib
 		shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
 		shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 			
-		mPipeline.Create(GetDevice(), mPipelineLayout.GetVkHandle(), mRenderPass, &mVertexDescription, shaderStages);
+		mPipeline = new Pipeline(GetDevice(), mPipelineLayout->GetVkHandle(), mRenderPass, &mVertexDescription, shaderStages);
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -254,16 +256,16 @@ namespace VulkanLib
 		for (auto& object : mModels)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline.GetVkHandle());
+			vkCmdBindPipeline(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-			vkCmdBindDescriptorSets(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout.GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
+			vkCmdBindDescriptorSets(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
 
 			// Push the world matrix constant
 			mPushConstants.world = object.object->GetWorldMatrix();
 			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
 			//mPushConstants.color = object.object->GetColor();
-			vkCmdPushConstants(secondaryCommandBuffer, mPipelineLayout.GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
+			vkCmdPushConstants(secondaryCommandBuffer, mPipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
 
 			// Bind triangle vertices
 			VkDeviceSize offsets[1] = { 0 };
@@ -301,10 +303,10 @@ namespace VulkanLib
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers[mCurrentBuffer]);
 
-		mQueue.Submit(mPrimaryCommandBuffer, &mRenderFence);
+		mQueue->Submit(mPrimaryCommandBuffer, mRenderFence);
 
 		// Wait for all command buffers to complete
-		mRenderFence.Wait(GetDevice()); 
+		mRenderFence->Wait(); 
 
 		VulkanBase::SubmitFrame();
 	}

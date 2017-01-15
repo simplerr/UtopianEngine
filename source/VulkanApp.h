@@ -116,12 +116,12 @@ namespace VulkanLib
 		
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
-		Pipeline						mPipeline;
-		PipelineLayout					mPipelineLayout;
+		Pipeline*						mPipeline;
+		PipelineLayout*					mPipelineLayout;
 
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; // This gets regenerated each frame so there is no need for command buffer per frame buffer
-		Fence							mRenderFence;
+		Fence*							mRenderFence;
 	public:
 	};
 }	// VulkanLib namespace

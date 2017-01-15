@@ -18,9 +18,9 @@ namespace VulkanLib
 	class PipelineLayout : public Handle<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout();
+		PipelineLayout(VkDevice device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
 
-		void Create(VkDevice device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
+		void Create(VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
 	private:
 	};
 }
