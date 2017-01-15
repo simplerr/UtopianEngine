@@ -50,7 +50,7 @@ namespace VulkanLib
 		VulkanBase(bool enableValidation);
 		virtual ~VulkanBase();
 
-		VkResult CreateInstance(const char* appName, bool enableValidation);
+		void CreateInstance(const char* appName, bool enableValidation);
 
 		virtual void Prepare();
 
@@ -69,6 +69,7 @@ namespace VulkanLib
 
 		VkPipelineShaderStageCreateInfo LoadShader(std::string fileName, VkShaderStageFlagBits stage);
 
+		// [TODO] Remove
 		VkBool32 CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory);
 
 		void PrepareFrame();
@@ -77,6 +78,7 @@ namespace VulkanLib
 		virtual void CompileShaders() = 0;
 
 		VkDevice GetDevice();
+		CommandPool* GetCommandPool();
 
 		int GetWindowWidth();
 		int GetWindowHeight();
@@ -93,8 +95,7 @@ namespace VulkanLib
 		Device*							mDevice;
 
 		// Command buffer
-		CommandPool						mCommandPool;
-		std::vector<VkCommandBuffer>	mRenderingCommandBuffers;
+		CommandPool*					mCommandPool;
 
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
@@ -123,10 +124,6 @@ namespace VulkanLib
 		// Group everything with the depth stencil together in a struct (as in Vulkan samples)
 		DepthStencil					mDepthStencil;
 
-		// Simple texture loader
-		vkTools::VulkanTextureLoader*	mTextureLoader = nullptr;
-
-		// Wrapper class for the platform dependet window code
 		Window*							mWindow;
 	};
 }	// VulkanLib namespace

@@ -79,29 +79,6 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
 	}
 
-	VkBool32 Device::GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t* typeIndex)
-	{
-		for (uint32_t i = 0; i < 32; i++)
-		{
-			if ((typeBits & 1) == 1)
-			{
-				if ((mDeviceMemoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
-				{
-					*typeIndex = i;
-					return true;
-				}
-			}
-			typeBits >>= 1;
-		}
-
-		return false;
-	}
-
-	VkPhysicalDeviceMemoryProperties Device::GetPhysicalDeviceMemoryProperties()
-	{
-		return mDeviceMemoryProperties;
-	}
-
 	VkCommandPool Device::CreateCommandPool(uint32_t queueFamilyIndex)
 	{
 		VkCommandPoolCreateInfo cmdPoolInfo = {};
@@ -166,5 +143,28 @@ namespace VulkanLib
 	VkDevice Device::GetVkDevice()
 	{
 		return mDevice;
+	}
+
+	VkBool32 Device::GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t* typeIndex)
+	{
+		for (uint32_t i = 0; i < 32; i++)
+		{
+			if ((typeBits & 1) == 1)
+			{
+				if ((mDeviceMemoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
+				{
+					*typeIndex = i;
+					return true;
+				}
+			}
+			typeBits >>= 1;
+		}
+
+		return false;
+	}
+
+	VkPhysicalDeviceMemoryProperties Device::GetPhysicalDeviceMemoryProperties()
+	{
+		return mDeviceMemoryProperties;
 	}
 }

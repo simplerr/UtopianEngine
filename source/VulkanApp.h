@@ -119,8 +119,8 @@ namespace VulkanLib
 		Pipeline						mPipeline;
 		PipelineLayout					mPipelineLayout;
 
-		CommandBuffer					mPrimaryCommandBuffer;
-		CommandBuffer					mSecondaryCommandBuffer; // This gets regenerated each frame so there is no need for command buffer per frame buffer
+		CommandBuffer*					mPrimaryCommandBuffer;
+		CommandBuffer*					mSecondaryCommandBuffer; // This gets regenerated each frame so there is no need for command buffer per frame buffer
 		Fence							mRenderFence;
 	public:
 	};

@@ -2,6 +2,7 @@
 
 * Create RenderPass class
 
+* Remove VulkanBase::CreateBuffer
 * Remove VulkanBase::CreateCommandBuffer
 * Use proper way to setup the rendering queue, instead of hardcoding it to 0
 * Add device information to Device, using vkGetPhysicalDeviceProperties() etc

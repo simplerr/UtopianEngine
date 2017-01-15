@@ -25,7 +25,7 @@ namespace VulkanLib
 		VulkanDebug::SetupDebugLayers();
 
 		// Create VkInstance
-		VulkanDebug::ErrorCheck(CreateInstance("Utopian Engine (pre-alpha)", enableValidation));
+		CreateInstance("Utopian Engine (pre-alpha)", enableValidation);
 
 		VulkanDebug::InitDebug(mInstance);
 
@@ -45,7 +45,7 @@ namespace VulkanLib
 		vkDestroySemaphore(GetDevice(), mPresentComplete, nullptr);
 		vkDestroySemaphore(GetDevice(), mRenderComplete, nullptr);
 
-		mCommandPool.Cleanup(GetDevice());
+		delete mCommandPool;
 
 		// Cleanup depth stencil data
 		vkDestroyImageView(GetDevice(), mDepthStencil.view, nullptr);
@@ -83,18 +83,9 @@ namespace VulkanLib
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
 		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
-
-		// Create a simple texture loader class
-		//mTextureLoader = new vkTools::VulkanTextureLoader(GetDevice(), mQueue, mCommandPool);
-
-		// The derived class initializes:
-		// Pipeline
-		// Uniform buffers
-		// Vertex buffers 
-		// Descriptor sets
 	}
 
-	VkResult VulkanBase::CreateInstance(const char* appName, bool enableValidation)
+	void VulkanBase::CreateInstance(const char* appName, bool enableValidation)
 	{
 		VkApplicationInfo appInfo = {};
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;			// Must be VK_STRUCTURE_TYPE_APPLICATION_INFO
@@ -131,14 +122,12 @@ namespace VulkanLib
 			createInfo.ppEnabledLayerNames = VulkanDebug::validation_layers.data();
 		}
 
-		VkResult res = vkCreateInstance(&createInfo, NULL, &mInstance);
-
-		return res;
+		VulkanDebug::ErrorCheck(vkCreateInstance(&createInfo, NULL, &mInstance));
 	}
 
 	void VulkanBase::CreateCommandPool()
 	{
-		mCommandPool.Create(GetDevice(), 0);
+		mCommandPool = new CommandPool(GetDevice(), 0);
 	}
 
 	void VulkanBase::CreateSemaphores()
@@ -382,6 +371,11 @@ namespace VulkanLib
 	VkDevice VulkanBase::GetDevice()
 	{
 		return mDevice->GetVkDevice();
+	}
+
+	CommandPool* VulkanBase::GetCommandPool()
+	{
+		return mCommandPool;
 	}
 
 	void VulkanBase::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

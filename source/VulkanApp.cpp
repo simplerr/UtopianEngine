@@ -43,8 +43,11 @@ namespace VulkanLib
 			delete mModels[i].object;
 		}
 
-		mPrimaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
-		mSecondaryCommandBuffer.Cleanup(GetDevice(), &mCommandPool);
+		delete mPrimaryCommandBuffer;
+		delete mSecondaryCommandBuffer;
+
+		//mPrimaryCommandBuffer.Cleanup(GetCommandPool());
+		//mSecondaryCommandBuffer.Cleanup(GetCommandPool());
 
 		delete mTextureLoader;
 	}
@@ -74,8 +77,8 @@ namespace VulkanLib
 	void VulkanApp::PrepareCommandBuffers()
 	{
 		// Create the primary and secondary command buffers
-		mPrimaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-		mSecondaryCommandBuffer.Create(GetDevice(), &mCommandPool, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mPrimaryCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		mSecondaryCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void VulkanApp::CompileShaders()
@@ -210,8 +213,8 @@ namespace VulkanLib
 		renderPassBeginInfo.framebuffer = frameBuffer;
 
 		// Begin command buffer recording & the render pass
-		mPrimaryCommandBuffer.Begin();
-		vkCmdBeginRenderPass(mPrimaryCommandBuffer.GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
+		mPrimaryCommandBuffer->Begin();
+		vkCmdBeginRenderPass(mPrimaryCommandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
 		//
 		// Secondary command buffer
@@ -226,8 +229,8 @@ namespace VulkanLib
 		commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		commandBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
 
-		mSecondaryCommandBuffer.Begin(mRenderPass, frameBuffer);
-		VkCommandBuffer secondaryCommandBuffer = mSecondaryCommandBuffer.GetVkHandle();
+		mSecondaryCommandBuffer->Begin(mRenderPass, frameBuffer);
+		VkCommandBuffer secondaryCommandBuffer = mSecondaryCommandBuffer->GetVkHandle();
 
 		// Update dynamic viewport state
 		VkViewport viewport = {};
@@ -272,20 +275,20 @@ namespace VulkanLib
 		}
 
 		// End secondary command buffer
-		mSecondaryCommandBuffer.End();
+		mSecondaryCommandBuffer->End();
 
 		std::vector<VkCommandBuffer> commandBuffers;
-		commandBuffers.push_back(mSecondaryCommandBuffer.GetVkHandle());
+		commandBuffers.push_back(mSecondaryCommandBuffer->GetVkHandle());
 
 		// This is where multithreaded command buffers can be added
 		// ...
 
 		// Execute render commands from the secondary command buffer
-		vkCmdExecuteCommands(mPrimaryCommandBuffer.GetVkHandle(), commandBuffers.size(), commandBuffers.data());
+		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), commandBuffers.size(), commandBuffers.data());
 
 		// End command buffer recording & the render pass
-		vkCmdEndRenderPass(mPrimaryCommandBuffer.GetVkHandle());
-		mPrimaryCommandBuffer.End();
+		vkCmdEndRenderPass(mPrimaryCommandBuffer->GetVkHandle());
+		mPrimaryCommandBuffer->End();
 	}
 
 	void VulkanApp::Draw()
@@ -298,7 +301,7 @@ namespace VulkanLib
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers[mCurrentBuffer]);
 
-		mQueue.Submit(&mPrimaryCommandBuffer, &mRenderFence);
+		mQueue.Submit(mPrimaryCommandBuffer, &mRenderFence);
 
 		// Wait for all command buffers to complete
 		mRenderFence.Wait(GetDevice()); 

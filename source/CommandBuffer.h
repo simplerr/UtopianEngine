@@ -10,14 +10,16 @@ namespace VulkanLib
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{
 	public:
-		CommandBuffer();
 		CommandBuffer(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
-		void Create(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
+		~CommandBuffer();
+
+		void Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
 		void Begin();
 		void Begin(VkRenderPass renderPass, VkFramebuffer frameBuffer);
 		void End();
-		void Flush(VkDevice device, VkQueue queue, CommandPool* commandPool, bool free = false);
-		void Cleanup(VkDevice device, CommandPool* commandPool);
+		void Flush(VkQueue queue, CommandPool* commandPool, bool free = false);
+		void Cleanup(CommandPool* commandPool);
 	private:
+		CommandPool* mCommandPool; // The command pool this command buffer comes from 
 	};
 }

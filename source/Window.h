@@ -3,6 +3,7 @@
 
 namespace VulkanLib
 {
+	// Wrapper class for the platform dependent window code
 	class Window
 	{
 	public:

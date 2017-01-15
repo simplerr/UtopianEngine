@@ -4,20 +4,18 @@
 
 namespace VulkanLib
 {
-	CommandBuffer::CommandBuffer()
-	{
-
-	}
-
 	CommandBuffer::CommandBuffer(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+		: Handle(device, nullptr)
 	{
+		mCommandPool = commandPool;
+
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocateInfo.commandPool = commandPool->GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(device, &allocateInfo, &mHandle));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mHandle));
 
 		// If requested, also start the new command buffer
 		if (begin)
@@ -26,7 +24,13 @@ namespace VulkanLib
 		}
 	}
 
-	void CommandBuffer::Create(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+	CommandBuffer::~CommandBuffer()
+	{
+		// [NOTE] Maybe not needed, if the command pool frees all it's command buffers
+		vkFreeCommandBuffers(GetDevice(), mCommandPool->GetVkHandle(), 1, &mHandle);
+	}
+
+	void CommandBuffer::Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
 	{
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -34,7 +38,7 @@ namespace VulkanLib
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(device, &allocateInfo, &mHandle));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mHandle));
 
 		// If requested, also start the new command buffer
 		if (begin)
@@ -74,7 +78,7 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
 	}
 
-	void CommandBuffer::Flush(VkDevice device, VkQueue queue, CommandPool* commandPool, bool free)
+	void CommandBuffer::Flush(VkQueue queue, CommandPool* commandPool, bool free)
 	{
 		if (mHandle == VK_NULL_HANDLE)
 		{
@@ -93,11 +97,12 @@ namespace VulkanLib
 
 		if (free)
 		{
-			Cleanup(device, commandPool);
+			Cleanup(commandPool);
 		}
 	}
-	void CommandBuffer::Cleanup(VkDevice device, CommandPool* commandPool)
+
+	void CommandBuffer::Cleanup(CommandPool* commandPool)
 	{
-		vkFreeCommandBuffers(device, commandPool->GetVkHandle(), 1, &mHandle);
+		vkFreeCommandBuffers(GetDevice(), commandPool->GetVkHandle(), 1, &mHandle);
 	}
 }
