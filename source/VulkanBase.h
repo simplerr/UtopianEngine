@@ -34,7 +34,7 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 
 namespace VulkanLib
 {
-	class VulkanDevice;
+	class Device;
 	class CommandPool;
 
 	struct DepthStencil {
@@ -51,7 +51,6 @@ namespace VulkanLib
 		virtual ~VulkanBase();
 
 		VkResult CreateInstance(const char* appName, bool enableValidation);
-		VkResult CreateDevice(bool enableValidation);
 
 		virtual void Prepare();
 
@@ -80,6 +79,7 @@ namespace VulkanLib
 		virtual void CompileShaders() = 0;
 
 		VkDevice GetDevice();
+
 		int GetWindowWidth();
 		int GetWindowHeight();
 
@@ -90,11 +90,9 @@ namespace VulkanLib
 
 	protected:
 		VkInstance						mInstance = VK_NULL_HANDLE;
-		VkPhysicalDevice				mPhysicalDevice = VK_NULL_HANDLE;
-		VkDevice						mDevice = VK_NULL_HANDLE;
 		Queue							mQueue;
 
-		VulkanDevice*					mVulkanDevice;
+		Device*							mDevice;
 
 		// Command buffer
 		CommandPool						mCommandPool;

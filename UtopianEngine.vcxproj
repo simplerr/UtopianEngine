@@ -113,7 +113,7 @@
     <ClCompile Include="source\VulkanApp.cpp" />
     <ClCompile Include="source\VulkanBase.cpp" />
     <ClCompile Include="source\VulkanDebug.cpp" />
-    <ClCompile Include="source\VulkanDevice.cpp" />
+    <ClCompile Include="source\Device.cpp" />
     <ClCompile Include="source\VulkanHelpers.cpp" />
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
@@ -135,7 +135,7 @@
     <ClInclude Include="source\VertexDescription.h" />
     <ClInclude Include="source\VulkanBase.h" />
     <ClInclude Include="source\VulkanDebug.h" />
-    <ClInclude Include="source\VulkanDevice.h" />
+    <ClInclude Include="source\Device.h" />
     <ClInclude Include="source\VulkanHelpers.h" />
     <ClInclude Include="source\VulkanApp.h" />
     <ClInclude Include="source\Window.h" />

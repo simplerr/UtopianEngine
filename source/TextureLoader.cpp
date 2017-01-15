@@ -1,14 +1,14 @@
 #include "TextureLoader.h"
 #include "VulkanDebug.h"
-#include "VulkanDevice.h"
+#include "Device.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
 
 namespace VulkanLib
 {
-	TextureLoader::TextureLoader(VulkanDevice* vulkanDevice, VkQueue queue)
+	TextureLoader::TextureLoader(Device* Device, VkQueue queue)
 	{
-		mVulkanDevice = vulkanDevice;
+		mDevice = Device;
 		mQueue = queue;
 	}
 
@@ -18,7 +18,7 @@ namespace VulkanLib
 
 	bool TextureLoader::LoadTexture(std::string filename, VulkanTexture * texture)
 	{
-		VkDevice device =  mVulkanDevice->GetLogicalDevice();	
+		VkDevice device =  mDevice->GetVkDevice();	
 		int texWidth, texHeight, texChannels;
 		stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		VkDeviceSize imageSize = texWidth * texHeight * 4;
@@ -98,15 +98,15 @@ namespace VulkanLib
 
 	void TextureLoader::DestroyTexture(VulkanTexture texture)
 	{
-		vkDestroyImageView(mVulkanDevice->GetLogicalDevice(), texture.imageView, nullptr);
-		vkDestroyImage(mVulkanDevice->GetLogicalDevice(), texture.image, nullptr);
-		vkDestroySampler(mVulkanDevice->GetLogicalDevice(), texture.sampler, nullptr);
-		vkFreeMemory(mVulkanDevice->GetLogicalDevice(), texture.deviceMemory, nullptr);
+		vkDestroyImageView(mDevice->GetVkDevice(), texture.imageView, nullptr);
+		vkDestroyImage(mDevice->GetVkDevice(), texture.image, nullptr);
+		vkDestroySampler(mDevice->GetVkDevice(), texture.sampler, nullptr);
+		vkFreeMemory(mDevice->GetVkDevice(), texture.deviceMemory, nullptr);
 	}
 
 	void TextureLoader::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
 	{
-		VkDevice device =  mVulkanDevice->GetLogicalDevice();
+		VkDevice device =  mDevice->GetVkDevice();
 
 		// Create info for the image that will be used for staging
 		VkImageCreateInfo imageInfo = {};
@@ -132,7 +132,7 @@ namespace VulkanLib
 		VkMemoryAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = mVulkanDevice->FindMemoryType(memRequirements.memoryTypeBits, properties);
+		allocInfo.memoryTypeIndex = mDevice->FindMemoryType(memRequirements.memoryTypeBits, properties);
 
 		VulkanDebug::ErrorCheck(vkAllocateMemory(device, &allocInfo, nullptr, imageMemory));
 		VulkanDebug::ErrorCheck(vkBindImageMemory(device, *image, *imageMemory, 0));
@@ -140,7 +140,7 @@ namespace VulkanLib
 
 	void TextureLoader::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
 	{
-		VkCommandBuffer commandBuffer = mVulkanDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		VkImageMemoryBarrier barrier = {};
 		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -181,12 +181,12 @@ namespace VulkanLib
 			1, &barrier
 		);
 
-		mVulkanDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
+		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
 	}
 
 	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, uint32_t width, uint32_t height)
 	{
-		VkCommandBuffer commandBuffer = mVulkanDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		VkImageSubresourceLayers subResource = {};
 		subResource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -211,7 +211,7 @@ namespace VulkanLib
 			1, &region
 		);
 
-		mVulkanDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
+		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
 	}
 
 	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView)
@@ -227,7 +227,7 @@ namespace VulkanLib
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
 
-		VulkanDebug::ErrorCheck(vkCreateImageView(mVulkanDevice->GetLogicalDevice(), &viewInfo, nullptr, imageView));
+		VulkanDebug::ErrorCheck(vkCreateImageView(mDevice->GetVkDevice(), &viewInfo, nullptr, imageView));
 	}
 
 	void TextureLoader::CreateImageSampler(VkSampler* sampler)
@@ -247,6 +247,6 @@ namespace VulkanLib
 		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
 		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 
-		VulkanDebug::ErrorCheck(vkCreateSampler(mVulkanDevice->GetLogicalDevice(), &samplerInfo, nullptr, sampler));
+		VulkanDebug::ErrorCheck(vkCreateSampler(mDevice->GetVkDevice(), &samplerInfo, nullptr, sampler));
 	}
 }

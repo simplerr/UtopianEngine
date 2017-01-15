@@ -10,7 +10,7 @@
 #include "VulkanHelpers.h"
 #include "Light.h"
 #include "TextureLoader.h"
-#include "VulkanDevice.h"
+#include "Device.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "PipelineLayout.h"
@@ -61,7 +61,7 @@ namespace VulkanLib
 		PreparePipelines();
 		PrepareUniformBuffers();			// Must run before SetupDescriptorSet() (Creates the uniform buffer)
 
-		mTextureLoader = new TextureLoader(mVulkanDevice, mQueue.GetVkHandle());
+		mTextureLoader = new TextureLoader(mDevice, mQueue.GetVkHandle());
 		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
 
 		SetupDescriptorPool();
@@ -268,7 +268,6 @@ namespace VulkanLib
 			vkCmdBindIndexBuffer(secondaryCommandBuffer, object.mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 			// Draw indexed triangle	
-			//vkCmdSetLineWidth(secondaryCommandBuffer, 1.0f);
 			vkCmdDrawIndexed(secondaryCommandBuffer, object.mesh->GetNumIndices(), 1, 0, 0, 0);
 		}
 
@@ -291,10 +290,6 @@ namespace VulkanLib
 
 	void VulkanApp::Draw()
 	{
-		//
-		// Transition image format to VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-		//
-
 		VulkanBase::PrepareFrame();
 
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
@@ -303,25 +298,10 @@ namespace VulkanLib
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers[mCurrentBuffer]);
 
-		//
-		// Do rendering
-		//
-
 		mQueue.Submit(&mPrimaryCommandBuffer, &mRenderFence);
 
-		// Wait for fence to signal that all command buffers are ready
-		VkResult fenceRes;
-		do
-		{
-			fenceRes = vkWaitForFences(GetDevice(), 1, &mRenderFence.mHandle, VK_TRUE, 100000000);
-		} while (fenceRes == VK_TIMEOUT);
-
-		VulkanDebug::ErrorCheck(fenceRes);
-		mRenderFence.Reset(GetDevice());
-
-		//
-		// Transition image format to VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-		//
+		// Wait for all command buffers to complete
+		mRenderFence.Wait(GetDevice()); 
 
 		VulkanBase::SubmitFrame();
 	}

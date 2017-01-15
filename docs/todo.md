@@ -3,7 +3,9 @@
 * Create RenderPass class
 
 * Remove VulkanBase::CreateCommandBuffer
-* VulkanDevice::FlushCommandBuffer should use fences instead of VkQueueWaitIdle()
+* Use proper way to setup the rendering queue, instead of hardcoding it to 0
+* Add device information to Device, using vkGetPhysicalDeviceProperties() etc
+* Device::FlushCommandBuffer should use fences instead of VkQueueWaitIdle()
 * Enable validation layers
 * Use RenderDoc
 

@@ -4,7 +4,7 @@
 
 namespace VulkanLib
 {
-	class VulkanDevice;
+	class Device;
 
 	struct VulkanTexture
 	{
@@ -27,7 +27,7 @@ namespace VulkanLib
 	class TextureLoader
 	{
 	public:
-		TextureLoader(VulkanDevice* vulkanDevice, VkQueue queue);
+		TextureLoader(Device* Device, VkQueue queue);
 		~TextureLoader();
 
 		bool LoadTexture(std::string filename, VulkanTexture* texture);
@@ -39,7 +39,7 @@ namespace VulkanLib
 		void CreateImageView(VkImage image, VkFormat format, VkImageView* imageView);
 		void CreateImageSampler(VkSampler* sampler);
 	private:
-		VulkanDevice* mVulkanDevice;
+		Device* mDevice;
 		VkQueue mQueue;
 	};
 }

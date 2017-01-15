@@ -2,11 +2,11 @@
 #include <cassert>
 #include <functional>
 #include <vulkan/vulkan.h>
-#include "VulkanDevice.h"
+#include "Device.h"
 
 namespace VulkanLib
 {
-	class VulkanDevice;
+	class Device;
 
 	template<typename T>
 	class Handle

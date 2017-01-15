@@ -1,6 +1,6 @@
 #include "CommandPool.h"
 #include "VulkanDebug.h"
-#include "VulkanDevice.h"
+#include "Device.h"
 
 namespace VulkanLib
 {

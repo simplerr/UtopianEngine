@@ -10,6 +10,7 @@ namespace VulkanLib
 		Fence();
 
 		void Create(VkDevice device, VkFenceCreateFlags flags);
+		void Wait(VkDevice device);
 		void Reset(VkDevice device);
 	private:
 	};

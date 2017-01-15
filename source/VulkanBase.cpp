@@ -7,7 +7,7 @@
 #include <chrono>
 
 #include "VulkanBase.h"
-#include "VulkanDevice.h"
+#include "Device.h"
 #include "VulkanDebug.h"
 #include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
@@ -29,17 +29,14 @@ namespace VulkanLib
 
 		VulkanDebug::InitDebug(mInstance);
 
-		// Create VkDevice
-		VulkanDebug::ErrorCheck(CreateDevice(enableValidation));
+		mDevice = new Device(mInstance);
 
 		// Gather physical device memory properties
-		// [TODO] This should be moved to a VulkanDevice struct
-		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
+		// [TODO] This should be moved to a Device struct
+		vkGetPhysicalDeviceMemoryProperties(mDevice->GetPhysicalDevice(), &mDeviceMemoryProperties);
 
 		// Setup function pointers for the swap chain
-		mSwapChain.connect(mInstance, mPhysicalDevice, mDevice);
-
-		mVulkanDevice = new VulkanDevice(mPhysicalDevice, mDevice);
+		mSwapChain.connect(mInstance, mDevice->GetPhysicalDevice(), mDevice->GetVkDevice());
 
 		// Synchronization code missing here, VkSemaphore etc.
 	}
@@ -49,31 +46,29 @@ namespace VulkanLib
 		mSwapChain.cleanup();
 
 		// Destroy semaphores
-		vkDestroySemaphore(mDevice, mPresentComplete, nullptr);
-		vkDestroySemaphore(mDevice, mRenderComplete, nullptr);
+		vkDestroySemaphore(GetDevice(), mPresentComplete, nullptr);
+		vkDestroySemaphore(GetDevice(), mRenderComplete, nullptr);
 
 		mCommandPool.Cleanup(GetDevice());
 
-		delete mVulkanDevice;
-
 		// Cleanup depth stencil data
-		vkDestroyImageView(mDevice, mDepthStencil.view, nullptr);
-		vkDestroyImage(mDevice, mDepthStencil.image, nullptr);
-		vkFreeMemory(mDevice, mDepthStencil.memory, nullptr);
+		vkDestroyImageView(GetDevice(), mDepthStencil.view, nullptr);
+		vkDestroyImage(GetDevice(), mDepthStencil.image, nullptr);
+		vkFreeMemory(GetDevice(), mDepthStencil.memory, nullptr);
 
-		vkDestroyRenderPass(mDevice, mRenderPass, nullptr);
+		vkDestroyRenderPass(GetDevice(), mRenderPass, nullptr);
 
 		for (uint32_t i = 0; i < mFrameBuffers.size(); i++)
 		{
-			vkDestroyFramebuffer(mDevice, mFrameBuffers[i], nullptr);
+			vkDestroyFramebuffer(GetDevice(), mFrameBuffers[i], nullptr);
 		}
 
 		for (auto& shaderModule : mShaderModules)
 		{
-			vkDestroyShaderModule(mDevice, shaderModule, nullptr);
+			vkDestroyShaderModule(GetDevice(), shaderModule, nullptr);
 		}
 
-		vkDestroyDevice(mDevice, nullptr);
+		delete mDevice;
 
 		VulkanDebug::CleanupDebugging(mInstance);
 
@@ -87,14 +82,14 @@ namespace VulkanLib
 		SetupSwapchain();				// Setup the swap chain with the helper class
 		CreateSemaphores();
 
-		mQueue.Create(mDevice, &mPresentComplete, &mRenderComplete);
+		mQueue.Create(GetDevice(), &mPresentComplete, &mRenderComplete);
 
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
 		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
 
 		// Create a simple texture loader class
-		//mTextureLoader = new vkTools::VulkanTextureLoader(mDevice, mQueue, mCommandPool);
+		//mTextureLoader = new vkTools::VulkanTextureLoader(GetDevice(), mQueue, mCommandPool);
 
 		// The derived class initializes:
 		// Pipeline
@@ -145,67 +140,6 @@ namespace VulkanLib
 		return res;
 	}
 
-	VkResult VulkanBase::CreateDevice(bool enableValidation)
-	{
-		// Query for the number of GPUs
-		uint32_t gpuCount = 0;
-		VkResult result = vkEnumeratePhysicalDevices(mInstance, &gpuCount, NULL);
-
-		if (result != VK_SUCCESS)
-			VulkanDebug::ConsolePrint("vkEnumeratePhysicalDevices failed");
-
-		if (gpuCount < 1)
-			VulkanDebug::ConsolePrint("vkEnumeratePhysicalDevices didn't find any valid devices for Vulkan");
-
-		// Enumerate devices
-		std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
-		result = vkEnumeratePhysicalDevices(mInstance, &gpuCount, physicalDevices.data());
-
-		// Assume that there only is 1 GPU
-		mPhysicalDevice = physicalDevices[0];
-
-		// This is not used right now, but GPU vendor and model can be retrieved
-		//VkPhysicalDeviceProperties physicalDeviceProperties;
-		//vkGetPhysicalDeviceProperties(physicalDevice, &physicalDeviceProperties);
-
-		// Some implementations use vkGetPhysicalDeviceQueueFamilyProperties and uses the result to find out
-		// the first queue that support graphic operations (queueFlags & VK_QUEUE_GRAPHICS_BIT)
-		// Here I simply set queueInfo.queueFamilyIndex = 0 and (hope) it works
-		// In Sascha Willems examples he has a compute queue with queueFamilyIndex = 1
-
-		std::array<float, 1> queuePriorities = { 1.0f };
-		VkDeviceQueueCreateInfo queueInfo = {};
-		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueInfo.pNext = nullptr;
-		queueInfo.flags = 0;
-		queueInfo.queueFamilyIndex = 0; // 0 seems to always be the first valid queue (see above)
-		queueInfo.pQueuePriorities = queuePriorities.data();
-		queueInfo.queueCount = 1;
-
-		// Use the VK_KHR_SWAPCHAIN_EXTENSION_NAME extension
-		// [NOTE] There is another VK_EXT_DEBUG_MARKER_EXTENSION_NAME extension that might be good to add later.
-		std::vector<const char*> enabledExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-		VkDeviceCreateInfo deviceInfo = {};
-		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		deviceInfo.pNext = nullptr;
-		deviceInfo.flags = 0;
-		deviceInfo.queueCreateInfoCount = 1;
-		deviceInfo.pQueueCreateInfos = &queueInfo;
-		deviceInfo.pEnabledFeatures = nullptr;
-		deviceInfo.enabledExtensionCount = enabledExtensions.size();				// Extensions
-		deviceInfo.ppEnabledExtensionNames = enabledExtensions.data();
-
-		if (enableValidation)
-		{
-			deviceInfo.enabledLayerCount = VulkanDebug::validation_layers.size();	// Debug validation layers
-			deviceInfo.ppEnabledLayerNames = VulkanDebug::validation_layers.data();
-		}
-
-		result = vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice);
-
-		return result;
-	}
-
 	void VulkanBase::CreateCommandPool()
 	{
 		mCommandPool.Create(GetDevice(), 0);
@@ -217,12 +151,12 @@ namespace VulkanLib
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
 		// Create a semaphore used to synchronize image presentation
-		// Ensures that the image is displayed before we start submitting new commands to the queu
-		VulkanDebug::ErrorCheck(vkCreateSemaphore(mDevice, &createInfo, nullptr, &mPresentComplete));
+		// Ensures that the image is displayed before we start submitting new commands to the queue
+		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetDevice(), &createInfo, nullptr, &mPresentComplete));
 
 		// Create a semaphore used to synchronize command submission
-		// Ensures that the image is not presented until all commands have been sumbitted and executed
-		VulkanDebug::ErrorCheck(vkCreateSemaphore(mDevice, &createInfo, nullptr, &mRenderComplete));
+		// Ensures that the image is not presented until all commands have been submitted and executed
+		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetDevice(), &createInfo, nullptr, &mRenderComplete));
 	}
 
 	void VulkanBase::SetupDepthStencil()
@@ -253,21 +187,21 @@ namespace VulkanLib
 		viewCreateInfo.subresourceRange.baseArrayLayer = 0;
 		viewCreateInfo.subresourceRange.layerCount = 1;
 
-		VulkanDebug::ErrorCheck(vkCreateImage(mDevice, &imageCreateInfo, nullptr, &mDepthStencil.image));
+		VulkanDebug::ErrorCheck(vkCreateImage(GetDevice(), &imageCreateInfo, nullptr, &mDepthStencil.image));
 
 		// Get memory requirements
 		VkMemoryRequirements memRequirments;
-		vkGetImageMemoryRequirements(mDevice, mDepthStencil.image, &memRequirments);
+		vkGetImageMemoryRequirements(GetDevice(), mDepthStencil.image, &memRequirments);
 		allocateInfo.allocationSize = memRequirments.size;
 		allocateInfo.memoryTypeIndex = 0; // [NOTE] 0 seems to do fine, but proper way is to use getMemoryTypeIndex()
 		GetMemoryType(memRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &allocateInfo.memoryTypeIndex);
 
-		VulkanDebug::ErrorCheck(vkAllocateMemory(mDevice, &allocateInfo, nullptr, &mDepthStencil.memory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(mDevice, mDepthStencil.image, mDepthStencil.memory, 0));
+		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &allocateInfo, nullptr, &mDepthStencil.memory));
+		VulkanDebug::ErrorCheck(vkBindImageMemory(GetDevice(), mDepthStencil.image, mDepthStencil.memory, 0));
 
 		// Connect the view with the image
 		viewCreateInfo.image = mDepthStencil.image;	
-		VulkanDebug::ErrorCheck(vkCreateImageView(mDevice, &viewCreateInfo, nullptr, &mDepthStencil.view));
+		VulkanDebug::ErrorCheck(vkCreateImageView(GetDevice(), &viewCreateInfo, nullptr, &mDepthStencil.view));
 	}
 
 	void VulkanBase::SetupRenderPass()
@@ -348,7 +282,7 @@ namespace VulkanLib
 		renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());	
 		renderPassInfo.pDependencies = dependencies.data();							
 
-		VulkanDebug::ErrorCheck(vkCreateRenderPass(mDevice, &renderPassInfo, nullptr, &mRenderPass));
+		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetDevice(), &renderPassInfo, nullptr, &mRenderPass));
 	}
 
 	void VulkanBase::SetupFrameBuffer()
@@ -372,7 +306,7 @@ namespace VulkanLib
 		for (uint32_t i = 0; i < mFrameBuffers.size(); i++)
 		{
 			attachments[0] = mSwapChain.buffers[i].view;
-			VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice, &createInfo, nullptr, &mFrameBuffers[i]));
+			VulkanDebug::ErrorCheck(vkCreateFramebuffer(GetDevice(), &createInfo, nullptr, &mFrameBuffers[i]));
 		}
 	}
 
@@ -402,21 +336,21 @@ namespace VulkanLib
 		VkMemoryAllocateInfo memAlloc = vkTools::initializers::memoryAllocateInfo();
 		VkBufferCreateInfo bufferCreateInfo = vkTools::initializers::bufferCreateInfo(usageFlags, size);
 
-		VulkanDebug::ErrorCheck(vkCreateBuffer(mDevice, &bufferCreateInfo, nullptr, buffer));
+		VulkanDebug::ErrorCheck(vkCreateBuffer(GetDevice(), &bufferCreateInfo, nullptr, buffer));
 
-		vkGetBufferMemoryRequirements(mDevice, *buffer, &memReqs);
+		vkGetBufferMemoryRequirements(GetDevice(), *buffer, &memReqs);
 		memAlloc.allocationSize = memReqs.size;
 		uint32_t tmp;
 		memAlloc.memoryTypeIndex = GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp);
-		VulkanDebug::ErrorCheck(vkAllocateMemory(mDevice, &memAlloc, nullptr, memory));
+		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &memAlloc, nullptr, memory));
 		if (data != nullptr)
 		{
 			void *mapped;
-			VulkanDebug::ErrorCheck(vkMapMemory(mDevice, *memory, 0, size, 0, &mapped));
+			VulkanDebug::ErrorCheck(vkMapMemory(GetDevice(), *memory, 0, size, 0, &mapped));
 			memcpy(mapped, data, size);
-			vkUnmapMemory(mDevice, *memory);
+			vkUnmapMemory(GetDevice(), *memory);
 		}
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(mDevice, *buffer, *memory, 0));
+		VulkanDebug::ErrorCheck(vkBindBufferMemory(GetDevice(), *buffer, *memory, 0));
 
 		return true;
 	}
@@ -439,9 +373,9 @@ namespace VulkanLib
 		shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		shaderStage.stage = stage;
 #if defined(__ANDROID__)
-		shaderStage.module = vkTools::loadShader(androidApp->activity->assetManager, fileName.c_str(), mDevice, stage);
+		shaderStage.module = vkTools::loadShader(androidApp->activity->assetManager, fileName.c_str(), GetDevice(), stage);
 #else
-		shaderStage.module = vkTools::loadShader(fileName.c_str(), mDevice, stage);		// Uses helper functions (NOTE/TODO)
+		shaderStage.module = vkTools::loadShader(fileName.c_str(), GetDevice(), stage);		// Uses helper functions (NOTE/TODO)
 #endif
 		shaderStage.pName = "main";
 		assert(shaderStage.module != NULL);
@@ -451,7 +385,7 @@ namespace VulkanLib
 
 	VkDevice VulkanBase::GetDevice()
 	{
-		return mDevice;
+		return mDevice->GetVkDevice();
 	}
 
 	// Code from Vulkan samples and SaschaWillems

@@ -4,7 +4,7 @@
 
 namespace VulkanLib
 {
-	class VulkanDevice;
+	class Device;
 
 	class CommandPool : public Handle<VkCommandPool>
 	{
