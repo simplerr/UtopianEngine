@@ -90,6 +90,8 @@ namespace VulkanLib
 		void SetCamera(Camera* camera);
 		void AddModel(VulkanModel model);
 
+		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to work
+
 
 		// 
 		//	High level code

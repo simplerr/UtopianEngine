@@ -71,7 +71,7 @@ namespace VulkanLib
 
 					VulkanModel model;
 					model.object = object;
-					model.mesh = mModelLoader.LoadModel(mRenderer, object->GetModel());
+					model.mesh = mModelLoader.LoadModel(mRenderer->GetDeviceTmp(), object->GetModel());
 					mRenderer->AddModel(model);
 				}
 			}

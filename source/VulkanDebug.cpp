@@ -48,6 +48,7 @@ namespace VulkanLib
 			validation_layers.push_back("VK_LAYER_LUNARG_image");
 			validation_layers.push_back("VK_LAYER_GOOGLE_unique_objects");*/
 		}
+
 		void InitDebug(VkInstance instance)
 		{
 			CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugReportCallbackEXT");
@@ -188,6 +189,7 @@ namespace VulkanLib
 				assert(0 && "ErrorCheck() catched an error!");
 			}
 		}
+
 		void ConsolePrint(std::string text)
 		{
 			std::cout << text << std::endl;

@@ -25,15 +25,11 @@ namespace VulkanLib
 		VulkanDebug::SetupDebugLayers();
 
 		// Create VkInstance
-		VulkanDebug::ErrorCheck(CreateInstance("Vulkan App", enableValidation));
+		VulkanDebug::ErrorCheck(CreateInstance("Utopian Engine (pre-alpha)", enableValidation));
 
 		VulkanDebug::InitDebug(mInstance);
 
 		mDevice = new Device(mInstance);
-
-		// Gather physical device memory properties
-		// [TODO] This should be moved to a Device struct
-		vkGetPhysicalDeviceMemoryProperties(mDevice->GetPhysicalDevice(), &mDeviceMemoryProperties);
 
 		// Setup function pointers for the swap chain
 		mSwapChain.connect(mInstance, mDevice->GetPhysicalDevice(), mDevice->GetVkDevice());
@@ -194,7 +190,7 @@ namespace VulkanLib
 		vkGetImageMemoryRequirements(GetDevice(), mDepthStencil.image, &memRequirments);
 		allocateInfo.allocationSize = memRequirments.size;
 		allocateInfo.memoryTypeIndex = 0; // [NOTE] 0 seems to do fine, but proper way is to use getMemoryTypeIndex()
-		GetMemoryType(memRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &allocateInfo.memoryTypeIndex);
+		mDevice->GetMemoryType(memRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &allocateInfo.memoryTypeIndex);
 
 		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &allocateInfo, nullptr, &mDepthStencil.memory));
 		VulkanDebug::ErrorCheck(vkBindImageMemory(GetDevice(), mDepthStencil.image, mDepthStencil.memory, 0));
@@ -341,7 +337,7 @@ namespace VulkanLib
 		vkGetBufferMemoryRequirements(GetDevice(), *buffer, &memReqs);
 		memAlloc.allocationSize = memReqs.size;
 		uint32_t tmp;
-		memAlloc.memoryTypeIndex = GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp);
+		memAlloc.memoryTypeIndex = mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp); // [NOTE] This is really weird
 		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &memAlloc, nullptr, memory));
 		if (data != nullptr)
 		{
@@ -386,24 +382,6 @@ namespace VulkanLib
 	VkDevice VulkanBase::GetDevice()
 	{
 		return mDevice->GetVkDevice();
-	}
-
-	// Code from Vulkan samples and SaschaWillems
-	VkBool32 VulkanBase::GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex)
-	{
-		for (uint32_t i = 0; i < 32; i++)
-		{
-			if ((typeBits & 1) == 1)
-			{
-				if ((mDeviceMemoryProperties.memoryTypes[i].propertyFlags & properties) == properties)
-				{
-					*typeIndex = i;
-					return true;
-				}
-			}
-			typeBits >>= 1;
-		}
-		return false;
 	}
 
 	void VulkanBase::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

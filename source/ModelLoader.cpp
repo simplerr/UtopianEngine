@@ -1,6 +1,6 @@
 #include "ModelLoader.h"
 #include "StaticModel.h"
-#include "VulkanBase.h"
+#include "Device.h"
 
 #include <vector>
 
@@ -39,7 +39,7 @@ namespace VulkanLib
 		}
 	}
 
-	StaticModel * ModelLoader::LoadModel(VulkanBase* vulkanBase, std::string filename)
+	StaticModel * ModelLoader::LoadModel(Device* device, std::string filename)
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find(filename) != mModelMap.end())
@@ -107,7 +107,7 @@ namespace VulkanLib
 			}
 
 			// Add the model to the model map
-			model->BuildBuffers(vulkanBase);		// Build the models buffers here
+			model->BuildBuffers(device);		// Build the models buffers here
 			mModelMap[filename] = model;
 		}
 		else {
@@ -118,7 +118,7 @@ namespace VulkanLib
 		return model;
 	}
 
-	StaticModel* ModelLoader::GenerateTerrain(VulkanBase* vulkanBase, std::string filename)
+	StaticModel* ModelLoader::GenerateTerrain(Device* device, std::string filename)
 	{
 		return nullptr;
 		//// Check if the model already is loaded

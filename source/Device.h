@@ -16,13 +16,18 @@ namespace VulkanLib
 		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
 		VkCommandPool CreateCommandPool(uint32_t queueFamilyIndex);
 
-		uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-
 		VkPhysicalDevice GetPhysicalDevice();
 		VkDevice GetVkDevice();
+
+		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex);
+		VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties();
+
 	private:
 		VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice mDevice = VK_NULL_HANDLE;
 		VkCommandPool mCommandPool = VK_NULL_HANDLE;
+
+		// Stores all available memory (type) properties for the physical device
+		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
 	};
 }

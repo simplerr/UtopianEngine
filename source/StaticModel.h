@@ -9,7 +9,7 @@ using namespace glm;
 
 namespace VulkanLib
 {
-	class VulkanBase;
+	class Device;
 
 	struct Vertex
 	{
@@ -44,7 +44,7 @@ namespace VulkanLib
 		~StaticModel();
 
 		void AddMesh(Mesh& mesh);
-		void BuildBuffers(VulkanBase* vulkanBase);		// Gets called in ModelLoader::LoadModel()
+		void BuildBuffers(Device* device);		// Gets called in ModelLoader::LoadModel()
 
 		struct {
 			VkBuffer buffer;

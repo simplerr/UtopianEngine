@@ -132,7 +132,7 @@ namespace VulkanLib
 		VkMemoryAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = mDevice->FindMemoryType(memRequirements.memoryTypeBits, properties);
+		mDevice->GetMemoryType(memRequirements.memoryTypeBits, properties, &allocInfo.memoryTypeIndex);
 
 		VulkanDebug::ErrorCheck(vkAllocateMemory(device, &allocInfo, nullptr, imageMemory));
 		VulkanDebug::ErrorCheck(vkBindImageMemory(device, *image, *imageMemory, 0));

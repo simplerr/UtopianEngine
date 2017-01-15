@@ -8,7 +8,7 @@
 namespace VulkanLib
 {
 	class StaticModel;
-	class VulkanBase;
+	class Device;
 
 	// TODO: This will later work like a factory, where the same model only gets loaded once
 	class ModelLoader
@@ -16,8 +16,8 @@ namespace VulkanLib
 	public:
 		void CleanupModels(VkDevice device);
 
-		StaticModel* LoadModel(VulkanBase* vulkanBase, std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
-		StaticModel* GenerateTerrain(VulkanBase* vulkanBase, std::string filename);
+		StaticModel* LoadModel(Device* device, std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
+		StaticModel* GenerateTerrain(Device* device, std::string filename);
 	private:
 		int FindValidPath(aiString* texturePath, std::string modelPath);
 		bool TryLongerPath(char* szTemp, aiString* p_szString);

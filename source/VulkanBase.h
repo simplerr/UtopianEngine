@@ -74,8 +74,6 @@ namespace VulkanLib
 		void PrepareFrame();
 		void SubmitFrame();
 
-		VkBool32 GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex);
-
 		virtual void CompileShaders() = 0;
 
 		VkDevice GetDevice();
@@ -121,9 +119,6 @@ namespace VulkanLib
 
 		// List of shader modules created and that needs cleanup
 		std::vector<VkShaderModule>		mShaderModules;
-
-		// Stores all available memory (type) properties for the physical device
-		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
 
 		// Group everything with the depth stencil together in a struct (as in Vulkan samples)
 		DepthStencil					mDepthStencil;
