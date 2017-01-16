@@ -12,6 +12,7 @@
 #include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
 #include "CommandPool.h"
+#include "Semaphore.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -41,10 +42,9 @@ namespace VulkanLib
 	{
 		mSwapChain.cleanup();
 
-		// Destroy semaphores
-		vkDestroySemaphore(GetDevice(), mPresentComplete, nullptr);
-		vkDestroySemaphore(GetDevice(), mRenderComplete, nullptr);
-
+		// Destroy Vulkan handles
+		delete mPresentComplete;
+		delete mRenderComplete;
 		delete mCommandPool;
 		delete mQueue;
 
@@ -79,7 +79,7 @@ namespace VulkanLib
 		SetupSwapchain();				// Setup the swap chain with the helper class
 		CreateSemaphores();
 
-		mQueue = new Queue(GetDevice(), &mPresentComplete, &mRenderComplete);
+		mQueue = new Queue(GetDevice(), mPresentComplete, mRenderComplete);
 
 		SetupDepthStencil();			// Setup the depth stencil buffer
 		SetupRenderPass();				// Setup the render pass
@@ -138,11 +138,11 @@ namespace VulkanLib
 
 		// Create a semaphore used to synchronize image presentation
 		// Ensures that the image is displayed before we start submitting new commands to the queue
-		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetDevice(), &createInfo, nullptr, &mPresentComplete));
+		mPresentComplete = new Semaphore(mDevice);
 
 		// Create a semaphore used to synchronize command submission
 		// Ensures that the image is not presented until all commands have been submitted and executed
-		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetDevice(), &createInfo, nullptr, &mRenderComplete));
+		mRenderComplete = new Semaphore(mDevice);
 	}
 
 	void VulkanBase::SetupDepthStencil()
@@ -306,12 +306,12 @@ namespace VulkanLib
 	void VulkanBase::PrepareFrame()
 	{
 		// Acquire the next image from the swap chaing
-		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(mPresentComplete, &mCurrentBuffer));
+		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(mPresentComplete->GetVkHandle(), &mCurrentBuffer));
 	}
 
 	void VulkanBase::SubmitFrame()
 	{
-		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mCurrentBuffer, mRenderComplete));
+		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mCurrentBuffer, mRenderComplete->GetVkHandle()));
 		mQueue->WaitIdle();
 	}
 

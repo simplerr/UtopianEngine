@@ -36,6 +36,7 @@ namespace VulkanLib
 {
 	class Device;
 	class CommandPool;
+	class Semaphore;
 
 	struct DepthStencil {
 		VkImage image;
@@ -90,21 +91,12 @@ namespace VulkanLib
 
 	protected:
 		VkInstance						mInstance = VK_NULL_HANDLE;
-		Queue*							mQueue;
-
-		Device*							mDevice;
-
-		// Command buffer
-		CommandPool*					mCommandPool;
 
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
 
 		// Global render pass for frame buffer writes
 		VkRenderPass					mRenderPass;
-
-		VkSemaphore						mPresentComplete;
-		VkSemaphore						mRenderComplete;
 
 		// List of available frame buffers (same as number of swap chain images)
 		std::vector<VkFramebuffer>		mFrameBuffers;
@@ -124,7 +116,12 @@ namespace VulkanLib
 		// Group everything with the depth stencil together in a struct (as in Vulkan samples)
 		DepthStencil					mDepthStencil;
 
+		Queue*							mQueue;
+		Device*							mDevice;
+		CommandPool*					mCommandPool;
 		Window*							mWindow;
+		Semaphore*						mPresentComplete;
+		Semaphore*						mRenderComplete;
 	};
 }	// VulkanLib namespace
 #pragma once

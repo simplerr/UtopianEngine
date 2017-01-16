@@ -2,6 +2,7 @@
 
 * Create RenderPass class
 
+* Remove use of mHandle outside the Handle classes
 * Remove VulkanBase::CreateBuffer
 * Remove VulkanBase::CreateCommandBuffer
 * Use proper way to setup the rendering queue, instead of hardcoding it to 0

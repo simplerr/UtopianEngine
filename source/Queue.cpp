@@ -2,10 +2,11 @@
 #include "VulkanDebug.h"
 #include "Fence.h"
 #include "CommandBuffer.h"
+#include "Semaphore.h"
 
 namespace VulkanLib
 {
-	Queue::Queue(VkDevice device, VkSemaphore* waitSemaphore, VkSemaphore* signalSemaphore)
+	Queue::Queue(VkDevice device, Semaphore* waitSemaphore, Semaphore* signalSemaphore)
 		: Handle(device, nullptr)
 	{
 		mSubmitInfo = {};
@@ -15,8 +16,8 @@ namespace VulkanLib
 		mSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		mSubmitInfo.waitSemaphoreCount = 1;
 		mSubmitInfo.signalSemaphoreCount = 1;
-		mSubmitInfo.pWaitSemaphores = waitSemaphore;							// Waits for swapChain.acquireNextImage to complete
-		mSubmitInfo.pSignalSemaphores = signalSemaphore;						// swapChain.queuePresent will wait for this submit to complete
+		mSubmitInfo.pWaitSemaphores = &waitSemaphore->mHandle;							// Waits for swapChain.acquireNextImage to complete
+		mSubmitInfo.pSignalSemaphores = &signalSemaphore->mHandle;						// swapChain.queuePresent will wait for this submit to complete
 		mSubmitInfo.pWaitDstStageMask = &mStageFlags;
 
 		// Get the queue from the device
