@@ -98,11 +98,8 @@ namespace VulkanLib
 		//
 
 		PushConstantBlock				mPushConstants;						// Gets updated with new push constants for each object
-
 		bool							mPrepared = false;
-
 		Camera*							mCamera;
-
 		std::vector<VulkanModel>		mModels;
 
 		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
@@ -118,9 +115,8 @@ namespace VulkanLib
 		VulkanTexture					mTestTexture;
 		Pipeline*						mPipeline;
 		PipelineLayout*					mPipelineLayout;
-
 		CommandBuffer*					mPrimaryCommandBuffer;
-		CommandBuffer*					mSecondaryCommandBuffer; // This gets regenerated each frame so there is no need for command buffer per frame buffer
+		CommandBuffer*					mSecondaryCommandBuffer; 
 		Fence*							mRenderFence;
 	public:
 	};

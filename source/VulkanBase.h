@@ -37,12 +37,7 @@ namespace VulkanLib
 	class Device;
 	class CommandPool;
 	class Semaphore;
-
-	struct DepthStencil {
-		VkImage image;
-		VkDeviceMemory memory;
-		VkImageView view;
-	};
+	class Image;
 
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
@@ -113,15 +108,13 @@ namespace VulkanLib
 		// List of shader modules created and that needs cleanup
 		std::vector<VkShaderModule>		mShaderModules;
 
-		// Group everything with the depth stencil together in a struct (as in Vulkan samples)
-		DepthStencil					mDepthStencil;
-
 		Queue*							mQueue;
 		Device*							mDevice;
 		CommandPool*					mCommandPool;
 		Window*							mWindow;
 		Semaphore*						mPresentComplete;
 		Semaphore*						mRenderComplete;
+		Image*							mDepthStencil;
 	};
 }	// VulkanLib namespace
 #pragma once

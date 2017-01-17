@@ -3,6 +3,7 @@
 * Create RenderPass class
 
 * Remove use of mHandle outside the Handle classes
+* ~~Create a class from DepthStencil~~
 * Remove VulkanBase::CreateBuffer
 * Remove VulkanBase::CreateCommandBuffer
 * Use proper way to setup the rendering queue, instead of hardcoding it to 0

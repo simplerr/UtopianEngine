@@ -13,6 +13,7 @@
 #include "Window.h"
 #include "CommandPool.h"
 #include "Semaphore.h"
+#include "Image.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -47,11 +48,7 @@ namespace VulkanLib
 		delete mRenderComplete;
 		delete mCommandPool;
 		delete mQueue;
-
-		// Cleanup depth stencil data
-		vkDestroyImageView(GetDevice(), mDepthStencil.view, nullptr);
-		vkDestroyImage(GetDevice(), mDepthStencil.image, nullptr);
-		vkFreeMemory(GetDevice(), mDepthStencil.memory, nullptr);
+		delete mDepthStencil;
 
 		vkDestroyRenderPass(GetDevice(), mRenderPass, nullptr);
 
@@ -147,47 +144,12 @@ namespace VulkanLib
 
 	void VulkanBase::SetupDepthStencil()
 	{
-		VkImageCreateInfo imageCreateInfo = {};
-		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageCreateInfo.format = mDepthFormat;
-		imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageCreateInfo.extent = { (uint32_t)GetWindowWidth(), (uint32_t)GetWindowHeight(), 1 };
-		imageCreateInfo.mipLevels = 1;
-		imageCreateInfo.arrayLayers = 1;
-		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageCreateInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-
-		VkMemoryAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		// The rest can have their default 0 value
-
-		VkImageViewCreateInfo viewCreateInfo = {};
-		viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		viewCreateInfo.format = mDepthFormat;
-		viewCreateInfo.subresourceRange = {};
-		viewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-		viewCreateInfo.subresourceRange.baseMipLevel = 0;
-		viewCreateInfo.subresourceRange.levelCount = 1;
-		viewCreateInfo.subresourceRange.baseArrayLayer = 0;
-		viewCreateInfo.subresourceRange.layerCount = 1;
-
-		VulkanDebug::ErrorCheck(vkCreateImage(GetDevice(), &imageCreateInfo, nullptr, &mDepthStencil.image));
-
-		// Get memory requirements
-		VkMemoryRequirements memRequirments;
-		vkGetImageMemoryRequirements(GetDevice(), mDepthStencil.image, &memRequirments);
-		allocateInfo.allocationSize = memRequirments.size;
-		allocateInfo.memoryTypeIndex = 0; // [NOTE] 0 seems to do fine, but proper way is to use getMemoryTypeIndex()
-		mDevice->GetMemoryType(memRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &allocateInfo.memoryTypeIndex);
-
-		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &allocateInfo, nullptr, &mDepthStencil.memory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(GetDevice(), mDepthStencil.image, mDepthStencil.memory, 0));
-
-		// Connect the view with the image
-		viewCreateInfo.image = mDepthStencil.image;	
-		VulkanDebug::ErrorCheck(vkCreateImageView(GetDevice(), &viewCreateInfo, nullptr, &mDepthStencil.view));
+		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
+			mDepthFormat,
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
 	}
 
 	void VulkanBase::SetupRenderPass()
@@ -276,7 +238,7 @@ namespace VulkanLib
 		// The code here depends on the depth stencil buffer, the render pass and the swap chain
 
 		VkImageView attachments[2];
-		attachments[1] = mDepthStencil.view;
+		attachments[1] = mDepthStencil->GetView();
 
 		VkFramebufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
