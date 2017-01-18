@@ -14,6 +14,7 @@
 #include "CommandPool.h"
 #include "Semaphore.h"
 #include "Image.h"
+#include "RenderPass.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -49,8 +50,7 @@ namespace VulkanLib
 		delete mCommandPool;
 		delete mQueue;
 		delete mDepthStencil;
-
-		vkDestroyRenderPass(GetDevice(), mRenderPass, nullptr);
+		delete mRenderPass;
 
 		for (uint32_t i = 0; i < mFrameBuffers.size(); i++)
 		{
@@ -72,14 +72,24 @@ namespace VulkanLib
 	void VulkanBase::Prepare()
 	{
 		CompileShaders();				// Compile shaders using batch files
-		CreateCommandPool();			// Create a command pool to allocate command buffers from
 		SetupSwapchain();				// Setup the swap chain with the helper class
-		CreateSemaphores();
+
+		mCommandPool = new CommandPool(GetDevice(), 0);
+
+		mPresentComplete = new Semaphore(mDevice);
+		mRenderComplete = new Semaphore(mDevice);
 
 		mQueue = new Queue(GetDevice(), mPresentComplete, mRenderComplete);
 
-		SetupDepthStencil();			// Setup the depth stencil buffer
-		SetupRenderPass();				// Setup the render pass
+		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
+			mDepthFormat,
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+
+		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat);
+
 		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
 	}
 
@@ -123,116 +133,6 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkCreateInstance(&createInfo, NULL, &mInstance));
 	}
 
-	void VulkanBase::CreateCommandPool()
-	{
-		mCommandPool = new CommandPool(GetDevice(), 0);
-	}
-
-	void VulkanBase::CreateSemaphores()
-	{
-		VkSemaphoreCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-		// Create a semaphore used to synchronize image presentation
-		// Ensures that the image is displayed before we start submitting new commands to the queue
-		mPresentComplete = new Semaphore(mDevice);
-
-		// Create a semaphore used to synchronize command submission
-		// Ensures that the image is not presented until all commands have been submitted and executed
-		mRenderComplete = new Semaphore(mDevice);
-	}
-
-	void VulkanBase::SetupDepthStencil()
-	{
-		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
-			mDepthFormat,
-			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
-	}
-
-	void VulkanBase::SetupRenderPass()
-	{
-		// Descriptors for the attachments used by this renderpass
-		std::array<VkAttachmentDescription, 2> attachments = {};
-
-		// Color attachment
-		attachments[0].format = mColorFormat;
-		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;									
-		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;							
-		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;						
-		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;			
-		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;	
-		attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;		
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-																	
-		// Depth attachment											
-		attachments[1].format = mDepthFormat;
-		attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;						
-		attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;				
-		attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;		
-		attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;		
-		attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;			
-		attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;	
-
-		// Setup attachment references																			
-		VkAttachmentReference colorReference = {};
-		colorReference.attachment = 0;											
-		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
-
-		VkAttachmentReference depthReference = {};
-		depthReference.attachment = 1;									
-		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;		
-
-		// Setup a single subpass reference																			
-		VkSubpassDescription subpassDescription = {};
-		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.colorAttachmentCount = 1;							
-		subpassDescription.pColorAttachments = &colorReference;				
-		subpassDescription.pDepthStencilAttachment = &depthReference;	
-		subpassDescription.inputAttachmentCount = 0;				
-		subpassDescription.pInputAttachments = nullptr;			
-		subpassDescription.preserveAttachmentCount = 0;		
-		subpassDescription.pPreserveAttachments = nullptr;								
-		subpassDescription.pResolveAttachments = nullptr;							
-
-		std::array<VkSubpassDependency, 2> dependencies;
-
-		// First dependency at the start of the renderpass
-		// Does the transition from final to initial layout 
-		dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;						
-		dependencies[0].dstSubpass = 0;										
-		dependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-		// Second dependency at the end the renderpass
-		// Does the transition from the initial to the final layout
-		dependencies[1].srcSubpass = 0;									
-		dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;			
-		dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependencies[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		dependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-		// Create the actual renderpass
-		VkRenderPassCreateInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());	
-		renderPassInfo.pAttachments = attachments.data();						
-		renderPassInfo.subpassCount = 1;									
-		renderPassInfo.pSubpasses = &subpassDescription;				
-		renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());	
-		renderPassInfo.pDependencies = dependencies.data();							
-
-		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetDevice(), &renderPassInfo, nullptr, &mRenderPass));
-	}
-
 	void VulkanBase::SetupFrameBuffer()
 	{
 		// The code here depends on the depth stencil buffer, the render pass and the swap chain
@@ -242,7 +142,7 @@ namespace VulkanLib
 
 		VkFramebufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.renderPass = mRenderPass;
+		createInfo.renderPass = mRenderPass->GetVkHandle();
 		createInfo.attachmentCount = 2;
 		createInfo.pAttachments = attachments;
 		createInfo.width = GetWindowWidth();

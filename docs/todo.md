@@ -3,6 +3,7 @@
 * Create RenderPass class
 
 * Remove use of mHandle outside the Handle classes
+* Create ColorImage and DepthStencilImage classes
 * ~~Create a class from DepthStencil~~
 * Remove VulkanBase::CreateBuffer
 * Remove VulkanBase::CreateCommandBuffer

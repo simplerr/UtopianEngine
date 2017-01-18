@@ -14,6 +14,7 @@
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "PipelineLayout.h"
+#include "RenderPass.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
@@ -47,9 +48,6 @@ namespace VulkanLib
 
 		delete mPrimaryCommandBuffer;
 		delete mSecondaryCommandBuffer;
-
-		//mPrimaryCommandBuffer.Cleanup(GetCommandPool());
-		//mSecondaryCommandBuffer.Cleanup(GetCommandPool());
 
 		delete mTextureLoader;
 	}
@@ -181,7 +179,7 @@ namespace VulkanLib
 		shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
 		shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 			
-		mPipeline = new Pipeline(GetDevice(), mPipelineLayout->GetVkHandle(), mRenderPass, &mVertexDescription, shaderStages);
+		mPipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -207,7 +205,7 @@ namespace VulkanLib
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBeginInfo.renderPass = mRenderPass;
+		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
 		renderPassBeginInfo.renderArea.extent.width = GetWindowWidth();
 		renderPassBeginInfo.renderArea.extent.height = GetWindowHeight();
 		renderPassBeginInfo.clearValueCount = 2;
@@ -223,7 +221,7 @@ namespace VulkanLib
 		//
 		VkCommandBufferInheritanceInfo inheritanceInfo = {};
 		inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-		inheritanceInfo.renderPass = mRenderPass;
+		inheritanceInfo.renderPass = mRenderPass->GetVkHandle();
 		inheritanceInfo.framebuffer = frameBuffer;
 
 		VkCommandBufferBeginInfo commandBufferBeginInfo = {};

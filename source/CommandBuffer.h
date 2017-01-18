@@ -6,6 +6,7 @@ namespace VulkanLib
 {
 	class Device;
 	class CommandPool;
+	class RenderPass;
 
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{
@@ -15,7 +16,7 @@ namespace VulkanLib
 
 		void Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
 		void Begin();
-		void Begin(VkRenderPass renderPass, VkFramebuffer frameBuffer);
+		void Begin(RenderPass* renderPass, VkFramebuffer frameBuffer);
 		void End();
 		void Flush(VkQueue queue, CommandPool* commandPool, bool free = false);
 		void Cleanup(CommandPool* commandPool);

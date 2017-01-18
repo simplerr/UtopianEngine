@@ -38,6 +38,7 @@ namespace VulkanLib
 	class CommandPool;
 	class Semaphore;
 	class Image;
+	class RenderPass;
 
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
@@ -53,11 +54,6 @@ namespace VulkanLib
 		virtual void Update() = 0;
 		virtual void Render() = 0;
 
-		void CreateCommandPool();
-		void CreateSemaphores();
-
-		void SetupDepthStencil();
-		void SetupRenderPass();
 		void SetupFrameBuffer();
 
 		void InitSwapchain(Window* window);
@@ -90,20 +86,11 @@ namespace VulkanLib
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
 
-		// Global render pass for frame buffer writes
-		VkRenderPass					mRenderPass;
-
 		// List of available frame buffers (same as number of swap chain images)
 		std::vector<VkFramebuffer>		mFrameBuffers;
 
 		// Active frame buffer index
 		uint32_t						mCurrentBuffer = 0;
-
-		// Hardcoded for now, should be selected during init with proper tests
-		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
-
-		// Color buffer format
-		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
 
 		// List of shader modules created and that needs cleanup
 		std::vector<VkShaderModule>		mShaderModules;
@@ -112,9 +99,13 @@ namespace VulkanLib
 		Device*							mDevice;
 		CommandPool*					mCommandPool;
 		Window*							mWindow;
+		RenderPass*						mRenderPass;
 		Semaphore*						mPresentComplete;
 		Semaphore*						mRenderComplete;
 		Image*							mDepthStencil;
+
+		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
+		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
 	};
 }	// VulkanLib namespace
 #pragma once

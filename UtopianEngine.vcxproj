@@ -90,6 +90,7 @@
     <ClCompile Include="source\Pipeline.cpp" />
     <ClCompile Include="source\PipelineLayout.cpp" />
     <ClCompile Include="source\Queue.cpp" />
+    <ClCompile Include="source\RenderPass.cpp" />
     <ClCompile Include="source\Semaphore.cpp" />
     <ClCompile Include="source\TextureLoader.cpp" />
     <ClCompile Include="source\VertexUniformBuffer.cpp" />
@@ -111,6 +112,7 @@
     <ClInclude Include="source\Pipeline.h" />
     <ClInclude Include="source\PipelineLayout.h" />
     <ClInclude Include="source\Queue.h" />
+    <ClInclude Include="source\RenderPass.h" />
     <ClInclude Include="source\Semaphore.h" />
     <ClInclude Include="source\StaticModel.h" />
     <ClCompile Include="source\Timer.cpp" />

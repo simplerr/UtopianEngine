@@ -1,16 +1,19 @@
 #include "Pipeline.h"
+#include "Device.h"
 #include "VulkanDebug.h"
 #include "VertexDescription.h"
+#include "RenderPass.h"
+#include "PipelineLayout.h"
 
 namespace VulkanLib
 {
-	Pipeline::Pipeline(VkDevice device, VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
-		: Handle(device, vkDestroyPipeline)
+	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
+		: Handle(device->GetVkDevice(), vkDestroyPipeline)
 	{
 		Create(pipelineLayout, renderPass, vertexDescription, shaderStages);
 	}
 
-	void Pipeline::Create(VkPipelineLayout pipelineLayout, VkRenderPass renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
+	void Pipeline::Create(PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
@@ -84,8 +87,8 @@ namespace VulkanLib
 		// The states will be static and can't be changed after the pipeline is created
 		VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineCreateInfo.layout = pipelineLayout;
-		pipelineCreateInfo.renderPass = renderPass;
+		pipelineCreateInfo.layout = pipelineLayout->GetVkHandle();
+		pipelineCreateInfo.renderPass = renderPass->GetVkHandle();
 		pipelineCreateInfo.pVertexInputState = &vertexDescription->GetInputState();		// From base - &vertices.inputState;
 		pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
 		pipelineCreateInfo.pRasterizationState = &rasterizationState;

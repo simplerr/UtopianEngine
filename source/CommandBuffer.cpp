@@ -1,6 +1,7 @@
 #include "CommandBuffer.h"
 #include "VulkanDebug.h"
 #include "CommandPool.h"
+#include "RenderPass.h"
 
 namespace VulkanLib
 {
@@ -58,11 +59,11 @@ namespace VulkanLib
 	}
 
 	// Used when beginning secondary command buffers
-	void CommandBuffer::Begin(VkRenderPass renderPass, VkFramebuffer frameBuffer)
+	void CommandBuffer::Begin(RenderPass* renderPass, VkFramebuffer frameBuffer)
 	{
 		VkCommandBufferInheritanceInfo inheritanceInfo = {};
 		inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-		inheritanceInfo.renderPass = renderPass;
+		inheritanceInfo.renderPass = renderPass->GetVkHandle();
 		inheritanceInfo.framebuffer = frameBuffer;
 
 		VkCommandBufferBeginInfo beginInfo = {};
