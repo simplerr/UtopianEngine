@@ -3,13 +3,15 @@
 
 namespace VulkanLib
 {
+	class Instance;
+
 	class Device
 	{
 	public:
-		Device(VkInstance instance, bool enableValidation = false);
+		Device(Instance* instance, bool enableValidation = false);
 		~Device();
 		
-		void Create(VkInstance instance, bool enableValidation);
+		void Create(Instance* instance, bool enableValidation);
 
 		// [TODO] Add creation of the logical device
 		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);

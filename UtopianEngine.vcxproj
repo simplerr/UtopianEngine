@@ -87,6 +87,7 @@
     <ClCompile Include="source\Fence.cpp" />
     <ClCompile Include="source\Handle.cpp" />
     <ClCompile Include="source\Image.cpp" />
+    <ClCompile Include="source\Instance.cpp" />
     <ClCompile Include="source\Pipeline.cpp" />
     <ClCompile Include="source\PipelineLayout.cpp" />
     <ClCompile Include="source\Queue.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="source\FragmentUniformBuffer.h" />
     <ClInclude Include="source\Handle.h" />
     <ClInclude Include="source\Image.h" />
+    <ClInclude Include="source\Instance.h" />
     <ClInclude Include="source\Pipeline.h" />
     <ClInclude Include="source\PipelineLayout.h" />
     <ClInclude Include="source\Queue.h" />

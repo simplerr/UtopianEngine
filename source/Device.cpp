@@ -1,11 +1,12 @@
 #include <stdexcept>
 #include <array>
 #include "Device.h"
+#include "Instance.h"
 #include "VulkanDebug.h"
 
 namespace VulkanLib
 {
-	Device::Device(VkInstance instance, bool enableValidation)
+	Device::Device(Instance* instance, bool enableValidation)
 	{
 		Create(instance, enableValidation);
 
@@ -20,11 +21,11 @@ namespace VulkanLib
 		vkDestroyDevice(mDevice, nullptr);
 	}
 
-	void Device::Create(VkInstance instance, bool enableValidation)
+	void Device::Create(Instance* instance, bool enableValidation)
 	{
 		// Query for the number of GPUs
 		uint32_t gpuCount = 0;
-		VkResult result = vkEnumeratePhysicalDevices(instance, &gpuCount, NULL);
+		VkResult result = vkEnumeratePhysicalDevices(instance->GetVkHandle(), &gpuCount, NULL);
 
 		if (result != VK_SUCCESS)
 			VulkanDebug::ConsolePrint("vkEnumeratePhysicalDevices failed");
@@ -34,7 +35,7 @@ namespace VulkanLib
 
 		// Enumerate devices
 		std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
-		result = vkEnumeratePhysicalDevices(instance, &gpuCount, physicalDevices.data());
+		result = vkEnumeratePhysicalDevices(instance->GetVkHandle(), &gpuCount, physicalDevices.data());
 
 		// Assume that there only is 1 GPU
 		mPhysicalDevice = physicalDevices[0];

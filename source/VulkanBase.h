@@ -39,6 +39,7 @@ namespace VulkanLib
 	class Semaphore;
 	class Image;
 	class RenderPass;
+	class Instance;
 
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
@@ -46,8 +47,6 @@ namespace VulkanLib
 	public:
 		VulkanBase(bool enableValidation);
 		virtual ~VulkanBase();
-
-		void CreateInstance(const char* appName, bool enableValidation);
 
 		virtual void Prepare();
 
@@ -81,7 +80,6 @@ namespace VulkanLib
 #endif
 
 	protected:
-		VkInstance						mInstance = VK_NULL_HANDLE;
 
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
@@ -95,14 +93,15 @@ namespace VulkanLib
 		// List of shader modules created and that needs cleanup
 		std::vector<VkShaderModule>		mShaderModules;
 
-		Queue*							mQueue;
-		Device*							mDevice;
-		CommandPool*					mCommandPool;
-		Window*							mWindow;
-		RenderPass*						mRenderPass;
-		Semaphore*						mPresentComplete;
-		Semaphore*						mRenderComplete;
-		Image*							mDepthStencil;
+		Instance*						mInstance = nullptr;
+		Device*							mDevice = nullptr;
+		Queue*							mQueue = nullptr;
+		CommandPool*					mCommandPool = nullptr;
+		Window*							mWindow = nullptr;
+		RenderPass*						mRenderPass = nullptr;
+		Semaphore*						mPresentComplete = nullptr;
+		Semaphore*						mRenderComplete = nullptr;
+		Image*							mDepthStencil = nullptr;
 
 		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
