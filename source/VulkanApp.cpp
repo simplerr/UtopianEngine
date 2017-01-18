@@ -15,6 +15,7 @@
 #include "CommandPool.h"
 #include "PipelineLayout.h"
 #include "RenderPass.h"
+#include "FrameBuffers.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
@@ -299,7 +300,7 @@ namespace VulkanLib
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
-		RecordRenderingCommandBuffer(mFrameBuffers[mCurrentBuffer]);
+		RecordRenderingCommandBuffer(mFrameBuffers->GetFrameBuffer(mCurrentBuffer));
 
 		mQueue->Submit(mPrimaryCommandBuffer, mRenderFence);
 

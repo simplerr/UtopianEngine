@@ -40,6 +40,7 @@ namespace VulkanLib
 	class Image;
 	class RenderPass;
 	class Instance;
+	class FrameBuffers;
 
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
@@ -52,8 +53,6 @@ namespace VulkanLib
 
 		virtual void Update() = 0;
 		virtual void Render() = 0;
-
-		void SetupFrameBuffer();
 
 		void InitSwapchain(Window* window);
 		void SetupSwapchain();
@@ -84,9 +83,6 @@ namespace VulkanLib
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
 
-		// List of available frame buffers (same as number of swap chain images)
-		std::vector<VkFramebuffer>		mFrameBuffers;
-
 		// Active frame buffer index
 		uint32_t						mCurrentBuffer = 0;
 
@@ -95,6 +91,7 @@ namespace VulkanLib
 
 		Instance*						mInstance = nullptr;
 		Device*							mDevice = nullptr;
+		FrameBuffers*					mFrameBuffers = nullptr;
 		Queue*							mQueue = nullptr;
 		CommandPool*					mCommandPool = nullptr;
 		Window*							mWindow = nullptr;

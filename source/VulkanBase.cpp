@@ -16,6 +16,7 @@
 #include "Image.h"
 #include "RenderPass.h"
 #include "Instance.h"
+#include "FrameBuffers.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -52,11 +53,7 @@ namespace VulkanLib
 		delete mQueue;
 		delete mDepthStencil;
 		delete mRenderPass;
-
-		for (uint32_t i = 0; i < mFrameBuffers.size(); i++)
-		{
-			vkDestroyFramebuffer(GetDevice(), mFrameBuffers[i], nullptr);
-		}
+		delete mFrameBuffers;
 
 		for (auto& shaderModule : mShaderModules)
 		{
@@ -76,11 +73,9 @@ namespace VulkanLib
 		SetupSwapchain();				// Setup the swap chain with the helper class
 
 		mCommandPool = new CommandPool(GetDevice(), 0);
-
 		mPresentComplete = new Semaphore(mDevice);
 		mRenderComplete = new Semaphore(mDevice);
-
-		mQueue = new Queue(GetDevice(), mPresentComplete, mRenderComplete);
+		mQueue = new Queue(mDevice, mPresentComplete, mRenderComplete);
 
 		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
 			mDepthFormat,
@@ -88,35 +83,9 @@ namespace VulkanLib
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
-
+		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat);
-
-		SetupFrameBuffer();				// Setup the frame buffer, it uses the depth stencil buffer, render pass and swap chain
-	}
-
-	void VulkanBase::SetupFrameBuffer()
-	{
-		// The code here depends on the depth stencil buffer, the render pass and the swap chain
-
-		VkImageView attachments[2];
-		attachments[1] = mDepthStencil->GetView();
-
-		VkFramebufferCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.renderPass = mRenderPass->GetVkHandle();
-		createInfo.attachmentCount = 2;
-		createInfo.pAttachments = attachments;
-		createInfo.width = GetWindowWidth();
-		createInfo.height = GetWindowHeight();
-		createInfo.layers = 1;
-
-		// Create a frame buffer for each swap chain image
-		mFrameBuffers.resize(mSwapChain.imageCount);
-		for (uint32_t i = 0; i < mFrameBuffers.size(); i++)
-		{
-			attachments[0] = mSwapChain.buffers[i].view;
-			VulkanDebug::ErrorCheck(vkCreateFramebuffer(GetDevice(), &createInfo, nullptr, &mFrameBuffers[i]));
-		}
+		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());
 	}
 
 	void VulkanBase::SetupSwapchain()
