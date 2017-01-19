@@ -17,6 +17,7 @@
 #include "RenderPass.h"
 #include "Instance.h"
 #include "FrameBuffers.h"
+#include "ShaderManager.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -54,12 +55,7 @@ namespace VulkanLib
 		delete mDepthStencil;
 		delete mRenderPass;
 		delete mFrameBuffers;
-
-		for (auto& shaderModule : mShaderModules)
-		{
-			vkDestroyShaderModule(GetDevice(), shaderModule, nullptr);
-		}
-
+		delete mShaderManager;
 		delete mDevice;
 
 		VulkanDebug::CleanupDebugging(mInstance->GetVkHandle());
@@ -86,6 +82,7 @@ namespace VulkanLib
 		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat);
 		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());
+		mShaderManager = new ShaderManager(mDevice);
 	}
 
 	void VulkanBase::SetupSwapchain()
@@ -98,12 +95,12 @@ namespace VulkanLib
 	void VulkanBase::PrepareFrame()
 	{
 		// Acquire the next image from the swap chaing
-		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(mPresentComplete->GetVkHandle(), &mCurrentBuffer));
+		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(mPresentComplete->GetVkHandle(), &mFrameBuffers->mCurrentFrameBuffer));
 	}
 
 	void VulkanBase::SubmitFrame()
 	{
-		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mCurrentBuffer, mRenderComplete->GetVkHandle()));
+		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mFrameBuffers->mCurrentFrameBuffer, mRenderComplete->GetVkHandle()));
 		mQueue->WaitIdle();
 	}
 
@@ -143,22 +140,6 @@ namespace VulkanLib
 #elif defined(__linux__)
 		mSwapChain.initSurface(mWindow->GetConnection(), mWindow->GetWindow());
 #endif
-	}
-
-	VkPipelineShaderStageCreateInfo VulkanBase::LoadShader(std::string fileName, VkShaderStageFlagBits stage)
-	{
-		VkPipelineShaderStageCreateInfo shaderStage = {};
-		shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		shaderStage.stage = stage;
-#if defined(__ANDROID__)
-		shaderStage.module = vkTools::loadShader(androidApp->activity->assetManager, fileName.c_str(), GetDevice(), stage);
-#else
-		shaderStage.module = vkTools::loadShader(fileName.c_str(), GetDevice(), stage);		// Uses helper functions (NOTE/TODO)
-#endif
-		shaderStage.pName = "main";
-		assert(shaderStage.module != NULL);
-		mShaderModules.push_back(shaderStage.module);		// Add them to the vector so they can be cleaned up
-		return shaderStage;
 	}
 
 	VkDevice VulkanBase::GetDevice()

@@ -4,16 +4,17 @@
 #include "VertexDescription.h"
 #include "RenderPass.h"
 #include "PipelineLayout.h"
+#include "ShaderManager.h"
 
 namespace VulkanLib
 {
-	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
+	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
 		: Handle(device->GetVkDevice(), vkDestroyPipeline)
 	{
-		Create(pipelineLayout, renderPass, vertexDescription, shaderStages);
+		Create(pipelineLayout, renderPass, vertexDescription, shader);
 	}
 
-	void Pipeline::Create(PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages)
+	void Pipeline::Create(PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
@@ -97,8 +98,8 @@ namespace VulkanLib
 		pipelineCreateInfo.pDynamicState = &dynamicState;
 		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
 		pipelineCreateInfo.pMultisampleState = &multisampleState;
-		pipelineCreateInfo.stageCount = shaderStages.size();
-		pipelineCreateInfo.pStages = shaderStages.data();
+		pipelineCreateInfo.stageCount = shader->shaderStages.size();
+		pipelineCreateInfo.pStages = shader->shaderStages.data();
 
 		// Create the colored pipeline	
 		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;

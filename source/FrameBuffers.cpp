@@ -44,4 +44,8 @@ namespace VulkanLib
 		// [TODO] Add bound checks
 		return mFrameBuffers.at(index);
 	}
+	VkFramebuffer FrameBuffers::GetCurrent()
+	{
+		return mFrameBuffers[mCurrentFrameBuffer];
+	}
 }

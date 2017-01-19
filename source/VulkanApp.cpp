@@ -16,6 +16,7 @@
 #include "PipelineLayout.h"
 #include "RenderPass.h"
 #include "FrameBuffers.h"
+#include "ShaderManager.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
@@ -176,11 +177,10 @@ namespace VulkanLib
 	void VulkanApp::PreparePipelines()
 	{
 		// Load shader
-		std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
-		shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-		shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+		// [TODO] Move this into Pipeline?
+		Shader* shader = mShaderManager->CreateShader("data/shaders/phong/phong.vert.spv", "data/shaders/phong/phong.frag.spv");
 			
-		mPipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, shaderStages);
+		mPipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, shader);
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -300,7 +300,7 @@ namespace VulkanLib
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
-		RecordRenderingCommandBuffer(mFrameBuffers->GetFrameBuffer(mCurrentBuffer));
+		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
 		mQueue->Submit(mPrimaryCommandBuffer, mRenderFence);
 

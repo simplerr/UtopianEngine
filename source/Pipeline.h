@@ -9,13 +9,14 @@ namespace VulkanLib
 	class RenderPass;
 	class PipelineLayout;
 	class Device;
+	class Shader;
 
 	class Pipeline : public Handle<VkPipeline>
 	{
 	public:
-		Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages);
+		Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader);
 
-		void Create(PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, const std::array<VkPipelineShaderStageCreateInfo, 2>& shaderStages);
+		void Create(PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader);
 	private:
 	};
 }

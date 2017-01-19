@@ -94,6 +94,7 @@
     <ClCompile Include="source\Queue.cpp" />
     <ClCompile Include="source\RenderPass.cpp" />
     <ClCompile Include="source\Semaphore.cpp" />
+    <ClCompile Include="source\ShaderManager.cpp" />
     <ClCompile Include="source\TextureLoader.cpp" />
     <ClCompile Include="source\VertexUniformBuffer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -118,6 +119,7 @@
     <ClInclude Include="source\Queue.h" />
     <ClInclude Include="source\RenderPass.h" />
     <ClInclude Include="source\Semaphore.h" />
+    <ClInclude Include="source\ShaderManager.h" />
     <ClInclude Include="source\StaticModel.h" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\VulkanApp.cpp" />

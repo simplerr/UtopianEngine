@@ -17,6 +17,9 @@ namespace VulkanLib
 		~FrameBuffers();
 
 		VkFramebuffer GetFrameBuffer(uint32_t index);
+		VkFramebuffer GetCurrent();
+
+		uint32_t mCurrentFrameBuffer = 0;
 	private:
 		std::vector<VkFramebuffer> mFrameBuffers;
 		Device* mDevice;

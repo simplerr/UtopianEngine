@@ -1,7 +1,7 @@
 ### TODO
 
 * Create RenderPass class
-
+* Move VulkanApp::CompileShaders() to ShaderManager
 * Remove use of mHandle outside the Handle classes
 * Create ColorImage and DepthStencilImage classes
 * ~~Create a class from DepthStencil~~

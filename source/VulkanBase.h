@@ -41,6 +41,7 @@ namespace VulkanLib
 	class RenderPass;
 	class Instance;
 	class FrameBuffers;
+	class ShaderManager;
 
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
@@ -56,8 +57,6 @@ namespace VulkanLib
 
 		void InitSwapchain(Window* window);
 		void SetupSwapchain();
-
-		VkPipelineShaderStageCreateInfo LoadShader(std::string fileName, VkShaderStageFlagBits stage);
 
 		// [TODO] Remove
 		VkBool32 CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory);
@@ -79,15 +78,8 @@ namespace VulkanLib
 #endif
 
 	protected:
-
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
-
-		// Active frame buffer index
-		uint32_t						mCurrentBuffer = 0;
-
-		// List of shader modules created and that needs cleanup
-		std::vector<VkShaderModule>		mShaderModules;
 
 		Instance*						mInstance = nullptr;
 		Device*							mDevice = nullptr;
@@ -99,6 +91,7 @@ namespace VulkanLib
 		Semaphore*						mPresentComplete = nullptr;
 		Semaphore*						mRenderComplete = nullptr;
 		Image*							mDepthStencil = nullptr;
+		ShaderManager*					mShaderManager = nullptr;
 
 		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
