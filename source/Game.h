@@ -3,6 +3,12 @@
 #include "Timer.h"
 #include "ModelLoader.h"
 
+namespace ECS
+{
+	class RenderSystem;
+	class EntityManager;
+}
+
 namespace VulkanLib
 {
 	class VulkanApp;
@@ -22,6 +28,7 @@ namespace VulkanLib
 		void InitScene();	
 		bool IsClosing();
 
+		// Move all of these to other locations
 		VulkanApp* mRenderer;
 		Window* mWindow;
 		Camera* mCamera;
@@ -29,5 +36,8 @@ namespace VulkanLib
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;
+
+		// All the ECS::System 
+		ECS::EntityManager* mEntityManager;
 	};
 }
