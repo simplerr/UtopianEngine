@@ -11,10 +11,23 @@ namespace VulkanLib
 	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
 		: Handle(device->GetVkDevice(), vkDestroyPipeline)
 	{
-		Create(pipelineLayout, renderPass, vertexDescription, shader);
+		mPipelineLayout = pipelineLayout;
+		mRenderPass = renderPass;
+		mVertexDescription = vertexDescription;
+		mShader = shader;
+
+		// Rasterization state default values
+		mRasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		mRasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+		mRasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mRasterizationState.depthClampEnable = VK_FALSE;
+		mRasterizationState.rasterizerDiscardEnable = VK_FALSE;
+		mRasterizationState.depthBiasEnable = VK_FALSE;
+		mRasterizationState.lineWidth = 1.0f;
 	}
 
-	void Pipeline::Create(PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
+	void Pipeline::Create()
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
@@ -24,17 +37,6 @@ namespace VulkanLib
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
 		inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-
-		// Rasterization state
-		VkPipelineRasterizationStateCreateInfo rasterizationState = {};
-		rasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-		rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
-		rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		rasterizationState.depthClampEnable = VK_FALSE;
-		rasterizationState.rasterizerDiscardEnable = VK_FALSE;
-		rasterizationState.depthBiasEnable = VK_FALSE;
-		rasterizationState.lineWidth = 1.0f;
 
 		// Color blend state
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
@@ -88,18 +90,18 @@ namespace VulkanLib
 		// The states will be static and can't be changed after the pipeline is created
 		VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineCreateInfo.layout = pipelineLayout->GetVkHandle();
-		pipelineCreateInfo.renderPass = renderPass->GetVkHandle();
-		pipelineCreateInfo.pVertexInputState = &vertexDescription->GetInputState();		// From base - &vertices.inputState;
+		pipelineCreateInfo.layout = mPipelineLayout->GetVkHandle();
+		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
+		pipelineCreateInfo.pVertexInputState = &mVertexDescription->GetInputState();		// From base - &vertices.inputState;
 		pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
-		pipelineCreateInfo.pRasterizationState = &rasterizationState;
+		pipelineCreateInfo.pRasterizationState = &mRasterizationState;
 		pipelineCreateInfo.pColorBlendState = &colorBlendState;
 		pipelineCreateInfo.pViewportState = &viewportState;
 		pipelineCreateInfo.pDynamicState = &dynamicState;
 		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
 		pipelineCreateInfo.pMultisampleState = &multisampleState;
-		pipelineCreateInfo.stageCount = shader->shaderStages.size();
-		pipelineCreateInfo.pStages = shader->shaderStages.data();
+		pipelineCreateInfo.stageCount = mShader->shaderStages.size();
+		pipelineCreateInfo.pStages = mShader->shaderStages.data();
 
 		// Create the colored pipeline	
 		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;

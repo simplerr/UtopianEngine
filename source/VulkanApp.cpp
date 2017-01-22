@@ -40,7 +40,11 @@ namespace VulkanLib
 		mDescriptorPool.Cleanup(GetDevice());
 		mDescriptorSet.Cleanup(GetDevice());
 
-		delete mPipeline;
+		for (auto const& pipeline : mPipelines)
+		{
+			delete pipeline.second;
+		}
+
 		delete mPipelineLayout;
 
 		delete mRenderFence;
@@ -76,7 +80,6 @@ namespace VulkanLib
 		SetupDescriptorPool();
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
-
 
 		mPrepared = true;
 	}
@@ -190,7 +193,18 @@ namespace VulkanLib
 		// [TODO] Move this into Pipeline?
 		Shader* shader = mShaderManager->CreateShader("data/shaders/phong/phong.vert.spv", "data/shaders/phong/phong.frag.spv");
 			
-		mPipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, shader);
+		// Solid pipeline
+		Pipeline*  pipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, shader);
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		pipeline->Create();
+		mPipelines[PipelineType::PIPELINE_BASIC] = pipeline;
+
+		// Wireframe pipeline
+		pipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, shader);
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		pipeline->Create();
+		mPipelines[PipelineType::PIPELINE_WIREFRAME] = pipeline;
+
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -260,7 +274,7 @@ namespace VulkanLib
 		vkCmdSetScissor(secondaryCommandBuffer, 0, 1, &scissor);
 
 		// The render system does the actual rendering
-		mRenderSystem->Render(mSecondaryCommandBuffer, mPipeline, mPipelineLayout, mDescriptorSet);
+		mRenderSystem->Render(mSecondaryCommandBuffer, mPipelines, mPipelineLayout, mDescriptorSet);
 
 		// End secondary command buffer
 		mSecondaryCommandBuffer->End();

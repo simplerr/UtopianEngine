@@ -1,5 +1,7 @@
 ### TODO
 
+* Create PickingSystem
+* Optimize TransformComponent::RebuildWorldMatrix()
 * Create RenderPass class
 * Move VulkanApp::CompileShaders() to ShaderManager
 * Remove use of mHandle outside the Handle classes

@@ -57,7 +57,7 @@ namespace VulkanLib
 
 		//mEntityManager->SendQuery()
 
-		int size = 5;
+		int size = 3;
 		int space = 300;
 		int i = 0;
 		for (int x = 0; x < size; x++)
@@ -66,18 +66,13 @@ namespace VulkanLib
 			{
 				for (int z = 0; z < size; z++)
 				{
-					ECS::ComponentList componentList;
-
 					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space, -100 - y * space, z * space));
 					transformComponent->SetRotation(glm::vec3(180, 0, 0));
 					transformComponent->SetScale(glm::vec3(3.0f));
 
-					if(x == 0 && y == 0 && z == 0)
-						transformComponent->SetScale(glm::vec3(9.0f));
-
 					// Physics
-					uint32_t maxSpeed = 5;
+					uint32_t maxSpeed = 2;
 					uint32_t maxRotation = 100;
 					float divider = 90.0f;
 					ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
@@ -85,7 +80,14 @@ namespace VulkanLib
 					physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
 					physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
 
-					componentList.push_back(new ECS::MeshComponent("data/models/teapot.obj", ECS::Pipeline::PIPELINE_BASIC));
+					// Mesh
+					ECS::MeshComponent* meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
+					if (rand() % 2 == 0)
+						meshComponent->SetPipeline(PipelineType::PIPELINE_WIREFRAME);
+
+					// Create component list
+					ECS::ComponentList componentList;
+					componentList.push_back(meshComponent);
 					componentList.push_back(transformComponent);
 					componentList.push_back(physicsComponent);
 					

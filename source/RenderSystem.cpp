@@ -35,12 +35,12 @@ namespace ECS
 		mMeshEntities[entityPair.meshComponent->GetPipeline()].push_back(entityPair);
 	}
 
-	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, VulkanLib::Pipeline* pipeline, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
+	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
 	{
 		for (auto const& entityVector : mMeshEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
+			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[entityVector.first]->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
 			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);

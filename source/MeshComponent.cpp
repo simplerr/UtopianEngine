@@ -2,14 +2,19 @@
 
 namespace ECS
 {
-	MeshComponent::MeshComponent(std::string filename, Pipeline pipeline)
+	MeshComponent::MeshComponent(std::string filename, VulkanLib::PipelineType pipeline)
 		: Component(MESH_COMPONENT)
 	{
 		mFilename = filename;
+		SetPipeline(pipeline);
+	}
+
+	void MeshComponent::SetPipeline(VulkanLib::PipelineType pipeline)
+	{
 		mPipeline = pipeline;
 	}
 
-	ECS::Pipeline MeshComponent::GetPipeline()
+	VulkanLib::PipelineType MeshComponent::GetPipeline()
 	{
 		return mPipeline;
 	}

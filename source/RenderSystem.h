@@ -39,7 +39,7 @@ namespace ECS
 
 		void AddEntity(Entity* entity);
 
-		void Render(VulkanLib::CommandBuffer* commandBuffer, VulkanLib::Pipeline* pipeline, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet);
+		void Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet);
 
 		virtual void Process();
 	private:

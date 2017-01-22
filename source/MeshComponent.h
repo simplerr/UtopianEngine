@@ -2,23 +2,25 @@
 #include <string>
 #include "Component.h"
 
+namespace VulkanLib
+{
+	enum PipelineType;
+}
+
 namespace ECS
 {
-	enum Pipeline
-	{
-		PIPELINE_BASIC
-	};
 
 	// Static mesh
 	class MeshComponent : public Component
 	{
 	public:
-		MeshComponent(std::string filename, Pipeline pipeline);
+		MeshComponent(std::string filename, VulkanLib::PipelineType pipeline);
 
-		ECS::Pipeline GetPipeline();
+		void SetPipeline(VulkanLib::PipelineType pipeline);
+		VulkanLib::PipelineType GetPipeline();
 		std::string GetFilename();
 	private:
-		ECS::Pipeline mPipeline;
+		VulkanLib::PipelineType mPipeline;
 		std::string mFilename;
 
 		// Material

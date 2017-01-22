@@ -4,6 +4,7 @@
 #include "ModelLoader.h"
 #include "StaticModel.h"
 #include <glm/glm.hpp>
+#include <map>
 #include <glm/gtc/matrix_transform.hpp>
 #include "VertexDescription.h"
 #include "UniformBuffer.h"
@@ -34,6 +35,11 @@ namespace VulkanLib
 	class PipelineLayout;
 	class Fence;
 
+	enum PipelineType
+	{
+		PIPELINE_BASIC,
+		PIPELINE_WIREFRAME
+	};
 
 	struct Buffer {
 		VkBuffer buffer;
@@ -45,10 +51,6 @@ namespace VulkanLib
 		vec3 position;
 		vec3 scale;
 		vec3 color;
-	};
-
-	struct Pipelines {
-		VkPipeline phong;
 	};
 
 	struct PushConstantBlock {
@@ -121,11 +123,13 @@ namespace VulkanLib
 		
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
-		Pipeline*						mPipeline;
+		Pipeline*						mSolidPipeline;
 		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; 
 		Fence*							mRenderFence;
+
+		std::map<int, Pipeline*> mPipelines;
 
 		ECS::RenderSystem*				mRenderSystem;
 	public:
