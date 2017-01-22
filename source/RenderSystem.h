@@ -37,8 +37,7 @@ namespace ECS
 		RenderSystem(VulkanLib::VulkanApp* vulkanApp);
 		~RenderSystem();
 
-		void AddMeshComponent(MeshComponent* mesh);
-		void AddMeshEntity(Entity* entity);
+		void AddEntity(Entity* entity);
 
 		void Render(VulkanLib::CommandBuffer* commandBuffer, VulkanLib::Pipeline* pipeline, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet);
 
@@ -52,7 +51,5 @@ namespace ECS
 		// The RenderSystem should contain a list of all loaded meshes, with only one copy of each in memory
 		// What happens if a mesh changes pipeline?
 		std::map<int, std::vector<EntityPair> > mMeshEntities;
-
-		
 	};
 }

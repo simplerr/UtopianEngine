@@ -159,6 +159,12 @@
     <ClCompile Include="source\UniformBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\PhysicsSystem.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PhysicsComponent.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\vulkantools.h">
@@ -285,6 +291,12 @@
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
     <ClInclude Include="source\TransformComponent.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PhysicsSystem.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PhysicsComponent.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>

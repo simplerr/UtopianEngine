@@ -1,6 +1,7 @@
 #include "EntityManager.h"
 #include "Entity.h"
 #include "RenderSystem.h"
+#include "PhysicsSystem.h"
 #include "Component.h"
 #include "VulkanApp.h"
 
@@ -9,6 +10,7 @@ namespace ECS
 	EntityManager::EntityManager(VulkanLib::VulkanApp* vulkanApp)
 	{
 		// Create all ECS::System
+		mPhysicsSystem = new ECS::PhysicsSystem();
 		mRenderSystem = new ECS::RenderSystem(vulkanApp);
 		vulkanApp->SetRenderSystem(mRenderSystem);
 
@@ -25,6 +27,7 @@ namespace ECS
 
 		// Delete all ECS::System
 		delete mRenderSystem;
+		delete mPhysicsSystem;
 	}
 
 	// AddEntity() is responsible for informing the needed ECS::Systems
@@ -38,11 +41,11 @@ namespace ECS
 			if (components[i]->GetType() == MESH_COMPONENT)
 			{
 				// The RenderSystem will need to access the TransformComponent
-				mRenderSystem->AddMeshEntity(entity);
+				mRenderSystem->AddEntity(entity);
 			}
 			else if (components[i]->GetType() == PHYSICS_COMPONENT)
 			{
-				// Todo
+				mPhysicsSystem->AddEntity(entity);
 			}
 			else if (components[i]->GetType() == LIGHT_COMPONENT)
 			{
@@ -51,7 +54,6 @@ namespace ECS
 		}
 
 		mEntities.push_back(entity);
-
 		mNextEntityId++;
 
 		return entity;
@@ -73,5 +75,6 @@ namespace ECS
 	void EntityManager::Process()
 	{
 		mRenderSystem->Process();
+		mPhysicsSystem->Process();
 	}
 }

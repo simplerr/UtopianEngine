@@ -24,15 +24,7 @@ namespace ECS
 		delete mModelLoader;
 	}
 
-	void RenderSystem::AddMeshComponent(MeshComponent* mesh)
-	{
-		// Do we need to load a new model into memory?
-
-
-		//mMeshEntities[mesh->GetPipeline()].push_back(mesh);
-	}
-
-	void RenderSystem::AddMeshEntity(Entity* entity)
+	void RenderSystem::AddEntity(Entity* entity)
 	{
 		EntityPair entityPair;
 		entityPair.entity = entity;

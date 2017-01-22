@@ -6,16 +6,21 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <stdlib.h>
+#include <time.h>
 #include "ModelLoader.h"
 #include "EntityManager.h"
 #include "Entity.h"
 #include "MeshComponent.h"
 #include "TransformComponent.h"
+#include "PhysicsComponent.h"
 
 namespace VulkanLib
 {
 	Game::Game(Window* window)
 	{
+		srand(time(NULL));
+
 		mIsClosing = false;
 		mRenderer = new VulkanApp();
 
@@ -62,6 +67,8 @@ namespace VulkanLib
 				for (int z = 0; z < size; z++)
 				{
 					ECS::ComponentList componentList;
+
+					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space, -100 - y * space, z * space));
 					transformComponent->SetRotation(glm::vec3(180, 0, 0));
 					transformComponent->SetScale(glm::vec3(3.0f));
@@ -69,8 +76,18 @@ namespace VulkanLib
 					if(x == 0 && y == 0 && z == 0)
 						transformComponent->SetScale(glm::vec3(9.0f));
 
+					// Physics
+					uint32_t maxSpeed = 5;
+					uint32_t maxRotation = 100;
+					float divider = 90.0f;
+					ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
+					physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
+					physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
+					physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
+
 					componentList.push_back(new ECS::MeshComponent("data/models/teapot.obj", ECS::Pipeline::PIPELINE_BASIC));
 					componentList.push_back(transformComponent);
+					componentList.push_back(physicsComponent);
 					
 					mEntityManager->AddEntity(componentList);
 				}

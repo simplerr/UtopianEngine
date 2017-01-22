@@ -23,7 +23,7 @@
 #include "Queue.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
-#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
 
 namespace VulkanLib
 {
