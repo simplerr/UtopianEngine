@@ -19,7 +19,7 @@
 #include "RenderPass.h"
 #include "FrameBuffers.h"
 #include "ShaderManager.h"
-//#include "RenderSystem.h"
+#include "RenderSystem.h"
 #include "Queue.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
@@ -103,10 +103,10 @@ namespace VulkanLib
 		mModels.push_back(model);
 	}
 
-	//void VulkanApp::SetRenderSystem(ECS::RenderSystem* renderSystem)
-	//{
-	//	mRenderSystem = renderSystem;
-	//}
+	void VulkanApp::SetRenderSystem(ECS::RenderSystem* renderSystem)
+	{
+		mRenderSystem = renderSystem;
+	}
 	
 	void VulkanApp::PrepareUniformBuffers()
 	{
@@ -259,7 +259,7 @@ namespace VulkanLib
 		scissor.offset.y = 0;
 		vkCmdSetScissor(secondaryCommandBuffer, 0, 1, &scissor);
 
-		//mRenderSystem->Render(mSecondaryCommandBuffer, mPipeline, mPipelineLayout, mDescriptorSet);
+		mRenderSystem->Render(mSecondaryCommandBuffer, mPipeline, mPipelineLayout, mDescriptorSet);
 
 		//
 		// Testing push constant rendering with different matrices

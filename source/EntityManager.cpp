@@ -10,7 +10,7 @@ namespace ECS
 	{
 		// Create all ECS::System
 		mRenderSystem = new ECS::RenderSystem(vulkanApp);
-		//vulkanApp->SetRenderSystem(mRenderSystem);
+		vulkanApp->SetRenderSystem(mRenderSystem);
 	}
 
 	EntityManager::~EntityManager()

@@ -98,7 +98,7 @@ namespace VulkanLib
 
 		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
 
-//		void SetRenderSystem(ECS::RenderSystem* renderSystem);
+		void SetRenderSystem(ECS::RenderSystem* renderSystem);
 
 
 		// 

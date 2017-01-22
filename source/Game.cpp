@@ -55,6 +55,12 @@ namespace VulkanLib
 		
 		ECS::Entity* testEntity = mEntityManager->AddEntity(componentList);
 
+		ECS::ComponentList componentList2;
+		componentList2.push_back(new ECS::MeshComponent("data/models/box.obj", ECS::Pipeline::PIPELINE_BASIC));
+		componentList2.push_back(new ECS::TransformComponent(vec3(0, 100, 100)));
+		
+		testEntity = mEntityManager->AddEntity(componentList2);
+
 		//TransformComponent transform = mEntityManager->GetComponent<TransformComponent>(testEntity);
 
 		//mEntityManager->SendQuery()
