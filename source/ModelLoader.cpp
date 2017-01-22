@@ -26,15 +26,6 @@ namespace VulkanLib
 			vkDestroyBuffer(device, model.second->indices.buffer, nullptr);
 			vkFreeMemory(device, model.second->indices.memory, nullptr);
 
-			// Free the texture (NOTE: not sure if this is the right place to delete them, texture loader maybe?)
-			if (model.second->texture != nullptr)
-			{
-				vkDestroyImageView(device, model.second->texture->view, nullptr);		// NOTE: Ugly
-				vkDestroyImage(device, model.second->texture->image, nullptr);
-				vkDestroySampler(device, model.second->texture->sampler, nullptr);
-				vkFreeMemory(device, model.second->texture->deviceMemory, nullptr);
-			}
-
 			delete model.second;
 		}
 	}

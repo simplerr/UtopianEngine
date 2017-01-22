@@ -3,7 +3,6 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <vulkan\vulkan.h>
-#include "../base/vulkanTextureLoader.hpp"
 
 using namespace glm;
 
@@ -58,8 +57,6 @@ namespace VulkanLib
 
 		int GetNumIndices();
 		int GetNumVertics();
-
-		vkTools::VulkanTexture* texture;
 
 		std::vector<Mesh> mMeshes;
 	private:

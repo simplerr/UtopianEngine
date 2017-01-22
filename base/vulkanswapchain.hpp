@@ -20,11 +20,11 @@
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>
+#include <iostream>
 #else
 #endif
 
 #include <vulkan/vulkan.h>
-#include "vulkantools.h"
 
 #ifdef __ANDROID__
 #include "vulkanandroid.h"
@@ -199,13 +199,17 @@ public:
 		// Exit if either a graphics or a presenting queue hasn't been found
 		if (graphicsQueueNodeIndex == UINT32_MAX || presentQueueNodeIndex == UINT32_MAX) 
 		{
-			vkTools::exitFatal("Could not find a graphics and/or presenting queue!", "Fatal error");
+			MessageBox(NULL, "Could not find a graphics and/or presenting queue!", "Fatal error", MB_OK | MB_ICONERROR);
+			std::cerr << "Could not find a graphics and/or presenting queue!" << "\n";
+			exit(1);
 		}
 
 		// todo : Add support for separate graphics and presenting queue
 		if (graphicsQueueNodeIndex != presentQueueNodeIndex) 
 		{
-			vkTools::exitFatal("Separate graphics and presenting queues are not supported yet!", "Fatal error");
+			MessageBox(NULL, "Separate graphics and presenting queues are not supported yet!", "Fatal error", MB_OK | MB_ICONERROR);
+			std::cerr << "Separate graphics and presenting queues are not supported yet!" << "\n";
+			exit(1);
 		}
 
 		queueNodeIndex = graphicsQueueNodeIndex;

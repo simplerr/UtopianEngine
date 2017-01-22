@@ -9,7 +9,6 @@
 #include "VulkanBase.h"
 #include "Device.h"
 #include "VulkanDebug.h"
-#include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
 #include "CommandPool.h"
 #include "Semaphore.h"
@@ -109,16 +108,26 @@ namespace VulkanLib
 	{
 		// [TODO] Remove use of vkTools::initializers
 		VkMemoryRequirements memReqs;
-		VkMemoryAllocateInfo memAlloc = vkTools::initializers::memoryAllocateInfo();
-		VkBufferCreateInfo bufferCreateInfo = vkTools::initializers::bufferCreateInfo(usageFlags, size);
+		VkMemoryAllocateInfo memAllocInfo = {};
+		memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		memAllocInfo.pNext = NULL;
+		memAllocInfo.allocationSize = 0;
+		memAllocInfo.memoryTypeIndex = 0;
+
+		VkBufferCreateInfo bufferCreateInfo = {};
+		bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		bufferCreateInfo.pNext = NULL;
+		bufferCreateInfo.usage = usageFlags;
+		bufferCreateInfo.size = size;
+		bufferCreateInfo.flags = 0;
 
 		VulkanDebug::ErrorCheck(vkCreateBuffer(GetDevice(), &bufferCreateInfo, nullptr, buffer));
 
 		vkGetBufferMemoryRequirements(GetDevice(), *buffer, &memReqs);
-		memAlloc.allocationSize = memReqs.size;
+		memAllocInfo.allocationSize = memReqs.size;
 		uint32_t tmp;
-		memAlloc.memoryTypeIndex = mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp); // [NOTE] This is really weird
-		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &memAlloc, nullptr, memory));
+		memAllocInfo.memoryTypeIndex = mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp); // [NOTE] This is really weird
+		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &memAllocInfo, nullptr, memory));
 		if (data != nullptr)
 		{
 			void *mapped;

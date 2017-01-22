@@ -6,13 +6,12 @@ namespace VulkanLib
 {
 	StaticModel::StaticModel()
 	{
-		texture = nullptr;
+
 	}
 
 	StaticModel::~StaticModel()
 	{
-		// The model loader destroys the buffers for us
-		delete texture;
+
 	}
 
 	void StaticModel::AddMesh(Mesh & mesh)

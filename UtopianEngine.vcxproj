@@ -80,7 +80,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="base\vulkantools.cpp" />
     <ClCompile Include="source\CommandBuffer.cpp" />
     <ClCompile Include="source\CommandPool.cpp" />
     <ClCompile Include="source\Entity.cpp" />
@@ -143,7 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\vulkanswapchain.hpp" />
-    <ClInclude Include="base\vulkantools.h" />
     <ClInclude Include="source\System.h" />
     <ClInclude Include="source\PhysicsComponent.h" />
     <ClInclude Include="source\PhysicsSystem.h" />

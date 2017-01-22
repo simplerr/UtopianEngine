@@ -51,9 +51,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base\vulkantools.cpp">
-      <Filter>Source Files\base</Filter>
-    </ClCompile>
     <ClCompile Include="source\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -173,9 +170,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base\vulkantools.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
     <ClInclude Include="source\VulkanBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
