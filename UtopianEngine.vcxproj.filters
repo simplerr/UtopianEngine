@@ -43,6 +43,12 @@
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{097edc4d-5926-4d5c-be13-6590d56b72dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders\phong">
+      <UniqueIdentifier>{1f6e2f10-3ba8-458e-8275-2b47ce8d723a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\test">
+      <UniqueIdentifier>{5ae90826-31cc-411d-b982-f7a88e2ba631}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\vulkantools.cpp">
@@ -317,10 +323,16 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="data\shaders\phong\phong.frag">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Source Files\shaders\phong</Filter>
     </None>
     <None Include="data\shaders\phong\phong.vert">
-      <Filter>Source Files\shaders</Filter>
+      <Filter>Source Files\shaders\phong</Filter>
+    </None>
+    <None Include="data\shaders\test\test.frag">
+      <Filter>Source Files\shaders\test</Filter>
+    </None>
+    <None Include="data\shaders\test\test.vert">
+      <Filter>Source Files\shaders\test</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

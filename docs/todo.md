@@ -1,5 +1,7 @@
 ### TODO
 
+* MeshComponents should be able to change Pipeline at runtime
+* Do not use the same DescriptorSet for every Pipeline
 * Create PickingSystem
 * Optimize TransformComponent::RebuildWorldMatrix()
 * Create RenderPass class

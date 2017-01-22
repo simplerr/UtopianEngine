@@ -170,6 +170,8 @@
   <ItemGroup>
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
+    <None Include="data\shaders\test\test.frag" />
+    <None Include="data\shaders\test\test.vert" />
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />
     <None Include="docs\system_requirements.md" />

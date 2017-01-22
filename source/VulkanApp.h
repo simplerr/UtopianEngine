@@ -38,7 +38,8 @@ namespace VulkanLib
 	enum PipelineType
 	{
 		PIPELINE_BASIC,
-		PIPELINE_WIREFRAME
+		PIPELINE_WIREFRAME,
+		PIPELINE_TEST
 	};
 
 	struct Buffer {

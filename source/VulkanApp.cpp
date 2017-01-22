@@ -93,7 +93,9 @@ namespace VulkanLib
 
 	void VulkanApp::CompileShaders()
 	{
+		// [TODO] Move to ShaderManager
 		system("cd data/shaders/phong/ && generate-spirv.bat");
+		system("cd data/shaders/test/ && generate-spirv.bat");
 	}
 
 	void VulkanApp::SetCamera(Camera * camera)
@@ -204,6 +206,13 @@ namespace VulkanLib
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->Create();
 		mPipelines[PipelineType::PIPELINE_WIREFRAME] = pipeline;
+
+		// Test pipeline
+		Shader* testShader = mShaderManager->CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
+		pipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, testShader);
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		pipeline->Create();
+		mPipelines[PipelineType::PIPELINE_TEST] = pipeline;
 
 	}
 
