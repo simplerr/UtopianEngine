@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include "../base/vulkanTextureLoader.hpp"
+//#include "../base/vulkanTextureLoader.hpp"
 
 namespace VulkanLib
 {
@@ -15,5 +15,5 @@ namespace VulkanLib
 		VkPipelineLayoutCreateInfo PipelineLayout(uint32_t setLayoutCount, const VkDescriptorSetLayout* pSetLayouts);
 	};
 
-	VkDescriptorImageInfo GetTextureDescriptorInfo(vkTools::VulkanTexture texture);
+	//VkDescriptorImageInfo GetTextureDescriptorInfo(vkTools::VulkanTexture texture);
 }

@@ -2,6 +2,7 @@
 #include "UniformBuffer.h"
 #include "Light.h"
 #include <glm/glm.hpp>
+#include <vector>
 
 /*
 	The uniform buffer that the Phong fragment shader uses

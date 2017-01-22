@@ -4,13 +4,11 @@
 #endif
 
 //#include "../external\vulkan\vulkan.h"
-#include "../base/vulkantools.h"	
+//#include "../base/vulkantools.h"	
 #include "../base/vulkanswapchain.hpp"
-#include "../base/vulkanTextureLoader.hpp"
+//#include "../base/vulkanTextureLoader.hpp"
 #include "Window.h"
 #include "Timer.h"
-#include "CommandPool.h"
-#include "Queue.h"
 
 #include <vulkan/vulkan.h>
 
@@ -42,6 +40,7 @@ namespace VulkanLib
 	class Instance;
 	class FrameBuffers;
 	class ShaderManager;
+	class Queue;
 
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase

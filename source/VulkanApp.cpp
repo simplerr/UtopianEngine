@@ -13,10 +13,14 @@
 #include "Device.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "Pipeline.h"
+#include "Fence.h"
 #include "PipelineLayout.h"
 #include "RenderPass.h"
 #include "FrameBuffers.h"
 #include "ShaderManager.h"
+//#include "RenderSystem.h"
+#include "Queue.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
@@ -73,6 +77,7 @@ namespace VulkanLib
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
 
+
 		mPrepared = true;
 	}
 
@@ -97,6 +102,11 @@ namespace VulkanLib
 	{
 		mModels.push_back(model);
 	}
+
+	//void VulkanApp::SetRenderSystem(ECS::RenderSystem* renderSystem)
+	//{
+	//	mRenderSystem = renderSystem;
+	//}
 	
 	void VulkanApp::PrepareUniformBuffers()
 	{
@@ -249,31 +259,33 @@ namespace VulkanLib
 		scissor.offset.y = 0;
 		vkCmdSetScissor(secondaryCommandBuffer, 0, 1, &scissor);
 
+		//mRenderSystem->Render(mSecondaryCommandBuffer, mPipeline, mPipelineLayout, mDescriptorSet);
+
 		//
 		// Testing push constant rendering with different matrices
 		//
-		for (auto& object : mModels)
-		{
-			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline->GetVkHandle());
+		//for (auto& object : mModels)
+		//{
+		//	// Bind the rendering pipeline (including the shaders)
+		//	vkCmdBindPipeline(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline->GetVkHandle());
 
-			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-			vkCmdBindDescriptorSets(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
+		//	// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
+		//	vkCmdBindDescriptorSets(secondaryCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet.descriptorSet, 0, NULL);
 
-			// Push the world matrix constant
-			mPushConstants.world = object.object->GetWorldMatrix();
-			mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
-			//mPushConstants.color = object.object->GetColor();
-			vkCmdPushConstants(secondaryCommandBuffer, mPipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
+		//	// Push the world matrix constant
+		//	mPushConstants.world = object.object->GetWorldMatrix();
+		//	mPushConstants.worldInvTranspose = object.object->GetWorldInverseTransposeMatrix();
+		//	//mPushConstants.color = object.object->GetColor();
+		//	vkCmdPushConstants(secondaryCommandBuffer, mPipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(mPushConstants), &mPushConstants);
 
-			// Bind triangle vertices
-			VkDeviceSize offsets[1] = { 0 };
-			vkCmdBindVertexBuffers(secondaryCommandBuffer, VERTEX_BUFFER_BIND_ID, 1, &object.mesh->vertices.buffer, offsets);		// [TODO] The renderer should group the same object models together
-			vkCmdBindIndexBuffer(secondaryCommandBuffer, object.mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+		//	// Bind triangle vertices
+		//	VkDeviceSize offsets[1] = { 0 };
+		//	vkCmdBindVertexBuffers(secondaryCommandBuffer, VERTEX_BUFFER_BIND_ID, 1, &object.mesh->vertices.buffer, offsets);		// [TODO] The renderer should group the same object models together
+		//	vkCmdBindIndexBuffer(secondaryCommandBuffer, object.mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-			// Draw indexed triangle	
-			vkCmdDrawIndexed(secondaryCommandBuffer, object.mesh->GetNumIndices(), 1, 0, 0, 0);
-		}
+		//	// Draw indexed triangle	
+		//	vkCmdDrawIndexed(secondaryCommandBuffer, object.mesh->GetNumIndices(), 1, 0, 0, 0);
+		//}
 
 		// End secondary command buffer
 		mSecondaryCommandBuffer->End();

@@ -37,11 +37,14 @@
     <Filter Include="Source Files\Vulkan">
       <UniqueIdentifier>{066db12e-ccda-4f4e-807c-e3d02017ffb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ECS">
+      <UniqueIdentifier>{704bdec3-7c65-42f8-92a6-88ae2b99a4f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS">
+      <UniqueIdentifier>{097edc4d-5926-4d5c-be13-6590d56b72dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="base\vulkandebug.cpp">
-      <Filter>Source Files\base</Filter>
-    </ClCompile>
     <ClCompile Include="base\vulkantools.cpp">
       <Filter>Source Files\base</Filter>
     </ClCompile>
@@ -138,11 +141,26 @@
     <ClCompile Include="source\ShaderManager.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="source\RenderSystem.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MeshComponent.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TransformComponent.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\EntityManager.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Entity.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="source\UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base\vulkandebug.h">
-      <Filter>Header Files\base</Filter>
-    </ClInclude>
     <ClInclude Include="base\vulkantools.h">
       <Filter>Header Files\base</Filter>
     </ClInclude>
@@ -247,6 +265,27 @@
     </ClInclude>
     <ClInclude Include="source\ShaderManager.h">
       <Filter>Header Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entity.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Component.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RenderSystem.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MeshComponent.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\System.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\EntityManager.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TransformComponent.h">
+      <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

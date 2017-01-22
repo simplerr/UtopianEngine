@@ -1,11 +1,9 @@
 #pragma once
 #include "Platform.h"
 #include "Timer.h"
-#include "ModelLoader.h"
 
 namespace ECS
 {
-	class RenderSystem;
 	class EntityManager;
 }
 
@@ -14,6 +12,7 @@ namespace VulkanLib
 	class VulkanApp;
 	class Window;
 	class Camera;
+	class ModelLoader;
 
 	class Game
 	{
@@ -32,12 +31,11 @@ namespace VulkanLib
 		VulkanApp* mRenderer;
 		Window* mWindow;
 		Camera* mCamera;
-		ModelLoader	mModelLoader;
+		ModelLoader* mModelLoader;
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;
 
-		// All the ECS::System 
 		ECS::EntityManager* mEntityManager;
 	};
 }

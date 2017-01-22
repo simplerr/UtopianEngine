@@ -10,17 +10,20 @@ namespace ECS
 		ParticleComponent, PowerupComponent, LightComponent, InputComponent, CameraComponent
 	*/
 	class Component;
+	class TransformComponent;
 
-	typedef std::vector<Component> ComponentList;
+	typedef std::vector<Component*> ComponentList;
 
 	class Entity
 	{
-
 	public:
-		void AddComponent(Component* component);
+		Entity(ComponentList components);
+		Component* GetComponent(uint32_t componentType);
 		uint32_t GetId();
+		//TransformComponent* GetTransform();
 	private:
 		ComponentList mComponents;
+		//TransformComponent* mTransformComponent;
 		uint32_t mId;
 
 		// An entity should be able to have multiple MeshComponents

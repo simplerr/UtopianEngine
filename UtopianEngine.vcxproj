@@ -80,22 +80,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="base\vulkandebug.cpp" />
     <ClCompile Include="base\vulkantools.cpp" />
     <ClCompile Include="source\CommandBuffer.cpp" />
     <ClCompile Include="source\CommandPool.cpp" />
+    <ClCompile Include="source\Entity.cpp" />
+    <ClCompile Include="source\EntityManager.cpp" />
     <ClCompile Include="source\Fence.cpp" />
     <ClCompile Include="source\FrameBuffers.cpp" />
     <ClCompile Include="source\Handle.cpp" />
     <ClCompile Include="source\Image.cpp" />
     <ClCompile Include="source\Instance.cpp" />
+    <ClCompile Include="source\MeshComponent.cpp" />
     <ClCompile Include="source\Pipeline.cpp" />
     <ClCompile Include="source\PipelineLayout.cpp" />
     <ClCompile Include="source\Queue.cpp" />
     <ClCompile Include="source\RenderPass.cpp" />
+    <ClCompile Include="source\RenderSystem.cpp" />
     <ClCompile Include="source\Semaphore.cpp" />
     <ClCompile Include="source\ShaderManager.cpp" />
     <ClCompile Include="source\TextureLoader.cpp" />
+    <ClCompile Include="source\TransformComponent.cpp" />
+    <ClCompile Include="source\UniformBuffer.cpp" />
     <ClCompile Include="source\VertexUniformBuffer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\DescriptorSet.cpp" />
@@ -108,16 +113,21 @@
     <ClCompile Include="source\StaticModel.cpp" />
     <ClInclude Include="source\CommandBuffer.h" />
     <ClInclude Include="source\CommandPool.h" />
+    <ClInclude Include="source\Component.h" />
+    <ClInclude Include="source\Entity.h" />
+    <ClInclude Include="source\EntityManager.h" />
     <ClInclude Include="source\Fence.h" />
     <ClInclude Include="source\FragmentUniformBuffer.h" />
     <ClInclude Include="source\FrameBuffers.h" />
     <ClInclude Include="source\Handle.h" />
     <ClInclude Include="source\Image.h" />
     <ClInclude Include="source\Instance.h" />
+    <ClInclude Include="source\MeshComponent.h" />
     <ClInclude Include="source\Pipeline.h" />
     <ClInclude Include="source\PipelineLayout.h" />
     <ClInclude Include="source\Queue.h" />
     <ClInclude Include="source\RenderPass.h" />
+    <ClInclude Include="source\RenderSystem.h" />
     <ClInclude Include="source\Semaphore.h" />
     <ClInclude Include="source\ShaderManager.h" />
     <ClInclude Include="source\StaticModel.h" />
@@ -130,10 +140,11 @@
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base\vulkandebug.h" />
     <ClInclude Include="base\vulkanswapchain.hpp" />
     <ClInclude Include="base\vulkantools.h" />
+    <ClInclude Include="source\System.h" />
     <ClInclude Include="source\TextureLoader.h" />
+    <ClInclude Include="source\TransformComponent.h" />
     <ClInclude Include="source\VertexUniformBuffer.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\DescriptorSet.h" />

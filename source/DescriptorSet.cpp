@@ -1,4 +1,5 @@
 #include "DescriptorSet.h"
+#include "VulkanDebug.h"
 
 namespace VulkanLib
 {
@@ -81,5 +82,47 @@ namespace VulkanLib
 	void DescriptorSet::UpdateDescriptorSets(VkDevice device)
 	{
 		vkUpdateDescriptorSets(device, mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
+	}
+
+	void DescriptorPool::Cleanup(VkDevice device)
+	{
+		vkDestroyDescriptorPool(device, mDescriptorPool, nullptr);
+	}
+
+	void DescriptorPool::CreatePoolFromLayout(VkDevice device, std::vector<VkDescriptorSetLayoutBinding>& descriptorLayouts)
+	{
+		for (int i = 0; i < descriptorLayouts.size(); i++)
+		{
+			VkDescriptorPoolSize descriptorSize = {};
+			descriptorSize.type = descriptorLayouts[i].descriptorType;
+			descriptorSize.descriptorCount = descriptorLayouts[i].descriptorCount;
+			mDescriptorSizes.push_back(descriptorSize);
+		}
+
+		CreatePool(device);
+	}
+
+	void DescriptorPool::AddDescriptor(VkDescriptorType type, uint32_t count)
+	{
+		VkDescriptorPoolSize descriptorSize = {};
+		descriptorSize.type = type;
+		descriptorSize.descriptorCount = count;
+		mDescriptorSizes.push_back(descriptorSize);
+	}
+
+	void DescriptorPool::CreatePool(VkDevice device)
+	{
+		VkDescriptorPoolCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.poolSizeCount = mDescriptorSizes.size();
+		createInfo.pPoolSizes = mDescriptorSizes.data();
+		createInfo.maxSets = mDescriptorSizes.size();		// [NOTE] This can perhaps be 1
+
+		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(device, &createInfo, nullptr, &mDescriptorPool));
+	}
+
+	VkDescriptorPool DescriptorPool::GetVkDescriptorPool()
+	{
+		return mDescriptorPool;
 	}
 }

@@ -71,7 +71,7 @@ namespace VulkanLib
 	}
 
 	// Used when adding descriptor set bindings
-	VkDescriptorImageInfo GetTextureDescriptorInfo(vkTools::VulkanTexture texture)
+	/*VkDescriptorImageInfo GetTextureDescriptorInfo(vkTools::VulkanTexture texture)
 	{
 		VkDescriptorImageInfo texDescriptor = {};
 		texDescriptor.sampler = texture.sampler;
@@ -79,5 +79,5 @@ namespace VulkanLib
 		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
 		return texDescriptor;
-	}
+	}*/
 }

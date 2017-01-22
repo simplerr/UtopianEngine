@@ -1,7 +1,6 @@
 #pragma once
 #include <vulkan/vulkan.h>
 #include <vector>
-#include "VulkanDebug.h"
 #include "VulkanHelpers.h"
 
 namespace VulkanLib
@@ -44,47 +43,11 @@ namespace VulkanLib
 	class DescriptorPool
 	{
 	public:
-		void Cleanup(VkDevice device)
-		{
-			vkDestroyDescriptorPool(device, mDescriptorPool, nullptr);
-		}
-
-		void CreatePoolFromLayout(VkDevice device, std::vector<VkDescriptorSetLayoutBinding>& descriptorLayouts)
-		{
-			for (int i = 0; i < descriptorLayouts.size(); i++)
-			{
-				VkDescriptorPoolSize descriptorSize = {};
-				descriptorSize.type = descriptorLayouts[i].descriptorType;
-				descriptorSize.descriptorCount = descriptorLayouts[i].descriptorCount;
-				mDescriptorSizes.push_back(descriptorSize);
-			}
-
-			CreatePool(device);
-		}
-
-		void AddDescriptor(VkDescriptorType type, uint32_t count)
-		{
-			VkDescriptorPoolSize descriptorSize = {};
-			descriptorSize.type = type;
-			descriptorSize.descriptorCount = count;
-			mDescriptorSizes.push_back(descriptorSize);
-		}
-
-		void CreatePool(VkDevice device)
-		{
-			VkDescriptorPoolCreateInfo createInfo = {};
-			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			createInfo.poolSizeCount = mDescriptorSizes.size();
-			createInfo.pPoolSizes = mDescriptorSizes.data();
-			createInfo.maxSets = mDescriptorSizes.size();		// [NOTE] This can perhaps be 1
-
-			VulkanDebug::ErrorCheck(vkCreateDescriptorPool(device, &createInfo, nullptr, &mDescriptorPool));
-		}
-
-		VkDescriptorPool GetVkDescriptorPool()
-		{
-			return mDescriptorPool;
-		}
+		void Cleanup(VkDevice device);
+		void CreatePoolFromLayout(VkDevice device, std::vector<VkDescriptorSetLayoutBinding>& descriptorLayouts);
+		void AddDescriptor(VkDescriptorType type, uint32_t count);
+		void CreatePool(VkDevice device);
+		VkDescriptorPool GetVkDescriptorPool();
 	private:
 		VkDescriptorPool mDescriptorPool = VK_NULL_HANDLE;
 		std::vector<VkDescriptorPoolSize> mDescriptorSizes;

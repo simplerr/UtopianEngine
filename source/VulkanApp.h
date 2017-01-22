@@ -10,15 +10,16 @@
 #include "VertexUniformBuffer.h"
 #include "DescriptorSet.h"
 #include "TextureLoader.h"
-#include "Pipeline.h"
-#include "CommandBuffer.h"
-#include "PipelineLayout.h"
-#include "Fence.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 using namespace glm;
+
+namespace ECS
+{
+	class RenderSystem;
+}
 
 namespace VulkanLib
 {
@@ -28,6 +29,11 @@ namespace VulkanLib
 	class TextureData;
 	class Light;
 	class CommandBuffer;
+	class TextureLoader;
+	class Pipeline;
+	class PipelineLayout;
+	class Fence;
+
 
 	struct Buffer {
 		VkBuffer buffer;
@@ -90,7 +96,9 @@ namespace VulkanLib
 		void SetCamera(Camera* camera);
 		void AddModel(VulkanModel model);
 
-		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to work
+		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
+
+//		void SetRenderSystem(ECS::RenderSystem* renderSystem);
 
 
 		// 
@@ -118,6 +126,8 @@ namespace VulkanLib
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; 
 		Fence*							mRenderFence;
+
+		ECS::RenderSystem*				mRenderSystem;
 	public:
 	};
 }	// VulkanLib namespace

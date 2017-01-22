@@ -4,7 +4,6 @@
 #include "ShaderManager.h"
 #include "Device.h"
 #include "VulkanDebug.h"
-#include "Shader.h"
 
 namespace VulkanLib
 {

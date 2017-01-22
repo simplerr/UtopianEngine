@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include "ModelLoader.h"
 #include "EntityManager.h"
 #include "Entity.h"
 #include "MeshComponent.h"
@@ -27,29 +28,36 @@ namespace VulkanLib
 		mCamera = new VulkanLib::Camera(glm::vec3(500, 4700, 500), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
-		InitScene();
 
 		mEntityManager = new ECS::EntityManager(mRenderer);
+
+		mModelLoader = new ModelLoader();
+
+		InitScene();
 	}
 
 	Game::~Game()
 	{
-		mModelLoader.CleanupModels(mRenderer->GetDevice());
+		mModelLoader->CleanupModels(mRenderer->GetDevice());
+		delete mModelLoader;
 
-		delete mRenderer;
 		delete mCamera;
-
 		delete mEntityManager;
+		delete mRenderer;
 	}
 
 	void Game::InitScene()
 	{
 		// Create example Entity
 		ECS::ComponentList componentList;
-		componentList.push_back(ECS::MeshComponent("data/models/teapot.obj"));
-		componentList.push_back(ECS::TransformComponent(vec3(0, -100, 0)));
+		componentList.push_back(new ECS::MeshComponent("data/models/teapot.obj", ECS::Pipeline::PIPELINE_BASIC));
+		componentList.push_back(new ECS::TransformComponent(vec3(0, -100, 0)));
 		
 		ECS::Entity* testEntity = mEntityManager->AddEntity(componentList);
+
+		//TransformComponent transform = mEntityManager->GetComponent<TransformComponent>(testEntity);
+
+		//mEntityManager->SendQuery()
 
 		// Add a test object to the scene
 		// Add objects
@@ -72,7 +80,7 @@ namespace VulkanLib
 
 					VulkanModel model;
 					model.object = object;
-					model.mesh = mModelLoader.LoadModel(mRenderer->GetDeviceTmp(), object->GetModel());
+					model.mesh = mModelLoader->LoadModel(mRenderer->GetDeviceTmp(), object->GetModel());
 					mRenderer->AddModel(model);
 				}
 			}
@@ -111,6 +119,7 @@ namespace VulkanLib
 			{
 				mRenderer->Update();
 				mRenderer->Render();
+				mEntityManager->Process();
 
 				// Frame end
 				auto fps = mTimer.FrameEnd();

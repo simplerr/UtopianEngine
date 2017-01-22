@@ -18,6 +18,7 @@
 #include "Instance.h"
 #include "FrameBuffers.h"
 #include "ShaderManager.h"
+#include "Queue.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
