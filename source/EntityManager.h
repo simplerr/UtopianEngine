@@ -29,5 +29,6 @@ namespace ECS
 		ECS::RenderSystem* mRenderSystem;
 
 		EntityList mEntities;
+		uint32_t mNextEntityId;
 	};
 }

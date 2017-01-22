@@ -48,26 +48,12 @@ namespace VulkanLib
 
 	void Game::InitScene()
 	{
-		// Create example Entity
-		ECS::ComponentList componentList;
-		componentList.push_back(new ECS::MeshComponent("data/models/teapot.obj", ECS::Pipeline::PIPELINE_BASIC));
-		componentList.push_back(new ECS::TransformComponent(vec3(0, -100, 0)));
-		
-		ECS::Entity* testEntity = mEntityManager->AddEntity(componentList);
-
-		ECS::ComponentList componentList2;
-		componentList2.push_back(new ECS::MeshComponent("data/models/box.obj", ECS::Pipeline::PIPELINE_BASIC));
-		componentList2.push_back(new ECS::TransformComponent(vec3(0, 100, 100)));
-		
-		testEntity = mEntityManager->AddEntity(componentList2);
-
 		//TransformComponent transform = mEntityManager->GetComponent<TransformComponent>(testEntity);
 
 		//mEntityManager->SendQuery()
 
-		// Add a test object to the scene
-		// Add objects
 		int size = 5;
+		int space = 300;
 		int i = 0;
 		for (int x = 0; x < size; x++)
 		{
@@ -75,24 +61,40 @@ namespace VulkanLib
 			{
 				for (int z = 0; z < size; z++)
 				{
-					int space = 300;
-					Object* object = new Object(glm::vec3(x * space, -100 - y * space, z * space));
-					object->SetModel("data/models/teapot.obj");
-					object->SetColor(glm::vec3(1.0f, 1.0f, 1.0f));
-					object->SetId(OBJECT_ID_PROP);
-					object->SetRotation(glm::vec3(180, 0, 0));
-					object->SetScale(glm::vec3(3.0f));
-					object->SetPipeline(PipelineEnum::COLORED);
+					ECS::ComponentList componentList;
+					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space, -100 - y * space, z * space));
+					transformComponent->SetRotation(glm::vec3(180, 0, 0));
+					transformComponent->SetScale(glm::vec3(3.0f));
 
-					VulkanModel model;
-					model.object = object;
-					model.mesh = mModelLoader->LoadModel(mRenderer->GetDeviceTmp(), object->GetModel());
-					mRenderer->AddModel(model);
+					if(x == 0 && y == 0 && z == 0)
+						transformComponent->SetScale(glm::vec3(9.0f));
+
+					componentList.push_back(new ECS::MeshComponent("data/models/teapot.obj", ECS::Pipeline::PIPELINE_BASIC));
+					componentList.push_back(transformComponent);
+					
+					mEntityManager->AddEntity(componentList);
 				}
 			}
 		}
+
+		mTestEntity = mEntityManager->GetEntity(0u);
 	}
 
+	void Game::Update()
+	{
+		mRenderer->Update();
+		mEntityManager->Process();
+
+		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
+		float speed = 5.0f;
+		transform->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
+	}
+
+	void Game::Draw()
+	{
+		mRenderer->Render();
+	}
+	
 	bool Game::IsClosing()
 	{
 		return mIsClosing;
@@ -123,9 +125,8 @@ namespace VulkanLib
 
 			if (mRenderer != nullptr && IsClosing() == false)
 			{
-				mRenderer->Update();
-				mRenderer->Render();
-				mEntityManager->Process();
+				Update();
+				Draw();
 
 				// Frame end
 				auto fps = mTimer.FrameEnd();
@@ -142,6 +143,7 @@ namespace VulkanLib
 			}
 		}
 	}
+
 #endif
 
 	void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

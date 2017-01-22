@@ -11,6 +11,8 @@ namespace ECS
 		// Create all ECS::System
 		mRenderSystem = new ECS::RenderSystem(vulkanApp);
 		vulkanApp->SetRenderSystem(mRenderSystem);
+
+		mNextEntityId = 0u;
 	}
 
 	EntityManager::~EntityManager()
@@ -28,7 +30,7 @@ namespace ECS
 	// AddEntity() is responsible for informing the needed ECS::Systems
 	Entity* EntityManager::AddEntity(ComponentList& components)
 	{
-		Entity* entity = new Entity(components);
+		Entity* entity = new Entity(components, mNextEntityId);
 
 		for (int i = 0; i < components.size(); i++)
 		{
@@ -50,11 +52,21 @@ namespace ECS
 
 		mEntities.push_back(entity);
 
+		mNextEntityId++;
+
 		return entity;
 	}
 
 	Entity* EntityManager::GetEntity(uint32_t id)
 	{
+		for (int i = 0; i < mEntities.size(); i++)
+		{
+			if (mEntities[i]->GetId() == id)
+			{
+				return mEntities[i];
+			}
+		}
+
 		return nullptr;
 	}
 

@@ -48,7 +48,6 @@ namespace ECS
 		for (auto const& entityVector : mMeshEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			// Todo
 			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
@@ -69,7 +68,7 @@ namespace ECS
 
 				// Bind triangle vertices
 				VkDeviceSize offsets[1] = { 0 };
-				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->vertices.buffer, offsets);		// [TODO] The renderer should group the same object models together
+				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->vertices.buffer, offsets);		
 				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), model->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 				// Draw indexed triangle	

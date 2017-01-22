@@ -5,6 +5,7 @@
 namespace ECS
 {
 	class EntityManager;
+	class Entity;
 }
 
 namespace VulkanLib
@@ -21,6 +22,8 @@ namespace VulkanLib
 		~Game();
 
 		void RenderLoop();
+		void Update();
+		void Draw();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
@@ -37,5 +40,6 @@ namespace VulkanLib
 		bool mIsClosing;
 
 		ECS::EntityManager* mEntityManager;
+		ECS::Entity* mTestEntity;
 	};
 }

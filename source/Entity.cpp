@@ -3,12 +3,14 @@
 
 namespace ECS
 {
-	Entity::Entity(ComponentList components)
+	Entity::Entity(ComponentList components, uint32_t id)
 	{
 		for (int i = 0; i < components.size(); i++)
 		{
 			mComponents.push_back(components[i]);
 		}
+
+		mId = id;
 	}
 
 	Component* Entity::GetComponent(uint32_t componentType)

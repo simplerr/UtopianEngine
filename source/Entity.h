@@ -17,7 +17,7 @@ namespace ECS
 	class Entity
 	{
 	public:
-		Entity(ComponentList components);
+		Entity(ComponentList components, uint32_t id);
 		Component* GetComponent(uint32_t componentType);
 		uint32_t GetId();
 		//TransformComponent* GetTransform();
