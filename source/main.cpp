@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <vector>
 
-#include "VulkanApp.h"
+#include "vulkan/VulkanApp.h"
 #include "Window.h"
 #include "Game.h"
 #include "Camera.h"

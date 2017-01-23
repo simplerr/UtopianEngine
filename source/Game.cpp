@@ -1,19 +1,19 @@
 #include "Game.h"
 #include "Window.h"
 #include "Camera.h"
-#include "VulkanApp.h"
+#include "vulkan/VulkanApp.h"
 #include "Object.h"
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <stdlib.h>
 #include <time.h>
-#include "ModelLoader.h"
-#include "EntityManager.h"
-#include "Entity.h"
-#include "MeshComponent.h"
-#include "TransformComponent.h"
-#include "PhysicsComponent.h"
+#include "vulkan/ModelLoader.h"
+#include "ecs/EntityManager.h"
+#include "ecs/Entity.h"
+#include "ecs/components/MeshComponent.h"
+#include "ecs/components/TransformComponent.h"
+#include "ecs/components/PhysicsComponent.h"
 
 namespace VulkanLib
 {

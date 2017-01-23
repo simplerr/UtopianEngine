@@ -1,6 +1,7 @@
 #pragma once
-#include "Platform.h"
+
 #include <glm/glm.hpp>
+#include "Platform.h"
 
 using namespace glm;
 

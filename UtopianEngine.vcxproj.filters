@@ -16,32 +16,11 @@
     <Filter Include="docs">
       <UniqueIdentifier>{3e1d716f-b9bb-4e3d-9824-84e11a3e035a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\base">
-      <UniqueIdentifier>{8bfb3350-205e-40f6-977a-882ce281505a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\base">
-      <UniqueIdentifier>{943fab21-14b7-4094-be75-ad2667cd063f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\model">
-      <UniqueIdentifier>{820d0bbe-823e-4a2f-af05-53de236907b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\model">
       <UniqueIdentifier>{dc8908bd-669a-478b-b3aa-cc4a7d61975d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{4b9640ab-3ca8-4181-a8a4-b43faf1930f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Vulkan">
-      <UniqueIdentifier>{4fe9b2e1-52ec-496b-b64b-cd390236908c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Vulkan">
-      <UniqueIdentifier>{066db12e-ccda-4f4e-807c-e3d02017ffb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ECS">
-      <UniqueIdentifier>{704bdec3-7c65-42f8-92a6-88ae2b99a4f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ECS">
-      <UniqueIdentifier>{097edc4d-5926-4d5c-be13-6590d56b72dc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\shaders\phong">
       <UniqueIdentifier>{1f6e2f10-3ba8-458e-8275-2b47ce8d723a}</UniqueIdentifier>
@@ -49,18 +28,24 @@
     <Filter Include="Source Files\shaders\test">
       <UniqueIdentifier>{5ae90826-31cc-411d-b982-f7a88e2ba631}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ecs">
+      <UniqueIdentifier>{097edc4d-5926-4d5c-be13-6590d56b72dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan">
+      <UniqueIdentifier>{066db12e-ccda-4f4e-807c-e3d02017ffb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\handles">
+      <UniqueIdentifier>{9195b835-50c6-4ffd-96bd-187dd8c7fd6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs\systems">
+      <UniqueIdentifier>{bcbd577c-5819-4520-9087-456c369683e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ecs\components">
+      <UniqueIdentifier>{5c273a02-ddf0-4826-bbf4-841160c99fe7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\VulkanBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\VulkanDebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\VulkanHelpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Timer.cpp">
@@ -72,13 +57,7 @@
     <ClCompile Include="source\Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\VulkanApp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\DescriptorSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Light.cpp">
@@ -87,102 +66,108 @@
     <ClCompile Include="source\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\ModelLoader.cpp">
-      <Filter>Source Files\model</Filter>
+    <ClCompile Include="source\ecs\components\MeshComponent.cpp">
+      <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
-    <ClCompile Include="source\StaticModel.cpp">
-      <Filter>Source Files\model</Filter>
+    <ClCompile Include="source\ecs\components\PhysicsComponent.cpp">
+      <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
-    <ClCompile Include="source\FragmentUniformBuffer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\ecs\components\TransformComponent.cpp">
+      <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
-    <ClCompile Include="source\VertexUniformBuffer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\ecs\systems\PhysicsSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
-    <ClCompile Include="source\TextureLoader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\ecs\systems\RenderSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
-    <ClCompile Include="source\CommandBuffer.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\CommandPool.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\CommandPool.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Pipeline.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\DescriptorSet.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Handle.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Fence.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\PipelineLayout.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\FrameBuffers.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Fence.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Handle.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Queue.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Image.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Device.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Instance.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Semaphore.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Pipeline.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Image.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\PipelineLayout.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\RenderPass.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Queue.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Instance.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\RenderPass.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\FrameBuffers.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\handles\Semaphore.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\ShaderManager.cpp">
-      <Filter>Source Files\Vulkan</Filter>
+    <ClCompile Include="source\vulkan\FragmentUniformBuffer.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\RenderSystem.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\ModelLoader.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\MeshComponent.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\ShaderManager.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\TransformComponent.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\StaticModel.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\EntityManager.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\TextureLoader.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\Entity.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\UniformBuffer.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\UniformBuffer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\vulkan\VertexUniformBuffer.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\PhysicsSystem.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\VulkanApp.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\PhysicsComponent.cpp">
-      <Filter>Source Files\ECS</Filter>
+    <ClCompile Include="source\vulkan\VulkanBase.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\VulkanDebug.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\VulkanHelpers.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\Device.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ecs\Entity.cpp">
+      <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ecs\EntityManager.cpp">
+      <Filter>Source Files\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\VulkanBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\VulkanDebug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\VulkanHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Timer.h">
@@ -191,23 +176,8 @@
     <ClInclude Include="source\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\VulkanApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\Camera.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\VertexDescription.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\UniformBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\DescriptorSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ModelLoader.h">
-      <Filter>Header Files\model</Filter>
     </ClInclude>
     <ClInclude Include="source\Light.h">
       <Filter>Header Files</Filter>
@@ -215,89 +185,113 @@
     <ClInclude Include="source\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="base\vulkanswapchain.hpp">
-      <Filter>Header Files\base</Filter>
+    <ClInclude Include="source\ecs\components\Component.h">
+      <Filter>Source Files\ecs\components</Filter>
     </ClInclude>
-    <ClInclude Include="source\StaticModel.h">
-      <Filter>Header Files\model</Filter>
+    <ClInclude Include="source\ecs\components\MeshComponent.h">
+      <Filter>Source Files\ecs\components</Filter>
     </ClInclude>
-    <ClInclude Include="source\FragmentUniformBuffer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="source\ecs\components\PhysicsComponent.h">
+      <Filter>Source Files\ecs\components</Filter>
     </ClInclude>
-    <ClInclude Include="source\VertexUniformBuffer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="source\ecs\components\TransformComponent.h">
+      <Filter>Source Files\ecs\components</Filter>
     </ClInclude>
-    <ClInclude Include="source\TextureLoader.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="source\ecs\systems\PhysicsSystem.h">
+      <Filter>Source Files\ecs\systems</Filter>
     </ClInclude>
-    <ClInclude Include="source\CommandBuffer.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\ecs\systems\RenderSystem.h">
+      <Filter>Source Files\ecs\systems</Filter>
     </ClInclude>
-    <ClInclude Include="source\CommandPool.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\ecs\systems\System.h">
+      <Filter>Source Files\ecs\systems</Filter>
     </ClInclude>
-    <ClInclude Include="source\Pipeline.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\CommandBuffer.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Handle.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\CommandPool.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\PipelineLayout.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\DescriptorSet.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Fence.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\Fence.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Queue.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\FrameBuffers.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Device.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\Handle.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Semaphore.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\Image.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Image.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\Instance.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\RenderPass.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\Pipeline.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Instance.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\PipelineLayout.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\FrameBuffers.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\Queue.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\ShaderManager.h">
-      <Filter>Header Files\Vulkan</Filter>
+    <ClInclude Include="source\vulkan\handles\RenderPass.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Entity.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\handles\Semaphore.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Component.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\FragmentUniformBuffer.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\RenderSystem.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\ModelLoader.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\MeshComponent.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\ShaderManager.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\System.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\StaticModel.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\EntityManager.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\TextureLoader.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\TransformComponent.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\UniformBuffer.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\PhysicsSystem.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\VertexDescription.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\PhysicsComponent.h">
-      <Filter>Header Files\ECS</Filter>
+    <ClInclude Include="source\vulkan\VertexUniformBuffer.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanApp.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanBase.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanDebug.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanHelpers.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\Device.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ecs\Entity.h">
+      <Filter>Source Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ecs\EntityManager.h">
+      <Filter>Source Files\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
