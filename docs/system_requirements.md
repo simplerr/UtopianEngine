@@ -39,7 +39,7 @@ The more detailed requirements of each part of the engine is located in the soft
 * Takes user input and updates the components that have a input component
 
 ## Entities & Components
-* Every object in the game world is an Entitie
+* Every object in the game world is an Entity
 * Entities are made up of different Components
 	- These components can be changed during runtime, to modify the Entities behavior
 * Full scripting support in Lua	
