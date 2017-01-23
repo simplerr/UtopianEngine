@@ -10,7 +10,6 @@
 #include "Window.h"
 #include "Game.h"
 #include "Camera.h"
-#include "Object.h"
 
 using namespace VulkanLib;
 

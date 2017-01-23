@@ -63,9 +63,6 @@
     <ClCompile Include="source\Light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\ecs\components\MeshComponent.cpp">
       <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
@@ -180,9 +177,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\ecs\components\Component.h">

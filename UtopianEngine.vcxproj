@@ -91,7 +91,6 @@
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\Object.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\Device.cpp" />
     <ClCompile Include="source\vulkan\FragmentUniformBuffer.cpp" />
@@ -133,7 +132,6 @@
     <ClInclude Include="source\ecs\systems\System.h" />
     <ClInclude Include="source\Game.h" />
     <ClInclude Include="source\Light.h" />
-    <ClInclude Include="source\Object.h" />
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\vulkan\Device.h" />

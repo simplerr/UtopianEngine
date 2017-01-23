@@ -2,7 +2,6 @@
 #include "Window.h"
 #include "Camera.h"
 #include "vulkan/VulkanApp.h"
-#include "Object.h"
 #include <string>
 #include <sstream>
 #include <fstream>

@@ -27,7 +27,6 @@ namespace VulkanLib
 {
 	class StaticModel;
 	class Camera;
-	class Object;
 	class TextureData;
 	class Light;
 	class CommandBuffer;
@@ -61,13 +60,6 @@ namespace VulkanLib
 		//vec3 color;
 	};
 
-	struct VulkanModel
-	{
-		Object* object;
-		StaticModel* mesh;
-		VkPipeline pipeline;
-	};
-
 	class VulkanApp : public VulkanBase
 	{
 	public:
@@ -98,7 +90,6 @@ namespace VulkanLib
 		//
 		void CompileShaders();
 		void SetCamera(Camera* camera);
-		void AddModel(VulkanModel model);
 
 		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
 
@@ -112,7 +103,6 @@ namespace VulkanLib
 		PushConstantBlock				mPushConstants;						// Gets updated with new push constants for each object
 		bool							mPrepared = false;
 		Camera*							mCamera;
-		std::vector<VulkanModel>		mModels;
 
 		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
 		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
@@ -131,7 +121,7 @@ namespace VulkanLib
 		CommandBuffer*					mSecondaryCommandBuffer; 
 		Fence*							mRenderFence;
 
-		std::map<int, Pipeline*> mPipelines;
+		std::map<int, Pipeline*>		mPipelines;
 
 		ECS::RenderSystem*				mRenderSystem;
 	public:

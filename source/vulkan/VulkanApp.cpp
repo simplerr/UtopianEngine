@@ -6,7 +6,6 @@
 #include "VulkanDebug.h"
 #include "StaticModel.h"
 #include "Camera.h"
-#include "Object.h"
 #include "VulkanHelpers.h"
 #include "Light.h"
 #include "TextureLoader.h"
@@ -53,10 +52,6 @@ namespace VulkanLib
 		// Free the testing texture
 		mTextureLoader->DestroyTexture(mTestTexture);
 
-		for (int i = 0; i < mModels.size(); i++) {
-			delete mModels[i].object;
-		}
-
 		delete mPrimaryCommandBuffer;
 		delete mSecondaryCommandBuffer;
 
@@ -102,11 +97,6 @@ namespace VulkanLib
 	void VulkanApp::SetCamera(Camera * camera)
 	{
 		mCamera = camera;
-	}
-
-	void VulkanApp::AddModel(VulkanModel model)
-	{
-		mModels.push_back(model);
 	}
 
 	void VulkanApp::SetRenderSystem(ECS::RenderSystem* renderSystem)
@@ -333,15 +323,7 @@ namespace VulkanLib
 
 	void VulkanApp::Update()
 	{
-		//return;
-		// Rotate the objects
-		for (auto& object : mModels)
-		{
-			// [NOTE] Just for testing
-			float speed = 5.0f;
-			if (object.object->GetId() == OBJECT_ID_PROP)
-				object.object->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
-		}
+
 	}
 
 	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
