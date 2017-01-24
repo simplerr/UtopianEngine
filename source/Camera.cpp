@@ -6,6 +6,7 @@ namespace VulkanLib
 	Camera::Camera()
 	{
 		mPosition = glm::vec3(7, 7, 7);
+		mUp = glm::vec3(0, 1, 0);
 
 		mYaw = mPitch = 0.0f;
 		mFov = 60.0f;
@@ -23,6 +24,7 @@ namespace VulkanLib
 		this->mAspectRatio = aspectRatio;
 		this->mNearPlane = nearPlane;
 		this->mFarPlane = farPlane;
+		mUp = glm::vec3(0, 1, 0);
 		mYaw = mPitch = 0.0f;
 		mLastX = mLastY = -1;
 	}
@@ -121,6 +123,16 @@ namespace VulkanLib
 	vec3 Camera::GetPosition()
 	{
 		return mPosition;
+	}
+
+	vec3 Camera::GetTarget()
+	{
+		return GetPosition() + GetDirection();
+	}
+
+	vec3 Camera::GetUp()
+	{
+		return mUp;
 	}
 
 	mat4 Camera::GetOrientation()

@@ -28,6 +28,8 @@ namespace VulkanLib
 		mat4 GetMatrix();
 		vec3 GetRight();
 		vec3 GetPosition();
+		vec3 GetTarget();
+		vec3 GetUp();
 		float GetPitch();
 		float GetYaw();
 		void AddOrientation(float yaw, float pitch);
@@ -40,6 +42,7 @@ namespace VulkanLib
 
 		vec3 mPosition;
 	private:
+		vec3 mUp;
 
 		float mPitch;	// Vertical angle
 		float mYaw;		// Horizontal angle

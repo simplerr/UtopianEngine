@@ -13,6 +13,7 @@ namespace ECS
 	class Component;
 	class RenderSystem;
 	class PhysicsSystem;
+	class PickingSystem;
 
 	typedef std::vector<Entity*> EntityList;
 	typedef std::vector<Component*> ComponentList;
@@ -30,6 +31,7 @@ namespace ECS
 		// All the ECS::System 
 		ECS::RenderSystem* mRenderSystem;
 		ECS::PhysicsSystem* mPhysicsSystem;
+		ECS::PickingSystem* mPickingSystem;
 
 		EntityList mEntities;
 		uint32_t mNextEntityId;

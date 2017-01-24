@@ -159,6 +159,9 @@
     <ClCompile Include="source\ecs\EntityManager.cpp">
       <Filter>Source Files\ecs</Filter>
     </ClCompile>
+    <ClCompile Include="source\ecs\systems\PickingSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -287,6 +290,9 @@
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="source\ecs\systems\PickingSystem.h">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -296,9 +302,6 @@
       <Filter>docs</Filter>
     </None>
     <None Include="docs\system_requirements.md">
-      <Filter>docs</Filter>
-    </None>
-    <None Include="source\notes.md">
       <Filter>docs</Filter>
     </None>
     <None Include="README.md">
@@ -315,6 +318,9 @@
     </None>
     <None Include="data\shaders\test\test.vert">
       <Filter>Source Files\shaders\test</Filter>
+    </None>
+    <None Include="docs\notes.md">
+      <Filter>docs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

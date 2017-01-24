@@ -99,6 +99,11 @@ namespace VulkanLib
 		mCamera = camera;
 	}
 
+	Camera* VulkanApp::GetCamera()
+	{
+		return mCamera;
+	}
+
 	void VulkanApp::SetRenderSystem(ECS::RenderSystem* renderSystem)
 	{
 		mRenderSystem = renderSystem;

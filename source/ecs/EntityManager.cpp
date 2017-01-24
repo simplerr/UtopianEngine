@@ -1,6 +1,7 @@
 #include "vulkan/VulkanApp.h"
 #include "systems/RenderSystem.h"
 #include "systems/PhysicsSystem.h"
+#include "systems/PickingSystem.h"
 #include "components/Component.h"
 #include "EntityManager.h"
 #include "Entity.h"
@@ -12,6 +13,7 @@ namespace ECS
 		// Create all ECS::System
 		mPhysicsSystem = new ECS::PhysicsSystem();
 		mRenderSystem = new ECS::RenderSystem(vulkanApp);
+		mPickingSystem = new ECS::PickingSystem(vulkanApp->GetCamera(), vulkanApp);
 		vulkanApp->SetRenderSystem(mRenderSystem);
 
 		mNextEntityId = 0u;
@@ -28,6 +30,7 @@ namespace ECS
 		// Delete all ECS::System
 		delete mRenderSystem;
 		delete mPhysicsSystem;
+		delete mPickingSystem;
 	}
 
 	// AddEntity() is responsible for informing the needed ECS::Systems
@@ -42,6 +45,7 @@ namespace ECS
 			{
 				// The RenderSystem will need to access the TransformComponent
 				mRenderSystem->AddEntity(entity);
+				mPickingSystem->AddEntity(entity);
 			}
 			else if (components[i]->GetType() == PHYSICS_COMPONENT)
 			{
@@ -76,5 +80,6 @@ namespace ECS
 	{
 		mRenderSystem->Process();
 		mPhysicsSystem->Process();
+		mPickingSystem->Process();
 	}
 }

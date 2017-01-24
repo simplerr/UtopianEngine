@@ -174,4 +174,9 @@ namespace VulkanLib
 	{
 		return mWindow->GetHeight();
 	}
+
+	Window * VulkanBase::GetWindow()
+	{
+		return mWindow;
+	}
 }	// VulkanLib namespace

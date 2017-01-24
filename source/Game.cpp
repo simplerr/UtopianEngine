@@ -29,7 +29,7 @@ namespace VulkanLib
 		mWindow = window;
 
 		// Create the camera
-		mCamera = new VulkanLib::Camera(glm::vec3(500, 4700, 500), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
+		mCamera = new VulkanLib::Camera(glm::vec3(0.0f, 500.0f, 0.0f), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
@@ -66,7 +66,7 @@ namespace VulkanLib
 				for (int z = 0; z < size; z++)
 				{
 					// Transform
-					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space, -100 - y * space, z * space));
+					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
 					transformComponent->SetRotation(glm::vec3(180, 0, 0));
 					transformComponent->SetScale(glm::vec3(3.0f));
 
@@ -90,9 +90,13 @@ namespace VulkanLib
 					ECS::ComponentList componentList;
 					componentList.push_back(meshComponent);
 					componentList.push_back(transformComponent);
-					componentList.push_back(physicsComponent);
+					//componentList.push_back(physicsComponent);
 					
-					mEntityManager->AddEntity(componentList);
+					// TEMPORARY
+					if(i == 0)
+						mEntityManager->AddEntity(componentList);
+
+					i++;
 				}
 			}
 		}

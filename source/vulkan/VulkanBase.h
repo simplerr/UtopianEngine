@@ -68,6 +68,8 @@ namespace VulkanLib
 		int GetWindowWidth();
 		int GetWindowHeight();
 
+		Window*  GetWindow();
+
 		// Platform specific
 #if defined(_WIN32)
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

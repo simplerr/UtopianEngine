@@ -87,6 +87,7 @@
     <ClCompile Include="source\ecs\Entity.cpp" />
     <ClCompile Include="source\ecs\EntityManager.cpp" />
     <ClCompile Include="source\ecs\systems\PhysicsSystem.cpp" />
+    <ClCompile Include="source\ecs\systems\PickingSystem.cpp" />
     <ClCompile Include="source\ecs\systems\RenderSystem.cpp" />
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Light.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="source\ecs\Entity.h" />
     <ClInclude Include="source\ecs\EntityManager.h" />
     <ClInclude Include="source\ecs\systems\PhysicsSystem.h" />
+    <ClInclude Include="source\ecs\systems\PickingSystem.h" />
     <ClInclude Include="source\ecs\systems\RenderSystem.h" />
     <ClInclude Include="source\ecs\systems\System.h" />
     <ClInclude Include="source\Game.h" />
@@ -168,11 +170,11 @@
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\test\test.frag" />
     <None Include="data\shaders\test\test.vert" />
+    <None Include="docs\notes.md" />
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />
     <None Include="docs\system_requirements.md" />
     <None Include="README.md" />
-    <None Include="source\notes.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\todo.md" />

@@ -91,6 +91,7 @@ namespace VulkanLib
 		void CompileShaders();
 		void SetCamera(Camera* camera);
 
+		Camera* GetCamera();
 		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
 
 		void SetRenderSystem(ECS::RenderSystem* renderSystem);
