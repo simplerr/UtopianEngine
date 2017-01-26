@@ -26,7 +26,7 @@ namespace ECS
 		EntityCache entityCache;
 		entityCache.entity = entity;
 		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
-		entityCache.mesh= dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
+		entityCache.mesh = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
 
 		mEntities.push_back(entityCache);
 	}
@@ -38,6 +38,7 @@ namespace ECS
 		for (int i = 0; i < mEntities.size(); i++)
 		{
 			glm::vec3 pos = mEntities[i].transform->GetPosition();
+			BoundingBox boundingBox = mEntities[i].mesh->g
 
 			float dist = FLT_MAX;
 			Sphere sphere(pos, 40.0f);

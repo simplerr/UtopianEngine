@@ -36,6 +36,39 @@ namespace VulkanLib
 		std::string texturePath;
 	};
 
+	class BoundingBox
+	{
+	public:
+		BoundingBox(glm::vec3 min, glm::vec3 max) {
+			mMin = min;
+			mMax = max;
+		}
+
+		float GetWidth() {
+			return mMax.x - mMin.x;
+		}
+
+		float GetHeight() {
+			return mMax.y - mMin.y;
+		}
+
+		float GetDepth() {
+			return mMax.z - mMin.z;
+		}
+
+		glm::vec3 GetMin() {
+			return mMin;
+		}
+
+		glm::vec3 GetMax() {
+			return mMax;
+		}
+		
+	private:
+		glm::vec3 mMin;
+		glm::vec3 mMax;
+	};
+
 	class StaticModel
 	{
 	public:
@@ -57,10 +90,13 @@ namespace VulkanLib
 
 		int GetNumIndices();
 		int GetNumVertics();
+		BoundingBox GetBoundingBox();
 
 		std::vector<Mesh> mMeshes;
 	private:
 		uint32_t mIndicesCount;
 		uint32_t mVerticesCount;
+
+		BoundingBox mBoundingBox;
 	};
 }	// VulkanLib namespace
