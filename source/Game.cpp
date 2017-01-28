@@ -82,9 +82,9 @@ namespace VulkanLib
 					// Mesh
 					ECS::MeshComponent* meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
 					if (x == 0)
-						meshComponent->SetPipeline(PipelineType::PIPELINE_WIREFRAME);
-					else if(x == 1)
-						meshComponent->SetPipeline(PipelineType::PIPELINE_TEST);
+						meshComponent->SetPipeline(PipelineType::PIPELINE_BASIC);
+					/*else if(x == 1)
+						meshComponent->SetPipeline(PipelineType::PIPELINE_TEST);*/
 
 					// Create component list
 					ECS::ComponentList componentList;

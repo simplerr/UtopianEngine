@@ -13,6 +13,7 @@ namespace VulkanLib
 	class PipelineLayout;
 	class DescriptorSet;
 	class CommandBuffer;
+	class CubeMesh;
 }
 
 namespace ECS
@@ -47,6 +48,7 @@ namespace ECS
 		// VulkanApp needs to be available for HUDS, debugging etc
 		VulkanLib::VulkanApp* mVulkanApp;
 		VulkanLib::ModelLoader* mModelLoader;
+		VulkanLib::CubeMesh* mCubeMesh;
 
 		// The RenderSystem should contain a list of all loaded meshes, with only one copy of each in memory
 		// What happens if a mesh changes pipeline?

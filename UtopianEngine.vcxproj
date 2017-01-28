@@ -93,6 +93,7 @@
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\vulkan\CubeMesh.cpp" />
     <ClCompile Include="source\vulkan\Device.cpp" />
     <ClCompile Include="source\vulkan\FragmentUniformBuffer.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
+    <ClInclude Include="source\vulkan\CubeMesh.h" />
     <ClInclude Include="source\vulkan\Device.h" />
     <ClInclude Include="source\vulkan\FragmentUniformBuffer.h" />
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h" />
@@ -157,6 +159,7 @@
     <ClInclude Include="source\vulkan\StaticModel.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\UniformBuffer.h" />
+    <ClInclude Include="source\vulkan\Vertex.h" />
     <ClInclude Include="source\vulkan\VertexDescription.h" />
     <ClInclude Include="source\vulkan\VertexUniformBuffer.h" />
     <ClInclude Include="source\vulkan\VulkanApp.h" />

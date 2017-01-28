@@ -1,3 +1,4 @@
+#include <glm/gtc/matrix_transform.hpp>
 #include "ecs/Entity.h"
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/TransformComponent.h"
@@ -6,7 +7,9 @@
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/CubeMesh.h"
 #include "RenderSystem.h"
+
 
 #define VERTEX_BUFFER_BIND_ID 0
 
@@ -16,12 +19,16 @@ namespace ECS
 	{
 		mVulkanApp = vulkanApp;
 		mModelLoader = new VulkanLib::ModelLoader();
+
+		mCubeMesh = new VulkanLib::CubeMesh(vulkanApp->GetDeviceTmp());
+		mCubeMesh->BuildBuffers(vulkanApp->GetDeviceTmp());
 	}
 
 	RenderSystem::~RenderSystem()
 	{
 		mModelLoader->CleanupModels(mVulkanApp->GetDevice());
 		delete mModelLoader;
+		delete mCubeMesh;
 	}
 
 	void RenderSystem::AddEntity(Entity* entity)
@@ -38,6 +45,7 @@ namespace ECS
 
 	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
 	{
+		// Draw all meshes
 		for (auto const& entityVector : mMeshEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
@@ -66,6 +74,21 @@ namespace ECS
 
 				// Draw indexed triangle	
 				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
+
+				// Draw debug bounding box
+				VulkanLib::BoundingBox boundingBox = entity.meshComponent->GetBoundingBox();
+				boundingBox.Translate(entity.transform->GetWorldMatrix());
+
+				mat4 world;
+				world = glm::translate(world, transform->GetPosition());
+				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
+
+				pushConstantBlock.world = world;
+
+				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeMesh->vertices.buffer, offsets);		
+				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeMesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeMesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
 	}
