@@ -25,7 +25,6 @@ namespace ECS
 		Entity* entity;
 		MeshComponent* meshComponent;
 		TransformComponent* transform;
-		VulkanLib::StaticModel* model;
 	};
 
 	// RenderSystem will need to contain low level Vulkan code but by using the wrapper classes in VulkanLib as much as possible

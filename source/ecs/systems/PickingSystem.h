@@ -3,6 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "System.h"
+#include "Collision.h"
 
 namespace VulkanLib
 {
@@ -12,24 +13,6 @@ namespace VulkanLib
 
 namespace ECS
 {
-	struct Ray
-	{
-		Ray() {}
-		Ray(glm::vec3 o, glm::vec3 d) : origin(o), direction(d) {}
-		glm::vec3 origin;
-		glm::vec3 direction;
-	};
-
-	struct Sphere
-	{
-		Sphere(glm::vec3 position, float radius) {
-			this->position = position;
-			this->radius = radius;
-		}
-
-		glm::vec3 position;
-		float radius;
-	};
 
 	class TransformComponent;
 	class MeshComponent;
@@ -49,10 +32,8 @@ namespace ECS
 		void Process();
 
 		Entity* GetPickedEntity();
-		bool RaySphereIntersection(Ray ray, Sphere sphere, float& dist);
-		//void RayBoxIntersection(Ray ray, BoundingBox box, float& dist);
 
-		Ray GetPickingRay(VulkanLib::Camera* camera);
+		VulkanLib::Ray GetPickingRay(VulkanLib::Camera* camera);
 	private:
 		std::vector<EntityCache> mEntities;
 		VulkanLib::VulkanApp* mVulkanApp;

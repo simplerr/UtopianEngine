@@ -68,7 +68,7 @@ namespace VulkanLib
 					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
 					transformComponent->SetRotation(glm::vec3(180, 0, 0));
-					transformComponent->SetScale(glm::vec3(3.0f));
+					transformComponent->SetScale(glm::vec3(1.0f));
 
 					// Physics
 					uint32_t maxSpeed = 2;
@@ -111,7 +111,7 @@ namespace VulkanLib
 
 		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
 		float speed = 5.0f;
-		transform->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
+		//transform->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
 	}
 
 	void Game::Draw()

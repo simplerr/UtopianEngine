@@ -8,6 +8,7 @@
 #include "ecs/Entity.h"
 #include "PickingSystem.h"
 #include "Camera.h"
+#include "Collision.h"
 
 // [TODO] Move
 #define WINDOW_WIDTH 1600
@@ -38,12 +39,13 @@ namespace ECS
 		for (int i = 0; i < mEntities.size(); i++)
 		{
 			glm::vec3 pos = mEntities[i].transform->GetPosition();
-			BoundingBox boundingBox = mEntities[i].mesh->g
+			VulkanLib::BoundingBox boundingBox = mEntities[i].mesh->GetBoundingBox();
+
+			boundingBox.Translate(mEntities[i].transform->GetWorldMatrix());
 
 			float dist = FLT_MAX;
-			Sphere sphere(pos, 40.0f);
-			Ray ray = GetPickingRay(mCamera);
-			if (RaySphereIntersection(ray, sphere, dist))
+			VulkanLib::Ray ray = GetPickingRay(mCamera);
+			if (boundingBox.RayIntersect(ray, dist))
 			{
 				VulkanLib::VulkanDebug::ConsolePrint("GET PHYSICAL " + std::to_string(dist) + "\n");
 				if (dist < minDist)
@@ -58,7 +60,7 @@ namespace ECS
 		mEntities[minId];
 	}
 
-	Ray PickingSystem::GetPickingRay(VulkanLib::Camera* camera)
+	VulkanLib::Ray PickingSystem::GetPickingRay(VulkanLib::Camera* camera)
 	{
 		// Camera/view matrix
 		mat4 viewMatrix = glm::lookAt(camera->GetPosition(), camera->GetTarget(), camera->GetUp());
@@ -66,11 +68,11 @@ namespace ECS
 		// Projection matrix
 		mat4 projectionMatrix = glm::perspective(90, WINDOW_WIDTH / WINDOW_HEIGHT, 1, 2);
 
-		//// Get inverse of view*proj
+		// Get inverse of view*proj
 		mat4 inverseViewProjection = projectionMatrix * viewMatrix;
 		inverseViewProjection = glm::inverse(inverseViewProjection);
 
-		//// [TODO] Move
+		// [TODO] Move
 		POINT cursorPos;
 		GetCursorPos(&cursorPos);
 		ScreenToClient(mVulkanApp->GetWindow()->GetHwnd(), &cursorPos);
@@ -83,53 +85,11 @@ namespace ECS
 		rayDir -= vec4(camera->GetPosition(), 0);
 		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
 
-		return Ray(camera->GetPosition(), rayFinalDir);
+		return VulkanLib::Ray(camera->GetPosition(), rayFinalDir);
 	}
 
 	Entity* PickingSystem::GetPickedEntity()
 	{
 		return nullptr;
 	}
-
-	bool PickingSystem::RaySphereIntersection(Ray ray, Sphere sphere, float& dist)
-	{
-		float t0, t1;
-
-		vec3 L = sphere.position - ray.origin;
-		float tca = glm::dot(L, ray.direction);
-		if (tca < 0)
-			return false;
-
-		float d2 = glm::dot(L, L) - tca * tca;
-
-		if (d2 > pow(sphere.radius, 2))
-			return false;
-
-		float thc = sqrt(pow(sphere.radius, 2) - d2);
-		t0 = tca - thc;
-		t1 = tca + thc;
-
-		if (t0 < 0)
-		{
-			float tmp = t0;
-			t0 = t1;
-			t1 = tmp;
-
-			if (t0 < 0)
-				return false;
-		}
-
-		if (t0 > 0.0 && t0 < t1)
-		{
-			dist = t0;
-			return true;
-		}
-
-		return false;
-	}
-
-	//void PickingSystem::RayBoxIntersection(Ray ray, BoundingBox box, float& dist)
-	//{
-
-	//}
 }

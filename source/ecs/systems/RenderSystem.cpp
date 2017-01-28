@@ -30,7 +30,8 @@ namespace ECS
 		entityPair.entity = entity;
 		entityPair.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
 		entityPair.meshComponent = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
-		entityPair.model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityPair.meshComponent->GetFilename());
+		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityPair.meshComponent->GetFilename()); 
+		entityPair.meshComponent->SetModel(model);
 
 		mMeshEntities[entityPair.meshComponent->GetPipeline()].push_back(entityPair);
 	}
@@ -49,7 +50,7 @@ namespace ECS
 			{
 				TransformComponent* transform = entity.transform;
 				MeshComponent* meshComponent = entity.meshComponent;
-				VulkanLib::StaticModel* model = entity.model;
+				VulkanLib::StaticModel* model = entity.meshComponent->GetModel();
 
 				// Bind the correct vertex & index buffers
 				// Push the world matrix constant
@@ -84,7 +85,6 @@ namespace ECS
 			{
 				TransformComponent* transform = entity.transform;
 				MeshComponent* meshComponent = entity.meshComponent;
-				VulkanLib::StaticModel* model = entity.model;
 
 				// Bind the correct vertex & index buffers
 			}

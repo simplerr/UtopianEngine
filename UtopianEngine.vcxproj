@@ -136,6 +136,7 @@
     <ClInclude Include="source\Light.h" />
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\Timer.h" />
+    <ClInclude Include="source\Collision.h" />
     <ClInclude Include="source\vulkan\Device.h" />
     <ClInclude Include="source\vulkan\FragmentUniformBuffer.h" />
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h" />

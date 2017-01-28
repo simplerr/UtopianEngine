@@ -293,6 +293,9 @@
     <ClInclude Include="source\ecs\systems\PickingSystem.h">
       <Filter>Source Files\ecs\systems</Filter>
     </ClInclude>
+    <ClInclude Include="source\Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
