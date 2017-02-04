@@ -1,6 +1,7 @@
 #include <vector>
 
 #include "ModelLoader.h"
+#include "vulkan/Mesh.h"
 #include "StaticModel.h"
 #include "Device.h"
 
@@ -21,22 +22,26 @@ namespace VulkanLib
 		for (auto& model : mModelMap)
 		{
 			// Free vertex and index buffers
-			vkDestroyBuffer(device, model.second->vertices.buffer, nullptr);
-			vkFreeMemory(device, model.second->vertices.memory, nullptr);
-			vkDestroyBuffer(device, model.second->indices.buffer, nullptr);
-			vkFreeMemory(device, model.second->indices.memory, nullptr);
+			for (int i = 0; i < model.second->mMeshes.size(); i++)
+			{
+				vkDestroyBuffer(device, model.second->mMeshes[i]->vertices.buffer, nullptr);
+				vkFreeMemory(device, model.second->mMeshes[i]->vertices.memory, nullptr);
+				vkDestroyBuffer(device, model.second->mMeshes[i]->indices.buffer, nullptr);
+				vkFreeMemory(device, model.second->mMeshes[i]->indices.memory, nullptr);
+			}
 
 			delete model.second;
 		}
 	}
 
-	StaticModel * ModelLoader::LoadModel(Device* device, std::string filename)
+	StaticModel* ModelLoader::LoadModel(Device* device, std::string filename)
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find(filename) != mModelMap.end())
 			return mModelMap[filename];
 
-		StaticModel* model = nullptr;
+		StaticModel* model = new StaticModel();
+
 		Assimp::Importer importer;
 
 		// Load scene from the file.
@@ -44,17 +49,17 @@ namespace VulkanLib
 
 		if (scene != nullptr)
 		{
-			model = new StaticModel;
+			std::vector<AssimpMesh> assimpMeshes;
 
 			// Loop over all meshes
 			for (int meshId = 0; meshId < scene->mNumMeshes; meshId++)
 			{
+				Mesh* mesh = new Mesh(device);
 				aiMesh* assimpMesh = scene->mMeshes[meshId];
 
 				// Get the diffuse color
 				aiColor3D color(0.f, 0.f, 0.f);
 				scene->mMaterials[assimpMesh->mMaterialIndex]->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-				Mesh mesh;
 
 				// Load vertices
 				for (int vertexId = 0; vertexId < assimpMesh->mNumVertices; vertexId++)
@@ -68,15 +73,16 @@ namespace VulkanLib
 
 					n = n.Normalize();
 					Vertex vertex(v.x, v.y, v.z, n.x, n.y, n.z, 0, 0, 0, t.x, t.y, color.r, color.g, color.b);
-
-					mesh.vertices.push_back(vertex);
+					mesh->AddVertex(vertex);
 				}
 
 				// Load indices
 				for (int faceId = 0; faceId < assimpMesh->mNumFaces; faceId++)
 				{
-					for (int indexId = 0; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId++)
-						mesh.indices.push_back(assimpMesh->mFaces[faceId].mIndices[indexId]);
+					for (int indexId = 0; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId+=3)
+					{
+						mesh->AddIndex(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
+					}
 				}
 
 				// Get texture path
@@ -87,18 +93,19 @@ namespace VulkanLib
 					aiString texturePath;
 					material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
 					FindValidPath(&texturePath, filename);
-					mesh.texturePath = texturePath.C_Str();
+					mesh->SetTexturePath(texturePath.C_Str());
 				}
 				else
 				{
-					mesh.texturePath = "NO_TEXTURE";
+					mesh->SetTexturePath("NO_TEXTURE");
 				}
 
+				mesh->BuildBuffers(device);		// Build the models buffers here
 				model->AddMesh(mesh);
 			}
 
 			// Add the model to the model map
-			model->BuildBuffers(device);		// Build the models buffers here
+			model->Init(device);
 			mModelMap[filename] = model;
 		}
 		else {
@@ -231,6 +238,59 @@ namespace VulkanLib
 		//mModelMap[filename] = terrain;
 
 		//return terrain;
+	}
+
+	StaticModel* ModelLoader::LoadDebugBox(Device* device)
+	{
+		// Check if the model already is loaded
+		if (mModelMap.find("debug_box") != mModelMap.end())
+			return mModelMap["debug_box"];
+
+		StaticModel* model = new StaticModel();
+		Mesh* mesh = new Mesh(device);
+
+		// Front
+		mesh->AddVertex(-0.5f, -0.5f, 0.5f);
+		mesh->AddVertex(0.5f, -0.5f, 0.5f);
+		mesh->AddVertex(0.5f, 0.5f, 0.5f);
+		mesh->AddVertex(-0.5f, 0.5f, 0.5f);
+
+		// Back
+		mesh->AddVertex(-0.5f, -0.5f, -0.5f);
+		mesh->AddVertex(0.5f, -0.5f, -0.5f);
+		mesh->AddVertex(0.5f, 0.5f, -0.5f);
+		mesh->AddVertex(-0.5f, 0.5f, -0.5f);
+
+		// Front
+		mesh->AddIndex(0, 1, 2);
+		mesh->AddIndex(2, 3, 0);
+
+		// Top
+		mesh->AddIndex(1, 5, 6);
+		mesh->AddIndex(6, 2, 1);
+
+		// Back
+		mesh->AddIndex(7, 6, 5);
+		mesh->AddIndex(5, 4, 7);
+
+		// Bottom
+		mesh->AddIndex(4, 0, 3);
+		mesh->AddIndex(3, 7, 4);
+
+		// Left
+		mesh->AddIndex(4, 5, 1);
+		mesh->AddIndex(1, 0, 4);
+
+		// Right
+		mesh->AddIndex(3, 2, 6);
+		mesh->AddIndex(6, 7, 3);
+
+		mesh->BuildBuffers(device);		
+		model->AddMesh(mesh);
+
+		model->Init(device);
+		mModelMap["debug_box"] = model;
+		return model;
 	}
 
 	// From /assimp/assimp/tools/assimp_view/Material.cpp

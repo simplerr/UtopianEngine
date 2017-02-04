@@ -162,11 +162,11 @@
     <ClCompile Include="source\ecs\systems\PickingSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\CubeMesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Collision.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\Mesh.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,10 +302,10 @@
     <ClInclude Include="source\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\CubeMesh.h">
+    <ClInclude Include="source\vulkan\Vertex.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\Vertex.h">
+    <ClInclude Include="source\vulkan\Mesh.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>

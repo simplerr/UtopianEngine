@@ -14,84 +14,34 @@ namespace VulkanLib
 
 	}
 
-	void StaticModel::AddMesh(Mesh & mesh)
+	void StaticModel::AddMesh(Mesh* mesh)
 	{
 		mMeshes.push_back(mesh);
 	}
 
-	void StaticModel::BuildBuffers(Device* device)
+	void StaticModel::Init(Device* device)
 	{
 		std::vector<Vertex> vertexVector;
 		std::vector<uint32_t> indexVector;
 
-		// All the vertices & indices from the different meshes needs to be combined into one vector
 		for (int meshId = 0; meshId < mMeshes.size(); meshId++)
 		{
-			for (int i = 0; i < mMeshes[meshId].vertices.size(); i++)
+			for (int i = 0; i < mMeshes[meshId]->vertexVector.size(); i++)
 			{
-				Vertex vertex = mMeshes[meshId].vertices[i];
+				Vertex vertex = mMeshes[meshId]->vertexVector[i];
 				vertexVector.push_back(vertex);
 			}
 
-			for (int i = 0; i < mMeshes[meshId].indices.size(); i++)
+			for (int i = 0; i < mMeshes[meshId]->indexVector.size(); i++)
 			{
-				indexVector.push_back(mMeshes[meshId].indices[i]);
+				indexVector.push_back(mMeshes[meshId]->indexVector[i]);
 			}
 		}
 
-		mBoundingBox.Init(vertexVector);
-
-		uint32_t vertexBufferSize = vertexVector.size() * sizeof(Vertex);
-		uint32_t indexBufferSize = indexVector.size() * sizeof(uint32_t);
-
-		mIndicesCount = indexVector.size();	// NOTE maybe not smart
 		mVerticesCount = vertexVector.size();
+		mIndicesCount = indexVector.size();
 
-		VkMemoryRequirements memoryRequirments;
-		VkMemoryAllocateInfo memoryAllocation = {};
-		memoryAllocation.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-
-		void *data;				// Used for memcpy
-
-		//
-		// Create the vertex buffer
-		//
-		VkBufferCreateInfo vertexBufferInfo = {};
-		vertexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		vertexBufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-		vertexBufferInfo.size = vertexBufferSize;
-
-		VulkanDebug::ErrorCheck(vkCreateBuffer(device->GetVkDevice(), &vertexBufferInfo, nullptr, &vertices.buffer));								// Create buffer
-		vkGetBufferMemoryRequirements(device->GetVkDevice(), vertices.buffer, &memoryRequirments);												// Get buffer size
-		memoryAllocation.allocationSize = memoryRequirments.size;
-		device->GetMemoryType(memoryRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocation.memoryTypeIndex);		// Get memory type
-		VulkanDebug::ErrorCheck(vkAllocateMemory(device->GetVkDevice(), &memoryAllocation, nullptr, &vertices.memory));							// Allocate device memory
-		VulkanDebug::ErrorCheck(vkMapMemory(device->GetVkDevice(), vertices.memory, 0, memoryAllocation.allocationSize, 0, &data));				// Map device memory so the host can access it through data
-		memcpy(data, vertexVector.data(), vertexBufferSize);																						// Copy buffer data to the mapped data pointer
-		vkUnmapMemory(device->GetVkDevice(), vertices.memory);																					// Unmap memory
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), vertices.buffer, vertices.memory, 0));									// Bind the buffer to the allocated device memory
-
-		//
-		// Create the index buffer
-		//
-		VkBufferCreateInfo indexBufferInfo = {};
-		indexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		indexBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-		indexBufferInfo.size = indexBufferSize;
-
-		memset(&indices, 0, sizeof(indices));
-		VulkanDebug::ErrorCheck(vkCreateBuffer(device->GetVkDevice(), &indexBufferInfo, nullptr, &indices.buffer));								// Create buffer
-		vkGetBufferMemoryRequirements(device->GetVkDevice(), indices.buffer, &memoryRequirments);													// Get buffer size
-		memoryAllocation.allocationSize = memoryRequirments.size;
-		device->GetMemoryType(memoryRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocation.memoryTypeIndex);		// Get memory type
-		VulkanDebug::ErrorCheck(vkAllocateMemory(device->GetVkDevice(), &memoryAllocation, nullptr, &indices.memory));							// Allocate device memory
-		VulkanDebug::ErrorCheck(vkMapMemory(device->GetVkDevice(), indices.memory, 0, memoryAllocation.allocationSize, 0, &data));				// Map device memory so the host can access it through data
-		memcpy(data, indexVector.data(), indexBufferSize);																							// Copy buffer data to the mapped data pointer
-		vkUnmapMemory(device->GetVkDevice(), indices.memory);																						// Unmap memory
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), indices.buffer, indices.memory, 0));									// Bind the buffer to the allocated device memory
-
-		// TODO:
-		// The mMeshes vector with all the vertices and indices can now actually be destroyed, no need for it any more
+		mBoundingBox.Init(vertexVector);
 	}
 
 	int StaticModel::GetNumIndices()

@@ -1,16 +1,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
-#include "CubeMesh.h"
+#include "Mesh.h"
 
 namespace VulkanLib
 {
-	CubeMesh::CubeMesh(Device* device)
+	Mesh::Mesh(Device* device)
 	{
 		mDevice = device;
 	}
 	
-	CubeMesh::~CubeMesh()
+	Mesh::~Mesh()
 	{
 		// Free vertex and index buffers
 		vkDestroyBuffer(mDevice->GetVkDevice(), vertices.buffer, nullptr);
@@ -19,63 +19,27 @@ namespace VulkanLib
 		vkFreeMemory(mDevice->GetVkDevice(), indices.memory, nullptr);
 	}
 
-	void CubeMesh::AddVertex(Vertex vertex)
+	void Mesh::AddVertex(Vertex vertex)
 	{
-		mVertices.push_back(vertex);
+		vertexVector.push_back(vertex);
 	}
 
-	void CubeMesh::AddVertex(float x, float y, float z)
+	void Mesh::AddVertex(float x, float y, float z)
 	{
 		AddVertex(Vertex(x, y, z));
 	}
 
-	void CubeMesh::AddIndex(uint32_t v1, uint32_t v2, uint32_t v3)
+	void Mesh::AddIndex(uint32_t v1, uint32_t v2, uint32_t v3)
 	{
-		mIndices.push_back(v1);
-		mIndices.push_back(v2);
-		mIndices.push_back(v3);
+		indexVector.push_back(v1);
+		indexVector.push_back(v2);
+		indexVector.push_back(v3);
 	}
 
-	void CubeMesh::BuildBuffers(Device * device)
+	void Mesh::BuildBuffers(Device* device)
 	{
-		// Front
-		AddVertex(-0.5f, -0.5f, 0.5f);
-		AddVertex(0.5f, -0.5f, 0.5f);
-		AddVertex(0.5f, 0.5f, 0.5f);
-		AddVertex(-0.5f, 0.5f, 0.5f);
-
-		// Back
-		AddVertex(-0.5f, -0.5f, -0.5f);
-		AddVertex(0.5f, -0.5f, -0.5f);
-		AddVertex(0.5f, 0.5f, -0.5f);
-		AddVertex(-0.5f, 0.5f, -0.5f);
-
-		// Front
-		AddIndex(0, 1, 2);
-		AddIndex(2, 3, 0);
-
-		// Top
-		AddIndex(1, 5, 6);
-		AddIndex(6, 2, 1);
-
-		// Back
-		AddIndex(7, 6, 5);
-		AddIndex(5, 4, 7);
-
-		// Bottom
-		AddIndex(4, 0, 3);
-		AddIndex(3, 7, 4);
-
-		// Left
-		AddIndex(4, 5, 1);
-		AddIndex(1, 0, 4);
-
-		// Right
-		AddIndex(3, 2, 6);
-		AddIndex(6, 7, 3);
-
-		mVerticesCount = mVertices.size();
-		mIndicesCount = mIndices.size();	
+		mVerticesCount = vertexVector.size();
+		mIndicesCount = indexVector.size();
 
 		uint32_t vertexBufferSize = mVerticesCount * sizeof(Vertex);
 		uint32_t indexBufferSize = mIndicesCount * sizeof(uint32_t);
@@ -100,7 +64,7 @@ namespace VulkanLib
 		device->GetMemoryType(memoryRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocation.memoryTypeIndex);		// Get memory type
 		VulkanDebug::ErrorCheck(vkAllocateMemory(device->GetVkDevice(), &memoryAllocation, nullptr, &vertices.memory));							// Allocate device memory
 		VulkanDebug::ErrorCheck(vkMapMemory(device->GetVkDevice(), vertices.memory, 0, memoryAllocation.allocationSize, 0, &data));				// Map device memory so the host can access it through data
-		memcpy(data, mVertices.data(), vertexBufferSize);																						// Copy buffer data to the mapped data pointer
+		memcpy(data, vertexVector.data(), vertexBufferSize);																						// Copy buffer data to the mapped data pointer
 		vkUnmapMemory(device->GetVkDevice(), vertices.memory);																					// Unmap memory
 		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), vertices.buffer, vertices.memory, 0));								// Bind the buffer to the allocated device memory
 
@@ -119,18 +83,28 @@ namespace VulkanLib
 		device->GetMemoryType(memoryRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocation.memoryTypeIndex);		// Get memory type
 		VulkanDebug::ErrorCheck(vkAllocateMemory(device->GetVkDevice(), &memoryAllocation, nullptr, &indices.memory));							// Allocate device memory
 		VulkanDebug::ErrorCheck(vkMapMemory(device->GetVkDevice(), indices.memory, 0, memoryAllocation.allocationSize, 0, &data));				// Map device memory so the host can access it through data
-		memcpy(data, mIndices.data(), indexBufferSize);																							// Copy buffer data to the mapped data pointer
+		memcpy(data, indexVector.data(), indexBufferSize);																							// Copy buffer data to the mapped data pointer
 		vkUnmapMemory(device->GetVkDevice(), indices.memory);																					// Unmap memory
 		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), indices.buffer, indices.memory, 0));									// Bind the buffer to the allocated device memory
 	}
 
-	BoundingBox CubeMesh::GetBoundingBox()
+	void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)
+	{
+
+	}
+
+	BoundingBox Mesh::GetBoundingBox()
 	{
 		return mBoundingBox;
 	}
 
-	uint32_t CubeMesh::GetNumIndices()
+	uint32_t Mesh::GetNumIndices()
 	{
 		return mIndicesCount;
+	}
+
+	void Mesh::SetTexturePath(std::string texturePath)
+	{
+		mTexturePath = texturePath;
 	}
 }

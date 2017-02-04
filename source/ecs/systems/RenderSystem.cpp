@@ -7,7 +7,7 @@
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/CubeMesh.h"
+#include "vulkan/Mesh.h"
 #include "RenderSystem.h"
 
 
@@ -20,15 +20,13 @@ namespace ECS
 		mVulkanApp = vulkanApp;
 		mModelLoader = new VulkanLib::ModelLoader();
 
-		mCubeMesh = new VulkanLib::CubeMesh(vulkanApp->GetDeviceTmp());
-		mCubeMesh->BuildBuffers(vulkanApp->GetDeviceTmp());
+		mCubeModel = mModelLoader->LoadDebugBox(vulkanApp->GetDeviceTmp());
 	}
 
 	RenderSystem::~RenderSystem()
 	{
 		mModelLoader->CleanupModels(mVulkanApp->GetDevice());
 		delete mModelLoader;
-		delete mCubeMesh;
 	}
 
 	void RenderSystem::AddEntity(Entity* entity)
@@ -69,8 +67,8 @@ namespace ECS
 
 				// Bind triangle vertices
 				VkDeviceSize offsets[1] = { 0 };
-				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->vertices.buffer, offsets);		
-				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), model->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->mMeshes[0]->vertices.buffer, offsets);		
+				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 				// Draw indexed triangle	
 				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
@@ -89,9 +87,9 @@ namespace ECS
 				pushConstantBlock.world = world;
 
 				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
-				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeMesh->vertices.buffer, offsets);		
-				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeMesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeMesh->GetNumIndices(), 1, 0, 0, 0);
+				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
+				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
 	}

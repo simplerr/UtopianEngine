@@ -93,7 +93,7 @@ namespace VulkanLib
 					//componentList.push_back(physicsComponent);
 					
 					// TEMPORARY
-					if(i == 0)
+					//if(i == 0)
 						mEntityManager->AddEntity(componentList);
 
 					i++;

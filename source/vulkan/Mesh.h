@@ -10,7 +10,7 @@ namespace VulkanLib
 {
 	class Device;
 
-	class CubeMesh
+	class Mesh
 	{
 	public:
 		struct {
@@ -23,21 +23,24 @@ namespace VulkanLib
 			VkDeviceMemory memory;
 		} indices;
 
-		CubeMesh(Device* device);
-		~CubeMesh();
+		Mesh(Device* device);
+		~Mesh();
 		void AddVertex(Vertex vertex);
 		void AddVertex(float x, float y, float z);
 		void AddIndex(uint32_t v1, uint32_t v2, uint32_t v3);
 		void BuildBuffers(Device* device);
+		void BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>);
 
 		BoundingBox GetBoundingBox();
 
 		uint32_t GetNumIndices();
+		void SetTexturePath(std::string texturePath);
 
+		std::vector<Vertex> vertexVector;
+		std::vector<unsigned int> indexVector;
 	private:
 		Device* mDevice;
-		std::vector<Vertex> mVertices;
-		std::vector<unsigned int> mIndices;
+		std::string mTexturePath;
 
 		BoundingBox mBoundingBox;
 
