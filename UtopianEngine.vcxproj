@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\ecs\components\MeshComponent.cpp" />
     <ClCompile Include="source\ecs\components\PhysicsComponent.cpp" />
     <ClCompile Include="source\ecs\components\TransformComponent.cpp" />

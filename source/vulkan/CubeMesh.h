@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "vulkan/Vertex.h"
+#include "Collision.h"
 
 namespace VulkanLib
 {
@@ -29,12 +30,16 @@ namespace VulkanLib
 		void AddIndex(uint32_t v1, uint32_t v2, uint32_t v3);
 		void BuildBuffers(Device* device);
 
+		BoundingBox GetBoundingBox();
+
 		uint32_t GetNumIndices();
 
 	private:
 		Device* mDevice;
 		std::vector<Vertex> mVertices;
 		std::vector<unsigned int> mIndices;
+
+		BoundingBox mBoundingBox;
 
 		uint32_t mIndicesCount;
 		uint32_t mVerticesCount;

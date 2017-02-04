@@ -76,12 +76,15 @@ namespace ECS
 				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
 
 				// Draw debug bounding box
-				VulkanLib::BoundingBox boundingBox = entity.meshComponent->GetBoundingBox();
-				boundingBox.Translate(entity.transform->GetWorldMatrix());
+				VulkanLib::BoundingBox meshBoundingBox = entity.meshComponent->GetBoundingBox();
+				meshBoundingBox.Update(entity.transform->GetWorldMatrix()); 
 
 				mat4 world;
+				float width = meshBoundingBox.GetWidth();
+				float height = meshBoundingBox.GetHeight();
+				float depth = meshBoundingBox.GetDepth();
+				world = glm::scale(world, glm::vec3(width, height, depth));
 				world = glm::translate(world, transform->GetPosition());
-				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
 				pushConstantBlock.world = world;
 

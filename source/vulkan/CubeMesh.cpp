@@ -1,7 +1,7 @@
+#include <glm/gtc/matrix_transform.hpp>
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "CubeMesh.h"
-
 
 namespace VulkanLib
 {
@@ -122,6 +122,11 @@ namespace VulkanLib
 		memcpy(data, mIndices.data(), indexBufferSize);																							// Copy buffer data to the mapped data pointer
 		vkUnmapMemory(device->GetVkDevice(), indices.memory);																					// Unmap memory
 		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), indices.buffer, indices.memory, 0));									// Bind the buffer to the allocated device memory
+	}
+
+	BoundingBox CubeMesh::GetBoundingBox()
+	{
+		return mBoundingBox;
 	}
 
 	uint32_t CubeMesh::GetNumIndices()

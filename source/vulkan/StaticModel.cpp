@@ -24,9 +24,6 @@ namespace VulkanLib
 		std::vector<Vertex> vertexVector;
 		std::vector<uint32_t> indexVector;
 
-		glm::vec3 min = glm::vec3(FLT_MAX);
-		glm::vec3 max = glm::vec3(-FLT_MAX);
-
 		// All the vertices & indices from the different meshes needs to be combined into one vector
 		for (int meshId = 0; meshId < mMeshes.size(); meshId++)
 		{
@@ -34,21 +31,6 @@ namespace VulkanLib
 			{
 				Vertex vertex = mMeshes[meshId].vertices[i];
 				vertexVector.push_back(vertex);
-
-				if (vertex.Pos.x < min.x)
-					min.x = vertex.Pos.x;
-				else if (vertex.Pos.x > max.x)
-					max.x = vertex.Pos.x;
-
-				if (vertex.Pos.y < min.y)
-					min.y = vertex.Pos.y;
-				else if (vertex.Pos.y > max.y)
-					max.y = vertex.Pos.y;
-
-				if (vertex.Pos.z < min.z)
-					min.z = vertex.Pos.z;
-				else if (vertex.Pos.z > max.z)
-					max.z = vertex.Pos.z;
 			}
 
 			for (int i = 0; i < mMeshes[meshId].indices.size(); i++)
@@ -57,7 +39,7 @@ namespace VulkanLib
 			}
 		}
 
-		mBoundingBox = BoundingBox(min, max);
+		mBoundingBox.Init(vertexVector);
 
 		uint32_t vertexBufferSize = vertexVector.size() * sizeof(Vertex);
 		uint32_t indexBufferSize = indexVector.size() * sizeof(uint32_t);

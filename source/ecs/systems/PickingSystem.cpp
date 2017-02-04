@@ -41,7 +41,7 @@ namespace ECS
 			glm::vec3 pos = mEntities[i].transform->GetPosition();
 			VulkanLib::BoundingBox boundingBox = mEntities[i].mesh->GetBoundingBox();
 
-			boundingBox.Translate(mEntities[i].transform->GetWorldMatrix());
+			boundingBox.Update(mEntities[i].transform->GetWorldMatrix());
 
 			float dist = FLT_MAX;
 			VulkanLib::Ray ray = GetPickingRay(mCamera);
