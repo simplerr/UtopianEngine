@@ -1,3 +1,7 @@
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <Windows.h>
 #include <float.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,8 +15,8 @@
 #include "Collision.h"
 
 // [TODO] Move
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 1200
+#define WINDOW_WIDTH 1600.0f
+#define WINDOW_HEIGHT 1200.0f
 
 namespace ECS
 {
@@ -29,11 +33,23 @@ namespace ECS
 		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
 		entityCache.mesh = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
 
+		VulkanLib::VulkanDebug::ConsolePrint(entityCache.transform->GetPosition());
+
 		mEntities.push_back(entityCache);
 	}
 
 	void PickingSystem::Process()
 	{
+
+	}
+
+	void PickingSystem::PerformPicking()
+	{
+		VulkanLib::Ray ray = GetPickingRay(mCamera);
+
+		static  int test = 0;
+		test++;
+		VulkanLib::VulkanDebug::ConsolePrint("test: " + std::to_string(test));
 		float minDist = FLT_MAX;
 		uint32_t minId = 0;
 		for (int i = 0; i < mEntities.size(); i++)
@@ -42,17 +58,24 @@ namespace ECS
 			VulkanLib::BoundingBox boundingBox = mEntities[i].mesh->GetBoundingBox();
 
 			boundingBox.Update(mEntities[i].transform->GetWorldMatrix());
+			//VulkanLib::VulkanDebug::ConsolePrint(boundingBox.GetMin(), "***** picked min aabb: ");
 
 			float dist = FLT_MAX;
-			VulkanLib::Ray ray = GetPickingRay(mCamera);
+			VulkanLib::Sphere sphere(pos, 200);
+			//if(sphere.RayIntersection(ray, dist))
 			if (boundingBox.RayIntersect(ray, dist))
 			{
-				VulkanLib::VulkanDebug::ConsolePrint("GET PHYSICAL " + std::to_string(dist) + "\n");
-				if (dist < minDist)
-				{
-					minDist = dist;
-					minId = i;
-				}
+				VulkanLib::VulkanDebug::ConsolePrint(pos, "picked pos: ");
+				VulkanLib::VulkanDebug::ConsolePrint(boundingBox.GetMin(), "picked min aabb: ");
+				VulkanLib::VulkanDebug::ConsolePrint("Picked entity ID: " + std::to_string(i));
+				//if (dist < minDist)
+				//{
+				//	minDist = dist;
+				//	minId = i;
+				//}
+
+				minId = i;
+				//break;
 			}
 		}
 
@@ -63,29 +86,39 @@ namespace ECS
 	VulkanLib::Ray PickingSystem::GetPickingRay(VulkanLib::Camera* camera)
 	{
 		// Camera/view matrix
-		mat4 viewMatrix = glm::lookAt(camera->GetPosition(), camera->GetTarget(), camera->GetUp());
+		mat4 viewMatrix = camera->GetView();
+		mat4 projectionMatrix = camera->GetProjection();
 
-		// Projection matrix
-		mat4 projectionMatrix = glm::perspective(90, WINDOW_WIDTH / WINDOW_HEIGHT, 1, 2);
-
-		// Get inverse of view*proj
-		mat4 inverseViewProjection = projectionMatrix * viewMatrix;
-		inverseViewProjection = glm::inverse(inverseViewProjection);
+		mat4 inverseView = glm::inverse(viewMatrix);
+		mat4 inverseProjection = glm::inverse(projectionMatrix);
 
 		// [TODO] Move
 		POINT cursorPos;
 		GetCursorPos(&cursorPos);
 		ScreenToClient(mVulkanApp->GetWindow()->GetHwnd(), &cursorPos);
 
-		float vx = (+2.0f * cursorPos.x / WINDOW_WIDTH - 1);
-		float vy = (-2.0f * cursorPos.y / WINDOW_HEIGHT + 1);
+		float vx = (+2.0f * cursorPos.x / WINDOW_WIDTH - 1.0f);
+		float vy = (-2.0f * cursorPos.y / WINDOW_HEIGHT + 1.0f);
 
-		vec4 rayDir = inverseViewProjection * vec4(vx, vy, 0, 1);
-		rayDir = rayDir / rayDir.w;
-		rayDir -= vec4(camera->GetPosition(), 0);
+		vec4 rayDir = inverseProjection * vec4(-vx, vy, 1.0, 1.0);
+		rayDir.z = 1.0;
+		rayDir.w = 0;
+		rayDir = inverseView * rayDir;
+		//rayDir = rayDir / rayDir.w;
+		//rayDir -= vec4(camera->GetPosition(), 0);
 		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
 
 		return VulkanLib::Ray(camera->GetPosition(), rayFinalDir);
+	}
+
+	void PickingSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (uMsg)
+		{
+		case WM_LBUTTONDOWN:
+			PerformPicking();
+			break;
+		}
 	}
 
 	Entity* PickingSystem::GetPickedEntity()

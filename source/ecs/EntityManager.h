@@ -27,6 +27,8 @@ namespace ECS
 		Entity* GetEntity(uint32_t id);
 
 		void Process();
+
+		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		// All the ECS::System 
 		ECS::RenderSystem* mRenderSystem;

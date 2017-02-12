@@ -1,5 +1,9 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <glm/glm.hpp>
 #include <map>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,9 +16,6 @@
 #include "VertexUniformBuffer.h"
 #include "TextureLoader.h"
 #include "handles/DescriptorSet.h"
-
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 using namespace glm;
 

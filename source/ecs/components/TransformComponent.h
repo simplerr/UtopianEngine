@@ -1,5 +1,9 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <glm/glm.hpp>
 #include "Component.h"
 
@@ -25,8 +29,8 @@ namespace ECS
 		mat4 GetWorldMatrix();
 		mat4 GetWorldInverseTransposeMatrix();
 
-	private:
 		void RebuildWorldMatrix();
+	private:
 
 		mat4 mWorld;
 		vec3 mPosition;

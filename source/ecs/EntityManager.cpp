@@ -82,4 +82,11 @@ namespace ECS
 		mPhysicsSystem->Process();
 		mPickingSystem->Process();
 	}
+
+	void EntityManager::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		mRenderSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
+		mPickingSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
+		mPhysicsSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
+	}
 }

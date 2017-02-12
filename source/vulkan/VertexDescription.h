@@ -1,5 +1,9 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <vector>
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>

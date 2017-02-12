@@ -2,6 +2,7 @@
 
 #include <map>
 #include <vector>
+#include <window.h>
 #include "System.h"
 
 namespace VulkanLib
@@ -43,6 +44,8 @@ namespace ECS
 		void Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet);
 
 		virtual void Process();
+
+		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		// RenderSystem should not BE a VulkanApp but rather have one, since the usage of Vulkan should not be limited to only the ECS
 		// VulkanApp needs to be available for HUDS, debugging etc

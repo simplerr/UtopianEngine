@@ -36,4 +36,9 @@ namespace ECS
 			transform->SetScale(transform->GetScale() + physicsComponent->GetScaleSpeed());
 		}
 	}
+
+	void PhysicsSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+
+	}
 }

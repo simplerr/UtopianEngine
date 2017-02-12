@@ -194,5 +194,10 @@ namespace VulkanLib
 		{
 			std::cout << text << std::endl;
 		}
+
+		void ConsolePrint(glm::vec3 vec, std::string text)
+		{
+			std::cout << text << " " << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << std::endl;
+		}
 	}
 }	// VulkanLib namespace

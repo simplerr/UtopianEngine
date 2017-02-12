@@ -1,3 +1,7 @@
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <glm/gtc/matrix_transform.hpp>
 #include "ecs/Entity.h"
 #include "ecs/components/MeshComponent.h"
@@ -62,6 +66,13 @@ namespace ECS
 				// Push the world matrix constant
 				VulkanLib::PushConstantBlock pushConstantBlock;
 				pushConstantBlock.world = transform->GetWorldMatrix();
+
+				// NOTE: For some reason the translation needs to be negated when rendering
+				// Otherwise the physical representation does not match the rendered scene
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];	
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+				
 				pushConstantBlock.worldInvTranspose = transform->GetWorldInverseTransposeMatrix();
 				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
@@ -77,12 +88,12 @@ namespace ECS
 				VulkanLib::BoundingBox meshBoundingBox = entity.meshComponent->GetBoundingBox();
 				meshBoundingBox.Update(entity.transform->GetWorldMatrix()); 
 
-				mat4 world;
+				mat4 world = mat4();
 				float width = meshBoundingBox.GetWidth();
 				float height = meshBoundingBox.GetHeight();
 				float depth = meshBoundingBox.GetDepth();
+				world = glm::translate(world, -transform->GetPosition());
 				world = glm::scale(world, glm::vec3(width, height, depth));
-				world = glm::translate(world, transform->GetPosition());
 
 				pushConstantBlock.world = world;
 
@@ -113,5 +124,10 @@ namespace ECS
 				// Bind the correct vertex & index buffers
 			}
 		}
+	}
+
+	void RenderSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+
 	}
 }

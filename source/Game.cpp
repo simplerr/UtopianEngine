@@ -29,7 +29,7 @@ namespace VulkanLib
 		mWindow = window;
 
 		// Create the camera
-		mCamera = new VulkanLib::Camera(glm::vec3(0.0f, 500.0f, 0.0f), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
+		mCamera = new VulkanLib::Camera(glm::vec3(500.0f, 500.0f, 500.0f), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
@@ -67,7 +67,7 @@ namespace VulkanLib
 				{
 					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
-					transformComponent->SetRotation(glm::vec3(70, 40, 30));
+					transformComponent->SetRotation(glm::vec3(180, 0, 0));
 					transformComponent->SetScale(glm::vec3(1.0f));
 
 					// Physics
@@ -93,7 +93,7 @@ namespace VulkanLib
 					//componentList.push_back(physicsComponent);
 					
 					// TEMPORARY
-					//if(i == 0)
+					//if(i < 1)
 						mEntityManager->AddEntity(componentList);
 
 					i++;
@@ -111,7 +111,7 @@ namespace VulkanLib
 
 		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
 		float speed = 5.0f;
-		transform->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
+		//transform->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
 	}
 
 	void Game::Draw()
@@ -172,6 +172,8 @@ namespace VulkanLib
 
 	void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		mEntityManager->HandleMessages(hWnd, uMsg, wParam, lParam);
+
 		if (mRenderer != nullptr)
 			mRenderer->HandleMessages(hWnd, uMsg, wParam, lParam);
 

@@ -1,6 +1,11 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <vector>
+#include <glm/glm.hpp>
 #include "Platform.h"
 
 #define ENUM_TO_STR(x) #x
@@ -20,7 +25,8 @@ namespace VulkanLib
 		void SetupConsole(std::string title);
 		void ErrorCheck(VkResult result);
 
-		void ConsolePrint(std::string text);
+	  	void ConsolePrint(std::string text);
+		void ConsolePrint(glm::vec3 vec, std::string text = "");
 
 		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 			VkDebugReportFlagsEXT       flags,

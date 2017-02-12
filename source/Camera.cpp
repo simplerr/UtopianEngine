@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 
 namespace VulkanLib
@@ -96,6 +97,12 @@ namespace VulkanLib
 
 			break;
 		}
+		case WM_KEYDOWN:
+			if (wParam == VK_SPACE)
+			{
+				VulkanLib::VulkanDebug::ConsolePrint(mPosition, "Camera pos: ");
+			}
+			break;
 		default:
 			break;
 		}
@@ -137,9 +144,10 @@ namespace VulkanLib
 
 	mat4 Camera::GetOrientation()
 	{
-		mat4 orientation;
+		mat4 orientation = mat4();
 		orientation = glm::rotate(orientation, glm::radians(mPitch), vec3(1, 0, 0));		// Pitch (vertical angle)
 		orientation = glm::rotate(orientation, glm::radians(mYaw), vec3(0, 1, 0));			// Yaw (horizontal angle)
+		orientation = glm::rotate(orientation, glm::radians(0.0f), vec3(0, 0, 1));			// Yaw (horizontal angle)
 		return orientation;
 	}
 
@@ -159,6 +167,8 @@ namespace VulkanLib
 
 	mat4 Camera::GetView()
 	{
+		//mat4 viewMatrix = glm::lookAt(GetPosition(), GetTarget(), GetUp());
+		//return viewMatrix;
 		return GetOrientation() * glm::translate(mat4(), mPosition);
 	}
 

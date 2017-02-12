@@ -1,7 +1,12 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+
 #include <vector>
 #include <glm/glm.hpp>
+#include <window.h>
 #include "System.h"
 #include "Collision.h"
 
@@ -30,10 +35,13 @@ namespace ECS
 		PickingSystem(VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp);
 		void AddEntity(Entity* entity);
 		void Process();
+		void PerformPicking();
 
 		Entity* GetPickedEntity();
 
 		VulkanLib::Ray GetPickingRay(VulkanLib::Camera* camera);
+
+		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		std::vector<EntityCache> mEntities;
 		VulkanLib::VulkanApp* mVulkanApp;

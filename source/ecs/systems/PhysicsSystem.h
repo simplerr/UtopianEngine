@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <window.h>
 #include "System.h"
 
 namespace VulkanLib
@@ -25,6 +26,8 @@ namespace ECS
 	public:
 		void AddEntity(Entity* entity);
 		void Process();
+
+		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		std::vector<EntityCache> mEntities;
 	};

@@ -50,7 +50,7 @@ namespace VulkanLib
 
 		for (int i = 0; i < mVertices.size(); i++)
 		{
-			glm::vec3 pos = glm::vec4(mVertices[i], 1.0f) * worldMatrix;
+			glm::vec3 pos = worldMatrix * glm::vec4(mVertices[i], 1.0f);
 
 			if (pos.x < min.x)
 				min.x = pos.x;
