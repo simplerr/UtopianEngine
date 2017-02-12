@@ -29,7 +29,7 @@ namespace VulkanLib
 		mWindow = window;
 
 		// Create the camera
-		mCamera = new VulkanLib::Camera(glm::vec3(500.0f, 500.0f, 500.0f), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
+		mCamera = new VulkanLib::Camera(glm::vec3(1500.0f, 1500.0f, 1500.0f), 60.0f, (float)mWindow->GetWidth() / (float)mWindow->GetHeight(), 0.1f, 25600.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
@@ -52,10 +52,6 @@ namespace VulkanLib
 
 	void Game::InitScene()
 	{
-		//TransformComponent transform = mEntityManager->GetComponent<TransformComponent>(testEntity);
-
-		//mEntityManager->SendQuery()
-
 		int size = 3;
 		int space = 300;
 		int i = 0;
@@ -67,7 +63,7 @@ namespace VulkanLib
 				{
 					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
-					transformComponent->SetRotation(glm::vec3(180, 0, 0));
+					transformComponent->SetRotation(glm::vec3(180, 30, 40));
 					transformComponent->SetScale(glm::vec3(1.0f));
 
 					// Physics
@@ -83,8 +79,8 @@ namespace VulkanLib
 					ECS::MeshComponent* meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
 					if (x == 0)
 						meshComponent->SetPipeline(PipelineType::PIPELINE_BASIC);
-					/*else if(x == 1)
-						meshComponent->SetPipeline(PipelineType::PIPELINE_TEST);*/
+					//else if(x == 1)
+					//	meshComponent->SetPipeline(PipelineType::PIPELINE_TEST);
 
 					// Create component list
 					ECS::ComponentList componentList;

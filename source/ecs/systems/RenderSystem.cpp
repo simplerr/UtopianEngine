@@ -73,6 +73,7 @@ namespace ECS
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 				
+				// TOOD: This probably also needs to be negated
 				pushConstantBlock.worldInvTranspose = transform->GetWorldInverseTransposeMatrix();
 				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
@@ -83,7 +84,20 @@ namespace ECS
 
 				// Draw indexed triangle	
 				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
+			}
+		}
+		//return;
+		// Draw debug boxes
+		for (auto const& entityVector : mMeshEntities)
+		{
+			// Bind the rendering pipeline (including the shaders)
+			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[2]->GetVkHandle());
 
+			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
+			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
+
+			for (auto const& entity : entityVector.second)
+			{
 				// Draw debug bounding box
 				VulkanLib::BoundingBox meshBoundingBox = entity.meshComponent->GetBoundingBox();
 				meshBoundingBox.Update(entity.transform->GetWorldMatrix()); 
@@ -92,11 +106,13 @@ namespace ECS
 				float width = meshBoundingBox.GetWidth();
 				float height = meshBoundingBox.GetHeight();
 				float depth = meshBoundingBox.GetDepth();
-				world = glm::translate(world, -transform->GetPosition());
+				world = glm::translate(world, -entity.transform->GetPosition());
 				world = glm::scale(world, glm::vec3(width, height, depth));
 
+				VulkanLib::PushConstantBlock pushConstantBlock;
 				pushConstantBlock.world = world;
 
+				VkDeviceSize offsets[1] = { 0 };
 				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
 				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);

@@ -262,28 +262,28 @@ namespace VulkanLib
 		mesh->AddVertex(-0.5f, 0.5f, -0.5f);
 
 		// Front
-		mesh->AddIndex(0, 1, 2);
-		mesh->AddIndex(2, 3, 0);
+		mesh->AddIndex(0, 2, 1);
+		mesh->AddIndex(2, 0, 3);
 
 		// Top
-		mesh->AddIndex(1, 5, 6);
-		mesh->AddIndex(6, 2, 1);
+		mesh->AddIndex(1, 6, 5);
+		mesh->AddIndex(6, 1, 2);
 
 		// Back
-		mesh->AddIndex(7, 6, 5);
-		mesh->AddIndex(5, 4, 7);
+		mesh->AddIndex(7, 5, 6);
+		mesh->AddIndex(5, 7, 4);
 
 		// Bottom
-		mesh->AddIndex(4, 0, 3);
-		mesh->AddIndex(3, 7, 4);
+		mesh->AddIndex(4, 3, 0);
+		mesh->AddIndex(3, 4, 7);
 
 		// Left
-		mesh->AddIndex(4, 5, 1);
-		mesh->AddIndex(1, 0, 4);
+		mesh->AddIndex(4, 1, 5);
+		mesh->AddIndex(1, 4, 0);
 
 		// Right
-		mesh->AddIndex(3, 2, 6);
-		mesh->AddIndex(6, 7, 3);
+		mesh->AddIndex(3, 6, 2);
+		mesh->AddIndex(6, 3, 7);
 
 		mesh->BuildBuffers(device);		
 		model->AddMesh(mesh);

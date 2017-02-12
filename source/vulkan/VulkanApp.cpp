@@ -206,7 +206,8 @@ namespace VulkanLib
 		// Test pipeline
 		Shader* testShader = mShaderManager->CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
 		pipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, testShader);
-		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;
 		pipeline->Create();
 		mPipelines[PipelineType::PIPELINE_TEST] = pipeline;
 
