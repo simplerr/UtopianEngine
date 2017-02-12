@@ -13,7 +13,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/Mesh.h"
 #include "RenderSystem.h"
-
+#include "Colors.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 
@@ -25,6 +25,11 @@ namespace ECS
 		mModelLoader = new VulkanLib::ModelLoader();
 
 		mCubeModel = mModelLoader->LoadDebugBox(vulkanApp->GetDeviceTmp());
+
+		AddDebugCube(vec3(0.0f, 0.0f, 0.0f), VulkanLib::Color::White, 70.0f);
+		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), VulkanLib::Color::Red, 70.0f);
+		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), VulkanLib::Color::Green, 70.0f);
+		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), VulkanLib::Color::Blue, 70.0f);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -91,7 +96,7 @@ namespace ECS
 		for (auto const& entityVector : mMeshEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[2]->GetVkHandle());
+			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[VulkanLib::PipelineType::PIPELINE_TEST]->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
 			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
@@ -109,8 +114,9 @@ namespace ECS
 				world = glm::translate(world, -entity.transform->GetPosition());
 				world = glm::scale(world, glm::vec3(width, height, depth));
 
-				VulkanLib::PushConstantBlock pushConstantBlock;
+				PushConstantDebugBlock pushConstantBlock;
 				pushConstantBlock.world = world;
+				pushConstantBlock.color = VulkanLib::Color::White;
 
 				VkDeviceSize offsets[1] = { 0 };
 				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
@@ -118,6 +124,32 @@ namespace ECS
 				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 			}
+		}
+
+		// Bind the rendering pipeline (including the shaders)
+		vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[VulkanLib::PipelineType::PIPELINE_DEBUG]->GetVkHandle());
+
+		// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
+		vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
+
+		// Draw debug cubes for the origin and each axis
+		for (int i = 0; i < mDebugCubes.size(); i++)
+		{
+			DebugCube debugCube = mDebugCubes[i];
+
+			glm::mat4 world = mat4();
+			world = glm::translate(world, -debugCube.pos);
+			world = glm::scale(world, glm::vec3(debugCube.size));
+
+			PushConstantDebugBlock pushConstantBlock;
+			pushConstantBlock.world = world;
+			pushConstantBlock.color = debugCube.color;
+
+			VkDeviceSize offsets[1] = { 0 };
+			vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
+			vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
 	}
 
@@ -140,6 +172,11 @@ namespace ECS
 				// Bind the correct vertex & index buffers
 			}
 		}
+	}
+
+	void RenderSystem::AddDebugCube(vec3 pos, vec4 color, float size)
+	{
+		mDebugCubes.push_back(DebugCube(pos, color, size));
 	}
 
 	void RenderSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -40,7 +40,8 @@ namespace VulkanLib
 	{
 		PIPELINE_BASIC,
 		PIPELINE_WIREFRAME,
-		PIPELINE_TEST
+		PIPELINE_TEST,
+		PIPELINE_DEBUG
 	};
 
 	struct Buffer {
@@ -97,7 +98,6 @@ namespace VulkanLib
 
 		void SetRenderSystem(ECS::RenderSystem* renderSystem);
 
-
 		// 
 		//	High level code
 		//
@@ -121,11 +121,13 @@ namespace VulkanLib
 		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; 
+		CommandBuffer*					mDebugCommandBuffer;
 		Fence*							mRenderFence;
 
 		std::map<int, Pipeline*>		mPipelines;
 
 		ECS::RenderSystem*				mRenderSystem;
+
 	public:
 	};
 }	// VulkanLib namespace

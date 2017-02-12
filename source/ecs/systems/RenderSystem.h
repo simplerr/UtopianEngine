@@ -29,6 +29,24 @@ namespace ECS
 		TransformComponent* transform;
 	};
 
+	struct PushConstantDebugBlock {
+		mat4 world;
+		vec4 color;
+	};
+
+	struct DebugCube
+	{
+		DebugCube(vec3 pos, vec4 color, float size) {
+			this->pos = pos;
+			this->color = color;
+			this->size = size;
+		}
+
+		vec3 pos;
+		vec4 color;
+		float size;
+	};
+
 	// RenderSystem will need to contain low level Vulkan code but by using the wrapper classes in VulkanLib as much as possible
 	// It will be RenderSystem that is responsible for how objects are stored when using different amount of CPU threads
 
@@ -46,6 +64,8 @@ namespace ECS
 		virtual void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+		void AddDebugCube(vec3 pos, vec4 color, float size);
 	private:
 		// RenderSystem should not BE a VulkanApp but rather have one, since the usage of Vulkan should not be limited to only the ECS
 		// VulkanApp needs to be available for HUDS, debugging etc
@@ -56,5 +76,7 @@ namespace ECS
 		// The RenderSystem should contain a list of all loaded meshes, with only one copy of each in memory
 		// What happens if a mesh changes pipeline?
 		std::map<int, std::vector<EntityPair> > mMeshEntities;
+
+		std::vector<DebugCube> mDebugCubes;
 	};
 }

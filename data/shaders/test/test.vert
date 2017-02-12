@@ -27,24 +27,24 @@ layout (std140, binding = 0) uniform UBO
 
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		
-	 mat4 worldInvTranspose;
+	 vec4 color;
+	 //mat4 worldInvTranspose;
 	 //vec3 color;	
 } pushConsts;
 
 layout (location = 0) out vec3 OutPosW;
 layout (location = 1) out vec3 OutNormalW;
 layout (location = 2) out vec3 OutEyePosW;
-layout (location = 3) out vec3 OutColor;
+layout (location = 3) out vec4 OutColor;
 layout (location = 4) out vec2 OutTex;
 
 void main() 
 {
-	OutColor = vec3(1.0f, 1.0f, 1.0f);	
+	OutColor = pushConsts.color;	
 	OutEyePosW = per_frame.eyePos;
 
 	// Transform to world space.
 	OutPosW     = (pushConsts.world * vec4(InPosL, 1.0f)).xyz;
-	OutNormalW  = mat3(pushConsts.worldInvTranspose) * InNormalL;
 
 	// Pass on the texture coordinates.
 	OutTex = InTex;

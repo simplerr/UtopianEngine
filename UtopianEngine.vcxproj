@@ -124,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Camera.h" />
+    <ClInclude Include="source\Colors.h" />
     <ClInclude Include="source\ecs\components\Component.h" />
     <ClInclude Include="source\ecs\components\MeshComponent.h" />
     <ClInclude Include="source\ecs\components\PhysicsComponent.h" />

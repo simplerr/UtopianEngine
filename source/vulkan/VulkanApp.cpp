@@ -2,6 +2,7 @@
 #include <time.h>
 #include <cstdlib>
 #include <thread>
+#include <glm/gtc/matrix_transform.hpp>
 #include "VulkanApp.h"
 #include "VulkanDebug.h"
 #include "StaticModel.h"
@@ -54,6 +55,7 @@ namespace VulkanLib
 
 		delete mPrimaryCommandBuffer;
 		delete mSecondaryCommandBuffer;
+		delete mDebugCommandBuffer;
 
 		delete mTextureLoader;
 	}
@@ -85,6 +87,7 @@ namespace VulkanLib
 		// Create the primary and secondary command buffers
 		mPrimaryCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 		mSecondaryCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mDebugCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void VulkanApp::CompileShaders()
@@ -108,6 +111,7 @@ namespace VulkanLib
 	{
 		mRenderSystem = renderSystem;
 	}
+
 	
 	void VulkanApp::PrepareUniformBuffers()
 	{
@@ -211,6 +215,12 @@ namespace VulkanLib
 		pipeline->Create();
 		mPipelines[PipelineType::PIPELINE_TEST] = pipeline;
 
+		pipeline = new Pipeline(mDevice, mPipelineLayout, mRenderPass, &mVertexDescription, testShader);
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;
+		// TODO: Disable depth test
+		pipeline->Create();
+		mPipelines[PipelineType::PIPELINE_DEBUG] = pipeline;
 	}
 
 	void VulkanApp::SetupVertexDescriptions()
@@ -231,7 +241,7 @@ namespace VulkanLib
 	void VulkanApp::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
 	{
 		VkClearValue clearValues[2];
-		clearValues[0].color = { 0.2f, 0.2f, 0.8f, 0.0f };
+		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
 		clearValues[1].depthStencil = { 1.0f, 0 };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
@@ -286,6 +296,7 @@ namespace VulkanLib
 		mSecondaryCommandBuffer->End();
 
 		std::vector<VkCommandBuffer> commandBuffers;
+		commandBuffers.push_back(mDebugCommandBuffer->GetVkHandle());
 		commandBuffers.push_back(mSecondaryCommandBuffer->GetVkHandle());
 
 		// This is where multithreaded command buffers can be added
