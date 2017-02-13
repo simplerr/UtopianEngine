@@ -2,6 +2,7 @@
 #include "systems/RenderSystem.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/PickingSystem.h"
+#include "systems/HealthSystem.h"
 #include "components/Component.h"
 #include "EntityManager.h"
 #include "Entity.h"
@@ -10,12 +11,6 @@ namespace ECS
 {
 	EntityManager::EntityManager(VulkanLib::VulkanApp* vulkanApp)
 	{
-		// Create all ECS::System
-		mPhysicsSystem = new ECS::PhysicsSystem();
-		mRenderSystem = new ECS::RenderSystem(vulkanApp);
-		mPickingSystem = new ECS::PickingSystem(vulkanApp->GetCamera(), vulkanApp);
-		vulkanApp->SetRenderSystem(mRenderSystem);
-
 		mNextEntityId = 0u;
 	}
 
@@ -31,6 +26,17 @@ namespace ECS
 		delete mRenderSystem;
 		delete mPhysicsSystem;
 		delete mPickingSystem;
+		delete mHealthSystem;
+	}
+
+	void EntityManager::Init(VulkanLib::VulkanApp* vulkanApp)
+	{
+		// Create all ECS::System
+		mPhysicsSystem = new ECS::PhysicsSystem();
+		mRenderSystem = new ECS::RenderSystem(vulkanApp);
+		mPickingSystem = new ECS::PickingSystem(vulkanApp->GetCamera(), vulkanApp);
+		mHealthSystem = new ECS::HealthSystem(this);
+		vulkanApp->SetRenderSystem(mRenderSystem);
 	}
 
 	// AddEntity() is responsible for informing the needed ECS::Systems
@@ -55,6 +61,10 @@ namespace ECS
 			{
 				// Todo (should be in RenderSystem?)
 			}
+			else if (components[i]->GetType() == HEALTH_COMPONENT)
+			{
+				mHealthSystem->AddEntity(entity);
+			}
 		}
 
 		mEntities.push_back(entity);
@@ -76,11 +86,37 @@ namespace ECS
 		return nullptr;
 	}
 
+	void EntityManager::RemoveEntity(Entity* entity)
+	{
+		mRemoveList.push_back(entity);
+	}
+
 	void EntityManager::Process()
 	{
 		mRenderSystem->Process();
 		mPhysicsSystem->Process();
 		mPickingSystem->Process();
+		mHealthSystem->Process();
+
+		// Removing of entities is done after all systems have been processed
+		for (auto entity : mRemoveList)
+		{
+			mRenderSystem->RemoveEntity(entity);
+			mPhysicsSystem->RemoveEntity(entity);
+			mPickingSystem->RemoveEntity(entity);
+			mHealthSystem->RemoveEntity(entity);
+
+			for (auto iter = mEntities.begin(); iter < mEntities.end(); iter++)
+			{
+				if ((*iter)->GetId() == entity->GetId())
+				{
+					iter = mEntities.erase(iter);
+				}
+			}
+		}
+
+		if (mRemoveList.size() != 0)
+			mRemoveList.clear();
 	}
 
 	void EntityManager::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -88,5 +124,6 @@ namespace ECS
 		mRenderSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
 		mPickingSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
 		mPhysicsSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
+		mHealthSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
 	}
 }

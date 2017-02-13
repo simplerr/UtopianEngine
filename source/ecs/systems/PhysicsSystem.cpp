@@ -15,6 +15,17 @@ namespace ECS
 		mEntities.push_back(entityCache);
 	}
 
+	void PhysicsSystem::RemoveEntity(Entity* entity)
+	{
+		for (auto iter = mEntities.begin(); iter < mEntities.end(); iter++)
+		{
+			if ((*iter).entity->GetId() == entity->GetId())
+			{
+				iter = mEntities.erase(iter);
+			}
+		}
+	}
+
 	void PhysicsSystem::Process()
 	{
 		for (int i = 0; i < mEntities.size(); i++)

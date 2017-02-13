@@ -9,6 +9,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "ecs/components/TransformComponent.h"
 #include "ecs/components/MeshComponent.h"
+#include "ecs/components/HealthComponent.h"
 #include "ecs/Entity.h"
 #include "PickingSystem.h"
 #include "Camera.h"
@@ -32,10 +33,22 @@ namespace ECS
 		entityCache.entity = entity;
 		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
 		entityCache.mesh = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
+		entityCache.healthComponent = dynamic_cast<HealthComponent*>(entity->GetComponent(HEALTH_COMPONENT));
 
 		VulkanLib::VulkanDebug::ConsolePrint(entityCache.transform->GetPosition());
 
 		mEntities.push_back(entityCache);
+	}
+
+	void PickingSystem::RemoveEntity(Entity* entity)
+	{
+		for (auto iter = mEntities.begin(); iter < mEntities.end(); iter++)
+		{
+			if ((*iter).entity->GetId() == entity->GetId())
+			{
+				iter = mEntities.erase(iter);
+			}
+		}
 	}
 
 	void PickingSystem::Process()
@@ -51,7 +64,7 @@ namespace ECS
 		test++;
 		VulkanLib::VulkanDebug::ConsolePrint("test: " + std::to_string(test));
 		float minDist = FLT_MAX;
-		uint32_t minId = 0;
+		uint32_t pickedId = -1;
 		for (int i = 0; i < mEntities.size(); i++)
 		{
 			glm::vec3 pos = mEntities[i].transform->GetPosition();
@@ -74,13 +87,19 @@ namespace ECS
 				//	minId = i;
 				//}
 
-				minId = i;
+				pickedId = i;
 				//break;
 			}
 		}
 
-		// Do something with the entity that was picked
-		mEntities[minId];
+		if(pickedId != -1)
+		{
+			// Do something with the entity that was picked
+			if (mEntities[pickedId].healthComponent != nullptr)
+			{
+				mEntities[pickedId].healthComponent->SetHealth(0);
+			}
+		}
 	}
 
 	VulkanLib::Ray PickingSystem::GetPickingRay(VulkanLib::Camera* camera)

@@ -10,6 +10,7 @@ namespace ECS
 		// The derived systems can store the entities however they want
 		// RenderSystem groups them by their Pipeline 
 		virtual void AddEntity(Entity* entity) =  0;
+		virtual void RemoveEntity(Entity* entity) = 0;
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 	protected:
 		// Only the entities that have components inside this ECS::System

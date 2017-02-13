@@ -82,11 +82,13 @@
   <ItemGroup>
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Collision.cpp" />
+    <ClCompile Include="source\ecs\components\HealthComponent.cpp" />
     <ClCompile Include="source\ecs\components\MeshComponent.cpp" />
     <ClCompile Include="source\ecs\components\PhysicsComponent.cpp" />
     <ClCompile Include="source\ecs\components\TransformComponent.cpp" />
     <ClCompile Include="source\ecs\Entity.cpp" />
     <ClCompile Include="source\ecs\EntityManager.cpp" />
+    <ClCompile Include="source\ecs\systems\HealthSystem.cpp" />
     <ClCompile Include="source\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="source\ecs\systems\PickingSystem.cpp" />
     <ClCompile Include="source\ecs\systems\RenderSystem.cpp" />
@@ -126,11 +128,13 @@
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
     <ClInclude Include="source\ecs\components\Component.h" />
+    <ClInclude Include="source\ecs\components\HealthComponent.h" />
     <ClInclude Include="source\ecs\components\MeshComponent.h" />
     <ClInclude Include="source\ecs\components\PhysicsComponent.h" />
     <ClInclude Include="source\ecs\components\TransformComponent.h" />
     <ClInclude Include="source\ecs\Entity.h" />
     <ClInclude Include="source\ecs\EntityManager.h" />
+    <ClInclude Include="source\ecs\systems\HealthSystem.h" />
     <ClInclude Include="source\ecs\systems\PhysicsSystem.h" />
     <ClInclude Include="source\ecs\systems\PickingSystem.h" />
     <ClInclude Include="source\ecs\systems\RenderSystem.h" />

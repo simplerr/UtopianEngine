@@ -50,6 +50,20 @@ namespace ECS
 		mMeshEntities[entityPair.meshComponent->GetPipeline()].push_back(entityPair);
 	}
 
+	void RenderSystem::RemoveEntity(Entity* entity)
+	{
+		for (auto& entityVector : mMeshEntities)
+		{
+			for (auto iter = entityVector.second.begin(); iter < entityVector.second.end(); iter++)
+			{
+				if ((*iter).entity->GetId() == entity->GetId())
+				{
+					iter = entityVector.second.erase(iter);
+				}
+			}
+		}
+	}
+
 	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
 	{
 		// Draw all meshes

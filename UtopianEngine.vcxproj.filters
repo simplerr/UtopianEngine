@@ -168,6 +168,12 @@
     <ClCompile Include="source\vulkan\Mesh.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="source\ecs\components\HealthComponent.cpp">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ecs\systems\HealthSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -310,6 +316,12 @@
     </ClInclude>
     <ClInclude Include="source\Colors.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ecs\components\HealthComponent.h">
+      <Filter>Source Files\ecs\components</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ecs\systems\HealthSystem.h">
+      <Filter>Source Files\ecs\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

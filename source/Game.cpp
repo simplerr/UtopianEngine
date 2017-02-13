@@ -13,6 +13,7 @@
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/TransformComponent.h"
 #include "ecs/components/PhysicsComponent.h"
+#include "ecs/components/HealthComponent.h"
 
 namespace VulkanLib
 {
@@ -34,6 +35,7 @@ namespace VulkanLib
 		mRenderer->SetCamera(mCamera);
 
 		mEntityManager = new ECS::EntityManager(mRenderer);
+		mEntityManager->Init(mRenderer);
 
 		mModelLoader = new ModelLoader();
 
@@ -82,11 +84,15 @@ namespace VulkanLib
 					//else if(x == 1)
 					//	meshComponent->SetPipeline(PipelineType::PIPELINE_TEST);
 
+					// Health
+					ECS::HealthComponent* healthComponent = new ECS::HealthComponent(100);
+
 					// Create component list
 					ECS::ComponentList componentList;
 					componentList.push_back(meshComponent);
 					componentList.push_back(transformComponent);
-					//componentList.push_back(physicsComponent);
+					componentList.push_back(healthComponent);
+					componentList.push_back(physicsComponent);
 					
 					// TEMPORARY
 					//if(i < 1)

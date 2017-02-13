@@ -21,6 +21,7 @@ namespace ECS
 
 	class TransformComponent;
 	class MeshComponent;
+	class HealthComponent;
 
 	class PickingSystem : public System
 	{
@@ -29,11 +30,13 @@ namespace ECS
 			Entity* entity;
 			TransformComponent* transform;
 			MeshComponent* mesh;
+			HealthComponent* healthComponent;
 		};
 
 	public:
 		PickingSystem(VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp);
 		void AddEntity(Entity* entity);
+		void RemoveEntity(Entity* entity);
 		void Process();
 		void PerformPicking();
 
