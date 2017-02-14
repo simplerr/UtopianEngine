@@ -64,7 +64,7 @@ namespace VulkanLib
 		switch (msg)
 		{
 
-		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
 		{
 			mLastX = LOWORD(lParam);
 			mLastY = HIWORD(lParam);
@@ -72,7 +72,7 @@ namespace VulkanLib
 		}
 		case WM_MOUSEMOVE:
 		{
-			if (wParam & MK_LBUTTON)
+			if (wParam & MK_RBUTTON)
 			{
 				int x = LOWORD(lParam);
 				int y = HIWORD(lParam);
