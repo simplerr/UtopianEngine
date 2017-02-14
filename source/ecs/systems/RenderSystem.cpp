@@ -59,6 +59,7 @@ namespace ECS
 				if ((*iter).entity->GetId() == entity->GetId())
 				{
 					iter = entityVector.second.erase(iter);
+					break;
 				}
 			}
 		}

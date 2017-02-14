@@ -111,6 +111,7 @@ namespace ECS
 				if ((*iter)->GetId() == entity->GetId())
 				{
 					iter = mEntities.erase(iter);
+					break;
 				}
 			}
 		}

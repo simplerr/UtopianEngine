@@ -38,6 +38,7 @@ namespace ECS
 			if ((*iter).entity->GetId() == entity->GetId())
 			{
 				iter = mEntities.erase(iter);
+				break;
 			}
 		}
 	}
