@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "ecs/components/Component.h"
 
 namespace ECS
 {
@@ -21,9 +22,11 @@ namespace ECS
 		Entity(ComponentList components, uint32_t id);
 
 		void AddComponent(Component* component);
+		bool RemoveComponent(Type componentType);
 		Component* GetComponent(uint32_t componentType);
 		uint32_t GetId();
 		uint32_t GetComponentsMask();
+		bool HasComponent(Type componentType);
 		//TransformComponent* GetTransform();
 	private:
 		ComponentList mComponents;

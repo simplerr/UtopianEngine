@@ -2,6 +2,7 @@
 
 #include <Window.h>
 #include <vector>
+#include "ecs/components/Component.h"
 
 namespace VulkanLib
 {
@@ -34,7 +35,7 @@ namespace ECS
 		Entity* GetEntity(uint32_t id);
 
 		void RemoveEntity(Entity* entity);
-		//void RemoveComponent(Entity* entity, ECS::Type componentType);
+		void RemoveComponent(Entity* entity, ECS::Type componentType);
 		void AddComponent(Entity* entity, Component* component);
 
 		void Process();

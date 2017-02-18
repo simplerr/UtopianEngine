@@ -103,15 +103,23 @@ namespace ECS
 			//{
 			//	mEntities[pickedId].healthComponent->SetHealth(0);
 			//}
-
-			uint32_t maxSpeed = 2;
-			uint32_t maxRotation = 100;
-			float divider = 90.0f;
-			ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
-			physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
-			physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
-			physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
-			GetEntityManager()->AddComponent(mEntities[pickedId].entity, physicsComponent);
+			Entity* pickedEntity = mEntities[pickedId].entity;
+			if (pickedEntity->HasComponent(Type::PHYSICS_COMPONENT))
+			{
+				GetEntityManager()->RemoveComponent(pickedEntity, Type::PHYSICS_COMPONENT);
+				mEntities[pickedId].healthComponent->SetHealth(0);
+			}
+			else
+			{
+				uint32_t maxSpeed = 2;
+				uint32_t maxRotation = 100;
+				float divider = 90.0f;
+				ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
+				physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
+				physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
+				physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
+				GetEntityManager()->AddComponent(mEntities[pickedId].entity, physicsComponent);
+			}
 		}
 	}
 

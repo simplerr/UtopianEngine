@@ -83,19 +83,23 @@ namespace ECS
 		mRemoveList.push_back(entity);
 	}
 
-	//void EntityManager::RemoveComponent(Entity* entity, ECS::Type componentType)
-	//{
-	//	// Remove component from Entity and inform all related Systems
-	//}
+	void EntityManager::RemoveComponent(Entity* entity, ECS::Type componentType)
+	{
+		// Remove component from Entity and inform all related Systems
+		if (entity->RemoveComponent(componentType))
+		{
+			for (System* system : mSystems)
+			{
+				if ((system->GetComponentMask() & componentType) != 0)
+				{
+					system->RemoveEntity(entity);
+				}
+			}
+		}
+	}
 
 	void EntityManager::AddComponent(Entity* entity, Component* component)
 	{
-		// 0/ Add component to the entity
-		// 1/ Loop through every system
-		// 2/ Does the system accept the entity? 
-		// 3/ Is the entity already present in the system? -> Do nothing
-		// 4/ If not, add it to the system
-
 		entity->AddComponent(component);
 
 		for (System* system : mSystems)
