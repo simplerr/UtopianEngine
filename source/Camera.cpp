@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Window.h"
 #include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 
@@ -18,16 +19,17 @@ namespace VulkanLib
 		mLastX = mLastY = -1;
 	}
 
-	Camera::Camera(vec3 position, float fieldOfView, float aspectRatio, float nearPlane, float farPlane)
+	Camera::Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
 		this->mPosition = position;
 		this->mFov = fieldOfView;
-		this->mAspectRatio = aspectRatio;
+		this->mAspectRatio = (float)window->GetWidth() / (float)window->GetHeight();
 		this->mNearPlane = nearPlane;
 		this->mFarPlane = farPlane;
 		mUp = glm::vec3(0, 1, 0);
 		mYaw = mPitch = 0.0f;
 		mLastX = mLastY = -1;
+		mWindow = window;
 	}
 
 	void Camera::Update()
@@ -108,6 +110,32 @@ namespace VulkanLib
 		}
 	}
 #endif
+
+	Ray Camera::GetPickingRay()
+	{
+		// Camera/view matrix
+		mat4 viewMatrix = GetView();
+		mat4 projectionMatrix = GetProjection();
+
+		mat4 inverseView = glm::inverse(viewMatrix);
+		mat4 inverseProjection = glm::inverse(projectionMatrix);
+
+		// [TODO] Move
+		POINT cursorPos;
+		GetCursorPos(&cursorPos);
+		ScreenToClient(mWindow->GetHwnd(), &cursorPos);
+
+		float vx = (+2.0f * cursorPos.x / mWindow->GetWidth() - 1.0f);
+		float vy = (-2.0f * cursorPos.y / mWindow->GetHeight() + 1.0f);
+
+		vec4 rayDir = inverseProjection * vec4(-vx, vy, 1.0, 1.0);
+		rayDir.z = 1.0;
+		rayDir.w = 0;
+		rayDir = inverseView * rayDir;
+		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
+
+		return VulkanLib::Ray(GetPosition(), rayFinalDir);
+	}
 
 	vec3 Camera::GetDirection()
 	{

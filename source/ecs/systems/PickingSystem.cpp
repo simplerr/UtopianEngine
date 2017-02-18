@@ -62,7 +62,7 @@ namespace ECS
 
 	void PickingSystem::PerformPicking()
 	{
-		VulkanLib::Ray ray = GetPickingRay(mCamera);
+		VulkanLib::Ray ray = mCamera->GetPickingRay();
 
 		static  int test = 0;
 		test++;
@@ -121,34 +121,6 @@ namespace ECS
 				GetEntityManager()->AddComponent(mEntities[pickedId].entity, physicsComponent);
 			}
 		}
-	}
-
-	VulkanLib::Ray PickingSystem::GetPickingRay(VulkanLib::Camera* camera)
-	{
-		// Camera/view matrix
-		mat4 viewMatrix = camera->GetView();
-		mat4 projectionMatrix = camera->GetProjection();
-
-		mat4 inverseView = glm::inverse(viewMatrix);
-		mat4 inverseProjection = glm::inverse(projectionMatrix);
-
-		// [TODO] Move
-		POINT cursorPos;
-		GetCursorPos(&cursorPos);
-		ScreenToClient(mVulkanApp->GetWindow()->GetHwnd(), &cursorPos);
-
-		float vx = (+2.0f * cursorPos.x / WINDOW_WIDTH - 1.0f);
-		float vy = (-2.0f * cursorPos.y / WINDOW_HEIGHT + 1.0f);
-
-		vec4 rayDir = inverseProjection * vec4(-vx, vy, 1.0, 1.0);
-		rayDir.z = 1.0;
-		rayDir.w = 0;
-		rayDir = inverseView * rayDir;
-		//rayDir = rayDir / rayDir.w;
-		//rayDir -= vec4(camera->GetPosition(), 0);
-		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
-
-		return VulkanLib::Ray(camera->GetPosition(), rayFinalDir);
 	}
 
 	void PickingSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

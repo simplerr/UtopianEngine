@@ -42,8 +42,6 @@ namespace ECS
 
 		Entity* GetPickedEntity();
 
-		VulkanLib::Ray GetPickingRay(VulkanLib::Camera* camera);
-
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 		bool Contains(Entity* entity);
 	private:

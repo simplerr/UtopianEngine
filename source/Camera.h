@@ -6,22 +6,27 @@
 
 #include <glm/glm.hpp>
 #include "Platform.h"
+#include "Collision.h"
 
 using namespace glm;
 
 namespace VulkanLib
 {
+	class Window;
+
 	class Camera
 	{
 	public:
 		Camera();
-		Camera(vec3 position, float fieldOfView, float aspectRatio, float nearPlane, float farPlane);
+		Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 
 		void Update();
 
 #if defined(_WIN32)
 		void HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #endif
+
+		Ray GetPickingRay();
 
 		vec3 GetDirection();
 
@@ -46,6 +51,7 @@ namespace VulkanLib
 
 		vec3 mPosition;
 	private:
+		Window* mWindow;
 		vec3 mUp;
 
 		float mPitch;	// Vertical angle
