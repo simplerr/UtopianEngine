@@ -34,7 +34,7 @@ namespace ECS
 		};
 
 	public:
-		PickingSystem(VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp);
+		PickingSystem(EntityManager* entityManager, VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp);
 		void AddEntity(Entity* entity);
 		void RemoveEntity(Entity* entity);
 		void Process();
@@ -45,6 +45,7 @@ namespace ECS
 		VulkanLib::Ray GetPickingRay(VulkanLib::Camera* camera);
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		bool Contains(Entity* entity);
 	private:
 		std::vector<EntityCache> mEntities;
 		VulkanLib::VulkanApp* mVulkanApp;

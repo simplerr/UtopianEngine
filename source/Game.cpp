@@ -92,7 +92,7 @@ namespace VulkanLib
 					componentList.push_back(meshComponent);
 					componentList.push_back(transformComponent);
 					componentList.push_back(healthComponent);
-					componentList.push_back(physicsComponent);
+					//componentList.push_back(physicsComponent);
 					
 					// TEMPORARY
 					//if(i < 1)

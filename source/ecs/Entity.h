@@ -19,6 +19,8 @@ namespace ECS
 	{
 	public:
 		Entity(ComponentList components, uint32_t id);
+
+		void AddComponent(Component* component);
 		Component* GetComponent(uint32_t componentType);
 		uint32_t GetId();
 		uint32_t GetComponentsMask();

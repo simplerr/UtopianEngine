@@ -5,12 +5,17 @@ namespace ECS
 {
 	Entity::Entity(ComponentList components, uint32_t id)
 	{
-		for (int i = 0; i < components.size(); i++)
+		for (Component* component : components)
 		{
-			mComponents.push_back(components[i]);
+			AddComponent(component);
 		}
 
 		mId = id;
+	}
+
+	void Entity::AddComponent(Component* component)
+	{
+		mComponents.push_back(component);
 	}
 
 	Component* Entity::GetComponent(uint32_t componentType)

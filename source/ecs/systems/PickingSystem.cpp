@@ -10,6 +10,8 @@
 #include "ecs/components/TransformComponent.h"
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/HealthComponent.h"
+#include "ecs/components/PhysicsComponent.h"
+#include "ecs/EntityManager.h"
 #include "ecs/Entity.h"
 #include "PickingSystem.h"
 #include "Camera.h"
@@ -21,8 +23,8 @@
 
 namespace ECS
 {
-	PickingSystem::PickingSystem(VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp)
-		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
+	PickingSystem::PickingSystem(EntityManager* entityManager, VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp)
+		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
 	{
 		mVulkanApp = vulkanApp;
 		mCamera = camera;
@@ -97,10 +99,19 @@ namespace ECS
 		if(pickedId != -1)
 		{
 			// Do something with the entity that was picked
-			if (mEntities[pickedId].healthComponent != nullptr)
-			{
-				mEntities[pickedId].healthComponent->SetHealth(0);
-			}
+			//if (mEntities[pickedId].healthComponent != nullptr)
+			//{
+			//	mEntities[pickedId].healthComponent->SetHealth(0);
+			//}
+
+			uint32_t maxSpeed = 2;
+			uint32_t maxRotation = 100;
+			float divider = 90.0f;
+			ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
+			physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
+			physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
+			physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
+			GetEntityManager()->AddComponent(mEntities[pickedId].entity, physicsComponent);
 		}
 	}
 
@@ -145,5 +156,16 @@ namespace ECS
 	Entity* PickingSystem::GetPickedEntity()
 	{
 		return nullptr;
+	}
+
+	bool PickingSystem::Contains(Entity* entity)
+	{
+		for (EntityCache entityCache : mEntities)
+		{
+			if (entityCache.entity->GetId() == entity->GetId())
+				return true;
+		}
+
+		return false;
 	}
 }

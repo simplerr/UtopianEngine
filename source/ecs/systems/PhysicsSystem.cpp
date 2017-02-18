@@ -5,8 +5,8 @@
 
 namespace ECS
 {
-	PhysicsSystem::PhysicsSystem()
-		: System(Type::PHYSICS_COMPONENT)
+	PhysicsSystem::PhysicsSystem(EntityManager* entityManager)
+		: System(entityManager, Type::PHYSICS_COMPONENT)
 	{
 	}
 
@@ -57,5 +57,16 @@ namespace ECS
 	void PhysicsSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 
+	}
+
+	bool PhysicsSystem::Contains(Entity* entity)
+	{
+		for (EntityCache entityCache : mEntities)
+		{
+			if (entityCache.entity->GetId() == entity->GetId())
+				return true;
+		}
+
+		return false;
 	}
 }

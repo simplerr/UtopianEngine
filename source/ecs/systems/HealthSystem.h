@@ -27,8 +27,8 @@ namespace ECS
 		void AddEntity(Entity* entity);
 		void RemoveEntity(Entity* entity);
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		bool Contains(Entity* entity);
 	private:
 		std::vector<EntityCache> mEntities;
-		EntityManager* mEntityManager;
 	};
 }

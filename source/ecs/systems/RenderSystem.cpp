@@ -19,8 +19,8 @@
 
 namespace ECS
 {
-	RenderSystem::RenderSystem(VulkanLib::VulkanApp* vulkanApp)
-		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT)
+	RenderSystem::RenderSystem(EntityManager* entityManager, VulkanLib::VulkanApp* vulkanApp)
+		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT)
 	{
 		mVulkanApp = vulkanApp;
 		mModelLoader = new VulkanLib::ModelLoader();
@@ -41,14 +41,14 @@ namespace ECS
 
 	void RenderSystem::AddEntity(Entity* entity)
 	{
-		EntityPair entityPair;
-		entityPair.entity = entity;
-		entityPair.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
-		entityPair.meshComponent = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
-		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityPair.meshComponent->GetFilename()); 
-		entityPair.meshComponent->SetModel(model);
+		EntityCache entityCache;
+		entityCache.entity = entity;
+		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
+		entityCache.meshComponent = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
+		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
+		entityCache.meshComponent->SetModel(model);
 
-		mMeshEntities[entityPair.meshComponent->GetPipeline()].push_back(entityPair);
+		mMeshEntities[entityCache.meshComponent->GetPipeline()].push_back(entityCache);
 	}
 
 	void RenderSystem::RemoveEntity(Entity* entity)
@@ -198,5 +198,19 @@ namespace ECS
 	void RenderSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 
+	}
+
+	bool RenderSystem::Contains(Entity* entity)
+	{
+		for (auto const& entityVector : mMeshEntities)
+		{
+			for (EntityCache entityCache : entityVector.second)
+			{
+				if (entityCache.entity->GetId() == entity->GetId())
+					return true;
+			}
+		}
+
+		return false;
 	}
 }

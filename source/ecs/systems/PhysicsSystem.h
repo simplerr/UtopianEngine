@@ -24,12 +24,13 @@ namespace ECS
 		};
 
 	public:
-		PhysicsSystem();
+		PhysicsSystem(EntityManager* entityManager);
 		void AddEntity(Entity* entity);
 		void RemoveEntity(Entity* entity);
 		void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		bool Contains(Entity* entity);
 	private:
 		std::vector<EntityCache> mEntities;
 	};

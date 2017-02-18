@@ -6,9 +6,9 @@
 namespace ECS
 {
 	HealthSystem::HealthSystem(EntityManager* entityManager)
-		: System(Type::HEALTH_COMPONENT)
+		: System(entityManager, Type::HEALTH_COMPONENT)
 	{
-		mEntityManager = entityManager;
+
 	}
 
 	void HealthSystem::Process()
@@ -18,7 +18,7 @@ namespace ECS
 			// Remove entity from world
 			if (entityCache.healthComponent->GetHealth() <= 0)
 			{
-				mEntityManager->RemoveEntity(entityCache.entity);
+				GetEntityManager()->RemoveEntity(entityCache.entity);
 				//mEntityManager->RemoveComponent(entityCache.entity, ECS::Type::PHYSICS_COMPONENT);
 			}
 		}
@@ -48,5 +48,16 @@ namespace ECS
 	void HealthSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 
+	}
+
+	bool HealthSystem::Contains(Entity* entity)
+	{
+		for (EntityCache entityCache : mEntities)
+		{
+			if (entityCache.entity->GetId() == entity->GetId())
+				return true;
+		}
+
+		return false;
 	}
 }

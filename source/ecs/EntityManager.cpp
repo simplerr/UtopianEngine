@@ -32,11 +32,11 @@ namespace ECS
 	void EntityManager::Init(VulkanLib::VulkanApp* vulkanApp)
 	{
 		// Create all ECS::System
-		AddSystem(new ECS::PhysicsSystem());
-		AddSystem(new ECS::PickingSystem(vulkanApp->GetCamera(), vulkanApp));
+		AddSystem(new ECS::PhysicsSystem(this));
+		AddSystem(new ECS::PickingSystem(this, vulkanApp->GetCamera(), vulkanApp));
 		AddSystem(new ECS::HealthSystem(this));
 
-		RenderSystem* renderSystem = new ECS::RenderSystem(vulkanApp);
+		RenderSystem* renderSystem = new ECS::RenderSystem(this, vulkanApp);
 		AddSystem(renderSystem);
 		vulkanApp->SetRenderSystem(renderSystem); // TODO: Fix this dependency
 	}
@@ -90,7 +90,24 @@ namespace ECS
 
 	void EntityManager::AddComponent(Entity* entity, Component* component)
 	{
+		// 0/ Add component to the entity
+		// 1/ Loop through every system
+		// 2/ Does the system accept the entity? 
+		// 3/ Is the entity already present in the system? -> Do nothing
+		// 4/ If not, add it to the system
 
+		entity->AddComponent(component);
+
+		for (System* system : mSystems)
+		{
+			if (system->Accepts(entity->GetComponentsMask()))
+			{
+				if (system->Contains(entity) == false)
+				{
+					system->AddEntity(entity);
+				}
+			}
+		}
 	}
 
 	void EntityManager::Process()
