@@ -5,6 +5,11 @@
 
 namespace ECS
 {
+	PhysicsSystem::PhysicsSystem()
+		: System(Type::PHYSICS_COMPONENT)
+	{
+	}
+
 	void PhysicsSystem::AddEntity(Entity* entity)
 	{
 		EntityCache entityCache;

@@ -10,6 +10,7 @@ namespace VulkanLib
 
 namespace ECS
 {
+	class System;
 	class Entity;
 	class Component;
 	class RenderSystem;
@@ -28,16 +29,21 @@ namespace ECS
 
 		void Init(VulkanLib::VulkanApp* vulkanApp);
 
+		void AddSystem(ECS::System* system);
 		Entity* AddEntity(ComponentList& components);
 		Entity* GetEntity(uint32_t id);
 
 		void RemoveEntity(Entity* entity);
+		//void RemoveComponent(Entity* entity, ECS::Type componentType);
+		void AddComponent(Entity* entity, Component* component);
 
 		void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		// All the ECS::System 
+		std::vector<ECS::System*> mSystems;
+
 		ECS::RenderSystem* mRenderSystem;
 		ECS::PhysicsSystem* mPhysicsSystem;
 		ECS::PickingSystem* mPickingSystem;

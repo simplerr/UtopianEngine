@@ -20,6 +20,7 @@
 namespace ECS
 {
 	RenderSystem::RenderSystem(VulkanLib::VulkanApp* vulkanApp)
+		: System(Type::MESH_COMPONENT)
 	{
 		mVulkanApp = vulkanApp;
 		mModelLoader = new VulkanLib::ModelLoader();

@@ -23,20 +23,27 @@ namespace ECS
 		}
 
 		// Delete all ECS::System
-		delete mRenderSystem;
-		delete mPhysicsSystem;
-		delete mPickingSystem;
-		delete mHealthSystem;
+		for(System* system : mSystems)
+		{
+			delete system;
+		}
 	}
 
 	void EntityManager::Init(VulkanLib::VulkanApp* vulkanApp)
 	{
 		// Create all ECS::System
-		mPhysicsSystem = new ECS::PhysicsSystem();
-		mRenderSystem = new ECS::RenderSystem(vulkanApp);
-		mPickingSystem = new ECS::PickingSystem(vulkanApp->GetCamera(), vulkanApp);
-		mHealthSystem = new ECS::HealthSystem(this);
-		vulkanApp->SetRenderSystem(mRenderSystem);
+		AddSystem(new ECS::PhysicsSystem());
+		AddSystem(new ECS::PickingSystem(vulkanApp->GetCamera(), vulkanApp));
+		AddSystem(new ECS::HealthSystem(this));
+
+		RenderSystem* renderSystem = new ECS::RenderSystem(vulkanApp);
+		AddSystem(renderSystem);
+		vulkanApp->SetRenderSystem(renderSystem); // TODO: Fix this dependency
+	}
+
+	void EntityManager::AddSystem(ECS::System* system)
+	{
+		mSystems.push_back(system);
 	}
 
 	// AddEntity() is responsible for informing the needed ECS::Systems
@@ -44,27 +51,9 @@ namespace ECS
 	{
 		Entity* entity = new Entity(components, mNextEntityId);
 
-		for (int i = 0; i < components.size(); i++)
+		for(Component* component : components)
 		{
-			// Add to RenderSystem
-			if (components[i]->GetType() == MESH_COMPONENT)
-			{
-				// The RenderSystem will need to access the TransformComponent
-				mRenderSystem->AddEntity(entity);
-				mPickingSystem->AddEntity(entity);
-			}
-			else if (components[i]->GetType() == PHYSICS_COMPONENT)
-			{
-				mPhysicsSystem->AddEntity(entity);
-			}
-			else if (components[i]->GetType() == LIGHT_COMPONENT)
-			{
-				// Todo (should be in RenderSystem?)
-			}
-			else if (components[i]->GetType() == HEALTH_COMPONENT)
-			{
-				mHealthSystem->AddEntity(entity);
-			}
+			AddComponent(entity, component);
 		}
 
 		mEntities.push_back(entity);
@@ -91,20 +80,36 @@ namespace ECS
 		mRemoveList.push_back(entity);
 	}
 
+	//void EntityManager::RemoveComponent(Entity* entity, ECS::Type componentType)
+	//{
+	//	// Remove component from Entity and inform all related Systems
+	//}
+
+	void EntityManager::AddComponent(Entity* entity, Component* component)
+	{
+		for (System* system : mSystems)
+		{
+			if ((system->GetComponentMask() & (uint32_t)component->GetType()) != 0)
+			{
+				system->AddEntity(entity);
+			}
+		}
+	}
+
 	void EntityManager::Process()
 	{
-		mRenderSystem->Process();
-		mPhysicsSystem->Process();
-		mPickingSystem->Process();
-		mHealthSystem->Process();
+		for (System* system : mSystems)
+		{
+			system->Process();
+		}
 
 		// Removing of entities is done after all systems have been processed
 		for (auto entity : mRemoveList)
 		{
-			mRenderSystem->RemoveEntity(entity);
-			mPhysicsSystem->RemoveEntity(entity);
-			mPickingSystem->RemoveEntity(entity);
-			mHealthSystem->RemoveEntity(entity);
+			for (System* system : mSystems)
+			{
+				system->RemoveEntity(entity);
+			}
 
 			for (auto iter = mEntities.begin(); iter < mEntities.end(); iter++)
 			{
@@ -122,9 +127,9 @@ namespace ECS
 
 	void EntityManager::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		mRenderSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
-		mPickingSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
-		mPhysicsSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
-		mHealthSystem->HandleMessages(hWnd, uMsg, wParam, lParam);
+		for (System* system : mSystems)
+		{
+			system->HandleMessages(hWnd, uMsg, wParam, lParam);
+		}
 	}
 }
