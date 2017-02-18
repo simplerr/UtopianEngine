@@ -22,7 +22,7 @@
 namespace ECS
 {
 	PickingSystem::PickingSystem(VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp)
-		: System(Type::MESH_COMPONENT)
+		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
 	{
 		mVulkanApp = vulkanApp;
 		mCamera = camera;

@@ -51,9 +51,12 @@ namespace ECS
 	{
 		Entity* entity = new Entity(components, mNextEntityId);
 
-		for(Component* component : components)
+		for (System* system : mSystems)
 		{
-			AddComponent(entity, component);
+			if (system->Accepts(entity->GetComponentsMask()))
+			{
+				system->AddEntity(entity);
+			}
 		}
 
 		mEntities.push_back(entity);
@@ -87,13 +90,7 @@ namespace ECS
 
 	void EntityManager::AddComponent(Entity* entity, Component* component)
 	{
-		for (System* system : mSystems)
-		{
-			if ((system->GetComponentMask() & (uint32_t)component->GetType()) != 0)
-			{
-				system->AddEntity(entity);
-			}
-		}
+
 	}
 
 	void EntityManager::Process()

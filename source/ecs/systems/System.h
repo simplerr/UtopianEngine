@@ -18,6 +18,11 @@ namespace ECS
 			return mComponentMask;
 		}
 
+		bool Accepts(uint32_t mask)
+		{
+			return (mask & GetComponentMask()) == GetComponentMask();
+		}
+
 		// The derived systems can store the entities however they want
 		// RenderSystem groups them by their Pipeline 
 		virtual void AddEntity(Entity* entity) =  0;

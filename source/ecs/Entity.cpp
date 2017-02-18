@@ -31,6 +31,17 @@ namespace ECS
 		return mId;
 	}
 
+	uint32_t Entity::GetComponentsMask()
+	{
+		uint32_t mask = 0;
+		for (Component* component : mComponents)
+		{
+			mask |= (uint32_t)component->GetType();
+		}
+
+		return mask;
+	}
+
 	//TransformComponent* Entity::GetTransform()
 	//{
 	//	return mTransformComponent;

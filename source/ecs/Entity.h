@@ -21,6 +21,7 @@ namespace ECS
 		Entity(ComponentList components, uint32_t id);
 		Component* GetComponent(uint32_t componentType);
 		uint32_t GetId();
+		uint32_t GetComponentsMask();
 		//TransformComponent* GetTransform();
 	private:
 		ComponentList mComponents;
