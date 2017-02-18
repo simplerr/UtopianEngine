@@ -45,7 +45,7 @@ int main(const int argc, const char *argv[])
 	/*
 	Create the window
 	*/
-	VulkanLib::Window window = VulkanLib::Window(1600, 1200);
+	VulkanLib::Window window = VulkanLib::Window(1500, 950);
 
 #if defined(_WIN32)			// Win32
 	window.SetupWindow(hInstance, WndProc);

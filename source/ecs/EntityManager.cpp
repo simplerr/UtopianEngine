@@ -1,4 +1,5 @@
 #include "vulkan/VulkanApp.h"
+#include "vulkan/VulkanDebug.h"
 #include "systems/RenderSystem.h"
 #include "systems/PhysicsSystem.h"
 #include "systems/PickingSystem.h"
@@ -148,6 +149,18 @@ namespace ECS
 		for (System* system : mSystems)
 		{
 			system->HandleMessages(hWnd, uMsg, wParam, lParam);
+		}
+
+		switch (uMsg)
+		{
+		case WM_KEYDOWN:
+			if (wParam == VK_SPACE)
+			{
+				VulkanLib::VulkanDebug::ConsolePrint("TODO: Add entity systems debug printing");
+			}
+			break;
+		default:
+			break;
 		}
 	}
 }

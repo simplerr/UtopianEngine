@@ -38,8 +38,6 @@ namespace ECS
 		entityCache.mesh = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
 		entityCache.healthComponent = dynamic_cast<HealthComponent*>(entity->GetComponent(HEALTH_COMPONENT));
 
-		VulkanLib::VulkanDebug::ConsolePrint(entityCache.transform->GetPosition());
-
 		mEntities.push_back(entityCache);
 	}
 
@@ -64,9 +62,6 @@ namespace ECS
 	{
 		VulkanLib::Ray ray = mCamera->GetPickingRay();
 
-		static  int test = 0;
-		test++;
-		VulkanLib::VulkanDebug::ConsolePrint("test: " + std::to_string(test));
 		float minDist = FLT_MAX;
 		uint32_t pickedId = -1;
 		for (int i = 0; i < mEntities.size(); i++)
@@ -82,9 +77,6 @@ namespace ECS
 			//if(sphere.RayIntersection(ray, dist))
 			if (boundingBox.RayIntersect(ray, dist))
 			{
-				VulkanLib::VulkanDebug::ConsolePrint(pos, "picked pos: ");
-				VulkanLib::VulkanDebug::ConsolePrint(boundingBox.GetMin(), "picked min aabb: ");
-				VulkanLib::VulkanDebug::ConsolePrint("Picked entity ID: " + std::to_string(i));
 				//if (dist < minDist)
 				//{
 				//	minDist = dist;

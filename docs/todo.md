@@ -1,8 +1,14 @@
 ### TODO
 
+18/2
+* Remove dependency between VulkanApp and RenderSystem
+* Properly used the correct texture for loaded models
+* Add debug prints for entity systems
+* Add text overlay rendering
+* Experiment with terrain rendering
+
 * MeshComponents should be able to change Pipeline at runtime
 * Do not use the same DescriptorSet for every Pipeline
-* Create PickingSystem
 * Optimize TransformComponent::RebuildWorldMatrix()
 * Remove use of mHandle outside the Handle classes
 * Create ColorImage and DepthStencilImage classes
