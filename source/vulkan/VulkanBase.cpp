@@ -160,6 +160,11 @@ namespace VulkanLib
 		return mCommandPool;
 	}
 
+	RenderPass * VulkanBase::GetRenderPass()
+	{
+		return mRenderPass;
+	}
+
 	void VulkanBase::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		// Game::HandleMessages() handles the closing of the window
@@ -175,7 +180,12 @@ namespace VulkanLib
 		return mWindow->GetHeight();
 	}
 
-	Window * VulkanBase::GetWindow()
+	VkFramebuffer VulkanBase::GetCurrentFrameBuffer()
+	{
+		return mFrameBuffers->GetCurrent();
+	}
+
+	Window* VulkanBase::GetWindow()
 	{
 		return mWindow;
 	}

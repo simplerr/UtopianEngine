@@ -8,6 +8,7 @@ namespace VulkanLib
 	class Device;
 	class CommandPool;
 	class RenderPass;
+	class VulkanApp;
 
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{

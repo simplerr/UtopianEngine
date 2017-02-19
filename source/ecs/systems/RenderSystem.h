@@ -53,6 +53,7 @@ namespace ECS
 		void Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet);
 
 		void OnEntityAdded(const EntityCache& entityCache);
+		//void OnEntityRemoved(cosnt EntityCache& entityCache);
 		virtual void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -64,6 +65,7 @@ namespace ECS
 		VulkanLib::VulkanApp* mVulkanApp;
 		VulkanLib::ModelLoader* mModelLoader;
 		VulkanLib::StaticModel* mCubeModel;
+		VulkanLib::CommandBuffer* mCommandBuffer;
 
 		// The RenderSystem should contain a list of all loaded meshes, with only one copy of each in memory
 		// What happens if a mesh changes pipeline?

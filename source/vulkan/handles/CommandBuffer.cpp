@@ -58,7 +58,6 @@ namespace VulkanLib
 		VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mHandle, &beginInfo));
 	}
 
-	// Used when beginning secondary command buffers
 	void CommandBuffer::Begin(RenderPass* renderPass, VkFramebuffer frameBuffer)
 	{
 		VkCommandBufferInheritanceInfo inheritanceInfo = {};

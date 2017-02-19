@@ -36,10 +36,7 @@ namespace ECS
 		AddSystem(new ECS::PhysicsSystem(this));
 		AddSystem(new ECS::PickingSystem(this, vulkanApp->GetCamera(), vulkanApp));
 		AddSystem(new ECS::HealthSystem(this));
-
-		RenderSystem* renderSystem = new ECS::RenderSystem(this, vulkanApp);
-		AddSystem(renderSystem);
-		vulkanApp->SetRenderSystem(renderSystem); // TODO: Fix this dependency
+		AddSystem(new ECS::RenderSystem(this, vulkanApp));
 	}
 
 	void EntityManager::AddSystem(ECS::System* system)

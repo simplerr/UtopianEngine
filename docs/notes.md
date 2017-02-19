@@ -14,3 +14,27 @@
 	‒ This can be requested by:
 	‒ injecting image barriers into command buffers
 	‒ correct renderpass & subpass configuration
+
+### Renderer
+* Is able to let application code generate different command buffers each frame
+	- This makes it impossible to swap to a non-Vulkan renderer!
+	- Should Renderer be responsible for all command buffer generation then?
+		- __How should the connection between MeshComponent and Renderer be?__
+		- How should the connection between Terrain and Renderer be?
+* Should not need to know of any application code 
+
+* The `RenderSystem` is only one of many that needs to use Vulkan functionality
+	- Making `RenderSystem` inherit from `VulkanApp` would mean that other classes would depend on `RenderSystem`, `Terrain` for example
+	- It's better if RenderSystem _has_ a pointer to `VulkanApp`
+	- `VulkanApp` should let higher level classes generate command buffers to run each frame
+		- How are they added?
+
+RenderSystem::OnEntityAdded(entity)
+{
+	mVulkanApp->AddModelInstance(entity.model);	
+}
+
+RenderSystem::OnEntityRemoved(entity)
+{
+	mVulkanApp->RemoveModelInstance(entity.model);	
+}

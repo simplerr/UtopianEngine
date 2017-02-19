@@ -95,8 +95,11 @@ namespace VulkanLib
 
 		Camera* GetCamera();
 		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
+		Pipeline* GetPipeline(PipelineType pipelineType);
+		PipelineLayout* GetPipelineLayout();
+		const VkDescriptorSet GetDescriptorSet();
 
-		void SetRenderSystem(ECS::RenderSystem* renderSystem);
+		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
 		// 
 		//	High level code
@@ -122,6 +125,7 @@ namespace VulkanLib
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; 
 		CommandBuffer*					mDebugCommandBuffer;
+		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
 		Fence*							mRenderFence;
 
 		std::map<int, Pipeline*>		mPipelines;

@@ -1,7 +1,6 @@
 ## Engine requirements
 
 ### Renderer
-* 
 
 ### Game world
 

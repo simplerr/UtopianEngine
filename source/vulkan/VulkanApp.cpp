@@ -57,6 +57,12 @@ namespace VulkanLib
 		delete mSecondaryCommandBuffer;
 		delete mDebugCommandBuffer;
 
+
+		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
+		{
+			delete commandBuffer;
+		}
+
 		delete mTextureLoader;
 	}
 
@@ -107,11 +113,28 @@ namespace VulkanLib
 		return mCamera;
 	}
 
-	void VulkanApp::SetRenderSystem(ECS::RenderSystem* renderSystem)
+	Pipeline* VulkanApp::GetPipeline(PipelineType pipelineType)
 	{
-		mRenderSystem = renderSystem;
+		// TODO: Add boundary check
+		return mPipelines[pipelineType];
 	}
 
+	PipelineLayout* VulkanApp::GetPipelineLayout()
+	{
+		return mPipelineLayout;
+	}
+
+	const VkDescriptorSet VulkanApp::GetDescriptorSet()
+	{
+		return mDescriptorSet.descriptorSet;
+	}
+
+	CommandBuffer* VulkanApp::CreateCommandBuffer(VkCommandBufferLevel level)
+	{
+		CommandBuffer* commandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), level);
+		mApplicationCommandBuffers.push_back(commandBuffer);
+		return commandBuffer;
+	}
 	
 	void VulkanApp::PrepareUniformBuffers()
 	{
@@ -257,47 +280,11 @@ namespace VulkanLib
 		mPrimaryCommandBuffer->Begin();
 		vkCmdBeginRenderPass(mPrimaryCommandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
-		//
-		// Secondary command buffer
-		//
-		VkCommandBufferInheritanceInfo inheritanceInfo = {};
-		inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-		inheritanceInfo.renderPass = mRenderPass->GetVkHandle();
-		inheritanceInfo.framebuffer = frameBuffer;
-
-		VkCommandBufferBeginInfo commandBufferBeginInfo = {};
-		commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-		commandBufferBeginInfo.pInheritanceInfo = &inheritanceInfo;
-
-		mSecondaryCommandBuffer->Begin(mRenderPass, frameBuffer);
-		VkCommandBuffer secondaryCommandBuffer = mSecondaryCommandBuffer->GetVkHandle();
-
-		// Update dynamic viewport state
-		VkViewport viewport = {};
-		viewport.width = (float)GetWindowWidth();
-		viewport.height = (float)GetWindowHeight();
-		viewport.minDepth = (float) 0.0f;
-		viewport.maxDepth = (float) 1.0f;
-		vkCmdSetViewport(secondaryCommandBuffer, 0, 1, &viewport);
-
-		// Update dynamic scissor state
-		VkRect2D scissor = {};
-		scissor.extent.width = GetWindowWidth();
-		scissor.extent.height = GetWindowHeight();
-		scissor.offset.x = 0;
-		scissor.offset.y = 0;
-		vkCmdSetScissor(secondaryCommandBuffer, 0, 1, &scissor);
-
-		// The render system does the actual rendering
-		mRenderSystem->Render(mSecondaryCommandBuffer, mPipelines, mPipelineLayout, mDescriptorSet);
-
-		// End secondary command buffer
-		mSecondaryCommandBuffer->End();
-
 		std::vector<VkCommandBuffer> commandBuffers;
-		commandBuffers.push_back(mDebugCommandBuffer->GetVkHandle());
-		commandBuffers.push_back(mSecondaryCommandBuffer->GetVkHandle());
+		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
+		{
+			commandBuffers.push_back(commandBuffer->GetVkHandle());
+		}
 
 		// This is where multithreaded command buffers can be added
 		// ...
@@ -312,8 +299,6 @@ namespace VulkanLib
 
 	void VulkanApp::Draw()
 	{
-		VulkanBase::PrepareFrame();
-
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
@@ -324,8 +309,6 @@ namespace VulkanLib
 
 		// Wait for all command buffers to complete
 		mRenderFence->Wait(); 
-
-		VulkanBase::SubmitFrame();
 	}
 
 	void VulkanApp::Render()

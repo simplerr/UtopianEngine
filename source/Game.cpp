@@ -151,8 +151,12 @@ namespace VulkanLib
 
 			if (mRenderer != nullptr && IsClosing() == false)
 			{
+				mRenderer->PrepareFrame();
+
 				Update();
 				Draw();
+
+				mRenderer->SubmitFrame();
 
 				// Frame end
 				auto fps = mTimer.FrameEnd();

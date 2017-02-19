@@ -31,6 +31,8 @@ namespace ECS
 		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), VulkanLib::Color::Red, 70.0f);
 		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), VulkanLib::Color::Green, 70.0f);
 		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), VulkanLib::Color::Blue, 70.0f);
+
+		mCommandBuffer = mVulkanApp->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -41,14 +43,47 @@ namespace ECS
 
 	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
 	{
-		// Draw all meshes
+	}
+
+	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
+	{
+		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
+		entityCache.meshComponent->SetModel(model);
+	}
+
+	void RenderSystem::Process()
+	{
+		// Build mesh rendering command buffer
+		mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
+
+		VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
+
+		// Update dynamic viewport state
+		VkViewport viewport = {};
+		viewport.width = (float)mVulkanApp->GetWindowWidth();
+		viewport.height = (float)mVulkanApp->GetWindowHeight();
+		viewport.minDepth = (float) 0.0f;
+		viewport.maxDepth = (float) 1.0f;
+		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
+
+		// Update dynamic scissor state
+		VkRect2D scissor = {};
+		scissor.extent.width = mVulkanApp->GetWindowWidth();
+		scissor.extent.height = mVulkanApp->GetWindowHeight();
+		scissor.offset.x = 0;
+		scissor.offset.y = 0;
+		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);		// Draw all meshes
+
+		// ========== 	START
+
 		for (EntityCache entityCache : mEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[entityCache.meshComponent->GetPipeline()]->GetVkHandle());
+			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipeline(entityCache.meshComponent->GetPipeline())->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
+			VkDescriptorSet descriptorSet = mVulkanApp->GetDescriptorSet();
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 1, &descriptorSet, 0, NULL);
 
 			TransformComponent* transform = entityCache.transformComponent;
 			MeshComponent* meshComponent = entityCache.meshComponent;
@@ -67,25 +102,26 @@ namespace ECS
 				
 			// TOOD: This probably also needs to be negated
 			pushConstantBlock.worldInvTranspose = transform->GetWorldInverseTransposeMatrix();
-			vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdPushConstants(commandBuffer, mVulkanApp->GetPipelineLayout()->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
 			// Bind triangle vertices
 			VkDeviceSize offsets[1] = { 0 };
-			vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->mMeshes[0]->vertices.buffer, offsets);		
-			vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdBindVertexBuffers(commandBuffer, VERTEX_BUFFER_BIND_ID, 1, &model->mMeshes[0]->vertices.buffer, offsets);		
+			vkCmdBindIndexBuffer(commandBuffer, model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
 			// Draw indexed triangle	
-			vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
+			vkCmdDrawIndexed(commandBuffer, model->GetNumIndices(), 1, 0, 0, 0);
 		}
 
 		// Draw debug boxes
 		for (EntityCache entityCache : mEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[VulkanLib::PipelineType::PIPELINE_TEST]->GetVkHandle());
+			vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST)->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
+			VkDescriptorSet descriptorSet = mVulkanApp->GetDescriptorSet();
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 1, &descriptorSet, 0, NULL);
 
 			// Draw debug bounding box
 			VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
@@ -103,17 +139,18 @@ namespace ECS
 			pushConstantBlock.color = VulkanLib::Color::White;
 
 			VkDeviceSize offsets[1] = { 0 };
-			vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
-			vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
-			vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-			vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+			vkCmdPushConstants(commandBuffer, mVulkanApp->GetPipelineLayout()->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdBindVertexBuffers(commandBuffer, VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
+			vkCmdBindIndexBuffer(commandBuffer, mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdDrawIndexed(commandBuffer, mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
 
 		// Bind the rendering pipeline (including the shaders)
-		vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[VulkanLib::PipelineType::PIPELINE_DEBUG]->GetVkHandle());
+		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG)->GetVkHandle());
 
 		// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
-		vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
+		VkDescriptorSet descriptorSet = mVulkanApp->GetDescriptorSet();
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 1, &descriptorSet, 0, NULL);
 
 		// Draw debug cubes for the origin and each axis
 		for (int i = 0; i < mDebugCubes.size(); i++)
@@ -129,21 +166,29 @@ namespace ECS
 			pushConstantBlock.color = debugCube.color;
 
 			VkDeviceSize offsets[1] = { 0 };
-			vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
-			vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
-			vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-			vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+			vkCmdPushConstants(commandBuffer, mVulkanApp->GetPipelineLayout()->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdBindVertexBuffers(commandBuffer, VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
+			vkCmdBindIndexBuffer(commandBuffer, mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdDrawIndexed(commandBuffer, mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
-	}
 
-	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
-	{
-		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
-		entityCache.meshComponent->SetModel(model);
-	}
 
-	void RenderSystem::Process()
-	{
+		mCommandBuffer->End();
+
+		// Build debug rendering command buffer
+
+		// Adds the command buffers to a list for VulkanApp to process
+		//mVulkanApp->SubmitCommandBuffer(mMeshCommandBuffer);
+		//mVulkanApp->SubmitCommandBuffer(mDebugCommandBuffer);
+
+		// Create a command buffer for all mesh components
+
+		// Terrain
+		// Create a command buffer for the terrain
+
+		// Create a command buffer for text rendering
+
+
 		// This will not work since we want to render all identical objects after each other
 		// How the RenderSystem stores the meshes internally will not be the same as in Entity
 
