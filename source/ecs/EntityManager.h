@@ -35,6 +35,9 @@ namespace ECS
 		Entity* GetEntity(uint32_t id);
 
 		void RemoveEntity(Entity* entity);
+
+		// It might be good to do this after all systems have been processed
+		// To better support future multi-threading of systems
 		void RemoveComponent(Entity* entity, ECS::Type componentType);
 		void AddComponent(Entity* entity, Component* component);
 

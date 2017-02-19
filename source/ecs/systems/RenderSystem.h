@@ -22,13 +22,6 @@ namespace ECS
 	class MeshComponent;
 	class TransformComponent;
 
-	struct EntityCache
-	{
-		Entity* entity;
-		MeshComponent* meshComponent;
-		TransformComponent* transform;
-	};
-
 	struct PushConstantDebugBlock {
 		mat4 world;
 		vec4 color;
@@ -57,15 +50,12 @@ namespace ECS
 		RenderSystem(EntityManager* entityManager, VulkanLib::VulkanApp* vulkanApp);
 		~RenderSystem();
 
-		void AddEntity(Entity* entity);
-		void RemoveEntity(Entity* entity);
-
 		void Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet);
 
+		void OnEntityAdded(const EntityCache& entityCache);
 		virtual void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-		bool Contains(Entity* entity);
 
 		void AddDebugCube(vec3 pos, vec4 color, float size);
 	private:
@@ -77,7 +67,7 @@ namespace ECS
 
 		// The RenderSystem should contain a list of all loaded meshes, with only one copy of each in memory
 		// What happens if a mesh changes pipeline?
-		std::map<int, std::vector<EntityCache> > mMeshEntities;
+		//std::map<int, std::vector<EntityCache> > mMeshEntities;
 
 		std::vector<DebugCube> mDebugCubes;
 	};

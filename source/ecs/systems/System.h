@@ -1,46 +1,59 @@
 #pragma once
 
+#include <stdint.h>
+#include <vector>
+#include <windows.h>
+
 namespace ECS
 {
 	class Entity;
 	class EntityManager;
+	class MeshComponent;
+	class HealthComponent;
+	class PhysicsComponent;
+	class TransformComponent;
+
+	struct EntityCache
+	{
+		EntityCache()
+		{
+			entity = nullptr;
+			meshComponent = nullptr;
+			transformComponent = nullptr;
+			healthComponent = nullptr;
+			physicsComponent = nullptr;
+		}
+
+		Entity* entity;
+		MeshComponent* meshComponent;
+		TransformComponent* transformComponent;
+		HealthComponent* healthComponent;
+		PhysicsComponent* physicsComponent;
+	};
 
 	class System
 	{
 	public:
-		System(EntityManager* entityManager, uint32_t componentMask)
-		{
-			mEntityManager = entityManager;
-			mComponentMask = componentMask;
-		}
-
-		EntityManager* GetEntityManager()
-		{
-			return mEntityManager;
-		}
-
-		bool Accepts(uint32_t mask)
-		{
-			return (mask & GetComponentMask()) == GetComponentMask();
-		}
-
-		uint32_t GetComponentMask()
-		{
-			return mComponentMask;
-		}
+		System(EntityManager* entityManager, uint32_t componentMask);
+		EntityManager* GetEntityManager();
+		bool Accepts(uint32_t mask);
+		uint32_t GetComponentMask();
+		
 
 		// The derived systems can store the entities however they want
 		// RenderSystem groups them by their Pipeline 
-		virtual void AddEntity(Entity* entity) =  0;
-		virtual void RemoveEntity(Entity* entity) = 0;
+		void AddEntity(Entity* entity);
+		void RemoveEntity(Entity* entity);
+		bool Contains(Entity* entity);
+
+		virtual void OnEntityAdded(const EntityCache& entityCache) {};
 		virtual void Process() = 0;
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
-		virtual bool Contains(Entity* entity) = 0;
-
 	protected:
 		// Only the entities that have components inside this ECS::System
 		//EntityList mEntities;
 		EntityManager* mEntityManager;
+		std::vector<EntityCache> mEntities;
 		uint32_t mComponentMask;
 	};
 }

@@ -30,29 +30,6 @@ namespace ECS
 		mCamera = camera;
 	}
 
-	void PickingSystem::AddEntity(Entity* entity)
-	{
-		EntityCache entityCache;
-		entityCache.entity = entity;
-		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
-		entityCache.mesh = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
-		entityCache.healthComponent = dynamic_cast<HealthComponent*>(entity->GetComponent(HEALTH_COMPONENT));
-
-		mEntities.push_back(entityCache);
-	}
-
-	void PickingSystem::RemoveEntity(Entity* entity)
-	{
-		for (auto iter = mEntities.begin(); iter < mEntities.end(); iter++)
-		{
-			if ((*iter).entity->GetId() == entity->GetId())
-			{
-				iter = mEntities.erase(iter);
-				break;
-			}
-		}
-	}
-
 	void PickingSystem::Process()
 	{
 
@@ -66,10 +43,10 @@ namespace ECS
 		uint32_t pickedId = -1;
 		for (int i = 0; i < mEntities.size(); i++)
 		{
-			glm::vec3 pos = mEntities[i].transform->GetPosition();
-			VulkanLib::BoundingBox boundingBox = mEntities[i].mesh->GetBoundingBox();
+			glm::vec3 pos = mEntities[i].transformComponent->GetPosition();
+			VulkanLib::BoundingBox boundingBox = mEntities[i].meshComponent->GetBoundingBox();
 
-			boundingBox.Update(mEntities[i].transform->GetWorldMatrix());
+			boundingBox.Update(mEntities[i].transformComponent->GetWorldMatrix());
 			//VulkanLib::VulkanDebug::ConsolePrint(boundingBox.GetMin(), "***** picked min aabb: ");
 
 			float dist = FLT_MAX;
@@ -99,7 +76,7 @@ namespace ECS
 			if (pickedEntity->HasComponent(Type::PHYSICS_COMPONENT))
 			{
 				GetEntityManager()->RemoveComponent(pickedEntity, Type::PHYSICS_COMPONENT);
-				mEntities[pickedId].healthComponent->SetHealth(0);
+				//mEntities[pickedId].healthComponent->SetHealth(0);
 			}
 			else
 			{
@@ -128,16 +105,5 @@ namespace ECS
 	Entity* PickingSystem::GetPickedEntity()
 	{
 		return nullptr;
-	}
-
-	bool PickingSystem::Contains(Entity* entity)
-	{
-		for (EntityCache entityCache : mEntities)
-		{
-			if (entityCache.entity->GetId() == entity->GetId())
-				return true;
-		}
-
-		return false;
 	}
 }

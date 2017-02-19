@@ -92,6 +92,7 @@
     <ClCompile Include="source\ecs\systems\PhysicsSystem.cpp" />
     <ClCompile Include="source\ecs\systems\PickingSystem.cpp" />
     <ClCompile Include="source\ecs\systems\RenderSystem.cpp" />
+    <ClCompile Include="source\ecs\systems\System.cpp" />
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\main.cpp" />

@@ -10,34 +10,12 @@ namespace ECS
 	{
 	}
 
-	void PhysicsSystem::AddEntity(Entity* entity)
-	{
-		EntityCache entityCache;
-		entityCache.entity = entity;
-		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(ECS::Type::TRANSFORM_COMPONENT));
-		entityCache.physics = dynamic_cast<PhysicsComponent*>(entity->GetComponent(ECS::Type::PHYSICS_COMPONENT));
-
-		mEntities.push_back(entityCache);
-	}
-
-	void PhysicsSystem::RemoveEntity(Entity* entity)
-	{
-		for (auto iter = mEntities.begin(); iter < mEntities.end(); iter++)
-		{
-			if ((*iter).entity->GetId() == entity->GetId())
-			{
-				iter = mEntities.erase(iter);
-				break;
-			}
-		}
-	}
-
 	void PhysicsSystem::Process()
 	{
 		for (int i = 0; i < mEntities.size(); i++)
 		{
-			TransformComponent* transform = mEntities[i].transform;
-			PhysicsComponent* physicsComponent = mEntities[i].physics;
+			TransformComponent* transform = mEntities[i].transformComponent;
+			PhysicsComponent* physicsComponent = mEntities[i].physicsComponent;
 
 			// Apply physics rules
 			if (fabs(transform->GetPosition().x) > 1000.0f)
@@ -57,16 +35,5 @@ namespace ECS
 	void PhysicsSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 
-	}
-
-	bool PhysicsSystem::Contains(Entity* entity)
-	{
-		for (EntityCache entityCache : mEntities)
-		{
-			if (entityCache.entity->GetId() == entity->GetId())
-				return true;
-		}
-
-		return false;
 	}
 }

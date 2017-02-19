@@ -14,21 +14,11 @@ namespace ECS
 	*/
 	class HealthSystem : public System
 	{
-		struct EntityCache
-		{
-			Entity* entity;
-			HealthComponent* healthComponent;
-		};
-
 	public:
 		HealthSystem(EntityManager* entityManager);
 
 		void Process();
-		void AddEntity(Entity* entity);
-		void RemoveEntity(Entity* entity);
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-		bool Contains(Entity* entity);
 	private:
-		std::vector<EntityCache> mEntities;
 	};
 }

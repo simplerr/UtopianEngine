@@ -39,77 +39,47 @@ namespace ECS
 		delete mModelLoader;
 	}
 
-	void RenderSystem::AddEntity(Entity* entity)
-	{
-		EntityCache entityCache;
-		entityCache.entity = entity;
-		entityCache.transform = dynamic_cast<TransformComponent*>(entity->GetComponent(TRANSFORM_COMPONENT));
-		entityCache.meshComponent = dynamic_cast<MeshComponent*>(entity->GetComponent(MESH_COMPONENT));
-		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
-		entityCache.meshComponent->SetModel(model);
-
-		mMeshEntities[entityCache.meshComponent->GetPipeline()].push_back(entityCache);
-	}
-
-	void RenderSystem::RemoveEntity(Entity* entity)
-	{
-		for (auto& entityVector : mMeshEntities)
-		{
-			for (auto iter = entityVector.second.begin(); iter < entityVector.second.end(); iter++)
-			{
-				if ((*iter).entity->GetId() == entity->GetId())
-				{
-					iter = entityVector.second.erase(iter);
-					break;
-				}
-			}
-		}
-	}
-
 	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
 	{
 		// Draw all meshes
-		for (auto const& entityVector : mMeshEntities)
+		for (EntityCache entityCache : mEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
-			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[entityVector.first]->GetVkHandle());
+			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[entityCache.meshComponent->GetPipeline()]->GetVkHandle());
 
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
 			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
 
-			for (auto const& entity : entityVector.second)
-			{
-				TransformComponent* transform = entity.transform;
-				MeshComponent* meshComponent = entity.meshComponent;
-				VulkanLib::StaticModel* model = entity.meshComponent->GetModel();
+			TransformComponent* transform = entityCache.transformComponent;
+			MeshComponent* meshComponent = entityCache.meshComponent;
+			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
 
-				// Bind the correct vertex & index buffers
-				// Push the world matrix constant
-				VulkanLib::PushConstantBlock pushConstantBlock;
-				pushConstantBlock.world = transform->GetWorldMatrix();
+			// Bind the correct vertex & index buffers
+			// Push the world matrix constant
+			VulkanLib::PushConstantBlock pushConstantBlock;
+			pushConstantBlock.world = transform->GetWorldMatrix();
 
-				// NOTE: For some reason the translation needs to be negated when rendering
-				// Otherwise the physical representation does not match the rendered scene
-				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];	
-				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+			// NOTE: For some reason the translation needs to be negated when rendering
+			// Otherwise the physical representation does not match the rendered scene
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];	
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 				
-				// TOOD: This probably also needs to be negated
-				pushConstantBlock.worldInvTranspose = transform->GetWorldInverseTransposeMatrix();
-				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			// TOOD: This probably also needs to be negated
+			pushConstantBlock.worldInvTranspose = transform->GetWorldInverseTransposeMatrix();
+			vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
-				// Bind triangle vertices
-				VkDeviceSize offsets[1] = { 0 };
-				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->mMeshes[0]->vertices.buffer, offsets);		
-				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			// Bind triangle vertices
+			VkDeviceSize offsets[1] = { 0 };
+			vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &model->mMeshes[0]->vertices.buffer, offsets);		
+			vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-				// Draw indexed triangle	
-				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
-			}
+			// Draw indexed triangle	
+			vkCmdDrawIndexed(commandBuffer->GetVkHandle(), model->GetNumIndices(), 1, 0, 0, 0);
 		}
-		//return;
+
 		// Draw debug boxes
-		for (auto const& entityVector : mMeshEntities)
+		for (EntityCache entityCache : mEntities)
 		{
 			// Bind the rendering pipeline (including the shaders)
 			vkCmdBindPipeline(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines[VulkanLib::PipelineType::PIPELINE_TEST]->GetVkHandle());
@@ -117,29 +87,26 @@ namespace ECS
 			// Bind descriptor sets describing shader binding points (must be called after vkCmdBindPipeline!)
 			vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet.descriptorSet, 0, NULL);
 
-			for (auto const& entity : entityVector.second)
-			{
-				// Draw debug bounding box
-				VulkanLib::BoundingBox meshBoundingBox = entity.meshComponent->GetBoundingBox();
-				meshBoundingBox.Update(entity.transform->GetWorldMatrix()); 
+			// Draw debug bounding box
+			VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
+			meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
 
-				mat4 world = mat4();
-				float width = meshBoundingBox.GetWidth();
-				float height = meshBoundingBox.GetHeight();
-				float depth = meshBoundingBox.GetDepth();
-				world = glm::translate(world, -entity.transform->GetPosition());
-				world = glm::scale(world, glm::vec3(width, height, depth));
+			mat4 world = mat4();
+			float width = meshBoundingBox.GetWidth();
+			float height = meshBoundingBox.GetHeight();
+			float depth = meshBoundingBox.GetDepth();
+			world = glm::translate(world, -entityCache.transformComponent->GetPosition());
+			world = glm::scale(world, glm::vec3(width, height, depth));
 
-				PushConstantDebugBlock pushConstantBlock;
-				pushConstantBlock.world = world;
-				pushConstantBlock.color = VulkanLib::Color::White;
+			PushConstantDebugBlock pushConstantBlock;
+			pushConstantBlock.world = world;
+			pushConstantBlock.color = VulkanLib::Color::White;
 
-				VkDeviceSize offsets[1] = { 0 };
-				vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
-				vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
-				vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-				vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-			}
+			VkDeviceSize offsets[1] = { 0 };
+			vkCmdPushConstants(commandBuffer->GetVkHandle(), pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdBindVertexBuffers(commandBuffer->GetVkHandle(), VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer, offsets);
+			vkCmdBindIndexBuffer(commandBuffer->GetVkHandle(), mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			vkCmdDrawIndexed(commandBuffer->GetVkHandle(), mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
 
 		// Bind the rendering pipeline (including the shaders)
@@ -169,6 +136,12 @@ namespace ECS
 		}
 	}
 
+	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
+	{
+		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
+		entityCache.meshComponent->SetModel(model);
+	}
+
 	void RenderSystem::Process()
 	{
 		// This will not work since we want to render all identical objects after each other
@@ -176,18 +149,18 @@ namespace ECS
 
 		// It does not make sense for Update() to take an Entity as RenderSystem will not do the rendering 1..n for each Entity
 
-		for (auto const& entityVector : mMeshEntities)
-		{
-			// Bind the correct pipeline
+		//for (auto const& entityVector : mMeshEntities)
+		//{
+		//	// Bind the correct pipeline
 
-			for (auto const& entity : entityVector.second)
-			{
-				TransformComponent* transform = entity.transform;
-				MeshComponent* meshComponent = entity.meshComponent;
+		//	for (auto const& entity : entityVector.second)
+		//	{
+		//		TransformComponent* transform = entity.transform;
+		//		MeshComponent* meshComponent = entity.meshComponent;
 
-				// Bind the correct vertex & index buffers
-			}
-		}
+		//		// Bind the correct vertex & index buffers
+		//	}
+		//}
 	}
 
 	void RenderSystem::AddDebugCube(vec3 pos, vec4 color, float size)
@@ -198,19 +171,5 @@ namespace ECS
 	void RenderSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 
-	}
-
-	bool RenderSystem::Contains(Entity* entity)
-	{
-		for (auto const& entityVector : mMeshEntities)
-		{
-			for (EntityCache entityCache : entityVector.second)
-			{
-				if (entityCache.entity->GetId() == entity->GetId())
-					return true;
-			}
-		}
-
-		return false;
 	}
 }
