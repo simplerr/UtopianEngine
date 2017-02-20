@@ -124,9 +124,9 @@ namespace VulkanLib
 		return mPipelineLayout;
 	}
 
-	const VkDescriptorSet VulkanApp::GetDescriptorSet()
+	DescriptorSet* VulkanApp::GetDescriptorSet()
 	{
-		return mDescriptorSet.descriptorSet;
+		return &mDescriptorSet;
 	}
 
 	CommandBuffer* VulkanApp::CreateCommandBuffer(VkCommandBufferLevel level)

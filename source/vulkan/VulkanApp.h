@@ -97,7 +97,7 @@ namespace VulkanLib
 		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
 		Pipeline* GetPipeline(PipelineType pipelineType);
 		PipelineLayout* GetPipelineLayout();
-		const VkDescriptorSet GetDescriptorSet();
+		DescriptorSet* GetDescriptorSet();
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
