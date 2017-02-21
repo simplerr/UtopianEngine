@@ -5,6 +5,8 @@
 
 namespace VulkanLib
 {
+	class Device;
+
 	struct PushConstantRange
 	{
 		PushConstantRange(VkShaderStageFlagBits shaderStage, uint32_t size, uint32_t offset = 0)
@@ -19,7 +21,7 @@ namespace VulkanLib
 	class PipelineLayout : public Handle<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(VkDevice device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
+		PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
 
 		void Create(VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
 	private:

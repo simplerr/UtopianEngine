@@ -16,7 +16,7 @@ namespace VulkanLib
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{
 	public:
-		CommandBuffer(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
+		CommandBuffer(Device* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
 		~CommandBuffer();
 
 		void Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);

@@ -41,10 +41,6 @@ namespace ECS
 		delete mModelLoader;
 	}
 
-	void RenderSystem::Render(VulkanLib::CommandBuffer* commandBuffer, std::map<int, VulkanLib::Pipeline*>& pipelines, VulkanLib::PipelineLayout* pipelineLayout, VulkanLib::DescriptorSet& descriptorSet)
-	{
-	}
-
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
 	{
 		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());

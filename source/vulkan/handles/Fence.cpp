@@ -1,9 +1,10 @@
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/Device.h"
 #include "Fence.h"
 
 namespace VulkanLib
 {
-	Fence::Fence(VkDevice device, VkFenceCreateFlags flags)
+	Fence::Fence(Device* device, VkFenceCreateFlags flags)
 		: Handle(device, vkDestroyFence)
 	{
 		VkFenceCreateInfo fenceCreateInfo = {};

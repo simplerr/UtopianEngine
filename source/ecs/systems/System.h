@@ -47,6 +47,7 @@ namespace ECS
 		bool Contains(Entity* entity);
 
 		virtual void OnEntityAdded(const EntityCache& entityCache) {};
+		virtual void OnEntityRemoved(const EntityCache& entityCache) {};
 		virtual void Process() = 0;
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 	protected:

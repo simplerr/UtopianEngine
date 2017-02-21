@@ -3,7 +3,7 @@
 
 namespace VulkanLib
 {
-	PipelineLayout::PipelineLayout(VkDevice device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
+	PipelineLayout::PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
 		: Handle(device, vkDestroyPipelineLayout)
 	{
 		Create(setLayout, pushConstantRage);

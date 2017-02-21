@@ -71,7 +71,7 @@ namespace VulkanLib
 		VulkanBase::Prepare();
 
 		// Create a fence for synchronization
-		mRenderFence = new Fence(GetDevice(), VK_FLAGS_NONE);
+		mRenderFence = new Fence(mDevice, VK_FLAGS_NONE);
 
 		SetupVertexDescriptions();			
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
@@ -91,9 +91,9 @@ namespace VulkanLib
 	void VulkanApp::PrepareCommandBuffers()
 	{
 		// Create the primary and secondary command buffers
-		mPrimaryCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-		mSecondaryCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mDebugCommandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		mSecondaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mDebugCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void VulkanApp::CompileShaders()
@@ -131,7 +131,7 @@ namespace VulkanLib
 
 	CommandBuffer* VulkanApp::CreateCommandBuffer(VkCommandBufferLevel level)
 	{
-		CommandBuffer* commandBuffer = new CommandBuffer(GetDevice(), GetCommandPool(), level);
+		CommandBuffer* commandBuffer = new CommandBuffer(mDevice, GetCommandPool(), level);
 		mApplicationCommandBuffers.push_back(commandBuffer);
 		return commandBuffer;
 	}
@@ -194,7 +194,7 @@ namespace VulkanLib
 		mDescriptorSet.CreateLayout(GetDevice());
 
 		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout = new PipelineLayout(GetDevice(), &mDescriptorSet.setLayout, &pushConstantRange);
+		mPipelineLayout = new PipelineLayout(mDevice, &mDescriptorSet.setLayout, &pushConstantRange);
 	}
 
 	void VulkanApp::SetupDescriptorPool()

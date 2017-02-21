@@ -8,7 +8,7 @@
 namespace VulkanLib
 {
 	Queue::Queue(Device* device, Semaphore* waitSemaphore, Semaphore* signalSemaphore)
-		: Handle(device->GetVkDevice(), nullptr)
+		: Handle(device, nullptr)
 	{
 		mSubmitInfo = {};
 		mStageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;

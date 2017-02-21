@@ -6,7 +6,7 @@
 namespace VulkanLib
 {
 	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat)
-		: Handle(device->GetVkDevice(), vkDestroyRenderPass)
+		: Handle(device, vkDestroyRenderPass)
 	{
 		// Descriptors for the attachments used by this renderpass
 		std::array<VkAttachmentDescription, 2> attachments = {};

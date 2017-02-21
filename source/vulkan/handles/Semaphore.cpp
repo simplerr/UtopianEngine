@@ -5,7 +5,7 @@
 namespace VulkanLib
 {
 	Semaphore::Semaphore(Device* device)
-		: Handle(device->GetVkDevice(), vkDestroySemaphore)
+		: Handle(device, vkDestroySemaphore)
 	{
 		VkSemaphoreCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;

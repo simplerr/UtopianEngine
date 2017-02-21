@@ -66,7 +66,7 @@ namespace VulkanLib
 		CompileShaders();				// Compile shaders using batch files
 		SetupSwapchain();				// Setup the swap chain with the helper class
 
-		mCommandPool = new CommandPool(GetDevice(), 0);
+		mCommandPool = new CommandPool(mDevice, 0);
 		mPresentComplete = new Semaphore(mDevice);
 		mRenderComplete = new Semaphore(mDevice);
 		mQueue = new Queue(mDevice, mPresentComplete, mRenderComplete);

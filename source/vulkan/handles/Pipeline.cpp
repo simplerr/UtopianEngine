@@ -9,7 +9,7 @@
 namespace VulkanLib
 {
 	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
-		: Handle(device->GetVkDevice(), vkDestroyPipeline)
+		: Handle(device, vkDestroyPipeline)
 	{
 		mPipelineLayout = pipelineLayout;
 		mRenderPass = renderPass;

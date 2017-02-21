@@ -3,6 +3,7 @@
 #include <cassert>
 #include <functional>
 #include <vulkan/vulkan.h>
+#include "vulkan/Device.h" 
 
 namespace VulkanLib
 {
@@ -40,9 +41,9 @@ namespace VulkanLib
 
 		}
 
-		Handle(VkDevice device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
+		Handle(Device* device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
 		{
-			mDevice = device;
+			mDevice = device->GetVkDevice();
 			mDestroyFunc = destroyFunction;
 		}
 

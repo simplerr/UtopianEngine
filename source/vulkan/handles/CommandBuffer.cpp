@@ -1,4 +1,5 @@
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/Device.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -8,7 +9,7 @@
 
 namespace VulkanLib
 {
-	CommandBuffer::CommandBuffer(VkDevice device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+	CommandBuffer::CommandBuffer(Device* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
 		: Handle(device, nullptr)
 	{
 		mCommandPool = commandPool;
