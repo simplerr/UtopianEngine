@@ -62,7 +62,8 @@ namespace VulkanLib
 
 		virtual void CompileShaders() = 0;
 
-		VkDevice GetDevice();
+		Device* GetDevice();
+		VkDevice GetVkDevice();
 		CommandPool* GetCommandPool();
 		RenderPass* GetRenderPass();
 		VkFramebuffer GetCurrentFrameBuffer();

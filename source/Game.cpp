@@ -44,7 +44,7 @@ namespace VulkanLib
 
 	Game::~Game()
 	{
-		mModelLoader->CleanupModels(mRenderer->GetDevice());
+		mModelLoader->CleanupModels(mRenderer->GetVkDevice());
 		delete mModelLoader;
 
 		delete mCamera;

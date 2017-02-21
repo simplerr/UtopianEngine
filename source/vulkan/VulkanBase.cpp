@@ -119,21 +119,21 @@ namespace VulkanLib
 		bufferCreateInfo.size = size;
 		bufferCreateInfo.flags = 0;
 
-		VulkanDebug::ErrorCheck(vkCreateBuffer(GetDevice(), &bufferCreateInfo, nullptr, buffer));
+		VulkanDebug::ErrorCheck(vkCreateBuffer(GetVkDevice(), &bufferCreateInfo, nullptr, buffer));
 
-		vkGetBufferMemoryRequirements(GetDevice(), *buffer, &memReqs);
+		vkGetBufferMemoryRequirements(GetVkDevice(), *buffer, &memReqs);
 		memAllocInfo.allocationSize = memReqs.size;
 		uint32_t tmp;
 		memAllocInfo.memoryTypeIndex = mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp); // [NOTE] This is really weird
-		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &memAllocInfo, nullptr, memory));
+		VulkanDebug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &memAllocInfo, nullptr, memory));
 		if (data != nullptr)
 		{
 			void *mapped;
-			VulkanDebug::ErrorCheck(vkMapMemory(GetDevice(), *memory, 0, size, 0, &mapped));
+			VulkanDebug::ErrorCheck(vkMapMemory(GetVkDevice(), *memory, 0, size, 0, &mapped));
 			memcpy(mapped, data, size);
-			vkUnmapMemory(GetDevice(), *memory);
+			vkUnmapMemory(GetVkDevice(), *memory);
 		}
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(GetDevice(), *buffer, *memory, 0));
+		VulkanDebug::ErrorCheck(vkBindBufferMemory(GetVkDevice(), *buffer, *memory, 0));
 
 		return true;
 	}
@@ -150,7 +150,12 @@ namespace VulkanLib
 #endif
 	}
 
-	VkDevice VulkanBase::GetDevice()
+	Device* VulkanBase::GetDevice()
+	{
+		return mDevice;
+	}
+
+	VkDevice VulkanBase::GetVkDevice()
 	{
 		return mDevice->GetVkDevice();
 	}

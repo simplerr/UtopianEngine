@@ -37,7 +37,7 @@ namespace ECS
 
 	RenderSystem::~RenderSystem()
 	{
-		mModelLoader->CleanupModels(mVulkanApp->GetDevice());
+		mModelLoader->CleanupModels(mVulkanApp->GetVkDevice());
 		delete mModelLoader;
 	}
 
