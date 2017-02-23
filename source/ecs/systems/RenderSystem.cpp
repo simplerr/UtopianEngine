@@ -49,6 +49,9 @@ namespace ECS
 
 	void RenderSystem::Process()
 	{
+		// Temp
+		VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
+
 		// Build mesh rendering command buffer
 		mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 
@@ -58,7 +61,10 @@ namespace ECS
 		for (EntityCache entityCache : mEntities)
 		{
 			mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(entityCache.meshComponent->GetPipeline()));
-			mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+			//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+
+			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
 
@@ -84,7 +90,10 @@ namespace ECS
 		for (EntityCache entityCache : mEntities)
 		{
 			mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST));
-			mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+			//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+
+			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 			VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
 			meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
@@ -107,7 +116,10 @@ namespace ECS
 		}
 
 		mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
-		mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+		//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+
+		VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 		// Draw debug cubes for the origin and each axis
 		for (int i = 0; i < mDebugCubes.size(); i++)

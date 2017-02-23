@@ -39,7 +39,11 @@ namespace VulkanLib
 		mVertexUniformBuffer.Cleanup(GetVkDevice());
 		mFragmentUniformBuffer.Cleanup(GetVkDevice());
 		mDescriptorPool.Cleanup(GetVkDevice());
-		mDescriptorSet.Cleanup(GetVkDevice());
+		//mDescriptorSet.Cleanup(GetVkDevice());
+
+		//mCameraDescriptorSet.Cleanup(GetVkDevice());
+		//mLightDescriptorSet.Cleanup(GetVkDevice());
+		//mTextureDescriptorSet.Cleanup(GetVkDevice());
 
 		for (auto const& pipeline : mPipelines)
 		{
@@ -126,7 +130,7 @@ namespace VulkanLib
 
 	DescriptorSet* VulkanApp::GetDescriptorSet()
 	{
-		return &mDescriptorSet;
+		return nullptr;// &mDescriptorSet;
 	}
 
 	CommandBuffer* VulkanApp::CreateCommandBuffer(VkCommandBufferLevel level)
@@ -188,28 +192,53 @@ namespace VulkanLib
 
 	void VulkanApp::SetupDescriptorSetLayout()
 	{
-		mDescriptorSet.AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);				// Uniform buffer binding: 0
-		mDescriptorSet.AddLayoutBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
-		mDescriptorSet.AddLayoutBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
-		mDescriptorSet.CreateLayout(GetVkDevice());
+		// Here we want to split the descriptor set into 3 different ones
+		// The PipelineLayout can take a an array of several DescriptorSetLayout
+		// And when rendering vkCmdBindDescriptorSets also takes an array of DescriptorSets
+
+		mCameraDescriptorSet = new DescriptorSet();
+		mLightDescriptorSet= new DescriptorSet();
+		mTextureDescriptorSet = new DescriptorSet();
+
+		mCameraDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);					// Uniform buffer binding: 0
+		mLightDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
+		mTextureDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
+
+		mCameraDescriptorSet->CreateLayout(GetVkDevice());
+		mLightDescriptorSet->CreateLayout(GetVkDevice());
+		mTextureDescriptorSet->CreateLayout(GetVkDevice());
+
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+		descriptorSetLayouts.push_back(mCameraDescriptorSet->setLayout);
+		descriptorSetLayouts.push_back(mLightDescriptorSet->setLayout);
+		descriptorSetLayouts.push_back(mTextureDescriptorSet->setLayout);
 
 		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout = new PipelineLayout(mDevice, &mDescriptorSet.setLayout, &pushConstantRange);
+		mPipelineLayout = new PipelineLayout(mDevice, descriptorSetLayouts, &pushConstantRange);
 	}
 
 	void VulkanApp::SetupDescriptorPool()
 	{
-		mDescriptorPool.CreatePoolFromLayout(GetVkDevice(), mDescriptorSet.GetLayoutBindings());
+		std::vector<VkDescriptorSetLayoutBinding> bindings = mCameraDescriptorSet->mLayoutBindings;
+		bindings.insert(bindings.end(), mLightDescriptorSet->mLayoutBindings.begin(), mLightDescriptorSet->mLayoutBindings.end());
+		bindings.insert(bindings.end(), mTextureDescriptorSet->mLayoutBindings.begin(), mTextureDescriptorSet->mLayoutBindings.end());
+		mDescriptorPool.CreatePoolFromLayout(GetVkDevice(), bindings);
 	}
 
 	// [TODO] Let each thread have a seperate descriptor set!!
 	void VulkanApp::SetupDescriptorSet()
 	{
-		mDescriptorSet.AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
-		mDescriptorSet.BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
-		mDescriptorSet.BindUniformBuffer(1, &mFragmentUniformBuffer.GetDescriptor());
-		mDescriptorSet.BindCombinedImage(2, &mTestTexture.GetTextureDescriptorInfo());
-		mDescriptorSet.UpdateDescriptorSets(GetVkDevice());
+		mCameraDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
+		mLightDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
+		mTextureDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
+
+		mCameraDescriptorSet->BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
+		mLightDescriptorSet->BindUniformBuffer(0, &mFragmentUniformBuffer.GetDescriptor());
+		mTextureDescriptorSet->BindCombinedImage(0, &mTestTexture.GetTextureDescriptorInfo());
+
+		mCameraDescriptorSet->UpdateDescriptorSets(GetVkDevice());
+		mLightDescriptorSet->UpdateDescriptorSets(GetVkDevice());
+		mTextureDescriptorSet->UpdateDescriptorSets(GetVkDevice());
 	}
 
 	void VulkanApp::PreparePipelines()

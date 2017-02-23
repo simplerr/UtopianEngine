@@ -1,11 +1,13 @@
 #pragma once
 
+#include <vector>
 #include <vulkan/vulkan.h>
 #include "Handle.h"
 
 namespace VulkanLib
 {
 	class Device;
+	class DescriptorSet;
 
 	struct PushConstantRange
 	{
@@ -22,6 +24,7 @@ namespace VulkanLib
 	{
 	public:
 		PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
+		PipelineLayout(Device* device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts, PushConstantRange* pushConstantRage);
 
 		void Create(VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
 	private:

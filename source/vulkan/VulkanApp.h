@@ -116,7 +116,7 @@ namespace VulkanLib
 		VertexUniformBuffer				mVertexUniformBuffer;
 		FragmentUniformBuffer			mFragmentUniformBuffer;
 		DescriptorPool					mDescriptorPool;
-		DescriptorSet					mDescriptorSet;
+		//DescriptorSet					mDescriptorSet;
 		
 		TextureLoader*					mTextureLoader;
 		VulkanTexture					mTestTexture;
@@ -132,6 +132,10 @@ namespace VulkanLib
 
 		ECS::RenderSystem*				mRenderSystem;
 
+		// Divide descriptor set
+		DescriptorSet*					mCameraDescriptorSet;
+		DescriptorSet*					mLightDescriptorSet;
+		DescriptorSet*					mTextureDescriptorSet;
 	public:
 	};
 }	// VulkanLib namespace

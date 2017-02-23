@@ -9,7 +9,7 @@ layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec4 InTangentL;
 
-layout (std140, binding = 0) uniform UBO 
+layout (std140, set = 0, binding = 0) uniform UBO 
 {
 	// Camera 
 	mat4 projection;

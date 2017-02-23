@@ -32,8 +32,9 @@ namespace VulkanLib
 		// Public for ease of use
 		VkDescriptorSetLayout setLayout = VK_NULL_HANDLE;
 		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
-	private:
+
 		std::vector<VkDescriptorSetLayoutBinding> mLayoutBindings;
+	private:
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 	};
 
