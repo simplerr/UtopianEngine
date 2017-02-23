@@ -136,6 +136,8 @@ namespace VulkanLib
 		DescriptorSet*					mCameraDescriptorSet;
 		DescriptorSet*					mLightDescriptorSet;
 		DescriptorSet*					mTextureDescriptorSet;
+		DescriptorSet*					mTextureDescriptorSet2;
+		VulkanTexture					mTestTexture2;
 	public:
 	};
 }	// VulkanLib namespace

@@ -24,7 +24,7 @@
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
-#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
 
 namespace VulkanLib
 {
@@ -84,6 +84,7 @@ namespace VulkanLib
 
 		mTextureLoader = new TextureLoader(mDevice, mQueue->GetVkHandle());
 		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
+		mTextureLoader->LoadTexture("data/textures/checker.jpg", &mTestTexture2);
 
 		SetupDescriptorPool();
 		SetupDescriptorSet();
@@ -199,14 +200,17 @@ namespace VulkanLib
 		mCameraDescriptorSet = new DescriptorSet();
 		mLightDescriptorSet= new DescriptorSet();
 		mTextureDescriptorSet = new DescriptorSet();
+		mTextureDescriptorSet2 = new DescriptorSet();	// This don't need a layout setup 
 
 		mCameraDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);					// Uniform buffer binding: 0
 		mLightDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
 		mTextureDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
+		mTextureDescriptorSet2->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
 
 		mCameraDescriptorSet->CreateLayout(GetVkDevice());
 		mLightDescriptorSet->CreateLayout(GetVkDevice());
 		mTextureDescriptorSet->CreateLayout(GetVkDevice());
+		mTextureDescriptorSet2->CreateLayout(GetVkDevice());
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 		descriptorSetLayouts.push_back(mCameraDescriptorSet->setLayout);
@@ -222,6 +226,7 @@ namespace VulkanLib
 		std::vector<VkDescriptorSetLayoutBinding> bindings = mCameraDescriptorSet->mLayoutBindings;
 		bindings.insert(bindings.end(), mLightDescriptorSet->mLayoutBindings.begin(), mLightDescriptorSet->mLayoutBindings.end());
 		bindings.insert(bindings.end(), mTextureDescriptorSet->mLayoutBindings.begin(), mTextureDescriptorSet->mLayoutBindings.end());
+		bindings.insert(bindings.end(), mTextureDescriptorSet2->mLayoutBindings.begin(), mTextureDescriptorSet2->mLayoutBindings.end());
 		mDescriptorPool.CreatePoolFromLayout(GetVkDevice(), bindings);
 	}
 
@@ -231,14 +236,17 @@ namespace VulkanLib
 		mCameraDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
 		mLightDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
 		mTextureDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
+		mTextureDescriptorSet2->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
 
 		mCameraDescriptorSet->BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
 		mLightDescriptorSet->BindUniformBuffer(0, &mFragmentUniformBuffer.GetDescriptor());
 		mTextureDescriptorSet->BindCombinedImage(0, &mTestTexture.GetTextureDescriptorInfo());
+		mTextureDescriptorSet2->BindCombinedImage(0, &mTestTexture2.GetTextureDescriptorInfo());
 
 		mCameraDescriptorSet->UpdateDescriptorSets(GetVkDevice());
 		mLightDescriptorSet->UpdateDescriptorSets(GetVkDevice());
 		mTextureDescriptorSet->UpdateDescriptorSets(GetVkDevice());
+		mTextureDescriptorSet2->UpdateDescriptorSets(GetVkDevice());
 	}
 
 	void VulkanApp::PreparePipelines()

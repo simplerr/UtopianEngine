@@ -62,8 +62,15 @@ namespace ECS
 		{
 			mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(entityCache.meshComponent->GetPipeline()));
 			//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+			VkDescriptorSet textureDescriptorSet;
 
-			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
+			if (entityCache.entity->GetId() < 20)
+				textureDescriptorSet = mVulkanApp->mTextureDescriptorSet->descriptorSet;
+			else
+				textureDescriptorSet = mVulkanApp->mTextureDescriptorSet2->descriptorSet;
+
+
+			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
