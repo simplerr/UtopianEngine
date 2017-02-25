@@ -7,6 +7,7 @@
 namespace VulkanLib
 {
 	class DescriptorSetLayout;
+	class DescriptorPool;
 
 	/*
 	Wraps VkDescriptorSetLayout and VkDescriptorSet to make them easier to work with
@@ -14,10 +15,10 @@ namespace VulkanLib
 	class DescriptorSet
 	{
 	public:
-		DescriptorSet(DescriptorSetLayout* setLayout);
+		DescriptorSet(DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 		void Cleanup(VkDevice device);
 
-		void AllocateDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool);
+		void AllocateDescriptorSets(VkDevice device);
 		void UpdateDescriptorSets(VkDevice device);
 
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
@@ -29,6 +30,7 @@ namespace VulkanLib
 		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
 	private:
 		DescriptorSetLayout* mSetLayout;
+		DescriptorPool* mDescriptorPool;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 	};
 

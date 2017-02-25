@@ -1,3 +1,5 @@
+#include "vulkan/VulkanApp.h"
+#include "vulkan/handles/DescriptorSet.h"
 #include "TextureLoader.h"
 #include "VulkanDebug.h"
 #include "Device.h"
@@ -6,17 +8,18 @@
 
 namespace VulkanLib
 {
-	TextureLoader::TextureLoader(Device* Device, VkQueue queue)
+	TextureLoader::TextureLoader(VulkanApp* vulkanApp, VkQueue queue)
 	{
-		mDevice = Device;
+		mVulkanApp = vulkanApp;
 		mQueue = queue;
+		mDevice = mVulkanApp->GetDevice();
 	}
 
 	TextureLoader::~TextureLoader()
 	{
 	}
 
-	bool TextureLoader::LoadTexture(std::string filename, VulkanTexture * texture)
+	bool TextureLoader::LoadTexture(std::string filename, VulkanTexture* texture)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
 		int texWidth, texHeight, texChannels;
@@ -90,6 +93,12 @@ namespace VulkanLib
 		// Create the sampler
 		CreateImageSampler(&texture->sampler);
 
+		// Create the descriptor set for the texture
+		texture->descriptorSet = new DescriptorSet(mVulkanApp->GetTextureDescriptorSetLayout(), mVulkanApp->GetDescriptorPool());
+		texture->descriptorSet->AllocateDescriptorSets(device);
+		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());
+		texture->descriptorSet->UpdateDescriptorSets(device);
+		
 		vkDestroyImage(device, stagingImage, nullptr);
 		vkFreeMemory(device, stagingMemory, nullptr);
 

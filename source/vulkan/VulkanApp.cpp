@@ -39,12 +39,13 @@ namespace VulkanLib
 	{
 		mVertexUniformBuffer.Cleanup(GetVkDevice());
 		mFragmentUniformBuffer.Cleanup(GetVkDevice());
-		mDescriptorPool.Cleanup(GetVkDevice());
-		//mDescriptorSet.Cleanup(GetVkDevice());
+		mDescriptorPool->Cleanup(GetVkDevice());
 
-		//mCameraDescriptorSet.Cleanup(GetVkDevice());
-		//mLightDescriptorSet.Cleanup(GetVkDevice());
-		//mTextureDescriptorSet.Cleanup(GetVkDevice());
+		delete mDescriptorPool;
+
+		delete mCameraDescriptorSetLayout;
+		delete mLightDescriptorSetLayout;
+		delete mTextureDescriptorSetLayout;
 
 		for (auto const& pipeline : mPipelines)
 		{
@@ -83,13 +84,13 @@ namespace VulkanLib
 		PreparePipelines();
 		PrepareUniformBuffers();			// Must run before SetupDescriptorSet() (Creates the uniform buffer)
 
-		mTextureLoader = new TextureLoader(mDevice, mQueue->GetVkHandle());
-		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
-		mTextureLoader->LoadTexture("data/textures/checker.jpg", &mTestTexture2);
-
 		SetupDescriptorPool();
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
+
+		mTextureLoader = new TextureLoader(this, mQueue->GetVkHandle());
+		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
+		mTextureLoader->LoadTexture("data/textures/checker.jpg", &mTestTexture2);
 
 		mPrepared = true;
 	}
@@ -130,9 +131,14 @@ namespace VulkanLib
 		return mPipelineLayout;
 	}
 
-	DescriptorSet* VulkanApp::GetDescriptorSet()
+	DescriptorSetLayout* VulkanApp::GetTextureDescriptorSetLayout()
 	{
-		return nullptr;// &mDescriptorSet;
+		return mTextureDescriptorSetLayout;
+	}
+
+	DescriptorPool* VulkanApp::GetDescriptorPool()
+	{
+		return mDescriptorPool;
 	}
 
 	CommandBuffer* VulkanApp::CreateCommandBuffer(VkCommandBufferLevel level)
@@ -213,9 +219,9 @@ namespace VulkanLib
 		mTextureDescriptorSetLayout->Create();
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		descriptorSetLayouts.push_back(mCameraDescriptorSetLayout->GetLayout());
-		descriptorSetLayouts.push_back(mLightDescriptorSetLayout->GetLayout());
-		descriptorSetLayouts.push_back(mTextureDescriptorSetLayout->GetLayout());
+		descriptorSetLayouts.push_back(mCameraDescriptorSetLayout->GetVkHandle());
+		descriptorSetLayouts.push_back(mLightDescriptorSetLayout->GetVkHandle());
+		descriptorSetLayouts.push_back(mTextureDescriptorSetLayout->GetVkHandle());
 
 		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
 		mPipelineLayout = new PipelineLayout(mDevice, descriptorSetLayouts, &pushConstantRange);
@@ -223,33 +229,26 @@ namespace VulkanLib
 
 	void VulkanApp::SetupDescriptorPool()
 	{
-		mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
-		mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
-		mDescriptorPool.CreatePool(GetVkDevice());
+		mDescriptorPool = new DescriptorPool();
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_NUM_TEXTURES);
+		mDescriptorPool->CreatePool(GetVkDevice());
 	}
 
 	// [TODO] Let each thread have a separate descriptor set!!
 	void VulkanApp::SetupDescriptorSet()
 	{
-		mCameraDescriptorSet = new DescriptorSet(mCameraDescriptorSetLayout);
-		mLightDescriptorSet = new DescriptorSet(mLightDescriptorSetLayout);
-		mTextureDescriptorSet = new DescriptorSet(mTextureDescriptorSetLayout);
-		mTextureDescriptorSet2 = new DescriptorSet(mTextureDescriptorSetLayout);
+		mCameraDescriptorSet = new DescriptorSet(mCameraDescriptorSetLayout, mDescriptorPool);
+		mLightDescriptorSet = new DescriptorSet(mLightDescriptorSetLayout, mDescriptorPool);
 
-		mCameraDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
-		mLightDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
-		mTextureDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
-		mTextureDescriptorSet2->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
+		mCameraDescriptorSet->AllocateDescriptorSets(GetVkDevice());
+		mLightDescriptorSet->AllocateDescriptorSets(GetVkDevice());
 
 		mCameraDescriptorSet->BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
 		mLightDescriptorSet->BindUniformBuffer(0, &mFragmentUniformBuffer.GetDescriptor());
-		mTextureDescriptorSet->BindCombinedImage(0, &mTestTexture.GetTextureDescriptorInfo());
-		mTextureDescriptorSet2->BindCombinedImage(0, &mTestTexture2.GetTextureDescriptorInfo());
 
 		mCameraDescriptorSet->UpdateDescriptorSets(GetVkDevice());
 		mLightDescriptorSet->UpdateDescriptorSets(GetVkDevice());
-		mTextureDescriptorSet->UpdateDescriptorSets(GetVkDevice());
-		mTextureDescriptorSet2->UpdateDescriptorSets(GetVkDevice());
 	}
 
 	void VulkanApp::PreparePipelines()

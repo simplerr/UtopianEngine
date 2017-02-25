@@ -65,9 +65,9 @@ namespace ECS
 			VkDescriptorSet textureDescriptorSet;
 
 			if (entityCache.entity->GetId() < 20)
-				textureDescriptorSet = mVulkanApp->mTextureDescriptorSet->descriptorSet;
+				textureDescriptorSet = mVulkanApp->mTestTexture.descriptorSet->descriptorSet;
 			else
-				textureDescriptorSet = mVulkanApp->mTextureDescriptorSet2->descriptorSet;
+				textureDescriptorSet = mVulkanApp->mTestTexture2.descriptorSet->descriptorSet;
 
 
 			//textureDescriptorSet = entityCache.meshComponent->GetTexture();
@@ -127,7 +127,7 @@ namespace ECS
 		mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
 		//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
 
-		VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
+		VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTestTexture.descriptorSet->descriptorSet };
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 		// Draw debug cubes for the origin and each axis

@@ -6,6 +6,8 @@
 namespace VulkanLib
 {
 	class Device;
+	class DescriptorSet;
+	class VulkanApp;
 
 	struct VulkanTexture
 	{
@@ -13,6 +15,8 @@ namespace VulkanLib
 		VkDeviceMemory deviceMemory;
 		VkImageView imageView;
 		VkSampler sampler;
+
+		DescriptorSet* descriptorSet;
 
 		VkDescriptorImageInfo GetTextureDescriptorInfo()
 		{
@@ -28,7 +32,7 @@ namespace VulkanLib
 	class TextureLoader
 	{
 	public:
-		TextureLoader(Device* Device, VkQueue queue);
+		TextureLoader(VulkanApp* vulkanApp, VkQueue queue);
 		~TextureLoader();
 
 		bool LoadTexture(std::string filename, VulkanTexture* texture);
@@ -40,7 +44,8 @@ namespace VulkanLib
 		void CreateImageView(VkImage image, VkFormat format, VkImageView* imageView);
 		void CreateImageSampler(VkSampler* sampler);
 	private:
-		Device* mDevice;
+		VulkanApp* mVulkanApp;
+		Device*  mDevice;
 		VkQueue mQueue;
 	};
 }

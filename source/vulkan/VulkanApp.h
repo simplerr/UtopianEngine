@@ -98,7 +98,8 @@ namespace VulkanLib
 		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
 		Pipeline* GetPipeline(PipelineType pipelineType);
 		PipelineLayout* GetPipelineLayout();
-		DescriptorSet* GetDescriptorSet();
+		DescriptorSetLayout* GetTextureDescriptorSetLayout();
+		DescriptorPool* GetDescriptorPool();
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
@@ -116,11 +117,8 @@ namespace VulkanLib
 		VertexDescription				mVertexDescription;
 		VertexUniformBuffer				mVertexUniformBuffer;
 		FragmentUniformBuffer			mFragmentUniformBuffer;
-		DescriptorPool					mDescriptorPool;
-		//DescriptorSet					mDescriptorSet;
 		
 		TextureLoader*					mTextureLoader;
-		VulkanTexture					mTestTexture;
 		Pipeline*						mSolidPipeline;
 		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;
@@ -134,15 +132,20 @@ namespace VulkanLib
 		ECS::RenderSystem*				mRenderSystem;
 
 		// Divide descriptor set
+		DescriptorPool*					mDescriptorPool;
 		DescriptorSet*					mCameraDescriptorSet;
 		DescriptorSet*					mLightDescriptorSet;
-		DescriptorSet*					mTextureDescriptorSet;
-		DescriptorSet*					mTextureDescriptorSet2;
+
+		VulkanTexture					mTestTexture;
 		VulkanTexture					mTestTexture2;
+		VulkanTexture					mTestTexture3;
 
 		DescriptorSetLayout*			mCameraDescriptorSetLayout;
 		DescriptorSetLayout*			mLightDescriptorSetLayout;
 		DescriptorSetLayout*			mTextureDescriptorSetLayout;
+
+		const uint32_t					MAX_NUM_TEXTURES = 10;
+
 	public:
 	};
 }	// VulkanLib namespace

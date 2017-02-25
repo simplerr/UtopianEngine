@@ -15,10 +15,8 @@ namespace VulkanLib
 
 		void AddBinding(uint32_t binding, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags stageFlags);
 		void Create();
-		VkDescriptorSetLayout GetLayout();
 	private:
 		std::vector<VkDescriptorSetLayoutBinding> mLayoutBindings;
-		VkDescriptorSetLayout mSetLayout = VK_NULL_HANDLE;
 	};
 }
 

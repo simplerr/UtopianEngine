@@ -4,9 +4,10 @@
 
 namespace VulkanLib
 {
-	DescriptorSet::DescriptorSet(DescriptorSetLayout* setLayout)
+	DescriptorSet::DescriptorSet(DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
 		mSetLayout = setLayout;
+		mDescriptorPool = descriptorPool;
 	}
 
 	void DescriptorSet::Cleanup(VkDevice device)
@@ -14,14 +15,14 @@ namespace VulkanLib
 		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
 	}
 
-	void DescriptorSet::AllocateDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool)
+	void DescriptorSet::AllocateDescriptorSets(VkDevice device)
 	{
-		VkDescriptorSetLayout setLayout = mSetLayout->GetLayout();
+		VkDescriptorSetLayout setLayout = mSetLayout->GetVkHandle();
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptorPool;
+		allocInfo.descriptorPool = mDescriptorPool->GetVkDescriptorPool();
 		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &setLayout;	// allocInfo.pSetLayouts = &mDescriptorSetLayout;
+		allocInfo.pSetLayouts = &setLayout;	
 
 		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet));
 	}
@@ -52,12 +53,12 @@ namespace VulkanLib
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
-	void DescriptorSet::UpdateUniformBuffer(uint32_t binding, VkDescriptorBufferInfo * bufferInfo)
+	void DescriptorSet::UpdateUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 	{
 		// [TODO]
 	}
 
-	void DescriptorSet::UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo * imageInfo)
+	void DescriptorSet::UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
 	{
 		// [TODO]
 	}

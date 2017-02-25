@@ -27,11 +27,6 @@ namespace VulkanLib
 		createInfo.bindingCount = mLayoutBindings.size();
 		createInfo.pBindings = mLayoutBindings.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(GetDevice(), &createInfo, nullptr, &mSetLayout));
-	}
-
-	VkDescriptorSetLayout DescriptorSetLayout::GetLayout()
-	{
-		return mSetLayout;
+		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(GetDevice(), &createInfo, nullptr, &mHandle));
 	}
 }
