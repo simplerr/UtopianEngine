@@ -120,7 +120,7 @@
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\UniformBuffer.cpp" />
     <ClCompile Include="source\vulkan\VertexUniformBuffer.cpp" />
-    <ClCompile Include="source\vulkan\VulkanApp.cpp" />
+    <ClCompile Include="source\vulkan\Renderer.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
     <ClCompile Include="source\vulkan\VulkanDebug.cpp" />
     <ClCompile Include="source\vulkan\VulkanHelpers.cpp" />
@@ -171,7 +171,7 @@
     <ClInclude Include="source\vulkan\Vertex.h" />
     <ClInclude Include="source\vulkan\VertexDescription.h" />
     <ClInclude Include="source\vulkan\VertexUniformBuffer.h" />
-    <ClInclude Include="source\vulkan\VulkanApp.h" />
+    <ClInclude Include="source\vulkan\Renderer.h" />
     <ClInclude Include="source\vulkan\VulkanBase.h" />
     <ClInclude Include="source\vulkan\VulkanDebug.h" />
     <ClInclude Include="source\vulkan\VulkanHelpers.h" />

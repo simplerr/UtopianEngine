@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <vector>
 
-#include "vulkan/VulkanApp.h"
+#include "vulkan/Renderer.h"
 #include "Window.h"
 #include "Game.h"
 #include "Camera.h"
@@ -14,7 +14,7 @@
 using namespace VulkanLib;
 
 // The Vulkan application
-//VulkanLib::VulkanApp vulkanApp;
+//VulkanLib::renderer renderer;
 
 VulkanLib::Game* gGame = nullptr;
 

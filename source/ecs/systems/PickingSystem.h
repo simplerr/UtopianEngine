@@ -12,7 +12,7 @@
 
 namespace VulkanLib
 {
-	class VulkanApp;
+	class Renderer;
 	class Camera;
 }
 

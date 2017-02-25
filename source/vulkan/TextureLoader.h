@@ -10,7 +10,7 @@ namespace VulkanLib
 {
 	class Device;
 	class DescriptorSet;
-	class VulkanApp;
+	class Renderer;
 
 	struct VulkanTexture
 	{
@@ -35,7 +35,7 @@ namespace VulkanLib
 	class TextureLoader
 	{
 	public:
-		TextureLoader(VulkanApp* vulkanApp, VkQueue queue);
+		TextureLoader(Renderer* renderer, VkQueue queue);
 		~TextureLoader();
 
 		VulkanTexture* LoadTexture(std::string filename);
@@ -48,7 +48,7 @@ namespace VulkanLib
 		void CreateImageSampler(VkSampler* sampler);
 	private:
 		std::map<std::string, VulkanTexture*> mTextureMap;
-		VulkanApp* mVulkanApp;
+		Renderer* mRenderer;
 		Device*  mDevice;
 		VkQueue mQueue;
 	};

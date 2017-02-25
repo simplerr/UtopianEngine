@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "Window.h"
 #include "Camera.h"
-#include "vulkan/VulkanApp.h"
+#include "vulkan/Renderer.h"
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -22,7 +22,7 @@ namespace VulkanLib
 		srand(time(NULL));
 
 		mIsClosing = false;
-		mRenderer = new VulkanApp();
+		mRenderer = new Renderer();
 
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();

@@ -8,7 +8,7 @@ namespace VulkanLib
 	class Device;
 	class CommandPool;
 	class RenderPass;
-	class VulkanApp;
+	class Renderer;
 	class Pipeline;
 	class PipelineLayout;
 	class DescriptorSet;

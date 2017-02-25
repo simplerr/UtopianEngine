@@ -24,17 +24,17 @@
 * Should not need to know of any application code 
 
 * The `RenderSystem` is only one of many that needs to use Vulkan functionality
-	- Making `RenderSystem` inherit from `VulkanApp` would mean that other classes would depend on `RenderSystem`, `Terrain` for example
-	- It's better if RenderSystem _has_ a pointer to `VulkanApp`
-	- `VulkanApp` should let higher level classes generate command buffers to run each frame
+	- Making `RenderSystem` inherit from `renderer` would mean that other classes would depend on `RenderSystem`, `Terrain` for example
+	- It's better if RenderSystem _has_ a pointer to `renderer`
+	- `renderer` should let higher level classes generate command buffers to run each frame
 		- How are they added?
 
 RenderSystem::OnEntityAdded(entity)
 {
-	mVulkanApp->AddModelInstance(entity.model);	
+	mRenderer->AddModelInstance(entity.model);	
 }
 
 RenderSystem::OnEntityRemoved(entity)
 {
-	mVulkanApp->RemoveModelInstance(entity.model);	
+	mRenderer->RemoveModelInstance(entity.model);	
 }

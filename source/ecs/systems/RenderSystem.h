@@ -7,7 +7,7 @@
 
 namespace VulkanLib
 {
-	class VulkanApp;
+	class Renderer;
 	class ModelLoader;
 	class TextureLoader;
 	class StaticModel;
@@ -48,7 +48,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(EntityManager* entityManager, VulkanLib::VulkanApp* vulkanApp);
+		RenderSystem(EntityManager* entityManager, VulkanLib::Renderer* renderer);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);
@@ -58,9 +58,9 @@ namespace ECS
 
 		void AddDebugCube(vec3 pos, vec4 color, float size);
 	private:
-		// RenderSystem should not BE a VulkanApp but rather have one, since the usage of Vulkan should not be limited to only the ECS
-		// VulkanApp needs to be available for HUDS, debugging etc
-		VulkanLib::VulkanApp* mVulkanApp;
+		// RenderSystem should not BE a renderer but rather have one, since the usage of Vulkan should not be limited to only the ECS
+		// renderer needs to be available for HUDS, debugging etc
+		VulkanLib::Renderer* mRenderer;
 		VulkanLib::ModelLoader* mModelLoader;
 		VulkanLib::TextureLoader* mTextureLoader;
 		VulkanLib::StaticModel* mCubeModel;

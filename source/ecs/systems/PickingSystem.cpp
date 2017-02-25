@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <float.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "vulkan/VulkanApp.h"
+#include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include "ecs/components/TransformComponent.h"
 #include "ecs/components/MeshComponent.h"

@@ -56,11 +56,11 @@ namespace VulkanLib
 		//vec3 color;
 	};
 
-	class VulkanApp : public VulkanBase
+	class Renderer : public VulkanBase
 	{
 	public:
-		VulkanApp();
-		~VulkanApp();
+		Renderer();
+		~Renderer();
 
 		void Prepare();
 

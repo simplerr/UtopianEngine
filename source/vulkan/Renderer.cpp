@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <thread>
 #include <glm/gtc/matrix_transform.hpp>
-#include "VulkanApp.h"
+#include "Renderer.h"
 #include "VulkanDebug.h"
 #include "StaticModel.h"
 #include "Camera.h"
@@ -29,13 +29,13 @@
 
 namespace VulkanLib
 {
-	VulkanApp::VulkanApp() : VulkanBase(VULKAN_ENABLE_VALIDATION)
+	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
 		srand(time(NULL));
 		mCamera = nullptr;
 	}
 
-	VulkanApp::~VulkanApp()
+	Renderer::~Renderer()
 	{
 		mVertexUniformBuffer.Cleanup(GetVkDevice());
 		mFragmentUniformBuffer.Cleanup(GetVkDevice());
@@ -65,7 +65,7 @@ namespace VulkanLib
 		}
 	}
 
-	void VulkanApp::Prepare()
+	void Renderer::Prepare()
 	{
 		VulkanBase::Prepare();
 
@@ -83,54 +83,54 @@ namespace VulkanLib
 		mPrepared = true;
 	}
 
-	void VulkanApp::PrepareCommandBuffers()
+	void Renderer::PrepareCommandBuffers()
 	{
 		// Create the primary and secondary command buffers
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 		mSecondaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
-	void VulkanApp::CompileShaders()
+	void Renderer::CompileShaders()
 	{
 		// [TODO] Move to ShaderManager
 		system("cd data/shaders/phong/ && generate-spirv.bat");
 		system("cd data/shaders/test/ && generate-spirv.bat");
 	}
 
-	void VulkanApp::SetCamera(Camera* camera)
+	void Renderer::SetCamera(Camera* camera)
 	{
 		mCamera = camera;
 	}
 
-	Pipeline* VulkanApp::GetPipeline(PipelineType pipelineType)
+	Pipeline* Renderer::GetPipeline(PipelineType pipelineType)
 	{
 		// TODO: Add boundary check
 		return mPipelines[pipelineType];
 	}
 
-	PipelineLayout* VulkanApp::GetPipelineLayout()
+	PipelineLayout* Renderer::GetPipelineLayout()
 	{
 		return mPipelineLayout;
 	}
 
-	DescriptorSetLayout* VulkanApp::GetTextureDescriptorSetLayout()
+	DescriptorSetLayout* Renderer::GetTextureDescriptorSetLayout()
 	{
 		return mTextureDescriptorSetLayout;
 	}
 
-	DescriptorPool* VulkanApp::GetDescriptorPool()
+	DescriptorPool* Renderer::GetDescriptorPool()
 	{
 		return mDescriptorPool;
 	}
 
-	CommandBuffer* VulkanApp::CreateCommandBuffer(VkCommandBufferLevel level)
+	CommandBuffer* Renderer::CreateCommandBuffer(VkCommandBufferLevel level)
 	{
 		CommandBuffer* commandBuffer = new CommandBuffer(mDevice, GetCommandPool(), level);
 		mApplicationCommandBuffers.push_back(commandBuffer);
 		return commandBuffer;
 	}
 	
-	void VulkanApp::PrepareUniformBuffers()
+	void Renderer::PrepareUniformBuffers()
 	{
 		// Create the fragment shader uniform buffer
 		Light light;
@@ -166,7 +166,7 @@ namespace VulkanLib
 	}
 
 	// Call this every time any uniform buffer should be updated (view changes etc.)
-	void VulkanApp::UpdateUniformBuffers()
+	void Renderer::UpdateUniformBuffers()
 	{
 		if (mCamera != nullptr)
 		{
@@ -180,7 +180,7 @@ namespace VulkanLib
 		mFragmentUniformBuffer.UpdateMemory(GetVkDevice());
 	}
 
-	void VulkanApp::SetupDescriptorSetLayout()
+	void Renderer::SetupDescriptorSetLayout()
 	{
 		// Here we want to split the descriptor set into 3 different ones
 		// The PipelineLayout can take a an array of several DescriptorSetLayout
@@ -209,7 +209,7 @@ namespace VulkanLib
 		mPipelineLayout = new PipelineLayout(mDevice, descriptorSetLayouts, &pushConstantRange);
 	}
 
-	void VulkanApp::SetupDescriptorPool()
+	void Renderer::SetupDescriptorPool()
 	{
 		mDescriptorPool = new DescriptorPool();
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
@@ -218,7 +218,7 @@ namespace VulkanLib
 	}
 
 	// [TODO] Let each thread have a separate descriptor set!!
-	void VulkanApp::SetupDescriptorSet()
+	void Renderer::SetupDescriptorSet()
 	{
 		mCameraDescriptorSet = new DescriptorSet(mCameraDescriptorSetLayout, mDescriptorPool);
 		mLightDescriptorSet = new DescriptorSet(mLightDescriptorSetLayout, mDescriptorPool);
@@ -233,7 +233,7 @@ namespace VulkanLib
 		mLightDescriptorSet->UpdateDescriptorSets(GetVkDevice());
 	}
 
-	void VulkanApp::PreparePipelines()
+	void Renderer::PreparePipelines()
 	{
 		// Load shader
 		// [TODO] Move this into Pipeline?
@@ -267,7 +267,7 @@ namespace VulkanLib
 		mPipelines[PipelineType::PIPELINE_DEBUG] = pipeline;
 	}
 
-	void VulkanApp::SetupVertexDescriptions()
+	void Renderer::SetupVertexDescriptions()
 	{
 		// First tell Vulkan about how large each vertex is, the binding ID and the inputRate
 		mVertexDescription.AddBinding(VERTEX_BUFFER_BIND_ID, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);					// Per vertex
@@ -282,7 +282,7 @@ namespace VulkanLib
 		mVertexDescription.AddAttribute(VERTEX_BUFFER_BIND_ID, Vec4Attribute());	// Location 4 : Tangent
 	}
 
-	void VulkanApp::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
+	void Renderer::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
 	{
 		VkClearValue clearValues[2];
 		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
@@ -318,7 +318,7 @@ namespace VulkanLib
 		mPrimaryCommandBuffer->End();
 	}
 
-	void VulkanApp::Draw()
+	void Renderer::Draw()
 	{
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
@@ -332,7 +332,7 @@ namespace VulkanLib
 		mRenderFence->Wait(); 
 	}
 
-	void VulkanApp::Render()
+	void Renderer::Render()
 	{
 		mCamera->Update();
 
@@ -342,12 +342,12 @@ namespace VulkanLib
 		}
 	}
 
-	void VulkanApp::Update()
+	void Renderer::Update()
 	{
 
 	}
 
-	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		// Default message handling
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);

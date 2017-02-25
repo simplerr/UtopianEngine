@@ -1,4 +1,4 @@
-#include "vulkan/VulkanApp.h"
+#include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include "systems/RenderSystem.h"
 #include "systems/PhysicsSystem.h"
@@ -30,13 +30,13 @@ namespace ECS
 		}
 	}
 
-	void EntityManager::Init(VulkanLib::VulkanApp* vulkanApp,  VulkanLib::Camera* camera)
+	void EntityManager::Init(VulkanLib::Renderer* renderer,  VulkanLib::Camera* camera)
 	{
 		// Create all ECS::System
 		AddSystem(new ECS::PhysicsSystem(this));
 		AddSystem(new ECS::PickingSystem(this, camera));
 		AddSystem(new ECS::HealthSystem(this));
-		AddSystem(new ECS::RenderSystem(this, vulkanApp));
+		AddSystem(new ECS::RenderSystem(this, renderer));
 	}
 
 	void EntityManager::AddSystem(ECS::System* system)

@@ -11,7 +11,7 @@ namespace ECS
 
 namespace VulkanLib
 {
-	class VulkanApp;
+	class Renderer;
 	class Window;
 	class Camera;
 	class ModelLoader;
@@ -32,7 +32,7 @@ namespace VulkanLib
 		bool IsClosing();
 
 		// Move all of these to other locations
-		VulkanApp* mRenderer;
+		Renderer* mRenderer;
 		Window* mWindow;
 		Camera* mCamera;
 		Timer mTimer;
