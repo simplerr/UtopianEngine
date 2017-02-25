@@ -23,10 +23,9 @@
 
 namespace ECS
 {
-	PickingSystem::PickingSystem(EntityManager* entityManager, VulkanLib::Camera* camera, VulkanLib::VulkanApp* vulkanApp)
+	PickingSystem::PickingSystem(EntityManager* entityManager, VulkanLib::Camera* camera)
 		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
 	{
-		mVulkanApp = vulkanApp;
 		mCamera = camera;
 	}
 

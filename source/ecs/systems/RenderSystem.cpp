@@ -30,7 +30,7 @@ namespace ECS
 		mTextureLoader = new VulkanLib::TextureLoader(mVulkanApp, mVulkanApp->GetQueue()->GetVkHandle());
 		mModelLoader = new VulkanLib::ModelLoader(mTextureLoader);
 
-		mCubeModel = mModelLoader->LoadDebugBox(vulkanApp->GetDeviceTmp());
+		mCubeModel = mModelLoader->LoadDebugBox(vulkanApp->GetDevice());
 
 		AddDebugCube(vec3(0.0f, 0.0f, 0.0f), VulkanLib::Color::White, 70.0f);
 		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), VulkanLib::Color::Red, 70.0f);
@@ -50,7 +50,7 @@ namespace ECS
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
 	{
 		// Load the model
-		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
+		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDevice(), entityCache.meshComponent->GetFilename());
 
 		entityCache.meshComponent->SetModel(model);
 	}

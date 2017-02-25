@@ -7,6 +7,7 @@
 namespace VulkanLib
 {
 	class VulkanApp;
+	class Camera;
 }
 
 namespace ECS
@@ -25,10 +26,10 @@ namespace ECS
 	class EntityManager
 	{
 	public:
-		EntityManager(VulkanLib::VulkanApp* vulkanApp);
+		EntityManager();
 		~EntityManager();
 
-		void Init(VulkanLib::VulkanApp* vulkanApp);
+		void Init(VulkanLib::VulkanApp* vulkanApp, VulkanLib::Camera* camera);
 
 		void AddSystem(ECS::System* system);
 		Entity* AddEntity(ComponentList& components);

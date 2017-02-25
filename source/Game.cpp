@@ -34,8 +34,8 @@ namespace VulkanLib
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
-		mEntityManager = new ECS::EntityManager(mRenderer);
-		mEntityManager->Init(mRenderer);
+		mEntityManager = new ECS::EntityManager();
+		mEntityManager->Init(mRenderer, mCamera);
 
 		InitScene();
 	}

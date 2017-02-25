@@ -1,7 +1,6 @@
 ### TODO
 
 18/2
-* Properly used the correct texture for loaded models
 * Do not use the same DescriptorSet for every Pipeline
 * Add debug prints for entity systems
 * Add text overlay rendering

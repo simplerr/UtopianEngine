@@ -10,7 +10,7 @@
 
 namespace ECS
 {
-	EntityManager::EntityManager(VulkanLib::VulkanApp* vulkanApp)
+	EntityManager::EntityManager()
 	{
 		mNextEntityId = 0u;
 	}
@@ -30,11 +30,11 @@ namespace ECS
 		}
 	}
 
-	void EntityManager::Init(VulkanLib::VulkanApp* vulkanApp)
+	void EntityManager::Init(VulkanLib::VulkanApp* vulkanApp,  VulkanLib::Camera* camera)
 	{
 		// Create all ECS::System
 		AddSystem(new ECS::PhysicsSystem(this));
-		AddSystem(new ECS::PickingSystem(this, vulkanApp->GetCamera(), vulkanApp));
+		AddSystem(new ECS::PickingSystem(this, camera));
 		AddSystem(new ECS::HealthSystem(this));
 		AddSystem(new ECS::RenderSystem(this, vulkanApp));
 	}

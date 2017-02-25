@@ -85,10 +85,7 @@ namespace VulkanLib
 		//	High level code
 		//
 		void CompileShaders();
-		void SetCamera(Camera* camera);
 
-		Camera* GetCamera();
-		Device* GetDeviceTmp() { return mDevice; } // [NOTE] [TODO] A hack to get the model loading in Game.cpp to workVulkanApp
 		Pipeline* GetPipeline(PipelineType pipelineType);
 		PipelineLayout* GetPipelineLayout();
 		DescriptorSetLayout* GetTextureDescriptorSetLayout();
@@ -96,13 +93,16 @@ namespace VulkanLib
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
-		// 
-		//	High level code
-		//
+		void SetCamera(Camera* camera);
 
-		PushConstantBlock				mPushConstants;						// Gets updated with new push constants for each object
+	public:
+		// NOTE: These should probably be moved to RenderSystem
+		DescriptorSet*					mCameraDescriptorSet;
+		DescriptorSet*					mLightDescriptorSet;
+
+	private:
+		PushConstantBlock				mPushConstants;						
 		bool							mPrepared = false;
-		Camera*							mCamera;
 
 		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
 		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
@@ -115,24 +115,19 @@ namespace VulkanLib
 		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; 
-		CommandBuffer*					mDebugCommandBuffer;
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
 		Fence*							mRenderFence;
 
 		std::map<int, Pipeline*>		mPipelines;
 
-		ECS::RenderSystem*				mRenderSystem;
-
-		// Divide descriptor set
 		DescriptorPool*					mDescriptorPool;
-		DescriptorSet*					mCameraDescriptorSet;
-		DescriptorSet*					mLightDescriptorSet;
 
 		DescriptorSetLayout*			mCameraDescriptorSetLayout;
 		DescriptorSetLayout*			mLightDescriptorSetLayout;
 		DescriptorSetLayout*			mTextureDescriptorSetLayout;
 
 		const uint32_t					MAX_NUM_TEXTURES = 10;
-	public:
+
+		Camera*							mCamera;
 	};
 }	// VulkanLib namespace

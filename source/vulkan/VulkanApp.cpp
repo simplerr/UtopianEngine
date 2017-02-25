@@ -25,7 +25,7 @@
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
-#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
 
 namespace VulkanLib
 {
@@ -58,8 +58,6 @@ namespace VulkanLib
 
 		delete mPrimaryCommandBuffer;
 		delete mSecondaryCommandBuffer;
-		delete mDebugCommandBuffer;
-
 
 		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
 		{
@@ -71,7 +69,6 @@ namespace VulkanLib
 	{
 		VulkanBase::Prepare();
 
-		// Create a fence for synchronization
 		mRenderFence = new Fence(mDevice, VK_FLAGS_NONE);
 
 		SetupVertexDescriptions();			
@@ -91,7 +88,6 @@ namespace VulkanLib
 		// Create the primary and secondary command buffers
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 		mSecondaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mDebugCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void VulkanApp::CompileShaders()
@@ -101,14 +97,9 @@ namespace VulkanLib
 		system("cd data/shaders/test/ && generate-spirv.bat");
 	}
 
-	void VulkanApp::SetCamera(Camera * camera)
+	void VulkanApp::SetCamera(Camera* camera)
 	{
 		mCamera = camera;
-	}
-
-	Camera* VulkanApp::GetCamera()
-	{
-		return mCamera;
 	}
 
 	Pipeline* VulkanApp::GetPipeline(PipelineType pipelineType)
