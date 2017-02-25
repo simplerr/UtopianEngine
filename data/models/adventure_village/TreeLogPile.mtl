@@ -1,0 +1,17 @@
+# Wavefront MTL file
+# Creator: Ultimate Unwrap3D Pro v3.27
+# URL: http://www.unwrap3d.com
+# Time: Sun Mar 17 11:10:40 2013
+# num_materials: 1
+
+newmtl TreeLogs
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd TreeLogs_D.png
+map_Ks TreeLogs_S.png
+
+# num_materials: 1

@@ -61,7 +61,7 @@ namespace VulkanLib
 					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
 					transformComponent->SetRotation(glm::vec3(180, 30, 40));
-					transformComponent->SetScale(glm::vec3(1.0f));
+					transformComponent->SetScale(glm::vec3(50.0f));
 
 					// Physics
 					uint32_t maxSpeed = 2;
@@ -74,13 +74,14 @@ namespace VulkanLib
 
 					// Mesh
 					ECS::MeshComponent* meshComponent = nullptr;
-					if (x == 0) {
-						meshComponent = new ECS::MeshComponent("data/models/Crate/Crate1.obj", PipelineType::PIPELINE_BASIC);
-						transformComponent->SetScale(glm::vec3(35.0f));
-					}
-					else { 
-						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
-					}
+					//if (x == 0) {
+					//	meshComponent = new ECS::MeshComponent("data/models/Crate/Crate1.obj", PipelineType::PIPELINE_BASIC);
+					//	transformComponent->SetScale(glm::vec3(35.0f));
+					//}
+					//else { 
+						meshComponent = new ECS::MeshComponent("data/models/adventure_village/CrateSquareB.obj", PipelineType::PIPELINE_BASIC);
+						//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
+					//}
 
 					// Health
 					ECS::HealthComponent* healthComponent = new ECS::HealthComponent(100);

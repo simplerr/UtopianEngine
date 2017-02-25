@@ -1,0 +1,47 @@
+# Wavefront MTL file
+# Creator: Ultimate Unwrap3D Pro v3.27
+# URL: http://www.unwrap3d.com
+# Time: Sun Mar 17 11:11:55 2013
+# num_materials: 4
+
+newmtl Window1
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd Window1_D.png
+map_Ks Window1_S.png
+
+newmtl WoodBeams
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodBars_D.png
+map_Ks WoodBars_S.png
+
+newmtl WoodPlain
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodPlain_D.png
+map_Ks WoodPlain_S.png
+
+newmtl WoodDetail2
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodDetail2_D.png
+map_Ks WoodDetail2_S.png
+
+# num_materials: 4

@@ -1,0 +1,75 @@
+# Wavefront MTL file
+# Creator: Ultimate Unwrap3D Pro v3.27
+# URL: http://www.unwrap3d.com
+# Time: Sun Mar 17 11:11:10 2013
+# num_materials: 7
+
+newmtl OldBrick
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd BrickOld_D.png
+map_Ks BrickOld_S.png
+
+newmtl WoodPlanks
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodPlanks_D.png
+map_Ks WoodPlanks_S.png
+
+newmtl WoodPlainDark
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodPlainDark_D.png
+map_Ks WoodPlain_S.png
+
+newmtl Rope
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+d 0.000000
+illum 2
+Ns 1.000000
+map_Kd Rope_D.png
+
+newmtl WoodPlain
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodPlain_D.png
+map_Ks WoodPlain_S.png
+
+newmtl RockRough
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd RockRough_D.png
+
+newmtl WoodDetail2
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd WoodDetail2_D.png
+map_Ks WoodDetail2_S.png
+
+# num_materials: 7

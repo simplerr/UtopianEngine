@@ -9,12 +9,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "FragmentUniformBuffer.h"
 #include "VulkanBase.h"
-#include "ModelLoader.h"
-#include "StaticModel.h"
 #include "VertexDescription.h"
 #include "UniformBuffer.h"
 #include "VertexUniformBuffer.h"
-#include "TextureLoader.h"
 #include "handles/DescriptorSet.h"
 
 using namespace glm;
@@ -26,12 +23,8 @@ namespace ECS
 
 namespace VulkanLib
 {
-	class StaticModel;
 	class Camera;
-	class TextureData;
-	class Light;
 	class CommandBuffer;
-	class TextureLoader;
 	class Pipeline;
 	class PipelineLayout;
 	class Fence;
@@ -135,16 +128,11 @@ namespace VulkanLib
 		DescriptorSet*					mCameraDescriptorSet;
 		DescriptorSet*					mLightDescriptorSet;
 
-		VulkanTexture					mTestTexture;
-		VulkanTexture					mTestTexture2;
-		VulkanTexture					mTestTexture3;
-
 		DescriptorSetLayout*			mCameraDescriptorSetLayout;
 		DescriptorSetLayout*			mLightDescriptorSetLayout;
 		DescriptorSetLayout*			mTextureDescriptorSetLayout;
 
 		const uint32_t					MAX_NUM_TEXTURES = 10;
-
 	public:
 	};
 }	// VulkanLib namespace

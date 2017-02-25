@@ -1,0 +1,34 @@
+# Wavefront MTL file
+# Creator: Ultimate Unwrap3D Pro v3.27
+# URL: http://www.unwrap3d.com
+# Time: Sun Mar 17 11:06:28 2013
+# num_materials: 3
+
+newmtl MetalBase
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd MetalBase_D.png
+map_Ks MetalBase_S.png
+
+newmtl Black
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.200000 0.200000 0.200000
+d 0.000000
+illum 2
+Ns 1.000000
+
+newmtl RockRough
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 2
+Ns 1.000000
+map_Kd RockRough_D.png
+
+# num_materials: 3
