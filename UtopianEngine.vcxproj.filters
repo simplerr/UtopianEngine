@@ -177,6 +177,9 @@
     <ClCompile Include="source\ecs\systems\System.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -325,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="source\ecs\systems\HealthSystem.h">
       <Filter>Source Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

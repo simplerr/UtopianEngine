@@ -20,6 +20,7 @@
 #include "handles/RenderPass.h"
 #include "handles/FrameBuffers.h"
 #include "handles/Queue.h"
+#include "handles/DescriptorSetLayout.h"
 #include "ecs/systems/RenderSystem.h"
 
 #define VK_FLAGS_NONE 0
@@ -197,25 +198,24 @@ namespace VulkanLib
 		// The PipelineLayout can take a an array of several DescriptorSetLayout
 		// And when rendering vkCmdBindDescriptorSets also takes an array of DescriptorSets
 
-		mCameraDescriptorSet = new DescriptorSet();
-		mLightDescriptorSet= new DescriptorSet();
-		mTextureDescriptorSet = new DescriptorSet();
-		mTextureDescriptorSet2 = new DescriptorSet();	// This don't need a layout setup 
+		mCameraDescriptorSetLayout = new DescriptorSetLayout(GetDevice());
+		mLightDescriptorSetLayout = new DescriptorSetLayout(GetDevice());
+		mTextureDescriptorSetLayout = new DescriptorSetLayout(GetDevice());
 
-		mCameraDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);					// Uniform buffer binding: 0
-		mLightDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);				// Uniform buffer binding: 1
-		mTextureDescriptorSet->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
-		mTextureDescriptorSet2->AddLayoutBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);		// Combined image sampler binding: 2
+		// TODO: Separate DescriptorSet and DescriptorSetLayout
+		// DescriptorSets should be able to be created from an existing DescriptorSetLayout
+		mCameraDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_VERTEX_BIT);					// Uniform buffer binding: 0
+		mLightDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);					// Uniform buffer binding: 1
+		mTextureDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);			// Combined image sampler binding: 2
 
-		mCameraDescriptorSet->CreateLayout(GetVkDevice());
-		mLightDescriptorSet->CreateLayout(GetVkDevice());
-		mTextureDescriptorSet->CreateLayout(GetVkDevice());
-		mTextureDescriptorSet2->CreateLayout(GetVkDevice());
+		mCameraDescriptorSetLayout->Create();
+		mLightDescriptorSetLayout->Create();
+		mTextureDescriptorSetLayout->Create();
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		descriptorSetLayouts.push_back(mCameraDescriptorSet->setLayout);
-		descriptorSetLayouts.push_back(mLightDescriptorSet->setLayout);
-		descriptorSetLayouts.push_back(mTextureDescriptorSet->setLayout);
+		descriptorSetLayouts.push_back(mCameraDescriptorSetLayout->GetLayout());
+		descriptorSetLayouts.push_back(mLightDescriptorSetLayout->GetLayout());
+		descriptorSetLayouts.push_back(mTextureDescriptorSetLayout->GetLayout());
 
 		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
 		mPipelineLayout = new PipelineLayout(mDevice, descriptorSetLayouts, &pushConstantRange);
@@ -223,16 +223,19 @@ namespace VulkanLib
 
 	void VulkanApp::SetupDescriptorPool()
 	{
-		std::vector<VkDescriptorSetLayoutBinding> bindings = mCameraDescriptorSet->mLayoutBindings;
-		bindings.insert(bindings.end(), mLightDescriptorSet->mLayoutBindings.begin(), mLightDescriptorSet->mLayoutBindings.end());
-		bindings.insert(bindings.end(), mTextureDescriptorSet->mLayoutBindings.begin(), mTextureDescriptorSet->mLayoutBindings.end());
-		bindings.insert(bindings.end(), mTextureDescriptorSet2->mLayoutBindings.begin(), mTextureDescriptorSet2->mLayoutBindings.end());
-		mDescriptorPool.CreatePoolFromLayout(GetVkDevice(), bindings);
+		mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
+		mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
+		mDescriptorPool.CreatePool(GetVkDevice());
 	}
 
-	// [TODO] Let each thread have a seperate descriptor set!!
+	// [TODO] Let each thread have a separate descriptor set!!
 	void VulkanApp::SetupDescriptorSet()
 	{
+		mCameraDescriptorSet = new DescriptorSet(mCameraDescriptorSetLayout);
+		mLightDescriptorSet = new DescriptorSet(mLightDescriptorSetLayout);
+		mTextureDescriptorSet = new DescriptorSet(mTextureDescriptorSetLayout);
+		mTextureDescriptorSet2 = new DescriptorSet(mTextureDescriptorSetLayout);
+
 		mCameraDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
 		mLightDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());
 		mTextureDescriptorSet->AllocateDescriptorSets(GetVkDevice(), mDescriptorPool.GetVkDescriptorPool());

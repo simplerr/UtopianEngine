@@ -6,16 +6,16 @@
 
 namespace VulkanLib
 {
+	class DescriptorSetLayout;
+
 	/*
 	Wraps VkDescriptorSetLayout and VkDescriptorSet to make them easier to work with
 	*/
 	class DescriptorSet
 	{
 	public:
+		DescriptorSet(DescriptorSetLayout* setLayout);
 		void Cleanup(VkDevice device);
-
-		void AddLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags stageFlags);
-		void CreateLayout(VkDevice device);
 
 		void AllocateDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool);
 		void UpdateDescriptorSets(VkDevice device);
@@ -26,15 +26,9 @@ namespace VulkanLib
 		void UpdateUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);	// Will be used for changing the texture
 
-		std::vector<VkDescriptorSetLayoutBinding> GetLayoutBindings();
-		// Add more binding function when needed...	
-
-		// Public for ease of use
-		VkDescriptorSetLayout setLayout = VK_NULL_HANDLE;
 		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
-
-		std::vector<VkDescriptorSetLayoutBinding> mLayoutBindings;
 	private:
+		DescriptorSetLayout* mSetLayout;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 	};
 
@@ -46,7 +40,6 @@ namespace VulkanLib
 	{
 	public:
 		void Cleanup(VkDevice device);
-		void CreatePoolFromLayout(VkDevice device, std::vector<VkDescriptorSetLayoutBinding>& descriptorLayouts);
 		void AddDescriptor(VkDescriptorType type, uint32_t count);
 		void CreatePool(VkDevice device);
 		VkDescriptorPool GetVkDescriptorPool();

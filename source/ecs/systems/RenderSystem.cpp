@@ -70,6 +70,8 @@ namespace ECS
 				textureDescriptorSet = mVulkanApp->mTextureDescriptorSet2->descriptorSet;
 
 
+			//textureDescriptorSet = entityCache.meshComponent->GetTexture();
+
 			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
@@ -94,33 +96,33 @@ namespace ECS
 		}
 
 		// Draw debug boxes
-		for (EntityCache entityCache : mEntities)
-		{
-			mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST));
-			//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
+		//for (EntityCache entityCache : mEntities)
+		//{
+		//	mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST));
+		//	//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
 
-			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+		//	VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTextureDescriptorSet->descriptorSet };
+		//	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
-			VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
-			meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
+		//	VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
+		//	meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
 
-			mat4 world = mat4();
-			float width = meshBoundingBox.GetWidth();
-			float height = meshBoundingBox.GetHeight();
-			float depth = meshBoundingBox.GetDepth();
-			world = glm::translate(world, -entityCache.transformComponent->GetPosition());
-			world = glm::scale(world, glm::vec3(width, height, depth));
+		//	mat4 world = mat4();
+		//	float width = meshBoundingBox.GetWidth();
+		//	float height = meshBoundingBox.GetHeight();
+		//	float depth = meshBoundingBox.GetDepth();
+		//	world = glm::translate(world, -entityCache.transformComponent->GetPosition());
+		//	world = glm::scale(world, glm::vec3(width, height, depth));
 
-			PushConstantDebugBlock pushConstantBlock;
-			pushConstantBlock.world = world;
-			pushConstantBlock.color = VulkanLib::Color::White;
+		//	PushConstantDebugBlock pushConstantBlock;
+		//	pushConstantBlock.world = world;
+		//	pushConstantBlock.color = VulkanLib::Color::White;
 
-			mCommandBuffer->CmdPushConstants(mVulkanApp->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-			mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-			mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-		}
+		//	mCommandBuffer->CmdPushConstants(mVulkanApp->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+		//	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+		//	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+		//	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+		//}
 
 		mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
 		//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());

@@ -1,34 +1,22 @@
 #include "vulkan/VulkanDebug.h"
 #include "DescriptorSet.h"
+#include "DescriptorSetLayout.h"
 
 namespace VulkanLib
 {
+	DescriptorSet::DescriptorSet(DescriptorSetLayout* setLayout)
+	{
+		mSetLayout = setLayout;
+	}
+
 	void DescriptorSet::Cleanup(VkDevice device)
 	{
-		vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
-	}
-
-	void DescriptorSet::AddLayoutBinding(uint32_t binding, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags stageFlags)
-	{
-		VkDescriptorSetLayoutBinding layoutBinding = {
-			binding,
-			descriptorType,
-			descriptorCount,
-			stageFlags
-		};
-
-		mLayoutBindings.push_back(layoutBinding);
-	}
-
-	void DescriptorSet::CreateLayout(VkDevice device)
-	{
-		// One more binding would be used for a texture (VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER and VK_SHADER_STAGE_FRAGMENT_BIT)
-		VkDescriptorSetLayoutCreateInfo createInfo = CreateInfo::DescriptorSetLayout(mLayoutBindings.size(), mLayoutBindings.data());
-		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(device, &createInfo, nullptr, &setLayout));
+		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
 	}
 
 	void DescriptorSet::AllocateDescriptorSets(VkDevice device, VkDescriptorPool descriptorPool)
 	{
+		VkDescriptorSetLayout setLayout = mSetLayout->GetLayout();
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = descriptorPool;
@@ -74,11 +62,6 @@ namespace VulkanLib
 		// [TODO]
 	}
 
-	std::vector<VkDescriptorSetLayoutBinding> DescriptorSet::GetLayoutBindings()
-	{
-		return mLayoutBindings;
-	}
-
 	void DescriptorSet::UpdateDescriptorSets(VkDevice device)
 	{
 		vkUpdateDescriptorSets(device, mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
@@ -87,19 +70,6 @@ namespace VulkanLib
 	void DescriptorPool::Cleanup(VkDevice device)
 	{
 		vkDestroyDescriptorPool(device, mDescriptorPool, nullptr);
-	}
-
-	void DescriptorPool::CreatePoolFromLayout(VkDevice device, std::vector<VkDescriptorSetLayoutBinding>& descriptorLayouts)
-	{
-		for (int i = 0; i < descriptorLayouts.size(); i++)
-		{
-			VkDescriptorPoolSize descriptorSize = {};
-			descriptorSize.type = descriptorLayouts[i].descriptorType;
-			descriptorSize.descriptorCount = descriptorLayouts[i].descriptorCount;
-			mDescriptorSizes.push_back(descriptorSize);
-		}
-
-		CreatePool(device);
 	}
 
 	void DescriptorPool::AddDescriptor(VkDescriptorType type, uint32_t count)
@@ -112,11 +82,17 @@ namespace VulkanLib
 
 	void DescriptorPool::CreatePool(VkDevice device)
 	{
+		uint32_t maxSets = 0;
+		for (auto descriptorSize : mDescriptorSizes) 
+		{
+			maxSets += descriptorSize.descriptorCount;
+		}
+
 		VkDescriptorPoolCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		createInfo.maxSets = maxSets;
 		createInfo.poolSizeCount = mDescriptorSizes.size();
 		createInfo.pPoolSizes = mDescriptorSizes.data();
-		createInfo.maxSets = mDescriptorSizes.size();		// [NOTE] This can perhaps be 1
 
 		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(device, &createInfo, nullptr, &mDescriptorPool));
 	}

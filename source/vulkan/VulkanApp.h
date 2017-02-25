@@ -35,6 +35,7 @@ namespace VulkanLib
 	class Pipeline;
 	class PipelineLayout;
 	class Fence;
+	class DescriptorSetLayout;
 
 	enum PipelineType
 	{
@@ -138,6 +139,10 @@ namespace VulkanLib
 		DescriptorSet*					mTextureDescriptorSet;
 		DescriptorSet*					mTextureDescriptorSet2;
 		VulkanTexture					mTestTexture2;
+
+		DescriptorSetLayout*			mCameraDescriptorSetLayout;
+		DescriptorSetLayout*			mLightDescriptorSetLayout;
+		DescriptorSetLayout*			mTextureDescriptorSetLayout;
 	public:
 	};
 }	// VulkanLib namespace
