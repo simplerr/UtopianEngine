@@ -1,7 +1,10 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vulkan/vulkan.h>
+
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
 
 namespace VulkanLib
 {
@@ -35,8 +38,8 @@ namespace VulkanLib
 		TextureLoader(VulkanApp* vulkanApp, VkQueue queue);
 		~TextureLoader();
 
-		bool LoadTexture(std::string filename, VulkanTexture* texture);
-		void DestroyTexture(VulkanTexture texture);
+		VulkanTexture* LoadTexture(std::string filename);
+		void DestroyTexture(VulkanTexture* texture);
 
 		void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory);
 		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -44,6 +47,7 @@ namespace VulkanLib
 		void CreateImageView(VkImage image, VkFormat format, VkImageView* imageView);
 		void CreateImageSampler(VkSampler* sampler);
 	private:
+		std::map<std::string, VulkanTexture*> mTextureMap;
 		VulkanApp* mVulkanApp;
 		Device*  mDevice;
 		VkQueue mQueue;

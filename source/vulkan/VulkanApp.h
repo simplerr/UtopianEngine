@@ -118,7 +118,6 @@ namespace VulkanLib
 		VertexUniformBuffer				mVertexUniformBuffer;
 		FragmentUniformBuffer			mFragmentUniformBuffer;
 		
-		TextureLoader*					mTextureLoader;
 		Pipeline*						mSolidPipeline;
 		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;

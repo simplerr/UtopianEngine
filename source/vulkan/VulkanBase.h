@@ -66,6 +66,7 @@ namespace VulkanLib
 		VkDevice GetVkDevice();
 		CommandPool* GetCommandPool();
 		RenderPass* GetRenderPass();
+		Queue* GetQueue();
 		VkFramebuffer GetCurrentFrameBuffer();
 
 		int GetWindowWidth();

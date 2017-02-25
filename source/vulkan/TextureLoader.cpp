@@ -17,18 +17,28 @@ namespace VulkanLib
 
 	TextureLoader::~TextureLoader()
 	{
+		for (auto& texture : mTextureMap)
+		{
+			DestroyTexture(texture.second);
+		}
 	}
 
-	bool TextureLoader::LoadTexture(std::string filename, VulkanTexture* texture)
+	VulkanTexture* TextureLoader::LoadTexture(std::string filename)
 	{
+		// Check if the model already is loaded
+		if (mTextureMap.find(filename) != mTextureMap.end())
+			return mTextureMap[filename];
+
 		VkDevice device =  mDevice->GetVkDevice();	
 		int texWidth, texHeight, texChannels;
 		stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		VkDeviceSize imageSize = texWidth * texHeight * 4;
 
 		if (!pixels) {
-			return false;
+			return nullptr;
 		}
+
+		VulkanTexture* texture = new VulkanTexture();
 
 		// Create the staging image and device memory
 		VkImage stagingImage = VK_NULL_HANDLE;
@@ -96,21 +106,23 @@ namespace VulkanLib
 		// Create the descriptor set for the texture
 		texture->descriptorSet = new DescriptorSet(mVulkanApp->GetTextureDescriptorSetLayout(), mVulkanApp->GetDescriptorPool());
 		texture->descriptorSet->AllocateDescriptorSets(device);
-		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());
+		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
 		texture->descriptorSet->UpdateDescriptorSets(device);
 		
+		mTextureMap[filename] = texture;
+
 		vkDestroyImage(device, stagingImage, nullptr);
 		vkFreeMemory(device, stagingMemory, nullptr);
 
-		return false;
+		return texture;
 	}
 
-	void TextureLoader::DestroyTexture(VulkanTexture texture)
+	void TextureLoader::DestroyTexture(VulkanTexture* texture)
 	{
-		vkDestroyImageView(mDevice->GetVkDevice(), texture.imageView, nullptr);
-		vkDestroyImage(mDevice->GetVkDevice(), texture.image, nullptr);
-		vkDestroySampler(mDevice->GetVkDevice(), texture.sampler, nullptr);
-		vkFreeMemory(mDevice->GetVkDevice(), texture.deviceMemory, nullptr);
+		vkDestroyImageView(mDevice->GetVkDevice(), texture->imageView, nullptr);
+		vkDestroyImage(mDevice->GetVkDevice(), texture->image, nullptr);
+		vkDestroySampler(mDevice->GetVkDevice(), texture->sampler, nullptr);
+		vkFreeMemory(mDevice->GetVkDevice(), texture->deviceMemory, nullptr);
 	}
 
 	void TextureLoader::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)

@@ -9,6 +9,7 @@ namespace VulkanLib
 {
 	class VulkanApp;
 	class ModelLoader;
+	class TextureLoader;
 	class StaticModel;
 	class Pipeline;
 	class PipelineLayout;
@@ -61,6 +62,7 @@ namespace ECS
 		// VulkanApp needs to be available for HUDS, debugging etc
 		VulkanLib::VulkanApp* mVulkanApp;
 		VulkanLib::ModelLoader* mModelLoader;
+		VulkanLib::TextureLoader* mTextureLoader;
 		VulkanLib::StaticModel* mCubeModel;
 		VulkanLib::CommandBuffer* mCommandBuffer;
 

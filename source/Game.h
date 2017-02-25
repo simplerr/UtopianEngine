@@ -35,7 +35,6 @@ namespace VulkanLib
 		VulkanApp* mRenderer;
 		Window* mWindow;
 		Camera* mCamera;
-		ModelLoader* mModelLoader;
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;

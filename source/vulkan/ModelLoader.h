@@ -9,6 +9,7 @@
 namespace VulkanLib
 {
 	class StaticModel;
+	class TextureLoader;
 	class Device;
 
 	struct AssimpMesh
@@ -22,6 +23,7 @@ namespace VulkanLib
 	class ModelLoader
 	{
 	public:
+		ModelLoader(TextureLoader* textureLoader);
 		void CleanupModels(VkDevice device);
 
 		StaticModel* LoadModel(Device* device, std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
@@ -31,5 +33,7 @@ namespace VulkanLib
 		int FindValidPath(aiString* texturePath, std::string modelPath);
 		bool TryLongerPath(char* szTemp, aiString* p_szString);
 		std::map<std::string, StaticModel*> mModelMap;
+
+		TextureLoader* mTextureLoader;
 	};
 }	// VulkanLib namespace

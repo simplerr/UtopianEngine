@@ -13,6 +13,11 @@ namespace ECS
 		mComponentMask = componentMask;
 	}
 
+	System::~System()
+	{
+		
+	}
+
 	EntityManager* System::GetEntityManager()
 	{
 		return mEntityManager;

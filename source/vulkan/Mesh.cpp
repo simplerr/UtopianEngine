@@ -5,6 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/TextureLoader.h"
+#include "vulkan/handles/DescriptorSet.h"
 #include "Mesh.h"
 
 namespace VulkanLib
@@ -95,6 +97,16 @@ namespace VulkanLib
 	void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)
 	{
 
+	}
+
+	void Mesh::SetTexture(VulkanTexture* texture)
+	{
+		mTexture = texture;
+	}
+
+	VkDescriptorSet Mesh::GetTextureDescriptor()
+	{
+		return mTexture->descriptorSet->descriptorSet;
 	}
 
 	BoundingBox Mesh::GetBoundingBox()

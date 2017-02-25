@@ -1,6 +1,7 @@
 #include <vector>
 
 #include "ModelLoader.h"
+#include "TextureLoader.h"
 #include "vulkan/Mesh.h"
 #include "StaticModel.h"
 #include "Device.h"
@@ -17,6 +18,11 @@ using namespace glm;
 
 namespace VulkanLib
 {
+	ModelLoader::ModelLoader(TextureLoader* textureLoader)
+	{
+		mTextureLoader = textureLoader;
+	}
+
 	void ModelLoader::CleanupModels(VkDevice device)
 	{
 		for (auto& model : mModelMap)
@@ -94,10 +100,16 @@ namespace VulkanLib
 					material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
 					FindValidPath(&texturePath, filename);
 					mesh->SetTexturePath(texturePath.C_Str());
+
+					VulkanTexture* texture = mTextureLoader->LoadTexture(texturePath.C_Str());
+					mesh->SetTexture(texture);
 				}
 				else
 				{
-					mesh->SetTexturePath("NO_TEXTURE");
+					mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
+
+					VulkanTexture* texture = mTextureLoader->LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+					mesh->SetTexture(texture);
 				}
 
 				mesh->BuildBuffers(device);		// Build the models buffers here

@@ -11,6 +11,7 @@
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/Queue.h"
 #include "vulkan/Mesh.h"
 #include "RenderSystem.h"
 #include "Colors.h"
@@ -23,7 +24,8 @@ namespace ECS
 		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT)
 	{
 		mVulkanApp = vulkanApp;
-		mModelLoader = new VulkanLib::ModelLoader();
+		mTextureLoader = new VulkanLib::TextureLoader(mVulkanApp, mVulkanApp->GetQueue()->GetVkHandle());
+		mModelLoader = new VulkanLib::ModelLoader(mTextureLoader);
 
 		mCubeModel = mModelLoader->LoadDebugBox(vulkanApp->GetDeviceTmp());
 
@@ -39,11 +41,14 @@ namespace ECS
 	{
 		mModelLoader->CleanupModels(mVulkanApp->GetVkDevice());
 		delete mModelLoader;
+		delete mTextureLoader;
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
 	{
+		// Load the model
 		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mVulkanApp->GetDeviceTmp(), entityCache.meshComponent->GetFilename());
+
 		entityCache.meshComponent->SetModel(model);
 	}
 
@@ -58,24 +63,17 @@ namespace ECS
 		mCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 		mCommandBuffer->CmdSetScissor(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
+		// TODO: Loop over each models meshes
 		for (EntityCache entityCache : mEntities)
 		{
 			mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(entityCache.meshComponent->GetPipeline()));
-			//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
-			VkDescriptorSet textureDescriptorSet;
 
-			if (entityCache.entity->GetId() < 20)
-				textureDescriptorSet = mVulkanApp->mTestTexture.descriptorSet->descriptorSet;
-			else
-				textureDescriptorSet = mVulkanApp->mTestTexture2.descriptorSet->descriptorSet;
+			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
 
-
-			//textureDescriptorSet = entityCache.meshComponent->GetTexture();
+			VkDescriptorSet textureDescriptorSet = model->mMeshes[0]->GetTextureDescriptor(); 
 
 			VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
-
-			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
 
 			// Push the world matrix constant
 			VulkanLib::PushConstantBlock pushConstantBlock;
@@ -127,8 +125,8 @@ namespace ECS
 		mCommandBuffer->CmdBindPipeline(mVulkanApp->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
 		//mCommandBuffer->CmdBindDescriptorSet(mVulkanApp->GetPipelineLayout(), mVulkanApp->GetDescriptorSet());
 
-		VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTestTexture.descriptorSet->descriptorSet };
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+		//VkDescriptorSet descriptorSets[3] = { mVulkanApp->mCameraDescriptorSet->descriptorSet, mVulkanApp->mLightDescriptorSet->descriptorSet, mVulkanApp->mTestTexture.descriptorSet->descriptorSet };
+		//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mVulkanApp->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 		// Draw debug cubes for the origin and each axis
 		for (int i = 0; i < mDebugCubes.size(); i++)

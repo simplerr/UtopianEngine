@@ -37,16 +37,11 @@ namespace VulkanLib
 		mEntityManager = new ECS::EntityManager(mRenderer);
 		mEntityManager->Init(mRenderer);
 
-		mModelLoader = new ModelLoader();
-
 		InitScene();
 	}
 
 	Game::~Game()
 	{
-		mModelLoader->CleanupModels(mRenderer->GetVkDevice());
-		delete mModelLoader;
-
 		delete mCamera;
 		delete mEntityManager;
 		delete mRenderer;
@@ -78,11 +73,14 @@ namespace VulkanLib
 					physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
 
 					// Mesh
-					ECS::MeshComponent* meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
-					if (x == 0)
-						meshComponent->SetPipeline(PipelineType::PIPELINE_BASIC);
-					//else if(x == 1)
-					//	meshComponent->SetPipeline(PipelineType::PIPELINE_TEST);
+					ECS::MeshComponent* meshComponent = nullptr;
+					if (x == 0) {
+						meshComponent = new ECS::MeshComponent("data/models/Crate/Crate1.obj", PipelineType::PIPELINE_BASIC);
+						transformComponent->SetScale(glm::vec3(35.0f));
+					}
+					else { 
+						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
+					}
 
 					// Health
 					ECS::HealthComponent* healthComponent = new ECS::HealthComponent(100);

@@ -56,9 +56,6 @@ namespace VulkanLib
 
 		delete mRenderFence;
 
-		// Free the testing texture
-		mTextureLoader->DestroyTexture(mTestTexture);
-
 		delete mPrimaryCommandBuffer;
 		delete mSecondaryCommandBuffer;
 		delete mDebugCommandBuffer;
@@ -68,8 +65,6 @@ namespace VulkanLib
 		{
 			delete commandBuffer;
 		}
-
-		delete mTextureLoader;
 	}
 
 	void VulkanApp::Prepare()
@@ -87,10 +82,6 @@ namespace VulkanLib
 		SetupDescriptorPool();
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
-
-		mTextureLoader = new TextureLoader(this, mQueue->GetVkHandle());
-		mTextureLoader->LoadTexture("data/textures/crate.jpg", &mTestTexture);
-		mTextureLoader->LoadTexture("data/textures/checker.jpg", &mTestTexture2);
 
 		mPrepared = true;
 	}

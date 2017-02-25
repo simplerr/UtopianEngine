@@ -35,6 +35,7 @@ namespace ECS
 	{
 	public:
 		System(EntityManager* entityManager, uint32_t componentMask);
+		virtual ~System();
 		EntityManager* GetEntityManager();
 		bool Accepts(uint32_t mask);
 		uint32_t GetComponentMask();

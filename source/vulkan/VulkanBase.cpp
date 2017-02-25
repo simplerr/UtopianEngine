@@ -170,6 +170,11 @@ namespace VulkanLib
 		return mRenderPass;
 	}
 
+	Queue* VulkanBase::GetQueue()
+	{
+		return mQueue;
+	}
+
 	void VulkanBase::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		// Game::HandleMessages() handles the closing of the window
