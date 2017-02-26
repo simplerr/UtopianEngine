@@ -63,6 +63,8 @@ namespace VulkanLib
 		{
 			delete commandBuffer;
 		}
+
+		delete mShaderManager;
 	}
 
 	void Renderer::Prepare()
@@ -70,6 +72,7 @@ namespace VulkanLib
 		VulkanBase::Prepare();
 
 		mRenderFence = new Fence(mDevice, VK_FLAGS_NONE);
+		mShaderManager = new ShaderManager(mDevice);
 
 		SetupVertexDescriptions();			
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
@@ -95,6 +98,7 @@ namespace VulkanLib
 		// [TODO] Move to ShaderManager
 		system("cd data/shaders/phong/ && generate-spirv.bat");
 		system("cd data/shaders/test/ && generate-spirv.bat");
+		system("cd data/shaders/geometry/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Camera* camera)

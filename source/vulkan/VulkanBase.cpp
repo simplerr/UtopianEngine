@@ -53,7 +53,6 @@ namespace VulkanLib
 		delete mDepthStencil;
 		delete mRenderPass;
 		delete mFrameBuffers;
-		delete mShaderManager;
 		delete mDevice;
 
 		VulkanDebug::CleanupDebugging(mInstance->GetVkHandle());
@@ -80,7 +79,6 @@ namespace VulkanLib
 		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat);
 		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());
-		mShaderManager = new ShaderManager(mDevice);
 	}
 
 	void VulkanBase::SetupSwapchain()

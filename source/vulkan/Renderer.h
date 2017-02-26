@@ -111,7 +111,6 @@ namespace VulkanLib
 		VertexUniformBuffer				mVertexUniformBuffer;
 		FragmentUniformBuffer			mFragmentUniformBuffer;
 		
-		Pipeline*						mSolidPipeline;
 		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mSecondaryCommandBuffer; 
@@ -129,5 +128,7 @@ namespace VulkanLib
 		const uint32_t					MAX_NUM_TEXTURES = 10;
 
 		Camera*							mCamera;
+
+		ShaderManager*					mShaderManager = nullptr;
 	};
 }	// VulkanLib namespace

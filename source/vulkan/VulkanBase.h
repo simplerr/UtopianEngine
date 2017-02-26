@@ -94,7 +94,6 @@ namespace VulkanLib
 		Semaphore*						mPresentComplete = nullptr;
 		Semaphore*						mRenderComplete = nullptr;
 		Image*							mDepthStencil = nullptr;
-		ShaderManager*					mShaderManager = nullptr;
 
 		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
