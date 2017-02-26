@@ -28,6 +28,8 @@ namespace VulkanLib
 	  	void ConsolePrint(std::string text);
 		void ConsolePrint(glm::vec3 vec, std::string text = "");
 
+		void TogglePerformanceWarnings();
+
 		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 			VkDebugReportFlagsEXT       flags,
 			VkDebugReportObjectTypeEXT  objectType,
@@ -44,5 +46,7 @@ namespace VulkanLib
 		// Both InitDebug() and VkInstance uses the create info from SetupDebugLayers()
 		extern VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo;
 		extern VkDebugReportCallbackEXT msgCallback;
+
+		extern bool performanceWarnings;
 	}
 }	// VulkanLib namespace

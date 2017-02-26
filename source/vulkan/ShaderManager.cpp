@@ -7,10 +7,14 @@
 
 namespace VulkanLib
 {
-	Shader::Shader(VkPipelineShaderStageCreateInfo vertexShaderCreateInfo, VkPipelineShaderStageCreateInfo pixelShaderCreateInfo)
+	Shader::Shader()
 	{
-		shaderStages[0] = vertexShaderCreateInfo;
-		shaderStages[1] = pixelShaderCreateInfo;
+
+	}
+
+	void Shader::AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo)
+	{
+		shaderStages.push_back(shaderStageCreateInfo);
 	}
 	
 	ShaderManager::ShaderManager(Device* device)
@@ -21,16 +25,19 @@ namespace VulkanLib
 
 	ShaderManager::~ShaderManager()
 	{
+		// TODO: Fix this
 		for (int i = 0; i < mLoadedShaders.size(); i++)
 		{
-			vkDestroyShaderModule(mDevice->GetVkDevice(), mLoadedShaders[i]->shaderStages[VERTEX_SHADER_IDX].module, nullptr);
-			vkDestroyShaderModule(mDevice->GetVkDevice(), mLoadedShaders[i]->shaderStages[PIXEL_SHADER_IDX].module, nullptr);
+			for (int j = 0; j < mLoadedShaders[i]->shaderStages.size(); j++)
+			{
+				vkDestroyShaderModule(mDevice->GetVkDevice(), mLoadedShaders[i]->shaderStages[j].module, nullptr);
+			}
 
 			delete mLoadedShaders[i];
 		}
 	}
 
-	Shader* ShaderManager::CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename)
+	Shader* ShaderManager::CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
 	{
 		// Vertex shader
 		VkPipelineShaderStageCreateInfo vertexShaderCreateInfo = {};
@@ -46,7 +53,21 @@ namespace VulkanLib
 		pixelShaderCreateInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
 		pixelShaderCreateInfo.module = LoadShader(pixelShaderFilename.c_str(), VK_SHADER_STAGE_FRAGMENT_BIT);
 
-		Shader* shader = new Shader(vertexShaderCreateInfo, pixelShaderCreateInfo);
+		Shader* shader = new Shader();
+
+		shader->AddShaderStage(vertexShaderCreateInfo);
+		shader->AddShaderStage(pixelShaderCreateInfo);
+
+		VkPipelineShaderStageCreateInfo geometryShaderCreateInfo = {};
+		if (geometryShaderFilename != "NONE")
+		{
+			geometryShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			geometryShaderCreateInfo.pName = "main";
+			geometryShaderCreateInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+			geometryShaderCreateInfo.module = LoadShader(geometryShaderFilename.c_str(), VK_SHADER_STAGE_GEOMETRY_BIT);
+
+			shader->AddShaderStage(geometryShaderCreateInfo);
+		}
 
 		mLoadedShaders.push_back(shader);
 		

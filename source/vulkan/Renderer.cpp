@@ -25,7 +25,7 @@
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
-#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
 
 namespace VulkanLib
 {
@@ -125,6 +125,11 @@ namespace VulkanLib
 	DescriptorPool* Renderer::GetDescriptorPool()
 	{
 		return mDescriptorPool;
+	}
+
+	VertexDescription* Renderer::GetVertexDescription()
+	{
+		return &mVertexDescription;
 	}
 
 	CommandBuffer* Renderer::CreateCommandBuffer(VkCommandBufferLevel level)

@@ -4,10 +4,12 @@
 #include <vector>
 #include <window.h>
 #include "System.h"
+#include "vulkan/VulkanDebug.h"
 
 namespace VulkanLib
 {
 	class Renderer;
+	class Camera;
 	class ModelLoader;
 	class TextureLoader;
 	class StaticModel;
@@ -16,6 +18,31 @@ namespace VulkanLib
 	class DescriptorSet;
 	class CommandBuffer;
 	class CubeMesh;
+	class VertexDescription;
+
+	class GeometryUniformBuffer : public UniformBuffer
+	{
+	public:
+		virtual void UpdateMemory(VkDevice device)
+		{
+			// Map uniform buffer and update it
+			uint8_t *data1;
+			VulkanLib::VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, 0, sizeof(data), 0, (void **)&data1));
+			memcpy(data1, &data, sizeof(data));
+			vkUnmapMemory(device, mMemory);
+		}
+
+		virtual int GetSize()
+		{
+			return sizeof(data);
+		}
+
+		// Public data members
+		struct {
+			glm::mat4 projection;
+			glm::mat4 view;
+		} data;
+	};
 }
 
 namespace ECS
@@ -48,7 +75,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(EntityManager* entityManager, VulkanLib::Renderer* renderer);
+		RenderSystem(EntityManager* entityManager, VulkanLib::Renderer* renderer, VulkanLib::Camera* cameraj);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);
@@ -65,7 +92,21 @@ namespace ECS
 		VulkanLib::TextureLoader* mTextureLoader;
 		VulkanLib::StaticModel* mCubeModel;
 		VulkanLib::CommandBuffer* mCommandBuffer;
+		VulkanLib::Camera* mCamera;
 
 		std::vector<DebugCube> mDebugCubes;
+
+		// Geometry shader stuff
+		VulkanLib::DescriptorPool* mDescriptorPool;
+		VulkanLib::DescriptorSetLayout* mDescriptorSetLayout;
+		VulkanLib::DescriptorSet* mDescriptorSet;
+		VulkanLib::Pipeline* mGeometryPipeline;
+		VulkanLib::PipelineLayout* mPipelineLayout;
+		VulkanLib::GeometryUniformBuffer  mUniformBuffer;
+
+		struct PushConstantBlock {
+			mat4 world;
+			mat4 worldInvTranspose;
+		};
 	};
 }

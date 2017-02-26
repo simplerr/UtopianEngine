@@ -43,6 +43,9 @@
     <Filter Include="Source Files\ecs\components">
       <UniqueIdentifier>{5c273a02-ddf0-4826-bbf4-841160c99fe7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders\geometry">
+      <UniqueIdentifier>{af8adda5-88c8-474b-ad59-41a01731b147}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -360,6 +363,15 @@
     </None>
     <None Include="docs\notes.md">
       <Filter>docs</Filter>
+    </None>
+    <None Include="data\shaders\geometry\base.frag">
+      <Filter>Source Files\shaders\geometry</Filter>
+    </None>
+    <None Include="data\shaders\geometry\base.vert">
+      <Filter>Source Files\shaders\geometry</Filter>
+    </None>
+    <None Include="data\shaders\geometry\normaldebug.geom">
+      <Filter>Source Files\shaders\geometry</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

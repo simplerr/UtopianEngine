@@ -36,7 +36,7 @@ namespace ECS
 		AddSystem(new ECS::PhysicsSystem(this));
 		AddSystem(new ECS::PickingSystem(this, camera));
 		AddSystem(new ECS::HealthSystem(this));
-		AddSystem(new ECS::RenderSystem(this, renderer));
+		AddSystem(new ECS::RenderSystem(this, renderer, camera));
 	}
 
 	void EntityManager::AddSystem(ECS::System* system)

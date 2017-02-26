@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/VulkanDebug.h"
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -23,6 +24,8 @@ namespace VulkanLib
 
 		mIsClosing = false;
 		mRenderer = new Renderer();
+
+		VulkanLib::VulkanDebug::TogglePerformanceWarnings();
 
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
@@ -60,7 +63,8 @@ namespace VulkanLib
 				{
 					// Transform
 					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
-					transformComponent->SetRotation(glm::vec3(180, 30, 40));
+					//transformComponent->SetRotation(glm::vec3(180, 30, 40));
+					transformComponent->SetRotation(glm::vec3(180.0f, 0.0f, 0.0f));
 					transformComponent->SetScale(glm::vec3(50.0f));
 
 					// Physics
@@ -80,6 +84,7 @@ namespace VulkanLib
 					//}
 					//else { 
 						meshComponent = new ECS::MeshComponent("data/models/adventure_village/CrateSquareB.obj", PipelineType::PIPELINE_BASIC);
+						//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
 						//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
 					//}
 

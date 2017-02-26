@@ -15,6 +15,7 @@ namespace VulkanLib
 		std::vector<const char*> validation_layers;
 		VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo = {};
 		VkDebugReportCallbackEXT msgCallback = nullptr;
+		bool performanceWarnings = true;
 
 		void SetupDebugLayers()
 		{
@@ -102,6 +103,9 @@ namespace VulkanLib
 				stream << "WARNING: ";
 			}
 			if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) {
+				if(!performanceWarnings)
+					return VK_FALSE;
+
 				stream << "PERFORMANCE: ";
 			}
 			if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
@@ -198,6 +202,11 @@ namespace VulkanLib
 		void ConsolePrint(glm::vec3 vec, std::string text)
 		{
 			std::cout << text << " " << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << std::endl;
+		}
+
+		void TogglePerformanceWarnings()
+		{
+			performanceWarnings = !performanceWarnings;
 		}
 	}
 }	// VulkanLib namespace

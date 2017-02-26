@@ -90,6 +90,7 @@ namespace VulkanLib
 		PipelineLayout* GetPipelineLayout();
 		DescriptorSetLayout* GetTextureDescriptorSetLayout();
 		DescriptorPool* GetDescriptorPool();
+		VertexDescription* GetVertexDescription();
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
@@ -101,7 +102,6 @@ namespace VulkanLib
 		DescriptorSet*					mLightDescriptorSet;
 
 	private:
-		PushConstantBlock				mPushConstants;						
 		bool							mPrepared = false;
 
 		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
@@ -129,6 +129,8 @@ namespace VulkanLib
 
 		Camera*							mCamera;
 
+		// TODO: NOTE: HACK
+	public:
 		ShaderManager*					mShaderManager = nullptr;
 	};
 }	// VulkanLib namespace

@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <array>
 #include <vulkan/vulkan.h>
 
 #define VERTEX_SHADER_IDX 0
@@ -15,9 +14,11 @@ namespace VulkanLib
 	class Shader
 	{
 	public:
-		Shader(VkPipelineShaderStageCreateInfo vertexShaderCreateInfo, VkPipelineShaderStageCreateInfo pixelShaderCreateInfo);
+		Shader();
 
-		std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
+		void AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo);
+
+		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 	};
 
 	class ShaderManager
@@ -25,7 +26,7 @@ namespace VulkanLib
 	public:
 		ShaderManager(Device* device);
 		~ShaderManager();
-		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename);
+		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
 	private:
 		VkShaderModule LoadShader(std::string filename, VkShaderStageFlagBits stage);
 	private:

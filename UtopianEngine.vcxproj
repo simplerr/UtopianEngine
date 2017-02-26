@@ -179,6 +179,9 @@
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\shaders\geometry\base.frag" />
+    <None Include="data\shaders\geometry\base.vert" />
+    <None Include="data\shaders\geometry\normaldebug.geom" />
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\test\test.frag" />

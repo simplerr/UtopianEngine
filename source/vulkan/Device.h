@@ -32,5 +32,7 @@ namespace VulkanLib
 
 		// Stores all available memory (type) properties for the physical device
 		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
+
+		VkPhysicalDeviceFeatures mEnabledFeatures{};
 	};
 }

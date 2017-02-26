@@ -8,6 +8,10 @@ namespace VulkanLib
 {
 	Device::Device(Instance* instance, bool enableValidation)
 	{
+		mEnabledFeatures.geometryShader = VK_TRUE;
+		mEnabledFeatures.shaderTessellationAndGeometryPointSize = VK_TRUE;
+		mEnabledFeatures.fillModeNonSolid = VK_TRUE;
+
 		Create(instance, enableValidation);
 
 		mCommandPool = CreateCommandPool(0); // [NOTE] Hardcoded
@@ -67,7 +71,7 @@ namespace VulkanLib
 		deviceInfo.flags = 0;
 		deviceInfo.queueCreateInfoCount = 1;
 		deviceInfo.pQueueCreateInfos = &queueInfo;
-		deviceInfo.pEnabledFeatures = nullptr;
+		deviceInfo.pEnabledFeatures = &mEnabledFeatures;
 		deviceInfo.enabledExtensionCount = enabledExtensions.size();				// Extensions
 		deviceInfo.ppEnabledExtensionNames = enabledExtensions.data();
 

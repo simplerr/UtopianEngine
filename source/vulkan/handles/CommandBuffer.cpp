@@ -144,7 +144,7 @@ namespace VulkanLib
 
 	void CommandBuffer::CmdPushConstants(PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
 	{
-		vkCmdPushConstants(mHandle, pipelineLayout->GetVkHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, size, data);
+		vkCmdPushConstants(mHandle, pipelineLayout->GetVkHandle(), shaderStageFlags, 0, size, data);
 	}
 
 	void CommandBuffer::CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* buffers)
