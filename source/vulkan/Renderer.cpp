@@ -229,17 +229,17 @@ namespace VulkanLib
 	// [TODO] Let each thread have a separate descriptor set!!
 	void Renderer::SetupDescriptorSet()
 	{
-		mCameraDescriptorSet = new DescriptorSet(mCameraDescriptorSetLayout, mDescriptorPool);
-		mLightDescriptorSet = new DescriptorSet(mLightDescriptorSetLayout, mDescriptorPool);
+		mCameraDescriptorSet = new DescriptorSet(GetDevice(), mCameraDescriptorSetLayout, mDescriptorPool);
+		mLightDescriptorSet = new DescriptorSet(GetDevice(), mLightDescriptorSetLayout, mDescriptorPool);
 
-		mCameraDescriptorSet->AllocateDescriptorSets(GetVkDevice());
-		mLightDescriptorSet->AllocateDescriptorSets(GetVkDevice());
+		mCameraDescriptorSet->AllocateDescriptorSets();
+		mLightDescriptorSet->AllocateDescriptorSets();
 
 		mCameraDescriptorSet->BindUniformBuffer(0, &mVertexUniformBuffer.GetDescriptor());
 		mLightDescriptorSet->BindUniformBuffer(0, &mFragmentUniformBuffer.GetDescriptor());
 
-		mCameraDescriptorSet->UpdateDescriptorSets(GetVkDevice());
-		mLightDescriptorSet->UpdateDescriptorSets(GetVkDevice());
+		mCameraDescriptorSet->UpdateDescriptorSets();
+		mLightDescriptorSet->UpdateDescriptorSets();
 	}
 
 	void Renderer::PreparePipelines()

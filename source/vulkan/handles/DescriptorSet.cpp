@@ -1,11 +1,13 @@
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/Device.h"
 #include "DescriptorSet.h"
 #include "DescriptorSetLayout.h"
 
 namespace VulkanLib
 {
-	DescriptorSet::DescriptorSet(DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
+	DescriptorSet::DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
+		mDevice = device;
 		mSetLayout = setLayout;
 		mDescriptorPool = descriptorPool;
 	}
@@ -15,7 +17,7 @@ namespace VulkanLib
 		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
 	}
 
-	void DescriptorSet::AllocateDescriptorSets(VkDevice device)
+	void DescriptorSet::AllocateDescriptorSets()
 	{
 		VkDescriptorSetLayout setLayout = mSetLayout->GetVkHandle();
 		VkDescriptorSetAllocateInfo allocInfo = {};
@@ -24,7 +26,7 @@ namespace VulkanLib
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &setLayout;	
 
-		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(device, &allocInfo, &descriptorSet));
+		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &descriptorSet));
 	}
 
 	void DescriptorSet::BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
@@ -63,9 +65,9 @@ namespace VulkanLib
 		// [TODO]
 	}
 
-	void DescriptorSet::UpdateDescriptorSets(VkDevice device)
+	void DescriptorSet::UpdateDescriptorSets()
 	{
-		vkUpdateDescriptorSets(device, mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
+		vkUpdateDescriptorSets(mDevice->GetVkDevice(), mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
 	}
 
 	void DescriptorPool::Cleanup(VkDevice device)

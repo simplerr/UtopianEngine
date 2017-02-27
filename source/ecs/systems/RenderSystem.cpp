@@ -62,10 +62,10 @@ namespace ECS
 
 		mUniformBuffer.CreateBuffer(mRenderer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet = new VulkanLib::DescriptorSet(mDescriptorSetLayout, mDescriptorPool);
-		mDescriptorSet->AllocateDescriptorSets(mRenderer->GetVkDevice());
+		mDescriptorSet = new VulkanLib::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
+		mDescriptorSet->AllocateDescriptorSets();
 		mDescriptorSet->BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
-		mDescriptorSet->UpdateDescriptorSets(mRenderer->GetVkDevice());
+		mDescriptorSet->UpdateDescriptorSets();
 
 		VulkanLib::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
 		mGeometryPipeline = new VulkanLib::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mRenderer->GetVertexDescription(), shader);

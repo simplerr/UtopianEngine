@@ -104,10 +104,10 @@ namespace VulkanLib
 		CreateImageSampler(&texture->sampler);
 
 		// Create the descriptor set for the texture
-		texture->descriptorSet = new DescriptorSet(mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		texture->descriptorSet->AllocateDescriptorSets(device);
+		texture->descriptorSet = new DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		texture->descriptorSet->AllocateDescriptorSets();
 		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
-		texture->descriptorSet->UpdateDescriptorSets(device);
+		texture->descriptorSet->UpdateDescriptorSets();
 		
 		mTextureMap[filename] = texture;
 
