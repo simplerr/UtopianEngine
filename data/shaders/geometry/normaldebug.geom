@@ -23,7 +23,7 @@ layout(push_constant) uniform PushConsts {
 
 void main(void)
 {	
-	float normalLength = 1;
+	float normalLength = 1.0;
 	for(int i=0; i<gl_in.length(); i++)
 	{
 		vec3 pos = gl_in[i].gl_Position.xyz;

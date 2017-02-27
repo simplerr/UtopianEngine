@@ -83,8 +83,8 @@ namespace VulkanLib
 					//	transformComponent->SetScale(glm::vec3(35.0f));
 					//}
 					//else { 
-						meshComponent = new ECS::MeshComponent("data/models/adventure_village/CrateSquareB.obj", PipelineType::PIPELINE_BASIC);
-						//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
+						//meshComponent = new ECS::MeshComponent("data/models/adventure_village/CrateSquareB.obj", PipelineType::PIPELINE_BASIC);
+						meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
 						//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
 					//}
 
@@ -99,7 +99,7 @@ namespace VulkanLib
 					//componentList.push_back(physicsComponent);
 					
 					// TEMPORARY
-					//if(i < 1)
+					if(i < 1)
 						mEntityManager->AddEntity(componentList);
 
 					i++;
