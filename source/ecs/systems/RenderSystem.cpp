@@ -56,9 +56,9 @@ namespace ECS
 		VulkanLib::PushConstantRange pushConstantRange = VulkanLib::PushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
 		mPipelineLayout = new VulkanLib::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, &pushConstantRange);
 
-		mDescriptorPool = new VulkanLib::DescriptorPool();
+		mDescriptorPool = new VulkanLib::DescriptorPool(mRenderer->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->CreatePool(mRenderer->GetVkDevice());
+		mDescriptorPool->CreatePool();
 
 		mUniformBuffer.CreateBuffer(mRenderer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
@@ -77,6 +77,12 @@ namespace ECS
 		mModelLoader->CleanupModels(mRenderer->GetVkDevice());
 		delete mModelLoader;
 		delete mTextureLoader;
+		delete mDescriptorSetLayout;
+		delete mPipelineLayout;
+		delete mDescriptorPool;
+		delete mDescriptorSet;
+		delete mGeometryPipeline;
+		mUniformBuffer.Cleanup(mRenderer->GetVkDevice());
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)

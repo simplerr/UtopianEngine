@@ -39,7 +39,6 @@ namespace VulkanLib
 	{
 		mVertexUniformBuffer.Cleanup(GetVkDevice());
 		mFragmentUniformBuffer.Cleanup(GetVkDevice());
-		mDescriptorPool->Cleanup(GetVkDevice());
 
 		delete mDescriptorPool;
 
@@ -220,10 +219,10 @@ namespace VulkanLib
 
 	void Renderer::SetupDescriptorPool()
 	{
-		mDescriptorPool = new DescriptorPool();
+		mDescriptorPool = new DescriptorPool(GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_NUM_TEXTURES);
-		mDescriptorPool->CreatePool(GetVkDevice());
+		mDescriptorPool->CreatePool();
 	}
 
 	// [TODO] Let each thread have a separate descriptor set!!

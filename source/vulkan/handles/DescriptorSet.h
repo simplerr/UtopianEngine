@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "vulkan/VulkanHelpers.h"
+#include "vulkan/handles/Handle.h"
 
 namespace VulkanLib
 {
@@ -40,15 +41,13 @@ namespace VulkanLib
 	Wraps VkDescriptorPool to make it easier to work with
 	Can be created directly from a descriptor layout vector
 	*/
-	class DescriptorPool
+	class DescriptorPool : public Handle<VkDescriptorPool>
 	{
 	public:
-		void Cleanup(VkDevice device);
+		DescriptorPool(Device* device);
 		void AddDescriptor(VkDescriptorType type, uint32_t count);
-		void CreatePool(VkDevice device);
-		VkDescriptorPool GetVkDescriptorPool();
+		void CreatePool();
 	private:
-		VkDescriptorPool mDescriptorPool = VK_NULL_HANDLE;
 		std::vector<VkDescriptorPoolSize> mDescriptorSizes;
 	};
 }

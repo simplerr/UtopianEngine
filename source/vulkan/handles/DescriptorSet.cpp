@@ -22,7 +22,7 @@ namespace VulkanLib
 		VkDescriptorSetLayout setLayout = mSetLayout->GetVkHandle();
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = mDescriptorPool->GetVkDescriptorPool();
+		allocInfo.descriptorPool = mDescriptorPool->GetVkHandle();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &setLayout;	
 
@@ -70,9 +70,10 @@ namespace VulkanLib
 		vkUpdateDescriptorSets(mDevice->GetVkDevice(), mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
 	}
 
-	void DescriptorPool::Cleanup(VkDevice device)
+	DescriptorPool::DescriptorPool(Device* device)
+		: Handle(device, vkDestroyDescriptorPool)
 	{
-		vkDestroyDescriptorPool(device, mDescriptorPool, nullptr);
+
 	}
 
 	void DescriptorPool::AddDescriptor(VkDescriptorType type, uint32_t count)
@@ -83,7 +84,7 @@ namespace VulkanLib
 		mDescriptorSizes.push_back(descriptorSize);
 	}
 
-	void DescriptorPool::CreatePool(VkDevice device)
+	void DescriptorPool::CreatePool()
 	{
 		uint32_t maxSets = 0;
 		for (auto descriptorSize : mDescriptorSizes) 
@@ -97,11 +98,6 @@ namespace VulkanLib
 		createInfo.poolSizeCount = mDescriptorSizes.size();
 		createInfo.pPoolSizes = mDescriptorSizes.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(device, &createInfo, nullptr, &mDescriptorPool));
-	}
-
-	VkDescriptorPool DescriptorPool::GetVkDescriptorPool()
-	{
-		return mDescriptorPool;
+		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(GetDevice(), &createInfo, nullptr, &mHandle));
 	}
 }
