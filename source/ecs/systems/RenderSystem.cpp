@@ -58,7 +58,7 @@ namespace ECS
 
 		mDescriptorPool = new VulkanLib::DescriptorPool(mRenderer->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->CreatePool();
+		mDescriptorPool->Create();
 
 		mUniformBuffer.CreateBuffer(mRenderer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 

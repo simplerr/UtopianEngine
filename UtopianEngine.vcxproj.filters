@@ -335,6 +335,9 @@
     <ClInclude Include="source\vulkan\Renderer.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\TextOverlay.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">

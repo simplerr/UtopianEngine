@@ -166,6 +166,7 @@
     <ClInclude Include="source\vulkan\ModelLoader.h" />
     <ClInclude Include="source\vulkan\ShaderManager.h" />
     <ClInclude Include="source\vulkan\StaticModel.h" />
+    <ClInclude Include="source\vulkan\TextOverlay.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\UniformBuffer.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />

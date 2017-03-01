@@ -84,7 +84,7 @@ namespace VulkanLib
 		mDescriptorSizes.push_back(descriptorSize);
 	}
 
-	void DescriptorPool::CreatePool()
+	void DescriptorPool::Create()
 	{
 		uint32_t maxSets = 0;
 		for (auto descriptorSize : mDescriptorSizes) 

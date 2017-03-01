@@ -46,7 +46,7 @@ namespace VulkanLib
 	public:
 		DescriptorPool(Device* device);
 		void AddDescriptor(VkDescriptorType type, uint32_t count);
-		void CreatePool();
+		void Create();
 	private:
 		std::vector<VkDescriptorPoolSize> mDescriptorSizes;
 	};
