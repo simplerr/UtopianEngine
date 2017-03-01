@@ -25,6 +25,8 @@
 namespace VulkanLib
 {
 	class Device;
+	class Renderer;
+	class CommandBuffer;
 
 	// Mostly self-contained text overlay class
 	class TextOverlay
@@ -34,7 +36,7 @@ namespace VulkanLib
 
 		bool visible = true;
 
-		TextOverlay(
+		TextOverlay(Renderer* renderer,
 			Device *vulkanDevice,
 			VkQueue queue,
 			std::vector<VkFramebuffer> &framebuffers,
@@ -74,7 +76,9 @@ namespace VulkanLib
 		void submit(VkQueue queue, uint32_t bufferindex);
 	private:
 		// My code
-		Device *vulkanDevice;
+		Device* vulkanDevice;
+		Renderer* mRenderer;
+		CommandBuffer* mCommandBuffer;
 
 		// Saschas code 
 		VkQueue queue;

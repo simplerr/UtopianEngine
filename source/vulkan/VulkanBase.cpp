@@ -100,7 +100,7 @@ namespace VulkanLib
 		mQueue->WaitIdle();
 	}
 
-	VkBool32 VulkanBase::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory)
+	VkBool32 VulkanBase::CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data, VkBuffer* buffer, VkDeviceMemory* memory)
 	{
 		// [TODO] Remove use of vkTools::initializers
 		VkMemoryRequirements memReqs;

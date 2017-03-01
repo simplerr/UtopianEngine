@@ -1,15 +1,18 @@
 #include "vulkan/TextOverlay.h"
 #include "vulkan/Device.h"
+#include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 
 namespace VulkanLib
 {
-	TextOverlay::TextOverlay(Device *vulkanDevice, VkQueue queue, std::vector<VkFramebuffer> &framebuffers, VkFormat colorformat,
+	TextOverlay::TextOverlay(Renderer* renderer, Device *vulkanDevice, VkQueue queue, std::vector<VkFramebuffer> &framebuffers, VkFormat colorformat,
 		VkFormat depthformat,
 		uint32_t *framebufferwidth,
 		uint32_t *framebufferheight,
 		std::vector<VkPipelineShaderStageCreateInfo> shaderstages)
 	{
+		mRenderer = renderer;
+		
 		this->vulkanDevice = vulkanDevice;
 		this->queue = queue;
 		this->colorFormat = colorformat;
@@ -58,61 +61,21 @@ namespace VulkanLib
 		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
 
 		// Command buffer
-
-		// Pool
-		VkCommandPoolCreateInfo cmdPoolInfo = {};
-		cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		cmdPoolInfo.queueFamilyIndex = 0; // NOTE: Hardcoded to 0
-		cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		VulkanDebug::ErrorCheck(vkCreateCommandPool(vulkanDevice->GetVkDevice(), &cmdPoolInfo, nullptr, &commandPool));
-
-		VkCommandBufferAllocateInfo cmdBufAllocateInfo =
-			vks::initializers::commandBufferAllocateInfo(
-				commandPool,
-				VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-				(uint32_t)cmdBuffers.size());
-
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(vulkanDevice->GetVkDevice(), &cmdBufAllocateInfo, cmdBuffers.data()));
+		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		// Vertex buffer
 		VkDeviceSize bufferSize = TEXTOVERLAY_MAX_CHAR_COUNT * sizeof(glm::vec4);
+		mRenderer->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, nullptr, &mBuffer, mMemory);
 
-		VkBufferCreateInfo bufferInfo = vks::initializers::bufferCreateInfo(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, bufferSize);
-		VulkanDebug::ErrorCheck(vkCreateBuffer(vulkanDevice->GetVkDevice(), &bufferInfo, nullptr, &mBuffer));
-
-		VkMemoryRequirements memReqs;
-		VkMemoryAllocateInfo allocInfo = vks::initializers::memoryAllocateInfo();
-
-		vkGetBufferMemoryRequirements(vulkanDevice->GetVkDevice(), mBuffer, &memReqs);
-		allocInfo.allocationSize = memReqs.size;
-		allocInfo.memoryTypeIndex = vulkanDevice->getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-		VulkanDebug::ErrorCheck(vkAllocateMemory(vulkanDevice->GetVkDevice(), &allocInfo, nullptr, &mMemory));
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(vulkanDevice->GetVkDevice(), mBuffer, mMemory, 0));
-
-		// Font texture
-		VkImageCreateInfo imageInfo = vks::initializers::imageCreateInfo();
-		imageInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageInfo.format = VK_FORMAT_R8_UNORM;
-		imageInfo.extent.width = STB_FONT_WIDTH;
-		imageInfo.extent.height = STB_FONT_HEIGHT;
-		imageInfo.extent.depth = 1;
-		imageInfo.mipLevels = 1;
-		imageInfo.arrayLayers = 1;
-		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-		VulkanDebug::ErrorCheck(vkCreateImage(vulkanDevice->GetVkDevice(), &imageInfo, nullptr, &image));
-
-		vkGetImageMemoryRequirements(vulkanDevice->GetVkDevice(), image, &memReqs);
-		allocInfo.allocationSize = memReqs.size;
-		allocInfo.memoryTypeIndex = vulkanDevice->getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-		VulkanDebug::ErrorCheck(vkAllocateMemory(vulkanDevice->GetVkDevice(), &allocInfo, nullptr, &imageMemory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(vulkanDevice->GetVkDevice(), image, imageMemory, 0));
+		// TODO: Send VK_IMAGE_LAYOUT_UNDEFINED 
+		mTextureLoader->CreateImage(STB_FONT_WIDTH,
+									STB_FONT_HEIGHT,
+									VK_FORMAT_R8_UNORM,
+									VK_IMAGE_TILING_OPTIMAL, 
+									VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+									VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+									&image,
+									&imageMemory);
 
 		// Staging
 
