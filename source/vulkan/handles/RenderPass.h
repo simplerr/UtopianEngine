@@ -8,7 +8,7 @@ namespace VulkanLib
 {
 	class Device;
 
-	enum RenderPassAtachment
+	enum RenderPassAttachment
 	{
 		COLOR_ATTACHMENT = 0,
 		DEPTH_ATTACHMENT

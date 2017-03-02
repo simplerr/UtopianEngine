@@ -198,4 +198,14 @@ namespace VulkanLib
 	{
 		return mWindow;
 	}
+	
+	VkFormat VulkanBase::GetColorFormat()
+	{
+		return mColorFormat;	
+	}
+	
+	VkFormat VulkanBase::GetDepthFormat()
+	{
+		return mDepthFormat;	
+	}
 }	// VulkanLib namespace

@@ -5,33 +5,22 @@
 
 namespace VulkanLib
 {
-	TextOverlay::TextOverlay(Renderer* renderer, Device *vulkanDevice, VkQueue queue, std::vector<VkFramebuffer> &framebuffers, VkFormat colorformat,
-		VkFormat depthformat,
-		uint32_t *framebufferwidth,
-		uint32_t *framebufferheight,
-		std::vector<VkPipelineShaderStageCreateInfo> shaderstages)
+	TextOverlay::TextOverlay(Renderer* renderer, std::vector<VkPipelineShaderStageCreateInfo> shaderstages)
 	{
 		mRenderer = renderer;
-		
-		this->vulkanDevice = vulkanDevice;
-		this->queue = queue;
-		this->colorFormat = colorformat;
-		this->depthFormat = depthformat;
+		vulkanDevice = renderer->GetDevice();
 
-		this->frameBuffers.resize(framebuffers.size());
-		for (uint32_t i = 0; i < framebuffers.size(); i++)
-		{
-			this->frameBuffers[i] = &framebuffers[i];
-		}
+		// Create a renderpass that loads the current framebuffer content
+		// and renders the text as an overlay
+		mRenderPass = new RenderPass(renderer->GetDevice(), renderer->GetColorFormat(), renderer->GetDepthFormat());
+		mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT] = VK_ATTACHMENT_LOAD_OP_LOAD;
+		mRenderPass->Create();
 
 		this->shaderStages = shaderstages;
 
-		this->frameBufferWidth = framebufferwidth;
-		this->frameBufferHeight = framebufferheight;
-
+		// 2?
 		cmdBuffers.resize(framebuffers.size());
 		prepareResources();
-		prepareRenderPass();
 		preparePipeline();
 	}
 
@@ -51,6 +40,8 @@ namespace VulkanLib
 		vkDestroyPipeline(vulkanDevice->GetVkDevice(), pipeline, nullptr);
 		vkDestroyRenderPass(vulkanDevice->GetVkDevice(), renderPass, nullptr);
 		vkDestroyCommandPool(vulkanDevice->GetVkDevice(), commandPool, nullptr);
+
+		delete mRenderPass;
 	}
 
 	// Prepare all vulkan resources required to render the font
@@ -243,60 +234,24 @@ namespace VulkanLib
 	// Prepare a separate pipeline for the font rendering decoupled from the main application
 	void TextOverlay::preparePipeline()
 	{
-		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState =
-			vks::initializers::pipelineInputAssemblyStateCreateInfo(
-				VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
-				0,
-				VK_FALSE);
-
-		VkPipelineRasterizationStateCreateInfo rasterizationState =
-			vks::initializers::pipelineRasterizationStateCreateInfo(
-				VK_POLYGON_MODE_FILL,
-				VK_CULL_MODE_BACK_BIT,
-				VK_FRONT_FACE_CLOCKWISE,
-				0);
+		VulkanLib::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
+		mPipeline = new VulkanLib::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mRenderer->GetVertexDescription(), shader);
+		
+        // Why triangle strip?
+		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 
 		// Enable blending
-		VkPipelineColorBlendAttachmentState blendAttachmentState =
-			vks::initializers::pipelineColorBlendAttachmentState(0xf, VK_TRUE);
+		mPipeline->mBlendAttachmentState.blendEnable = VK_TRUE;
+		mPipeline->mBlendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		mPipeline->mBlendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		mPipeline->mBlendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+		mPipeline->mBlendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		mPipeline->mBlendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		mPipeline->mBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
+		mPipeline->mBlendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		mPipeline->Create();
 
-		blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
-		blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-		blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
-		blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-
-		VkPipelineColorBlendStateCreateInfo colorBlendState =
-			vks::initializers::pipelineColorBlendStateCreateInfo(
-				1,
-				&blendAttachmentState);
-
-		VkPipelineDepthStencilStateCreateInfo depthStencilState =
-			vks::initializers::pipelineDepthStencilStateCreateInfo(
-				VK_TRUE,
-				VK_TRUE,
-				VK_COMPARE_OP_LESS_OR_EQUAL);
-
-		VkPipelineViewportStateCreateInfo viewportState =
-			vks::initializers::pipelineViewportStateCreateInfo(1, 1, 0);
-
-		VkPipelineMultisampleStateCreateInfo multisampleState =
-			vks::initializers::pipelineMultisampleStateCreateInfo(
-				VK_SAMPLE_COUNT_1_BIT,
-				0);
-
-		std::vector<VkDynamicState> dynamicStateEnables = {
-			VK_DYNAMIC_STATE_VIEWPORT,
-			VK_DYNAMIC_STATE_SCISSOR
-		};
-
-		VkPipelineDynamicStateCreateInfo dynamicState =
-			vks::initializers::pipelineDynamicStateCreateInfo(
-				dynamicStateEnables.data(),
-				static_cast<uint32_t>(dynamicStateEnables.size()),
-				0);
+		// TODO: Create a VertexDescription for this
 
 		std::array<VkVertexInputBindingDescription, 2> vertexBindings = {};
 		vertexBindings[0] = vks::initializers::vertexInputBindingDescription(0, sizeof(glm::vec4), VK_VERTEX_INPUT_RATE_VERTEX);
@@ -313,105 +268,6 @@ namespace VulkanLib
 		inputState.pVertexBindingDescriptions = vertexBindings.data();
 		inputState.vertexAttributeDescriptionCount = static_cast<uint32_t>(vertexAttribs.size());
 		inputState.pVertexAttributeDescriptions = vertexAttribs.data();
-
-		VkGraphicsPipelineCreateInfo pipelineCreateInfo =
-			vks::initializers::pipelineCreateInfo(
-				pipelineLayout,
-				renderPass,
-				0);
-
-		pipelineCreateInfo.pVertexInputState = &inputState;
-		pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
-		pipelineCreateInfo.pRasterizationState = &rasterizationState;
-		pipelineCreateInfo.pColorBlendState = &colorBlendState;
-		pipelineCreateInfo.pMultisampleState = &multisampleState;
-		pipelineCreateInfo.pViewportState = &viewportState;
-		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
-		pipelineCreateInfo.pDynamicState = &dynamicState;
-		pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
-		pipelineCreateInfo.pStages = shaderStages.data();
-
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(vulkanDevice->GetVkDevice(), pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline));
-	}
-
-	// Prepare a separate render pass for rendering the text as an overlay
-	void TextOverlay::prepareRenderPass()
-	{
-		VkAttachmentDescription attachments[2] = {};
-
-		// Color attachment
-		attachments[0].format = colorFormat;
-		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-		// Don't clear the framebuffer (like the renderpass from the example does)
-		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		// Depth attachment
-		attachments[1].format = depthFormat;
-		attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentReference colorReference = {};
-		colorReference.attachment = 0;
-		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentReference depthReference = {};
-		depthReference.attachment = 1;
-		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-		// Use subpass dependencies for image layout transitions
-		VkSubpassDependency subpassDependencies[2] = {};
-
-		// Transition from final to initial (VK_SUBPASS_EXTERNAL refers to all commmands executed outside of the actual renderpass)
-		subpassDependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
-		subpassDependencies[0].dstSubpass = 0;
-		subpassDependencies[0].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		subpassDependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		subpassDependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		subpassDependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		subpassDependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-		// Transition from initial to final
-		subpassDependencies[1].srcSubpass = 0;
-		subpassDependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
-		subpassDependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		subpassDependencies[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		subpassDependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		subpassDependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		subpassDependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-		VkSubpassDescription subpassDescription = {};
-		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.flags = 0;
-		subpassDescription.inputAttachmentCount = 0;
-		subpassDescription.pInputAttachments = NULL;
-		subpassDescription.colorAttachmentCount = 1;
-		subpassDescription.pColorAttachments = &colorReference;
-		subpassDescription.pResolveAttachments = NULL;
-		subpassDescription.pDepthStencilAttachment = &depthReference;
-		subpassDescription.preserveAttachmentCount = 0;
-		subpassDescription.pPreserveAttachments = NULL;
-
-		VkRenderPassCreateInfo renderPassInfo = {};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.pNext = NULL;
-		renderPassInfo.attachmentCount = 2;
-		renderPassInfo.pAttachments = attachments;
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpassDescription;
-		renderPassInfo.dependencyCount = 2;
-		renderPassInfo.pDependencies = subpassDependencies;
-
-		VulkanDebug::ErrorCheck(vkCreateRenderPass(vulkanDevice->GetVkDevice(), &renderPassInfo, nullptr, &renderPass));
 	}
 
 	// Map buffer 
@@ -427,11 +283,12 @@ namespace VulkanLib
 	{
 		assert(mapped != nullptr);
 
-		const float charW = 1.5f / *frameBufferWidth;
-		const float charH = 1.5f / *frameBufferHeight;
+		float fbW = (float)mRenderer->GetWindowWidth();
+		float fbH = (float)mRenderer->GetWindowHeight();
+		
+		const float charW = 1.5f / fbW;
+		const float charH = 1.5f / fbH;
 
-		float fbW = (float)*frameBufferWidth;
-		float fbH = (float)*frameBufferHeight;
 		x = (x / fbW * 2.0f) - 1.0f;
 		y = (y / fbH * 2.0f) - 1.0f;
 
@@ -501,13 +358,14 @@ namespace VulkanLib
 	{
 		VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
 
+		// NOTE: Why noo clearValues[0]? Does it have to do with the renderpass color attachment?
 		VkClearValue clearValues[2];
 		clearValues[1].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = vks::initializers::renderPassBeginInfo();
 		renderPassBeginInfo.renderPass = renderPass;
-		renderPassBeginInfo.renderArea.extent.width = *frameBufferWidth;
-		renderPassBeginInfo.renderArea.extent.height = *frameBufferHeight;
+		renderPassBeginInfo.renderArea.extent.width = mRenderer->GetWindowWidth();
+		renderPassBeginInfo.renderArea.extent.height = mRenderer->GetWindowHeight();
 		renderPassBeginInfo.clearValueCount = 2;
 		renderPassBeginInfo.pClearValues = clearValues;
 
@@ -517,9 +375,10 @@ namespace VulkanLib
 
 			VulkanDebug::ErrorCheck(vkBeginCommandBuffer(cmdBuffers[i], &cmdBufInfo));
 
+			// TODO: This is currently done in the primary command buffer in Renderer
 			vkCmdBeginRenderPass(cmdBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-			VkViewport viewport = vks::initializers::viewport((float)*frameBufferWidth, (float)*frameBufferHeight, 0.0f, 1.0f);
+			VkViewport viewport = vks::initializers::viewport((float)mRenderer->GetWindowWidth(), (float)mRenderer->GetWindowHeight(), 0.0f, 1.0f);
 			vkCmdSetViewport(cmdBuffers[i], 0, 1, &viewport);
 
 			VkRect2D scissor = vks::initializers::rect2D(*frameBufferWidth, *frameBufferHeight, 0, 0);

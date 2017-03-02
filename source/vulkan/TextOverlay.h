@@ -27,6 +27,8 @@ namespace VulkanLib
 	class Device;
 	class Renderer;
 	class CommandBuffer;
+	class RenderPass;
+	class Pipeline;
 
 	// Mostly self-contained text overlay class
 	class TextOverlay
@@ -36,15 +38,7 @@ namespace VulkanLib
 
 		bool visible = true;
 
-		TextOverlay(Renderer* renderer,
-			Device *vulkanDevice,
-			VkQueue queue,
-			std::vector<VkFramebuffer> &framebuffers,
-			VkFormat colorformat,
-			VkFormat depthformat,
-			uint32_t *framebufferwidth,
-			uint32_t *framebufferheight,
-			std::vector<VkPipelineShaderStageCreateInfo> shaderstages);
+		TextOverlay(Renderer* renderer, std::vector<VkPipelineShaderStageCreateInfo> shaderstages);
 		
 		~TextOverlay();
 
@@ -54,9 +48,6 @@ namespace VulkanLib
 		
 		// Prepare a separate pipeline for the font rendering decoupled from the main application
 		void preparePipeline();
-
-		// Prepare a separate render pass for rendering the text as an overlay
-		void prepareRenderPass();
 
 		// Map buffer 
 		void beginTextUpdate();
@@ -79,14 +70,13 @@ namespace VulkanLib
 		Device* vulkanDevice;
 		Renderer* mRenderer;
 		CommandBuffer* mCommandBuffer;
+		RenderPass* mRenderPass;
+		Pipeline* mPipeline;
 
-		// Saschas code 
-		VkQueue queue;
-		VkFormat colorFormat;
-		VkFormat depthFormat;
-
-		uint32_t *frameBufferWidth;
-		uint32_t *frameBufferHeight;
+		// Should be fine to use VulkanBase framebuffer
+		// uint32_t *frameBufferWidth;
+		// uint32_t *frameBufferHeight;
+		// std::vector<VkFramebuffer*> frameBuffers;
 
 		VkSampler sampler;
 		VkImage image;
@@ -103,7 +93,6 @@ namespace VulkanLib
 		VkRenderPass renderPass;
 		VkCommandPool commandPool;
 		std::vector<VkCommandBuffer> cmdBuffers;
-		std::vector<VkFramebuffer*> frameBuffers;
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 
 		// Pointer to mapped vertex buffer

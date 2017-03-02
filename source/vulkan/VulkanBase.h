@@ -68,6 +68,8 @@ namespace VulkanLib
 		RenderPass* GetRenderPass();
 		Queue* GetQueue();
 		VkFramebuffer GetCurrentFrameBuffer();
+		VkFormat GetColorFormat();
+		VkFormat GetDepthFormat();
 
 		int GetWindowWidth();
 		int GetWindowHeight();
@@ -95,8 +97,8 @@ namespace VulkanLib
 		Semaphore*						mRenderComplete = nullptr;
 		Image*							mDepthStencil = nullptr;
 
-		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
 	};
 }	// VulkanLib namespace
 #pragma once
