@@ -1,4 +1,3 @@
-#include <array>
 #include "RenderPass.h"
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
@@ -8,29 +7,29 @@ namespace VulkanLib
 	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat)
 		: Handle(device, vkDestroyRenderPass)
 	{
-		// Descriptors for the attachments used by this renderpass
-		std::array<VkAttachmentDescription, 2> attachments = {};
-
 		// Color attachment
-		attachments[0].format = colorFormat;
-		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;									
-		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;							
-		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;						
-		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;			
-		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;	
-		attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;		
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		attachments[COLOR_ATTACHMENT].format = colorFormat;
+		attachments[COLOR_ATTACHMENT].samples = VK_SAMPLE_COUNT_1_BIT;
+		attachments[COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		attachments[COLOR_ATTACHMENT].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		attachments[COLOR_ATTACHMENT].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachments[COLOR_ATTACHMENT].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachments[COLOR_ATTACHMENT].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		attachments[COLOR_ATTACHMENT].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 																	
 		// Depth attachment											
-		attachments[1].format = depthFormat;
-		attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;						
-		attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;				
-		attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;		
-		attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;		
-		attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;			
-		attachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;	
+		attachments[DEPTH_ATTACHMENT].format = depthFormat;
+		attachments[DEPTH_ATTACHMENT].samples = VK_SAMPLE_COUNT_1_BIT;
+		attachments[DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;						
+		attachments[DEPTH_ATTACHMENT].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;				
+		attachments[DEPTH_ATTACHMENT].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;		
+		attachments[DEPTH_ATTACHMENT].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;		
+		attachments[DEPTH_ATTACHMENT].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;			
+		attachments[DEPTH_ATTACHMENT].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;	
+	}
 
+	void RenderPass::Create()
+	{
 		// Setup attachment references																			
 		VkAttachmentReference colorReference = {};
 		colorReference.attachment = 0;											
@@ -39,18 +38,6 @@ namespace VulkanLib
 		VkAttachmentReference depthReference = {};
 		depthReference.attachment = 1;									
 		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;		
-
-		// Setup a single subpass reference																			
-		VkSubpassDescription subpassDescription = {};
-		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.colorAttachmentCount = 1;							
-		subpassDescription.pColorAttachments = &colorReference;				
-		subpassDescription.pDepthStencilAttachment = &depthReference;	
-		subpassDescription.inputAttachmentCount = 0;				
-		subpassDescription.pInputAttachments = nullptr;			
-		subpassDescription.preserveAttachmentCount = 0;		
-		subpassDescription.pPreserveAttachments = nullptr;								
-		subpassDescription.pResolveAttachments = nullptr;							
 
 		std::array<VkSubpassDependency, 2> dependencies;
 
@@ -73,6 +60,18 @@ namespace VulkanLib
 		dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 		dependencies[1].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 		dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+		
+		// Setup a single subpass reference																			
+		VkSubpassDescription subpassDescription = {};
+		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpassDescription.colorAttachmentCount = 1;							
+		subpassDescription.pColorAttachments = &colorReference;				
+		subpassDescription.pDepthStencilAttachment = &depthReference;	
+		subpassDescription.inputAttachmentCount = 0;				
+		subpassDescription.pInputAttachments = nullptr;			
+		subpassDescription.preserveAttachmentCount = 0;		
+		subpassDescription.pPreserveAttachments = nullptr;								
+		subpassDescription.pResolveAttachments = nullptr;							
 
 		// Create the actual renderpass
 		VkRenderPassCreateInfo renderPassInfo = {};
@@ -83,7 +82,7 @@ namespace VulkanLib
 		renderPassInfo.pSubpasses = &subpassDescription;				
 		renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());	
 		renderPassInfo.pDependencies = dependencies.data();							
-
+		
 		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetDevice(), &renderPassInfo, nullptr, &mHandle));
-	}
+	}	
 }
