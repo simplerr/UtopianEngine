@@ -78,6 +78,7 @@ namespace VulkanLib
 			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
 		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat);
+		mRenderPass->Create();
 		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());
 	}
 
