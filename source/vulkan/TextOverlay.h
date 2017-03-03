@@ -9,7 +9,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "../external/stb/stb_font_consolas_24_latin1.inl"
+#include "../../external/stb/stb_font_consolas_24_latin1.inl"
 
 // Defines for the STB font used
 // STB font files can be found at http://nothings.org/stb/font/
@@ -29,6 +29,9 @@ namespace VulkanLib
 	class CommandBuffer;
 	class RenderPass;
 	class Pipeline;
+	class VulkanTexture;
+	class PipelineLayout;
+	class VertexDescription;
 
 	// Mostly self-contained text overlay class
 	class TextOverlay
@@ -38,7 +41,7 @@ namespace VulkanLib
 
 		bool visible = true;
 
-		TextOverlay(Renderer* renderer, std::vector<VkPipelineShaderStageCreateInfo> shaderstages);
+		TextOverlay(Renderer* renderer);
 		
 		~TextOverlay();
 
@@ -72,28 +75,25 @@ namespace VulkanLib
 		CommandBuffer* mCommandBuffer;
 		RenderPass* mRenderPass;
 		Pipeline* mPipeline;
+		VulkanTexture* mTexture;
+		PipelineLayout* mPipelineLayout;
+		VertexDescription* mVertexDescription;
 
 		// Should be fine to use VulkanBase framebuffer
 		// uint32_t *frameBufferWidth;
 		// uint32_t *frameBufferHeight;
 		// std::vector<VkFramebuffer*> frameBuffers;
 
+		VkBuffer mBuffer;
+		VkDeviceMemory mMemory;
+
 		VkSampler sampler;
 		VkImage image;
 		VkImageView view;
-		VkBuffer mBuffer;
-		VkDeviceMemory mMemory;
 		VkDeviceMemory imageMemory;
-		VkDescriptorPool descriptorPool;
-		VkDescriptorSetLayout descriptorSetLayout;
-		VkDescriptorSet descriptorSet;
-		VkPipelineLayout pipelineLayout;
-		VkPipelineCache pipelineCache;
-		VkPipeline pipeline;
 		VkRenderPass renderPass;
 		VkCommandPool commandPool;
 		std::vector<VkCommandBuffer> cmdBuffers;
-		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 
 		// Pointer to mapped vertex buffer
 		glm::vec4 *mapped = nullptr;

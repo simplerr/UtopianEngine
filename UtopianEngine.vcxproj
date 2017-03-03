@@ -117,6 +117,7 @@
     <ClCompile Include="source\vulkan\ModelLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderManager.cpp" />
     <ClCompile Include="source\vulkan\StaticModel.cpp" />
+    <ClCompile Include="source\vulkan\TextOverlay.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\UniformBuffer.cpp" />
     <ClCompile Include="source\vulkan\VertexUniformBuffer.cpp" />
