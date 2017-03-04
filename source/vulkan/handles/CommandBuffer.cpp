@@ -3,6 +3,7 @@
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/Buffer.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "RenderPass.h"
@@ -151,6 +152,13 @@ namespace Vulkan
 	{
 		VkDeviceSize offsets[1] = { 0 };
 		vkCmdBindVertexBuffers(mHandle, firstBinding, bindingCount, buffers, offsets);		
+	}
+
+	void CommandBuffer::CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, Buffer* buffer)
+	{
+		VkDeviceSize offsets[1] = { 0 };
+		VkBuffer vkBuffer = buffer->GetVkBuffer();
+		vkCmdBindVertexBuffers(mHandle, firstBinding, bindingCount, &vkBuffer, offsets);		
 	}
 
 	void CommandBuffer::CmdBindIndexBuffer(VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType)

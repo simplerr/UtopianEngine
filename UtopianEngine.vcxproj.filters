@@ -192,6 +192,9 @@
     <ClCompile Include="source\vulkan\handles\Texture.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Buffer.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -348,6 +351,9 @@
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Texture.h">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\Buffer.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,6 +11,7 @@
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/handles/Buffer.h"
 #include "vulkan/VertexDescription.h"
 
 namespace Vulkan
@@ -31,7 +32,7 @@ namespace Vulkan
 
 		// Vertex buffer
 		VkDeviceSize bufferSize = TEXTOVERLAY_MAX_CHAR_COUNT * sizeof(glm::vec4);
-		mRenderer->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, nullptr, &mBuffer, &mMemory);
+		mVertexBuffer = new Buffer(vulkanDevice, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, nullptr);
 
 		// Load the texture
 		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
@@ -75,9 +76,7 @@ namespace Vulkan
 	TextOverlay::~TextOverlay()
 	{
 		// Free up all Vulkan resources requested by the text overlay
-		vkDestroyBuffer(vulkanDevice->GetVkDevice(), mBuffer, nullptr);
-		vkFreeMemory(vulkanDevice->GetVkDevice(), mMemory, nullptr);
-
+		delete mVertexBuffer;
 		delete mRenderPass;
 		delete mPipelineLayout;
 		delete mPipeline;
@@ -87,7 +86,7 @@ namespace Vulkan
 	// Map buffer 
 	void TextOverlay::BeginTextUpdate()
 	{
-		VulkanDebug::ErrorCheck(vkMapMemory(vulkanDevice->GetVkDevice(), mMemory, 0, VK_WHOLE_SIZE, 0, (void **)&mapped));
+		mVertexBuffer->MapMemory(0, VK_WHOLE_SIZE, 0, (void **)&mapped);
 		numLetters = 0;
 	}
 
@@ -164,7 +163,7 @@ namespace Vulkan
 	// Unmap buffer and update command buffers
 	void TextOverlay::EndTextUpdate()
 	{
-		vkUnmapMemory(vulkanDevice->GetVkDevice(), mMemory);
+		mVertexBuffer->UnmapMemory();
 		mapped = nullptr;
 		UpdateCommandBuffers();
 	}
@@ -182,12 +181,8 @@ namespace Vulkan
 
 		vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mTexture->GetDescriptorSet()->descriptorSet, 0, NULL);
 
-		VkDeviceSize offsets = 0;
-		vkCmdBindVertexBuffers(mCommandBuffer->GetVkHandle(), 0, 1, &mBuffer, &offsets);
-		vkCmdBindVertexBuffers(mCommandBuffer->GetVkHandle(), 1, 1, &mBuffer, &offsets);
-
-		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mBuffer);
-		mCommandBuffer->CmdBindVertexBuffer(1, 1, &mBuffer);
+		mCommandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer);
+		mCommandBuffer->CmdBindVertexBuffer(1, 1, mVertexBuffer);
 		for (uint32_t j = 0; j < numLetters; j++)
 		{
 			vkCmdDraw(mCommandBuffer->GetVkHandle(), 4, 1, j * 4, 0);

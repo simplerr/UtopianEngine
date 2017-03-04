@@ -41,12 +41,6 @@ namespace Vulkan
 		PIPELINE_DEBUG
 	};
 
-	struct Buffer {
-		VkBuffer buffer;
-		VkDeviceMemory memory;
-		VkDescriptorBufferInfo descriptor;
-	};
-
 	struct InstanceData {
 		vec3 position;
 		vec3 scale;

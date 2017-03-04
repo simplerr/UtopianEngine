@@ -32,6 +32,7 @@ namespace Vulkan
 	class Texture;
 	class PipelineLayout;
 	class VertexDescription;
+	class Buffer;
 
 	// Mostly self-contained text overlay class
 	class TextOverlay
@@ -69,10 +70,7 @@ namespace Vulkan
 		Texture* mTexture;
 		PipelineLayout* mPipelineLayout;
 		VertexDescription* mVertexDescription;
-
-		// Vertex buffer
-		VkBuffer mBuffer;
-		VkDeviceMemory mMemory;
+		Buffer* mVertexBuffer;
 
 		// Pointer to mapped vertex buffer
 		glm::vec4 *mapped = nullptr;
