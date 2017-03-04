@@ -1,3 +1,5 @@
+#include <sstream>
+#include <iomanip>
 #include "vulkan/TextOverlay.h"
 #include "vulkan/Device.h"
 #include "vulkan/ShaderManager.h"
@@ -157,6 +159,40 @@ namespace Vulkan
 			x += charData->advance * charW;
 
 			numLetters++;
+		}
+	}
+
+	void TextOverlay::AddText(std::string text, glm::vec3 vec, float x, float y, TextAlign align)
+	{
+		AddText(text, x, y, align);
+
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(2) << std::showpos;
+		ss << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z;
+		AddText(ss.str(), x, y + y_offset, align);
+	}
+
+	void TextOverlay::AddText(std::string text, glm::vec4 vec, float x, float y, TextAlign align)
+	{
+		AddText(text, x, y, align);
+
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision(2) << std::showpos;
+		ss << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << " w: " << vec.w;
+		AddText(ss.str(), x, y + y_offset, align);
+	}
+
+	void TextOverlay::AddText(std::string text, glm::mat4 mat, float x, float y, TextAlign align)
+	{
+		AddText(text, x, y, align);
+
+		std::stringstream  ss;
+		for (uint32_t i = 0; i < 4; i++)
+		{
+			ss.str("");
+			ss << std::fixed << std::setprecision(2) << std::showpos;
+			ss << mat[0][i] << " " << mat[1][i] << " " << mat[2][i] << " " << mat[3][i];
+			AddText(ss.str(), x, y + y_offset + (float)i * 20.0f, align);
 		}
 	}
 

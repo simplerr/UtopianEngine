@@ -51,6 +51,9 @@ namespace Vulkan
 		// Add text to the current buffer
 		// todo : drop shadow? color attribute?
 		void AddText(std::string text, float x, float y, TextAlign align);
+		void AddText(std::string text, glm::vec3 vec, float x, float y, TextAlign align);
+		void AddText(std::string text, glm::vec4 vec, float x, float y, TextAlign align);
+		void AddText(std::string text, glm::mat4 mat, float x, float y, TextAlign align);
 		
 		// Unmap buffer and update command buffers
 		void EndTextUpdate();
@@ -78,5 +81,8 @@ namespace Vulkan
 		uint32_t numLetters;
 
 		bool mVisible;
+
+		// How much to offset debug print from header print
+		const float y_offset = 15.0f;
 	};
 }

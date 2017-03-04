@@ -358,8 +358,12 @@ namespace Vulkan
 	void Renderer::Update()
 	{
 		mTextOverlay->BeginTextUpdate();
-		mTextOverlay->AddText("Test string", 5.0f, 65.0f, TextOverlay::ALIGN_LEFT);
-		mTextOverlay->AddText("This is cool", 500.0f, 650.0f, TextOverlay::ALIGN_LEFT);
+
+		mTextOverlay->AddText("Camera pos", mCamera->GetPosition(), 5.0f, 5.0f, TextOverlay::ALIGN_LEFT);
+		mTextOverlay->AddText("Camera dir", mCamera->GetDirection(), 5.0f, 50.0f, TextOverlay::ALIGN_LEFT);
+
+		glm::mat4 mat = glm::mat4();
+		mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
 		mTextOverlay->EndTextUpdate();
 	}
 
