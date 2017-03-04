@@ -317,7 +317,10 @@ namespace Vulkan
 		std::vector<VkCommandBuffer> commandBuffers;
 		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
 		{
-			commandBuffers.push_back(commandBuffer->GetVkHandle());
+			if (commandBuffer->IsActive()) 
+			{
+				commandBuffers.push_back(commandBuffer->GetVkHandle());
+			}
 		}
 
 		// This is where multithreaded command buffers can be added
@@ -357,18 +360,31 @@ namespace Vulkan
 
 	void Renderer::Update()
 	{
-		mTextOverlay->BeginTextUpdate();
+		if (mTextOverlay->IsVisible())
+		{
+			mTextOverlay->BeginTextUpdate();
 
-		mTextOverlay->AddText("Camera pos", mCamera->GetPosition(), 5.0f, 5.0f, TextOverlay::ALIGN_LEFT);
-		mTextOverlay->AddText("Camera dir", mCamera->GetDirection(), 5.0f, 50.0f, TextOverlay::ALIGN_LEFT);
+			mTextOverlay->AddText("Camera pos", mCamera->GetPosition(), 5.0f, 5.0f, TextOverlay::ALIGN_LEFT);
+			mTextOverlay->AddText("Camera dir", mCamera->GetDirection(), 5.0f, 50.0f, TextOverlay::ALIGN_LEFT);
 
-		glm::mat4 mat = glm::mat4();
-		mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
-		mTextOverlay->EndTextUpdate();
+			glm::mat4 mat = glm::mat4();
+			mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
+			mTextOverlay->EndTextUpdate();
+		}
 	}
 
 	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
+		switch (msg)
+		{
+		case WM_KEYDOWN:
+			if (wParam == VK_SPACE)
+			{
+				mTextOverlay->ToggleVisible();
+			}
+			break;
+		}
+
 		// Default message handling
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
 

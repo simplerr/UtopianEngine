@@ -14,6 +14,7 @@ namespace Vulkan
 		: Handle(device, nullptr)
 	{
 		mCommandPool = commandPool;
+		mActive = true;
 
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -169,5 +170,15 @@ namespace Vulkan
 	void CommandBuffer::CmdDrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
 	{
 		vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
+	}
+
+	bool CommandBuffer::IsActive()
+	{
+		return mActive;
+	}
+
+	void CommandBuffer::ToggleActive()
+	{
+		mActive = !mActive;
 	}
 }

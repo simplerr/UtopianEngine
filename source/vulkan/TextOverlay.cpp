@@ -229,6 +229,7 @@ namespace Vulkan
 
 	void TextOverlay::ToggleVisible()
 	{
+		mCommandBuffer->ToggleActive();
 		mVisible = !mVisible;
 	}
 
