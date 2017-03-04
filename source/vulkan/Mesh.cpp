@@ -6,6 +6,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
+#include "vulkan/handles/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "Mesh.h"
 
@@ -99,14 +100,14 @@ namespace Vulkan
 
 	}
 
-	void Mesh::SetTexture(VulkanTexture* texture)
+	void Mesh::SetTexture(Texture* texture)
 	{
 		mTexture = texture;
 	}
 
 	VkDescriptorSet Mesh::GetTextureDescriptor()
 	{
-		return mTexture->descriptorSet->descriptorSet;
+		return mTexture->GetDescriptorSet()->descriptorSet;
 	}
 
 	BoundingBox Mesh::GetBoundingBox()

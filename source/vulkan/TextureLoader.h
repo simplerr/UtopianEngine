@@ -11,26 +11,7 @@ namespace Vulkan
 	class Device;
 	class DescriptorSet;
 	class Renderer;
-
-	struct VulkanTexture
-	{
-		VkImage image;
-		VkDeviceMemory deviceMemory;
-		VkImageView imageView;
-		VkSampler sampler;
-
-		DescriptorSet* descriptorSet;
-
-		VkDescriptorImageInfo GetTextureDescriptorInfo()
-		{
-			VkDescriptorImageInfo texDescriptor = {};
-			texDescriptor.sampler = sampler;
-			texDescriptor.imageView = imageView;
-			texDescriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-
-			return texDescriptor;
-		}
-	};
+	class Texture;
 
 	class TextureLoader
 	{
@@ -38,9 +19,10 @@ namespace Vulkan
 		TextureLoader(Renderer* renderer, VkQueue queue);
 		~TextureLoader();
 
-		VulkanTexture* LoadTexture(std::string filename);
-		VulkanTexture* LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size);
-		void DestroyTexture(VulkanTexture* texture);
+		Texture* LoadTexture(std::string filename);
+
+		// NOTE: Textures loaded with this function needs to be deleted manually
+		Texture* LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size);
 
 		void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory);
 		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
@@ -48,7 +30,7 @@ namespace Vulkan
 		void CreateImageView(VkImage image, VkFormat format, VkImageView* imageView);
 		void CreateImageSampler(VkSampler* sampler);
 	private:
-		std::map<std::string, VulkanTexture*> mTextureMap;
+		std::map<std::string, Texture*> mTextureMap;
 		Renderer* mRenderer;
 		Device*  mDevice;
 		VkQueue mQueue;

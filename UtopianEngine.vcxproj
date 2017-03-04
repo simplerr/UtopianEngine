@@ -98,6 +98,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
+    <ClCompile Include="source\vulkan\handles\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
     <ClCompile Include="source\vulkan\Device.cpp" />
     <ClCompile Include="source\vulkan\FragmentUniformBuffer.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h" />
+    <ClInclude Include="source\vulkan\handles\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
     <ClInclude Include="source\vulkan\Device.h" />
     <ClInclude Include="source\vulkan\FragmentUniformBuffer.h" />

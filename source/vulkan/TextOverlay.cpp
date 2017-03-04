@@ -4,6 +4,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
+#include "vulkan/handles/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
@@ -28,37 +29,13 @@ namespace Vulkan
 		mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		mRenderPass->Create();
 
-		prepareResources();
-		preparePipeline();
-	}
-
-	TextOverlay::~TextOverlay()
-	{
-		// Free up all Vulkan resources requested by the text overlay
-		vkDestroySampler(vulkanDevice->GetVkDevice(), sampler, nullptr);
-		vkDestroyImage(vulkanDevice->GetVkDevice(), image, nullptr);
-		vkDestroyImageView(vulkanDevice->GetVkDevice(), view, nullptr);
-		vkDestroyBuffer(vulkanDevice->GetVkDevice(), mBuffer, nullptr);
-		vkFreeMemory(vulkanDevice->GetVkDevice(), mMemory, nullptr);
-		vkFreeMemory(vulkanDevice->GetVkDevice(), imageMemory, nullptr);
-
-		delete mRenderPass;
-		delete mPipelineLayout;
-		delete mPipeline;
-		// TODO: Free the texture
-	}
-
-	// Prepare all vulkan resources required to render the font
-	// The text overlay uses separate resources for descriptors (pool, sets, layouts), pipelines and command buffers
-	void TextOverlay::prepareResources()
-	{
-		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
-		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
-
 		// Vertex buffer
 		VkDeviceSize bufferSize = TEXTOVERLAY_MAX_CHAR_COUNT * sizeof(glm::vec4);
 		mRenderer->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, nullptr, &mBuffer, &mMemory);
 
+		// Load the texture
+		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
+		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
 		mTexture = mRenderer->mTextureLoader->LoadTexture((void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, STB_FONT_WIDTH * STB_FONT_HEIGHT);
 
 		// NOTE: Uses the descriptor set layout for the texture from the Renderer
@@ -67,17 +44,14 @@ namespace Vulkan
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 		descriptorSetLayouts.push_back(mRenderer->GetTextureDescriptorSetLayout()->GetVkHandle());
 		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, nullptr);
-	}
 
-	// Prepare a separate pipeline for the font rendering decoupled from the main application
-	void TextOverlay::preparePipeline()
-	{
 		mVertexDescription = new VertexDescription();
 		mVertexDescription->AddBinding(0, sizeof(glm::vec4), VK_VERTEX_INPUT_RATE_VERTEX);					
 		mVertexDescription->AddBinding(1, sizeof(glm::vec4), VK_VERTEX_INPUT_RATE_VERTEX);				
 		mVertexDescription->AddAttribute(0, Vec2Attribute());	
 		mVertexDescription->AddAttribute(0, Vec2Attribute());
 
+		// Create the pipeline
 		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
 		mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 		
@@ -94,10 +68,24 @@ namespace Vulkan
 		mPipeline->mBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 		mPipeline->mBlendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 		mPipeline->Create();
+
+		mVisible = true;
+	}
+
+	TextOverlay::~TextOverlay()
+	{
+		// Free up all Vulkan resources requested by the text overlay
+		vkDestroyBuffer(vulkanDevice->GetVkDevice(), mBuffer, nullptr);
+		vkFreeMemory(vulkanDevice->GetVkDevice(), mMemory, nullptr);
+
+		delete mRenderPass;
+		delete mPipelineLayout;
+		delete mPipeline;
+		delete mTexture;
 	}
 
 	// Map buffer 
-	void TextOverlay::beginTextUpdate()
+	void TextOverlay::BeginTextUpdate()
 	{
 		VulkanDebug::ErrorCheck(vkMapMemory(vulkanDevice->GetVkDevice(), mMemory, 0, VK_WHOLE_SIZE, 0, (void **)&mapped));
 		numLetters = 0;
@@ -105,7 +93,7 @@ namespace Vulkan
 
 	// Add text to the current buffer
 	// todo : drop shadow? color attribute?
-	void TextOverlay::addText(std::string text, float x, float y, TextAlign align)
+	void TextOverlay::AddText(std::string text, float x, float y, TextAlign align)
 	{
 		assert(mapped != nullptr);
 
@@ -128,10 +116,10 @@ namespace Vulkan
 
 		switch (align)
 		{
-		case alignRight:
+		case ALIGN_RIGHT:
 			x -= textWidth;
 			break;
-		case alignCenter:
+		case ALIGN_CENTER:
 			x -= textWidth / 2.0f;
 			break;
 		}
@@ -174,15 +162,15 @@ namespace Vulkan
 	}
 
 	// Unmap buffer and update command buffers
-	void TextOverlay::endTextUpdate()
+	void TextOverlay::EndTextUpdate()
 	{
 		vkUnmapMemory(vulkanDevice->GetVkDevice(), mMemory);
 		mapped = nullptr;
-		updateCommandBuffers();
+		UpdateCommandBuffers();
 	}
 
 	// Needs to be called by the application
-	void TextOverlay::updateCommandBuffers()
+	void TextOverlay::UpdateCommandBuffers()
 	{
 		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
 
@@ -192,7 +180,7 @@ namespace Vulkan
 		// TODO: This is currently done in the primary command buffer in Renderer
 		mCommandBuffer->CmdBindPipeline(mPipeline);
 
-		vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mTexture->descriptorSet->descriptorSet, 0, NULL);
+		vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mTexture->GetDescriptorSet()->descriptorSet, 0, NULL);
 
 		VkDeviceSize offsets = 0;
 		vkCmdBindVertexBuffers(mCommandBuffer->GetVkHandle(), 0, 1, &mBuffer, &offsets);
@@ -208,20 +196,13 @@ namespace Vulkan
 		mCommandBuffer->End();
 	}
 
-	// Submit the text command buffers to a queue
-	// Does a queue wait idle
-	void TextOverlay::submit(VkQueue queue, uint32_t bufferindex)
+	void TextOverlay::ToggleVisible()
 	{
-		if (!visible)
-		{
-			return;
-		}
+		mVisible = !mVisible;
+	}
 
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO; submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &cmdBuffers[bufferindex];
-
-		VulkanDebug::ErrorCheck(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(queue));
+	bool TextOverlay::IsVisible()
+	{
+		return mVisible;
 	}
 }

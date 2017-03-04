@@ -360,10 +360,10 @@ namespace Vulkan
 
 	void Renderer::Update()
 	{
-		mTextOverlay->beginTextUpdate();
-		mTextOverlay->addText("Test string", 5.0f, 65.0f, TextOverlay::alignLeft);
-		mTextOverlay->addText("This is cool", 500.0f, 650.0f, TextOverlay::alignLeft);
-		mTextOverlay->endTextUpdate();
+		mTextOverlay->BeginTextUpdate();
+		mTextOverlay->AddText("Test string", 5.0f, 65.0f, TextOverlay::ALIGN_LEFT);
+		mTextOverlay->AddText("This is cool", 500.0f, 650.0f, TextOverlay::ALIGN_LEFT);
+		mTextOverlay->EndTextUpdate();
 	}
 
 	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

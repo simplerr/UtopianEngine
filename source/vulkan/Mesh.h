@@ -13,7 +13,7 @@
 namespace Vulkan
 {
 	class Device;
-	class VulkanTexture;
+	class Texture;
 
 	class Mesh
 	{
@@ -37,7 +37,7 @@ namespace Vulkan
 		void BuildBuffers(Device* device);
 		void BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>);
 
-		void SetTexture(VulkanTexture* texture);
+		void SetTexture(Texture* texture);
 		VkDescriptorSet GetTextureDescriptor();
 
 		BoundingBox GetBoundingBox();
@@ -49,7 +49,7 @@ namespace Vulkan
 		std::vector<unsigned int> indexVector;
 	private:
 		Device* mDevice;
-		VulkanTexture* mTexture;
+		Texture* mTexture;
 		std::string mTexturePath;
 
 		BoundingBox mBoundingBox;

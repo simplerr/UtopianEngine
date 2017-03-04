@@ -101,14 +101,14 @@ namespace Vulkan
 					FindValidPath(&texturePath, filename);
 					mesh->SetTexturePath(texturePath.C_Str());
 
-					VulkanTexture* texture = mTextureLoader->LoadTexture(texturePath.C_Str());
+					Texture* texture = mTextureLoader->LoadTexture(texturePath.C_Str());
 					mesh->SetTexture(texture);
 				}
 				else
 				{
 					mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
 
-					VulkanTexture* texture = mTextureLoader->LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+					Texture* texture = mTextureLoader->LoadTexture(PLACEHOLDER_TEXTURE_PATH);
 					mesh->SetTexture(texture);
 				}
 

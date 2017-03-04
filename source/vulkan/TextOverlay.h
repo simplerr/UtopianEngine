@@ -29,7 +29,7 @@ namespace Vulkan
 	class CommandBuffer;
 	class RenderPass;
 	class Pipeline;
-	class VulkanTexture;
+	class Texture;
 	class PipelineLayout;
 	class VertexDescription;
 
@@ -37,37 +37,28 @@ namespace Vulkan
 	class TextOverlay
 	{
 	public:
-		enum TextAlign { alignLeft, alignCenter, alignRight };
-
-		bool visible = true;
+		enum TextAlign {
+			ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT 
+		};
 
 		TextOverlay(Renderer* renderer);
-		
 		~TextOverlay();
 
-		// Prepare all vulkan resources required to render the font
-		// The text overlay uses separate resources for descriptors (pool, sets, layouts), pipelines and command buffers
-		void prepareResources();
-		
-		// Prepare a separate pipeline for the font rendering decoupled from the main application
-		void preparePipeline();
-
 		// Map buffer 
-		void beginTextUpdate();
+		void BeginTextUpdate();
 
 		// Add text to the current buffer
 		// todo : drop shadow? color attribute?
-		void addText(std::string text, float x, float y, TextAlign align);
+		void AddText(std::string text, float x, float y, TextAlign align);
 		
 		// Unmap buffer and update command buffers
-		void endTextUpdate();
+		void EndTextUpdate();
 
 		// Needs to be called by the application
-		void updateCommandBuffers();
+		void UpdateCommandBuffers();
 
-		// Submit the text command buffers to a queue
-		// Does a queue wait idle
-		void submit(VkQueue queue, uint32_t bufferindex);
+		void ToggleVisible();
+		bool IsVisible();
 	private:
 		// My code
 		Device* vulkanDevice;
@@ -75,29 +66,19 @@ namespace Vulkan
 		CommandBuffer* mCommandBuffer;
 		RenderPass* mRenderPass;
 		Pipeline* mPipeline;
-		VulkanTexture* mTexture;
+		Texture* mTexture;
 		PipelineLayout* mPipelineLayout;
 		VertexDescription* mVertexDescription;
 
-		// Should be fine to use VulkanBase framebuffer
-		// uint32_t *frameBufferWidth;
-		// uint32_t *frameBufferHeight;
-		// std::vector<VkFramebuffer*> frameBuffers;
-
+		// Vertex buffer
 		VkBuffer mBuffer;
 		VkDeviceMemory mMemory;
-
-		VkSampler sampler;
-		VkImage image;
-		VkImageView view;
-		VkDeviceMemory imageMemory;
-		VkRenderPass renderPass;
-		VkCommandPool commandPool;
-		std::vector<VkCommandBuffer> cmdBuffers;
 
 		// Pointer to mapped vertex buffer
 		glm::vec4 *mapped = nullptr;
 		stb_fontchar stbFontData[STB_NUM_CHARS];
 		uint32_t numLetters;
+
+		bool mVisible;
 	};
 }

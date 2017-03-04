@@ -1,5 +1,6 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/Texture.h"
 #include "TextureLoader.h"
 #include "VulkanDebug.h"
 #include "Device.h"
@@ -19,11 +20,11 @@ namespace Vulkan
 	{
 		for (auto& texture : mTextureMap)
 		{
-			DestroyTexture(texture.second);
+			delete texture.second;
 		}
 	}
 
-	VulkanTexture* TextureLoader::LoadTexture(std::string filename)
+	Texture* TextureLoader::LoadTexture(std::string filename)
 	{
 		// Check if the model already is loaded
 		if (mTextureMap.find(filename) != mTextureMap.end())
@@ -38,7 +39,7 @@ namespace Vulkan
 			return nullptr;
 		}
 
-		VulkanTexture* texture = new VulkanTexture();
+		Texture* texture = new Texture(mDevice);
 
 		// Create the staging image and device memory
 		VkImage stagingImage = VK_NULL_HANDLE;
@@ -104,10 +105,7 @@ namespace Vulkan
 		CreateImageSampler(&texture->sampler);
 
 		// Create the descriptor set for the texture
-		texture->descriptorSet = new DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		texture->descriptorSet->AllocateDescriptorSets();
-		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
-		texture->descriptorSet->UpdateDescriptorSets();
+		texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		
 		mTextureMap[filename] = texture;
 
@@ -117,12 +115,12 @@ namespace Vulkan
 		return texture;
 	}
 
-	VulkanTexture* TextureLoader::LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size)
+	Texture* TextureLoader::LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
-		VkDeviceSize imageSize = width * height;
+		VkDeviceSize imageSize = width * height; // NOTE: Assumes each pixel is stored as U8
 
-		VulkanTexture* texture = new VulkanTexture();
+		Texture* texture = new Texture(mDevice);
 
 		// Create the staging image and device memory
 		VkImage stagingImage = VK_NULL_HANDLE;
@@ -174,27 +172,16 @@ namespace Vulkan
 		CreateImageView(texture->image, format, &texture->imageView);
 
 		// Create the sampler
-		// NOTE: VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE
+		// NOTE: should be VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE when rendering text overlay
 		CreateImageSampler(&texture->sampler);
 
 		// Create the descriptor set for the texture
-		texture->descriptorSet = new DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		texture->descriptorSet->AllocateDescriptorSets();
-		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
-		texture->descriptorSet->UpdateDescriptorSets();
+		texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 
 		vkDestroyImage(device, stagingImage, nullptr);
 		vkFreeMemory(device, stagingMemory, nullptr);
 
 		return texture;
-	}
-
-	void TextureLoader::DestroyTexture(VulkanTexture* texture)
-	{
-		vkDestroyImageView(mDevice->GetVkDevice(), texture->imageView, nullptr);
-		vkDestroyImage(mDevice->GetVkDevice(), texture->image, nullptr);
-		vkDestroySampler(mDevice->GetVkDevice(), texture->sampler, nullptr);
-		vkFreeMemory(mDevice->GetVkDevice(), texture->deviceMemory, nullptr);
 	}
 
 	void TextureLoader::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
