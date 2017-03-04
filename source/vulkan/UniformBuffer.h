@@ -5,6 +5,7 @@
 namespace Vulkan
 {
 	class VulkanBase;
+	class Buffer;
 
 	/*
 	Base class that handles uniform buffer creation
@@ -13,12 +14,7 @@ namespace Vulkan
 	class UniformBuffer
 	{
 	public:
-		void Cleanup(VkDevice device)
-		{
-			// Cleanup uniform buffer
-			vkDestroyBuffer(device, mBuffer, nullptr);
-			vkFreeMemory(device, mMemory, nullptr);
-		}
+		virtual ~UniformBuffer();
 
 		// [NOTE] This has to be called after elements have been added to vectors, since GetSize() needs to return the correct size
 		// Creates a VkBuffer and maps it to a VkMemory (VulkanBase::CreateBuffer())
@@ -32,8 +28,7 @@ namespace Vulkan
 		VkDescriptorBufferInfo GetDescriptor() { return mDescriptor; }
 
 	protected:
-		VkBuffer mBuffer = VK_NULL_HANDLE;
-		VkDeviceMemory mMemory = VK_NULL_HANDLE;
+		Buffer* mBuffer;
 		VkDescriptorBufferInfo mDescriptor;
 	};
 }

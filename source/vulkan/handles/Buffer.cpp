@@ -30,6 +30,7 @@ namespace Vulkan
 		uint32_t tmp;
 		memAllocInfo.memoryTypeIndex = mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp); // [NOTE] This is really weird
 		VulkanDebug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
+
 		if (data != nullptr)
 		{
 			void *mapped;
@@ -48,7 +49,7 @@ namespace Vulkan
 
 	void Buffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
 	{
-		VulkanDebug::ErrorCheck(vkMapMemory(mDevice->GetVkDevice(), mMemory, 0, VK_WHOLE_SIZE, 0, data));
+		VulkanDebug::ErrorCheck(vkMapMemory(mDevice->GetVkDevice(), mMemory, offset, size, flags, data));
 	}
 
 	void Buffer::UnmapMemory()

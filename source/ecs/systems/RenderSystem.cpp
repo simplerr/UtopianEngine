@@ -81,7 +81,6 @@ namespace ECS
 		delete mDescriptorPool;
 		delete mDescriptorSet;
 		delete mGeometryPipeline;
-		mUniformBuffer.Cleanup(mRenderer->GetVkDevice());
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)

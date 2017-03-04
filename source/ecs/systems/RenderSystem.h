@@ -5,6 +5,7 @@
 #include <window.h>
 #include "System.h"
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/handles/Buffer.h"
 
 namespace Vulkan
 {
@@ -26,10 +27,10 @@ namespace Vulkan
 		virtual void UpdateMemory(VkDevice device)
 		{
 			// Map uniform buffer and update it
-			uint8_t *data1;
-			Vulkan::VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, 0, sizeof(data), 0, (void **)&data1));
-			memcpy(data1, &data, sizeof(data));
-			vkUnmapMemory(device, mMemory);
+			uint8_t *mapped;
+			mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
+			memcpy(mapped, &data, sizeof(data));
+			mBuffer->UnmapMemory();
 		}
 
 		virtual int GetSize()

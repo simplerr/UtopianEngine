@@ -39,9 +39,6 @@ namespace Vulkan
 
 	Renderer::~Renderer()
 	{
-		mVertexUniformBuffer.Cleanup(GetVkDevice());
-		mFragmentUniformBuffer.Cleanup(GetVkDevice());
-
 		delete mDescriptorPool;
 
 		delete mCameraDescriptorSetLayout;

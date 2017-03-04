@@ -1,23 +1,23 @@
 #include "FragmentUniformBuffer.h"
 #include "VulkanDebug.h"
+#include "vulkan/handles/Buffer.h"
 
 void FragmentUniformBuffer::UpdateMemory(VkDevice device)
 {
 	// Map and update the light data
-	uint8_t* data;
+	uint8_t* mapped;
 	uint32_t dataOffset = 0;
 	uint32_t dataSize = lights.size() * sizeof(Vulkan::Light);
-	Vulkan::VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, dataOffset, dataSize, 0, (void **)&data));
-	memcpy(data, lights.data(), dataSize);
-	vkUnmapMemory(device, mMemory);
+	mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
+	memcpy(mapped, lights.data(), dataSize);
+	mBuffer->UnmapMemory();
 
 	// Map and update number of lights
-	uint8_t* data1;
 	dataOffset += dataSize;
 	dataSize = sizeof(constants);
-	Vulkan::VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, dataOffset, dataSize, 0, (void **)&data1));
-	memcpy(data1, &constants.numLights, dataSize);
-	vkUnmapMemory(device, mMemory);
+	mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
+	memcpy(mapped, &constants.numLights, dataSize);
+	mBuffer->UnmapMemory();
 }
 
 int FragmentUniformBuffer::GetSize()

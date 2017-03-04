@@ -1,15 +1,16 @@
 #include "VertexUniformBuffer.h"
 #include "VulkanDebug.h"
+#include "vulkan/handles/Buffer.h"
 
 namespace Vulkan
 {
 	void VertexUniformBuffer::UpdateMemory(VkDevice device)
 	{
 		// Map uniform buffer and update it
-		uint8_t *data1;
-		VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, 0, sizeof(camera), 0, (void **)&data1));
-		memcpy(data1, &camera, sizeof(camera));
-		vkUnmapMemory(device, mMemory);
+		uint8_t *mapped;
+		mBuffer->MapMemory(0, sizeof(camera), 0, (void**)&mapped);
+		memcpy(mapped, &camera, sizeof(camera));
+		mBuffer->UnmapMemory();
 	}
 
 	int VertexUniformBuffer::GetSize()

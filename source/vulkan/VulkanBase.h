@@ -54,9 +54,6 @@ namespace Vulkan
 		void InitSwapchain(Window* window);
 		void SetupSwapchain();
 
-		// [TODO] Remove
-		VkBool32 CreateBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data, VkBuffer* buffer, VkDeviceMemory* memory);
-
 		void PrepareFrame();
 		void SubmitFrame();
 
