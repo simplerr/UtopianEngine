@@ -32,7 +32,7 @@ namespace ECS
 	{
 		mRenderer = renderer;
 		mCamera = camera;
-		mTextureLoader = new VulkanLib::TextureLoader(mRenderer, mRenderer->GetQueue()->GetVkHandle());
+		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new VulkanLib::ModelLoader(mTextureLoader);
 
 		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
@@ -58,7 +58,7 @@ namespace ECS
 
 		mDescriptorPool = new VulkanLib::DescriptorPool(mRenderer->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->CreatePool();
+		mDescriptorPool->Create();
 
 		mUniformBuffer.CreateBuffer(mRenderer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
@@ -76,7 +76,6 @@ namespace ECS
 	{
 		mModelLoader->CleanupModels(mRenderer->GetVkDevice());
 		delete mModelLoader;
-		delete mTextureLoader;
 		delete mDescriptorSetLayout;
 		delete mPipelineLayout;
 		delete mDescriptorPool;

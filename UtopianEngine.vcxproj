@@ -117,6 +117,7 @@
     <ClCompile Include="source\vulkan\ModelLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderManager.cpp" />
     <ClCompile Include="source\vulkan\StaticModel.cpp" />
+    <ClCompile Include="source\vulkan\TextOverlay.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\UniformBuffer.cpp" />
     <ClCompile Include="source\vulkan\VertexUniformBuffer.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="source\vulkan\ModelLoader.h" />
     <ClInclude Include="source\vulkan\ShaderManager.h" />
     <ClInclude Include="source\vulkan\StaticModel.h" />
+    <ClInclude Include="source\vulkan\TextOverlay.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\UniformBuffer.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />
@@ -186,6 +188,8 @@
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\test\test.frag" />
     <None Include="data\shaders\test\test.vert" />
+    <None Include="data\shaders\textoverlay\text.frag" />
+    <None Include="data\shaders\textoverlay\text.vert" />
     <None Include="docs\notes.md" />
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />

@@ -39,6 +39,7 @@ namespace VulkanLib
 		~TextureLoader();
 
 		VulkanTexture* LoadTexture(std::string filename);
+		VulkanTexture* LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size);
 		void DestroyTexture(VulkanTexture* texture);
 
 		void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory);

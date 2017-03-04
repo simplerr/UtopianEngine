@@ -12,6 +12,8 @@
 #include "TextureLoader.h"
 #include "Device.h"
 #include "ShaderManager.h"
+#include "TextOverlay.h"
+#include "handles/DescriptorSet.h"
 #include "handles/CommandBuffer.h"
 #include "handles/CommandPool.h"
 #include "handles/Pipeline.h"
@@ -64,6 +66,9 @@ namespace VulkanLib
 		}
 
 		delete mShaderManager;
+
+		delete mTextOverlay;
+		delete mTextureLoader;
 	}
 
 	void Renderer::Prepare()
@@ -82,6 +87,8 @@ namespace VulkanLib
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
 
+		mTextureLoader = new VulkanLib::TextureLoader(this, GetQueue()->GetVkHandle());
+		mTextOverlay = new TextOverlay(this);
 		mPrepared = true;
 	}
 
@@ -98,6 +105,7 @@ namespace VulkanLib
 		system("cd data/shaders/phong/ && generate-spirv.bat");
 		system("cd data/shaders/test/ && generate-spirv.bat");
 		system("cd data/shaders/geometry/ && generate-spirv.bat");
+		system("cd data/shaders/textoverlay/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Camera* camera)
@@ -222,7 +230,7 @@ namespace VulkanLib
 		mDescriptorPool = new DescriptorPool(GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, MAX_NUM_TEXTURES);
-		mDescriptorPool->CreatePool();
+		mDescriptorPool->Create();
 	}
 
 	// [TODO] Let each thread have a separate descriptor set!!
@@ -352,7 +360,10 @@ namespace VulkanLib
 
 	void Renderer::Update()
 	{
-
+		mTextOverlay->beginTextUpdate();
+		mTextOverlay->addText("Test string", 5.0f, 65.0f, TextOverlay::alignLeft);
+		mTextOverlay->addText("This is cool", 500.0f, 650.0f, TextOverlay::alignLeft);
+		mTextOverlay->endTextUpdate();
 	}
 
 	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

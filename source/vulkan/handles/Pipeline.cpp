@@ -25,6 +25,14 @@ namespace VulkanLib
 		mRasterizationState.rasterizerDiscardEnable = VK_FALSE;
 		mRasterizationState.depthBiasEnable = VK_FALSE;
 		mRasterizationState.lineWidth = 1.0f;
+		
+		// Input assembly state
+		mInputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		
+		// Color blend state
+		mBlendAttachmentState.colorWriteMask = 0xf;
+		mBlendAttachmentState.blendEnable = VK_FALSE;			// Blending disabled
 	}
 
 	void Pipeline::Create()
@@ -32,20 +40,10 @@ namespace VulkanLib
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
 		// ...
-
-		// Input assembly state
-		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
-		inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-
-		// Color blend state
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 		colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		VkPipelineColorBlendAttachmentState blendAttachmentState[1] = {};
-		blendAttachmentState[0].colorWriteMask = 0xf;
-		blendAttachmentState[0].blendEnable = VK_FALSE;			// Blending disabled
 		colorBlendState.attachmentCount = 1;
-		colorBlendState.pAttachments = blendAttachmentState;
+		colorBlendState.pAttachments = &mBlendAttachmentState;
 
 		// Viewport state
 		VkPipelineViewportStateCreateInfo viewportState = {};
@@ -93,7 +91,7 @@ namespace VulkanLib
 		pipelineCreateInfo.layout = mPipelineLayout->GetVkHandle();
 		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
 		pipelineCreateInfo.pVertexInputState = &mVertexDescription->GetInputState();		// From base - &vertices.inputState;
-		pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
+		pipelineCreateInfo.pInputAssemblyState = &mInputAssemblyState;
 		pipelineCreateInfo.pRasterizationState = &mRasterizationState;
 		pipelineCreateInfo.pColorBlendState = &colorBlendState;
 		pipelineCreateInfo.pViewportState = &viewportState;

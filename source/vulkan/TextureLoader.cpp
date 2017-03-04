@@ -117,6 +117,78 @@ namespace VulkanLib
 		return texture;
 	}
 
+	VulkanTexture* TextureLoader::LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size)
+	{
+		VkDevice device =  mDevice->GetVkDevice();	
+		VkDeviceSize imageSize = width * height;
+
+		VulkanTexture* texture = new VulkanTexture();
+
+		// Create the staging image and device memory
+		VkImage stagingImage = VK_NULL_HANDLE;
+		VkDeviceMemory stagingMemory = VK_NULL_HANDLE;
+
+		CreateImage(width,
+					  height,
+					  format,																		// VkFormat
+					  VK_IMAGE_TILING_LINEAR,														// VkImageTiling
+					  VK_IMAGE_USAGE_TRANSFER_SRC_BIT,												// VkImageUsageFlags
+					  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,	// VkMemoryPropertyFlags
+					  &stagingImage,																// VkImage
+					  &stagingMemory);																// VkDeviceMemory
+
+
+		// Copy the pixels from the loaded image to device memory
+		VkImageSubresource subresource = {};
+		subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subresource.mipLevel = 0;
+		subresource.arrayLayer = 0;
+
+		VkSubresourceLayout stagingImageLayout;
+		vkGetImageSubresourceLayout(device, stagingImage, &subresource, &stagingImageLayout);
+
+		uint8_t* mappedMemory;
+		VulkanDebug::ErrorCheck(vkMapMemory(device, stagingMemory, 0, imageSize, 0, (void **)&mappedMemory));
+		// Size of the font texture is WIDTH * HEIGHT * 1 byte (only one channel)
+		memcpy(mappedMemory, data, imageSize);
+		vkUnmapMemory(device, stagingMemory);
+
+		// Create the final image
+		CreateImage(width,
+					  height,
+					  format,																		// VkFormat
+					  VK_IMAGE_TILING_OPTIMAL,														// VkImageTiling
+					  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,					// VkImageUsageFlags
+					  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,											// VkMemoryPropertyFlags
+					  &texture->image,																// VkImage
+					  &texture->deviceMemory);														// VkDeviceMemory
+
+		TransitionImageLayout(stagingImage, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+		CopyImage(stagingImage, texture->image, width, height);
+
+		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		// Create the image view
+		CreateImageView(texture->image, format, &texture->imageView);
+
+		// Create the sampler
+		// NOTE: VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE
+		CreateImageSampler(&texture->sampler);
+
+		// Create the descriptor set for the texture
+		texture->descriptorSet = new DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		texture->descriptorSet->AllocateDescriptorSets();
+		texture->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
+		texture->descriptorSet->UpdateDescriptorSets();
+
+		vkDestroyImage(device, stagingImage, nullptr);
+		vkFreeMemory(device, stagingMemory, nullptr);
+
+		return texture;
+	}
+
 	void TextureLoader::DestroyTexture(VulkanTexture* texture)
 	{
 		vkDestroyImageView(mDevice->GetVkDevice(), texture->imageView, nullptr);

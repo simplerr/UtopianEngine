@@ -12,7 +12,6 @@
 #include "VertexDescription.h"
 #include "UniformBuffer.h"
 #include "VertexUniformBuffer.h"
-#include "handles/DescriptorSet.h"
 
 using namespace glm;
 
@@ -29,6 +28,10 @@ namespace VulkanLib
 	class PipelineLayout;
 	class Fence;
 	class DescriptorSetLayout;
+	class DescriptorSet;
+	class DescriptorPool;
+	class TextOverlay;
+	class TextureLoader;
 
 	enum PipelineType
 	{
@@ -123,14 +126,22 @@ namespace VulkanLib
 
 		DescriptorSetLayout*			mCameraDescriptorSetLayout;
 		DescriptorSetLayout*			mLightDescriptorSetLayout;
+
+		/* 
+			They descriptor set layout for textures is handled by Renderer
+			NOTE: Right now they have to be bound to binding=0	
+		*/
 		DescriptorSetLayout*			mTextureDescriptorSetLayout;
 
-		const uint32_t					MAX_NUM_TEXTURES = 10;
+		const uint32_t					MAX_NUM_TEXTURES = 64;
 
 		Camera*							mCamera;
+
+		TextOverlay*					mTextOverlay;
 
 		// TODO: NOTE: HACK
 	public:
 		ShaderManager*					mShaderManager = nullptr;
+		TextureLoader*					mTextureLoader = nullptr;
 	};
 }	// VulkanLib namespace

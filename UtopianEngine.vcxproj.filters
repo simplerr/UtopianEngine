@@ -46,6 +46,9 @@
     <Filter Include="Source Files\shaders\geometry">
       <UniqueIdentifier>{af8adda5-88c8-474b-ad59-41a01731b147}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders\text">
+      <UniqueIdentifier>{da46520d-639e-4ddb-b824-4fadd75d4061}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -181,6 +184,9 @@
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\Renderer.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\TextOverlay.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
@@ -335,6 +341,9 @@
     <ClInclude Include="source\vulkan\Renderer.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\TextOverlay.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -372,6 +381,12 @@
     </None>
     <None Include="data\shaders\geometry\normaldebug.geom">
       <Filter>Source Files\shaders\geometry</Filter>
+    </None>
+    <None Include="data\shaders\textoverlay\text.frag">
+      <Filter>Source Files\shaders\text</Filter>
+    </None>
+    <None Include="data\shaders\textoverlay\text.vert">
+      <Filter>Source Files\shaders\text</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

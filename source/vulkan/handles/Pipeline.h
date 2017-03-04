@@ -22,6 +22,8 @@ namespace VulkanLib
 		void Create();
 
 		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
+		VkPipelineInputAssemblyStateCreateInfo mInputAssemblyState = {};
+		VkPipelineColorBlendAttachmentState mBlendAttachmentState = {};
 	private:
 		PipelineLayout* mPipelineLayout = nullptr;
 		RenderPass* mRenderPass = nullptr;
