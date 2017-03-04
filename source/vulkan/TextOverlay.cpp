@@ -141,11 +141,6 @@ namespace VulkanLib
 		{
 			stb_fontchar *charData = &stbFontData[(uint32_t)letter - STB_FIRST_CHAR];
 
-			mapped->x = (x + (float)charData->x0 * charW);
-			mapped->y = (y + (float)charData->y0 * charH);
-			mapped->z = charData->s0;
-			mapped->w = charData->t0;
-			mapped++;
 
 			mapped->x = (x + (float)charData->x1 * charW);
 			mapped->y = (y + (float)charData->y0 * charH);
@@ -154,14 +149,21 @@ namespace VulkanLib
 			mapped++;
 
 			mapped->x = (x + (float)charData->x0 * charW);
-			mapped->y = (y + (float)charData->y1 * charH);
+			mapped->y = (y + (float)charData->y0 * charH);
 			mapped->z = charData->s0;
+			mapped->w = charData->t0;
+			mapped++;
+
+
+			mapped->x = (x + (float)charData->x1 * charW);
+			mapped->y = (y + (float)charData->y1 * charH);
+			mapped->z = charData->s1;
 			mapped->w = charData->t1;
 			mapped++;
 
-			mapped->x = (x + (float)charData->x1 * charW);
+			mapped->x = (x + (float)charData->x0 * charW);
 			mapped->y = (y + (float)charData->y1 * charH);
-			mapped->z = charData->s1;
+			mapped->z = charData->s0;
 			mapped->w = charData->t1;
 			mapped++;
 

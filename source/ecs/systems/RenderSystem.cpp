@@ -42,7 +42,7 @@ namespace ECS
 		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), VulkanLib::Color::Green, 70.0f);
 		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), VulkanLib::Color::Blue, 70.0f);
 
-		//mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		//
 		// Geometry shader pipeline
@@ -94,113 +94,113 @@ namespace ECS
 
 	void RenderSystem::Process()
 	{
-		//// TEMP:
-		//mUniformBuffer.data.projection = mCamera->GetProjection();
-		//mUniformBuffer.data.view = mCamera->GetView();
-		//mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+		// TEMP:
+		mUniformBuffer.data.projection = mCamera->GetProjection();
+		mUniformBuffer.data.view = mCamera->GetView();
+		mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
-		//// Temp
-		//VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
+		// Temp
+		VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
 
-		//// Build mesh rendering command buffer
-		//mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+		// Build mesh rendering command buffer
+		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
 
-		//mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-		//mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+		mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+		mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
+		for (EntityCache entityCache : mEntities)
+		{
+			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
+			
+			for (VulkanLib::Mesh* mesh : model->mMeshes)
+			{
+				mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(entityCache.meshComponent->GetPipeline()));
+
+				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+
+				VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+
+				// Push the world matrix constant
+				VulkanLib::PushConstantBlock pushConstantBlock;
+				pushConstantBlock.world = entityCache.transformComponent->GetWorldMatrix();
+				pushConstantBlock.worldInvTranspose = entityCache.transformComponent->GetWorldInverseTransposeMatrix(); // TOOD: This probably also needs to be negated
+
+				// NOTE: For some reason the translation needs to be negated when rendering
+				// Otherwise the physical representation does not match the rendered scene
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+				mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+
+				mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mesh->vertices.buffer);
+				mCommandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+
+				// Try the geometry shader pipeline
+				mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
+				mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+			}
+		}
+
+		// Draw debug boxes
 		//for (EntityCache entityCache : mEntities)
 		//{
-		//	VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
-		//	
-		//	for (VulkanLib::Mesh* mesh : model->mMeshes)
-		//	{
-		//		mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(entityCache.meshComponent->GetPipeline()));
+		//	mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST));
+		//	//mCommandBuffer->CmdBindDescriptorSet(mRenderer->GetPipelineLayout(), mRenderer->GetDescriptorSet());
 
-		//		VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+		//	//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, mRenderer->mTextureDescriptorSet->descriptorSet };
+		//	//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
-		//		VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-		//		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+		//	VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
+		//	meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
 
-		//		// Push the world matrix constant
-		//		VulkanLib::PushConstantBlock pushConstantBlock;
-		//		pushConstantBlock.world = entityCache.transformComponent->GetWorldMatrix();
-		//		pushConstantBlock.worldInvTranspose = entityCache.transformComponent->GetWorldInverseTransposeMatrix(); // TOOD: This probably also needs to be negated
+		//	mat4 world = mat4();
+		//	float width = meshBoundingBox.GetWidth();
+		//	float height = meshBoundingBox.GetHeight();
+		//	float depth = meshBoundingBox.GetDepth();
+		//	world = glm::translate(world, -entityCache.transformComponent->GetPosition());
+		//	world = glm::scale(world, glm::vec3(width, height, depth));
 
-		//		// NOTE: For some reason the translation needs to be negated when rendering
-		//		// Otherwise the physical representation does not match the rendered scene
-		//		pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-		//		pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-		//		pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+		//	PushConstantDebugBlock pushConstantBlock;
+		//	pushConstantBlock.world = world;
+		//	pushConstantBlock.color = VulkanLib::Color::White;
 
-		//		mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-
-		//		mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mesh->vertices.buffer);
-		//		mCommandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-		//		mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-
-		//		// Try the geometry shader pipeline
-		//		mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
-		//		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
-		//		mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-		//		mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-		//	}
+		//	mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+		//	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+		//	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+		//	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		//}
 
-		//// Draw debug boxes
-		////for (EntityCache entityCache : mEntities)
-		////{
-		////	mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST));
-		////	//mCommandBuffer->CmdBindDescriptorSet(mRenderer->GetPipelineLayout(), mRenderer->GetDescriptorSet());
+		//mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
+		////mCommandBuffer->CmdBindDescriptorSet(mRenderer->GetPipelineLayout(), mRenderer->GetDescriptorSet());
 
-		////	//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, mRenderer->mTextureDescriptorSet->descriptorSet };
-		////	//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+		////VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, mRenderer->mTestTexture.descriptorSet->descriptorSet };
+		////vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
-		////	VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
-		////	meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
+		//// Draw debug cubes for the origin and each axis
+		//for (int i = 0; i < mDebugCubes.size(); i++)
+		//{
+		//	DebugCube debugCube = mDebugCubes[i];
 
-		////	mat4 world = mat4();
-		////	float width = meshBoundingBox.GetWidth();
-		////	float height = meshBoundingBox.GetHeight();
-		////	float depth = meshBoundingBox.GetDepth();
-		////	world = glm::translate(world, -entityCache.transformComponent->GetPosition());
-		////	world = glm::scale(world, glm::vec3(width, height, depth));
+		//	glm::mat4 world = mat4();
+		//	world = glm::translate(world, -debugCube.pos);
+		//	world = glm::scale(world, glm::vec3(debugCube.size));
 
-		////	PushConstantDebugBlock pushConstantBlock;
-		////	pushConstantBlock.world = world;
-		////	pushConstantBlock.color = VulkanLib::Color::White;
+		//	PushConstantDebugBlock pushConstantBlock;
+		//	pushConstantBlock.world = world;
+		//	pushConstantBlock.color = debugCube.color;
 
-		////	mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-		////	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-		////	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-		////	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-		////}
+		//	mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+		//	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+		//	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+		//	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+		//}
 
-		////mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
-		//////mCommandBuffer->CmdBindDescriptorSet(mRenderer->GetPipelineLayout(), mRenderer->GetDescriptorSet());
-
-		//////VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, mRenderer->mTestTexture.descriptorSet->descriptorSet };
-		//////vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
-
-		////// Draw debug cubes for the origin and each axis
-		////for (int i = 0; i < mDebugCubes.size(); i++)
-		////{
-		////	DebugCube debugCube = mDebugCubes[i];
-
-		////	glm::mat4 world = mat4();
-		////	world = glm::translate(world, -debugCube.pos);
-		////	world = glm::scale(world, glm::vec3(debugCube.size));
-
-		////	PushConstantDebugBlock pushConstantBlock;
-		////	pushConstantBlock.world = world;
-		////	pushConstantBlock.color = debugCube.color;
-
-		////	mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-		////	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-		////	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-		////	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-		////}
-
-		//mCommandBuffer->End();
+		mCommandBuffer->End();
 	}
 
 	void RenderSystem::AddDebugCube(vec3 pos, vec4 color, float size)

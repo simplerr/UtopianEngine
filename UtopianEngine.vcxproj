@@ -188,6 +188,8 @@
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\test\test.frag" />
     <None Include="data\shaders\test\test.vert" />
+    <None Include="data\shaders\textoverlay\text.frag" />
+    <None Include="data\shaders\textoverlay\text.vert" />
     <None Include="docs\notes.md" />
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />

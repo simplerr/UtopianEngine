@@ -362,6 +362,7 @@ namespace VulkanLib
 	{
 		mTextOverlay->beginTextUpdate();
 		mTextOverlay->addText("Test string", 5.0f, 65.0f, TextOverlay::alignLeft);
+		mTextOverlay->addText("This is cool", 500.0f, 650.0f, TextOverlay::alignLeft);
 		mTextOverlay->endTextUpdate();
 	}
 
