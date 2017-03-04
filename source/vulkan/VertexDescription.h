@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include <map>
 
-namespace VulkanLib
+namespace Vulkan
 {
 	/*
 	Interface for all the different vertex attribute

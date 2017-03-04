@@ -12,14 +12,14 @@
 /*
 	The uniform buffer that the Phong fragment shader uses
 */
-class FragmentUniformBuffer : public VulkanLib::UniformBuffer
+class FragmentUniformBuffer : public Vulkan::UniformBuffer
 {
 public:
 	virtual void UpdateMemory(VkDevice device);
 	virtual int GetSize();
 
 	// Public data members
-	std::vector<VulkanLib::Light> lights;
+	std::vector<Vulkan::Light> lights;
 
 	struct {
 		float numLights;

@@ -3,7 +3,7 @@
 #include "DescriptorSet.h"
 #include "DescriptorSetLayout.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	DescriptorSet::DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{

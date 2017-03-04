@@ -1,6 +1,6 @@
 #include "Handle.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 
 }

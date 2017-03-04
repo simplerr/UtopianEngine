@@ -6,7 +6,7 @@
 #include "RenderPass.h"
 #include "PipelineLayout.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
 		: Handle(device, vkDestroyPipeline)

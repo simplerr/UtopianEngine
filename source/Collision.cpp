@@ -1,6 +1,6 @@
 #include  "Collision.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	void BoundingBox::Init(const std::vector<Vertex>& vertices)
 	{

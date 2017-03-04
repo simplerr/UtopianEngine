@@ -16,7 +16,7 @@
 
 using namespace glm;
 
-namespace VulkanLib
+namespace Vulkan
 {
 	ModelLoader::ModelLoader(TextureLoader* textureLoader)
 	{

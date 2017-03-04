@@ -8,7 +8,7 @@
 
 using namespace glm;
 
-namespace VulkanLib
+namespace Vulkan
 {
 	struct Vertex
 	{

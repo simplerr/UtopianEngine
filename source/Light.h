@@ -4,7 +4,7 @@
 
 using namespace glm;
 
-namespace VulkanLib
+namespace Vulkan
 {
 	enum LightType
 	{

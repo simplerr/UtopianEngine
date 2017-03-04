@@ -3,7 +3,7 @@
 
 namespace ECS
 {
-	MeshComponent::MeshComponent(std::string filename, VulkanLib::PipelineType pipeline)
+	MeshComponent::MeshComponent(std::string filename, Vulkan::PipelineType pipeline)
 		: Component(MESH_COMPONENT)
 	{
 		mFilename = filename;
@@ -11,27 +11,27 @@ namespace ECS
 		SetModel(nullptr);
 	}
 
-	void MeshComponent::SetModel(VulkanLib::StaticModel* model)
+	void MeshComponent::SetModel(Vulkan::StaticModel* model)
 	{
 		mModel = model;
 	}
 
-	void MeshComponent::SetPipeline(VulkanLib::PipelineType pipeline)
+	void MeshComponent::SetPipeline(Vulkan::PipelineType pipeline)
 	{
 		mPipeline = pipeline;
 	}
 
-	VulkanLib::PipelineType MeshComponent::GetPipeline()
+	Vulkan::PipelineType MeshComponent::GetPipeline()
 	{
 		return mPipeline;
 	}
 
-	VulkanLib::StaticModel* MeshComponent::GetModel()
+	Vulkan::StaticModel* MeshComponent::GetModel()
 	{
 		return mModel;
 	}
 
-	VulkanLib::BoundingBox MeshComponent::GetBoundingBox()
+	Vulkan::BoundingBox MeshComponent::GetBoundingBox()
 	{
 		return mModel->GetBoundingBox();
 	}

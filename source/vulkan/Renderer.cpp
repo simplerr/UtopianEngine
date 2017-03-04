@@ -29,7 +29,7 @@
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
@@ -87,7 +87,7 @@ namespace VulkanLib
 		SetupDescriptorSet();
 		PrepareCommandBuffers();
 
-		mTextureLoader = new VulkanLib::TextureLoader(this, GetQueue()->GetVkHandle());
+		mTextureLoader = new Vulkan::TextureLoader(this, GetQueue()->GetVkHandle());
 		mTextOverlay = new TextOverlay(this);
 		mPrepared = true;
 	}

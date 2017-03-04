@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Semaphore::Semaphore(Device* device)
 		: Handle(device, vkDestroySemaphore)

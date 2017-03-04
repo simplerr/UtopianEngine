@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Timer
 	{

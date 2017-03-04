@@ -1,6 +1,6 @@
 #include "VulkanHelpers.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	namespace CreateInfo
 	{

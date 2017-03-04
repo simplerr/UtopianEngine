@@ -2,7 +2,7 @@
 
 #include "Handle.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 	class Semaphore : public Handle<VkSemaphore>

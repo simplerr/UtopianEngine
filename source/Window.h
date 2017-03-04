@@ -2,7 +2,7 @@
 
 #include "Platform.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	// Wrapper class for the platform dependent window code
 	class Window

@@ -23,7 +23,7 @@
 
 namespace ECS
 {
-	PickingSystem::PickingSystem(EntityManager* entityManager, VulkanLib::Camera* camera)
+	PickingSystem::PickingSystem(EntityManager* entityManager, Vulkan::Camera* camera)
 		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
 	{
 		mCamera = camera;
@@ -36,20 +36,20 @@ namespace ECS
 
 	void PickingSystem::PerformPicking()
 	{
-		VulkanLib::Ray ray = mCamera->GetPickingRay();
+		Vulkan::Ray ray = mCamera->GetPickingRay();
 
 		float minDist = FLT_MAX;
 		uint32_t pickedId = -1;
 		for (int i = 0; i < mEntities.size(); i++)
 		{
 			glm::vec3 pos = mEntities[i].transformComponent->GetPosition();
-			VulkanLib::BoundingBox boundingBox = mEntities[i].meshComponent->GetBoundingBox();
+			Vulkan::BoundingBox boundingBox = mEntities[i].meshComponent->GetBoundingBox();
 
 			boundingBox.Update(mEntities[i].transformComponent->GetWorldMatrix());
 			//VulkanLib::VulkanDebug::ConsolePrint(boundingBox.GetMin(), "***** picked min aabb: ");
 
 			float dist = FLT_MAX;
-			VulkanLib::Sphere sphere(pos, 200);
+			Vulkan::Sphere sphere(pos, 200);
 			//if(sphere.RayIntersection(ray, dist))
 			if (boundingBox.RayIntersect(ray, dist))
 			{

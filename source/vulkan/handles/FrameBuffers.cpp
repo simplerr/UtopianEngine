@@ -5,7 +5,7 @@
 #include "Image.h"
 #include "RenderPass.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencil, VulkanSwapChain* swapChain, uint32_t width, uint32_t height)
 		: mDevice(device)

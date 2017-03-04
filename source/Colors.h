@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace VulkanLib
+namespace Vulkan
 {
 	namespace Color
 	{

@@ -27,48 +27,48 @@
 
 namespace ECS
 {
-	RenderSystem::RenderSystem(EntityManager* entityManager, VulkanLib::Renderer* renderer, VulkanLib::Camera* camera)
+	RenderSystem::RenderSystem(EntityManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT)
 	{
 		mRenderer = renderer;
 		mCamera = camera;
 		mTextureLoader = mRenderer->mTextureLoader;
-		mModelLoader = new VulkanLib::ModelLoader(mTextureLoader);
+		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
 		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
 
-		AddDebugCube(vec3(0.0f, 0.0f, 0.0f), VulkanLib::Color::White, 70.0f);
-		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), VulkanLib::Color::Red, 70.0f);
-		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), VulkanLib::Color::Green, 70.0f);
-		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), VulkanLib::Color::Blue, 70.0f);
+		AddDebugCube(vec3(0.0f, 0.0f, 0.0f), Vulkan::Color::White, 70.0f);
+		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
+		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
+		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		//
 		// Geometry shader pipeline
 		//
-		mDescriptorSetLayout = new VulkanLib::DescriptorSetLayout(mRenderer->GetDevice());
+		mDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
 		mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 		mDescriptorSetLayout->Create();
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 		descriptorSetLayouts.push_back(mDescriptorSetLayout->GetVkHandle());
-		VulkanLib::PushConstantRange pushConstantRange = VulkanLib::PushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout = new VulkanLib::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, &pushConstantRange);
+		Vulkan::PushConstantRange pushConstantRange = Vulkan::PushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
+		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, &pushConstantRange);
 
-		mDescriptorPool = new VulkanLib::DescriptorPool(mRenderer->GetDevice());
+		mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 		mDescriptorPool->Create();
 
 		mUniformBuffer.CreateBuffer(mRenderer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet = new VulkanLib::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
+		mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
 		mDescriptorSet->AllocateDescriptorSets();
 		mDescriptorSet->BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
 		mDescriptorSet->UpdateDescriptorSets();
 
-		VulkanLib::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
-		mGeometryPipeline = new VulkanLib::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mRenderer->GetVertexDescription(), shader);
+		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
+		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mRenderer->GetVertexDescription(), shader);
 		mGeometryPipeline->Create();
 	}
 
@@ -87,7 +87,7 @@ namespace ECS
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
 	{
 		// Load the model
-		VulkanLib::StaticModel* model = mModelLoader->LoadModel(mRenderer->GetDevice(), entityCache.meshComponent->GetFilename());
+		Vulkan::StaticModel* model = mModelLoader->LoadModel(mRenderer->GetDevice(), entityCache.meshComponent->GetFilename());
 
 		entityCache.meshComponent->SetModel(model);
 	}
@@ -110,9 +110,9 @@ namespace ECS
 
 		for (EntityCache entityCache : mEntities)
 		{
-			VulkanLib::StaticModel* model = entityCache.meshComponent->GetModel();
+			Vulkan::StaticModel* model = entityCache.meshComponent->GetModel();
 			
-			for (VulkanLib::Mesh* mesh : model->mMeshes)
+			for (Vulkan::Mesh* mesh : model->mMeshes)
 			{
 				mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(entityCache.meshComponent->GetPipeline()));
 
@@ -122,7 +122,7 @@ namespace ECS
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
-				VulkanLib::PushConstantBlock pushConstantBlock;
+				Vulkan::PushConstantBlock pushConstantBlock;
 				pushConstantBlock.world = entityCache.transformComponent->GetWorldMatrix();
 				pushConstantBlock.worldInvTranspose = entityCache.transformComponent->GetWorldInverseTransposeMatrix(); // TOOD: This probably also needs to be negated
 

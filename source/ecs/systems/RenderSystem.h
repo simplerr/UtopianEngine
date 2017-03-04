@@ -6,7 +6,7 @@
 #include "System.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Renderer;
 	class Camera;
@@ -27,7 +27,7 @@ namespace VulkanLib
 		{
 			// Map uniform buffer and update it
 			uint8_t *data1;
-			VulkanLib::VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, 0, sizeof(data), 0, (void **)&data1));
+			Vulkan::VulkanDebug::ErrorCheck(vkMapMemory(device, mMemory, 0, sizeof(data), 0, (void **)&data1));
 			memcpy(data1, &data, sizeof(data));
 			vkUnmapMemory(device, mMemory);
 		}
@@ -75,7 +75,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(EntityManager* entityManager, VulkanLib::Renderer* renderer, VulkanLib::Camera* cameraj);
+		RenderSystem(EntityManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* cameraj);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);
@@ -87,22 +87,22 @@ namespace ECS
 	private:
 		// RenderSystem should not BE a renderer but rather have one, since the usage of Vulkan should not be limited to only the ECS
 		// renderer needs to be available for HUDS, debugging etc
-		VulkanLib::Renderer* mRenderer;
-		VulkanLib::ModelLoader* mModelLoader;
-		VulkanLib::TextureLoader* mTextureLoader;
-		VulkanLib::StaticModel* mCubeModel;
-		VulkanLib::CommandBuffer* mCommandBuffer;
-		VulkanLib::Camera* mCamera;
+		Vulkan::Renderer* mRenderer;
+		Vulkan::ModelLoader* mModelLoader;
+		Vulkan::TextureLoader* mTextureLoader;
+		Vulkan::StaticModel* mCubeModel;
+		Vulkan::CommandBuffer* mCommandBuffer;
+		Vulkan::Camera* mCamera;
 
 		std::vector<DebugCube> mDebugCubes;
 
 		// Geometry shader stuff
-		VulkanLib::DescriptorPool* mDescriptorPool;
-		VulkanLib::DescriptorSetLayout* mDescriptorSetLayout;
-		VulkanLib::DescriptorSet* mDescriptorSet;
-		VulkanLib::Pipeline* mGeometryPipeline;
-		VulkanLib::PipelineLayout* mPipelineLayout;
-		VulkanLib::GeometryUniformBuffer  mUniformBuffer;
+		Vulkan::DescriptorPool* mDescriptorPool;
+		Vulkan::DescriptorSetLayout* mDescriptorSetLayout;
+		Vulkan::DescriptorSet* mDescriptorSet;
+		Vulkan::Pipeline* mGeometryPipeline;
+		Vulkan::PipelineLayout* mPipelineLayout;
+		Vulkan::GeometryUniformBuffer  mUniformBuffer;
 
 		struct PushConstantBlock {
 			mat4 world;

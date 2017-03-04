@@ -22,7 +22,7 @@
 no looping is done to find a queue that have the proper support
 */
 
-namespace VulkanLib
+namespace Vulkan
 {
 	VulkanBase::VulkanBase(bool enableValidation)
 	{

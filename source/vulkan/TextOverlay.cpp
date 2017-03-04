@@ -12,7 +12,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/VertexDescription.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	TextOverlay::TextOverlay(Renderer* renderer)
 	{
@@ -66,7 +66,7 @@ namespace VulkanLib
 		// This is cheating a bit since the shader don't use more than a sampler
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 		descriptorSetLayouts.push_back(mRenderer->GetTextureDescriptorSetLayout()->GetVkHandle());
-		mPipelineLayout = new VulkanLib::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, nullptr);
+		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, nullptr);
 	}
 
 	// Prepare a separate pipeline for the font rendering decoupled from the main application
@@ -78,8 +78,8 @@ namespace VulkanLib
 		mVertexDescription->AddAttribute(0, Vec2Attribute());	
 		mVertexDescription->AddAttribute(0, Vec2Attribute());
 
-		VulkanLib::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
-		mPipeline = new VulkanLib::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
+		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
+		mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 		
         // Why triangle strip?
 		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;

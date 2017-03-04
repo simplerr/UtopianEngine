@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include "vulkan/Vertex.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	struct Ray
 	{

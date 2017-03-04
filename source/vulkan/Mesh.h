@@ -10,7 +10,7 @@
 #include "vulkan/Vertex.h"
 #include "Collision.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 	class VulkanTexture;

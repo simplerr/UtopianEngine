@@ -2,7 +2,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "PipelineLayout.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	PipelineLayout::PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
 		: Handle(device, vkDestroyPipelineLayout)

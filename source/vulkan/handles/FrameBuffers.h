@@ -5,7 +5,7 @@
 
 class VulkanSwapChain;
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 	class RenderPass;

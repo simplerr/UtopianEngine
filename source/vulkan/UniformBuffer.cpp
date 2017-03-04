@@ -1,7 +1,7 @@
 #include "UniformBuffer.h"
 #include "VulkanBase.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	void UniformBuffer::CreateBuffer(VulkanBase* vulkanBase, VkMemoryPropertyFlagBits propertyFlags)
 	{

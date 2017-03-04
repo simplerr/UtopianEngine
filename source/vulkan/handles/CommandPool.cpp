@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "CommandPool.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	CommandPool::CommandPool()
 		: Handle(vkDestroyCommandPool)

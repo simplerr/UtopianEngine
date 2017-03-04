@@ -11,7 +11,7 @@
 /*
 The big uniform buffer that contains everything
 */
-namespace VulkanLib
+namespace Vulkan
 {
 	class VertexUniformBuffer : public UniformBuffer
 	{

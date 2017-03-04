@@ -7,7 +7,7 @@
 #define VERTEX_SHADER_IDX 0
 #define PIXEL_SHADER_IDX 1
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 

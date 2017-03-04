@@ -10,7 +10,7 @@
 
 #define ENUM_TO_STR(x) #x
 
-namespace VulkanLib
+namespace Vulkan
 {
 	namespace VulkanDebug
 	{

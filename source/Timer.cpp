@@ -1,7 +1,7 @@
 #include "Timer.h"
 #include <fstream>
 
-namespace VulkanLib
+namespace Vulkan
 {
 	void Timer::FrameBegin()
 	{

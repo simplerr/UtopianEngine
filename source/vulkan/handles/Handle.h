@@ -5,7 +5,7 @@
 #include <vulkan/vulkan.h>
 #include "vulkan/Device.h" 
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 

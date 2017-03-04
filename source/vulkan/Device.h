@@ -2,7 +2,7 @@
 
 #include <vulkan\vulkan.h>
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Instance;
 

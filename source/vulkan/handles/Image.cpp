@@ -2,7 +2,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "Image.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Image::Image(Device* device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImageAspectFlags aspectFlags)
 		: Handle(device, nullptr)

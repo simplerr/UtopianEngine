@@ -6,7 +6,7 @@
 #include "../external/assimp/assimp/Importer.hpp"
 #include "vulkan/Vertex.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class StaticModel;
 	class TextureLoader;

@@ -5,7 +5,7 @@
 #include "CommandBuffer.h"
 #include "Semaphore.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Queue::Queue(Device* device, Semaphore* waitSemaphore, Semaphore* signalSemaphore)
 		: Handle(device, nullptr)

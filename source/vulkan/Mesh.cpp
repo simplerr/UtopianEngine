@@ -9,7 +9,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "Mesh.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Mesh::Mesh(Device* device)
 	{

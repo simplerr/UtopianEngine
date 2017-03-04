@@ -9,7 +9,7 @@ namespace ECS
 	class Entity;
 }
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Renderer;
 	class Window;

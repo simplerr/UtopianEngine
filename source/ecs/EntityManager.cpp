@@ -30,7 +30,7 @@ namespace ECS
 		}
 	}
 
-	void EntityManager::Init(VulkanLib::Renderer* renderer,  VulkanLib::Camera* camera)
+	void EntityManager::Init(Vulkan::Renderer* renderer,  Vulkan::Camera* camera)
 	{
 		// Create all ECS::System
 		AddSystem(new ECS::PhysicsSystem(this));
@@ -153,7 +153,7 @@ namespace ECS
 		case WM_KEYDOWN:
 			if (wParam == VK_SPACE)
 			{
-				VulkanLib::VulkanDebug::ConsolePrint("TODO: Add entity systems debug printing");
+				Vulkan::VulkanDebug::ConsolePrint("TODO: Add entity systems debug printing");
 			}
 			break;
 		default:

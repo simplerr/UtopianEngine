@@ -10,7 +10,7 @@
 #include "System.h"
 #include "Collision.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Renderer;
 	class Camera;
@@ -25,7 +25,7 @@ namespace ECS
 	class PickingSystem : public System
 	{
 	public:
-		PickingSystem(EntityManager* entityManager, VulkanLib::Camera* camera);
+		PickingSystem(EntityManager* entityManager, Vulkan::Camera* camera);
 		void Process();
 		void PerformPicking();
 
@@ -33,6 +33,6 @@ namespace ECS
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
-		VulkanLib::Camera* mCamera;
+		Vulkan::Camera* mCamera;
 	};
 }

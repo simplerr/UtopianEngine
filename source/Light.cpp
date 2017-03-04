@@ -1,6 +1,6 @@
 #include "Light.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Light::Light()
 	{

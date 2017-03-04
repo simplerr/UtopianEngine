@@ -4,7 +4,7 @@
 #include <window.h>
 #include "System.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 }
 

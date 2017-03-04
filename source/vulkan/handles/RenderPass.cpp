@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat)
 		: Handle(device, vkDestroyRenderPass)

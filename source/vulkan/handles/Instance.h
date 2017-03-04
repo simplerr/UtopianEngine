@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <string>
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Instance 
 	{

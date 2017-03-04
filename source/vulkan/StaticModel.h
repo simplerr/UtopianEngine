@@ -13,7 +13,7 @@
 
 using namespace glm;
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 

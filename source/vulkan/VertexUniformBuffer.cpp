@@ -1,7 +1,7 @@
 #include "VertexUniformBuffer.h"
 #include "VulkanDebug.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	void VertexUniformBuffer::UpdateMemory(VkDevice device)
 	{

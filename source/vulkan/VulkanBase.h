@@ -27,7 +27,7 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 */
 
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 	class CommandPool;

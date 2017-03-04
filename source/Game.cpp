@@ -16,7 +16,7 @@
 #include "ecs/components/PhysicsComponent.h"
 #include "ecs/components/HealthComponent.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Game::Game(Window* window)
 	{
@@ -25,7 +25,7 @@ namespace VulkanLib
 		mIsClosing = false;
 		mRenderer = new Renderer();
 
-		VulkanLib::VulkanDebug::TogglePerformanceWarnings();
+		Vulkan::VulkanDebug::TogglePerformanceWarnings();
 
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
@@ -33,7 +33,7 @@ namespace VulkanLib
 		mWindow = window;
 
 		// Create the camera
-		mCamera = new VulkanLib::Camera(mWindow, glm::vec3(2700.0f, 2700.0f, 2700.0f), 60.0f, 0.1f, 25600.0f);
+		mCamera = new Vulkan::Camera(mWindow, glm::vec3(2700.0f, 2700.0f, 2700.0f), 60.0f, 0.1f, 25600.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 

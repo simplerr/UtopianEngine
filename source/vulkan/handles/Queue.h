@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 #include "Handle.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class CommandBuffer;
 	class Fence;

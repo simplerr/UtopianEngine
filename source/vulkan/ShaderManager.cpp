@@ -5,7 +5,7 @@
 #include "Device.h"
 #include "VulkanDebug.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Shader::Shader()
 	{

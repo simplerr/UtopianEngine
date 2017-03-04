@@ -5,7 +5,7 @@
 #include "vulkan/VulkanHelpers.h"
 #include "vulkan/handles/Handle.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class DescriptorSetLayout;
 	class DescriptorPool;

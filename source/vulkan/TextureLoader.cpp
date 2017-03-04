@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	TextureLoader::TextureLoader(Renderer* renderer, VkQueue queue)
 	{

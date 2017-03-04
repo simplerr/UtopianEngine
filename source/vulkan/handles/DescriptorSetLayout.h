@@ -4,7 +4,7 @@
 #include <vector>
 #include "Handle.h" 
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 

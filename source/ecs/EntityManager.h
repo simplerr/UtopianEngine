@@ -4,7 +4,7 @@
 #include <vector>
 #include "ecs/components/Component.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Renderer;
 	class Camera;
@@ -29,7 +29,7 @@ namespace ECS
 		EntityManager();
 		~EntityManager();
 
-		void Init(VulkanLib::Renderer* renderer, VulkanLib::Camera* camera);
+		void Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
 
 		void AddSystem(ECS::System* system);
 		Entity* AddEntity(ComponentList& components);

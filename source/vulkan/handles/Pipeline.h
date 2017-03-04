@@ -4,7 +4,7 @@
 #include <array>
 #include "Handle.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class VertexDescription;
 	class RenderPass;

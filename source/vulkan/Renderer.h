@@ -20,7 +20,7 @@ namespace ECS
 	class RenderSystem;
 }
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Camera;
 	class CommandBuffer;

@@ -3,7 +3,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Camera::Camera()
 	{
@@ -102,7 +102,7 @@ namespace VulkanLib
 		case WM_KEYDOWN:
 			if (wParam == VK_SPACE)
 			{
-				VulkanLib::VulkanDebug::ConsolePrint(mPosition, "Camera pos: ");
+				Vulkan::VulkanDebug::ConsolePrint(mPosition, "Camera pos: ");
 			}
 			break;
 		default:
@@ -134,7 +134,7 @@ namespace VulkanLib
 		rayDir = inverseView * rayDir;
 		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
 
-		return VulkanLib::Ray(GetPosition(), rayFinalDir);
+		return Vulkan::Ray(GetPosition(), rayFinalDir);
 	}
 
 	vec3 Camera::GetDirection()

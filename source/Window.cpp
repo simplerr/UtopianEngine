@@ -1,6 +1,6 @@
 #include "Window.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	Window::Window(int width, int height)
 	{

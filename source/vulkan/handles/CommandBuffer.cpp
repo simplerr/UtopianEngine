@@ -7,7 +7,7 @@
 #include "CommandPool.h"
 #include "RenderPass.h"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	CommandBuffer::CommandBuffer(Device* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
 		: Handle(device, nullptr)

@@ -6,7 +6,7 @@
 
 #define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
 
-namespace VulkanLib
+namespace Vulkan
 {
 	class Device;
 	class DescriptorSet;
