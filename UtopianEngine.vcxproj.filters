@@ -49,6 +49,9 @@
     <Filter Include="Source Files\shaders\text">
       <UniqueIdentifier>{da46520d-639e-4ddb-b824-4fadd75d4061}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders\terrain">
+      <UniqueIdentifier>{6af005ec-b8aa-4c94-a8bb-2fe381d562fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -194,6 +197,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\Buffer.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Terrain.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +362,9 @@
     <ClInclude Include="source\vulkan\handles\Buffer.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
+    <ClInclude Include="source\Terrain.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -399,6 +408,15 @@
     </None>
     <None Include="data\shaders\textoverlay\text.vert">
       <Filter>Source Files\shaders\text</Filter>
+    </None>
+    <None Include="data\shaders\terrain\base.frag">
+      <Filter>Source Files\shaders\terrain</Filter>
+    </None>
+    <None Include="data\shaders\terrain\base.vert">
+      <Filter>Source Files\shaders\terrain</Filter>
+    </None>
+    <None Include="data\shaders\terrain\marching_cubes.geom">
+      <Filter>Source Files\shaders\terrain</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

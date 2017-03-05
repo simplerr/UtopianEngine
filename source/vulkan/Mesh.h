@@ -18,6 +18,7 @@ namespace Vulkan
 	class Mesh
 	{
 	public:
+		// TODO: Replace with Vulkan::Buffer
 		struct {
 			VkBuffer buffer;
 			VkDeviceMemory memory;

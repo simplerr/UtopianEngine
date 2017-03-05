@@ -62,7 +62,7 @@ namespace Vulkan
 				for (int z = 0; z < size; z++)
 				{
 					// Transform
-					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(x * space,  y * space, z * space));
+					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(4000 + x * space,  y * space, z * space));
 					//transformComponent->SetRotation(glm::vec3(180, 30, 40));
 					transformComponent->SetRotation(glm::vec3(180.0f, 0.0f, 0.0f));
 					transformComponent->SetScale(glm::vec3(50.0f));

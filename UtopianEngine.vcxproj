@@ -96,6 +96,7 @@
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="source\Game.h" />
     <ClInclude Include="source\Light.h" />
     <ClInclude Include="source\Platform.h" />
+    <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
     <ClInclude Include="source\vulkan\handles\Buffer.h" />
@@ -190,6 +192,9 @@
     <None Include="data\shaders\geometry\normaldebug.geom" />
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
+    <None Include="data\shaders\terrain\base.frag" />
+    <None Include="data\shaders\terrain\base.vert" />
+    <None Include="data\shaders\terrain\marching_cubes.geom" />
     <None Include="data\shaders\test\test.frag" />
     <None Include="data\shaders\test\test.vert" />
     <None Include="data\shaders\textoverlay\text.frag" />

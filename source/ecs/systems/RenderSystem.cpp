@@ -22,6 +22,7 @@
 #include "vulkan/VertexDescription.h"
 #include "RenderSystem.h"
 #include "Colors.h"
+#include "Terrain.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 
@@ -70,6 +71,12 @@ namespace ECS
 		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
 		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mRenderer->GetVertexDescription(), shader);
 		mGeometryPipeline->Create();
+
+		//
+		// Terrain
+		// 
+		mTerrain = new Terrain(mRenderer, mCamera);
+		//mCommandBuffer->ToggleActive();
 	}
 
 	RenderSystem::~RenderSystem()
@@ -81,6 +88,7 @@ namespace ECS
 		delete mDescriptorPool;
 		delete mDescriptorSet;
 		delete mGeometryPipeline;
+		delete mTerrain;
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
@@ -93,6 +101,8 @@ namespace ECS
 
 	void RenderSystem::Process()
 	{
+		mTerrain->Update();
+
 		// TEMP:
 		mUniformBuffer.data.projection = mCamera->GetProjection();
 		mUniformBuffer.data.view = mCamera->GetView();

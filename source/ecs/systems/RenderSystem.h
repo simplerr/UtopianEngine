@@ -7,6 +7,8 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/handles/Buffer.h"
 
+class Terrain;
+
 namespace Vulkan
 {
 	class Renderer;
@@ -104,6 +106,8 @@ namespace ECS
 		Vulkan::Pipeline* mGeometryPipeline;
 		Vulkan::PipelineLayout* mPipelineLayout;
 		Vulkan::GeometryUniformBuffer  mUniformBuffer;
+
+		Terrain* mTerrain;
 
 		struct PushConstantBlock {
 			mat4 world;
