@@ -96,6 +96,7 @@ void Terrain::Update()
 	// TEMP:
 	mUniformBuffer.data.projection = mCamera->GetProjection();
 	mUniformBuffer.data.view = mCamera->GetView();
+	mUniformBuffer.data.voxelSize = mVoxelSize;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
 	// Temp

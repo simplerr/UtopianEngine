@@ -76,6 +76,7 @@ public:
 	struct {
 		glm::mat4 projection;
 		glm::mat4 view;
+		float voxelSize;
 	} data;
 };
 
@@ -113,6 +114,7 @@ private:
 
 	Block* mTestBlock;
 	const uint32_t mBlockSize = 32;
+	const uint32_t mVoxelSize = 50;
 
 	struct PushConstantBlock {
 		glm::mat4 world;

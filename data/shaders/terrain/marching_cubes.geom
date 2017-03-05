@@ -4,12 +4,13 @@
 #extension GL_ARB_shading_language_420pack : enable
 
 layout (points) in;
-layout (points, max_vertices = 6) out;
+layout (points, max_vertices = 8) out;
 
 layout (set = 0, binding = 0) uniform UBO 
 {
 	mat4 projection;
 	mat4 view;
+	float voxelSize;
 } ubo;
 
 layout (location = 0) out vec3 outColor;
@@ -32,30 +33,71 @@ float sdCone(vec3 p, vec2 c)
     return dot(c,vec2(q,p.z));
 }
 
+void CreatePoint(vec3 pos, float size, vec3 color)
+{
+	gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos, 1.0);
+	gl_PointSize = size;
+	outColor = color;
+	EmitVertex();
+}
+
+float density(vec3 pos)
+{
+	float density = 1;	
+
+	vec2 t = vec2(1000, 500);
+	density = sdTorus(pos, t); 
+
+	return density;
+}
+
 void main(void)
 {	
-	float normalLength = 1.0;
+	vec3 red = vec3(1, 0, 0);
+	vec3 green = vec3(0, 1, 0);
+	vec3 blue = vec3(0, 0, 1);
+	vec3 black = vec3(0, 0, 0);
+	vec3 white = vec3(1, 1, 1);
+
+	float voxelSize = ubo.voxelSize;
+
+	vec3 offsets[8] = {
+		vec3(0, 0, 0),
+		vec3(voxelSize, 0, 0),
+		vec3(voxelSize, voxelSize, 0),
+		vec3(0, voxelSize, 0),
+		vec3(0, 0, voxelSize),
+		vec3(voxelSize, 0, voxelSize),
+		vec3(voxelSize, voxelSize, voxelSize),
+		vec3(0, voxelSize, voxelSize)
+	};
+
 	for(int i=0; i<gl_in.length(); i++)
 	{
 		vec3 pos = gl_in[i].gl_Position.xyz;
 
-		vec2 t = vec2(1000, 500);
-		//vec2 c = normalize(vec2(50, 30));
-		//if(sdCone(pos, c) < 0)
-		if(sdTorus(pos, t) < 0)
+		float isoLevel = 0.0f;
+		int inside = 0;
+		int outside = 0;
+		for(int i = 0; i < 8; i++)
 		{
-			vec3 normal = vec3(0, 1, 0);
-
-			gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos, 1.0);
-			gl_PointSize = 3;
-			outColor = vec3(1.0, 0.0, 0.0);
-			EmitVertex();
-
-			//gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos + normal * normalLength, 1.0);
-			//outColor = vec3(0.0, 0.0, 1.0);
-			//EmitVertex();
-
-			EndPrimitive();
+			if(density(pos + offsets[i]) < isoLevel)
+				inside++;
+			else if(density(pos + offsets[i]) > isoLevel)
+				outside++;
 		}
+
+		if(inside > 0 && outside > 0)
+		{
+			for(int i = 0; i < 8; i++)
+			{
+				if(density(pos + offsets[i]) < isoLevel)
+					CreatePoint(pos + offsets[i], 5, red);
+				else if(density(pos + offsets[i]) > isoLevel)
+					CreatePoint(pos + offsets[i], 5, white);
+			}
+		}
+
+		EndPrimitive();
 	}
 }
