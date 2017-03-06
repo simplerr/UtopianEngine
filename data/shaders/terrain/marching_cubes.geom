@@ -82,24 +82,21 @@ void main(void)
 	for(int i=0; i<gl_in.length(); i++)
 	{
 		vec3 pos = gl_in[i].gl_Position.xyz;
-
 		float isoLevel = 0.0f;
-		int inside = 0;
-		int outside = 0;
+
+		int cubeIndex = 0;
 		for(int i = 0; i < 8; i++)
 		{
 			if(density(pos + offsets[i]) < isoLevel)
-				inside++;
-			else if(density(pos + offsets[i]) > isoLevel)
-				outside++;
+				cubeIndex |= (1 << i);
 		}
 
-		if(inside > 0 && outside > 0)
+		if(cubeIndex != 0 && cubeIndex != 0xff)
 		{
 			for(int i = 0; i < 8; i++)
 			{
 				if(density(pos + offsets[i]) < isoLevel)
-					CreatePoint(pos + offsets[i], 5, white);
+					CreatePoint(pos + offsets[i], 5, red);
 				else if(density(pos + offsets[i]) > isoLevel)
 					CreatePoint(pos + offsets[i], 5, white);
 			}
