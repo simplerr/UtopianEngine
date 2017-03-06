@@ -78,6 +78,19 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 	mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 	mPipeline->Create();
+
+	// Cube corner offsets
+	mUniformBuffer.data.offsets[0] = vec4(0, 0, 0, 0);
+	mUniformBuffer.data.offsets[1] = vec4(mVoxelSize, 0, 0, 0);
+	mUniformBuffer.data.offsets[2] = vec4(mVoxelSize, mVoxelSize, 0, 0);
+	mUniformBuffer.data.offsets[3] = vec4(0, mVoxelSize, 0, 0);
+	mUniformBuffer.data.offsets[4] = vec4(0, 0, mVoxelSize, 0);
+	mUniformBuffer.data.offsets[5] = vec4(mVoxelSize, 0, mVoxelSize, 0);
+	mUniformBuffer.data.offsets[6] = vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
+	mUniformBuffer.data.offsets[7] = vec4(0, mVoxelSize, mVoxelSize, 0);
+	mUniformBuffer.data.color = vec4(1, 0, 0, 1);
+
+	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 }
 
 Terrain::~Terrain()

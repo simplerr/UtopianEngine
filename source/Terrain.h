@@ -76,6 +76,8 @@ public:
 	struct {
 		glm::mat4 projection;
 		glm::mat4 view;
+		glm::vec4 offsets[8];
+		glm::vec4 color;
 		float voxelSize;
 		float time;
 	} data;

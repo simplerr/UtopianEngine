@@ -10,6 +10,8 @@ layout (set = 0, binding = 0) uniform UBO
 {
 	mat4 projection;
 	mat4 view;
+	vec4 offsets[8];
+	vec4 color;
 	float voxelSize;
 	float time;
 } ubo;
@@ -66,19 +68,6 @@ void main(void)
 	vec3 black = vec3(0, 0, 0);
 	vec3 white = vec3(1, 1, 1);
 
-	float voxelSize = ubo.voxelSize;
-
-	vec3 offsets[8] = {
-		vec3(0, 0, 0),
-		vec3(voxelSize, 0, 0),
-		vec3(voxelSize, voxelSize, 0),
-		vec3(0, voxelSize, 0),
-		vec3(0, 0, voxelSize),
-		vec3(voxelSize, 0, voxelSize),
-		vec3(voxelSize, voxelSize, voxelSize),
-		vec3(0, voxelSize, voxelSize)
-	};
-
 	for(int i=0; i<gl_in.length(); i++)
 	{
 		vec3 pos = gl_in[i].gl_Position.xyz;
@@ -87,7 +76,7 @@ void main(void)
 		int cubeIndex = 0;
 		for(int i = 0; i < 8; i++)
 		{
-			if(density(pos + offsets[i]) < isoLevel)
+			if(density(pos + ubo.offsets[i].xyz) < isoLevel)
 				cubeIndex |= (1 << i);
 		}
 
@@ -95,10 +84,10 @@ void main(void)
 		{
 			for(int i = 0; i < 8; i++)
 			{
-				if(density(pos + offsets[i]) < isoLevel)
-					CreatePoint(pos + offsets[i], 5, red);
-				else if(density(pos + offsets[i]) > isoLevel)
-					CreatePoint(pos + offsets[i], 5, white);
+				if(density(pos + ubo.offsets[i].xyz) < isoLevel)
+					CreatePoint(pos + ubo.offsets[i].xyz, 5, ubo.color.xyz);
+				else if(density(pos + ubo.offsets[i].xyz) > isoLevel)
+					CreatePoint(pos + ubo.offsets[i].xyz, 5, ubo.color.xyz);
 			}
 		}
 
