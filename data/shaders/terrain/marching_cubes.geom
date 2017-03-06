@@ -11,6 +11,7 @@ layout (set = 0, binding = 0) uniform UBO
 	mat4 projection;
 	mat4 view;
 	float voxelSize;
+	float time;
 } ubo;
 
 layout (location = 0) out vec3 outColor;
@@ -19,6 +20,11 @@ layout(push_constant) uniform PushConsts {
 	 mat4 world;		
 	 mat4 worldInvTranspose;
 } pushConsts;
+
+float sdSphere(vec3 p, float s)
+{
+  return length(p)-s;
+}
 
 float sdTorus(vec3 p, vec2 t)
 {
@@ -47,6 +53,7 @@ float density(vec3 pos)
 
 	vec2 t = vec2(1000, 500);
 	density = sdTorus(pos, t); 
+	density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
 	return density;
 }
@@ -92,7 +99,7 @@ void main(void)
 			for(int i = 0; i < 8; i++)
 			{
 				if(density(pos + offsets[i]) < isoLevel)
-					CreatePoint(pos + offsets[i], 5, red);
+					CreatePoint(pos + offsets[i], 5, white);
 				else if(density(pos + offsets[i]) > isoLevel)
 					CreatePoint(pos + offsets[i], 5, white);
 			}

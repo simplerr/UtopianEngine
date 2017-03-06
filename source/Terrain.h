@@ -77,6 +77,7 @@ public:
 		glm::mat4 projection;
 		glm::mat4 view;
 		float voxelSize;
+		float time;
 	} data;
 };
 
@@ -100,6 +101,7 @@ public:
 	~Terrain();
 
 	void Update();
+	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
 	Vulkan::Renderer* mRenderer;
 	Vulkan::CommandBuffer* mCommandBuffer;
@@ -120,4 +122,6 @@ private:
 		glm::mat4 world;
 		glm::mat4 worldInvTranspose;
 	};
+
+	bool mUpdateTimer = true;
 };

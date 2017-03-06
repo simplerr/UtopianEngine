@@ -219,6 +219,6 @@ namespace ECS
 
 	void RenderSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-
+		mTerrain->HandleMessages(hWnd, uMsg, wParam, lParam);
 	}
 }

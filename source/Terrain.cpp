@@ -93,10 +93,16 @@ Terrain::~Terrain()
 
 void Terrain::Update()
 {
+	static float time = 0.0f;
+
+	if(mUpdateTimer)
+		time += 0.002f;
+
 	// TEMP:
 	mUniformBuffer.data.projection = mCamera->GetProjection();
 	mUniformBuffer.data.view = mCamera->GetView();
 	mUniformBuffer.data.voxelSize = mVoxelSize;
+	mUniformBuffer.data.time = time;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
 	// Temp
@@ -129,4 +135,17 @@ void Terrain::Update()
 	vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
 
 	mCommandBuffer->End();
+}
+
+void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+		case WM_KEYDOWN:
+			if (wParam == 'P')
+			{
+				mUpdateTimer = !mUpdateTimer;
+			}
+			break;
+	}
 }
