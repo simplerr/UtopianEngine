@@ -115,10 +115,10 @@ namespace Vulkan
 		return texture;
 	}
 
-	Texture* TextureLoader::LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size)
+	Texture* TextureLoader::LoadTexture(DescriptorSetLayout* layout, DescriptorPool* pool, void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
-		VkDeviceSize imageSize = width * height; // NOTE: Assumes each pixel is stored as U8
+		VkDeviceSize imageSize = width * height * pixelSize; // NOTE: Assumes each pixel is stored as U8
 
 		Texture* texture = new Texture(mDevice);
 
@@ -176,7 +176,8 @@ namespace Vulkan
 		CreateImageSampler(&texture->sampler);
 
 		// Create the descriptor set for the texture
-		texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		//texture->CreateDescriptorSet(mRenderer->GetDevice(), layout, pool);
+		//texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 
 		vkDestroyImage(device, stagingImage, nullptr);
 		vkFreeMemory(device, stagingMemory, nullptr);

@@ -40,6 +40,7 @@ namespace Vulkan
 	class DescriptorSetLayout;
 	class CommandBuffer;
 	class VertexDescription;
+	class Texture;
 }
 
 struct CubeVertex
@@ -114,6 +115,7 @@ private:
 	Vulkan::PipelineLayout* mPipelineLayout;
 	Vulkan::VertexDescription* mVertexDescription;
 	Vulkan::Camera* mCamera;
+	Vulkan::Texture* mEdgeTableTexture;
 	GeometryUniformBuffer  mUniformBuffer;
 
 	Block* mTestBlock;

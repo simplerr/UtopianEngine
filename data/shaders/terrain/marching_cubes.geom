@@ -6,7 +6,9 @@
 layout (points) in;
 layout (points, max_vertices = 8) out;
 
-layout (set = 0, binding = 0) uniform UBO 
+layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
+
+layout (set = 0, binding = 1) uniform UBO 
 {
 	mat4 projection;
 	mat4 view;
@@ -62,11 +64,7 @@ float density(vec3 pos)
 
 void main(void)
 {	
-	vec3 red = vec3(1, 0, 0);
-	vec3 green = vec3(0, 1, 0);
-	vec3 blue = vec3(0, 0, 1);
-	vec3 black = vec3(0, 0, 0);
-	vec3 white = vec3(1, 1, 1);
+	vec3 outColor = ubo.color.xyz;
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
@@ -80,14 +78,14 @@ void main(void)
 				cubeIndex |= (1 << i);
 		}
 
-		if(cubeIndex != 0 && cubeIndex != 0xff)
+		if(texelFetch(edgeTableTex, ivec2(cubeIndex, 0), 0).r != 0)
 		{
 			for(int i = 0; i < 8; i++)
 			{
 				if(density(pos + ubo.offsets[i].xyz) < isoLevel)
-					CreatePoint(pos + ubo.offsets[i].xyz, 5, ubo.color.xyz);
+					CreatePoint(pos + ubo.offsets[i].xyz, 5, outColor);
 				else if(density(pos + ubo.offsets[i].xyz) > isoLevel)
-					CreatePoint(pos + ubo.offsets[i].xyz, 5, ubo.color.xyz);
+					CreatePoint(pos + ubo.offsets[i].xyz, 5, outColor);
 			}
 		}
 

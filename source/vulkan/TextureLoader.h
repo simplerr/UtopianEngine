@@ -10,6 +10,8 @@ namespace Vulkan
 {
 	class Device;
 	class DescriptorSet;
+	class DescriptorSetLayout;
+	class DescriptorPool;
 	class Renderer;
 	class Texture;
 
@@ -22,7 +24,7 @@ namespace Vulkan
 		Texture* LoadTexture(std::string filename);
 
 		// NOTE: Textures loaded with this function needs to be deleted manually
-		Texture* LoadTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t size);
+		Texture* LoadTexture(DescriptorSetLayout* layout, DescriptorPool* pool, void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize);
 
 		void CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory);
 		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);

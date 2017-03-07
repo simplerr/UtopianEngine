@@ -39,7 +39,8 @@ namespace Vulkan
 		// Load the texture
 		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
 		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
-		mTexture = mRenderer->mTextureLoader->LoadTexture((void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, STB_FONT_WIDTH * STB_FONT_HEIGHT);
+		mTexture = mRenderer->mTextureLoader->LoadTexture(mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool(), (void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, sizeof(unsigned char));
+		mTexture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 
 		// NOTE: Uses the descriptor set layout for the texture from the Renderer
 		// If more descriptors where to be needed they should be added as a separate descriptor set
