@@ -116,6 +116,7 @@ private:
 	Vulkan::VertexDescription* mVertexDescription;
 	Vulkan::Camera* mCamera;
 	Vulkan::Texture* mEdgeTableTexture;
+	Vulkan::Texture* mTriangleTableTexture;
 	GeometryUniformBuffer  mUniformBuffer;
 
 	Block* mTestBlock;

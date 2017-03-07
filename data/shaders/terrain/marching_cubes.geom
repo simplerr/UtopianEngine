@@ -7,6 +7,7 @@ layout (points) in;
 layout (points, max_vertices = 8) out;
 
 layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
+layout (set = 0, binding = 2) uniform isampler2D triangleTableTex;
 
 layout (set = 0, binding = 1) uniform UBO 
 {
@@ -65,6 +66,9 @@ float density(vec3 pos)
 void main(void)
 {	
 	vec3 outColor = ubo.color.xyz;
+
+	if(texelFetch(triangleTableTex, ivec2(3, 252), 0).r == 9)
+		outColor = vec3(1, 1, 0);
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
