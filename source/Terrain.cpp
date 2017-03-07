@@ -406,6 +406,8 @@ Terrain::~Terrain()
 	delete mDescriptorSet;
 	delete mPipeline;
 	delete mVertexDescription;
+	delete mEdgeTableTexture;
+	delete mTriangleTableTexture;
 }
 
 void Terrain::Update()
