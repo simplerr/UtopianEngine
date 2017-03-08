@@ -44,6 +44,11 @@ float sdCone(vec3 p, vec2 c)
     return dot(c,vec2(q,p.z));
 }
 
+float opI( float d1, float d2 )
+{
+    return max(d1,d2);
+}
+
 void CreatePoint(vec3 pos, float size, vec3 color)
 {
 	gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos, 1.0);
@@ -58,6 +63,7 @@ float density(vec3 pos)
 
 	vec2 t = vec2(1000, 500);
 	density = sdTorus(pos, t); 
+	return max(max(density, pos.y), -sdSphere(pos+800, 1000));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
 	return density;
