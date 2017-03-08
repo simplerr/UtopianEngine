@@ -87,7 +87,7 @@ public:
 class Block
 {
 public:
-	Block(Vulkan::Renderer* renderer, uint32_t blockSize);
+	Block(Vulkan::Renderer* renderer, uint32_t blockSize, float voxelSize);
 	~Block();
 
 	Vulkan::Buffer* GetVertexBuffer();
@@ -95,6 +95,7 @@ public:
 private:
 	std::vector<CubeVertex> mPointList;
 	Vulkan::Buffer* mVertexBuffer;
+	float mVoxelSize;
 };
 
 class Terrain
@@ -120,7 +121,7 @@ private:
 	GeometryUniformBuffer  mUniformBuffer;
 
 	Block* mTestBlock;
-	const uint32_t mBlockSize = 32;
+	const uint32_t mBlockSize = 64;
 	const uint32_t mVoxelSize = 50;
 
 	struct PushConstantBlock {

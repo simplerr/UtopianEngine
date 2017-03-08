@@ -12,17 +12,18 @@
 #include "Camera.h"
 #include "Terrain.h"
 
-Block::Block(Vulkan::Renderer* renderer, uint32_t blockSize)
+Block::Block(Vulkan::Renderer* renderer, uint32_t blockSize, float voxelSize)
 {
-	float spacing = 100.0f;
-	float size = blockSize * spacing;
+	mVoxelSize = voxelSize;
+
+	float size = blockSize * mVoxelSize;
 	for (uint32_t x = 0; x < blockSize; x++)
 	{
 		for (uint32_t y = 0; y < blockSize; y++)
 		{
 			for (uint32_t z = 0; z < blockSize; z++)
 			{
-				mPointList.push_back(CubeVertex(-size/2 + x * spacing, -size/2 + y * spacing, -size/2 + z * spacing));
+				mPointList.push_back(CubeVertex(-size / 2 + x * mVoxelSize, -size / 2 + y * mVoxelSize, -size / 2 + z * mVoxelSize));
 			}
 		}
 	}
@@ -45,7 +46,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 {
 	mRenderer = renderer;
 	mCamera = camera;
-	mTestBlock = new Block(renderer, mBlockSize);
+	mTestBlock = new Block(renderer, mBlockSize, mVoxelSize);
 
 	/* 
 		Initialize Vulkan handles
@@ -381,6 +382,8 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/terrain/base.vert.spv", "data/shaders/terrain/base.frag.spv", "data/shaders/terrain/marching_cubes.geom.spv");
 	mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 	mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+	//mPipeline->mRasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mPipeline->Create();
 
 	// Cube corner offsets
