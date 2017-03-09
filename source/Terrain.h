@@ -122,7 +122,7 @@ private:
 
 	Block* mTestBlock;
 	const uint32_t mBlockSize = 64;
-	const uint32_t mVoxelSize = 50;
+	const uint32_t mVoxelSize = 100;
 
 	struct PushConstantBlock {
 		glm::mat4 world;

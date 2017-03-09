@@ -10,7 +10,15 @@ layout (location = 0) out vec4 outFragColor;
 
 void main(void)
 {
-	outFragColor = vec4(inColor, 1.0);
+	vec3 color = vec3(1, 1, 1);
+	vec3 lightVec = vec3(1, 1, 1);
+	lightVec = normalize(lightVec);
+
+	float diffuseFactor = max(0, dot(lightVec, inNormal));
+
+	float ambientFactor = 0.1;
+	outFragColor = vec4(color * ambientFactor + diffuseFactor * color, 1.0);
+
 	outFragColor = vec4(inNormal.r, inNormal.g, inNormal.b, 1.0);
-	outFragColor = vec4(0, 0, inNormal.b, 1.0);
+	//outFragColor = vec4(0, 0, inNormal.b, 1.0);
 }

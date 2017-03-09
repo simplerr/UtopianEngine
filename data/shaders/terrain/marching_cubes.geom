@@ -4,7 +4,7 @@
 #extension GL_ARB_shading_language_420pack : enable
 
 layout (points) in;
-layout (triangle_strip, max_vertices = 12) out;
+layout (triangle_strip, max_vertices = 15) out;
 
 layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
 layout (set = 0, binding = 2) uniform isampler2D triangleTableTex;
@@ -64,7 +64,8 @@ float density(vec3 pos)
 
 	vec2 t = vec2(1000, 500);
 	density = sdTorus(pos, t); 
-	return min(max(density, pos.y), sdSphere(pos+800, 500));
+	//return -pos.y;
+	return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
 	return density;
@@ -72,7 +73,7 @@ float density(vec3 pos)
 
 float density(int corner)
 {
-	vec3 pos = gl_in[0].gl_Position.xyz + ubo.offsets[corner].xyz;
+	vec3 pos = (pushConsts.world * gl_in[0].gl_Position).xyz + ubo.offsets[corner].xyz;
 	return density(pos);
 }
 
@@ -88,7 +89,7 @@ vec3 cornerPos(vec3 pos, int corner)
 
 vec3 cornerPos(int corner)
 {
-	return gl_in[0].gl_Position.xyz + ubo.offsets[corner].xyz;
+	return (pushConsts.world * gl_in[0].gl_Position).xyz + ubo.offsets[corner].xyz;
 } 
 
 int edgeTableValue(int cubeIndex)
@@ -123,7 +124,7 @@ void main(void)
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
-		vec3 pos = gl_in[i].gl_Position.xyz;
+		vec3 pos = (pushConsts.world * gl_in[i].gl_Position).xyz;
 		float isoLevel = 0.0f;
 
 		int cubeIndex = 0;
@@ -163,23 +164,23 @@ void main(void)
 			if((edgeTableValue(cubeIndex) & 2048) != 0)
 				vertList[11] = vertexInterp(isoLevel, cornerPos(3), cornerPos(7), density(3), density(7));
 
-			mat4 modelViewProjection = ubo.projection * ubo.view * pushConsts.world;
+			mat4 viewProjection = ubo.projection * ubo.view;
 			vec3 position;
 			for(int i = 0; triangleTableValue(cubeIndex, i) != -1; i += 3)
 			{
 				position = vertList[triangleTableValue(cubeIndex, i)];
 				outNormal = generateNormal(position);
-				gl_Position = modelViewProjection * vec4(position, 1.0);
+				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				position = vertList[triangleTableValue(cubeIndex, i + 1)];
 				outNormal = generateNormal(position);
-				gl_Position = modelViewProjection * vec4(position, 1.0);
+				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				position = vertList[triangleTableValue(cubeIndex, i + 2)];
 				outNormal = generateNormal(position);
-				gl_Position = modelViewProjection * vec4(position, 1.0);
+				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				EndPrimitive();

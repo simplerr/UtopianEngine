@@ -383,7 +383,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 	mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 	//mPipeline->mRasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
-	mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+	mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 	mPipeline->Create();
 
 	// Cube corner offsets
@@ -454,6 +454,16 @@ void Terrain::Update()
 	mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
 	mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
+	vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+
+	// Test second block
+	pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(mBlockSize*mVoxelSize, 0, mBlockSize*mVoxelSize));
+	pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+	pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+	pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+	mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+
 	vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
 
 	mCommandBuffer->End();
