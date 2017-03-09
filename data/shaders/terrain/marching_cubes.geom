@@ -20,6 +20,7 @@ layout (set = 0, binding = 1) uniform UBO
 } ubo;
 
 layout (location = 0) out vec3 outColor;
+layout (location = 1) out vec3 outNormal;
 
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		
@@ -100,6 +101,19 @@ int triangleTableValue(int cubeIndex, int i)
 	return texelFetch(triangleTableTex, ivec2(i, cubeIndex), 0).r;
 }
 
+vec3 generateNormal(vec3 pos)
+{
+	vec3 grad;
+	float d = 1.0 / 32.0;
+
+	grad.x = density(pos + vec3(d, 0, 0)) - density(pos + vec3(-d, 0, 0));
+	grad.y = density(pos + vec3(0, d, 0)) - density(pos + vec3(0, -d, 0));
+	grad.z = density(pos + vec3(0, 0, d)) - density(pos + vec3(0, 0, -d));
+
+	vec3 normal = -normalize(grad);
+	return normal;
+}
+
 void main(void)
 {	
 	vec3 outColor = ubo.color.xyz;
@@ -150,30 +164,26 @@ void main(void)
 				vertList[11] = vertexInterp(isoLevel, cornerPos(3), cornerPos(7), density(3), density(7));
 
 			mat4 modelViewProjection = ubo.projection * ubo.view * pushConsts.world;
+			vec3 position;
 			for(int i = 0; triangleTableValue(cubeIndex, i) != -1; i += 3)
 			{
-				gl_Position = modelViewProjection * vec4(vertList[triangleTableValue(cubeIndex, i)], 1.0);
+				position = vertList[triangleTableValue(cubeIndex, i)];
+				outNormal = generateNormal(position);
+				gl_Position = modelViewProjection * vec4(position, 1.0);
 				EmitVertex();
 
-				gl_Position = modelViewProjection * vec4(vertList[triangleTableValue(cubeIndex, i + 1)], 1.0);
+				position = vertList[triangleTableValue(cubeIndex, i + 1)];
+				outNormal = generateNormal(position);
+				gl_Position = modelViewProjection * vec4(position, 1.0);
 				EmitVertex();
 
-				gl_Position = modelViewProjection * vec4(vertList[triangleTableValue(cubeIndex, i + 2)], 1.0);
+				position = vertList[triangleTableValue(cubeIndex, i + 2)];
+				outNormal = generateNormal(position);
+				gl_Position = modelViewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				EndPrimitive();
 			}
-
-			//for(int i = 0; i < 8; i++)
-			//{
-			//	if(density(pos + ubo.offsets[i].xyz) < isoLevel)
-			//		CreatePoint(pos + ubo.offsets[i].xyz, 5, outColor);
-			//	else if(density(pos + ubo.offsets[i].xyz) > isoLevel)
-			//		CreatePoint(pos + ubo.offsets[i].xyz, 5, outColor);
-			//}
-
-			//EndPrimitive();
 		}
-
 	}
 }
