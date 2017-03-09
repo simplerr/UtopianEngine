@@ -105,7 +105,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 		0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c,
 		0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0 };
 
-	mEdgeTableTexture = mRenderer->mTextureLoader->LoadTexture(mDescriptorSetLayout, mDescriptorPool, edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
+	mEdgeTableTexture = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
 	//mEdgeTableTexture->CreateDescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
 
 	int triTable[256][16] =
@@ -366,7 +366,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	{ 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 	{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 } };
 
-	mTriangleTableTexture = mRenderer->mTextureLoader->LoadTexture(mDescriptorSetLayout, mDescriptorPool, triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
+	mTriangleTableTexture = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
 	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
 	mDescriptorSet->AllocateDescriptorSets();

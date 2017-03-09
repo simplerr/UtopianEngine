@@ -30,18 +30,16 @@ namespace Vulkan
 		if (mTextureMap.find(filename) != mTextureMap.end())
 			return mTextureMap[filename];
 
-		VkDevice device =  mDevice->GetVkDevice();	
 		int texWidth, texHeight, texChannels;
+		uint32_t pixelSize = sizeof(uint32_t);
 		stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-		VkDeviceSize imageSize = texWidth * texHeight * 4;
+		VkDeviceSize imageSize = texWidth * texHeight * pixelSize;
 
 		if (!pixels) {
 			return nullptr;
 		}
 
-		Texture* texture = new Texture(mDevice);
-
-		// Create the staging image and device memory
+		// This is only used to get the image layout for the correct padding
 		VkImage stagingImage = VK_NULL_HANDLE;
 		VkDeviceMemory stagingMemory = VK_NULL_HANDLE;
 
@@ -58,64 +56,37 @@ namespace Vulkan
 		// Copy the pixels from the loaded image to device memory
 		VkImageSubresource subresource = {};
 		subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		subresource.mipLevel = 0;
-		subresource.arrayLayer = 0;
 
 		VkSubresourceLayout stagingImageLayout;
-		vkGetImageSubresourceLayout(device, stagingImage, &subresource, &stagingImageLayout);
+		vkGetImageSubresourceLayout(mDevice->GetVkDevice(), stagingImage, &subresource, &stagingImageLayout);
 
-		void* data;
-		vkMapMemory(device, stagingMemory, 0, imageSize, 0, &data);
+		uint32_t* data = new uint32_t[imageSize];
 
-		if (stagingImageLayout.rowPitch == texWidth * 4) {
+		if (stagingImageLayout.rowPitch == texWidth * pixelSize) {
 			memcpy(data, pixels, (size_t)imageSize);
 		}
 		else {
 			uint8_t* dataBytes = reinterpret_cast<uint8_t*>(data);
 
 			for (int y = 0; y < texHeight; y++) {
-				memcpy(&dataBytes[y * stagingImageLayout.rowPitch], &pixels[y * texWidth * 4], texWidth * 4);
+				memcpy(&dataBytes[y * stagingImageLayout.rowPitch], &pixels[y * texWidth * pixelSize], texWidth * pixelSize);
 			}
 		}
 
-		vkUnmapMemory(device, stagingMemory);
-		stbi_image_free(pixels);
-
-		// Create the final image
-		CreateImage(texWidth,
-					  texHeight,
-					  VK_FORMAT_R8G8B8A8_UNORM,														// VkFormat
-					  VK_IMAGE_TILING_OPTIMAL,														// VkImageTiling
-					  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,					// VkImageUsageFlags
-					  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,											// VkMemoryPropertyFlags
-					  &texture->image,																// VkImage
-					  &texture->deviceMemory);														// VkDeviceMemory
-
-		TransitionImageLayout(stagingImage, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-		TransitionImageLayout(texture->image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-		CopyImage(stagingImage, texture->image, texWidth, texHeight);
-
-		TransitionImageLayout(texture->image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-		// Create the image view
-		CreateImageView(texture->image, VK_FORMAT_R8G8B8A8_UNORM, &texture->imageView);
-
-		// Create the sampler
-		CreateImageSampler(&texture->sampler);
-
-		// Create the descriptor set for the texture
+		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, pixelSize);
 		texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		
 		mTextureMap[filename] = texture;
 
-		vkDestroyImage(device, stagingImage, nullptr);
-		vkFreeMemory(device, stagingMemory, nullptr);
+		vkDestroyImage(mDevice->GetVkDevice(), stagingImage, nullptr);
+		vkFreeMemory(mDevice->GetVkDevice(), stagingMemory, nullptr);
+		stbi_image_free(pixels);
+		delete[] data;
 
 		return texture;
 	}
 
-	Texture* TextureLoader::LoadTexture(DescriptorSetLayout* layout, DescriptorPool* pool, void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize)
+	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
 		VkDeviceSize imageSize = width * height * pixelSize; // NOTE: Assumes each pixel is stored as U8
