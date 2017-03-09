@@ -440,31 +440,27 @@ void Terrain::Update()
 
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
 
+	mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
+
 	// Push the world matrix constant
 	Vulkan::PushConstantBlock pushConstantBlock;
 	pushConstantBlock.world = glm::mat4();
 	pushConstantBlock.worldInvTranspose = glm::mat4(); 
 
-	// NOTE: For some reason the translation needs to be negated when rendering
-	// Otherwise the physical representation does not match the rendered scene
-	pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-	pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-	pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+	for (int x = -(float)mWorldWidth / 2; x < (float)mWorldWidth/2; x++)
+	{
+		for (int y = -(float)mWorldHeight / 2; y < (float)mWorldHeight/2; y++)
+		{
+			pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize));
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-	mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-	mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
-	vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
-
-	// Test second block
-	pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(mBlockSize*mVoxelSize, 0, mBlockSize*mVoxelSize));
-	pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-	pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-	pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-	mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-
-	vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+			vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+		}
+	}
 
 	mCommandBuffer->End();
 }
