@@ -21,4 +21,5 @@ void main(void)
 
 	outFragColor = vec4(inNormal.r, inNormal.g, inNormal.b, 1.0);
 	//outFragColor = vec4(0, 0, inNormal.b, 1.0);
+	outFragColor = vec4(inColor, 1.0);
 }

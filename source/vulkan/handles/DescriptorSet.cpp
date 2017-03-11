@@ -42,6 +42,19 @@ namespace Vulkan
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
+	void DescriptorSet::BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
+	{
+		VkWriteDescriptorSet writeDescriptorSet = {};
+		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writeDescriptorSet.dstSet = descriptorSet;
+		writeDescriptorSet.descriptorCount = 1;
+		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		writeDescriptorSet.pBufferInfo = bufferInfo;
+		writeDescriptorSet.dstBinding = binding;				// Binds this uniform buffer to binding point 0
+
+		mWriteDescriptorSets.push_back(writeDescriptorSet);
+	}
+
 	void DescriptorSet::BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
 	{
 		VkWriteDescriptorSet writeDescriptorSet = {};

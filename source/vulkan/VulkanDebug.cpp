@@ -204,6 +204,11 @@ namespace Vulkan
 			std::cout << text << " " << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << std::endl;
 		}
 
+		void ConsolePrint(glm::vec4 vec, std::string text)
+		{
+			std::cout << text << " " << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << " w: " << vec.w << std::endl;
+		}
+
 		void TogglePerformanceWarnings()
 		{
 			performanceWarnings = !performanceWarnings;

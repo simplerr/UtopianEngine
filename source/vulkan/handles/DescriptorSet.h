@@ -24,6 +24,7 @@ namespace Vulkan
 		void UpdateDescriptorSets();
 
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
+		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
 
 		void UpdateUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);

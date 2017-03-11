@@ -27,6 +27,12 @@ layout(push_constant) uniform PushConsts {
 	 mat4 worldInvTranspose;
 } pushConsts;
 
+// Binding 0 : Position storage buffer
+layout(std140, binding = 3) buffer StorageBuffer 
+{
+	vec4 pos[];
+} storageBuffer;
+
 float sdSphere(vec3 p, float s)
 {
   return length(p)-s;
@@ -117,10 +123,15 @@ vec3 generateNormal(vec3 pos)
 
 void main(void)
 {	
-	vec3 outColor = ubo.color.xyz;
+	//vec3 outColor = ubo.color.xyz;
 
 	if(texelFetch(triangleTableTex, ivec2(3, 252), 0).r == 9)
 		outColor = vec3(1, 1, 1);
+
+	outColor = storageBuffer.pos[29].xyz;
+
+	if(ubo.time > 1)
+		storageBuffer.pos[29] = vec4(1, 0, 0, 1);
 
 	for(int i=0; i<gl_in.length(); i++)
 	{

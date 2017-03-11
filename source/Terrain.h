@@ -95,6 +95,7 @@ public:
 private:
 	std::vector<CubeVertex> mPointList;
 	Vulkan::Buffer* mVertexBuffer;
+
 	float mVoxelSize;
 };
 
@@ -132,4 +133,9 @@ private:
 	};
 
 	bool mUpdateTimer = true;
+
+	// Storage buffer test
+	std::vector<glm::vec4> mStorageData;
+	Vulkan::Buffer* mOutputBuffer;
+	VkDescriptorBufferInfo mOutputBufferDescriptor;
 };

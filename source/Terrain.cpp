@@ -1,4 +1,5 @@
 #include "vulkan/Renderer.h"
+#include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -30,6 +31,7 @@ Block::Block(Vulkan::Renderer* renderer, uint32_t blockSize, float voxelSize)
 
 	VkDeviceSize bufferSize = blockSize * blockSize * blockSize * sizeof(CubeVertex);
 	mVertexBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, mPointList.data());
+
 }
 
 Block::~Block()
@@ -48,6 +50,36 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mCamera = camera;
 	mTestBlock = new Block(renderer, mBlockSize, mVoxelSize);
 
+	/*
+		Storage buffer test
+	*/
+	for (uint32_t i = 0; i < 32; i++)
+	{
+		mStorageData.push_back(vec4(i, 1, 1, 1));
+	}
+
+	mStorageData[29] = glm::vec4(0, 1, 0, 1);
+
+	mOutputBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
+									   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, mStorageData.size() * sizeof(glm::vec4), mStorageData.data());
+
+	void* mappedData;
+	mOutputBuffer->MapMemory(0, mStorageData.size() * sizeof(glm::vec4), 0, &mappedData);
+	
+	glm::vec4* data = (glm::vec4*)mappedData;
+	for (uint32_t i = 0; i < mStorageData.size(); i++)
+	{
+		glm::vec4 d = *data;
+		Vulkan::VulkanDebug::ConsolePrint(d, "Mapped output buffer");
+		data++;
+	}
+
+	mOutputBuffer->UnmapMemory();
+	
+	mOutputBufferDescriptor.buffer = mOutputBuffer->GetVkBuffer();
+	mOutputBufferDescriptor.range = mStorageData.size() * sizeof(glm::vec4);
+	mOutputBufferDescriptor.offset = 0;
+
 	/* 
 		Initialize Vulkan handles
 	*/
@@ -57,6 +89,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
+	mDescriptorSetLayout->AddBinding(3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->Create();
 
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
@@ -67,6 +100,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
+	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1);
 	mDescriptorPool->Create();
 
 	mUniformBuffer.CreateBuffer(mRenderer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
@@ -373,6 +407,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
 	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
 	mDescriptorSet->BindCombinedImage(2, &mTriangleTableTexture->GetTextureDescriptorInfo());
+	mDescriptorSet->BindStorageBuffer(3, &mOutputBufferDescriptor);
 	mDescriptorSet->UpdateDescriptorSets();
 
 	mVertexDescription = new Vulkan::VertexDescription();
@@ -383,7 +418,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 	mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 	//mPipeline->mRasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
-	mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+	mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mPipeline->Create();
 
 	// Cube corner offsets
@@ -419,6 +454,25 @@ void Terrain::Update()
 
 	if(mUpdateTimer)
 		time += 0.002f;
+
+	// Storage buffer test
+	if (time > 2)
+	{
+		//Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
+
+		void* mappedData;
+		mOutputBuffer->MapMemory(0, mStorageData.size() * sizeof(glm::vec4), 0, &mappedData);
+
+		glm::vec4* data = (glm::vec4*)mappedData;
+		for (uint32_t i = 0; i < mStorageData.size(); i++)
+		{
+			glm::vec4 d = *data;
+			//Vulkan::VulkanDebug::ConsolePrint(d, "Mapped output buffer");
+			data++;
+		}
+
+		mOutputBuffer->UnmapMemory();
+	}
 
 	// TEMP:
 	mUniformBuffer.data.projection = mCamera->GetProjection();
