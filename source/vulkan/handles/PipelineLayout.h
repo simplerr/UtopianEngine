@@ -8,25 +8,20 @@ namespace Vulkan
 {
 	class Device;
 	class DescriptorSet;
+	class DescriptorSetLayout;
 
-	struct PushConstantRange
-	{
-		PushConstantRange(VkShaderStageFlagBits shaderStage, uint32_t size, uint32_t offset = 0)
-		{
-			pushConstantRange.stageFlags = shaderStage;
-			pushConstantRange.size = size;
-			pushConstantRange.offset = offset;
-		}
-
-		VkPushConstantRange pushConstantRange = {};
-	};
 	class PipelineLayout : public Handle<VkPipelineLayout>
 	{
 	public:
-		PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
-		PipelineLayout(Device* device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts, PushConstantRange* pushConstantRage);
+		//PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
+		PipelineLayout(Device* device);
 
-		void Create(VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
+		void AddDescriptorSetLayout(DescriptorSetLayout* descriptorSetLayout);
+		void AddPushConstantRange(VkShaderStageFlagBits shaderStage, uint32_t size, uint32_t offset = 0);
+		void Create();
 	private:
+		std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
+		VkPushConstantRange mPushConstantRange = {};
+		bool mPushConstantActive = false;
 	};
 }

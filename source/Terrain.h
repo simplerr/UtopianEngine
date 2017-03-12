@@ -135,7 +135,18 @@ private:
 	bool mUpdateTimer = true;
 
 	// Storage buffer test
-	std::vector<glm::vec4> mStorageData;
+	struct GeometryVertex
+	{
+		GeometryVertex(glm::vec4 _pos, glm::vec4 _normal)
+			: pos(_pos), normal(_normal) {
+
+		}
+
+		glm::vec4 pos;
+		glm::vec4 normal;
+	};
+
+	std::vector<GeometryVertex> mStorageData;
 	Vulkan::Buffer* mOutputBuffer;
 	VkDescriptorBufferInfo mOutputBufferDescriptor;
 };

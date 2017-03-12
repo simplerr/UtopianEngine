@@ -1,43 +1,44 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/DescriptorSetLayout.h"
 #include "PipelineLayout.h"
 
 namespace Vulkan
 {
-	PipelineLayout::PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
+	PipelineLayout::PipelineLayout(Device* device)
 		: Handle(device, vkDestroyPipelineLayout)
 	{
-		Create(setLayout, pushConstantRage);
+
 	}
 
-	PipelineLayout::PipelineLayout(Device* device, const std::vector<VkDescriptorSetLayout>& descriptorSetLayouts, PushConstantRange* pushConstantRage)
-		: Handle(device, vkDestroyPipelineLayout)
+	void PipelineLayout::AddDescriptorSetLayout(DescriptorSetLayout* descriptorSetLayout)
+	{
+		mDescriptorSetLayouts.push_back(descriptorSetLayout->GetVkHandle());
+	}
+
+	void PipelineLayout::AddPushConstantRange(VkShaderStageFlagBits shaderStage, uint32_t size, uint32_t offset)
+	{
+		mPushConstantRange.stageFlags = shaderStage;
+		mPushConstantRange.size = size;
+		mPushConstantRange.offset = offset;
+
+		mPushConstantActive = true;
+	}
+
+	// TODO: Redundant and confusing, remove?
+	void PipelineLayout::Create()
 	{
 		VkPipelineLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		createInfo.pNext = NULL;
-		createInfo.setLayoutCount = descriptorSetLayouts.size();
-		createInfo.pSetLayouts = descriptorSetLayouts.data();
+		createInfo.setLayoutCount = mDescriptorSetLayouts.size();
+		createInfo.pSetLayouts = mDescriptorSetLayouts.data();
 
-		if (pushConstantRage != nullptr)
+		if (mPushConstantActive)
 		{
 			createInfo.pushConstantRangeCount = 1;
-			createInfo.pPushConstantRanges = &pushConstantRage->pushConstantRange;
+			createInfo.pPushConstantRanges = &mPushConstantRange;
 		}
-
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &createInfo, nullptr, &mHandle));
-	}
-
-	// TODO: Redundant and confusing, remove?j
-	void PipelineLayout::Create(VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage)
-	{
-		VkPipelineLayoutCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		createInfo.pNext = NULL;
-		createInfo.setLayoutCount = 1;
-		createInfo.pSetLayouts = setLayout;
-		createInfo.pushConstantRangeCount = 1;
-		createInfo.pPushConstantRanges = &pushConstantRage->pushConstantRange;
 
 		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &createInfo, nullptr, &mHandle));
 	}

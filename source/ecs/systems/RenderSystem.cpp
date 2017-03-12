@@ -52,10 +52,10 @@ namespace ECS
 		mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 		mDescriptorSetLayout->Create();
 
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		descriptorSetLayouts.push_back(mDescriptorSetLayout->GetVkHandle());
-		Vulkan::PushConstantRange pushConstantRange = Vulkan::PushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, &pushConstantRange);
+		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
+		mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
+		mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
+		mPipelineLayout->Create();
 
 		mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);

@@ -27,10 +27,16 @@ layout(push_constant) uniform PushConsts {
 	 mat4 worldInvTranspose;
 } pushConsts;
 
+struct GeometryVertex
+{
+	vec4 pos;
+	vec4 normal;
+};
+
 // Binding 0 : Position storage buffer
 layout(std140, binding = 3) buffer StorageBuffer 
 {
-	vec4 pos[];
+	GeometryVertex vertices[];
 } storageBuffer;
 
 float sdSphere(vec3 p, float s)
@@ -51,6 +57,12 @@ float sdCone(vec3 p, vec2 c)
     return dot(c,vec2(q,p.z));
 }
 
+float sdBox( vec3 p, vec3 b )
+{
+  vec3 d = abs(p) - b;
+  return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+}
+
 float opI( float d1, float d2 )
 {
     return max(d1,d2);
@@ -68,10 +80,12 @@ float density(vec3 pos)
 {
 	float density = 1;	
 
-	vec2 t = vec2(1000, 500);
-	density = sdTorus(pos, t); 
+	vec2 t = vec2(700, 500);
+	density = sdTorus(pos+1000, t); 
+	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
-	return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
+	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
+	return min(density, sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
 	return density;
@@ -128,10 +142,10 @@ void main(void)
 	if(texelFetch(triangleTableTex, ivec2(3, 252), 0).r == 9)
 		outColor = vec3(1, 1, 1);
 
-	outColor = storageBuffer.pos[29].xyz;
+	outColor = storageBuffer.vertices[29].pos.xyz;
 
 	if(ubo.time > 1)
-		storageBuffer.pos[29] = vec4(1, 0, 0, 1);
+		storageBuffer.vertices[29].pos = vec4(1, 0, 0, 1);
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
@@ -181,16 +195,23 @@ void main(void)
 			{
 				position = vertList[triangleTableValue(cubeIndex, i)];
 				outNormal = generateNormal(position);
+				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i].pos = vec4(position, 1);
+				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i].normal = vec4(outNormal, 1);
+				//storageBuffer.vertices[0].pos = vec4(gl_PrimitiveIDIn);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				position = vertList[triangleTableValue(cubeIndex, i + 1)];
 				outNormal = generateNormal(position);
+				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 1].pos = vec4(position, 1);
+				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 1].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				position = vertList[triangleTableValue(cubeIndex, i + 2)];
 				outNormal = generateNormal(position);
+				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 2].pos = vec4(position, 1);
+				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 2].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 

@@ -1,3 +1,4 @@
+#include <fstream>
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
@@ -53,31 +54,36 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	/*
 		Storage buffer test
 	*/
-	for (uint32_t i = 0; i < 32; i++)
+	for (uint32_t i = 0; i < mBlockSize*mBlockSize*mBlockSize*5*3; i++)
 	{
-		mStorageData.push_back(vec4(i, 1, 1, 1));
+		mStorageData.push_back(GeometryVertex(glm::vec4(i, 1, 1, 1), glm::vec4(-1, -1, -1, -1)));
 	}
 
-	mStorageData[29] = glm::vec4(0, 1, 0, 1);
+	uint32_t size = mStorageData.size() * sizeof(GeometryVertex);
+
+	mStorageData[29].pos = glm::vec4(0, 1, 0, 1);
+	mStorageData[29].normal = glm::vec4(0, 1, 0, 1);
 
 	mOutputBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
-									   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, mStorageData.size() * sizeof(glm::vec4), mStorageData.data());
+									   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, mStorageData.size() * sizeof(GeometryVertex), mStorageData.data());
 
 	void* mappedData;
-	mOutputBuffer->MapMemory(0, mStorageData.size() * sizeof(glm::vec4), 0, &mappedData);
+	mOutputBuffer->MapMemory(0, mStorageData.size() * sizeof(GeometryVertex), 0, &mappedData);
 	
-	glm::vec4* data = (glm::vec4*)mappedData;
+	GeometryVertex* data = (GeometryVertex*)mappedData;
 	for (uint32_t i = 0; i < mStorageData.size(); i++)
 	{
-		glm::vec4 d = *data;
-		Vulkan::VulkanDebug::ConsolePrint(d, "Mapped output buffer");
+		GeometryVertex d = *data;
+		if(d.normal != glm::vec4(-1, -1, -1, -1))
+			Vulkan::VulkanDebug::ConsolePrint(d.pos, "Mapped output buffer");
+
 		data++;
 	}
 
 	mOutputBuffer->UnmapMemory();
 	
 	mOutputBufferDescriptor.buffer = mOutputBuffer->GetVkBuffer();
-	mOutputBufferDescriptor.range = mStorageData.size() * sizeof(glm::vec4);
+	mOutputBufferDescriptor.range = mStorageData.size() * sizeof(GeometryVertex);
 	mOutputBufferDescriptor.offset = 0;
 
 	/* 
@@ -92,10 +98,10 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSetLayout->AddBinding(3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->Create();
 
-	std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-	descriptorSetLayouts.push_back(mDescriptorSetLayout->GetVkHandle());
-	Vulkan::PushConstantRange pushConstantRange = Vulkan::PushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
-	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, &pushConstantRange);
+	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
+	mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
+	mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
+	mPipelineLayout->Create();
 
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
@@ -455,25 +461,7 @@ void Terrain::Update()
 	if(mUpdateTimer)
 		time += 0.002f;
 
-	// Storage buffer test
-	if (time > 2)
-	{
-		//Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
-
-		void* mappedData;
-		mOutputBuffer->MapMemory(0, mStorageData.size() * sizeof(glm::vec4), 0, &mappedData);
-
-		glm::vec4* data = (glm::vec4*)mappedData;
-		for (uint32_t i = 0; i < mStorageData.size(); i++)
-		{
-			glm::vec4 d = *data;
-			//Vulkan::VulkanDebug::ConsolePrint(d, "Mapped output buffer");
-			data++;
-		}
-
-		mOutputBuffer->UnmapMemory();
-	}
-
+	static bool test = true;
 	// TEMP:
 	mUniformBuffer.data.projection = mCamera->GetProjection();
 	mUniformBuffer.data.view = mCamera->GetView();
@@ -527,6 +515,29 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (wParam == 'P')
 			{
 				mUpdateTimer = !mUpdateTimer;
+			}
+			if (wParam == 'G')
+			{
+				// Storage buffer test
+				///std::ofstream fout("vertices.txt");
+
+				Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
+
+				void* mappedData;
+				mOutputBuffer->MapMemory(0, mStorageData.size() * sizeof(GeometryVertex), 0, &mappedData);
+
+				GeometryVertex* data = (GeometryVertex*)mappedData;
+				for (uint32_t i = 0; i < mStorageData.size(); i++)
+				{
+					GeometryVertex d = *data;
+					//if (d.normal != glm::vec4(-1, -1, -1, -1))
+					//	fout << "[x: " << d.pos.x << " y: " << d.pos.y << " z: " << d.pos.z << " w: " << d.pos.w << "] [nx: " << d.normal.x << " ny: " << d.normal.y << " nz: " << d.normal.z << " nw: " << d.normal.w << "]" << std::endl;
+
+					data++;
+				}
+
+				//fout.close();
+				mOutputBuffer->UnmapMemory();
 			}
 			break;
 	}

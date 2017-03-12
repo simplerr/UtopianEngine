@@ -45,9 +45,9 @@ namespace Vulkan
 		// NOTE: Uses the descriptor set layout for the texture from the Renderer
 		// If more descriptors where to be needed they should be added as a separate descriptor set
 		// This is cheating a bit since the shader don't use more than a sampler
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		descriptorSetLayouts.push_back(mRenderer->GetTextureDescriptorSetLayout()->GetVkHandle());
-		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice(), descriptorSetLayouts, nullptr);
+		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
+		mPipelineLayout->AddDescriptorSetLayout(mRenderer->GetTextureDescriptorSetLayout());
+		mPipelineLayout->Create();
 
 		mVertexDescription = new VertexDescription();
 		mVertexDescription->AddBinding(0, sizeof(glm::vec4), VK_VERTEX_INPUT_RATE_VERTEX);					

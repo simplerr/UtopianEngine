@@ -214,13 +214,12 @@ namespace Vulkan
 		mLightDescriptorSetLayout->Create();
 		mTextureDescriptorSetLayout->Create();
 
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		descriptorSetLayouts.push_back(mCameraDescriptorSetLayout->GetVkHandle());
-		descriptorSetLayouts.push_back(mLightDescriptorSetLayout->GetVkHandle());
-		descriptorSetLayouts.push_back(mTextureDescriptorSetLayout->GetVkHandle());
-
-		PushConstantRange pushConstantRange = PushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout = new PipelineLayout(mDevice, descriptorSetLayouts, &pushConstantRange);
+		mPipelineLayout = new PipelineLayout(mDevice);
+		mPipelineLayout->AddDescriptorSetLayout(mCameraDescriptorSetLayout);
+		mPipelineLayout->AddDescriptorSetLayout(mLightDescriptorSetLayout);
+		mPipelineLayout->AddDescriptorSetLayout(mTextureDescriptorSetLayout);
+		mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
+		mPipelineLayout->Create();
 	}
 
 	void Renderer::SetupDescriptorPool()
