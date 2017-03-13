@@ -83,6 +83,7 @@ float density(vec3 pos)
 
 	vec2 t = vec2(700, 500);
 	density = sdTorus(pos+1000, t); 
+	density = min(-pos.y, density);
 	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
@@ -196,6 +197,7 @@ void main(void)
 			{
 				position = vertList[triangleTableValue(cubeIndex, i)];
 				outNormal = generateNormal(position);
+				atomicAdd(storageBuffer.vertexCount, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i].pos = vec4(position, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i].normal = vec4(outNormal, 1);
 				//storageBuffer.vertices[0].pos = vec4(gl_PrimitiveIDIn);
@@ -204,6 +206,7 @@ void main(void)
 
 				position = vertList[triangleTableValue(cubeIndex, i + 1)];
 				outNormal = generateNormal(position);
+				atomicAdd(storageBuffer.vertexCount, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 1].pos = vec4(position, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 1].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
@@ -211,6 +214,7 @@ void main(void)
 
 				position = vertList[triangleTableValue(cubeIndex, i + 2)];
 				outNormal = generateNormal(position);
+				atomicAdd(storageBuffer.vertexCount, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 2].pos = vec4(position, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 2].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);

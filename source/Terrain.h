@@ -177,4 +177,6 @@ private:
 	bool mUpdateTimer = true;
 
 	GeometrySSBO mGeometrySSBO;
+
+	void DumpDebug();
 };
