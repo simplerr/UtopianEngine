@@ -1,18 +1,18 @@
-#include "UniformBuffer.h"
-#include "VulkanBase.h"
+#include "ShaderBuffer.h"
+#include "vulkan/Device.h"
 #include "vulkan/handles/Buffer.h"
 
 namespace Vulkan
 {
-	UniformBuffer::~UniformBuffer()
+	ShaderBuffer::~ShaderBuffer()
 	{
 		delete mBuffer;
 	}
 
-	void UniformBuffer::CreateBuffer(VulkanBase* vulkanBase, VkMemoryPropertyFlagBits propertyFlags)
+	void ShaderBuffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags propertyFlags)
 	{
-		mBuffer = new Buffer(vulkanBase->GetDevice(), 
-							 VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+		mBuffer = new Buffer(device, 
+							 usageFlags,
 							 propertyFlags,
 							 GetSize(),	// Virtual function
 							 nullptr);
@@ -22,5 +22,15 @@ namespace Vulkan
 		mDescriptor.buffer = mBuffer->GetVkBuffer();
 		mDescriptor.range = GetSize();
 		mDescriptor.offset = 0;
+	}
+
+	void ShaderBuffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
+	{
+		mBuffer->MapMemory(offset, size, flags, data);
+	}
+
+	void ShaderBuffer::UnmapMemory()
+	{
+		mBuffer->UnmapMemory();
 	}
 }

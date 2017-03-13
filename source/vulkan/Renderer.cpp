@@ -168,13 +168,13 @@ namespace Vulkan
 		light.SetSpot(4.0f);
 		mFragmentUniformBuffer.lights.push_back(light);
 
-		// Important to call this before CreateBuffer() since # lights affects the total size
+		// Important to call this before Create() since # lights affects the total size
 		mFragmentUniformBuffer.constants.numLights = mFragmentUniformBuffer.lights.size();
 
-		mFragmentUniformBuffer.CreateBuffer(this, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		mFragmentUniformBuffer.Create(GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		// Create the vertex shader uniform buffer
-		mVertexUniformBuffer.CreateBuffer(this, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		mVertexUniformBuffer.Create(GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		UpdateUniformBuffers();
 	}

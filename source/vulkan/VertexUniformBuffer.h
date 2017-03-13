@@ -5,7 +5,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <glm/glm.hpp>
-#include "UniformBuffer.h"
+#include "ShaderBuffer.h"
 #include "Light.h"
 
 /*
@@ -13,7 +13,7 @@ The big uniform buffer that contains everything
 */
 namespace Vulkan
 {
-	class VertexUniformBuffer : public UniformBuffer
+	class VertexUniformBuffer : public ShaderBuffer
 	{
 	public:
 		virtual void UpdateMemory(VkDevice device);

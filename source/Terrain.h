@@ -55,8 +55,8 @@ struct CubeVertex
 
 	glm::vec3 pos;
 };
-	
-class GeometryUniformBuffer : public Vulkan::UniformBuffer
+
+class GeometryUniformBuffer : public Vulkan::ShaderBuffer
 {
 public:
 	virtual void UpdateMemory(VkDevice device)
@@ -82,6 +82,48 @@ public:
 		float voxelSize;
 		float time;
 	} data;
+};
+
+// Storage buffer test
+struct GeometryVertex
+{
+	GeometryVertex(glm::vec4 _pos, glm::vec4 _normal)
+		: pos(_pos), normal(_normal) {
+
+	}
+
+	glm::vec4 pos;
+	glm::vec4 normal;
+};
+	
+class GeometrySSBO : public Vulkan::ShaderBuffer
+{
+public:
+	virtual void UpdateMemory(VkDevice device)
+	{
+		// Map vertex counter
+		uint8_t *mapped;
+		uint32_t offset = 0;
+		uint32_t size = sizeof(numVertices);
+		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
+		memcpy(mapped, &numVertices, size);
+		mBuffer->UnmapMemory();
+
+		// Map vertex vector
+		offset += size;
+		size = vertices.size() * sizeof(GeometryVertex);
+		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
+		memcpy(mapped, vertices.data(), size);
+		mBuffer->UnmapMemory();
+	}
+
+	virtual int GetSize()
+	{
+		return sizeof(numVertices) + vertices.size() * sizeof(GeometryVertex);
+	}
+
+	uint32_t numVertices;
+	std::vector<GeometryVertex> vertices;
 };
 
 class Block
@@ -134,19 +176,5 @@ private:
 
 	bool mUpdateTimer = true;
 
-	// Storage buffer test
-	struct GeometryVertex
-	{
-		GeometryVertex(glm::vec4 _pos, glm::vec4 _normal)
-			: pos(_pos), normal(_normal) {
-
-		}
-
-		glm::vec4 pos;
-		glm::vec4 normal;
-	};
-
-	std::vector<GeometryVertex> mStorageData;
-	Vulkan::Buffer* mOutputBuffer;
-	VkDescriptorBufferInfo mOutputBufferDescriptor;
+	GeometrySSBO mGeometrySSBO;
 };

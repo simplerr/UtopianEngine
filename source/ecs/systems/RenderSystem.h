@@ -23,7 +23,7 @@ namespace Vulkan
 	class CubeMesh;
 	class VertexDescription;
 
-	class GeometryUniformBuffer : public UniformBuffer
+	class GeometryUniformBuffer : public ShaderBuffer
 	{
 	public:
 		virtual void UpdateMemory(VkDevice device)

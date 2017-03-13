@@ -36,6 +36,7 @@ struct GeometryVertex
 // Binding 0 : Position storage buffer
 layout(std140, binding = 3) buffer StorageBuffer 
 {
+	int vertexCount;
 	GeometryVertex vertices[];
 } storageBuffer;
 

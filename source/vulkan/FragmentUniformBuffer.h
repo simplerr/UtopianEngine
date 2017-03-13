@@ -6,13 +6,13 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "UniformBuffer.h"
+#include "ShaderBuffer.h"
 #include "Light.h"
 
 /*
 	The uniform buffer that the Phong fragment shader uses
 */
-class FragmentUniformBuffer : public Vulkan::UniformBuffer
+class FragmentUniformBuffer : public Vulkan::ShaderBuffer
 {
 public:
 	virtual void UpdateMemory(VkDevice device);

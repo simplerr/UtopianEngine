@@ -10,7 +10,7 @@
 #include "FragmentUniformBuffer.h"
 #include "VulkanBase.h"
 #include "VertexDescription.h"
-#include "UniformBuffer.h"
+#include "ShaderBuffer.h"
 #include "VertexUniformBuffer.h"
 
 using namespace glm;
