@@ -197,7 +197,6 @@ void main(void)
 			{
 				position = vertList[triangleTableValue(cubeIndex, i)];
 				outNormal = generateNormal(position);
-				atomicAdd(storageBuffer.vertexCount, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i].pos = vec4(position, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i].normal = vec4(outNormal, 1);
 				//storageBuffer.vertices[0].pos = vec4(gl_PrimitiveIDIn);
@@ -206,7 +205,6 @@ void main(void)
 
 				position = vertList[triangleTableValue(cubeIndex, i + 1)];
 				outNormal = generateNormal(position);
-				atomicAdd(storageBuffer.vertexCount, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 1].pos = vec4(position, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 1].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
@@ -214,13 +212,14 @@ void main(void)
 
 				position = vertList[triangleTableValue(cubeIndex, i + 2)];
 				outNormal = generateNormal(position);
-				atomicAdd(storageBuffer.vertexCount, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 2].pos = vec4(position, 1);
 				storageBuffer.vertices[gl_PrimitiveIDIn*3*5 + i + 2].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				EndPrimitive();
+
+				atomicAdd(storageBuffer.vertexCount, 3);
 			}
 		}
 	}
