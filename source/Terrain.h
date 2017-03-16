@@ -110,7 +110,7 @@ public:
 		mBuffer->UnmapMemory();
 
 		// Map vertex vector
-		offset += size;
+		offset += size*4;
 		size = vertices.size() * sizeof(GeometryVertex);
 		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
 		memcpy(mapped, vertices.data(), size);
@@ -119,7 +119,7 @@ public:
 
 	virtual int GetSize()
 	{
-		return sizeof(numVertices) + vertices.size() * sizeof(GeometryVertex);
+		return sizeof(numVertices) * 4 + vertices.size() * sizeof(GeometryVertex);
 	}
 
 	uint32_t numVertices;
@@ -164,8 +164,8 @@ private:
 	GeometryUniformBuffer  mUniformBuffer;
 
 	Block* mTestBlock;
-	const uint32_t mWorldWidth = 4;
-	const uint32_t mWorldHeight = 4;
+	const uint32_t mWorldWidth = 1;
+	const uint32_t mWorldHeight = 1;
 	const uint32_t mBlockSize = 32;
 	const uint32_t mVoxelSize = 200;
 

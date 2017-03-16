@@ -57,7 +57,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mGeometrySSBO.numVertices = 0;
 	for (uint32_t i = 0; i < mBlockSize*mBlockSize*mBlockSize*5*3; i++)
 	{
-		mGeometrySSBO.vertices.push_back(GeometryVertex(glm::vec4(i, 1, 1, 1), glm::vec4(-1, -1, -1, -1)));
+		mGeometrySSBO.vertices.push_back(GeometryVertex(glm::vec4(i, i, i, i), glm::vec4(-1, -1, -1, -1)));
 	}
 
 	mGeometrySSBO.Create(mRenderer->GetDevice(),
@@ -67,12 +67,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mGeometrySSBO.UpdateMemory(mRenderer->GetVkDevice());
 
 	void* mappedData;
-
-	mGeometrySSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
-	uint32_t count = *(uint32_t*)mappedData;
-	mGeometrySSBO.UnmapMemory();
-
-	mGeometrySSBO.MapMemory(sizeof(uint32_t), mGeometrySSBO.vertices.size() * sizeof(GeometryVertex), 0, &mappedData);
+	mGeometrySSBO.MapMemory(sizeof(uint32_t)*4, mGeometrySSBO.vertices.size() * sizeof(GeometryVertex), 0, &mappedData);
 
 	GeometryVertex* data = (GeometryVertex*)mappedData;
 	for (uint32_t i = 0; i < mGeometrySSBO.vertices.size(); i++)
@@ -535,7 +530,7 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				mGeometrySSBO.UnmapMemory();
 
 				Vulkan::VulkanDebug::ConsolePrint(*mapped, "numVertices: ");
-				//DumpDebug();
+				DumpDebug();
 			}
 			break;
 	}
@@ -550,19 +545,18 @@ void Terrain::DumpDebug()
 
 	void* mappedData;
 	mGeometrySSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
-	uint32_t count = *(uint32_t*)mappedData;
+	uint32_t numVertices = *(uint32_t*)mappedData;
 	mGeometrySSBO.UnmapMemory();
 
-	fout << "numVertices: " << count << std::endl;
+	fout << "numVertices: " << numVertices << std::endl;
 
-	mGeometrySSBO.MapMemory(sizeof(uint32_t), mGeometrySSBO.vertices.size() * sizeof(GeometryVertex), 0, &mappedData);
+	mGeometrySSBO.MapMemory(sizeof(uint32_t)*4, numVertices * sizeof(GeometryVertex), 0, &mappedData);
 
 	GeometryVertex* data = (GeometryVertex*)mappedData;
-	for (uint32_t i = 0; i < mGeometrySSBO.vertices.size(); i++)
+	for (uint32_t i = 0; i < numVertices; i++)
 	{
 		GeometryVertex d = *data;
-		if (d.normal != glm::vec4(-1, -1, -1, -1))
-			fout << "[x: " << d.pos.x << " y: " << d.pos.y << " z: " << d.pos.z << " w: " << d.pos.w << "] [nx: " << d.normal.x << " ny: " << d.normal.y << " nz: " << d.normal.z << " nw: " << d.normal.w << "]" << std::endl;
+		fout << "[x: " << d.pos.x << " y: " << d.pos.y << " z: " << d.pos.z << " w: " << d.pos.w << "] [nx: " << d.normal.x << " ny: " << d.normal.y << " nz: " << d.normal.z << " nw: " << d.normal.w << "]" << std::endl;
 
 		data++;
 	}
