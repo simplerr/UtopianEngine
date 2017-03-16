@@ -49,11 +49,6 @@ namespace ECS
 		// All the ECS::System 
 		std::vector<ECS::System*> mSystems;
 
-		ECS::RenderSystem* mRenderSystem;
-		ECS::PhysicsSystem* mPhysicsSystem;
-		ECS::PickingSystem* mPickingSystem;
-		ECS::HealthSystem* mHealthSystem;
-
 		EntityList mEntities;
 		EntityList mRemoveList;
 		uint32_t mNextEntityId;
