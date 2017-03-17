@@ -155,7 +155,8 @@ private:
 	Vulkan::DescriptorPool* mDescriptorPool;
 	Vulkan::DescriptorSetLayout* mDescriptorSetLayout;
 	Vulkan::DescriptorSet* mDescriptorSet;
-	Vulkan::Pipeline* mPipeline;
+	Vulkan::Pipeline* mGeometryPipeline;
+	Vulkan::Pipeline* mBasicPipeline;
 	Vulkan::PipelineLayout* mPipelineLayout;
 	Vulkan::VertexDescription* mVertexDescription;
 	Vulkan::Camera* mCamera;

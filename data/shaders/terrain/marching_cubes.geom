@@ -22,11 +22,6 @@ layout (set = 0, binding = 1) uniform UBO
 layout (location = 0) out vec3 outColor;
 layout (location = 1) out vec3 outNormal;
 
-layout(push_constant) uniform PushConsts {
-	 mat4 world;		
-	 mat4 worldInvTranspose;
-} pushConsts;
-
 struct GeometryVertex
 {
 	vec4 pos;
@@ -71,7 +66,7 @@ float opI( float d1, float d2 )
 
 void CreatePoint(vec3 pos, float size, vec3 color)
 {
-	gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos, 1.0);
+	gl_Position = ubo.projection * ubo.view * vec4(pos, 1.0);
 	gl_PointSize = size;
 	outColor = color;
 	EmitVertex();
@@ -95,7 +90,7 @@ float density(vec3 pos)
 
 float density(int corner)
 {
-	vec3 pos = (pushConsts.world * gl_in[0].gl_Position).xyz + ubo.offsets[corner].xyz;
+	vec3 pos = (gl_in[0].gl_Position).xyz + ubo.offsets[corner].xyz;
 	return density(pos);
 }
 
@@ -111,7 +106,7 @@ vec3 cornerPos(vec3 pos, int corner)
 
 vec3 cornerPos(int corner)
 {
-	return (pushConsts.world * gl_in[0].gl_Position).xyz + ubo.offsets[corner].xyz;
+	return (gl_in[0].gl_Position).xyz + ubo.offsets[corner].xyz;
 } 
 
 int edgeTableValue(int cubeIndex)
@@ -147,7 +142,7 @@ void main(void)
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
-		vec3 pos = (pushConsts.world * gl_in[i].gl_Position).xyz;
+		vec3 pos = (gl_in[i].gl_Position).xyz;
 		float isoLevel = 0.0f;
 
 		int cubeIndex = 0;

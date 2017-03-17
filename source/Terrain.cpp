@@ -95,7 +95,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 
 	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
 	mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
-	mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
+	mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
 	mPipelineLayout->Create();
 
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
@@ -416,11 +416,18 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mVertexDescription->AddAttribute(0, Vulkan::Vec3Attribute());	
 
 	Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/terrain/base.vert.spv", "data/shaders/terrain/base.frag.spv", "data/shaders/terrain/marching_cubes.geom.spv");
-	mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
-	mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+	mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
+	mGeometryPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 	//mPipeline->mRasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
-	mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-	mPipeline->Create();
+	mGeometryPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+	mGeometryPipeline->Create();
+
+	Vulkan::Shader* shader2 = mRenderer->mShaderManager->CreateShader("data/shaders/terrain/base.vert.spv", "data/shaders/terrain/base.frag.spv");
+	mBasicPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader2);
+	mBasicPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+	//mPipeline->mRasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	mBasicPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+	mBasicPipeline->Create();
 
 	// Cube corner offsets
 	mUniformBuffer.data.offsets[0] = vec4(0, 0, 0, 0);
@@ -443,7 +450,8 @@ Terrain::~Terrain()
 	delete mPipelineLayout;
 	delete mDescriptorPool;
 	delete mDescriptorSet;
-	delete mPipeline;
+	delete mGeometryPipeline;
+	delete mBasicPipeline;
 	delete mVertexDescription;
 	delete mEdgeTableTexture;
 	delete mTriangleTableTexture;
@@ -481,7 +489,8 @@ void Terrain::Update()
 	mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
-	mCommandBuffer->CmdBindPipeline(mPipeline);
+	mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
+	//mCommandBuffer->CmdBindPipeline(mBasicPipeline);
 
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
 
@@ -501,7 +510,7 @@ void Terrain::Update()
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
 			vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
 		}
