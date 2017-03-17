@@ -11,6 +11,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/BasicEffect.h"
 #include "Camera.h"
 #include "Terrain.h"
 
@@ -441,6 +442,8 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mUniformBuffer.data.color = vec4(0, 1, 0, 1);
 
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+
+	mBasicEffect = new Vulkan::BasicEffect(mRenderer);
 }
 
 Terrain::~Terrain()
@@ -480,6 +483,10 @@ void Terrain::Update()
 	mUniformBuffer.data.time = time;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
+	mBasicEffect->uniformBuffer.data.projection = mCamera->GetProjection();
+	mBasicEffect->uniformBuffer.data.view = mCamera->GetView();
+	mBasicEffect->uniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+
 	// Temp
 	VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
 
@@ -490,9 +497,10 @@ void Terrain::Update()
 	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
 	mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
-	//mCommandBuffer->CmdBindPipeline(mBasicPipeline);
+	//mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
 
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
+	//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
 
 	mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
 
@@ -511,6 +519,7 @@ void Terrain::Update()
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
 			mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			//mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
 			vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
 		}

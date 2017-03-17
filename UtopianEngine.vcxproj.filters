@@ -52,6 +52,24 @@
     <Filter Include="Source Files\shaders\terrain">
       <UniqueIdentifier>{6af005ec-b8aa-4c94-a8bb-2fe381d562fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\terrain">
+      <UniqueIdentifier>{414efb07-45ba-48ec-9c6c-52ae7b95efef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects">
+      <UniqueIdentifier>{a539331b-42e5-4ee9-b63a-74238eb7d995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\basic">
+      <UniqueIdentifier>{e4d33f4f-5750-40ac-9f0c-a40b4456de31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\phong">
+      <UniqueIdentifier>{8a094928-af10-4c91-bfc2-35a9836209a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\marching_cubes">
+      <UniqueIdentifier>{2515ac29-6c7f-4467-8329-a070f90922e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\basic">
+      <UniqueIdentifier>{feb028bc-a29e-42a1-a0e0-52134fdb74c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -195,11 +213,14 @@
     <ClCompile Include="source\vulkan\handles\Buffer.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\Terrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Terrain.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\BasicEffect.cpp">
+      <Filter>Source Files\vulkan\effects\basic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -359,11 +380,17 @@
     <ClInclude Include="source\vulkan\handles\Buffer.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\Terrain.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\ShaderBuffer.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Terrain.h">
+      <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\Effect.h">
+      <Filter>Source Files\vulkan\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\BasicEffect.h">
+      <Filter>Source Files\vulkan\effects\basic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -417,6 +444,12 @@
     </None>
     <None Include="data\shaders\terrain\marching_cubes.geom">
       <Filter>Source Files\shaders\terrain</Filter>
+    </None>
+    <None Include="data\shaders\basic\basic.vert">
+      <Filter>Source Files\shaders\basic</Filter>
+    </None>
+    <None Include="data\shaders\basic\basic.frag">
+      <Filter>Source Files\shaders\basic</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -41,6 +41,7 @@ namespace Vulkan
 	class CommandBuffer;
 	class VertexDescription;
 	class Texture;
+	class BasicEffect;
 }
 
 struct CubeVertex
@@ -163,6 +164,9 @@ private:
 	Vulkan::Texture* mEdgeTableTexture;
 	Vulkan::Texture* mTriangleTableTexture;
 	GeometryUniformBuffer  mUniformBuffer;
+
+	// Experimentation
+	Vulkan::BasicEffect* mBasicEffect;
 
 	Block* mTestBlock;
 	const uint32_t mWorldWidth = 1;
