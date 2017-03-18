@@ -28,12 +28,12 @@ struct GeometryVertex
 	vec4 normal;
 };
 
-layout(std430, binding = 3) buffer VertexSSBO 
+layout(std430, set = 1, binding = 0) buffer VertexSSBO 
 {
 	GeometryVertex vertices[];
 } vertexSSBO;
 
-layout(std430, binding = 4) buffer CounterSSBO 
+layout(std430, set = 1, binding = 1) buffer CounterSSBO 
 {
 	int vertexCount;
 } counterSSBO;
@@ -82,8 +82,10 @@ float density(vec3 pos)
 	float density = 1;	
 
 	vec2 t = vec2(700, 500);
+	vec2 t2 = vec2(1200, 500);
 	density = sdTorus(pos+1000, t); 
 	density = min(-pos.y, density);
+	density = min(sdTorus(pos+vec3(-5000, 1000, -5000), t2), density);
 	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));

@@ -222,6 +222,9 @@
     <ClCompile Include="source\vulkan\BasicEffect.cpp">
       <Filter>Source Files\vulkan\effects\basic</Filter>
     </ClCompile>
+    <ClCompile Include="source\Block.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -391,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\BasicEffect.h">
       <Filter>Source Files\vulkan\effects\basic</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Block.h">
+      <Filter>Source Files\terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

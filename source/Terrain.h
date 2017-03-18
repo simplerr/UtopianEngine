@@ -44,6 +44,8 @@ namespace Vulkan
 	class BasicEffect;
 }
 
+class Block;
+
 struct CubeVertex
 {
 	CubeVertex(glm::vec3 _pos) : pos(_pos) {
@@ -85,75 +87,6 @@ public:
 	} data;
 };
 
-// Storage buffer test
-struct GeometryVertex
-{
-	GeometryVertex(glm::vec4 _pos, glm::vec4 _normal)
-		: pos(_pos), normal(_normal) {
-
-	}
-
-	glm::vec4 pos;
-	glm::vec4 normal;
-};
-	
-class VertexSSBO : public Vulkan::ShaderBuffer
-{
-public:
-	virtual void UpdateMemory(VkDevice device)
-	{
-		uint8_t *mapped;
-		uint32_t offset = 0;
-		uint32_t size = vertices.size() * sizeof(GeometryVertex);
-		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
-		memcpy(mapped, vertices.data(), size);
-		mBuffer->UnmapMemory();
-	}
-
-	virtual int GetSize()
-	{
-		return vertices.size() * sizeof(GeometryVertex);
-	}
-
-	std::vector<GeometryVertex> vertices;
-};
-
-class CounterSSBO : public Vulkan::ShaderBuffer
-{
-public:
-	virtual void UpdateMemory(VkDevice device)
-	{
-		// Map vertex counter
-		uint8_t *mapped;
-		uint32_t offset = 0;
-		uint32_t size = sizeof(numVertices);
-		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
-		memcpy(mapped, &numVertices, size);
-		mBuffer->UnmapMemory();
-	}
-
-	virtual int GetSize()
-	{
-		return sizeof(numVertices);
-	}
-
-	uint32_t numVertices;
-};
-class Block
-{
-public:
-	Block(Vulkan::Renderer* renderer, uint32_t blockSize, float voxelSize);
-	~Block();
-
-	Vulkan::Buffer* GetVertexBuffer();
-
-private:
-	std::vector<CubeVertex> mPointList;
-	Vulkan::Buffer* mVertexBuffer;
-
-	float mVoxelSize;
-};
-
 class Terrain
 {
 public:
@@ -161,7 +94,11 @@ public:
 	~Terrain();
 
 	void Update();
+	void UpdateBlocks();
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	/* Builds the vertex buffer containing all the input points to the marching cubes algorithm */
+	void BuildPointList();
 private:
 	Vulkan::Renderer* mRenderer;
 	Vulkan::CommandBuffer* mCommandBuffer;
@@ -177,12 +114,15 @@ private:
 	Vulkan::Texture* mTriangleTableTexture;
 	GeometryUniformBuffer  mUniformBuffer;
 
+	// Block specific
+	Vulkan::DescriptorSetLayout* mBlockDescriptorSetLayout;
+
 	// Experimentation
 	Vulkan::BasicEffect* mBasicEffect;
 
+	std::vector<Block*> mBlockList;
 	Block* mTestBlock;
-	const uint32_t mWorldWidth = 1;
-	const uint32_t mWorldHeight = 1;
+	const uint32_t mWorldSize = 2;
 	const uint32_t mBlockSize = 32;
 	const uint32_t mVoxelSize = 200;
 
@@ -195,8 +135,10 @@ private:
 	bool mDrawGeneratedBuffer = false;
 	int mNumVertices = 0;
 
-	VertexSSBO mVertexSSBO;
-	CounterSSBO mCounterSSBO;
+	std::vector<CubeVertex> mPointList;
+	Vulkan::Buffer* mMarchingCubesVB;
+
+	const uint32_t NUM_MAX_STORAGE_BUFFERS = 10;
 
 	void DumpDebug();
 };

@@ -9,84 +9,20 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/handles/Queue.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/BasicEffect.h"
 #include "Camera.h"
 #include "Terrain.h"
-
-Block::Block(Vulkan::Renderer* renderer, uint32_t blockSize, float voxelSize)
-{
-	mVoxelSize = voxelSize;
-
-	float size = blockSize * mVoxelSize;
-	for (uint32_t x = 0; x < blockSize; x++)
-	{
-		for (uint32_t y = 0; y < blockSize; y++)
-		{
-			for (uint32_t z = 0; z < blockSize; z++)
-			{
-				mPointList.push_back(CubeVertex(-size / 2 + x * mVoxelSize, -size / 2 + y * mVoxelSize, -size / 2 + z * mVoxelSize));
-			}
-		}
-	}
-
-	VkDeviceSize bufferSize = blockSize * blockSize * blockSize * sizeof(CubeVertex);
-	mVertexBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, mPointList.data());
-
-}
-
-Block::~Block()
-{
-	delete mVertexBuffer;
-}
-
-Vulkan::Buffer* Block::GetVertexBuffer()
-{
-	return mVertexBuffer;
-}
+#include "Block.h"
 
 Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 {
 	mRenderer = renderer;
 	mCamera = camera;
-	mTestBlock = new Block(renderer, mBlockSize, mVoxelSize);
+	//mTestBlock = new Block(renderer, mBlockSize, mVoxelSize);
 
-	/*
-		Storage buffer test
-	*/
-	mCounterSSBO.numVertices = 0;
-
-	mCounterSSBO.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	mCounterSSBO.UpdateMemory(mRenderer->GetVkDevice());
-
-
-	for (uint32_t i = 0; i < mBlockSize*mBlockSize*mBlockSize*5*3; i++)
-	{
-		mVertexSSBO.vertices.push_back(GeometryVertex(glm::vec4(i, i, i, i), glm::vec4(-1, -1, -1, -1)));
-	}
-
-	mVertexSSBO.Create(mRenderer->GetDevice(),
-						 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-						 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	mVertexSSBO.UpdateMemory(mRenderer->GetVkDevice());
-
-
-	void* mappedData;
-	mVertexSSBO.MapMemory(0, mVertexSSBO.vertices.size() * sizeof(GeometryVertex), 0, &mappedData);
-
-	GeometryVertex* data = (GeometryVertex*)mappedData;
-	for (uint32_t i = 0; i < mVertexSSBO.vertices.size(); i++)
-	{
-		GeometryVertex d = *data;
-		if (d.normal != glm::vec4(-1, -1, -1, -1))
-			Vulkan::VulkanDebug::ConsolePrint(d.pos, "Mapped output buffer");
-
-		data++;
-	}
-
-	mVertexSSBO.UnmapMemory();
 
 	/* 
 		Initialize Vulkan handles
@@ -97,19 +33,23 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
-	mDescriptorSetLayout->AddBinding(3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
-	mDescriptorSetLayout->AddBinding(4, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->Create();
+
+	mBlockDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
+	mBlockDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
+	mBlockDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
+	mBlockDescriptorSetLayout->Create();
 
 	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
 	mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
+	mPipelineLayout->AddDescriptorSetLayout(mBlockDescriptorSetLayout);
 	mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
 	mPipelineLayout->Create();
 
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
-	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2);
+	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, NUM_MAX_STORAGE_BUFFERS); // NOTE:
 	mDescriptorPool->Create();
 
 	mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
@@ -416,8 +356,6 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
 	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
 	mDescriptorSet->BindCombinedImage(2, &mTriangleTableTexture->GetTextureDescriptorInfo());
-	mDescriptorSet->BindStorageBuffer(3, &mVertexSSBO.GetDescriptor());
-	mDescriptorSet->BindStorageBuffer(4, &mCounterSSBO.GetDescriptor());
 	mDescriptorSet->UpdateDescriptorSets();
 
 	mVertexDescription = new Vulkan::VertexDescription();
@@ -453,6 +391,23 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 
 	mBasicEffect = new Vulkan::BasicEffect(mRenderer);
 	//mCommandBuffer->ToggleActive();
+
+	/* 
+		Block specific initialization	
+	*/
+
+	/* Start with mWorldSize*mWorldSize loaded blocks */
+	for (float x = -(float)mWorldSize / 2; x < (float)mWorldSize / 2; x++)
+	{
+		for (float y = -(float)mWorldSize / 2; y < (float)mWorldSize / 2; y++)
+		{
+			glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize);
+			Block* block = new Block(renderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool);
+			mBlockList.push_back(block);
+		}
+	}
+
+	BuildPointList();
 }
 
 Terrain::~Terrain()
@@ -467,21 +422,66 @@ Terrain::~Terrain()
 	delete mVertexDescription;
 	delete mEdgeTableTexture;
 	delete mTriangleTableTexture;
+	delete mMarchingCubesVB;
+}
+
+void Terrain::UpdateBlocks()
+{
+	for (auto block : mBlockList)
+	{
+		// Generate the vertex buffer for the block 
+		if (!block->IsGenerated() || block->IsModified())
+		{
+			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+			commandBuffer.CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+			commandBuffer.CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+			commandBuffer.CmdBindPipeline(mGeometryPipeline);
+
+			VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
+			vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
+
+			//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
+			//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+
+			commandBuffer.CmdBindVertexBuffer(0, 1, mMarchingCubesVB);
+
+			// Push the world matrix constant
+			Vulkan::PushConstantBlock pushConstantBlock;
+			pushConstantBlock.world = glm::mat4();
+			pushConstantBlock.worldInvTranspose = glm::mat4();
+
+			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+			commandBuffer.CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+
+			vkCmdDraw(commandBuffer.GetVkHandle(), mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+
+			commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
+
+			uint32_t* mapped;
+			block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+			uint32_t numVertices = *(uint32_t*)mapped;
+			block->mCounterSSBO.UnmapMemory();
+
+			block->SetNumVertices(numVertices);
+			block->SetGenerated(true);
+			block->SetModified(false);
+		}
+	}
 }
 
 void Terrain::Update()
 {
+	UpdateBlocks();
+
 	static float time = 0.0f;
 
 	if(mUpdateTimer)
 		time += 0.002f;
-
-	// Reset vertex count each frame
-	uint32* mapped;
-	uint32_t numVertices = 0;
-	mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
-	memcpy(mapped, &numVertices, sizeof(uint32_t));
-	mCounterSSBO.UnmapMemory();
 
 	static bool test = true;
 
@@ -505,68 +505,27 @@ void Terrain::Update()
 	mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
-	if (mDrawGeneratedBuffer)
+	for (auto block : mBlockList)
 	{
-		mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
-
-		mCommandBuffer->CmdBindVertexBuffer(0, 1, mVertexSSBO.GetBuffer());
-
-		// Push the world matrix constant
-		Vulkan::PushConstantBlock pushConstantBlock;
-		pushConstantBlock.world = glm::mat4();
-		pushConstantBlock.worldInvTranspose = glm::mat4();
-
-		for (int x = -(float)mWorldWidth / 2; x < (float)mWorldWidth / 2; x++)
+		if (block->IsGenerated())
 		{
-			for (int y = -(float)mWorldHeight / 2; y < (float)mWorldHeight / 2; y++)
-			{
-				pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize));
-				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
 
-				mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			mCommandBuffer->CmdBindVertexBuffer(0, 1, block->mVertexSSBO.GetBuffer());
 
-				uint32_t  count = 9072;
-				//count = 3000;
-				vkCmdDraw(commandBuffer, mNumVertices, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
-			}
-		}
-	}
-	else
-	{
-		mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
+			// Push the world matrix constant
+			Vulkan::PushConstantBlock pushConstantBlock;
+			pushConstantBlock.world = glm::mat4();
+			pushConstantBlock.worldInvTranspose = glm::mat4();
 
-		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
+			mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-		mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
-
-		// Push the world matrix constant
-		Vulkan::PushConstantBlock pushConstantBlock;
-		pushConstantBlock.world = glm::mat4();
-		pushConstantBlock.worldInvTranspose = glm::mat4();
-
-		for (int x = -(float)mWorldWidth / 2; x < (float)mWorldWidth / 2; x++)
-		{
-			for (int y = -(float)mWorldHeight / 2; y < (float)mWorldHeight / 2; y++)
-			{
-				pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize));
-				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-				mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-
-				vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
-			}
+			vkCmdDraw(commandBuffer, block->GetNumVertices(), 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
 		}
 	}
 
 	mCommandBuffer->End();
-	
-	//DumpDebug();
-	//int a = 1;
 }
 
 void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -574,7 +533,7 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 		case WM_KEYDOWN:
-			if (wParam == 'P')
+			/*if (wParam == 'P')
 			{
 				mUpdateTimer = !mUpdateTimer;
 			}
@@ -595,37 +554,55 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
 				mNumVertices = *(uint32_t*)mapped;
 				mCounterSSBO.UnmapMemory();
-			}
+			}*/
 			break;
 	}
 }
 
-void Terrain::DumpDebug()
+void Terrain::BuildPointList()
 {
-	// Storage buffer test
-	std::ofstream fout("vertices.txt");
-
-	Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
-
-	void* mappedData;
-	mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
-	uint32_t numVertices = *(uint32_t*)mappedData;
-	mCounterSSBO.UnmapMemory();
-
-	fout << "numVertices: " << numVertices << std::endl;
-
-	mVertexSSBO.MapMemory(0, numVertices * sizeof(GeometryVertex), 0, &mappedData);
-
-	GeometryVertex* data = (GeometryVertex*)mappedData;
-	for (uint32_t i = 0; i < numVertices; i++)
+	float size = mBlockSize * mVoxelSize;
+	for (uint32_t x = 0; x < mBlockSize; x++)
 	{
-		GeometryVertex d = *data;
-		fout << "[x: " << d.pos.x << " y: " << d.pos.y << " z: " << d.pos.z << " w: " << d.pos.w << "] [nx: " << d.normal.x << " ny: " << d.normal.y << " nz: " << d.normal.z << " nw: " << d.normal.w << "]" << std::endl;
-
-		data++;
+		for (uint32_t y = 0; y < mBlockSize; y++)
+		{
+			for (uint32_t z = 0; z < mBlockSize; z++)
+			{
+				mPointList.push_back(CubeVertex(-size / 2 + x * mVoxelSize, -size / 2 + y * mVoxelSize, -size / 2 + z * mVoxelSize));
+			}
+		}
 	}
 
-	mVertexSSBO.UnmapMemory();
+	VkDeviceSize bufferSize = mBlockSize * mBlockSize * mBlockSize * sizeof(CubeVertex);
+	mMarchingCubesVB = new Vulkan::Buffer(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, mPointList.data());
+}
 
-	fout.close();
+void Terrain::DumpDebug()
+{
+	//// Storage buffer test
+	//std::ofstream fout("vertices.txt");
+
+	//Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
+
+	//void* mappedData;
+	//mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
+	//uint32_t numVertices = *(uint32_t*)mappedData;
+	//mCounterSSBO.UnmapMemory();
+
+	//fout << "numVertices: " << numVertices << std::endl;
+
+	//mVertexSSBO.MapMemory(0, numVertices * sizeof(GeometryVertex), 0, &mappedData);
+
+	//GeometryVertex* data = (GeometryVertex*)mappedData;
+	//for (uint32_t i = 0; i < numVertices; i++)
+	//{
+	//	GeometryVertex d = *data;
+	//	fout << "[x: " << d.pos.x << " y: " << d.pos.y << " z: " << d.pos.z << " w: " << d.pos.w << "] [nx: " << d.normal.x << " ny: " << d.normal.y << " nz: " << d.normal.z << " nw: " << d.normal.w << "]" << std::endl;
+
+	//	data++;
+	//}
+
+	//mVertexSSBO.UnmapMemory();
+
+	//fout.close();
 }
