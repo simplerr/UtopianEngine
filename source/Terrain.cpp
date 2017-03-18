@@ -533,6 +533,19 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 		case WM_KEYDOWN:
+			if (wParam == 'G')
+			{
+				uint32_t numBlocks = 0;
+				uint32_t numVertices = 0;
+				for (auto block : mBlockList)
+				{
+					numBlocks++;
+					numVertices += block->GetNumVertices();
+				}
+
+				Vulkan::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
+				Vulkan::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
+			}
 			/*if (wParam == 'P')
 			{
 				mUpdateTimer = !mUpdateTimer;

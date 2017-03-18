@@ -122,7 +122,7 @@ private:
 
 	std::vector<Block*> mBlockList;
 	Block* mTestBlock;
-	const uint32_t mWorldSize = 2;
+	const uint32_t mWorldSize = 5;
 	const uint32_t mBlockSize = 32;
 	const uint32_t mVoxelSize = 200;
 
@@ -138,7 +138,7 @@ private:
 	std::vector<CubeVertex> mPointList;
 	Vulkan::Buffer* mMarchingCubesVB;
 
-	const uint32_t NUM_MAX_STORAGE_BUFFERS = 10;
+	const uint32_t NUM_MAX_STORAGE_BUFFERS = 200;
 
 	void DumpDebug();
 };
