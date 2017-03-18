@@ -9,7 +9,8 @@ namespace Vulkan
 {
 	struct BasicVertex
 	{
-		glm::vec3 position;
+		glm::vec4 position;
+		glm::vec4 normal;
 	};
 
 	/** \brief Most basic effect

@@ -85,7 +85,7 @@ namespace Vulkan
 					//else { 
 						//meshComponent = new ECS::MeshComponent("data/models/adventure_village/CrateSquareB.obj", PipelineType::PIPELINE_BASIC);
 						//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
-						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
+						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_WIREFRAME);
 					//}
 
 					// Health

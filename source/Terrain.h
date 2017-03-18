@@ -192,6 +192,8 @@ private:
 	};
 
 	bool mUpdateTimer = true;
+	bool mDrawGeneratedBuffer = false;
+	int mNumVertices = 0;
 
 	VertexSSBO mVertexSSBO;
 	CounterSSBO mCounterSSBO;

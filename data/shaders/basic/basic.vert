@@ -3,7 +3,8 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (location = 0) in vec3 InPosL;
+layout (location = 0) in vec4 InPosL;
+layout (location = 1) in vec4 InNormal;
 
 layout (location = 0) out vec3 outColor;
 layout (location = 1) out vec3 outNormal;
@@ -31,4 +32,5 @@ void main(void)
 	outNormal = vec3(1, 1, 1);
 
 	gl_Position = per_frame.projection * per_frame.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+	//gl_Position = vec4(InPosL.xyz, 1.0);
 }

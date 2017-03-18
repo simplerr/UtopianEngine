@@ -28,6 +28,7 @@ namespace Vulkan
 		virtual int GetSize() = 0;
 
 		VkDescriptorBufferInfo GetDescriptor() { return mDescriptor; }
+		Buffer* GetBuffer() { return mBuffer; }
 
 	protected:
 		Buffer* mBuffer;

@@ -55,7 +55,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	/*
 		Storage buffer test
 	*/
-	mCounterSSBO.numVertices = 190;
+	mCounterSSBO.numVertices = 0;
 
 	mCounterSSBO.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	mCounterSSBO.UpdateMemory(mRenderer->GetVkDevice());
@@ -452,6 +452,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
 	mBasicEffect = new Vulkan::BasicEffect(mRenderer);
+	//mCommandBuffer->ToggleActive();
 }
 
 Terrain::~Terrain()
@@ -504,32 +505,61 @@ void Terrain::Update()
 	mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
-	mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
-	//mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
-
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
-	//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
-
-	mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
-
-	// Push the world matrix constant
-	Vulkan::PushConstantBlock pushConstantBlock;
-	pushConstantBlock.world = glm::mat4();
-	pushConstantBlock.worldInvTranspose = glm::mat4(); 
-
-	for (int x = -(float)mWorldWidth / 2; x < (float)mWorldWidth/2; x++)
+	if (mDrawGeneratedBuffer)
 	{
-		for (int y = -(float)mWorldHeight / 2; y < (float)mWorldHeight/2; y++)
+		mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
+
+		mCommandBuffer->CmdBindVertexBuffer(0, 1, mVertexSSBO.GetBuffer());
+
+		// Push the world matrix constant
+		Vulkan::PushConstantBlock pushConstantBlock;
+		pushConstantBlock.world = glm::mat4();
+		pushConstantBlock.worldInvTranspose = glm::mat4();
+
+		for (int x = -(float)mWorldWidth / 2; x < (float)mWorldWidth / 2; x++)
 		{
-			pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize));
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+			for (int y = -(float)mWorldHeight / 2; y < (float)mWorldHeight / 2; y++)
+			{
+				pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize));
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			//mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-			vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+				uint32_t  count = 9072;
+				//count = 3000;
+				vkCmdDraw(commandBuffer, mNumVertices, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+			}
+		}
+	}
+	else
+	{
+		mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
+
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
+
+		mCommandBuffer->CmdBindVertexBuffer(0, 1, mTestBlock->GetVertexBuffer());
+
+		// Push the world matrix constant
+		Vulkan::PushConstantBlock pushConstantBlock;
+		pushConstantBlock.world = glm::mat4();
+		pushConstantBlock.worldInvTranspose = glm::mat4();
+
+		for (int x = -(float)mWorldWidth / 2; x < (float)mWorldWidth / 2; x++)
+		{
+			for (int y = -(float)mWorldHeight / 2; y < (float)mWorldHeight / 2; y++)
+			{
+				pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize));
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+				mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+
+				vkCmdDraw(commandBuffer, mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+			}
 		}
 	}
 
@@ -557,6 +587,14 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				Vulkan::VulkanDebug::ConsolePrint(*mapped, "numVertices: ");
 				DumpDebug();
+			}
+			if (wParam == 'H')
+			{
+				mDrawGeneratedBuffer = !mDrawGeneratedBuffer;
+				uint32_t* mapped;
+				mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+				mNumVertices = *(uint32_t*)mapped;
+				mCounterSSBO.UnmapMemory();
 			}
 			break;
 	}

@@ -33,11 +33,13 @@ namespace Vulkan
 
 		mVertexDescription = new Vulkan::VertexDescription();
 		mVertexDescription->AddBinding(0, sizeof(BasicVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
-		mVertexDescription->AddAttribute(0, Vulkan::Vec3Attribute());	
+		mVertexDescription->AddAttribute(0, Vulkan::Vec4Attribute());	
+		mVertexDescription->AddAttribute(1, Vulkan::Vec4Attribute());	
 
 		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/basic/basic.vert.spv", "data/shaders/basic/basic.frag.spv");
 		mBasicPipeline = new Vulkan::Pipeline(renderer->GetDevice(), mPipelineLayout, renderer->GetRenderPass(), mVertexDescription, shader);
-		mBasicPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+		mBasicPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		//mBasicPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 		//mPipeline->mRasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
 		mBasicPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mBasicPipeline->Create();

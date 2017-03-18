@@ -87,7 +87,7 @@ float density(vec3 pos)
 	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
-	return min(density, sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
+	return min(density, sdSphere(pos+vec3(00, 1000, 00), 500*abs(sin(ubo.time))));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
 	return density;
@@ -141,9 +141,6 @@ void main(void)
 {	
 	outColor = vertexSSBO.vertices[29].pos.xyz;
 	outColor = vec3(0, 1, 0);
-
-	if(ubo.time > 1)
-		vertexSSBO.vertices[29].pos = vec4(1, 0, 0, 1);
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
