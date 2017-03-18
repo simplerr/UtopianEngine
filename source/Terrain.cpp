@@ -512,7 +512,7 @@ void Terrain::Update()
 			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
 
-			mCommandBuffer->CmdBindVertexBuffer(0, 1, block->mVertexSSBO.GetBuffer());
+			mCommandBuffer->CmdBindVertexBuffer(0, 1, block->GetVertexBuffer());
 
 			// Push the world matrix constant
 			Vulkan::PushConstantBlock pushConstantBlock;

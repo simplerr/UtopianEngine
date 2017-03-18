@@ -91,11 +91,11 @@ public:
 	Vulkan::DescriptorSet* GetDescriptorSet();
 	uint32_t GetNumVertices();
 
-	VertexSSBO mVertexSSBO;
 	CounterSSBO mCounterSSBO;
 
 private:
 	Vulkan::Buffer* mVertexBuffer;
+	VkDescriptorBufferInfo mBufferInfo;
 	Vulkan::DescriptorSet* mDescriptorSet;
 	glm::vec3 mPosition;
 
