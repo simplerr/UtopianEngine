@@ -55,23 +55,29 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	/*
 		Storage buffer test
 	*/
-	mGeometrySSBO.numVertices = 0;
+	mCounterSSBO.numVertices = 190;
+
+	mCounterSSBO.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	mCounterSSBO.UpdateMemory(mRenderer->GetVkDevice());
+
+
 	for (uint32_t i = 0; i < mBlockSize*mBlockSize*mBlockSize*5*3; i++)
 	{
-		mGeometrySSBO.vertices.push_back(GeometryVertex(glm::vec4(i, i, i, i), glm::vec4(-1, -1, -1, -1)));
+		mVertexSSBO.vertices.push_back(GeometryVertex(glm::vec4(i, i, i, i), glm::vec4(-1, -1, -1, -1)));
 	}
 
-	mGeometrySSBO.Create(mRenderer->GetDevice(),
+	mVertexSSBO.Create(mRenderer->GetDevice(),
 						 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 						 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	mGeometrySSBO.UpdateMemory(mRenderer->GetVkDevice());
+	mVertexSSBO.UpdateMemory(mRenderer->GetVkDevice());
+
 
 	void* mappedData;
-	mGeometrySSBO.MapMemory(sizeof(uint32_t)*4, mGeometrySSBO.vertices.size() * sizeof(GeometryVertex), 0, &mappedData);
+	mVertexSSBO.MapMemory(0, mVertexSSBO.vertices.size() * sizeof(GeometryVertex), 0, &mappedData);
 
 	GeometryVertex* data = (GeometryVertex*)mappedData;
-	for (uint32_t i = 0; i < mGeometrySSBO.vertices.size(); i++)
+	for (uint32_t i = 0; i < mVertexSSBO.vertices.size(); i++)
 	{
 		GeometryVertex d = *data;
 		if (d.normal != glm::vec4(-1, -1, -1, -1))
@@ -80,7 +86,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 		data++;
 	}
 
-	mGeometrySSBO.UnmapMemory();
+	mVertexSSBO.UnmapMemory();
 
 	/* 
 		Initialize Vulkan handles
@@ -92,6 +98,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->AddBinding(3, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
+	mDescriptorSetLayout->AddBinding(4, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->Create();
 
 	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
@@ -102,7 +109,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
-	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1);
+	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 2);
 	mDescriptorPool->Create();
 
 	mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
@@ -409,7 +416,8 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
 	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
 	mDescriptorSet->BindCombinedImage(2, &mTriangleTableTexture->GetTextureDescriptorInfo());
-	mDescriptorSet->BindStorageBuffer(3, &mGeometrySSBO.GetDescriptor());
+	mDescriptorSet->BindStorageBuffer(3, &mVertexSSBO.GetDescriptor());
+	mDescriptorSet->BindStorageBuffer(4, &mCounterSSBO.GetDescriptor());
 	mDescriptorSet->UpdateDescriptorSets();
 
 	mVertexDescription = new Vulkan::VertexDescription();
@@ -470,9 +478,9 @@ void Terrain::Update()
 	// Reset vertex count each frame
 	uint32* mapped;
 	uint32_t numVertices = 0;
-	mGeometrySSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+	mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
 	memcpy(mapped, &numVertices, sizeof(uint32_t));
-	mGeometrySSBO.UnmapMemory();
+	mCounterSSBO.UnmapMemory();
 
 	static bool test = true;
 
@@ -543,9 +551,9 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (wParam == 'G')
 			{
 				uint32_t* mapped;
-				mGeometrySSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+				mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
 				uint32_t count = *(uint32_t*)mapped;
-				mGeometrySSBO.UnmapMemory();
+				mCounterSSBO.UnmapMemory();
 
 				Vulkan::VulkanDebug::ConsolePrint(*mapped, "numVertices: ");
 				DumpDebug();
@@ -562,13 +570,13 @@ void Terrain::DumpDebug()
 	Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
 
 	void* mappedData;
-	mGeometrySSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
+	mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
 	uint32_t numVertices = *(uint32_t*)mappedData;
-	mGeometrySSBO.UnmapMemory();
+	mCounterSSBO.UnmapMemory();
 
 	fout << "numVertices: " << numVertices << std::endl;
 
-	mGeometrySSBO.MapMemory(sizeof(uint32_t)*4, numVertices * sizeof(GeometryVertex), 0, &mappedData);
+	mVertexSSBO.MapMemory(0, numVertices * sizeof(GeometryVertex), 0, &mappedData);
 
 	GeometryVertex* data = (GeometryVertex*)mappedData;
 	for (uint32_t i = 0; i < numVertices; i++)
@@ -579,7 +587,7 @@ void Terrain::DumpDebug()
 		data++;
 	}
 
-	mGeometrySSBO.UnmapMemory();
+	mVertexSSBO.UnmapMemory();
 
 	fout.close();
 }

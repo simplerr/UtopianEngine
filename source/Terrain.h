@@ -97,7 +97,28 @@ struct GeometryVertex
 	glm::vec4 normal;
 };
 	
-class GeometrySSBO : public Vulkan::ShaderBuffer
+class VertexSSBO : public Vulkan::ShaderBuffer
+{
+public:
+	virtual void UpdateMemory(VkDevice device)
+	{
+		uint8_t *mapped;
+		uint32_t offset = 0;
+		uint32_t size = vertices.size() * sizeof(GeometryVertex);
+		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
+		memcpy(mapped, vertices.data(), size);
+		mBuffer->UnmapMemory();
+	}
+
+	virtual int GetSize()
+	{
+		return vertices.size() * sizeof(GeometryVertex);
+	}
+
+	std::vector<GeometryVertex> vertices;
+};
+
+class CounterSSBO : public Vulkan::ShaderBuffer
 {
 public:
 	virtual void UpdateMemory(VkDevice device)
@@ -109,24 +130,15 @@ public:
 		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
 		memcpy(mapped, &numVertices, size);
 		mBuffer->UnmapMemory();
-
-		// Map vertex vector
-		offset += size*4;
-		size = vertices.size() * sizeof(GeometryVertex);
-		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
-		memcpy(mapped, vertices.data(), size);
-		mBuffer->UnmapMemory();
 	}
 
 	virtual int GetSize()
 	{
-		return sizeof(numVertices) * 4 + vertices.size() * sizeof(GeometryVertex);
+		return sizeof(numVertices);
 	}
 
 	uint32_t numVertices;
-	std::vector<GeometryVertex> vertices;
 };
-
 class Block
 {
 public:
@@ -181,7 +193,8 @@ private:
 
 	bool mUpdateTimer = true;
 
-	GeometrySSBO mGeometrySSBO;
+	VertexSSBO mVertexSSBO;
+	CounterSSBO mCounterSSBO;
 
 	void DumpDebug();
 };

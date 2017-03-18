@@ -28,12 +28,17 @@ struct GeometryVertex
 	vec4 normal;
 };
 
-// Binding 0 : Position storage buffer
-layout(std140, binding = 3) buffer StorageBuffer 
+layout(std430, binding = 3) buffer VertexSSBO 
 {
-	coherent int vertexCount;
 	GeometryVertex vertices[];
-} storageBuffer;
+} vertexSSBO;
+
+layout(std430, binding = 4) buffer CounterSSBO 
+{
+	int vertexCount;
+} counterSSBO;
+
+
 
 float sdSphere(vec3 p, float s)
 {
@@ -134,11 +139,11 @@ vec3 generateNormal(vec3 pos)
 
 void main(void)
 {	
-	outColor = storageBuffer.vertices[29].pos.xyz;
+	outColor = vertexSSBO.vertices[29].pos.xyz;
 	outColor = vec3(0, 1, 0);
 
 	if(ubo.time > 1)
-		storageBuffer.vertices[29].pos = vec4(1, 0, 0, 1);
+		vertexSSBO.vertices[29].pos = vec4(1, 0, 0, 1);
 
 	for(int i=0; i<gl_in.length(); i++)
 	{
@@ -187,26 +192,26 @@ void main(void)
 			vec3 position;
 			for(int i = 0; triangleTableValue(cubeIndex, i) != -1; i += 3)
 			{
-				int index = atomicAdd(storageBuffer.vertexCount, 3);
+				int index = atomicAdd(counterSSBO.vertexCount, 3);
 
 				position = vertList[triangleTableValue(cubeIndex, i)];
 				outNormal = generateNormal(position);
-				storageBuffer.vertices[index].pos = vec4(position, 1);
-				storageBuffer.vertices[index].normal = vec4(outNormal, 1);
+				vertexSSBO.vertices[index].pos = vec4(position, 1);
+				vertexSSBO.vertices[index].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				position = vertList[triangleTableValue(cubeIndex, i + 1)];
 				outNormal = generateNormal(position);
-				storageBuffer.vertices[index + 1].pos = vec4(position, 1);
-				storageBuffer.vertices[index + 1].normal = vec4(outNormal, 1);
+				vertexSSBO.vertices[index + 1].pos = vec4(position, 1);
+				vertexSSBO.vertices[index + 1].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
 				position = vertList[triangleTableValue(cubeIndex, i + 2)];
 				outNormal = generateNormal(position);
-				storageBuffer.vertices[index + 2].pos = vec4(position, 1);
-				storageBuffer.vertices[index + 2].normal = vec4(outNormal, 1);
+				vertexSSBO.vertices[index + 2].pos = vec4(position, 1);
+				vertexSSBO.vertices[index + 2].normal = vec4(outNormal, 1);
 				gl_Position = viewProjection * vec4(position, 1.0);
 				EmitVertex();
 
