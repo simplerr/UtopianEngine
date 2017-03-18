@@ -80,7 +80,7 @@ namespace Vulkan
 		stb_fontchar stbFontData[STB_NUM_CHARS];
 		uint32_t numLetters;
 
-		bool mVisible;
+		bool mVisible = true;
 
 		// How much to offset debug print from header print
 		const float y_offset = 15.0f;
