@@ -403,21 +403,6 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mBasicEffect = new Vulkan::BasicEffect(mRenderer);
 	//mCommandBuffer->ToggleActive();
 
-	/* 
-		Block specific initialization	
-	*/
-
-	/* Start with mWorldSize*mWorldSize loaded blocks */
-	//for (float x = -(float)mWorldSize / 2; x < (float)mWorldSize / 2; x++)
-	//{
-	//	for (float y = -(float)mWorldSize / 2; y < (float)mWorldSize / 2; y++)
-	//	{
-	//		glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize);
-	//		Block* block = new Block(renderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool);
-	//		mBlockList.push_back(block);
-	//	}
-	//}
-
 	BuildPointList();
 }
 
@@ -448,9 +433,9 @@ void Terrain::UpdateBlockList()
 	int32_t blockY = 0;
 	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mBlockSize);
 
-	for (int32_t x = blockX - (float)mViewDistance / 2; x < blockX + (float)mViewDistance / 2; x++)
+	for (int32_t x = blockX - mViewDistance; x < blockX + mViewDistance; x++)
 	{
-		for (int32_t z = blockZ - (float)mViewDistance / 2; z < blockZ + (float)mViewDistance / 2; z++)
+		for (int32_t z = blockZ - mViewDistance; z < blockZ + mViewDistance; z++)
 		{
 			BlockKey blockKey(x, 0, z);
 			if (mLoadedBlocks.find(blockKey) == mLoadedBlocks.end())
