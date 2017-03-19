@@ -5,6 +5,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <vector>
+#include <map>
 #include <glm/glm.hpp>
 #include "vulkan/handles/Buffer.h"
 
@@ -87,6 +88,18 @@ public:
 	} data;
 };
 
+struct BlockKey
+{
+	BlockKey(int32_t _x, int32_t _y, int32_t _z)
+		: x(_x), y(_y), z(_z) {
+
+	}
+
+	int32_t x, y, z;
+};
+
+bool operator<(BlockKey const& a, BlockKey const& b);
+
 class Terrain
 {
 public:
@@ -94,7 +107,17 @@ public:
 	~Terrain();
 
 	void Update();
-	void UpdateBlocks();
+
+	/**  
+	* \brief Adds the blocks within the viewing distance range
+	*/
+	void UpdateBlockList();
+
+	/**  
+	* \brief Generates the vertex buffer for newly added or modified blocks
+	*/
+	void GenerateBlocks();
+
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	/* Builds the vertex buffer containing all the input points to the marching cubes algorithm */
@@ -123,8 +146,13 @@ private:
 	std::vector<Block*> mBlockList;
 	Block* mTestBlock;
 	const uint32_t mWorldSize = 5;
-	const uint32_t mBlockSize = 32;
-	const uint32_t mVoxelSize = 200;
+	const int32_t mBlockSize = 32;
+	const int32_t mVoxelSize = 200;
+	const int32_t mViewDistance = 3;
+
+	
+
+	std::map<BlockKey, bool> mLoadedBlocks;
 
 	struct PushConstantBlock {
 		glm::mat4 world;

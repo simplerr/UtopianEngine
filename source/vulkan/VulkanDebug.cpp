@@ -199,6 +199,11 @@ namespace Vulkan
 			std::cout << text << std::endl;
 		}
 
+		void ConsolePrint(int32_t num, std::string text)
+		{
+			std::cout << text << num << std::endl;
+		}
+
 		void ConsolePrint(uint32_t num, std::string text)
 		{
 			std::cout << text << num << std::endl;

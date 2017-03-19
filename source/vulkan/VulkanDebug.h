@@ -27,6 +27,7 @@ namespace Vulkan
 
 	  	void ConsolePrint(std::string text);
 		void ConsolePrint(uint32_t num, std::string text = "");
+		void ConsolePrint(int32_t num, std::string text = "");
 		void ConsolePrint(glm::vec3 vec, std::string text = "");
 		void ConsolePrint(glm::vec4 vec, std::string text = "");
 

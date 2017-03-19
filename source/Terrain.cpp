@@ -17,6 +17,17 @@
 #include "Terrain.h"
 #include "Block.h"
 
+bool operator<(BlockKey const& a, BlockKey const& b)
+{
+	if (a.x != b.x)
+       return (a.x < b.x);
+
+   if (a.y != b.y)
+       return (a.y < b.y);
+
+   return (a.z < b.z);
+}
+
 Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 {
 	mRenderer = renderer;
@@ -397,15 +408,15 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	*/
 
 	/* Start with mWorldSize*mWorldSize loaded blocks */
-	for (float x = -(float)mWorldSize / 2; x < (float)mWorldSize / 2; x++)
-	{
-		for (float y = -(float)mWorldSize / 2; y < (float)mWorldSize / 2; y++)
-		{
-			glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize);
-			Block* block = new Block(renderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool);
-			mBlockList.push_back(block);
-		}
-	}
+	//for (float x = -(float)mWorldSize / 2; x < (float)mWorldSize / 2; x++)
+	//{
+	//	for (float y = -(float)mWorldSize / 2; y < (float)mWorldSize / 2; y++)
+	//	{
+	//		glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, y*mBlockSize*mVoxelSize);
+	//		Block* block = new Block(renderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool);
+	//		mBlockList.push_back(block);
+	//	}
+	//}
 
 	BuildPointList();
 }
@@ -425,7 +436,40 @@ Terrain::~Terrain()
 	delete mMarchingCubesVB;
 }
 
-void Terrain::UpdateBlocks()
+void Terrain::UpdateBlockList()
+{
+	// 1) Which blocks should be rendered? Based on the camera position
+		// Transform the camera position in to block grid coordinate
+	// 2) Are they already added? 
+	// 3) Add them
+
+	glm::vec3 cameraPos = mCamera->GetPosition();
+	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mBlockSize);
+	int32_t blockY = 0;
+	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mBlockSize);
+
+	for (int32_t x = blockX - (float)mViewDistance / 2; x < blockX + (float)mViewDistance / 2; x++)
+	{
+		for (int32_t z = blockZ - (float)mViewDistance / 2; z < blockZ + (float)mViewDistance / 2; z++)
+		{
+			BlockKey blockKey(x, 0, z);
+			if (mLoadedBlocks.find(blockKey) == mLoadedBlocks.end())
+			{
+				glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, z*mBlockSize*mVoxelSize);
+				Block* block = new Block(mRenderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool);
+				mBlockList.push_back(block);
+
+				BlockKey blockKey(x, 0, z);
+				mLoadedBlocks[blockKey] = true;
+			}
+		}
+	}
+
+	//Vulkan::VulkanDebug::ConsolePrint(blockX, "blockX: ");
+	//Vulkan::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
+}
+
+void Terrain::GenerateBlocks()
 {
 	for (auto block : mBlockList)
 	{
@@ -476,7 +520,8 @@ void Terrain::UpdateBlocks()
 
 void Terrain::Update()
 {
-	UpdateBlocks();
+	UpdateBlockList();
+	GenerateBlocks();
 
 	static float time = 0.0f;
 
@@ -545,6 +590,8 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				Vulkan::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
 				Vulkan::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
+
+				UpdateBlockList();
 			}
 			/*if (wParam == 'P')
 			{
