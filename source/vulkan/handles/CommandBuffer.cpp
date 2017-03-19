@@ -1,6 +1,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/Device.h"
 #include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Buffer.h"
@@ -137,6 +138,11 @@ namespace Vulkan
 	void CommandBuffer::CmdBindPipeline(Pipeline* pipeline)
 	{
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
+	}
+
+	void CommandBuffer::CmdBindPipeline(ComputePipeline* pipeline)
+	{
+		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetVkHandle());
 	}
 
 	void CommandBuffer::CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet)

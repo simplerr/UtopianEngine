@@ -27,7 +27,7 @@
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
-#define VULKAN_ENABLE_VALIDATION false		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
 
 namespace Vulkan
 {
@@ -105,6 +105,7 @@ namespace Vulkan
 		system("cd data/shaders/textoverlay/ && generate-spirv.bat");
 		system("cd data/shaders/terrain/ && generate-spirv.bat");
 		system("cd data/shaders/basic/ && generate-spirv.bat");
+		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Camera* camera)

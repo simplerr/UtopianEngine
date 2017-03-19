@@ -70,6 +70,9 @@
     <Filter Include="Source Files\shaders\basic">
       <UniqueIdentifier>{feb028bc-a29e-42a1-a0e0-52134fdb74c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders\marching_cubes">
+      <UniqueIdentifier>{b08f960f-908f-4177-bf0d-dd0ebc16a980}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -224,6 +227,9 @@
     </ClCompile>
     <ClCompile Include="source\Block.cpp">
       <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +404,9 @@
     <ClInclude Include="source\Block.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\handles\ComputePipeline.h">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -456,6 +465,9 @@
     </None>
     <None Include="data\shaders\basic\basic.frag">
       <Filter>Source Files\shaders\basic</Filter>
+    </None>
+    <None Include="data\shaders\marching_cubes\marching_cubes.comp">
+      <Filter>Source Files\shaders\marching_cubes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

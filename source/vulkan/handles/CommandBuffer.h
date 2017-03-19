@@ -10,6 +10,7 @@ namespace Vulkan
 	class RenderPass;
 	class Renderer;
 	class Pipeline;
+	class ComputePipeline;
 	class PipelineLayout;
 	class DescriptorSet;
 	class Buffer;
@@ -30,6 +31,7 @@ namespace Vulkan
 		void CmdSetViewPort(float width, float height);
 		void CmdSetScissor(uint32_t width, uint32_t height);
 		void CmdBindPipeline(Pipeline* pipeline);
+		void CmdBindPipeline(ComputePipeline* pipeline);
 		void CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);
 		void CmdPushConstants(PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* buffers);

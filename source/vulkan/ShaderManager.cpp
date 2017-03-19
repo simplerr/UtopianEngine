@@ -74,6 +74,24 @@ namespace Vulkan
 		return shader;
 	}
 
+	Shader* ShaderManager::CreateComputeShader(std::string computeShaderFilename)
+	{
+		// Compute shader
+		VkPipelineShaderStageCreateInfo computeShaderCreateInfo = {};
+		computeShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		computeShaderCreateInfo.pName = "main";
+		computeShaderCreateInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+		computeShaderCreateInfo.module = LoadShader(computeShaderFilename.c_str(), VK_SHADER_STAGE_COMPUTE_BIT);
+
+		Shader* shader = new Shader();
+
+		shader->AddShaderStage(computeShaderCreateInfo);
+
+		mLoadedShaders.push_back(shader);
+		
+		return shader;
+	}
+
 	VkShaderModule ShaderManager::LoadShader(std::string filename, VkShaderStageFlagBits stage)
 	{
 		std::ifstream is(filename.c_str(), std::ios::binary | std::ios::in | std::ios::ate);

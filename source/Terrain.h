@@ -36,6 +36,7 @@ namespace Vulkan
 	class Renderer;
 	class Camera;
 	class Pipeline;
+	class ComputePipeline;
 	class PipelineLayout;
 	class DescriptorSet;
 	class DescriptorSetLayout;
@@ -137,6 +138,13 @@ private:
 	Vulkan::Texture* mTriangleTableTexture;
 	GeometryUniformBuffer  mUniformBuffer;
 
+	// Marching cubes compute pipeline
+	Vulkan::ComputePipeline* mComputePipeline;
+	Vulkan::PipelineLayout* mComputePipelineLayout;
+	Vulkan::DescriptorSetLayout* mComputeDescriptorSetLayout;
+	Vulkan::DescriptorSetLayout* mComputeBlockDescriptorSetLayout;
+	Vulkan::DescriptorSet* mComputeDescriptorSet;
+
 	// Block specific
 	Vulkan::DescriptorSetLayout* mBlockDescriptorSetLayout;
 
@@ -159,6 +167,7 @@ private:
 
 	bool mUpdateTimer = true;
 	bool mDrawGeneratedBuffer = false;
+	bool mUseComputeShader = true;
 	int mNumVertices = 0;
 
 	std::vector<CubeVertex> mPointList;

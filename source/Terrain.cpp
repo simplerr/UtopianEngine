@@ -5,6 +5,7 @@
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -46,16 +47,32 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mDescriptorSetLayout->Create();
 
+	mComputeDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
+	mComputeDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
+	mComputeDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
+	mComputeDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
+	mComputeDescriptorSetLayout->Create();
+
 	mBlockDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
 	mBlockDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mBlockDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
 	mBlockDescriptorSetLayout->Create();
+
+	mComputeBlockDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
+	mComputeBlockDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
+	mComputeBlockDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
+	mComputeBlockDescriptorSetLayout->Create();
 
 	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
 	mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
 	mPipelineLayout->AddDescriptorSetLayout(mBlockDescriptorSetLayout);
 	mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock));
 	mPipelineLayout->Create();
+
+	mComputePipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
+	mComputePipelineLayout->AddDescriptorSetLayout(mComputeDescriptorSetLayout);
+	mComputePipelineLayout->AddDescriptorSetLayout(mComputeBlockDescriptorSetLayout);
+	mComputePipelineLayout->Create();
 
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
 	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
@@ -362,7 +379,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 
 	mTriangleTableTexture = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
-	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
+	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mComputeDescriptorSetLayout, mDescriptorPool);
 	mDescriptorSet->AllocateDescriptorSets();
 	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
 	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
@@ -404,6 +421,11 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	//mCommandBuffer->ToggleActive();
 
 	BuildPointList();
+	
+	Vulkan::Shader* computeShader = mRenderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
+	mComputePipeline = new Vulkan::ComputePipeline(mRenderer->GetDevice(), mComputePipelineLayout, computeShader);
+
+	mComputePipeline->Create();
 }
 
 Terrain::~Terrain()
@@ -414,6 +436,7 @@ Terrain::~Terrain()
 	delete mDescriptorPool;
 	delete mDescriptorSet;
 	delete mGeometryPipeline;
+	delete mComputePipeline;
 	delete mBasicPipeline;
 	delete mVertexDescription;
 	delete mEdgeTableTexture;
@@ -441,7 +464,7 @@ void Terrain::UpdateBlockList()
 			if (mLoadedBlocks.find(blockKey) == mLoadedBlocks.end())
 			{
 				glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, z*mBlockSize*mVoxelSize);
-				Block* block = new Block(mRenderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool);
+				Block* block = new Block(mRenderer, position, mBlockSize, mVoxelSize, mComputeBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
 				mBlockList.push_back(block);
 
 				BlockKey blockKey(x, 0, z);
@@ -458,47 +481,76 @@ void Terrain::GenerateBlocks()
 {
 	for (auto block : mBlockList)
 	{
-		// Generate the vertex buffer for the block 
-		if (!block->IsGenerated() || block->IsModified())
+		if (mUseComputeShader)
 		{
-			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			// Generate the vertex buffer for the block 
+			if (!block->IsGenerated() || block->IsModified())
+			{
+				Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-			commandBuffer.CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-			commandBuffer.CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-			commandBuffer.CmdBindPipeline(mGeometryPipeline);
+				commandBuffer.CmdBindPipeline(mComputePipeline);
+				VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mComputePipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
 
-			VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
-			vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
+				// TODO: Transform block position (PUSH CONSTS!)
+				vkCmdDispatch(commandBuffer.GetVkHandle(), 31, 31, 31);
 
-			//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-			//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+				commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 
-			commandBuffer.CmdBindVertexBuffer(0, 1, mMarchingCubesVB);
+				uint32_t* mapped;
+				block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+				uint32_t numVertices = *(uint32_t*)mapped;
+				block->mCounterSSBO.UnmapMemory();
 
-			// Push the world matrix constant
-			Vulkan::PushConstantBlock pushConstantBlock;
-			pushConstantBlock.world = glm::mat4();
-			pushConstantBlock.worldInvTranspose = glm::mat4();
+				block->SetNumVertices(numVertices);
+				block->SetGenerated(true);
+				block->SetModified(false);
+			}
+		}
+		else
+		{
+			// Generate the vertex buffer for the block 
+			if (!block->IsGenerated() || block->IsModified())
+			{
+				Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+				commandBuffer.CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+				commandBuffer.CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+				commandBuffer.CmdBindPipeline(mGeometryPipeline);
 
-			commandBuffer.CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
 
-			vkCmdDraw(commandBuffer.GetVkHandle(), mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+				//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
+				//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
-			commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
+				commandBuffer.CmdBindVertexBuffer(0, 1, mMarchingCubesVB);
 
-			uint32_t* mapped;
-			block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
-			uint32_t numVertices = *(uint32_t*)mapped;
-			block->mCounterSSBO.UnmapMemory();
+				// Push the world matrix constant
+				Vulkan::PushConstantBlock pushConstantBlock;
+				pushConstantBlock.world = glm::mat4();
+				pushConstantBlock.worldInvTranspose = glm::mat4();
 
-			block->SetNumVertices(numVertices);
-			block->SetGenerated(true);
-			block->SetModified(false);
+				pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+				commandBuffer.CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+
+				vkCmdDraw(commandBuffer.GetVkHandle(), mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+
+				commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
+
+				uint32_t* mapped;
+				block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+				uint32_t numVertices = *(uint32_t*)mapped;
+				block->mCounterSSBO.UnmapMemory();
+
+				block->SetNumVertices(numVertices);
+				block->SetGenerated(true);
+				block->SetModified(false);
+			}
 		}
 	}
 }

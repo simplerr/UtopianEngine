@@ -101,6 +101,7 @@
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\BasicEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
+    <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
     <ClCompile Include="source\vulkan\handles\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="source\vulkan\BasicEffect.h" />
     <ClInclude Include="source\vulkan\Effect.h" />
     <ClInclude Include="source\vulkan\handles\Buffer.h" />
+    <ClInclude Include="source\vulkan\handles\ComputePipeline.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h" />
     <ClInclude Include="source\vulkan\handles\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
@@ -197,6 +199,7 @@
     <None Include="data\shaders\geometry\base.frag" />
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />
+    <None Include="data\shaders\marching_cubes\marching_cubes.comp" />
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\terrain\base.frag" />
