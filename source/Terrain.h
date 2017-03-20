@@ -156,7 +156,7 @@ private:
 	const uint32_t mWorldSize = 5;
 	const int32_t mBlockSize = 32;
 	const int32_t mVoxelSize = 200;
-	const int32_t mViewDistance = 4;
+	const int32_t mViewDistance = 2;
 
 	std::map<BlockKey, bool> mLoadedBlocks;
 

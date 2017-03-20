@@ -28,7 +28,7 @@ out gl_PerVertex
 
 void main(void)
 {
-	outColor = vec3(1, 1, 1);
+	outColor = vec3(0, 1, 0);
 	outNormal = vec3(1, 1, 1);
 
 	gl_Position = per_frame.projection * per_frame.view * pushConsts.world * vec4(InPosL.xyz, 1.0);

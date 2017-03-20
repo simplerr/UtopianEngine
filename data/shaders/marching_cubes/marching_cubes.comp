@@ -6,6 +6,11 @@
 layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
 layout (set = 0, binding = 2) uniform isampler2D triangleTableTex;
 
+layout(push_constant) uniform PushConsts {
+	 mat4 world;		
+	 mat4 worldInvTranspose;
+} pushConsts;
+
 layout (set = 0, binding = 1) uniform UBO 
 {
 	mat4 projection;
@@ -67,21 +72,30 @@ float density(vec3 pos)
 
 	vec2 t = vec2(700, 500);
 	vec2 t2 = vec2(1200, 500);
-	density = sdTorus(pos+1000, t); 
-	density = min(-pos.y, density);
-	density = min(sdTorus(pos+vec3(-5000, 1000, -5000), t2), density);
+	density = sdTorus(pos-1700, t); 
+	//return density;
+	density = min(-pos.y+1500, density);
+	density = min(sdTorus(pos+vec3(3000, -1500, 3000), t), density);
+	density = min(sdTorus(pos+vec3(-7000, 0, -7000), t2), density);
 	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
-	return min(density, sdSphere(pos+vec3(00, 1000, 00), 500*abs(sin(ubo.time))));
+	//return min(density, sdSphere(pos+vec3(00, 1000, 00), 500*abs(sin(ubo.time))));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
 	return density;
 }
 
+vec3 worldCoordinate()
+{
+	// TODO: Remove hardcoded values
+	vec3 posW = -3200 + (pushConsts.world * vec4(gl_GlobalInvocationID.xyz * 200, 1.0)).xyz;
+	return posW;
+}
+
 float density(int corner)
 {
-	vec3 pos = (gl_GlobalInvocationID).xyz * 200 + ubo.offsets[corner].xyz;
+	vec3 pos = worldCoordinate() + ubo.offsets[corner].xyz;
 	return density(pos);
 }
 
@@ -97,7 +111,7 @@ vec3 cornerPos(vec3 pos, int corner)
 
 vec3 cornerPos(int corner)
 {
-	return (gl_GlobalInvocationID).xyz * 200 + ubo.offsets[corner].xyz;
+	return gl_GlobalInvocationID.xyz * 200 + ubo.offsets[corner].xyz;
 } 
 
 int edgeTableValue(int cubeIndex)
@@ -125,7 +139,7 @@ vec3 generateNormal(vec3 pos)
 
 void main(void)
 {	
-	vec3 pos = (gl_GlobalInvocationID).xyz * 200;
+	vec3 pos = worldCoordinate();
 	float isoLevel = 0.0f;
 
 	int cubeIndex = 0;

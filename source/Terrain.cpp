@@ -72,6 +72,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mComputePipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
 	mComputePipelineLayout->AddDescriptorSetLayout(mComputeDescriptorSetLayout);
 	mComputePipelineLayout->AddDescriptorSetLayout(mComputeBlockDescriptorSetLayout);
+	mComputePipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_COMPUTE_BIT, sizeof(PushConstantBlock));
 	mComputePipelineLayout->Create();
 
 	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
@@ -492,8 +493,21 @@ void Terrain::GenerateBlocks()
 				VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mComputePipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
 
+				// Push the world matrix constant
+				Vulkan::PushConstantBlock pushConstantBlock;
+				pushConstantBlock.world = glm::mat4();
+				//pushConstantBlock.worldInvTranspose = glm::mat4();
+
+				glm::vec3 position = block->GetPosition();
+				pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+				commandBuffer.CmdPushConstants(mComputePipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+
 				// TODO: Transform block position (PUSH CONSTS!)
-				vkCmdDispatch(commandBuffer.GetVkHandle(), 31, 31, 31);
+				vkCmdDispatch(commandBuffer.GetVkHandle(), 32, 32, 32);
 
 				commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 
@@ -587,6 +601,7 @@ void Terrain::Update()
 	mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
+	int i = 0;
 	for (auto block : mBlockList)
 	{
 		if (block->IsGenerated())
@@ -601,9 +616,16 @@ void Terrain::Update()
 			pushConstantBlock.world = glm::mat4();
 			pushConstantBlock.worldInvTranspose = glm::mat4();
 
+			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+			//pushConstantBlock.world = glm::translate(glm::mat4(), glm::vec3(i*1500, 0, 0));
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
 			mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-			vkCmdDraw(commandBuffer, block->GetNumVertices(), 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+			vkCmdDraw(commandBuffer, block->GetNumVertices(), 1, 0, 0);
+			i++;
 		}
 	}
 
