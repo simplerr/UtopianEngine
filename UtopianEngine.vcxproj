@@ -97,6 +97,7 @@
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Light.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\MarchingCubes.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\BasicEffect.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="source\ecs\systems\System.h" />
     <ClInclude Include="source\Game.h" />
     <ClInclude Include="source\Light.h" />
+    <ClInclude Include="source\MarchingCubes.h" />
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />

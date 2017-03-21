@@ -130,7 +130,6 @@ private:
 	Vulkan::DescriptorSetLayout* mDescriptorSetLayout;
 	Vulkan::DescriptorSet* mDescriptorSet;
 	Vulkan::Pipeline* mGeometryPipeline;
-	Vulkan::Pipeline* mBasicPipeline;
 	Vulkan::PipelineLayout* mPipelineLayout;
 	Vulkan::VertexDescription* mVertexDescription;
 	Vulkan::Camera* mCamera;
@@ -152,7 +151,6 @@ private:
 	Vulkan::BasicEffect* mBasicEffect;
 
 	std::vector<Block*> mBlockList;
-	Block* mTestBlock;
 	const uint32_t mWorldSize = 5;
 	const int32_t mBlockSize = 32;
 	const int32_t mVoxelSize = 200;

@@ -16,7 +16,7 @@ namespace Vulkan
 		mDescriptorSetLayouts.push_back(descriptorSetLayout->GetVkHandle());
 	}
 
-	void PipelineLayout::AddPushConstantRange(VkShaderStageFlagBits shaderStage, uint32_t size, uint32_t offset)
+	void PipelineLayout::AddPushConstantRange(VkShaderStageFlags shaderStage, uint32_t size, uint32_t offset)
 	{
 		mPushConstantRange.stageFlags = shaderStage;
 		mPushConstantRange.size = size;

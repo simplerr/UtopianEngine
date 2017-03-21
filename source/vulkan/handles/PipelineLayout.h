@@ -17,7 +17,7 @@ namespace Vulkan
 		PipelineLayout(Device* device);
 
 		void AddDescriptorSetLayout(DescriptorSetLayout* descriptorSetLayout);
-		void AddPushConstantRange(VkShaderStageFlagBits shaderStage, uint32_t size, uint32_t offset = 0);
+		void AddPushConstantRange(VkShaderStageFlags shaderStage, uint32_t size, uint32_t offset = 0);
 		void Create();
 	private:
 		std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
