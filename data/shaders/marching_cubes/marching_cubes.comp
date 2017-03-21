@@ -88,9 +88,7 @@ float density(vec3 pos)
 
 vec3 worldCoordinate()
 {
-	// TODO: Remove hardcoded values
-	vec3 posW = -3200 + (pushConsts.world * vec4(gl_GlobalInvocationID.xyz * 200, 1.0)).xyz;
-	return posW;
+	return (pushConsts.world * vec4(gl_GlobalInvocationID.xyz * ubo.voxelSize, 1.0)).xyz;
 }
 
 float density(int corner)
@@ -111,7 +109,7 @@ vec3 cornerPos(vec3 pos, int corner)
 
 vec3 cornerPos(int corner)
 {
-	return gl_GlobalInvocationID.xyz * 200 + ubo.offsets[corner].xyz;
+	return gl_GlobalInvocationID.xyz * ubo.voxelSize + ubo.offsets[corner].xyz;
 } 
 
 int edgeTableValue(int cubeIndex)

@@ -415,7 +415,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mUniformBuffer.data.offsets[6] = vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
 	mUniformBuffer.data.offsets[7] = vec4(0, mVoxelSize, mVoxelSize, 0);
 	mUniformBuffer.data.color = vec4(0, 1, 0, 1);
-
+	mUniformBuffer.data.voxelSize = mVoxelSize;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
 	mBasicEffect = new Vulkan::BasicEffect(mRenderer);
