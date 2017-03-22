@@ -5,6 +5,7 @@
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -97,12 +98,6 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mEdgeTableTexture = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
 	mTriangleTableTexture = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
-	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
-	mDescriptorSet->AllocateDescriptorSets();
-	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
-	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
-	mDescriptorSet->BindCombinedImage(2, &mTriangleTableTexture->GetTextureDescriptorInfo());
-	mDescriptorSet->UpdateDescriptorSets();
 
 	mVertexDescription = new Vulkan::VertexDescription();
 	mVertexDescription->AddBinding(0, sizeof(CubeVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
@@ -121,6 +116,13 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	Vulkan::Shader* computeShader = mRenderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
 	mComputePipeline = new Vulkan::ComputePipeline(mRenderer->GetDevice(), mPipelineLayout, computeShader);
 	mComputePipeline->Create();
+
+	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
+	mDescriptorSet->AllocateDescriptorSets();
+	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
+	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
+	mDescriptorSet->BindCombinedImage(2, &mTriangleTableTexture->GetTextureDescriptorInfo());
+	mDescriptorSet->UpdateDescriptorSets();
 
 	//mCommandBuffer->ToggleActive();
 }
@@ -299,7 +301,7 @@ void Terrain::Update()
 		if (block->IsGenerated())
 		{
 			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mPipelineLayout->GetVkHandle(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mBasicPipeline->GetPipelineLayout(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
 
 			mCommandBuffer->CmdBindVertexBuffer(0, 1, block->GetVertexBuffer());
 
@@ -313,7 +315,8 @@ void Terrain::Update()
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			mCommandBuffer->CmdPushConstants(mBasicEffect->mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			//mCommandBuffer->CmdPushConstants(mBasicEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdPushConstants(commandBuffer, mBasicEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
 			vkCmdDraw(commandBuffer, block->GetNumVertices(), 1, 0, 0);
 		}

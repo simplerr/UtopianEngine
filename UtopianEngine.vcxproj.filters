@@ -234,6 +234,9 @@
     <ClCompile Include="source\MarchingCubes.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Pipeline2.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -412,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="source\MarchingCubes.h">
       <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\Pipeline2.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

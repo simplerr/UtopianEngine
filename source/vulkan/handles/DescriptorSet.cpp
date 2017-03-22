@@ -12,6 +12,14 @@ namespace Vulkan
 		mDescriptorPool = descriptorPool;
 	}
 
+	DescriptorSet::DescriptorSet(Device* device, VkDescriptorSetLayout setLayout, DescriptorPool* descriptorPool)
+	{
+		mDevice = device;
+		mVkSetLayout = setLayout;
+		mSetLayout = nullptr;
+		mDescriptorPool = descriptorPool;
+	}
+
 	void DescriptorSet::Cleanup(VkDevice device)
 	{
 		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
@@ -19,7 +27,12 @@ namespace Vulkan
 
 	void DescriptorSet::AllocateDescriptorSets()
 	{
-		VkDescriptorSetLayout setLayout = mSetLayout->GetVkHandle();
+		VkDescriptorSetLayout setLayout;
+		if (mSetLayout != nullptr)
+			setLayout = mSetLayout->GetVkHandle();
+		else
+			setLayout = mVkSetLayout;
+
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocInfo.descriptorPool = mDescriptorPool->GetVkHandle();

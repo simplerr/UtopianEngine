@@ -7,6 +7,15 @@
 
 namespace Vulkan
 {
+	class Renderer;
+	class DescriptorSetLayout;
+	class DescriptorPool;
+	class DescriptorSet;
+	class Pipeline2;
+	class PipelineLayout;
+	class VertexDescription;
+	class Shader;
+
 	struct BasicVertex
 	{
 		glm::vec4 position;
@@ -17,7 +26,7 @@ namespace Vulkan
 	*
 	* Simply transforms each vertex and sets a pixel color
 	**/
-	class BasicEffect : public Effect
+	class BasicEffect
 	{
 	public:
 		class UniformBuffer : public Vulkan::ShaderBuffer
@@ -47,5 +56,11 @@ namespace Vulkan
 
 		/* Member variables */
 		UniformBuffer uniformBuffer;
+
+		DescriptorPool* mDescriptorPool;
+		DescriptorSet* mDescriptorSet;
+		Pipeline2* mBasicPipeline;
+		VertexDescription* mVertexDescription;
+		Shader* mShader;
 	};
 }

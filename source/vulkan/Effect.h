@@ -25,7 +25,6 @@ namespace Vulkan
 		DescriptorPool* mDescriptorPool;
 		DescriptorSetLayout* mDescriptorSetLayout;
 		DescriptorSet* mDescriptorSet;
-		Pipeline* mGeometryPipeline;
 		Pipeline* mBasicPipeline;
 		PipelineLayout* mPipelineLayout;
 		VertexDescription* mVertexDescription;

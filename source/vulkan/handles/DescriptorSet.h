@@ -18,6 +18,7 @@ namespace Vulkan
 	{
 	public:
 		DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
+		DescriptorSet(Device* device, VkDescriptorSetLayout setLayout, DescriptorPool* descriptorPool);
 		void Cleanup(VkDevice device);
 
 		void AllocateDescriptorSets();
@@ -34,6 +35,7 @@ namespace Vulkan
 	private:
 		Device* mDevice;
 		DescriptorSetLayout* mSetLayout;
+		VkDescriptorSetLayout mVkSetLayout; // NOTE: HACK
 		DescriptorPool* mDescriptorPool;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 	};

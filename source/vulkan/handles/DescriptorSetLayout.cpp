@@ -9,6 +9,11 @@ namespace Vulkan
 
 	}
 
+	DescriptorSetLayout::DescriptorSetLayout()
+	{
+
+	}
+
 	void DescriptorSetLayout::AddBinding(uint32_t binding, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags stageFlags)
 	{
 		VkDescriptorSetLayoutBinding layoutBinding = {};
@@ -28,5 +33,15 @@ namespace Vulkan
 		createInfo.pBindings = mLayoutBindings.data();
 
 		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(GetDevice(), &createInfo, nullptr, &mHandle));
+	}
+
+	void DescriptorSetLayout::Create(Device* device)
+	{
+		VkDescriptorSetLayoutCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		createInfo.bindingCount = mLayoutBindings.size();
+		createInfo.pBindings = mLayoutBindings.data();
+
+		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(device->GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

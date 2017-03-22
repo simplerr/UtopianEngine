@@ -104,6 +104,7 @@
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
+    <ClCompile Include="source\vulkan\handles\Pipeline2.cpp" />
     <ClCompile Include="source\vulkan\handles\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
     <ClCompile Include="source\vulkan\Device.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="source\vulkan\handles\Buffer.h" />
     <ClInclude Include="source\vulkan\handles\ComputePipeline.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h" />
+    <ClInclude Include="source\vulkan\handles\Pipeline2.h" />
     <ClInclude Include="source\vulkan\handles\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
     <ClInclude Include="source\vulkan\Device.h" />
