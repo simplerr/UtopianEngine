@@ -5,6 +5,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/Pipeline2.h"
+#include "vulkan/PipelineInterface.h"
 
 namespace Vulkan
 {
@@ -24,21 +25,14 @@ namespace Vulkan
 		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/basic/basic.vert.spv", "data/shaders/basic/basic.frag.spv");
 		mBasicPipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 
-		// TODO:
-		// Can be used when creating new Pipelines w/ the same layout
-		// Returned by CreateLayouts()
-		//struct LayoutStruct
-		//{
-		//	vector descriptorSetLayouts;
-		//	pipelineLayout
-		//};
-
 		// EXPERIMENT
-		mBasicPipeline->AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
-		mBasicPipeline->AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
-		mBasicPipeline->CreateLayouts(renderer->GetDevice());
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface.CreateLayouts(renderer->GetDevice());
 
-		VkDescriptorSetLayout setLayout0 = mBasicPipeline->GetDescriptorSetLayout(SET_0);
+		mBasicPipeline->SetPipelineInterface(&mPipelineInterface);
+
+		VkDescriptorSetLayout setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
 
 		mDescriptorSet = new Vulkan::DescriptorSet(renderer->GetDevice(), setLayout0, mDescriptorPool);
 		mDescriptorSet->AllocateDescriptorSets();

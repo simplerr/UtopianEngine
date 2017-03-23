@@ -4,6 +4,7 @@
 #include "vulkan/Effect.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/PipelineInterface.h"
 
 namespace Vulkan
 {
@@ -62,5 +63,6 @@ namespace Vulkan
 		Pipeline2* mBasicPipeline;
 		VertexDescription* mVertexDescription;
 		Shader* mShader;
+		PipelineInterface mPipelineInterface;
 	};
 }

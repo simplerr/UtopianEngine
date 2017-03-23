@@ -76,7 +76,7 @@ namespace ECS
 		// Terrain
 		// 
 		mTerrain = new Terrain(mRenderer, mCamera);
-		mCommandBuffer->ToggleActive();
+		//mCommandBuffer->ToggleActive();
 	}
 
 	RenderSystem::~RenderSystem()

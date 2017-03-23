@@ -27,6 +27,7 @@ namespace Vulkan
 	class Device;
 	class Shader;
 	class DescriptorSetLayout;
+	class PipelineInterface;
 
 	class Pipeline2 : public Handle<VkPipeline>
 	{
@@ -37,33 +38,17 @@ namespace Vulkan
 		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
 		void Create();
 
-		/*
-			Creates the descriptor set layout and pipeline layout objects	
-			\note Must be called before calling Create()
-		*/
-		void CreateLayouts(Device* device);
+		void SetPipelineInterface(PipelineInterface* pipelineInterface);
 
-		void AddUniformBuffer(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1);
-		void AddStorageBuffer(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1);
-		void AddCombinedImageSampler(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1);
-		void AddPushConstantRange(uint32_t size, VkShaderStageFlags shaderStage, uint32_t offset = 0);
-
-		VkDescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
 		VkPipelineLayout GetPipelineLayout();
 
 		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo mInputAssemblyState = {};
 		VkPipelineColorBlendAttachmentState mBlendAttachmentState = {};
 	private:
-		void AddDescriptor(VkDescriptorType descriptorType, uint32_t descriptorSet, uint32_t binding, uint32_t descriptorCount, VkShaderStageFlags stageFlags);
-
-		VkPipelineLayout mPipelineLayout;
-		//PipelineLayout* mPipelineLayout = nullptr;
 		RenderPass* mRenderPass = nullptr;
 		VertexDescription* mVertexDescription = nullptr;
 		Shader* mShader = nullptr;
-
-		std::map<uint32_t, DescriptorSetLayout> mDescriptorSetLayouts;
-		std::vector<VkPushConstantRange> mPushConstantRanges;
+		PipelineInterface* mPipelineInterface;
 	};
 }

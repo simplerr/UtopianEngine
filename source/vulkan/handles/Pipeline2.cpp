@@ -2,6 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/VertexDescription.h"
+#include "vulkan/PipelineInterface.h"
 #include "Pipeline2.h"
 #include "RenderPass.h"
 #include "PipelineLayout.h"
@@ -87,7 +88,7 @@ namespace Vulkan
 																			// The states will be static and can't be changed after the pipeline is created
 		VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineCreateInfo.layout = mPipelineLayout;
+		pipelineCreateInfo.layout = mPipelineInterface->GetPipelineLayout();
 		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
 		pipelineCreateInfo.pVertexInputState = &mVertexDescription->GetInputState();		// From base - &vertices.inputState;
 		pipelineCreateInfo.pInputAssemblyState = &mInputAssemblyState;
@@ -105,78 +106,13 @@ namespace Vulkan
 		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 	}
 
-	void Pipeline2::CreateLayouts(Device* device)
+	void Pipeline2::SetPipelineInterface(PipelineInterface* pipelineInterface)
 	{
-		// Create all VkDescriptorSetLayouts
-		for (auto& setLayout : mDescriptorSetLayouts)
-		{
-			setLayout.second.Create(device);
-		}
-
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		for (uint32_t i = 0; i < mDescriptorSetLayouts.size(); i++)
-		{
-			descriptorSetLayouts.push_back(mDescriptorSetLayouts[i].GetVkHandle());
-		}
-
-		// Create a VkPipelineLayout from all the VkDescriptorSetLayouts and Push Constant ranges
-		VkPipelineLayoutCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		createInfo.pNext = NULL;
-		createInfo.setLayoutCount = descriptorSetLayouts.size();
-		createInfo.pSetLayouts = descriptorSetLayouts.data();
-
-		if (mPushConstantRanges.size() > 0)
-		{
-			createInfo.pushConstantRangeCount = mPushConstantRanges.size();
-			createInfo.pPushConstantRanges = mPushConstantRanges.data();
-		}
-
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &createInfo, nullptr, &mPipelineLayout));
-	}
-
-	void Pipeline2::AddUniformBuffer(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
-	{
-		AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, descriptorSet, binding, descriptorCount, stageFlags);
-	}
-
-	void Pipeline2::AddStorageBuffer(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
-	{
-		AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, descriptorSet, binding, descriptorCount, stageFlags);
-	}
-
-	void Pipeline2::AddCombinedImageSampler(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
-	{
-		AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, descriptorSet, binding, descriptorCount, stageFlags);
-	}
-
-	void Pipeline2::AddPushConstantRange(uint32_t size, VkShaderStageFlags shaderStage, uint32_t offset)
-	{
-		VkPushConstantRange pushConstantRange = {};
-		pushConstantRange.stageFlags = shaderStage;
-		pushConstantRange.size = size;
-		pushConstantRange.offset = offset;
-
-		mPushConstantRanges.push_back(pushConstantRange);
-	}
-
-	VkDescriptorSetLayout Pipeline2::GetDescriptorSetLayout(uint32_t descriptorSet)
-	{
-		return mDescriptorSetLayouts[descriptorSet].GetVkHandle();
+		mPipelineInterface = pipelineInterface;
 	}
 
 	VkPipelineLayout Pipeline2::GetPipelineLayout()
 	{
-		return mPipelineLayout;
-	}
-
-	void Pipeline2::AddDescriptor(VkDescriptorType descriptorType, uint32_t descriptorSet, uint32_t binding, uint32_t descriptorCount, VkShaderStageFlags stageFlags)
-	{
-		if (mDescriptorSetLayouts.find(descriptorSet) == mDescriptorSetLayouts.end())
-		{
-			mDescriptorSetLayouts[descriptorSet] = DescriptorSetLayout();
-		}
-
-		mDescriptorSetLayouts[descriptorSet].AddBinding(binding, descriptorType, descriptorCount, stageFlags);
+		return mPipelineInterface->GetPipelineLayout();
 	}
 }

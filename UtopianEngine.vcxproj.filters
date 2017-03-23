@@ -237,6 +237,9 @@
     <ClCompile Include="source\vulkan\handles\Pipeline2.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\PipelineInterface.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -418,6 +421,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Pipeline2.h">
       <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\PipelineInterface.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
