@@ -6,6 +6,18 @@
 #include "Handle.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
+/* Defines to improve readability */
+#define SET_0 0
+#define SET_1 1
+#define SET_2 2
+#define SET_3 3
+#define SET_4 4
+
+#define BINDING_0 0
+#define BINDING_1 1
+#define BINDING_2 2
+#define BINDING_3 3
+#define BINDING_4 4
 
 namespace Vulkan
 {

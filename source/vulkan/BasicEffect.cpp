@@ -34,11 +34,11 @@ namespace Vulkan
 		//};
 
 		// EXPERIMENT
-		mBasicPipeline->AddUniformBuffer(0, 0, VK_SHADER_STAGE_VERTEX_BIT);
+		mBasicPipeline->AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
 		mBasicPipeline->AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
 		mBasicPipeline->CreateLayouts(renderer->GetDevice());
 
-		VkDescriptorSetLayout setLayout0 = mBasicPipeline->GetDescriptorSetLayout(0);
+		VkDescriptorSetLayout setLayout0 = mBasicPipeline->GetDescriptorSetLayout(SET_0);
 
 		mDescriptorSet = new Vulkan::DescriptorSet(renderer->GetDevice(), setLayout0, mDescriptorPool);
 		mDescriptorSet->AllocateDescriptorSets();
