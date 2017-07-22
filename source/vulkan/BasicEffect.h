@@ -23,6 +23,11 @@ namespace Vulkan
 		glm::vec4 normal;
 	};
 
+	struct PushConstantBasicBlock {
+		glm::mat4 world;
+		glm::vec3 color;
+	};
+
 	/** \brief Most basic effect
 	*
 	* Simply transforms each vertex and sets a pixel color

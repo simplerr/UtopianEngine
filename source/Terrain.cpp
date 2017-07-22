@@ -149,19 +149,20 @@ void Terrain::UpdateBlockList()
 	// 3) Add them
 
 	glm::vec3 cameraPos = mCamera->GetPosition();
-	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mBlockSize);
+	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
 	int32_t blockY = 0;
-	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mBlockSize);
+	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
 
-	for (int32_t x = blockX - mViewDistance; x < blockX + mViewDistance; x++)
+	for (int32_t x = blockX - mViewDistance; x <= (blockX + mViewDistance); x++)
 	{
-		for (int32_t z = blockZ - mViewDistance; z < blockZ + mViewDistance; z++)
+		for (int32_t z = blockZ - mViewDistance; z <= (blockZ + mViewDistance); z++)
 		{
 			BlockKey blockKey(x, 0, z);
 			if (mLoadedBlocks.find(blockKey) == mLoadedBlocks.end())
 			{
-				glm::vec3 position = glm::vec3(x*mBlockSize*mVoxelSize, 0, z*mBlockSize*mVoxelSize);
-				Block* block = new Block(mRenderer, position, mBlockSize, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
+				glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, 0, z*mVoxelsInBlock*mVoxelSize);
+				glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
+				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
 				mBlockList.push_back(block);
 
 				BlockKey blockKey(x, 0, z);
@@ -248,7 +249,7 @@ void Terrain::GenerateBlocks()
 
 				commandBuffer.CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-				vkCmdDraw(commandBuffer.GetVkHandle(), mBlockSize*mBlockSize*mBlockSize, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+				vkCmdDraw(commandBuffer.GetVkHandle(), mVoxelsInBlock*mVoxelsInBlock*mVoxelsInBlock, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
 
 				commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 
@@ -306,9 +307,9 @@ void Terrain::Update()
 			mCommandBuffer->CmdBindVertexBuffer(0, 1, block->GetVertexBuffer());
 
 			// Push the world matrix constant
-			Vulkan::PushConstantBlock pushConstantBlock;
+			Vulkan::PushConstantBasicBlock pushConstantBlock;
 			pushConstantBlock.world = glm::mat4();
-			pushConstantBlock.worldInvTranspose = glm::mat4();
+			pushConstantBlock.color = block->GetColor();
 
 			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
 			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
@@ -373,19 +374,19 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Terrain::BuildPointList()
 {
-	float size = mBlockSize * mVoxelSize;
-	for (uint32_t x = 0; x < mBlockSize; x++)
+	float size = mVoxelsInBlock * mVoxelSize;
+	for (uint32_t x = 0; x < mVoxelsInBlock; x++)
 	{
-		for (uint32_t y = 0; y < mBlockSize; y++)
+		for (uint32_t y = 0; y < mVoxelsInBlock; y++)
 		{
-			for (uint32_t z = 0; z < mBlockSize; z++)
+			for (uint32_t z = 0; z < mVoxelsInBlock; z++)
 			{
 				mPointList.push_back(CubeVertex(-size / 2 + x * mVoxelSize, -size / 2 + y * mVoxelSize, -size / 2 + z * mVoxelSize));
 			}
 		}
 	}
 
-	VkDeviceSize bufferSize = mBlockSize * mBlockSize * mBlockSize * sizeof(CubeVertex);
+	VkDeviceSize bufferSize = mVoxelsInBlock * mVoxelsInBlock * mVoxelsInBlock * sizeof(CubeVertex);
 	mMarchingCubesVB = new Vulkan::Buffer(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, mPointList.data());
 }
 

@@ -72,7 +72,7 @@ public:
 class Block
 {
 public:
-	Block(Vulkan::Renderer* renderer, glm::vec3 position, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool);
+	Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool);
 	~Block();
 
 	Vulkan::Buffer* GetVertexBuffer();
@@ -88,6 +88,7 @@ public:
 	void SetNumVertices(uint32_t numVertices);
 
 	glm::vec3 GetPosition();
+	glm::vec3 GetColor();
 	Vulkan::DescriptorSet* GetDescriptorSet();
 	uint32_t GetNumVertices();
 
@@ -98,6 +99,7 @@ private:
 	VkDescriptorBufferInfo mBufferInfo;
 	Vulkan::DescriptorSet* mDescriptorSet;
 	glm::vec3 mPosition;
+	glm::vec3 mColor;
 
 	bool mGenerated;
 	bool mModified;

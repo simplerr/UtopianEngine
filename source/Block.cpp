@@ -3,9 +3,10 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool)
+Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool)
 {
 	mPosition = position;
+	mColor = color;
 	mGenerated = false;
 	mModified = false;
 	mVoxelSize = voxelSize;
@@ -69,6 +70,11 @@ void Block::SetNumVertices(uint32_t numVertices)
 glm::vec3 Block::GetPosition()
 {
 	return mPosition;
+}
+
+glm::vec3 Block::GetColor()
+{
+	return mColor;
 }
 
 Vulkan::DescriptorSet* Block::GetDescriptorSet()
