@@ -149,9 +149,9 @@ void Terrain::UpdateBlockList()
 	// 3) Add them
 
 	glm::vec3 cameraPos = mCamera->GetPosition();
-	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
+	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 	int32_t blockY = 0;
-	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
+	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 
 	for (int32_t x = blockX - mViewDistance; x <= (blockX + mViewDistance); x++)
 	{
@@ -167,12 +167,12 @@ void Terrain::UpdateBlockList()
 
 				BlockKey blockKey(x, 0, z);
 				mLoadedBlocks[blockKey] = true;
+
+				Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
+				Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
 			}
 		}
 	}
-
-	//Vulkan::VulkanDebug::ConsolePrint(blockX, "blockX: ");
-	//Vulkan::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
 }
 
 void Terrain::GenerateBlocks()
@@ -343,6 +343,14 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				Vulkan::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
 				Vulkan::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
+
+				glm::vec3 cameraPos = mCamera->GetPosition();
+				int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
+				int32_t blockY = 0;
+				int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
+
+				Vulkan::VulkanDebug::ConsolePrint(blockX, "blockX: ");
+				Vulkan::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
 
 				UpdateBlockList();
 			}
