@@ -150,13 +150,13 @@ private:
 	// Experimentation
 	Vulkan::BasicEffect* mBasicEffect;
 
-	std::vector<Block*> mBlockList;
+	//std::vector<Block*> mBlockList;
 	const uint32_t mWorldSize = 5;
 	const int32_t mVoxelsInBlock = 32;
 	const int32_t mVoxelSize = 200;
-	const int32_t mViewDistance = 2;
+	const int32_t mViewDistance = 1;
 
-	std::map<BlockKey, bool> mLoadedBlocks;
+	std::map<BlockKey, Block*> mBlockList;
 
 	struct PushConstantBlock {
 		glm::mat4 world;

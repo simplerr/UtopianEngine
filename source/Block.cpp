@@ -52,6 +52,11 @@ bool Block::IsModified()
 	return mModified;
 }
 
+bool Block::IsVisible()
+{
+	return mVisible;
+}
+
 void Block::SetGenerated(bool generated)
 {
 	mGenerated = generated;
@@ -62,9 +67,19 @@ void Block::SetModified(bool modified)
 	mModified = modified;
 }
 
+void Block::SetVisible(bool visible)
+{
+	mVisible = visible;
+}
+
 void Block::SetNumVertices(uint32_t numVertices)
 {
 	mNumVertices = numVertices;
+}
+
+void Block::SetColor(glm::vec3 color)
+{
+	mColor = color;
 }
 
 glm::vec3 Block::GetPosition()

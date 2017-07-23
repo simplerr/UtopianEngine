@@ -83,9 +83,13 @@ public:
 	/* True if the block has been modified after the last generation */
 	bool IsModified();
 
+	bool IsVisible();
+
 	void SetGenerated(bool generated);
 	void SetModified(bool modified);
+	void SetVisible(bool visible);
 	void SetNumVertices(uint32_t numVertices);
+	void SetColor(glm::vec3 color);
 
 	glm::vec3 GetPosition();
 	glm::vec3 GetColor();
@@ -103,6 +107,7 @@ private:
 
 	bool mGenerated;
 	bool mModified;
+	bool mVisible;
 	uint32_t mNumVertices;
 
 	float mVoxelSize;

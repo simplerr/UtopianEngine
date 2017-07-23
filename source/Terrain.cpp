@@ -153,23 +153,31 @@ void Terrain::UpdateBlockList()
 	int32_t blockY = 0;
 	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 
+	// Make all blocks invisible
+	/*for (auto blockIter : mBlockList)
+	{
+		blockIter.second->SetVisible(false);
+	}*/
+
 	for (int32_t x = blockX - mViewDistance; x <= (blockX + mViewDistance); x++)
 	{
 		for (int32_t z = blockZ - mViewDistance; z <= (blockZ + mViewDistance); z++)
 		{
 			BlockKey blockKey(x, 0, z);
-			if (mLoadedBlocks.find(blockKey) == mLoadedBlocks.end())
+			if (mBlockList.find(blockKey) == mBlockList.end())
 			{
 				glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, 0, z*mVoxelsInBlock*mVoxelSize);
 				glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
 				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
-				mBlockList.push_back(block);
 
-				BlockKey blockKey(x, 0, z);
-				mLoadedBlocks[blockKey] = true;
+				mBlockList[blockKey] = block;
 
 				Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
 				Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
+			}
+			else
+			{
+				mBlockList[blockKey]->SetVisible(true);
 			}
 		}
 	}
@@ -177,12 +185,13 @@ void Terrain::UpdateBlockList()
 
 void Terrain::GenerateBlocks()
 {
-	for (auto block : mBlockList)
+	for (auto blockIter : mBlockList)
 	{
+		Block* block = blockIter.second;
 		if (mUseComputeShader)
-		{
+		{			
 			// Generate the vertex buffer for the block 
-			if (!block->IsGenerated() || block->IsModified())
+			if (block->IsVisible() && (!block->IsGenerated() || block->IsModified()))
 			{
 				Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
@@ -297,9 +306,10 @@ void Terrain::Update()
 	mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
-	for (auto block : mBlockList)
+	for (auto blockIter : mBlockList)
 	{
-		if (block->IsGenerated())
+		Block* block = blockIter.second;
+		if (block->IsVisible() && block->IsGenerated())
 		{
 			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mBasicPipeline->GetPipelineLayout(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
@@ -335,8 +345,9 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				uint32_t numBlocks = 0;
 				uint32_t numVertices = 0;
-				for (auto block : mBlockList)
+				for (auto blockIter : mBlockList)
 				{
+					Block* block = blockIter.second;
 					numBlocks++;
 					numVertices += block->GetNumVertices();
 				}
