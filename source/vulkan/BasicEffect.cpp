@@ -18,9 +18,9 @@ namespace Vulkan
 		mDescriptorPool->Create();
 
 		mVertexDescription = new Vulkan::VertexDescription();
-		mVertexDescription->AddBinding(0, sizeof(BasicVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
-		mVertexDescription->AddAttribute(0, Vulkan::Vec4Attribute());	
-		mVertexDescription->AddAttribute(1, Vulkan::Vec4Attribute());	
+		mVertexDescription->AddBinding(BINDING_0, sizeof(BasicVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
+		mVertexDescription->AddAttribute(BINDING_0, Vulkan::Vec4Attribute());	
+		mVertexDescription->AddAttribute(BINDING_0, Vulkan::Vec4Attribute());	
 
 		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/basic/basic.vert.spv", "data/shaders/basic/basic.frag.spv");
 		mBasicPipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
