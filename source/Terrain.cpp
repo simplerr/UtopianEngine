@@ -191,7 +191,7 @@ void Terrain::GenerateBlocks()
 		if (mUseComputeShader)
 		{			
 			// Generate the vertex buffer for the block 
-			if (block->IsVisible() && (!block->IsGenerated() || block->IsModified()))
+			if (!block->IsGenerated() || block->IsModified())
 			{
 				Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
@@ -314,7 +314,7 @@ void Terrain::Update()
 			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mBasicPipeline->GetPipelineLayout(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
 
-			mCommandBuffer->CmdBindVertexBuffer(0, 1, block->GetVertexBuffer());
+			mCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
 			// Push the world matrix constant
 			Vulkan::PushConstantBasicBlock pushConstantBlock;
@@ -329,7 +329,7 @@ void Terrain::Update()
 			//mCommandBuffer->CmdPushConstants(mBasicEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 			vkCmdPushConstants(commandBuffer, mBasicEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
-			vkCmdDraw(commandBuffer, block->GetNumVertices(), 1, 0, 0);
+			mCommandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
 		}
 	}
 

@@ -184,6 +184,11 @@ namespace Vulkan
 		vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
 	}
 
+	void CommandBuffer::CmdDraw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
+	{
+		vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance);
+	}
+
 	bool CommandBuffer::IsActive()
 	{
 		return mActive;
