@@ -26,9 +26,8 @@ namespace Vulkan
 		mBasicPipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 
 		// EXPERIMENT
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame UBO
+		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);	// pushConsts
 		mPipelineInterface.CreateLayouts(renderer->GetDevice());
 
 		mBasicPipeline->SetPipelineInterface(&mPipelineInterface);
@@ -41,7 +40,7 @@ namespace Vulkan
 		mDescriptorSet->UpdateDescriptorSets();
 
 		mBasicPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-		mBasicPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		//mBasicPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mBasicPipeline->Create();
 	}
 }

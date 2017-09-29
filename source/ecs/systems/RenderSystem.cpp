@@ -38,7 +38,7 @@ namespace ECS
 
 		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
 
-		AddDebugCube(vec3(0.0f, 0.0f, 0.0f), Vulkan::Color::White, 70.0f);
+		AddDebugCube(vec3(67000.0f, 1500.0f, 67000.0f), Vulkan::Color::Red, 70.0f);
 		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
 		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
 		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
@@ -148,10 +148,10 @@ namespace ECS
 				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 
 				// Try the geometry shader pipeline
-				mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
-				mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				//mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
+				//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
+				//mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				//mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
 
@@ -191,23 +191,23 @@ namespace ECS
 		////vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
 
 		//// Draw debug cubes for the origin and each axis
-		//for (int i = 0; i < mDebugCubes.size(); i++)
-		//{
-		//	DebugCube debugCube = mDebugCubes[i];
+		for (int i = 0; i < mDebugCubes.size(); i++)
+		{
+			DebugCube debugCube = mDebugCubes[i];
 
-		//	glm::mat4 world = mat4();
-		//	world = glm::translate(world, -debugCube.pos);
-		//	world = glm::scale(world, glm::vec3(debugCube.size));
+			glm::mat4 world = mat4();
+			world = glm::translate(world, debugCube.pos);
+			world = glm::scale(world, glm::vec3(debugCube.size));
 
-		//	PushConstantDebugBlock pushConstantBlock;
-		//	pushConstantBlock.world = world;
-		//	pushConstantBlock.color = debugCube.color;
+			PushConstantDebugBlock pushConstantBlock;
+			pushConstantBlock.world = world;
+			pushConstantBlock.color = debugCube.color;
 
-		//	mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-		//	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-		//	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-		//	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-		//}
+			mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+			mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+		}
 
 		mCommandBuffer->End();
 	}

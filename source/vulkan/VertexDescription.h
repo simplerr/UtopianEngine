@@ -88,7 +88,7 @@ namespace Vulkan
 			attributeDescription.binding = binding;
 			attributeDescription.location = attributeDescriptions.size();
 			attributeDescription.format = attribute.GetFormat();
-			attributeDescription.offset = offsets[binding];
+			attributeDescription.offset = offsets[binding]; // NOTE: This returns 0 when empty
 
 			attributeDescriptions.push_back(attributeDescription);
 

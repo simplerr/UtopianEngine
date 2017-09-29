@@ -296,6 +296,9 @@ void Terrain::Update()
 
 	mBasicEffect->uniformBuffer.data.projection = mCamera->GetProjection();
 	mBasicEffect->uniformBuffer.data.view = mCamera->GetView();
+	mBasicEffect->uniformBuffer.data.eyePos = mCamera->GetPosition();
+	mBasicEffect->uniformBuffer.data.fogStart = 10000.0f; // Test
+	mBasicEffect->uniformBuffer.data.fogDistance = 5400.0f;
 	mBasicEffect->uniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
 	VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();

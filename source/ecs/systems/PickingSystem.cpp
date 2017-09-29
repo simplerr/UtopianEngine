@@ -79,7 +79,7 @@ namespace ECS
 			}
 			else
 			{
-				uint32_t maxSpeed = 2;
+				uint32_t maxSpeed = 20;
 				uint32_t maxRotation = 100;
 				float divider = 90.0f;
 				ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();

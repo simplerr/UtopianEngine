@@ -64,7 +64,7 @@ namespace Vulkan
 				for (int z = 0; z < size; z++)
 				{
 					// Transform
-					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(4000 + x * space,  y * space, z * space));
+					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(67000 + 4000 + x * space,  y * space, 67000 + z * space));
 					//transformComponent->SetRotation(glm::vec3(180, 30, 40));
 					transformComponent->SetRotation(glm::vec3(180.0f, 0.0f, 0.0f));
 					transformComponent->SetScale(glm::vec3(50.0f));
@@ -85,9 +85,10 @@ namespace Vulkan
 					//	transformComponent->SetScale(glm::vec3(35.0f));
 					//}
 					//else { 
-						//meshComponent = new ECS::MeshComponent("data/models/adventure_village/CrateSquareB.obj", PipelineType::PIPELINE_BASIC);
+						//meshComponent = new ECS::MeshComponent("data/models/adventure_village/StreetLightTall.obj", PipelineType::PIPELINE_BASIC);
 						//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
-						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_WIREFRAME);
+						//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_WIREFRAME);
+						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
 					//}
 
 					// Health

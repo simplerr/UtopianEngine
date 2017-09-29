@@ -55,6 +55,10 @@ namespace Vulkan
 			struct {
 				glm::mat4 projection;
 				glm::mat4 view;
+				glm::vec3 eyePos;
+				float padding;
+				float fogStart;
+				float fogDistance;
 			} data;
 		};
 
