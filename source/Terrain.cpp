@@ -54,33 +54,16 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	*/
 	mCommandBuffer = renderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
-	mDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
-	mDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT | VK_SHADER_STAGE_COMPUTE_BIT);
-	mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT | VK_SHADER_STAGE_COMPUTE_BIT);
-	mDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_GEOMETRY_BIT | VK_SHADER_STAGE_COMPUTE_BIT);
-	mDescriptorSetLayout->Create();
-
 	mComputeDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
 	mComputeDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 	mComputeDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 	mComputeDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 	mComputeDescriptorSetLayout->Create();
 
-	mBlockDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
-	mBlockDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT | VK_SHADER_STAGE_COMPUTE_BIT);
-	mBlockDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT | VK_SHADER_STAGE_COMPUTE_BIT);
-	mBlockDescriptorSetLayout->Create();
-
 	mComputeBlockDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
 	mComputeBlockDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 	mComputeBlockDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 	mComputeBlockDescriptorSetLayout->Create();
-
-	mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
-	mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
-	mPipelineLayout->AddDescriptorSetLayout(mBlockDescriptorSetLayout);
-	mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_COMPUTE_BIT, sizeof(PushConstantBlock));
-	mPipelineLayout->Create();
 
 	mComputePipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
 	mComputePipelineLayout->AddDescriptorSetLayout(mComputeDescriptorSetLayout);
@@ -97,26 +80,13 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mEdgeTableTexture = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
 	mTriangleTableTexture = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
-
-	mVertexDescription = new Vulkan::VertexDescription();
-	mVertexDescription->AddBinding(0, sizeof(CubeVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
-	mVertexDescription->AddAttribute(0, Vulkan::Vec3Attribute());	
-
-	Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/terrain_geometry/base.vert.spv", "data/shaders/terrain_geometry/base.frag.spv", "data/shaders/terrain_geometry/marching_cubes.geom.spv");
-	mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
-	mGeometryPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-	mGeometryPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-	mGeometryPipeline->Create();
-
 	mTerrainEffect.Init(renderer);
 
-	BuildPointList();
-	
 	Vulkan::Shader* computeShader = mRenderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
-	mComputePipeline = new Vulkan::ComputePipeline(mRenderer->GetDevice(), mPipelineLayout, computeShader);
+	mComputePipeline = new Vulkan::ComputePipeline(mRenderer->GetDevice(), mComputePipelineLayout, computeShader);
 	mComputePipeline->Create();
 
-	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
+	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mComputeDescriptorSetLayout, mDescriptorPool);
 	mDescriptorSet->AllocateDescriptorSets();
 	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
 	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
@@ -128,16 +98,11 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 
 Terrain::~Terrain()
 {
-	delete mDescriptorSetLayout;
-	delete mPipelineLayout;
 	delete mDescriptorPool;
 	delete mDescriptorSet;
-	delete mGeometryPipeline;
 	delete mComputePipeline;
-	delete mVertexDescription;
 	delete mEdgeTableTexture;
 	delete mTriangleTableTexture;
-	delete mMarchingCubesVB;
 }
 
 void Terrain::UpdateBlockList()
@@ -167,7 +132,7 @@ void Terrain::UpdateBlockList()
 			{
 				glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, 0, z*mVoxelsInBlock*mVoxelSize);
 				glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, mBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
+				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, mComputeBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
 
 				mBlockList[blockKey] = block;
 
@@ -182,116 +147,65 @@ void Terrain::UpdateBlockList()
 	}
 }
 
-void Terrain::GenerateBlocks()
+void Terrain::GenerateBlocks(float time)
 {
 	for (auto blockIter : mBlockList)
 	{
 		Block* block = blockIter.second;
-		if (mUseComputeShader)
-		{			
-			// Generate the vertex buffer for the block 
-			if (!block->IsGenerated() || block->IsModified())
-			{
-				Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-
-				commandBuffer.CmdBindPipeline(mComputePipeline);
-				VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mPipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
-
-				// Push the world matrix constant
-				Vulkan::PushConstantBlock pushConstantBlock;
-				pushConstantBlock.world = glm::mat4();
-				//pushConstantBlock.worldInvTranspose = glm::mat4();
-
-				glm::vec3 position = block->GetPosition();
-				pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
-				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-				commandBuffer.CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-
-				// TODO: Transform block position (PUSH CONSTS!)
-				vkCmdDispatch(commandBuffer.GetVkHandle(), 32, 32, 32);
-
-				commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
-
-				uint32_t* mapped;
-				block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
-				uint32_t numVertices = *(uint32_t*)mapped;
-				block->mCounterSSBO.UnmapMemory();
-
-				block->SetNumVertices(numVertices);
-				block->SetGenerated(true);
-				block->SetModified(false);
-			}
-		}
-		else
+		// Generate the vertex buffer for the block 
+		if (!block->IsGenerated() || block->IsModified())
 		{
-			// Generate the vertex buffer for the block 
-			if (!block->IsGenerated() || block->IsModified())
-			{
-				Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			mUniformBuffer.data.projection = mCamera->GetProjection();
+			mUniformBuffer.data.view = mCamera->GetView();
+			mUniformBuffer.data.voxelSize = mVoxelSize;
+			mUniformBuffer.data.time = time;
+			mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
-				commandBuffer.CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-				commandBuffer.CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-				commandBuffer.CmdBindPipeline(mGeometryPipeline);
+			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-				VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
+			commandBuffer.CmdBindPipeline(mComputePipeline);
+			VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet }; // TODO: The block descriptor set is set in Terrain.cpp
+			vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mComputePipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
 
-				//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-				//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+			// Push the world matrix constant
+			Vulkan::PushConstantBlock pushConstantBlock;
+			pushConstantBlock.world = glm::mat4();
+			//pushConstantBlock.worldInvTranspose = glm::mat4();
 
-				commandBuffer.CmdBindVertexBuffer(0, 1, mMarchingCubesVB);
+			glm::vec3 position = block->GetPosition();
+			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-				// Push the world matrix constant
-				Vulkan::PushConstantBlock pushConstantBlock;
-				pushConstantBlock.world = glm::mat4();
-				pushConstantBlock.worldInvTranspose = glm::mat4();
+			commandBuffer.CmdPushConstants(mComputePipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-				pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
-				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+			// TODO: Transform block position (PUSH CONSTS!)
+			vkCmdDispatch(commandBuffer.GetVkHandle(), 32, 32, 32);
 
-				commandBuffer.CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 
-				vkCmdDraw(commandBuffer.GetVkHandle(), mVoxelsInBlock*mVoxelsInBlock*mVoxelsInBlock, 1, 0, 0); // TODO: Vulkan::Buffer should have a vertexCount member?
+			uint32_t* mapped;
+			block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+			uint32_t numVertices = *(uint32_t*)mapped;
+			block->mCounterSSBO.UnmapMemory();
 
-				commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
-
-				uint32_t* mapped;
-				block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
-				uint32_t numVertices = *(uint32_t*)mapped;
-				block->mCounterSSBO.UnmapMemory();
-
-				block->SetNumVertices(numVertices);
-				block->SetGenerated(true);
-				block->SetModified(false);
-			}
+			block->SetNumVertices(numVertices);
+			block->SetGenerated(true);
+			block->SetModified(false);
 		}
 	}
 }
 
 void Terrain::Update()
 {
-	UpdateBlockList();
-	GenerateBlocks();
-
 	static float time = 0.0f;
 
 	if(mUpdateTimer)
 		time += 0.002f;
 
-	static bool test = true;
-
-	// TEMP:
-	mUniformBuffer.data.projection = mCamera->GetProjection();
-	mUniformBuffer.data.view = mCamera->GetView();
-	mUniformBuffer.data.voxelSize = mVoxelSize;
-	mUniformBuffer.data.time = time;
-	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+	UpdateBlockList();
+	GenerateBlocks(time);
 
 	mTerrainEffect.per_frame_vs.data.projection = mCamera->GetProjection();
 	mTerrainEffect.per_frame_vs.data.view = mCamera->GetView();
@@ -393,24 +307,6 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}*/
 			break;
 	}
-}
-
-void Terrain::BuildPointList()
-{
-	float size = mVoxelsInBlock * mVoxelSize;
-	for (uint32_t x = 0; x < mVoxelsInBlock; x++)
-	{
-		for (uint32_t y = 0; y < mVoxelsInBlock; y++)
-		{
-			for (uint32_t z = 0; z < mVoxelsInBlock; z++)
-			{
-				mPointList.push_back(CubeVertex(-size / 2 + x * mVoxelSize, -size / 2 + y * mVoxelSize, -size / 2 + z * mVoxelSize));
-			}
-		}
-	}
-
-	VkDeviceSize bufferSize = mVoxelsInBlock * mVoxelsInBlock * mVoxelsInBlock * sizeof(CubeVertex);
-	mMarchingCubesVB = new Vulkan::Buffer(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, bufferSize, mPointList.data());
 }
 
 void Terrain::DumpDebug()

@@ -25,6 +25,7 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;
 
+	// TODO: Bad
 	mDescriptorSet = new Vulkan::DescriptorSet(renderer->GetDevice(), desscriptorSetLayout, descriptorPool);
 	mDescriptorSet->AllocateDescriptorSets();
 	mDescriptorSet->BindStorageBuffer(0, &mBufferInfo);

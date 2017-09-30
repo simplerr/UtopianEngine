@@ -201,17 +201,14 @@
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\shaders\basic\terrain.frag" />
-    <None Include="data\shaders\basic\terrain.vert" />
     <None Include="data\shaders\geometry\base.frag" />
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />
     <None Include="data\shaders\marching_cubes\marching_cubes.comp" />
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
-    <None Include="data\shaders\terrain\base.frag" />
-    <None Include="data\shaders\terrain\base.vert" />
-    <None Include="data\shaders\terrain\marching_cubes.geom" />
+    <None Include="data\shaders\terrain\terrain.frag" />
+    <None Include="data\shaders\terrain\terrain.vert" />
     <None Include="data\shaders\test\test.frag" />
     <None Include="data\shaders\test\test.vert" />
     <None Include="data\shaders\textoverlay\text.frag" />

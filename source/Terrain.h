@@ -118,21 +118,15 @@ public:
 	/**  
 	* \brief Generates the vertex buffer for newly added or modified blocks
 	*/
-	void GenerateBlocks();
+	void GenerateBlocks(float time);
 
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	/* Builds the vertex buffer containing all the input points to the marching cubes algorithm */
-	void BuildPointList();
 private:
 	Vulkan::Renderer* mRenderer;
 	Vulkan::CommandBuffer* mCommandBuffer;
 	Vulkan::DescriptorPool* mDescriptorPool;
-	Vulkan::DescriptorSetLayout* mDescriptorSetLayout;
 	Vulkan::DescriptorSet* mDescriptorSet;
-	Vulkan::Pipeline* mGeometryPipeline;
-	Vulkan::PipelineLayout* mPipelineLayout;
-	Vulkan::VertexDescription* mVertexDescription;
 	Vulkan::Camera* mCamera;
 	Vulkan::Texture* mEdgeTableTexture;
 	Vulkan::Texture* mTriangleTableTexture;
@@ -168,9 +162,6 @@ private:
 	bool mDrawGeneratedBuffer = false;
 	bool mUseComputeShader = true;
 	int mNumVertices = 0;
-
-	std::vector<CubeVertex> mPointList;
-	Vulkan::Buffer* mMarchingCubesVB;
 
 	const uint32_t NUM_MAX_STORAGE_BUFFERS = 200;
 

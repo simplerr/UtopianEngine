@@ -103,7 +103,6 @@ namespace Vulkan
 		system("cd data/shaders/test/ && generate-spirv.bat");
 		system("cd data/shaders/geometry/ && generate-spirv.bat");
 		system("cd data/shaders/textoverlay/ && generate-spirv.bat");
-		system("cd data/shaders/terrain_geometry/ && generate-spirv.bat");
 		system("cd data/shaders/terrain/ && generate-spirv.bat");
 		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
 	}

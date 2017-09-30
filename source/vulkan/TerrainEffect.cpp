@@ -30,8 +30,8 @@ namespace Vulkan
 
 	void TerrainEffect::CreatePipelineInterface(Device* device)
 	{
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame UBO
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame UBO
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);	// pushConsts
 		mPipelineInterface.CreateLayouts(device);
 	}
@@ -57,7 +57,7 @@ namespace Vulkan
 		// EXPERIMENT
 		mPipeline->SetPipelineInterface(&mPipelineInterface);
 		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-		//mBasicPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mPipeline->Create();
 	}
 
