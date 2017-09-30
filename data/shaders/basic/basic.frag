@@ -6,11 +6,16 @@
 layout (location = 0) in vec3 inPosW;
 layout (location = 1) in vec3 inColor;
 layout (location = 2) in vec3 inNormal;
-layout (location = 3) in vec3 inEyePosW;
-layout (location = 4) in float inFogStart;
-layout (location = 5) in float inFogDistance;
 
 layout (location = 0) out vec4 outFragColor;
+
+layout (std140, set = 0, binding = 1) uniform UBO 
+{
+	vec3 eyePos;
+	float padding;
+	float fogStart;
+	float fogDistance;
+} per_frame;
 
 void main(void)
 {
@@ -27,8 +32,8 @@ void main(void)
 	//outFragColor = vec4(0, 0, inNormal.b, 1.0);
 
 	// Apply fogging.
-	float distToEye = length(inEyePosW + inPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
-	float fogLerp = clamp((distToEye - inFogStart) / inFogDistance, 0.0, 1.0); 
+	float distToEye = length(per_frame.eyePos + inPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
+	float fogLerp = clamp((distToEye - per_frame.fogStart) / per_frame.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
 	vec3 litColor = mix(inColor, vec3(0.5), fogLerp);

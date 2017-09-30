@@ -294,12 +294,14 @@ void Terrain::Update()
 	mUniformBuffer.data.time = time;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
-	mBasicEffect->uniformBuffer.data.projection = mCamera->GetProjection();
-	mBasicEffect->uniformBuffer.data.view = mCamera->GetView();
-	mBasicEffect->uniformBuffer.data.eyePos = mCamera->GetPosition();
-	mBasicEffect->uniformBuffer.data.fogStart = 10000.0f; // Test
-	mBasicEffect->uniformBuffer.data.fogDistance = 5400.0f;
-	mBasicEffect->uniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+	mBasicEffect->uniformBufferVS.data.projection = mCamera->GetProjection();
+	mBasicEffect->uniformBufferVS.data.view = mCamera->GetView();
+	mBasicEffect->uniformBufferVS.data.eyePos = mCamera->GetPosition();
+	mBasicEffect->uniformBufferVS.UpdateMemory(mRenderer->GetVkDevice());
+	mBasicEffect->uniformBufferPS.data.eyePos = mCamera->GetPosition(); // Test
+	mBasicEffect->uniformBufferPS.data.fogStart = 10000.0f; // Test
+	mBasicEffect->uniformBufferPS.data.fogDistance = 5400.0f;
+	mBasicEffect->uniformBufferPS.UpdateMemory(mRenderer->GetVkDevice());
 
 	VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
 
@@ -315,6 +317,7 @@ void Terrain::Update()
 		if (block->IsVisible() && block->IsGenerated())
 		{
 			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
+			VkDescriptorSet descriptorSets[1] = {mBasicEffect->mDescriptorSet->descriptorSet};
 			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mBasicPipeline->GetPipelineLayout(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
 
 			mCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());

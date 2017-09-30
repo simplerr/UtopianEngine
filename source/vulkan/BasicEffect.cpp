@@ -11,7 +11,8 @@ namespace Vulkan
 {
 	BasicEffect::BasicEffect(Renderer* renderer)
 	{
-		uniformBuffer.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		uniformBufferVS.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		uniformBufferPS.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mDescriptorPool = new Vulkan::DescriptorPool(renderer->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
@@ -27,6 +28,7 @@ namespace Vulkan
 
 		// EXPERIMENT
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame UBO
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame UBO
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);	// pushConsts
 		mPipelineInterface.CreateLayouts(renderer->GetDevice());
 
@@ -36,7 +38,8 @@ namespace Vulkan
 
 		mDescriptorSet = new Vulkan::DescriptorSet(renderer->GetDevice(), setLayout0, mDescriptorPool);
 		mDescriptorSet->AllocateDescriptorSets();
-		mDescriptorSet->BindUniformBuffer(0, &uniformBuffer.GetDescriptor());
+		mDescriptorSet->BindUniformBuffer(0, &uniformBufferVS.GetDescriptor());
+		mDescriptorSet->BindUniformBuffer(1, &uniformBufferPS.GetDescriptor());
 		mDescriptorSet->UpdateDescriptorSets();
 
 		mBasicPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;

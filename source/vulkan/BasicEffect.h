@@ -35,7 +35,7 @@ namespace Vulkan
 	class BasicEffect
 	{
 	public:
-		class UniformBuffer : public Vulkan::ShaderBuffer
+		class UniformBufferVS : public Vulkan::ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory(VkDevice device)
@@ -56,6 +56,28 @@ namespace Vulkan
 				glm::mat4 projection;
 				glm::mat4 view;
 				glm::vec3 eyePos;
+			} data;
+		};
+
+		class UniformBufferPS : public Vulkan::ShaderBuffer
+		{
+		public:
+			virtual void UpdateMemory(VkDevice device)
+			{
+				// Map uniform buffer and update it
+				uint8_t *mapped;
+				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
+				memcpy(mapped, &data, sizeof(data));
+				mBuffer->UnmapMemory();
+			}
+
+			virtual int GetSize()
+			{
+				return sizeof(data);
+			}
+
+			struct {
+				glm::vec3 eyePos;
 				float padding;
 				float fogStart;
 				float fogDistance;
@@ -65,7 +87,8 @@ namespace Vulkan
 		BasicEffect(Renderer* renderer);
 
 		/* Member variables */
-		UniformBuffer uniformBuffer;
+		UniformBufferVS uniformBufferVS;
+		UniformBufferPS uniformBufferPS;
 
 		DescriptorPool* mDescriptorPool;
 		DescriptorSet* mDescriptorSet;
