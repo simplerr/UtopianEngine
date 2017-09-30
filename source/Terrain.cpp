@@ -14,7 +14,6 @@
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
-#include "vulkan/BasicEffect.h"
 #include "Camera.h"
 #include "Terrain.h"
 #include "Block.h"
@@ -109,7 +108,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mGeometryPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mGeometryPipeline->Create();
 
-	mBasicEffect = new Vulkan::BasicEffect(mRenderer);
+	mTerrainEffect.Init(renderer);
 
 	BuildPointList();
 	
@@ -294,14 +293,14 @@ void Terrain::Update()
 	mUniformBuffer.data.time = time;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
-	mBasicEffect->uniformBufferVS.data.projection = mCamera->GetProjection();
-	mBasicEffect->uniformBufferVS.data.view = mCamera->GetView();
-	mBasicEffect->uniformBufferVS.data.eyePos = mCamera->GetPosition();
-	mBasicEffect->uniformBufferVS.UpdateMemory(mRenderer->GetVkDevice());
-	mBasicEffect->uniformBufferPS.data.eyePos = mCamera->GetPosition(); // Test
-	mBasicEffect->uniformBufferPS.data.fogStart = 10000.0f; // Test
-	mBasicEffect->uniformBufferPS.data.fogDistance = 5400.0f;
-	mBasicEffect->uniformBufferPS.UpdateMemory(mRenderer->GetVkDevice());
+	mTerrainEffect.uniformBufferVS.data.projection = mCamera->GetProjection();
+	mTerrainEffect.uniformBufferVS.data.view = mCamera->GetView();
+	mTerrainEffect.uniformBufferVS.data.eyePos = mCamera->GetPosition();
+	mTerrainEffect.uniformBufferVS.UpdateMemory(mRenderer->GetVkDevice());
+	mTerrainEffect.uniformBufferPS.data.eyePos = mCamera->GetPosition(); // Test
+	mTerrainEffect.uniformBufferPS.data.fogStart = 10000.0f; // Test
+	mTerrainEffect.uniformBufferPS.data.fogDistance = 5400.0f;
+	mTerrainEffect.uniformBufferPS.UpdateMemory(mRenderer->GetVkDevice());
 
 	VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
 
@@ -316,9 +315,9 @@ void Terrain::Update()
 		Block* block = blockIter.second;
 		if (block->IsVisible() && block->IsGenerated())
 		{
-			mCommandBuffer->CmdBindPipeline(mBasicEffect->mBasicPipeline);
-			VkDescriptorSet descriptorSets[1] = {mBasicEffect->mDescriptorSet->descriptorSet};
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mBasicEffect->mBasicPipeline->GetPipelineLayout(), 0, 1, &mBasicEffect->mDescriptorSet->descriptorSet, 0, NULL);
+			mCommandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
+			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet->descriptorSet};
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mTerrainEffect.GetPipelineLayout(), 0, 1, &mTerrainEffect.mDescriptorSet->descriptorSet, 0, NULL);
 
 			mCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
@@ -332,8 +331,8 @@ void Terrain::Update()
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			//mCommandBuffer->CmdPushConstants(mBasicEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			vkCmdPushConstants(commandBuffer, mBasicEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
+			//mCommandBuffer->CmdPushConstants(mTerrainEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdPushConstants(commandBuffer, mTerrainEffect.GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
 			mCommandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
 		}

@@ -32,7 +32,7 @@ namespace Vulkan
 	*
 	* Simply transforms each vertex and sets a pixel color
 	**/
-	class BasicEffect
+	class TerrainEffect : public Effect
 	{
 	public:
 		class UniformBufferVS : public Vulkan::ShaderBuffer
@@ -84,17 +84,18 @@ namespace Vulkan
 			} data;
 		};
 
-		BasicEffect(Renderer* renderer);
+		// Override the base class interfaces
+		virtual void CreateDescriptorPool(Device* device);
+		virtual void CreateVertexDescription(Device* device);
+		virtual void CreatePipelineInterface(Device* device);
+		virtual void CreateDescriptorSets(Device* device);
+		virtual void CreatePipeline(Renderer* renderer);
+
+		TerrainEffect();
 
 		/* Member variables */
 		UniformBufferVS uniformBufferVS;
 		UniformBufferPS uniformBufferPS;
-
-		DescriptorPool* mDescriptorPool;
 		DescriptorSet* mDescriptorSet;
-		Pipeline2* mBasicPipeline;
-		VertexDescription* mVertexDescription;
-		Shader* mShader;
-		PipelineInterface mPipelineInterface;
 	};
 }

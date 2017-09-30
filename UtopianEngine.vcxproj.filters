@@ -222,9 +222,6 @@
     <ClCompile Include="source\Terrain.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\BasicEffect.cpp">
-      <Filter>Source Files\vulkan\effects\basic</Filter>
-    </ClCompile>
     <ClCompile Include="source\Block.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
@@ -239,6 +236,12 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\PipelineInterface.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Effect.cpp">
+      <Filter>Source Files\vulkan\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\TerrainEffect.cpp">
+      <Filter>Source Files\vulkan\effects\basic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -407,9 +410,6 @@
     <ClInclude Include="source\vulkan\Effect.h">
       <Filter>Source Files\vulkan\effects</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\BasicEffect.h">
-      <Filter>Source Files\vulkan\effects\basic</Filter>
-    </ClInclude>
     <ClInclude Include="source\Block.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
@@ -424,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\PipelineInterface.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\TerrainEffect.h">
+      <Filter>Source Files\vulkan\effects\basic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

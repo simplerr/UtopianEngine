@@ -1,33 +1,39 @@
 #pragma once
 
 #include <vulkan\vulkan.h>
+#include "vulkan/PipelineInterface.h"
 
 namespace Vulkan
 {
 	class Renderer;
-	class DescriptorSetLayout;
+	class Device;
 	class DescriptorPool;
-	class DescriptorSet;
-	class Pipeline;
-	class PipelineLayout;
 	class VertexDescription;
-	class Shader;
+	class Pipeline2;
 
+	/* 
+	 * Base class for all effects.
+	*/
 	class Effect
 	{
 	public:
-		Effect(Renderer* renderer) 
-		{
+		Effect();
 
-		};
-	//private:
+		void Init(Renderer* renderer);
 
+		virtual void CreateDescriptorPool(Device* device) = 0;
+		virtual void CreateVertexDescription(Device* device) = 0;
+		virtual void CreatePipelineInterface(Device* device) = 0;
+		virtual void CreateDescriptorSets(Device* device) = 0;
+		virtual void CreatePipeline(Renderer* renderer) = 0;
+
+		VkPipelineLayout GetPipelineLayout();
+		Pipeline2* GetPipeline();
+
+	protected:
 		DescriptorPool* mDescriptorPool;
-		DescriptorSetLayout* mDescriptorSetLayout;
-		DescriptorSet* mDescriptorSet;
-		Pipeline* mBasicPipeline;
-		PipelineLayout* mPipelineLayout;
+		PipelineInterface mPipelineInterface;
 		VertexDescription* mVertexDescription;
-		Shader* mShader;
+		Pipeline2* mPipeline;
 	};
 }

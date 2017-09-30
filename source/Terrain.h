@@ -8,6 +8,7 @@
 #include <map>
 #include <glm/glm.hpp>
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/TerrainEffect.h"
 
 /*
 	Steps for implementing the marching algorithm:
@@ -43,7 +44,7 @@ namespace Vulkan
 	class CommandBuffer;
 	class VertexDescription;
 	class Texture;
-	class BasicEffect;
+	class TerrainEffect;
 }
 
 class Block;
@@ -148,7 +149,7 @@ private:
 	Vulkan::DescriptorSetLayout* mBlockDescriptorSetLayout;
 
 	// Experimentation
-	Vulkan::BasicEffect* mBasicEffect;
+	Vulkan::TerrainEffect mTerrainEffect;
 
 	//std::vector<Block*> mBlockList;
 	const uint32_t mWorldSize = 5;
