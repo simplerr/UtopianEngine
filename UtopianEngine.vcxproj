@@ -201,8 +201,8 @@
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data\shaders\basic\basic.frag" />
-    <None Include="data\shaders\basic\basic.vert" />
+    <None Include="data\shaders\basic\terrain.frag" />
+    <None Include="data\shaders\basic\terrain.vert" />
     <None Include="data\shaders\geometry\base.frag" />
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />

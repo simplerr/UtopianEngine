@@ -38,19 +38,8 @@ namespace Vulkan
 		class UniformBufferVS : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device)
-			{
-				// Map uniform buffer and update it
-				uint8_t *mapped;
-				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-				memcpy(mapped, &data, sizeof(data));
-				mBuffer->UnmapMemory();
-			}
-
-			virtual int GetSize()
-			{
-				return sizeof(data);
-			}
+			virtual void UpdateMemory(VkDevice device);
+			virtual int GetSize();
 
 			struct {
 				glm::mat4 projection;
@@ -62,19 +51,8 @@ namespace Vulkan
 		class UniformBufferPS : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device)
-			{
-				// Map uniform buffer and update it
-				uint8_t *mapped;
-				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-				memcpy(mapped, &data, sizeof(data));
-				mBuffer->UnmapMemory();
-			}
-
-			virtual int GetSize()
-			{
-				return sizeof(data);
-			}
+			virtual void UpdateMemory(VkDevice device);
+			virtual int GetSize();
 
 			struct {
 				glm::vec3 eyePos;
@@ -91,11 +69,15 @@ namespace Vulkan
 		virtual void CreateDescriptorSets(Device* device);
 		virtual void CreatePipeline(Renderer* renderer);
 
+		/* Updates the memory for the effects descriptors
+		*/
+		virtual void UpdateMemory(Device* device);
+
 		TerrainEffect();
 
-		/* Member variables */
-		UniformBufferVS uniformBufferVS;
-		UniformBufferPS uniformBufferPS;
-		DescriptorSet* mDescriptorSet;
+		/* Shader descriptors */
+		UniformBufferVS per_frame_vs;	// Same name in terrain.vert
+		UniformBufferPS per_frame_ps;	// Same name in terrain.frag
+		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 	};
 }

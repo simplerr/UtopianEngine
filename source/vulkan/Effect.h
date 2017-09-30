@@ -13,6 +13,9 @@ namespace Vulkan
 
 	/* 
 	 * Base class for all effects.
+	 *
+	 * \note The naming of the descriptors in C++ and GLSL should be the same for readability.
+	 *
 	*/
 	class Effect
 	{
@@ -26,6 +29,7 @@ namespace Vulkan
 		virtual void CreatePipelineInterface(Device* device) = 0;
 		virtual void CreateDescriptorSets(Device* device) = 0;
 		virtual void CreatePipeline(Renderer* renderer) = 0;
+		virtual void UpdateMemory(Device* device) = 0;
 
 		VkPipelineLayout GetPipelineLayout();
 		Pipeline2* GetPipeline();

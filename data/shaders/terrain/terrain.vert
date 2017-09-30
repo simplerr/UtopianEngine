@@ -16,7 +16,7 @@ layout (std140, set = 0, binding = 0) uniform UBO
 	mat4 projection;
 	mat4 view;
 	vec3 eyePos;
-} per_frame;
+} per_frame_vs;
 
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		
@@ -34,5 +34,5 @@ void main(void)
 	outColor = pushConsts.color;
 	outNormal = vec3(1, 1, 1);
 
-	gl_Position = per_frame.projection * per_frame.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

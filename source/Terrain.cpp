@@ -102,7 +102,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mVertexDescription->AddBinding(0, sizeof(CubeVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
 	mVertexDescription->AddAttribute(0, Vulkan::Vec3Attribute());	
 
-	Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/terrain/base.vert.spv", "data/shaders/terrain/base.frag.spv", "data/shaders/terrain/marching_cubes.geom.spv");
+	Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/terrain_geometry/base.vert.spv", "data/shaders/terrain_geometry/base.frag.spv", "data/shaders/terrain_geometry/marching_cubes.geom.spv");
 	mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 	mGeometryPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 	mGeometryPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
@@ -171,8 +171,8 @@ void Terrain::UpdateBlockList()
 
 				mBlockList[blockKey] = block;
 
-				Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
-				Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
+				//Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
+				//Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
 			}
 			else
 			{
@@ -293,14 +293,13 @@ void Terrain::Update()
 	mUniformBuffer.data.time = time;
 	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
 
-	mTerrainEffect.uniformBufferVS.data.projection = mCamera->GetProjection();
-	mTerrainEffect.uniformBufferVS.data.view = mCamera->GetView();
-	mTerrainEffect.uniformBufferVS.data.eyePos = mCamera->GetPosition();
-	mTerrainEffect.uniformBufferVS.UpdateMemory(mRenderer->GetVkDevice());
-	mTerrainEffect.uniformBufferPS.data.eyePos = mCamera->GetPosition(); // Test
-	mTerrainEffect.uniformBufferPS.data.fogStart = 10000.0f; // Test
-	mTerrainEffect.uniformBufferPS.data.fogDistance = 5400.0f;
-	mTerrainEffect.uniformBufferPS.UpdateMemory(mRenderer->GetVkDevice());
+	mTerrainEffect.per_frame_vs.data.projection = mCamera->GetProjection();
+	mTerrainEffect.per_frame_vs.data.view = mCamera->GetView();
+	mTerrainEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
+	mTerrainEffect.per_frame_ps.data.eyePos = mCamera->GetPosition(); // Test
+	mTerrainEffect.per_frame_ps.data.fogStart = 10000.0f; // Test
+	mTerrainEffect.per_frame_ps.data.fogDistance = 5400.0f;
+	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
 
 	VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
 
@@ -316,8 +315,8 @@ void Terrain::Update()
 		if (block->IsVisible() && block->IsGenerated())
 		{
 			mCommandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
-			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet->descriptorSet};
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mTerrainEffect.GetPipelineLayout(), 0, 1, &mTerrainEffect.mDescriptorSet->descriptorSet, 0, NULL);
+			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet0->descriptorSet};
+			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mTerrainEffect.GetPipelineLayout(), 0, 1, &mTerrainEffect.mDescriptorSet0->descriptorSet, 0, NULL);
 
 			mCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 

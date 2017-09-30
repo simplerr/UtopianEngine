@@ -1,5 +1,2 @@
-glslangvalidator -V base.vert -o base.vert.spv
-
-glslangvalidator -V base.frag -o base.frag.spv
-
-glslangvalidator -V marching_cubes.geom -o marching_cubes.geom.spv
+glslangvalidator -V terrain.vert -o terrain.vert.spv
+glslangvalidator -V terrain.frag -o terrain.frag.spv

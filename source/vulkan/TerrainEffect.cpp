@@ -38,20 +38,20 @@ namespace Vulkan
 
 	void TerrainEffect::CreateDescriptorSets(Device* device)
 	{
-		uniformBufferVS.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		uniformBufferPS.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		VkDescriptorSetLayout setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
-		mDescriptorSet = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
-		mDescriptorSet->AllocateDescriptorSets();
-		mDescriptorSet->BindUniformBuffer(BINDING_0, &uniformBufferVS.GetDescriptor());
-		mDescriptorSet->BindUniformBuffer(BINDING_1, &uniformBufferPS.GetDescriptor());
-		mDescriptorSet->UpdateDescriptorSets();
+		mDescriptorSet0 = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
+		mDescriptorSet0->AllocateDescriptorSets();
+		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_vs.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_1, &per_frame_ps.GetDescriptor());
+		mDescriptorSet0->UpdateDescriptorSets();
 	}
 
 	void TerrainEffect::CreatePipeline(Renderer* renderer)
 	{
-		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/basic/basic.vert.spv", "data/shaders/basic/basic.frag.spv");
+		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
 		mPipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 
 		// EXPERIMENT
@@ -59,5 +59,39 @@ namespace Vulkan
 		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		//mBasicPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mPipeline->Create();
+	}
+
+	void TerrainEffect::UpdateMemory(Device* device)
+	{
+		per_frame_vs.UpdateMemory(device->GetVkDevice());
+		per_frame_ps.UpdateMemory(device->GetVkDevice());
+	}
+
+	void TerrainEffect::UniformBufferVS::UpdateMemory(VkDevice device)
+	{
+		// Map uniform buffer and update it
+		uint8_t *mapped;
+		mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
+		memcpy(mapped, &data, sizeof(data));
+		mBuffer->UnmapMemory();
+	}
+
+	int TerrainEffect::UniformBufferVS::GetSize()
+	{
+		return sizeof(data);
+	}
+
+	void TerrainEffect::UniformBufferPS::UpdateMemory(VkDevice device)
+	{
+		// Map uniform buffer and update it
+		uint8_t *mapped;
+		mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
+		memcpy(mapped, &data, sizeof(data));
+		mBuffer->UnmapMemory();
+	}
+
+	int TerrainEffect::UniformBufferPS::GetSize()
+	{
+		return sizeof(data);
 	}
 }

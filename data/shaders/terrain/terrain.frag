@@ -15,7 +15,7 @@ layout (std140, set = 0, binding = 1) uniform UBO
 	float padding;
 	float fogStart;
 	float fogDistance;
-} per_frame;
+} per_frame_ps;
 
 void main(void)
 {
@@ -32,8 +32,8 @@ void main(void)
 	//outFragColor = vec4(0, 0, inNormal.b, 1.0);
 
 	// Apply fogging.
-	float distToEye = length(per_frame.eyePos + inPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
-	float fogLerp = clamp((distToEye - per_frame.fogStart) / per_frame.fogDistance, 0.0, 1.0); 
+	float distToEye = length(per_frame_ps.eyePos + inPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
+	float fogLerp = clamp((distToEye - per_frame_ps.fogStart) / per_frame_ps.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
 	vec3 litColor = mix(inColor, vec3(0.5), fogLerp);
