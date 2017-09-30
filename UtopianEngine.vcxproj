@@ -100,6 +100,7 @@
     <ClCompile Include="source\MarchingCubes.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
     <ClCompile Include="source\vulkan\TerrainEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
+    <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\TerrainEffect.h" />
     <ClInclude Include="source\vulkan\Effect.h" />
     <ClInclude Include="source\vulkan\handles\Buffer.h" />

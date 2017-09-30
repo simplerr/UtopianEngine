@@ -5,18 +5,18 @@
 
 namespace Vulkan
 {
-	class PipelineLayout;
+	class PipelineInterface;
 	class Device;
 	class Shader;
 
 	class ComputePipeline : public Handle<VkPipeline>
 	{
 	public:
-		ComputePipeline(Device* device, PipelineLayout* pipelineLayout, Shader* shader);
+		ComputePipeline(Device* device, PipelineInterface* pipelineInterface, Shader* shader);
 
 		void Create();
 	private:
-		PipelineLayout* mPipelineLayout = nullptr;
+		PipelineInterface* mPipelineInterface = nullptr;
 		Shader* mShader = nullptr;
 	};
 }

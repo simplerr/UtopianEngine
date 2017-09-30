@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/TerrainEffect.h"
+#include "vulkan/MarchingCubesEffect.h"
 
 /*
 	Steps for implementing the marching algorithm:
@@ -62,33 +63,6 @@ struct CubeVertex
 	glm::vec3 pos;
 };
 
-class GeometryUniformBuffer : public Vulkan::ShaderBuffer
-{
-public:
-	virtual void UpdateMemory(VkDevice device)
-	{
-		// Map uniform buffer and update it
-		uint8_t *mapped;
-		mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-		memcpy(mapped, &data, sizeof(data));
-		mBuffer->UnmapMemory();
-	}
-
-	virtual int GetSize()
-	{
-		return sizeof(data);
-	}
-
-	// Public data members
-	struct {
-		glm::mat4 projection;
-		glm::mat4 view;
-		glm::vec4 offsets[8];
-		glm::vec4 color;
-		float voxelSize;
-		float time;
-	} data;
-};
 
 struct BlockKey
 {
@@ -125,30 +99,16 @@ public:
 private:
 	Vulkan::Renderer* mRenderer;
 	Vulkan::CommandBuffer* mCommandBuffer;
-	Vulkan::DescriptorPool* mDescriptorPool;
-	Vulkan::DescriptorSet* mDescriptorSet;
 	Vulkan::Camera* mCamera;
-	Vulkan::Texture* mEdgeTableTexture;
-	Vulkan::Texture* mTriangleTableTexture;
-	GeometryUniformBuffer  mUniformBuffer;
-
-	// Marching cubes compute pipeline
-	Vulkan::ComputePipeline* mComputePipeline;
-	Vulkan::PipelineLayout* mComputePipelineLayout;
-	Vulkan::DescriptorSetLayout* mComputeDescriptorSetLayout;
-	Vulkan::DescriptorSetLayout* mComputeBlockDescriptorSetLayout;
-	Vulkan::DescriptorSet* mComputeDescriptorSet;
-
-	// Block specific
-	Vulkan::DescriptorSetLayout* mBlockDescriptorSetLayout;
 
 	// Experimentation
 	Vulkan::TerrainEffect mTerrainEffect;
+	Vulkan::MarchingCubesEffect mMarchingCubesEffect;
 
 	//std::vector<Block*> mBlockList;
 	const uint32_t mWorldSize = 5;
 	const int32_t mVoxelsInBlock = 32;
-	const int32_t mVoxelSize = 200;
+	const int32_t mVoxelSize = 400;
 	const int32_t mViewDistance = 3;
 
 	std::map<BlockKey, Block*> mBlockList;
@@ -163,7 +123,6 @@ private:
 	bool mUseComputeShader = true;
 	int mNumVertices = 0;
 
-	const uint32_t NUM_MAX_STORAGE_BUFFERS = 200;
 
 	void DumpDebug();
 };

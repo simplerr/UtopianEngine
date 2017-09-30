@@ -23,8 +23,18 @@ namespace Vulkan
 		return mPipelineInterface.GetPipelineLayout();
 	}
 
+	DescriptorSetLayout Effect::GetDescriptorSetLayout(uint32_t descriptorSet)
+	{
+		return mPipelineInterface.GetDescriptorSetLayout(descriptorSet);
+	}
+
 	Pipeline2* Effect::GetPipeline()
 	{
 		return mPipeline;
+	}
+
+	DescriptorPool* Effect::GetDescriptorPool()
+	{
+		return mDescriptorPool;
 	}
 }

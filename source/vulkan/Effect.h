@@ -32,7 +32,9 @@ namespace Vulkan
 		virtual void UpdateMemory(Device* device) = 0;
 
 		VkPipelineLayout GetPipelineLayout();
+		DescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
 		Pipeline2* GetPipeline();
+		DescriptorPool* GetDescriptorPool();
 
 	protected:
 		DescriptorPool* mDescriptorPool;

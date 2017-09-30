@@ -59,7 +59,12 @@ namespace Vulkan
 		mPushConstantRanges.push_back(pushConstantRange);
 	}
 
-	VkDescriptorSetLayout PipelineInterface::GetDescriptorSetLayout(uint32_t descriptorSet)
+	DescriptorSetLayout PipelineInterface::GetDescriptorSetLayout(uint32_t descriptorSet)
+	{
+		return mDescriptorSetLayouts[descriptorSet];
+	}
+
+	VkDescriptorSetLayout PipelineInterface::GetVkDescriptorSetLayout(uint32_t descriptorSet)
 	{
 		return mDescriptorSetLayouts[descriptorSet].GetVkHandle();
 	}

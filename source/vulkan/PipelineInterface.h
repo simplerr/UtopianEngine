@@ -25,7 +25,8 @@ namespace Vulkan
 		void AddCombinedImageSampler(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1);
 		void AddPushConstantRange(uint32_t size, VkShaderStageFlags shaderStage, uint32_t offset = 0);
 
-		VkDescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
+		DescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
+		VkDescriptorSetLayout GetVkDescriptorSetLayout(uint32_t descriptorSet);
 		VkPipelineLayout GetPipelineLayout();
 
 	private:

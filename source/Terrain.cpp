@@ -35,74 +35,35 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mRenderer = renderer;
 	mCamera = camera;
 
-	// Marching cubes uniform buffer
-	mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-	mUniformBuffer.data.offsets[0] = vec4(0, 0, 0, 0);
-	mUniformBuffer.data.offsets[1] = vec4(mVoxelSize, 0, 0, 0);
-	mUniformBuffer.data.offsets[2] = vec4(mVoxelSize, mVoxelSize, 0, 0);
-	mUniformBuffer.data.offsets[3] = vec4(0, mVoxelSize, 0, 0);
-	mUniformBuffer.data.offsets[4] = vec4(0, 0, mVoxelSize, 0);
-	mUniformBuffer.data.offsets[5] = vec4(mVoxelSize, 0, mVoxelSize, 0);
-	mUniformBuffer.data.offsets[6] = vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
-	mUniformBuffer.data.offsets[7] = vec4(0, mVoxelSize, mVoxelSize, 0);
-	mUniformBuffer.data.color = vec4(0, 1, 0, 1);
-	mUniformBuffer.data.voxelSize = mVoxelSize;
-	mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
-
 	/* 
 		Initialize Vulkan handles
 	*/
 	mCommandBuffer = renderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
-	mComputeDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
-	mComputeDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
-	mComputeDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
-	mComputeDescriptorSetLayout->AddBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
-	mComputeDescriptorSetLayout->Create();
-
-	mComputeBlockDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
-	mComputeBlockDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
-	mComputeBlockDescriptorSetLayout->AddBinding(1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1, VK_SHADER_STAGE_COMPUTE_BIT);
-	mComputeBlockDescriptorSetLayout->Create();
-
-	mComputePipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
-	mComputePipelineLayout->AddDescriptorSetLayout(mComputeDescriptorSetLayout);
-	mComputePipelineLayout->AddDescriptorSetLayout(mComputeBlockDescriptorSetLayout);
-	mComputePipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_COMPUTE_BIT, sizeof(PushConstantBlock));
-	mComputePipelineLayout->Create();
-
-	mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
-	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
-	mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, NUM_MAX_STORAGE_BUFFERS); // NOTE:
-	mDescriptorPool->Create();
-
-	mEdgeTableTexture = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
-	mTriangleTableTexture = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
+	// NOTE: This must be done before Init()
+	// Move to effect?
+	mMarchingCubesEffect.edgeTableTex = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
+	mMarchingCubesEffect.triangleTableTex = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
 	mTerrainEffect.Init(renderer);
+	mMarchingCubesEffect.Init(renderer);
 
-	Vulkan::Shader* computeShader = mRenderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
-	mComputePipeline = new Vulkan::ComputePipeline(mRenderer->GetDevice(), mComputePipelineLayout, computeShader);
-	mComputePipeline->Create();
-
-	mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mComputeDescriptorSetLayout, mDescriptorPool);
-	mDescriptorSet->AllocateDescriptorSets();
-	mDescriptorSet->BindUniformBuffer(1, &mUniformBuffer.GetDescriptor());
-	mDescriptorSet->BindCombinedImage(0, &mEdgeTableTexture->GetTextureDescriptorInfo());
-	mDescriptorSet->BindCombinedImage(2, &mTriangleTableTexture->GetTextureDescriptorInfo());
-	mDescriptorSet->UpdateDescriptorSets();
-
-	//mCommandBuffer->ToggleActive();
+	mMarchingCubesEffect.ubo.data.offsets[0] = vec4(0, 0, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[1] = vec4(mVoxelSize, 0, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[2] = vec4(mVoxelSize, mVoxelSize, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[3] = vec4(0, mVoxelSize, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[4] = vec4(0, 0, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.offsets[5] = vec4(mVoxelSize, 0, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.offsets[6] = vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.offsets[7] = vec4(0, mVoxelSize, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.color = vec4(0, 1, 0, 1);
+	mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
+	mMarchingCubesEffect.UpdateMemory(renderer->GetDevice());
 }
 
 Terrain::~Terrain()
 {
-	delete mDescriptorPool;
-	delete mDescriptorSet;
-	delete mComputePipeline;
-	delete mEdgeTableTexture;
-	delete mTriangleTableTexture;
+
 }
 
 void Terrain::UpdateBlockList()
@@ -132,7 +93,8 @@ void Terrain::UpdateBlockList()
 			{
 				glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, 0, z*mVoxelsInBlock*mVoxelSize);
 				glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, mComputeBlockDescriptorSetLayout, mDescriptorPool); // NOTE: The descriptor set layout
+				Vulkan::DescriptorSetLayout setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
+				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, &setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
 
 				mBlockList[blockKey] = block;
 
@@ -155,17 +117,18 @@ void Terrain::GenerateBlocks(float time)
 		// Generate the vertex buffer for the block 
 		if (!block->IsGenerated() || block->IsModified())
 		{
-			mUniformBuffer.data.projection = mCamera->GetProjection();
-			mUniformBuffer.data.view = mCamera->GetView();
-			mUniformBuffer.data.voxelSize = mVoxelSize;
-			mUniformBuffer.data.time = time;
-			mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+			mMarchingCubesEffect.ubo.data.projection = mCamera->GetProjection();
+			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
+			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
+			mMarchingCubesEffect.ubo.data.time = time;
+			mMarchingCubesEffect.UpdateMemory(mRenderer->GetDevice());
 
 			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-			commandBuffer.CmdBindPipeline(mComputePipeline);
-			VkDescriptorSet descriptorSets[2] = { mDescriptorSet->descriptorSet, block->GetDescriptorSet()->descriptorSet }; // TODO: The block descriptor set is set in Terrain.cpp
-			vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mComputePipelineLayout->GetVkHandle(), 0, 2, descriptorSets, 0, NULL);
+			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
+			// TODO: Use the firstSet parameter to only update the Block descriptor
+			VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.mDescriptorSet0->descriptorSet, block->GetDescriptorSet()->descriptorSet }; // TODO: The block descriptor set is set in Terrain.cpp
+			vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mMarchingCubesEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
 			// Push the world matrix constant
 			Vulkan::PushConstantBlock pushConstantBlock;
@@ -178,7 +141,9 @@ void Terrain::GenerateBlocks(float time)
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			commandBuffer.CmdPushConstants(mComputePipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			// TOOD: Use CommandBuffer
+			//commandBuffer.CmdPushConstants(mMarchingCubesEffect.GetPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			vkCmdPushConstants(commandBuffer.GetVkHandle(), mMarchingCubesEffect.GetPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
 
 			// TODO: Transform block position (PUSH CONSTS!)
 			vkCmdDispatch(commandBuffer.GetVkHandle(), 32, 32, 32);
