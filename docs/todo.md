@@ -18,3 +18,4 @@
 
 30/9
 * Properly handle ComputePipeline in the Effect base class
+* Unify interfaces in CommandBuffer

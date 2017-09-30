@@ -52,10 +52,9 @@ namespace Vulkan
 		virtual void CreatePipelineInterface(Device* device);
 		virtual void CreateDescriptorSets(Device* device);
 		virtual void CreatePipeline(Renderer* renderer);
-
-		/* Updates the memory for the effects descriptors
-		*/
 		virtual void UpdateMemory(Device* device);
+
+		VkDescriptorSet GetDescriptorSet0();
 
 		// TODO: This should be handled in the baseclass.
 		// Multiple compute effects will use the same code

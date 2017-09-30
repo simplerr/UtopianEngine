@@ -6,6 +6,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/Effect.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "RenderPass.h"
@@ -156,9 +157,19 @@ namespace Vulkan
 		vkCmdBindDescriptorSets(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet->descriptorSet, 0, NULL);
 	}
 
+	void CommandBuffer::CmdBindDescriptorSet(Effect* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
+	{
+		vkCmdBindDescriptorSets(mHandle, bindPoint, effect->GetPipelineLayout(), firstSet, descriptorSetCount, descriptorSets, 0, NULL);
+	}
+
 	void CommandBuffer::CmdPushConstants(PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
 	{
 		vkCmdPushConstants(mHandle, pipelineLayout->GetVkHandle(), shaderStageFlags, 0, size, data);
+	}
+
+	void CommandBuffer::CmdPushConstants(Effect* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
+	{
+		vkCmdPushConstants(mHandle, effect->GetPipelineLayout(), shaderStageFlags, 0, size, data);
 	}
 
 	void CommandBuffer::CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* buffers)
@@ -187,6 +198,11 @@ namespace Vulkan
 	void CommandBuffer::CmdDraw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 	{
 		vkCmdDraw(mHandle, vertexCount, instanceCount, firstVertex, firstInstance);
+	}
+
+	void CommandBuffer::CmdDispatch(uint32_t x, uint32_t y, uint32_t z)
+	{
+		vkCmdDispatch(mHandle, x, y, z);
 	}
 
 	bool CommandBuffer::IsActive()

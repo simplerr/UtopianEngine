@@ -127,13 +127,13 @@ void Terrain::GenerateBlocks(float time)
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
 			// TODO: Use the firstSet parameter to only update the Block descriptor
-			VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.mDescriptorSet0->descriptorSet, block->GetDescriptorSet()->descriptorSet }; // TODO: The block descriptor set is set in Terrain.cpp
-			vkCmdBindDescriptorSets(commandBuffer.GetVkHandle(), VK_PIPELINE_BIND_POINT_COMPUTE, mMarchingCubesEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
+			VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.GetDescriptorSet0(),
+												  block->GetDescriptorSet()->descriptorSet }; // TODO: The block descriptor set is set in Terrain.cpp
+			commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
 			// Push the world matrix constant
 			Vulkan::PushConstantBlock pushConstantBlock;
 			pushConstantBlock.world = glm::mat4();
-			//pushConstantBlock.worldInvTranspose = glm::mat4();
 
 			glm::vec3 position = block->GetPosition();
 			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
@@ -141,15 +141,11 @@ void Terrain::GenerateBlocks(float time)
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			// TOOD: Use CommandBuffer
-			//commandBuffer.CmdPushConstants(mMarchingCubesEffect.GetPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			vkCmdPushConstants(commandBuffer.GetVkHandle(), mMarchingCubesEffect.GetPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
-
-			// TODO: Transform block position (PUSH CONSTS!)
-			vkCmdDispatch(commandBuffer.GetVkHandle(), 32, 32, 32);
-
+			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer.CmdDispatch(32, 32, 32);
 			commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 
+			// Get # of vertices so we can tell how many to draw
 			uint32_t* mapped;
 			block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
 			uint32_t numVertices = *(uint32_t*)mapped;
@@ -195,7 +191,7 @@ void Terrain::Update()
 		{
 			mCommandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
 			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet0->descriptorSet};
-			vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mTerrainEffect.GetPipelineLayout(), 0, 1, &mTerrainEffect.mDescriptorSet0->descriptorSet, 0, NULL);
+			mCommandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 			mCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
@@ -209,9 +205,7 @@ void Terrain::Update()
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			//mCommandBuffer->CmdPushConstants(mTerrainEffect->mBasicPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			vkCmdPushConstants(commandBuffer, mTerrainEffect.GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstantBlock), &pushConstantBlock);
-
+			mCommandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 			mCommandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
 		}
 	}

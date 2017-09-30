@@ -75,6 +75,11 @@ namespace Vulkan
 		return mComputePipeline;
 	}
 
+	VkDescriptorSet MarchingCubesEffect::GetDescriptorSet0()
+	{
+		return mDescriptorSet0->descriptorSet;
+	}
+
 	void MarchingCubesEffect::UniformBuffer::UpdateMemory(VkDevice device)
 	{
 		// Map uniform buffer and update it
