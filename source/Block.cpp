@@ -1,6 +1,7 @@
 #include "Block.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/TerrainEffect.h"
 #include "vulkan/handles/DescriptorSet.h"
 
 Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool)
@@ -31,6 +32,11 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mDescriptorSet->BindStorageBuffer(0, &mBufferInfo);
 	mDescriptorSet->BindStorageBuffer(1, &mCounterSSBO.GetDescriptor());
 	mDescriptorSet->UpdateDescriptorSets();
+
+	if (rand() % 2 == 0)
+		pipelineType = Vulkan::TerrainEffect::PipelineType2::WIREFRAME;
+	else
+		pipelineType = Vulkan::TerrainEffect::PipelineType2::SOLID;
 }
 
 Block::~Block()

@@ -35,6 +35,12 @@ namespace Vulkan
 	class TerrainEffect : public Effect
 	{
 	public:
+		enum PipelineType2
+		{
+			WIREFRAME = 0,
+			SOLID
+		};
+
 		class UniformBufferVS : public Vulkan::ShaderBuffer
 		{
 		public:

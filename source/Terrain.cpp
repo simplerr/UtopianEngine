@@ -189,6 +189,8 @@ void Terrain::Update()
 		Block* block = blockIter.second;
 		if (block->IsVisible() && block->IsGenerated())
 		{
+			mTerrainEffect.SetPipeline(block->pipelineType);
+				
 			mCommandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
 			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet0->descriptorSet};
 			mCommandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);

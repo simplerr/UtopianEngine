@@ -98,6 +98,9 @@ public:
 
 	CounterSSBO mCounterSSBO;
 
+	// TESTING:
+	uint32_t pipelineType;
+
 private:
 	Vulkan::Buffer* mVertexBuffer;
 	VkDescriptorBufferInfo mBufferInfo;

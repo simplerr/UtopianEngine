@@ -11,6 +11,7 @@ namespace Vulkan
 {
 	TerrainEffect::TerrainEffect()
 	{
+		SetPipeline(PipelineType2::WIREFRAME);
 	}
 
 	void TerrainEffect::CreateDescriptorPool(Device* device)
@@ -52,13 +53,18 @@ namespace Vulkan
 	void TerrainEffect::CreatePipeline(Renderer* renderer)
 	{
 		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
-		mPipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 
-		// EXPERIMENT
-		mPipeline->SetPipelineInterface(&mPipelineInterface);
-		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-		mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		mPipeline->Create();
+		Pipeline2* pipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		pipeline->SetPipelineInterface(&mPipelineInterface);
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		pipeline->Create();
+		mPipelines[PipelineType2::WIREFRAME] = pipeline;
+
+		Pipeline2* pipeline1 = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		pipeline1->SetPipelineInterface(&mPipelineInterface);
+		pipeline1->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		pipeline1->Create();
+		mPipelines[PipelineType2::SOLID] = pipeline1;
 	}
 
 	void TerrainEffect::UpdateMemory(Device* device)

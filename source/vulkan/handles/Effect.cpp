@@ -18,6 +18,11 @@ namespace Vulkan
 		CreatePipeline(renderer); // To access the shader manager.
 	}
 
+	void Effect::SetPipeline(uint32_t pipelineType)
+	{
+		mActivePipeline = pipelineType;
+	}
+
 	VkPipelineLayout Effect::GetPipelineLayout()
 	{
 		return mPipelineInterface.GetPipelineLayout();
@@ -30,7 +35,7 @@ namespace Vulkan
 
 	Pipeline2* Effect::GetPipeline()
 	{
-		return mPipeline;
+		return mPipelines[mActivePipeline];
 	}
 
 	DescriptorPool* Effect::GetDescriptorPool()

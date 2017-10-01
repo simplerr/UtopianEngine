@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan\vulkan.h>
+#include <map>
 #include "vulkan/PipelineInterface.h"
 
 namespace Vulkan
@@ -31,6 +32,7 @@ namespace Vulkan
 		virtual void CreatePipeline(Renderer* renderer) = 0;
 		virtual void UpdateMemory(Device* device) = 0;
 
+		void SetPipeline(uint32_t pipelineType);
 		VkPipelineLayout GetPipelineLayout();
 		DescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
 		Pipeline2* GetPipeline();
@@ -41,5 +43,7 @@ namespace Vulkan
 		PipelineInterface mPipelineInterface;
 		VertexDescription* mVertexDescription;
 		Pipeline2* mPipeline;
+		std::map<int, Pipeline2*> mPipelines;
+		uint32_t mActivePipeline;
 	};
 }
