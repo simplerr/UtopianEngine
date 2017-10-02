@@ -6,6 +6,7 @@
 #include "System.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/PhongEffect.h"
 
 class Terrain;
 
@@ -108,6 +109,8 @@ namespace ECS
 		Vulkan::GeometryUniformBuffer  mUniformBuffer;
 
 		Terrain* mTerrain;
+
+		Vulkan::PhongEffect mPhongEffect;
 
 		struct PushConstantBlock {
 			mat4 world;

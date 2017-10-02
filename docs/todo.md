@@ -19,3 +19,6 @@
 30/9
 * Properly handle ComputePipeline in the Effect base class
 * Unify interfaces in CommandBuffer
+
+2/10
+* Effect::mVertexDescription should not be a pointer

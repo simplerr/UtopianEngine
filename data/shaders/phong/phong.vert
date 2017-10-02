@@ -23,7 +23,7 @@ layout (std140, set = 0, binding = 0) uniform UBO
 	// Constans
 	bool useInstancing;
 	vec3 garbage;
-} per_frame;
+} per_frame_vs;
 
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		

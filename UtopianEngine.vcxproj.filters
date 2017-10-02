@@ -73,6 +73,9 @@
     <Filter Include="Source Files\vulkan\effects\marching_cubes\shader">
       <UniqueIdentifier>{e72cafff-ef38-42f9-9b8b-fcce7774e9f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\phong\shaders">
+      <UniqueIdentifier>{53d2ba0f-7ffc-4e55-baa5-91b6540e3e11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp">
       <Filter>Source Files\vulkan\effects\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\PhongEffect.cpp">
+      <Filter>Source Files\vulkan\effects\phong</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -434,6 +440,9 @@
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h">
       <Filter>Source Files\vulkan\effects\marching_cubes</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\PhongEffect.h">
+      <Filter>Source Files\vulkan\effects\phong</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -447,12 +456,6 @@
     </None>
     <None Include="README.md">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="data\shaders\phong\phong.frag">
-      <Filter>Source Files\shaders\phong</Filter>
-    </None>
-    <None Include="data\shaders\phong\phong.vert">
-      <Filter>Source Files\shaders\phong</Filter>
     </None>
     <None Include="data\shaders\test\test.frag">
       <Filter>Source Files\shaders\test</Filter>
@@ -486,6 +489,12 @@
     </None>
     <None Include="data\shaders\marching_cubes\marching_cubes.comp">
       <Filter>Source Files\vulkan\effects\marching_cubes\shader</Filter>
+    </None>
+    <None Include="data\shaders\phong\phong.frag">
+      <Filter>Source Files\vulkan\effects\phong\shaders</Filter>
+    </None>
+    <None Include="data\shaders\phong\phong.vert">
+      <Filter>Source Files\vulkan\effects\phong\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

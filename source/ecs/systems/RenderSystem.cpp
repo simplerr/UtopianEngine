@@ -23,6 +23,7 @@
 #include "RenderSystem.h"
 #include "Colors.h"
 #include "Terrain.h"
+#include "Light.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 
@@ -77,6 +78,34 @@ namespace ECS
 		// 
 		mTerrain = new Terrain(mRenderer, mCamera);
 		//mCommandBuffer->ToggleActive();
+
+		// NOTE: This must run before PhongEffect::Init()
+		// Create the fragment shader uniform buffer
+		Vulkan::Light light;
+		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
+		light.SetPosition(600, -800, 600);
+		light.SetDirection(1, -1, 1);
+		light.SetAtt(1, 0, 0);
+		light.SetIntensity(0.2f, 0.8f, 1.0f);
+		light.SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		light.SetRange(100000);
+		light.SetSpot(4.0f);
+		mPhongEffect.per_frame_ps.lights.push_back(light);
+
+		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
+		light.SetPosition(600, -800, 600);
+		light.SetDirection(-1, -1, -1);
+		light.SetAtt(1, 0, 0);
+		light.SetIntensity(0.2f, 0.5f, 1.0f);
+		light.SetType(Vulkan::LightType::SPOT_LIGHT);
+		light.SetRange(100000);
+		light.SetSpot(4.0f);
+		mPhongEffect.per_frame_ps.lights.push_back(light);
+
+		// Important to call this before Create() since # lights affects the total size
+		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();
+
+		mPhongEffect.Init(mRenderer);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -102,6 +131,17 @@ namespace ECS
 	void RenderSystem::Process()
 	{
 		mTerrain->Update();
+		
+		// From Renderer.cpp
+		if (mCamera != nullptr)
+		{
+			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
+			mPhongEffect.per_frame_vs.camera.viewMatrix = mCamera->GetView();
+			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
+			mPhongEffect.per_frame_vs.camera.eyePos = mCamera->GetPosition();
+		}
+
+		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
 
 		// TEMP:
 		mUniformBuffer.data.projection = mCamera->GetProjection();
@@ -120,15 +160,16 @@ namespace ECS
 		for (EntityCache entityCache : mEntities)
 		{
 			Vulkan::StaticModel* model = entityCache.meshComponent->GetModel();
+			mPhongEffect.SetPipeline(entityCache.meshComponent->GetPipeline());
 			
 			for (Vulkan::Mesh* mesh : model->mMeshes)
 			{
-				mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(entityCache.meshComponent->GetPipeline()));
+				mCommandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 
-				VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
+				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
 				Vulkan::PushConstantBlock pushConstantBlock;
@@ -141,7 +182,7 @@ namespace ECS
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-				mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
 				mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mesh->vertices.buffer);
 				mCommandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
@@ -203,7 +244,7 @@ namespace ECS
 			pushConstantBlock.world = world;
 			pushConstantBlock.color = debugCube.color;
 
-			mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			mCommandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 			mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
 			mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 			mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);

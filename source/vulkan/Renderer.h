@@ -83,7 +83,7 @@ namespace Vulkan
 		//
 		void CompileShaders();
 
-		Pipeline* GetPipeline(PipelineType pipelineType);
+		//Pipeline* GetPipeline(PipelineType pipelineType);
 		PipelineLayout* GetPipelineLayout();
 		DescriptorSetLayout* GetTextureDescriptorSetLayout();
 		DescriptorPool* GetDescriptorPool();
@@ -126,8 +126,6 @@ namespace Vulkan
 			NOTE: Right now they have to be bound to binding=0	
 		*/
 		DescriptorSetLayout*			mTextureDescriptorSetLayout;
-
-		const uint32_t					MAX_NUM_TEXTURES = 64;
 
 		Camera*							mCamera;
 

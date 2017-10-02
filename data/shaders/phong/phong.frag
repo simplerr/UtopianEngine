@@ -44,7 +44,7 @@ layout (std140, set = 1, binding = 0) uniform UBO
 	// Constants
 	float numLights;
 	vec3 garbage;
-} per_frame;
+} per_frame_ps;
 
 layout (location = 0) out vec4 OutFragColor;
 
