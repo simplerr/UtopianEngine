@@ -51,7 +51,7 @@ layout (location = 0) out vec4 OutFragColor;
 //! Computes the colors for directional light.
 void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
-	Light light = per_frame.lights[lightIndex];
+	Light light = per_frame_ps.lights[lightIndex];
 
 	// Initialize outputs.
 	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -83,7 +83,7 @@ void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec
 //! Computes the colors for a point light.
 void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
-	Light light = per_frame.lights[lightIndex];
+	Light light = per_frame_ps.lights[lightIndex];
 
 	// Initialize outputs.
 	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -131,7 +131,7 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 //! Computes the colors for a spot light.
 void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
-	Light light = per_frame.lights[lightIndex];
+	Light light = per_frame_ps.lights[lightIndex];
 
 	// Initialize outputs.
 	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -190,16 +190,16 @@ void ApplyLighting(Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4
 	vec4 spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Loop through all lights
-	for(int i = 0; i < per_frame.numLights; i++)
+	for(int i = 0; i < per_frame_ps.numLights; i++)
 	{
 		// Sum the light contribution from each light source.
 		vec4 A, D, S;
 
-		if(per_frame.lights[i].type == 0.0f)			// Directional light
+		if(per_frame_ps.lights[i].type == 0.0f)			// Directional light
 			ComputeDirectionalLight(material, i, normalW, toEyeW, A, D, S);
-		else if(per_frame.lights[i].type == 1.0f)		// Point light
+		else if(per_frame_ps.lights[i].type == 1.0f)		// Point light
 			ComputePointLight(material, i, posW, normalW, toEyeW, A, D, S);
-		else if(per_frame.lights[i].type == 2.0f)		// Spot light
+		else if(per_frame_ps.lights[i].type == 2.0f)		// Spot light
 			ComputeSpotLight(material, i, posW, normalW, toEyeW, A, D, S);
 
 		ambient += A;  

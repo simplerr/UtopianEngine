@@ -42,4 +42,9 @@ namespace Vulkan
 	{
 		return mDescriptorPool;
 	}
+
+	VertexDescription* Effect::GetVertexDescription()
+	{
+		return mVertexDescription;
+	}
 }

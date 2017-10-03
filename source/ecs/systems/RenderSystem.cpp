@@ -47,33 +47,6 @@ namespace ECS
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		//
-		// Geometry shader pipeline
-		//
-		mDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
-		mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
-		mDescriptorSetLayout->Create();
-
-		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
-		mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
-		mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout->Create();
-
-		mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->Create();
-
-		mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-		mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
-		mDescriptorSet->AllocateDescriptorSets();
-		mDescriptorSet->BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
-		mDescriptorSet->UpdateDescriptorSets();
-
-		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
-		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mRenderer->GetVertexDescription(), shader);
-		mGeometryPipeline->Create();
-
-		//
 		// Terrain
 		// 
 		mTerrain = new Terrain(mRenderer, mCamera);
@@ -106,6 +79,33 @@ namespace ECS
 		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();
 
 		mPhongEffect.Init(mRenderer);
+
+		//
+		// Geometry shader pipeline
+		//
+		mDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
+		mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
+		mDescriptorSetLayout->Create();
+
+		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
+		mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
+		mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
+		mPipelineLayout->Create();
+
+		mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
+		mDescriptorPool->Create();
+
+		mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+		mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
+		mDescriptorSet->AllocateDescriptorSets();
+		mDescriptorSet->BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
+		mDescriptorSet->UpdateDescriptorSets();
+
+		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
+		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mPhongEffect.GetVertexDescription(), shader);
+		mGeometryPipeline->Create();
 	}
 
 	RenderSystem::~RenderSystem()

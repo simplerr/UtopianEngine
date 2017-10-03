@@ -37,6 +37,7 @@ namespace Vulkan
 		DescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
 		Pipeline2* GetPipeline();
 		DescriptorPool* GetDescriptorPool();
+		VertexDescription* GetVertexDescription();
 
 	protected:
 		DescriptorPool* mDescriptorPool;

@@ -61,14 +61,9 @@ namespace Vulkan
 
 		void Prepare();
 
-		void PrepareUniformBuffers();
 		void SetupDescriptorSetLayout();
 		void SetupDescriptorPool();
-		void SetupDescriptorSet();
-		void PreparePipelines();
-		void UpdateUniformBuffers();
 		void PrepareCommandBuffers();						
-		void SetupVertexDescriptions();
 
 		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
 
@@ -84,19 +79,12 @@ namespace Vulkan
 		void CompileShaders();
 
 		//Pipeline* GetPipeline(PipelineType pipelineType);
-		PipelineLayout* GetPipelineLayout();
 		DescriptorSetLayout* GetTextureDescriptorSetLayout();
 		DescriptorPool* GetDescriptorPool();
-		VertexDescription* GetVertexDescription();
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
 		void SetCamera(Camera* camera);
-
-	public:
-		// NOTE: These should probably be moved to RenderSystem
-		DescriptorSet*					mCameraDescriptorSet;
-		DescriptorSet*					mLightDescriptorSet;
 
 	private:
 		bool							mPrepared = false;
@@ -104,31 +92,20 @@ namespace Vulkan
 		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
 		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
 		// inputState is the pVertexInputState when creating the graphics pipeline
-		VertexDescription				mVertexDescription;
-		VertexUniformBuffer				mVertexUniformBuffer;
-		FragmentUniformBuffer			mFragmentUniformBuffer;
 		
-		PipelineLayout*					mPipelineLayout;
 		CommandBuffer*					mPrimaryCommandBuffer;
-		CommandBuffer*					mSecondaryCommandBuffer; 
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
 		Fence*							mRenderFence;
-
-		std::map<int, Pipeline*>		mPipelines;
-
-		DescriptorPool*					mDescriptorPool;
-
-		DescriptorSetLayout*			mCameraDescriptorSetLayout;
-		DescriptorSetLayout*			mLightDescriptorSetLayout;
 
 		/* 
 			They descriptor set layout for textures is handled by Renderer
 			NOTE: Right now they have to be bound to binding=0	
 		*/
+		// TODO: Should not be here
 		DescriptorSetLayout*			mTextureDescriptorSetLayout;
+		DescriptorPool*					mDescriptorPool;
 
 		Camera*							mCamera;
-
 		TextOverlay*					mTextOverlay;
 
 		// TODO: NOTE: HACK

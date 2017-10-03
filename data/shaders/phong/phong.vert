@@ -40,7 +40,7 @@ layout (location = 4) out vec2 OutTex;
 void main() 
 {
 	OutColor = vec3(1.0f, 1.0f, 1.0f);	//pushConsts.color; 
-	OutEyePosW = per_frame.eyePos;
+	OutEyePosW = per_frame_vs.eyePos;
 
 	// Transform to world space.
 	OutPosW     = (pushConsts.world * vec4(InPosL, 1.0f)).xyz;
@@ -51,5 +51,5 @@ void main()
 	OutTex = InTex;
 
 	// Transform to homogeneous clip space.
-	gl_Position = per_frame.projection * per_frame.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

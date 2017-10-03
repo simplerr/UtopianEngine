@@ -22,3 +22,6 @@
 
 2/10
 * Effect::mVertexDescription should not be a pointer
+
+3/10
+* Remove DescriptorPool and mTextureDescriptorSetLayout from Renderer
