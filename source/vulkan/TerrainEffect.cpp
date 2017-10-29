@@ -18,6 +18,7 @@ namespace Vulkan
 	{
 		mDescriptorPool = new Vulkan::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1);
 		mDescriptorPool->Create();
 	}
 
@@ -33,6 +34,7 @@ namespace Vulkan
 	{
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
+		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);	// pushConsts
 		mPipelineInterface.CreateLayouts(device);
 	}
@@ -47,6 +49,7 @@ namespace Vulkan
 		mDescriptorSet0->AllocateDescriptorSets();
 		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_vs.GetDescriptor());
 		mDescriptorSet0->BindUniformBuffer(BINDING_1, &per_frame_ps.GetDescriptor());
+		mDescriptorSet0->BindCombinedImage(BINDING_2, &texture3d->GetTextureDescriptorInfo());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
 

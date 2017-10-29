@@ -45,6 +45,40 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mMarchingCubesEffect.edgeTableTex = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
 	mMarchingCubesEffect.triangleTableTex = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
+	/* Experimentation */
+	const uint32_t w = 4;
+	const uint32_t h = 4;
+	const uint32_t d = 4;
+
+	//char texture3d[w][h][d];
+	char texture3d[w * h * d * 4];
+	memset(texture3d, 0x00, sizeof(uint32_t) * w * h * d);
+
+	for (int x = 0; x < w; x++)
+	{
+		for (int y = 0; y < h; y++)
+		{
+			for (int z = 0; z < d; z++)
+			{
+				//texture3d[x + y * w + z * w * h] = 0xFF;
+				//texture3d[x + y * w + z * w * h + 1] = 0xFF;
+				//texture3d[x + y * w + z * w * h + 2] = 0xFF;
+				//texture3d[x + y * w + z * w * h + 3] = 0xFF;
+			}
+		}
+	}
+
+	texture3d[0] = 0xFF;
+	texture3d[1] = 0xFF;
+	//texture3d[2] = 0xFF;
+	//texture3d[3] = 0xFF;
+
+	//texture3d[0] = 0x00ff0000; // here the format is AABBGGRR
+	//texture3d[1] = 0x0000ff00; // here the format is AABBGGRR
+	//texture3d[2] = 0x000000ff; // here the format is AABBGGRR
+
+	mTerrainEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R8G8B8A8_SRGB, w, h, sizeof(uint32_t), d);
+
 	mTerrainEffect.Init(renderer);
 	mMarchingCubesEffect.Init(renderer);
 

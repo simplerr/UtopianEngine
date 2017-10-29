@@ -45,6 +45,7 @@ namespace Vulkan
 
 		CreateImage(texWidth,
 					  texHeight,
+					  1,
 					  VK_FORMAT_R8G8B8A8_UNORM,														// VkFormat
 					  VK_IMAGE_TILING_LINEAR,														// VkImageTiling
 					  VK_IMAGE_USAGE_TRANSFER_SRC_BIT,												// VkImageUsageFlags
@@ -86,10 +87,10 @@ namespace Vulkan
 		return texture;
 	}
 
-	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize)
+	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
-		VkDeviceSize imageSize = width * height * pixelSize; // NOTE: Assumes each pixel is stored as U8
+		VkDeviceSize imageSize = width * height * depth * pixelSize; // NOTE: Assumes each pixel is stored as U8
 
 		Texture* texture = new Texture(mDevice);
 
@@ -99,6 +100,7 @@ namespace Vulkan
 
 		CreateImage(width,
 					  height,
+					  depth,
 					  format,																		// VkFormat
 					  VK_IMAGE_TILING_LINEAR,														// VkImageTiling
 					  VK_IMAGE_USAGE_TRANSFER_SRC_BIT,												// VkImageUsageFlags
@@ -125,6 +127,7 @@ namespace Vulkan
 		// Create the final image
 		CreateImage(width,
 					  height,
+					  depth,
 					  format,																		// VkFormat
 					  VK_IMAGE_TILING_OPTIMAL,														// VkImageTiling
 					  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,					// VkImageUsageFlags
@@ -135,12 +138,12 @@ namespace Vulkan
 		TransitionImageLayout(stagingImage, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-		CopyImage(stagingImage, texture->image, width, height);
+		CopyImage(stagingImage, texture->image, width, height, depth);
 
 		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		// Create the image view
-		CreateImageView(texture->image, format, &texture->imageView);
+		CreateImageView(texture->image, format, &texture->imageView, depth);
 
 		// Create the sampler
 		// NOTE: should be VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE when rendering text overlay
@@ -156,17 +159,17 @@ namespace Vulkan
 		return texture;
 	}
 
-	void TextureLoader::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
+	void TextureLoader::CreateImage(uint32_t width, uint32_t height, uint32_t depth, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
 	{
 		VkDevice device =  mDevice->GetVkDevice();
 
 		// Create info for the image that will be used for staging
 		VkImageCreateInfo imageInfo = {};
 		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType = VK_IMAGE_TYPE_2D;
+		imageInfo.imageType = (depth == 1 ? VK_IMAGE_TYPE_2D : VK_IMAGE_TYPE_3D);
 		imageInfo.extent.width = width;
 		imageInfo.extent.height = height;
-		imageInfo.extent.depth = 1;
+		imageInfo.extent.depth = depth;
 		imageInfo.mipLevels = 1;
 		imageInfo.arrayLayers = 1;
 		imageInfo.format = format;
@@ -236,7 +239,7 @@ namespace Vulkan
 		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
 	}
 
-	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, uint32_t width, uint32_t height)
+	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, uint32_t width, uint32_t height, uint32_t depth)
 	{
 		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
@@ -253,7 +256,7 @@ namespace Vulkan
 		region.dstOffset = { 0, 0, 0 };
 		region.extent.width = width;
 		region.extent.height = height;
-		region.extent.depth = 1;
+		region.extent.depth = depth;
 
 		// [NOTE] It's also possible to use vkCmdCopyBufferToImage() instead
 		vkCmdCopyImage(
@@ -266,12 +269,12 @@ namespace Vulkan
 		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
 	}
 
-	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView)
+	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth)
 	{
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = image;
-		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfo.viewType = (depth == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_3D);
 		viewInfo.format = format;
 		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		viewInfo.subresourceRange.baseMipLevel = 0;

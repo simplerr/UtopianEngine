@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "vulkan/Effect.h"
+#include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
@@ -85,5 +86,6 @@ namespace Vulkan
 		UniformBufferVS per_frame_vs;	// Same name in terrain.vert
 		UniformBufferPS per_frame_ps;	// Same name in terrain.frag
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
+		Vulkan::Texture* texture3d;
 	};
 }

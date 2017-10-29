@@ -43,7 +43,6 @@ namespace Vulkan
 		DescriptorPool* mDescriptorPool;
 		PipelineInterface mPipelineInterface;
 		VertexDescription* mVertexDescription;
-		Pipeline2* mPipeline;
 		std::map<int, Pipeline2*> mPipelines;
 		uint32_t mActivePipeline;
 	};
