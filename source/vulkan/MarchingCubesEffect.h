@@ -64,6 +64,7 @@ namespace Vulkan
 		UniformBuffer ubo;
 		Vulkan::Texture* edgeTableTex;
 		Vulkan::Texture* triangleTableTex;
+		Vulkan::Texture* texture3d;
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 
 		const uint32_t NUM_MAX_STORAGE_BUFFERS = 200;

@@ -1,4 +1,6 @@
 #include <fstream>
+#include <random>
+#include <numeric>
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
@@ -30,6 +32,94 @@ bool operator<(BlockKey const& a, BlockKey const& b)
    return (a.z < b.z);
 }
 
+// Translation of Ken Perlin's JAVA implementation (http://mrl.nyu.edu/~perlin/noise/)
+template <typename T>
+class PerlinNoise
+{
+private:
+	uint32_t permutations[512];
+	T fade(T t)
+	{
+		return t * t * t * (t * (t * (T)6 - (T)15) + (T)10);
+	}
+	T lerp(T t, T a, T b)
+	{
+		return a + t * (b - a);
+	}
+	T grad(int hash, T x, T y, T z)
+	{
+		// Convert LO 4 bits of hash code into 12 gradient directions
+		int h = hash & 15;
+		T u = h < 8 ? x : y;
+		T v = h < 4 ? y : h == 12 || h == 14 ? x : z;
+		return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+	}
+public:
+	PerlinNoise()
+	{
+		// Generate random lookup for permutations containing all numbers from 0..255
+		std::vector<uint8_t> plookup;
+		plookup.resize(256);
+		std::iota(plookup.begin(), plookup.end(), 0);
+		std::default_random_engine rndEngine(std::random_device{}());
+		std::shuffle(plookup.begin(), plookup.end(), rndEngine);
+
+		for (uint32_t i = 0; i < 256; i++)
+		{
+			permutations[i] = permutations[256 + i] = plookup[i];
+		}
+	}
+	T noise(T x, T y, T z)
+	{
+		// Find unit cube that contains point
+		int32_t X = (int32_t)floor(x) & 255;
+		int32_t Y = (int32_t)floor(y) & 255;
+		int32_t Z = (int32_t)floor(z) & 255;
+		// Find relative x,y,z of point in cube
+		x -= floor(x);
+		y -= floor(y);
+		z -= floor(z);
+
+		// Compute fade curves for each of x,y,z
+		T u = fade(x);
+		T v = fade(y);
+		T w = fade(z);
+
+		// Hash coordinates of the 8 cube corners
+		uint32_t A = permutations[X] + Y;
+		uint32_t AA = permutations[A] + Z;
+		uint32_t AB = permutations[A + 1] + Z;
+		uint32_t B = permutations[X + 1] + Y;
+		uint32_t BA = permutations[B] + Z;
+		uint32_t BB = permutations[B + 1] + Z;
+
+		// And add blended results for 8 corners of the cube;
+		T res = lerp(w, lerp(v,
+			lerp(u, grad(permutations[AA], x, y, z), grad(permutations[BA], x - 1, y, z)), lerp(u, grad(permutations[AB], x, y - 1, z), grad(permutations[BB], x - 1, y - 1, z))),
+			lerp(v, lerp(u, grad(permutations[AA + 1], x, y, z - 1), grad(permutations[BA + 1], x - 1, y, z - 1)), lerp(u, grad(permutations[AB + 1], x, y - 1, z - 1), grad(permutations[BB + 1], x - 1, y - 1, z - 1))));
+		return res;
+	}
+};
+
+void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
+{
+	memset(texture3d, 0x00, sizeof(float) * width * height * depth);
+
+	PerlinNoise<float> perlinNoise;
+
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			for (int z = 0; z < depth; z++)
+			{
+				float n = perlinNoise.noise((float)x / width, (float)y / height, (float)z / depth);
+				texture3d[x + y * width + z * width * height] = n;
+			}
+		}
+	}
+}
+
 Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 {
 	mRenderer = renderer;
@@ -46,38 +136,15 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mMarchingCubesEffect.triangleTableTex = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
 
 	/* Experimentation */
-	const uint32_t w = 4;
-	const uint32_t h = 4;
-	const uint32_t d = 4;
+	const uint32_t w = 32;
+	const uint32_t h = 32;
+	const uint32_t d = 32;
 
-	//char texture3d[w][h][d];
-	char texture3d[w * h * d * 4];
-	memset(texture3d, 0x00, sizeof(uint32_t) * w * h * d);
+	float texture3d[w * h * d];
+	GenerateNoiseTexture(texture3d, w, h, d);
 
-	for (int x = 0; x < w; x++)
-	{
-		for (int y = 0; y < h; y++)
-		{
-			for (int z = 0; z < d; z++)
-			{
-				//texture3d[x + y * w + z * w * h] = 0xFF;
-				//texture3d[x + y * w + z * w * h + 1] = 0xFF;
-				//texture3d[x + y * w + z * w * h + 2] = 0xFF;
-				//texture3d[x + y * w + z * w * h + 3] = 0xFF;
-			}
-		}
-	}
-
-	texture3d[0] = 0xFF;
-	texture3d[1] = 0xFF;
-	//texture3d[2] = 0xFF;
-	//texture3d[3] = 0xFF;
-
-	//texture3d[0] = 0x00ff0000; // here the format is AABBGGRR
-	//texture3d[1] = 0x0000ff00; // here the format is AABBGGRR
-	//texture3d[2] = 0x000000ff; // here the format is AABBGGRR
-
-	mTerrainEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R8G8B8A8_SRGB, w, h, sizeof(uint32_t), d);
+	mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, sizeof(float), d);
+	mTerrainEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, sizeof(float), d);
 
 	mTerrainEffect.Init(renderer);
 	mMarchingCubesEffect.Init(renderer);
@@ -151,6 +218,18 @@ void Terrain::GenerateBlocks(float time)
 		// Generate the vertex buffer for the block 
 		if (!block->IsGenerated() || block->IsModified())
 		{
+			/* Experimentation */
+			const uint32_t w = 16;
+			const uint32_t h = 16;
+			const uint32_t d = 16;
+
+			float texture3d[w * h * d];
+			GenerateNoiseTexture(texture3d, w, h, d);
+
+			//mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, sizeof(float), d);
+			//mMarchingCubesEffect.mDescriptorSet0->BindCombinedImage(BINDING_3, &mMarchingCubesEffect.texture3d->GetTextureDescriptorInfo());
+			//mMarchingCubesEffect.mDescriptorSet0->UpdateDescriptorSets();
+
 			mMarchingCubesEffect.ubo.data.projection = mCamera->GetProjection();
 			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
 			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;

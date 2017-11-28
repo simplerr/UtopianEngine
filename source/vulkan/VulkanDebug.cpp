@@ -190,7 +190,7 @@ namespace Vulkan
 					break;
 				}
 
-				assert(0 && "ErrorCheck() catched an error!");
+			assert(0 && "ErrorCheck() catched an error!");
 			}
 		}
 

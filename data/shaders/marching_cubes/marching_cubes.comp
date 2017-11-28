@@ -5,6 +5,7 @@
 
 layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
 layout (set = 0, binding = 2) uniform isampler2D triangleTableTex;
+layout (set = 0, binding = 3) uniform sampler3D texture3d;
 
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		
@@ -82,6 +83,12 @@ float density(vec3 pos)
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
 	//return min(density, sdSphere(pos+vec3(00, 1000, 00), 500*abs(sin(ubo.time))));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
+
+	density += texture(texture3d, pos / 100000.0).r * 20000;// * 0.000001;
+	density += texture(texture3d, pos / 10000.0).r * 2000;// * 0.000001;
+
+	if (pos.x > 38000)
+		density += pos.x;
 
 	return density;
 }

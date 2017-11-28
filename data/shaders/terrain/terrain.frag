@@ -9,7 +9,7 @@ layout (location = 2) in vec3 inNormal;
 
 layout (location = 0) out vec4 outFragColor;
 
-layout (set = 0, binding = 2) uniform isampler3D texture3d;
+layout (set = 0, binding = 2) uniform sampler3D texture3d;
 
 layout (std140, set = 0, binding = 1) uniform UBO 
 {
@@ -41,7 +41,7 @@ void main(void)
 	vec3 litColor = mix(inColor, vec3(0.5), fogLerp);
 	outFragColor = vec4(litColor,  1.0);
 
-	outFragColor = texture(texture3d, vec3(1, 1, 1)); 
-	outFragColor = vec4(texelFetch(texture3d, ivec3(0, 0, 0),  0).rgb, 1.0f);
-	outFragColor = vec4(texture(texture3d, inPosW,  0).rgb, 1.0f);
+	//outFragColor = texture(texture3d, vec3(0, 0, 0)); 
+	//outFragColor = vec4(texelFetch(texture3d, ivec3(4, 15, 5),  0).rgb, 1.0f);
+	//outFragColor = vec4(texture(texture3d, inPosW,  0).rgb, 1.0f);
 }

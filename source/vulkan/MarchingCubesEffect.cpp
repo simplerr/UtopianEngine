@@ -19,7 +19,7 @@ namespace Vulkan
 	{
 		mDescriptorPool = new Vulkan::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 2);
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, NUM_MAX_STORAGE_BUFFERS); // NOTE:
 		mDescriptorPool->Create();
 	}
@@ -34,6 +34,7 @@ namespace Vulkan
 		mPipelineInterface.AddUniformBuffer(SET_0, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_0, 0, VK_SHADER_STAGE_COMPUTE_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_0, 2, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_0, 3, VK_SHADER_STAGE_COMPUTE_BIT);
 
 		// Descriptor set 1
 		mPipelineInterface.AddStorageBuffer(SET_1, 0, VK_SHADER_STAGE_COMPUTE_BIT);
@@ -55,6 +56,7 @@ namespace Vulkan
 		mDescriptorSet0->BindUniformBuffer(1, &ubo.GetDescriptor());
 		mDescriptorSet0->BindCombinedImage(0, &edgeTableTex->GetTextureDescriptorInfo());
 		mDescriptorSet0->BindCombinedImage(2, &triangleTableTex->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindCombinedImage(BINDING_3, &texture3d->GetTextureDescriptorInfo());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
 
