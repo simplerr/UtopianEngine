@@ -28,7 +28,6 @@ namespace Vulkan
 		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
 
-		void UpdateUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);	// Will be used for changing the texture
 
 		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;

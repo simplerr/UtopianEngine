@@ -44,6 +44,28 @@ namespace Vulkan
 			} data;
 		};
 
+		class CounterSSBO : public Vulkan::ShaderBuffer
+		{
+		public:
+			virtual void UpdateMemory(VkDevice device)
+			{
+				// Map vertex counter
+				uint8_t *mapped;
+				uint32_t offset = 0;
+				uint32_t size = sizeof(numVertices);
+				mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
+				memcpy(mapped, &numVertices, size);
+				mBuffer->UnmapMemory();
+			}
+
+			virtual int GetSize()
+			{
+				return sizeof(numVertices);
+			}
+
+			uint32_t numVertices;
+		};
+
 		MarchingCubesEffect();
 
 		// Override the base class interfaces
@@ -67,7 +89,9 @@ namespace Vulkan
 		Vulkan::Texture* texture3d;
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 
-		const uint32_t NUM_MAX_STORAGE_BUFFERS = 200;
+		CounterSSBO mCounterSSBO;
+
+		const uint32_t NUM_MAX_STORAGE_BUFFERS = 400;
 	private:
 		Vulkan::ComputePipeline* mComputePipeline;
 	};

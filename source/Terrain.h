@@ -106,10 +106,9 @@ private:
 	Vulkan::MarchingCubesEffect mMarchingCubesEffect;
 
 	//std::vector<Block*> mBlockList;
-	const uint32_t mWorldSize = 5;
 	const int32_t mVoxelsInBlock = 32;
-	const int32_t mVoxelSize = 400;
-	const int32_t mViewDistance = 3;
+	const int32_t mVoxelSize = 200;
+	const int32_t mViewDistance = 1;
 
 	std::map<BlockKey, Block*> mBlockList;
 

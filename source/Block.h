@@ -47,28 +47,6 @@ public:
 	std::vector<GeometryVertex> vertices;
 };
 
-class CounterSSBO : public Vulkan::ShaderBuffer
-{
-public:
-	virtual void UpdateMemory(VkDevice device)
-	{
-		// Map vertex counter
-		uint8_t *mapped;
-		uint32_t offset = 0;
-		uint32_t size = sizeof(numVertices);
-		mBuffer->MapMemory(offset, size, 0, (void**)&mapped);
-		memcpy(mapped, &numVertices, size);
-		mBuffer->UnmapMemory();
-	}
-
-	virtual int GetSize()
-	{
-		return sizeof(numVertices);
-	}
-
-	uint32_t numVertices;
-};
-
 class Block
 {
 public:
@@ -93,10 +71,9 @@ public:
 
 	glm::vec3 GetPosition();
 	glm::vec3 GetColor();
-	Vulkan::DescriptorSet* GetDescriptorSet();
 	uint32_t GetNumVertices();
-
-	CounterSSBO mCounterSSBO;
+	VkDescriptorBufferInfo GetBufferInfo();
+	Vulkan::DescriptorSet* GetDescriptorSet();
 
 	// TESTING:
 	uint32_t pipelineType;

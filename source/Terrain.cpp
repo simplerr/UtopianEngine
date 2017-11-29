@@ -176,7 +176,7 @@ void Terrain::UpdateBlockList()
 
 	glm::vec3 cameraPos = mCamera->GetPosition();
 	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock) + 1;
-	int32_t blockY = 0;
+	int32_t blockY = cameraPos.y / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 
 	// Make all blocks invisible
@@ -189,22 +189,25 @@ void Terrain::UpdateBlockList()
 	{
 		for (int32_t z = blockZ - mViewDistance; z <= (blockZ + mViewDistance); z++)
 		{
-			BlockKey blockKey(x, 0, z);
-			if (mBlockList.find(blockKey) == mBlockList.end())
+			for (int32_t y = blockY - mViewDistance; y <= (blockY + mViewDistance); y++)
 			{
-				glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, 0, z*mVoxelsInBlock*mVoxelSize);
-				glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-				Vulkan::DescriptorSetLayout setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
-				Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, &setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
+				BlockKey blockKey(x, y, z);
+				if (mBlockList.find(blockKey) == mBlockList.end())
+				{
+					glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, y*mVoxelsInBlock*mVoxelSize, z*mVoxelsInBlock*mVoxelSize);
+					glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
+					Vulkan::DescriptorSetLayout setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
+					Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, &setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
 
-				mBlockList[blockKey] = block;
+					mBlockList[blockKey] = block;
 
-				//Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
-				//Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
-			}
-			else
-			{
-				mBlockList[blockKey]->SetVisible(true);
+					//Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
+					//Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
+				}
+				else
+				{
+					mBlockList[blockKey]->SetVisible(true);
+				}
 			}
 		}
 	}
@@ -234,14 +237,22 @@ void Terrain::GenerateBlocks(float time)
 			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
 			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
 			mMarchingCubesEffect.ubo.data.time = time;
+
+			// Reset block vertex count
+			mMarchingCubesEffect.mCounterSSBO.numVertices = 0;
 			mMarchingCubesEffect.UpdateMemory(mRenderer->GetDevice());
+
+			//mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
+			//mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_1, &mMarchingCubesEffect.mCounterSSBO.GetDescriptor());
+			//mMarchingCubesEffect.mDescriptorSet1->UpdateDescriptorSets();
 
 			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
 			// TODO: Use the firstSet parameter to only update the Block descriptor
 			VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.GetDescriptorSet0(),
-												  block->GetDescriptorSet()->descriptorSet }; // TODO: The block descriptor set is set in Terrain.cpp
+												  //mMarchingCubesEffect.GetDescriptorSet1(),
+												  block->GetDescriptorSet()->descriptorSet}; // TODO: The block descriptor set is set in Terrain.cpp
 			commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
 			// Push the world matrix constant
@@ -260,9 +271,9 @@ void Terrain::GenerateBlocks(float time)
 
 			// Get # of vertices so we can tell how many to draw
 			uint32_t* mapped;
-			block->mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
+			mMarchingCubesEffect.mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
 			uint32_t numVertices = *(uint32_t*)mapped;
-			block->mCounterSSBO.UnmapMemory();
+			mMarchingCubesEffect.mCounterSSBO.UnmapMemory();
 
 			block->SetNumVertices(numVertices);
 			block->SetGenerated(true);

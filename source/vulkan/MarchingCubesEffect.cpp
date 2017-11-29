@@ -13,6 +13,7 @@ namespace Vulkan
 {
 	MarchingCubesEffect::MarchingCubesEffect()
 	{
+		mCounterSSBO.numVertices = 0;
 	}
 
 	void MarchingCubesEffect::CreateDescriptorPool(Device* device)
@@ -31,14 +32,14 @@ namespace Vulkan
 	void MarchingCubesEffect::CreatePipelineInterface(Device* device)
 	{
 		// Descriptor set 0
-		mPipelineInterface.AddUniformBuffer(SET_0, 1, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, 0, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, 2, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, 3, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_0, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_1, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_3, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface.AddStorageBuffer(SET_0, 4, VK_SHADER_STAGE_COMPUTE_BIT);
 
 		// Descriptor set 1
 		mPipelineInterface.AddStorageBuffer(SET_1, 0, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddStorageBuffer(SET_1, 1, VK_SHADER_STAGE_COMPUTE_BIT);
 
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_COMPUTE_BIT);
 
@@ -50,13 +51,17 @@ namespace Vulkan
 		// Create the descriptor here, it's data needs to be set in Terrain.cpp
 		ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
+		mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+		mCounterSSBO.UpdateMemory(device->GetVkDevice());
+
 		DescriptorSetLayout setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
 		mDescriptorSet0 = new Vulkan::DescriptorSet(device, &setLayout0, mDescriptorPool);
 		mDescriptorSet0->AllocateDescriptorSets();
-		mDescriptorSet0->BindUniformBuffer(1, &ubo.GetDescriptor());
-		mDescriptorSet0->BindCombinedImage(0, &edgeTableTex->GetTextureDescriptorInfo());
-		mDescriptorSet0->BindCombinedImage(2, &triangleTableTex->GetTextureDescriptorInfo());
-		mDescriptorSet0->BindCombinedImage(BINDING_3, &texture3d->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindCombinedImage(BINDING_0, &edgeTableTex->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindCombinedImage(BINDING_1, &triangleTableTex->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindCombinedImage(BINDING_2, &texture3d->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindUniformBuffer(BINDING_3, &ubo.GetDescriptor());
+		mDescriptorSet0->BindStorageBuffer(BINDING_4, &mCounterSSBO.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
 
@@ -70,6 +75,7 @@ namespace Vulkan
 	void MarchingCubesEffect::UpdateMemory(Device* device)
 	{
 		ubo.UpdateMemory(device->GetVkDevice());
+		mCounterSSBO.UpdateMemory(device->GetVkDevice());
 	}
 
 	ComputePipeline* MarchingCubesEffect::GetComputePipeline()

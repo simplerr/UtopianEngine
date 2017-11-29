@@ -12,14 +12,6 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mModified = false;
 	mVoxelSize = voxelSize;
 
-	/*
-		Storage buffer test
-	*/
-	mCounterSSBO.numVertices = 0;
-
-	mCounterSSBO.Create(renderer->GetDevice(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	mCounterSSBO.UpdateMemory(renderer->GetVkDevice());
-
 	uint32_t size = blockSize*blockSize*blockSize * 5 * 3;
 	mVertexBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, nullptr);
 	mBufferInfo.buffer = mVertexBuffer->GetVkBuffer();
@@ -30,7 +22,6 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mDescriptorSet = new Vulkan::DescriptorSet(renderer->GetDevice(), desscriptorSetLayout, descriptorPool);
 	mDescriptorSet->AllocateDescriptorSets();
 	mDescriptorSet->BindStorageBuffer(0, &mBufferInfo);
-	mDescriptorSet->BindStorageBuffer(1, &mCounterSSBO.GetDescriptor());
 	mDescriptorSet->UpdateDescriptorSets();
 
 	if (rand() % 2 == 0)
@@ -42,6 +33,11 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 Block::~Block()
 {
 	delete mVertexBuffer;
+}
+
+VkDescriptorBufferInfo Block::GetBufferInfo()
+{
+	return mBufferInfo;
 }
 
 Vulkan::Buffer* Block::GetVertexBuffer()
@@ -99,13 +95,12 @@ glm::vec3 Block::GetColor()
 	return mColor;
 }
 
-Vulkan::DescriptorSet* Block::GetDescriptorSet()
-{
-	return mDescriptorSet;
-}
-
 uint32_t Block::GetNumVertices()
 {
 	return mNumVertices;
 }
 
+Vulkan::DescriptorSet* Block::GetDescriptorSet()
+{
+	return mDescriptorSet;
+}

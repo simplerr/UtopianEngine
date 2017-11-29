@@ -4,15 +4,15 @@
 #extension GL_ARB_shading_language_420pack : enable
 
 layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
-layout (set = 0, binding = 2) uniform isampler2D triangleTableTex;
-layout (set = 0, binding = 3) uniform sampler3D texture3d;
+layout (set = 0, binding = 1) uniform isampler2D triangleTableTex;
+layout (set = 0, binding = 2) uniform sampler3D texture3d;
 
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		
 	 mat4 worldInvTranspose;
 } pushConsts;
 
-layout (set = 0, binding = 1) uniform UBO 
+layout (set = 0, binding = 3) uniform UBO 
 {
 	mat4 projection;
 	mat4 view;
@@ -28,15 +28,15 @@ struct GeometryVertex
 	vec4 normal;
 };
 
+layout(std430, set = 0, binding = 4) buffer CounterSSBO 
+{
+	uint vertexCount;
+} counterSSBO;
+
 layout(std430, set = 1, binding = 0) buffer VertexSSBO 
 {
 	GeometryVertex vertices[];
 } vertexSSBO;
-
-layout(std430, set = 1, binding = 1) buffer CounterSSBO 
-{
-	uint vertexCount;
-} counterSSBO;
 
 float sdSphere(vec3 p, float s)
 {
@@ -84,11 +84,16 @@ float density(vec3 pos)
 	//return min(density, sdSphere(pos+vec3(00, 1000, 00), 500*abs(sin(ubo.time))));
 	//density = sdSphere(pos, 2500 * abs(sin(ubo.time)));
 
+	//density = -pos.y;
+
+	//float total = texture(texture3d, pos / 100000.0).r * 20000;// * 0.000001;
+	//total += texture(texture3d, (pos + vec3(100, 100, 100) / 100000.0).r * 20000;// * 0.000001;
+	//total /= 2;
+	//density += total;
 	density += texture(texture3d, pos / 100000.0).r * 20000;// * 0.000001;
 	density += texture(texture3d, pos / 10000.0).r * 2000;// * 0.000001;
 
-	if (pos.x > 38000)
-		density += pos.x;
+	//return -pos.y;
 
 	return density;
 }

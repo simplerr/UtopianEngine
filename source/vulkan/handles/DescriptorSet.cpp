@@ -44,28 +44,54 @@ namespace Vulkan
 
 	void DescriptorSet::BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 	{
-		VkWriteDescriptorSet writeDescriptorSet = {};
-		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = descriptorSet;
-		writeDescriptorSet.descriptorCount = 1;
-		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		writeDescriptorSet.pBufferInfo = bufferInfo;
-		writeDescriptorSet.dstBinding = binding;				// Binds this uniform buffer to binding point 0
+		bool existing = false;
+		for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+		{
+			if (mWriteDescriptorSets[i].dstBinding == binding)
+			{
+				mWriteDescriptorSets[i].pBufferInfo = bufferInfo;
+				existing = true;
+			}
+		}
 
-		mWriteDescriptorSets.push_back(writeDescriptorSet);
+		if (!existing)
+		{
+			VkWriteDescriptorSet writeDescriptorSet = {};
+			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			writeDescriptorSet.dstSet = descriptorSet;
+			writeDescriptorSet.descriptorCount = 1;
+			writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			writeDescriptorSet.pBufferInfo = bufferInfo;
+			writeDescriptorSet.dstBinding = binding;
+
+			mWriteDescriptorSets.push_back(writeDescriptorSet);
+		}
 	}
 
 	void DescriptorSet::BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 	{
-		VkWriteDescriptorSet writeDescriptorSet = {};
-		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = descriptorSet;
-		writeDescriptorSet.descriptorCount = 1;
-		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-		writeDescriptorSet.pBufferInfo = bufferInfo;
-		writeDescriptorSet.dstBinding = binding;				// Binds this uniform buffer to binding point 0
+		bool existing = false;
+		for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+		{
+			if (mWriteDescriptorSets[i].dstBinding == binding)
+			{
+				mWriteDescriptorSets[i].pBufferInfo = bufferInfo;
+				existing = true;
+			}
+		}
 
-		mWriteDescriptorSets.push_back(writeDescriptorSet);
+		if (!existing)
+		{
+			VkWriteDescriptorSet writeDescriptorSet = {};
+			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			writeDescriptorSet.dstSet = descriptorSet;
+			writeDescriptorSet.descriptorCount = 1;
+			writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+			writeDescriptorSet.pBufferInfo = bufferInfo;
+			writeDescriptorSet.dstBinding = binding;
+
+			mWriteDescriptorSets.push_back(writeDescriptorSet);
+		}
 	}
 
 	void DescriptorSet::BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
@@ -79,11 +105,6 @@ namespace Vulkan
 		writeDescriptorSet.dstBinding = binding;				
 
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
-	}
-
-	void DescriptorSet::UpdateUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
-	{
-		// [TODO]
 	}
 
 	void DescriptorSet::UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
