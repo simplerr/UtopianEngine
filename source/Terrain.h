@@ -108,7 +108,7 @@ private:
 	//std::vector<Block*> mBlockList;
 	const int32_t mVoxelsInBlock = 32;
 	const int32_t mVoxelSize = 200;
-	const int32_t mViewDistance = 1;
+	const int32_t mViewDistance = 3;
 
 	std::map<BlockKey, Block*> mBlockList;
 

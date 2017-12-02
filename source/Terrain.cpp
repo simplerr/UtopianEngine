@@ -180,10 +180,10 @@ void Terrain::UpdateBlockList()
 	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 
 	// Make all blocks invisible
-	/*for (auto blockIter : mBlockList)
+	for (auto blockIter : mBlockList)
 	{
 		blockIter.second->SetVisible(false);
-	}*/
+	}
 
 	for (int32_t x = blockX - mViewDistance; x <= (blockX + mViewDistance); x++)
 	{
@@ -291,7 +291,7 @@ void Terrain::Update()
 	mTerrainEffect.per_frame_vs.data.view = mCamera->GetView();
 	mTerrainEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
 	mTerrainEffect.per_frame_ps.data.eyePos = mCamera->GetPosition(); // Test
-	mTerrainEffect.per_frame_ps.data.fogStart = 10000.0f; // Test
+	mTerrainEffect.per_frame_ps.data.fogStart = 15000.0f; // Test
 	mTerrainEffect.per_frame_ps.data.fogDistance = 5400.0f;
 	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
 
