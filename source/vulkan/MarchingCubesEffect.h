@@ -77,6 +77,7 @@ namespace Vulkan
 		virtual void UpdateMemory(Device* device);
 
 		VkDescriptorSet GetDescriptorSet0();
+		VkDescriptorSet GetDescriptorSet1();
 
 		// TODO: This should be handled in the baseclass.
 		// Multiple compute effects will use the same code
@@ -88,10 +89,11 @@ namespace Vulkan
 		Vulkan::Texture* triangleTableTex;
 		Vulkan::Texture* texture3d;
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
+		DescriptorSet* mDescriptorSet1; // set = 1 in GLSL
 
 		CounterSSBO mCounterSSBO;
 
-		const uint32_t NUM_MAX_STORAGE_BUFFERS = 400;
+		const uint32_t NUM_MAX_STORAGE_BUFFERS = 40;
 	private:
 		Vulkan::ComputePipeline* mComputePipeline;
 	};

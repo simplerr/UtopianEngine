@@ -63,6 +63,10 @@ namespace Vulkan
 		mDescriptorSet0->BindUniformBuffer(BINDING_3, &ubo.GetDescriptor());
 		mDescriptorSet0->BindStorageBuffer(BINDING_4, &mCounterSSBO.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
+
+		DescriptorSetLayout setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
+		mDescriptorSet1 = new Vulkan::DescriptorSet(device, &setLayout1, mDescriptorPool);
+		mDescriptorSet1->AllocateDescriptorSets();
 	}
 
 	void MarchingCubesEffect::CreatePipeline(Renderer* renderer)
@@ -86,6 +90,11 @@ namespace Vulkan
 	VkDescriptorSet MarchingCubesEffect::GetDescriptorSet0()
 	{
 		return mDescriptorSet0->descriptorSet;
+	}
+
+	VkDescriptorSet MarchingCubesEffect::GetDescriptorSet1()
+	{
+		return mDescriptorSet1->descriptorSet;
 	}
 
 	void MarchingCubesEffect::UniformBuffer::UpdateMemory(VkDevice device)

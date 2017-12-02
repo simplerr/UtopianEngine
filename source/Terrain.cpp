@@ -229,10 +229,6 @@ void Terrain::GenerateBlocks(float time)
 			float texture3d[w * h * d];
 			GenerateNoiseTexture(texture3d, w, h, d);
 
-			//mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, sizeof(float), d);
-			//mMarchingCubesEffect.mDescriptorSet0->BindCombinedImage(BINDING_3, &mMarchingCubesEffect.texture3d->GetTextureDescriptorInfo());
-			//mMarchingCubesEffect.mDescriptorSet0->UpdateDescriptorSets();
-
 			mMarchingCubesEffect.ubo.data.projection = mCamera->GetProjection();
 			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
 			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
@@ -242,17 +238,16 @@ void Terrain::GenerateBlocks(float time)
 			mMarchingCubesEffect.mCounterSSBO.numVertices = 0;
 			mMarchingCubesEffect.UpdateMemory(mRenderer->GetDevice());
 
-			//mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
-			//mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_1, &mMarchingCubesEffect.mCounterSSBO.GetDescriptor());
-			//mMarchingCubesEffect.mDescriptorSet1->UpdateDescriptorSets();
+			// Bind new vertex buffer SSBO descriptor
+			mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
+			mMarchingCubesEffect.mDescriptorSet1->UpdateDescriptorSets();
 
 			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
 			// TODO: Use the firstSet parameter to only update the Block descriptor
 			VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.GetDescriptorSet0(),
-												  //mMarchingCubesEffect.GetDescriptorSet1(),
-												  block->GetDescriptorSet()->descriptorSet}; // TODO: The block descriptor set is set in Terrain.cpp
+												  mMarchingCubesEffect.GetDescriptorSet1() };
 			commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
 			// Push the world matrix constant

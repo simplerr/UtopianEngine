@@ -18,12 +18,6 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;
 
-	// TODO: Bad
-	mDescriptorSet = new Vulkan::DescriptorSet(renderer->GetDevice(), desscriptorSetLayout, descriptorPool);
-	mDescriptorSet->AllocateDescriptorSets();
-	mDescriptorSet->BindStorageBuffer(0, &mBufferInfo);
-	mDescriptorSet->UpdateDescriptorSets();
-
 	if (rand() % 2 == 0)
 		pipelineType = Vulkan::TerrainEffect::PipelineType2::WIREFRAME;
 	else
@@ -98,9 +92,4 @@ glm::vec3 Block::GetColor()
 uint32_t Block::GetNumVertices()
 {
 	return mNumVertices;
-}
-
-Vulkan::DescriptorSet* Block::GetDescriptorSet()
-{
-	return mDescriptorSet;
 }

@@ -73,7 +73,6 @@ public:
 	glm::vec3 GetColor();
 	uint32_t GetNumVertices();
 	VkDescriptorBufferInfo GetBufferInfo();
-	Vulkan::DescriptorSet* GetDescriptorSet();
 
 	// TESTING:
 	uint32_t pipelineType;
@@ -81,7 +80,6 @@ public:
 private:
 	Vulkan::Buffer* mVertexBuffer;
 	VkDescriptorBufferInfo mBufferInfo;
-	Vulkan::DescriptorSet* mDescriptorSet;
 	glm::vec3 mPosition;
 	glm::vec3 mColor;
 
