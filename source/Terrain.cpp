@@ -226,9 +226,6 @@ void Terrain::GenerateBlocks(float time)
 			const uint32_t h = 16;
 			const uint32_t d = 16;
 
-			float texture3d[w * h * d];
-			GenerateNoiseTexture(texture3d, w, h, d);
-
 			mMarchingCubesEffect.ubo.data.projection = mCamera->GetProjection();
 			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
 			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
