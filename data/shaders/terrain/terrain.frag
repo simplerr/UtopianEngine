@@ -38,7 +38,7 @@ void main(void)
 	float fogLerp = clamp((distToEye - per_frame_ps.fogStart) / per_frame_ps.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
-	vec3 litColor = mix(inColor, vec3(0.5), fogLerp);
+	vec3 litColor = mix(inColor, vec3(0.2), fogLerp);
 	outFragColor = vec4(litColor,  1.0);
 
 	//outFragColor = texture(texture3d, vec3(0, 0, 0)); 
