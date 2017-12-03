@@ -71,13 +71,14 @@ float density(vec3 pos)
 {
 	float density = 1;	
 
-	vec2 t = vec2(700, 500);
+	vec2 t = vec2(4700, 2000);
 	vec2 t2 = vec2(1200, 500);
 	density = sdTorus(pos-1700, t); 
 	//return density;
 	density = min(-pos.y+1500, density);
 	density = min(sdTorus(pos+vec3(63000, -1500, 63000), t), density);
 	density = min(sdTorus(pos+vec3(-7000, 0, -7000), t2), density);
+	density = min(sdBox(pos+vec3(63000, 15500, 63000), vec3(5000, 5000, 5000)), density);
 	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));
@@ -90,8 +91,9 @@ float density(vec3 pos)
 	//total += texture(texture3d, (pos + vec3(100, 100, 100) / 100000.0).r * 20000;// * 0.000001;
 	//total /= 2;
 	//density += total;
-	density += texture(texture3d, pos / 100000.0).r * 20000;// * 0.000001;
-	density += texture(texture3d, pos / 10000.0).r * 2000;// * 0.000001;
+
+	//density += texture(texture3d, pos / 100000.0).r * 20000;// * 0.000001;
+	//density += texture(texture3d, pos / 10000.0).r * 2000;// * 0.000001;
 
 	//return -pos.y;
 
@@ -136,8 +138,12 @@ int triangleTableValue(int cubeIndex, int i)
 
 vec3 generateNormal(vec3 pos)
 {
+	//pos *= 300;
+	vec4 tmpPos = vec4(pos, 1);
+	tmpPos = pushConsts.world * tmpPos;
+	pos = tmpPos.xyz;
 	vec3 grad;
-	float d = 1.0 / 32.0;
+	float d = 1.0f / 32.0f;
 
 	grad.x = density(pos + vec3(d, 0, 0)) - density(pos + vec3(-d, 0, 0));
 	grad.y = density(pos + vec3(0, d, 0)) - density(pos + vec3(0, -d, 0));
@@ -210,6 +216,22 @@ void main(void)
 			normal = generateNormal(position);
 			vertexSSBO.vertices[index + 2].pos = vec4(position, 1);
 			vertexSSBO.vertices[index + 2].normal = vec4(normal, 1);
+
+			// Surface normal
+			vec3 U = vertexSSBO.vertices[index + 1].pos.xyz - vertexSSBO.vertices[index].pos.xyz;
+			vec3 V = vertexSSBO.vertices[index + 2].pos.xyz - vertexSSBO.vertices[index].pos.xyz;
+
+			normal.x = U.y * V.z - U.z * V.y;
+			normal.y = U.z * V.x - U.x * V.z;
+			normal.z = 1;//U.x * V.y - U.y - V.x;
+
+			//normal = vec3(normal.x);
+
+			normal = normalize(normal);
+
+			//vertexSSBO.vertices[index].normal = vec4(normal, 1);
+			//vertexSSBO.vertices[index + 1].normal = vec4(normal, 1);
+			//vertexSSBO.vertices[index + 2].normal = vec4(normal, 1);
 
 			//atomicExchange(counterSSBO.vertexCount, gl_GlobalInvocationID .z);
 			//counterSSBO.vertexCount = gl_GlobalInvocationID.x;

@@ -32,7 +32,7 @@ void main(void)
 {
 	outPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
 	outColor = pushConsts.color;
-	outNormal = vec3(1, 1, 1);
+	outNormal = InNormal.xyz;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

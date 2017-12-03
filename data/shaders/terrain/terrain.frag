@@ -21,25 +21,22 @@ layout (std140, set = 0, binding = 1) uniform UBO
 
 void main(void)
 {
-	vec3 color = vec3(1, 1, 1);
 	vec3 lightVec = vec3(1, 1, 1);
 	lightVec = normalize(lightVec);
 
 	float diffuseFactor = max(0, dot(lightVec, inNormal));
 
 	float ambientFactor = 0.1;
-	outFragColor = vec4(color * ambientFactor + diffuseFactor * color, 1.0);
-
-	outFragColor = vec4(inNormal.r, inNormal.g, inNormal.b, 1.0);
-	//outFragColor = vec4(0, 0, inNormal.b, 1.0);
+	vec3 color = inColor * ambientFactor + diffuseFactor * inColor;
 
 	// Apply fogging.
 	float distToEye = length(per_frame_ps.eyePos + inPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
 	float fogLerp = clamp((distToEye - per_frame_ps.fogStart) / per_frame_ps.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
-	vec3 litColor = mix(inColor, vec3(0.2), fogLerp);
-	outFragColor = vec4(litColor,  1.0);
+	color = mix(color, vec3(0.2), fogLerp);
+	outFragColor = vec4(color,  1.0);
+	//outFragColor = vec4(inNormal, 1.0);
 
 	//outFragColor = texture(texture3d, vec3(0, 0, 0)); 
 	//outFragColor = vec4(texelFetch(texture3d, ivec3(4, 15, 5),  0).rgb, 1.0f);
