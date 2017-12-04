@@ -67,12 +67,15 @@ float opI( float d1, float d2 )
     return max(d1,d2);
 }
 
-float cosNoise(vec3 pos)
+float cosNoise(vec2 pos)
 {
-	float amplitude = 1500.0f;
-	float freq = 2500.0f;
-	return amplitude * (sin(pos.x/freq) + sin(pos.z / freq));
+	float amplitude = 1.0f;
+	float freq = 5500.0f;
+	return amplitude * (sin(pos.x/freq) + sin(pos.y / freq));
 }
+
+const mat2 m2 = mat2(1.6,-1.2,
+                     1.2, 1.6);
 
 float density(vec3 pos)
 {
@@ -104,7 +107,22 @@ float density(vec3 pos)
 
 	//return -pos.y;
 
-	density = min(-pos.y + cosNoise(pos), density);
+	// Magic from Shadertoy: https://www.shadertoy.com/view/MtsSRf
+	float h = 0.0;
+	vec2 q = pos.xz*0.5;
+
+    float s = 0.5;
+    for(int i=0; i<6; i++)
+    {
+        h -= s*cosNoise(q); 
+        q = m2*q*0.85; 
+        q += vec2(2.41,8.13);
+        s *= 0.48 + 0.2*h;
+    }
+    h *= 5500.0;
+
+	density = min (-pos.y + h, density);
+	//density = min(-pos.y + cosNoise(pos), density);
 
 	return density;
 }
