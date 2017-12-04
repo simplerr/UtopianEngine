@@ -18,10 +18,11 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;
 
-	/*if (rand() % 2 == 0)
-		pipelineType = Vulkan::TerrainEffect::PipelineType2::WIREFRAME;
-	else*/
 	pipelineType = Vulkan::TerrainEffect::PipelineType2::SOLID;
+	//if (rand() % 2 == 0)
+	//	pipelineType = Vulkan::TerrainEffect::PipelineType2::WIREFRAME;
+	//else
+	//pipelineType = Vulkan::TerrainEffect::PipelineType2::SOLID;
 }
 
 Block::~Block()

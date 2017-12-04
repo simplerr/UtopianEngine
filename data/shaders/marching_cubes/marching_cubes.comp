@@ -67,6 +67,13 @@ float opI( float d1, float d2 )
     return max(d1,d2);
 }
 
+float cosNoise(vec3 pos)
+{
+	float amplitude = 1500.0f;
+	float freq = 2500.0f;
+	return amplitude * (sin(pos.x/freq) + sin(pos.z / freq));
+}
+
 float density(vec3 pos)
 {
 	float density = 1;	
@@ -75,8 +82,8 @@ float density(vec3 pos)
 	vec2 t2 = vec2(1200, 500);
 	density = sdTorus(pos-1700, t); 
 	//return density;
-	density = min(-pos.y+1500, density);
-	density = min(sdTorus(pos+vec3(63000, -1500, 63000), t), density);
+	//density = min(-pos.y+1500, density);
+	density = min(sdTorus(pos+vec3(63000, 15500, 69000), t), density);
 	density = min(sdTorus(pos+vec3(-7000, 0, -7000), t2), density);
 	density = min(sdBox(pos+vec3(63000, 15500, 63000), vec3(5000, 5000, 5000)), density);
 	//density = sdBox(pos, vec3(10));
@@ -96,6 +103,8 @@ float density(vec3 pos)
 	//density += texture(texture3d, pos / 10000.0).r * 2000;// * 0.000001;
 
 	//return -pos.y;
+
+	density = min(-pos.y + cosNoise(pos), density);
 
 	return density;
 }
@@ -138,12 +147,9 @@ int triangleTableValue(int cubeIndex, int i)
 
 vec3 generateNormal(vec3 pos)
 {
-	//pos *= 300;
-	vec4 tmpPos = vec4(pos, 1);
-	tmpPos = pushConsts.world * tmpPos;
-	pos = tmpPos.xyz;
+	pos = (pushConsts.world * vec4(pos, 1.0f)).xyz;
 	vec3 grad;
-	float d = 1.0f / 32.0f;
+	float d = 1.0f / 1.0f;
 
 	grad.x = density(pos + vec3(d, 0, 0)) - density(pos + vec3(-d, 0, 0));
 	grad.y = density(pos + vec3(0, d, 0)) - density(pos + vec3(0, -d, 0));

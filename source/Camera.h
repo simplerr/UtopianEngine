@@ -62,7 +62,7 @@ namespace Vulkan
 		float mAspectRatio;
 
 		float mSensitivity = 0.2f;
-		float mSpeed = 35.5f;
+		float mSpeed = 100.5f;
 
 		int mLastX, mLastY;
 	};
