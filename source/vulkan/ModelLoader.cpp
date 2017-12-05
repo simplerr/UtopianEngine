@@ -252,6 +252,34 @@ namespace Vulkan
 		//return terrain;
 	}
 
+	StaticModel* ModelLoader::LoadQuad(Device* device)
+	{
+		// Check if the model already is loaded
+		if (mModelMap.find("quad") != mModelMap.end())
+			return mModelMap["quad"];
+
+		StaticModel* model = new StaticModel();
+		Mesh* mesh = new Mesh(device);
+
+		// Front
+		float ANY = 0;
+		mesh->AddVertex(Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 0.0f, 0.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 1.0f, 0.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 1.0f, 1.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 0.0f, 1.0f, ANY, ANY, ANY));
+
+		// Front
+		mesh->AddIndex(1, 2, 0);
+		mesh->AddIndex(3, 0, 2);
+
+		mesh->BuildBuffers(device);
+		model->AddMesh(mesh);
+
+		model->Init(device);
+		mModelMap["quad"] = model;
+		return model;
+	}
+
 	StaticModel* ModelLoader::LoadDebugBox(Device* device)
 	{
 		// Check if the model already is loaded

@@ -2,7 +2,9 @@
 #define GLM_FORCE_RIGHT_HANDED 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 #include "ecs/Entity.h"
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/TransformComponent.h"
@@ -37,9 +39,9 @@ namespace ECS
 		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
-		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
+		mCubeModel = mModelLoader->LoadQuad(renderer->GetDevice());
 
-		AddDebugCube(vec3(67000.0f, 1500.0f, 67000.0f), Vulkan::Color::Red, 70.0f);
+		AddDebugCube(vec3(77000.0f, 8500.0f, 67000.0f), Vulkan::Color::Red, 12000.0f);
 		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
 		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
 		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
@@ -243,6 +245,9 @@ namespace ECS
 			PushConstantDebugBlock pushConstantBlock;
 			pushConstantBlock.world = world;
 			pushConstantBlock.color = debugCube.color;
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
 			mCommandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 			mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);

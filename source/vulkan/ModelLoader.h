@@ -29,6 +29,7 @@ namespace Vulkan
 		StaticModel* LoadModel(Device* device, std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
 		StaticModel* GenerateTerrain(Device* device, std::string filename);
 		StaticModel* LoadDebugBox(Device* device);
+		StaticModel* LoadQuad(Device* device);
 	private:
 		int FindValidPath(aiString* texturePath, std::string modelPath);
 		bool TryLongerPath(char* szTemp, aiString* p_szString);
