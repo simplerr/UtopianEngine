@@ -53,7 +53,6 @@ namespace Vulkan
 					  &stagingImage,																// VkImage
 					  &stagingMemory);																// VkDeviceMemory
 
-
 		// Copy the pixels from the loaded image to device memory
 		VkImageSubresource subresource = {};
 		subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -74,7 +73,7 @@ namespace Vulkan
 			}
 		}
 
-		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, pixelSize);
+		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
 		texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		
 		mTextureMap[filename] = texture;
@@ -87,7 +86,7 @@ namespace Vulkan
 		return texture;
 	}
 
-	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth)
+	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth, VkImageAspectFlagBits aspectMask)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
 		VkDeviceSize imageSize = width * height * depth * pixelSize; // NOTE: Assumes each pixel is stored as U8
@@ -111,7 +110,7 @@ namespace Vulkan
 
 		// Copy the pixels from the loaded image to device memory
 		VkImageSubresource subresource = {};
-		subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subresource.aspectMask = aspectMask;
 		subresource.mipLevel = 0;
 		subresource.arrayLayer = 0;
 
@@ -135,15 +134,15 @@ namespace Vulkan
 					  &texture->image,																// VkImage
 					  &texture->deviceMemory);														// VkDeviceMemory
 
-		TransitionImageLayout(stagingImage, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		TransitionImageLayout(stagingImage, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, aspectMask);
+		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, aspectMask);
 
-		CopyImage(stagingImage, texture->image, width, height, depth);
+		CopyImage(stagingImage, texture->image, aspectMask, width, height, depth);
 
-		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, aspectMask);
 
 		// Create the image view
-		CreateImageView(texture->image, format, &texture->imageView, depth);
+		CreateImageView(texture->image, format, &texture->imageView, depth, aspectMask);
 
 		// Create the sampler
 		// NOTE: should be VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE when rendering text overlay
@@ -193,7 +192,7 @@ namespace Vulkan
 		VulkanDebug::ErrorCheck(vkBindImageMemory(device, *image, *imageMemory, 0));
 	}
 
-	void TextureLoader::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+	void TextureLoader::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlagBits aspectMask)
 	{
 		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
@@ -204,7 +203,7 @@ namespace Vulkan
 		barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 		barrier.image = image;
-		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		barrier.subresourceRange.aspectMask = aspectMask;
 		barrier.subresourceRange.baseMipLevel = 0;
 		barrier.subresourceRange.levelCount = 1;
 		barrier.subresourceRange.baseArrayLayer = 0;
@@ -239,12 +238,12 @@ namespace Vulkan
 		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
 	}
 
-	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, uint32_t width, uint32_t height, uint32_t depth)
+	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, VkImageAspectFlagBits aspectMask, uint32_t width, uint32_t height, uint32_t depth)
 	{
 		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		VkImageSubresourceLayers subResource = {};
-		subResource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subResource.aspectMask = aspectMask;
 		subResource.baseArrayLayer = 0;
 		subResource.mipLevel = 0;
 		subResource.layerCount = 1;
@@ -269,14 +268,14 @@ namespace Vulkan
 		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
 	}
 
-	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth)
+	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth, VkImageAspectFlagBits aspectMask)
 	{
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		viewInfo.image = image;
 		viewInfo.viewType = (depth == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_3D);
 		viewInfo.format = format;
-		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		viewInfo.subresourceRange.aspectMask = aspectMask;
 		viewInfo.subresourceRange.baseMipLevel = 0;
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;

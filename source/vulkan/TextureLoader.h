@@ -34,13 +34,13 @@ namespace Vulkan
 		 *
 		 * \note TextureLoader does NOT handle the memory deallocation of the texture.
 		 */
-		Texture* CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth = 1);
+		Texture* CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth = 1, VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT);
 
 	private:
 		void CreateImage(uint32_t width, uint32_t height, uint32_t depth, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory);
-		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-		void CopyImage(VkImage srcImage, VkImage dstImage, uint32_t width, uint32_t height, uint32_t depth);
-		void CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth);
+		void TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlagBits aspectMask);
+		void CopyImage(VkImage srcImage, VkImage dstImage, VkImageAspectFlagBits aspectMask, uint32_t width, uint32_t height, uint32_t depth);
+		void CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth, VkImageAspectFlagBits aspectMask);
 		void CreateImageSampler(VkSampler* sampler);
 
 	private:
