@@ -25,3 +25,7 @@
 
 3/10
 * Remove DescriptorPool and mTextureDescriptorSetLayout from Renderer
+
+6/12
+* colorImageViews in FrameBuffers.h might depend a bit too much on the SwapChain class
+	Perhaps pass an Image* instead similar to depthStencil

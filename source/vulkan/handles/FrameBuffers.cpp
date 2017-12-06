@@ -7,11 +7,32 @@
 
 namespace Vulkan
 {
-	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencil, VulkanSwapChain* swapChain, uint32_t width, uint32_t height)
+	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height)
 		: mDevice(device)
 	{
 		VkImageView attachments[2];
-		attachments[1] = depthStencil->GetView();
+		attachments[0] = colorImage->GetView();
+		attachments[1] = depthStencilImage->GetView();
+
+		VkFramebufferCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		createInfo.renderPass = renderPass->GetVkHandle();
+		createInfo.attachmentCount = 2;
+		createInfo.pAttachments = attachments;
+		createInfo.width = width;
+		createInfo.height = height;
+		createInfo.layers = 1;
+
+		// Create a single frame buffer
+		mFrameBuffers.resize(1);
+		VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
+	}
+
+	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, VulkanSwapChain* swapChain, uint32_t width, uint32_t height)
+		: mDevice(device)
+	{
+		VkImageView attachments[2];
+		attachments[1] = depthStencilImage->GetView();
 
 		VkFramebufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

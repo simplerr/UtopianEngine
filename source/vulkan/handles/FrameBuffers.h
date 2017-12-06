@@ -14,7 +14,8 @@ namespace Vulkan
 	class FrameBuffers
 	{
 	public:
-		FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencil, VulkanSwapChain* swapChain, uint32_t width, uint32_t height);
+		FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height);
+		FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, VulkanSwapChain* swapChain, uint32_t width, uint32_t height);
 		~FrameBuffers();
 
 		VkFramebuffer GetFrameBuffer(uint32_t index);
