@@ -23,11 +23,11 @@ namespace ECS
 	typedef std::vector<Entity*> EntityList;
 	typedef std::vector<Component*> ComponentList;
 
-	class EntityManager
+	class SystemManager
 	{
 	public:
-		EntityManager();
-		~EntityManager();
+		SystemManager();
+		~SystemManager();
 
 		void Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
 

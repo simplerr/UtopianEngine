@@ -29,3 +29,4 @@
 6/12
 * colorImageViews in FrameBuffers.h might depend a bit too much on the SwapChain class
 	Perhaps pass an Image* instead similar to depthStencil
+* TextureLoader and Texture should reuse the code in Image

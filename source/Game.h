@@ -5,7 +5,7 @@
 
 namespace ECS
 {
-	class EntityManager;
+	class SystemManager;
 	class Entity;
 }
 
@@ -39,7 +39,7 @@ namespace Vulkan
 		std::string mTestCaseName;
 		bool mIsClosing;
 
-		ECS::EntityManager* mEntityManager;
+		ECS::SystemManager* mEntityManager;
 		ECS::Entity* mTestEntity;
 	};
 }

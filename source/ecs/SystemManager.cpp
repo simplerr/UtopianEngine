@@ -5,17 +5,17 @@
 #include "systems/PickingSystem.h"
 #include "systems/HealthSystem.h"
 #include "components/Component.h"
-#include "EntityManager.h"
+#include "SystemManager.h"
 #include "Entity.h"
 
 namespace ECS
 {
-	EntityManager::EntityManager()
+	SystemManager::SystemManager()
 	{
 		mNextEntityId = 0u;
 	}
 
-	EntityManager::~EntityManager()
+	SystemManager::~SystemManager()
 	{
 		// Delete all entities
 		for(int i = 0; i < mEntities.size(); i++)
@@ -30,7 +30,7 @@ namespace ECS
 		}
 	}
 
-	void EntityManager::Init(Vulkan::Renderer* renderer,  Vulkan::Camera* camera)
+	void SystemManager::Init(Vulkan::Renderer* renderer,  Vulkan::Camera* camera)
 	{
 		// Create all ECS::System
 		AddSystem(new ECS::PhysicsSystem(this));
@@ -39,13 +39,13 @@ namespace ECS
 		AddSystem(new ECS::RenderSystem(this, renderer, camera));
 	}
 
-	void EntityManager::AddSystem(ECS::System* system)
+	void SystemManager::AddSystem(ECS::System* system)
 	{
 		mSystems.push_back(system);
 	}
 
 	// AddEntity() is responsible for informing the needed ECS::Systems
-	Entity* EntityManager::AddEntity(ComponentList& components)
+	Entity* SystemManager::AddEntity(ComponentList& components)
 	{
 		Entity* entity = new Entity(components, mNextEntityId);
 
@@ -63,7 +63,7 @@ namespace ECS
 		return entity;
 	}
 
-	Entity* EntityManager::GetEntity(uint32_t id)
+	Entity* SystemManager::GetEntity(uint32_t id)
 	{
 		for (int i = 0; i < mEntities.size(); i++)
 		{
@@ -76,12 +76,12 @@ namespace ECS
 		return nullptr;
 	}
 
-	void EntityManager::RemoveEntity(Entity* entity)
+	void SystemManager::RemoveEntity(Entity* entity)
 	{
 		mRemoveList.push_back(entity);
 	}
 
-	void EntityManager::RemoveComponent(Entity* entity, ECS::Type componentType)
+	void SystemManager::RemoveComponent(Entity* entity, ECS::Type componentType)
 	{
 		// Remove component from Entity and inform all related Systems
 		if (entity->RemoveComponent(componentType))
@@ -96,7 +96,7 @@ namespace ECS
 		}
 	}
 
-	void EntityManager::AddComponent(Entity* entity, Component* component)
+	void SystemManager::AddComponent(Entity* entity, Component* component)
 	{
 		entity->AddComponent(component);
 
@@ -112,7 +112,7 @@ namespace ECS
 		}
 	}
 
-	void EntityManager::Process()
+	void SystemManager::Process()
 	{
 		for (System* system : mSystems)
 		{
@@ -141,7 +141,7 @@ namespace ECS
 			mRemoveList.clear();
 	}
 
-	void EntityManager::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	void SystemManager::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		for (System* system : mSystems)
 		{

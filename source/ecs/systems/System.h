@@ -7,7 +7,7 @@
 namespace ECS
 {
 	class Entity;
-	class EntityManager;
+	class SystemManager;
 	class MeshComponent;
 	class HealthComponent;
 	class PhysicsComponent;
@@ -34,9 +34,9 @@ namespace ECS
 	class System
 	{
 	public:
-		System(EntityManager* entityManager, uint32_t componentMask);
+		System(SystemManager* entityManager, uint32_t componentMask);
 		virtual ~System();
-		EntityManager* GetEntityManager();
+		SystemManager* GetEntityManager();
 		bool Accepts(uint32_t mask);
 		uint32_t GetComponentMask();
 		
@@ -54,7 +54,7 @@ namespace ECS
 	protected:
 		// Only the entities that have components inside this ECS::System
 		//EntityList mEntities;
-		EntityManager* mEntityManager;
+		SystemManager* mEntityManager;
 		std::vector<EntityCache> mEntities;
 		uint32_t mComponentMask;
 	};

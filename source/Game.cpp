@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "vulkan/ModelLoader.h"
-#include "ecs/EntityManager.h"
+#include "ecs/SystemManager.h"
 #include "ecs/Entity.h"
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/TransformComponent.h"
@@ -39,7 +39,7 @@ namespace Vulkan
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
-		mEntityManager = new ECS::EntityManager();
+		mEntityManager = new ECS::SystemManager();
 		mEntityManager->Init(mRenderer, mCamera);
 
 		InitScene();

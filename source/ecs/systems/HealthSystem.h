@@ -6,7 +6,7 @@
 namespace ECS
 {
 	class HealthComponent;
-	class EntityManager;
+	class SystemManager;
 
 	/*
 		\brief The responsibility of the HealthSystem is to check which entities
@@ -15,7 +15,7 @@ namespace ECS
 	class HealthSystem : public System
 	{
 	public:
-		HealthSystem(EntityManager* entityManager);
+		HealthSystem(SystemManager* entityManager);
 
 		void Process();
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

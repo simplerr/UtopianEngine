@@ -25,7 +25,7 @@ namespace ECS
 	class PickingSystem : public System
 	{
 	public:
-		PickingSystem(EntityManager* entityManager, Vulkan::Camera* camera);
+		PickingSystem(SystemManager* entityManager, Vulkan::Camera* camera);
 		void Process();
 		void PerformPicking();
 

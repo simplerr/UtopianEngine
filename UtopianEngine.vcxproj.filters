@@ -183,9 +183,6 @@
     <ClCompile Include="source\ecs\Entity.cpp">
       <Filter>Source Files\ecs</Filter>
     </ClCompile>
-    <ClCompile Include="source\ecs\EntityManager.cpp">
-      <Filter>Source Files\ecs</Filter>
-    </ClCompile>
     <ClCompile Include="source\ecs\systems\PickingSystem.cpp">
       <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
@@ -251,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\PhongEffect.cpp">
       <Filter>Source Files\vulkan\effects\phong</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ecs\SystemManager.cpp">
+      <Filter>Source Files\ecs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -368,9 +368,6 @@
     <ClInclude Include="source\ecs\Entity.h">
       <Filter>Source Files\ecs</Filter>
     </ClInclude>
-    <ClInclude Include="source\ecs\EntityManager.h">
-      <Filter>Source Files\ecs</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -442,6 +439,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\PhongEffect.h">
       <Filter>Source Files\vulkan\effects\phong</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ecs\SystemManager.h">
+      <Filter>Source Files\ecs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

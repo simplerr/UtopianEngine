@@ -1,11 +1,11 @@
 #include "ecs/components/HealthComponent.h"
-#include "ecs/EntityManager.h"
+#include "ecs/SystemManager.h"
 #include "ecs/Entity.h"
 #include "HealthSystem.h"
 
 namespace ECS
 {
-	HealthSystem::HealthSystem(EntityManager* entityManager)
+	HealthSystem::HealthSystem(SystemManager* entityManager)
 		: System(entityManager, Type::HEALTH_COMPONENT)
 	{
 

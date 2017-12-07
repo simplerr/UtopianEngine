@@ -79,7 +79,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(EntityManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* cameraj);
+		RenderSystem(SystemManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* cameraj);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);

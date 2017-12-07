@@ -11,7 +11,7 @@
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/HealthComponent.h"
 #include "ecs/components/PhysicsComponent.h"
-#include "ecs/EntityManager.h"
+#include "ecs/SystemManager.h"
 #include "ecs/Entity.h"
 #include "PickingSystem.h"
 #include "Camera.h"
@@ -23,7 +23,7 @@
 
 namespace ECS
 {
-	PickingSystem::PickingSystem(EntityManager* entityManager, Vulkan::Camera* camera)
+	PickingSystem::PickingSystem(SystemManager* entityManager, Vulkan::Camera* camera)
 		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
 	{
 		mCamera = camera;
