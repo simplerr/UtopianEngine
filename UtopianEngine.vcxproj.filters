@@ -76,6 +76,12 @@
     <Filter Include="Source Files\vulkan\effects\phong\shaders">
       <UniqueIdentifier>{53d2ba0f-7ffc-4e55-baa5-91b6540e3e11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\offscreen">
+      <UniqueIdentifier>{4864e690-918c-4063-9f76-b0de6383da9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\offscreen\shaders">
+      <UniqueIdentifier>{aebf40db-f2cf-4cec-9c3e-5dd808f44e2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -251,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="source\ecs\SystemManager.cpp">
       <Filter>Source Files\ecs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\OffscreenEffect.cpp">
+      <Filter>Source Files\vulkan\effects\offscreen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +452,9 @@
     <ClInclude Include="source\ecs\SystemManager.h">
       <Filter>Source Files\ecs</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\OffscreenEffect.h">
+      <Filter>Source Files\vulkan\effects\offscreen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -495,6 +507,12 @@
     </None>
     <None Include="data\shaders\phong\phong.vert">
       <Filter>Source Files\vulkan\effects\phong\shaders</Filter>
+    </None>
+    <None Include="data\shaders\offscreen\offscreen.vert">
+      <Filter>Source Files\vulkan\effects\offscreen\shaders</Filter>
+    </None>
+    <None Include="data\shaders\offscreen\offscreen.frag">
+      <Filter>Source Files\vulkan\effects\offscreen\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

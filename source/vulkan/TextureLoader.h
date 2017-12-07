@@ -34,7 +34,7 @@ namespace Vulkan
 		 *
 		 * \note TextureLoader does NOT handle the memory deallocation of the texture.
 		 */
-		Texture* CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth = 1, VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT);
+		Texture* CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT);
 
 	private:
 		void CreateImage(uint32_t width, uint32_t height, uint32_t depth, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory);

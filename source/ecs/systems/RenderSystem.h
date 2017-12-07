@@ -23,6 +23,9 @@ namespace Vulkan
 	class CommandBuffer;
 	class CubeMesh;
 	class VertexDescription;
+	class Texture;
+	class FrameBuffers;
+	class RenderPass;
 
 	class GeometryUniformBuffer : public ShaderBuffer
 	{
@@ -88,6 +91,9 @@ namespace ECS
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 		void AddDebugCube(vec3 pos, vec4 color, float size);
+
+		void PrepareOffscreen();
+		void RenderOffscreen();
 	private:
 		// RenderSystem should not BE a renderer but rather have one, since the usage of Vulkan should not be limited to only the ECS
 		// renderer needs to be available for HUDS, debugging etc
@@ -96,6 +102,8 @@ namespace ECS
 		Vulkan::TextureLoader* mTextureLoader;
 		Vulkan::StaticModel* mCubeModel;
 		Vulkan::CommandBuffer* mCommandBuffer;
+		Vulkan::CommandBuffer* mTerrainCommandBuffer;
+		Vulkan::CommandBuffer* mOffscreenCommandBuffer;
 		Vulkan::Camera* mCamera;
 
 		std::vector<DebugCube> mDebugCubes;
@@ -116,5 +124,20 @@ namespace ECS
 			mat4 world;
 			mat4 worldInvTranspose;
 		};
+
+		// Offscreen rendering
+		struct {
+			Vulkan::FrameBuffers* frameBuffer;
+			Vulkan::RenderPass* renderPass;
+			Vulkan::Texture* colorTexture;
+			Vulkan::Texture* depthTexture;
+			Vulkan::Image* colorImage;
+			Vulkan::Image* depthImage;
+			Vulkan::Pipeline* pipeline;
+			Vulkan::CommandBuffer* commandBuffer;
+			Vulkan::DescriptorSet* textureDescriptorSet;
+			VkSampler sampler;
+			uint32_t width, height;
+		} offscreen;
 	};
 }

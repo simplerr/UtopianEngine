@@ -83,6 +83,7 @@ public:
 	~Terrain();
 
 	void Update();
+	void Render(Vulkan::CommandBuffer* commandBuffer);
 
 	/**  
 	* \brief Adds the blocks within the viewing distance range
@@ -98,7 +99,6 @@ public:
 
 private:
 	Vulkan::Renderer* mRenderer;
-	Vulkan::CommandBuffer* mCommandBuffer;
 	Vulkan::Camera* mCamera;
 
 	// Experimentation
@@ -121,7 +121,6 @@ private:
 	bool mDrawGeneratedBuffer = false;
 	bool mUseComputeShader = true;
 	int mNumVertices = 0;
-
 
 	void DumpDebug();
 };

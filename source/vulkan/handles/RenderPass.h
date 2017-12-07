@@ -17,7 +17,7 @@ namespace Vulkan
 	class RenderPass : public Handle<VkRenderPass>
 	{
 	public:
-		RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat);
+		RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout);
 		void Create();
 		
 		// Descriptors for the attachments used by this renderpass

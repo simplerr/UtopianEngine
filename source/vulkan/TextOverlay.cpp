@@ -28,7 +28,7 @@ namespace Vulkan
 
 		// Create a renderpass that loads the current framebuffer content
 		// and renders the text as an overlay
-		mRenderPass = new RenderPass(renderer->GetDevice(), renderer->GetColorFormat(), renderer->GetDepthFormat());
+		mRenderPass = new RenderPass(renderer->GetDevice(), renderer->GetColorFormat(), renderer->GetDepthFormat(), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 		mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		mRenderPass->Create();
 
@@ -39,7 +39,7 @@ namespace Vulkan
 		// Load the texture
 		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
 		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
-		mTexture = mRenderer->mTextureLoader->CreateTexture((void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, sizeof(unsigned char));
+		mTexture = mRenderer->mTextureLoader->CreateTexture((void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, 1, sizeof(unsigned char));
 		mTexture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 
 		// NOTE: Uses the descriptor set layout for the texture from the Renderer

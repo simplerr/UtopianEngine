@@ -101,6 +101,7 @@
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
+    <ClCompile Include="source\vulkan\OffscreenEffect.cpp" />
     <ClCompile Include="source\vulkan\PhongEffect.cpp" />
     <ClCompile Include="source\vulkan\TerrainEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
+    <ClInclude Include="source\vulkan\OffscreenEffect.h" />
     <ClInclude Include="source\vulkan\PhongEffect.h" />
     <ClInclude Include="source\vulkan\TerrainEffect.h" />
     <ClInclude Include="source\vulkan\Effect.h" />
@@ -209,6 +211,8 @@
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />
     <None Include="data\shaders\marching_cubes\marching_cubes.comp" />
+    <None Include="data\shaders\offscreen\offscreen.frag" />
+    <None Include="data\shaders\offscreen\offscreen.vert" />
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\terrain\terrain.frag" />

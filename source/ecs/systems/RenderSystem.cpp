@@ -18,6 +18,9 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/Queue.h"
+#include "vulkan/handles/RenderPass.h"
+#include "vulkan/handles/FrameBuffers.h"
+#include "vulkan/handles/Image.h"
 #include "vulkan/Mesh.h"
 #include "Camera.h"
 #include "vulkan/StaticModel.h"
@@ -47,6 +50,7 @@ namespace ECS
 		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mTerrainCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		//
 		// Terrain
@@ -108,6 +112,8 @@ namespace ECS
 		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
 		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mPhongEffect.GetVertexDescription(), shader);
 		mGeometryPipeline->Create();
+
+		PrepareOffscreen();
 	}
 
 	RenderSystem::~RenderSystem()
@@ -122,6 +128,50 @@ namespace ECS
 		delete mTerrain;
 	}
 
+	void RenderSystem::PrepareOffscreen()
+	{
+		offscreen.width = 512;
+		offscreen.height = 512;
+		offscreen.colorTexture = mRenderer->mTextureLoader->CreateTexture(nullptr, VK_FORMAT_R8G8B8A8_UNORM, offscreen.width, offscreen.height, 1, sizeof(uint32_t), VK_IMAGE_ASPECT_COLOR_BIT);
+		offscreen.depthTexture = mRenderer->mTextureLoader->CreateTexture(nullptr, VK_FORMAT_R8G8B8A8_UNORM, offscreen.width, offscreen.height, 1, sizeof(uint32_t), (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT));
+
+		offscreen.commandBuffer = new Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
+
+		offscreen.colorImage = new Vulkan::Image(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
+		offscreen.depthImage = new Vulkan::Image(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+
+		offscreen.renderPass = new Vulkan::RenderPass(mRenderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		offscreen.renderPass->Create();
+		offscreen.frameBuffer = new Vulkan::FrameBuffers(mRenderer->GetDevice(), offscreen.renderPass, offscreen.depthImage->GetView(), offscreen.colorImage->GetView(), offscreen.width, offscreen.height);
+
+		VkSamplerCreateInfo samplerInfo = {};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = VK_FILTER_LINEAR;
+		samplerInfo.minFilter = VK_FILTER_LINEAR;
+		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerInfo.anisotropyEnable = VK_TRUE;
+		samplerInfo.maxAnisotropy = 16;
+		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+		samplerInfo.unnormalizedCoordinates = VK_FALSE;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+		Vulkan::VulkanDebug::ErrorCheck(vkCreateSampler(mRenderer->GetDevice()->GetVkDevice(), &samplerInfo, nullptr, &offscreen.sampler));
+
+		VkDescriptorImageInfo texDescriptor = {};
+		texDescriptor.sampler = offscreen.sampler;
+		texDescriptor.imageView = offscreen.colorImage->GetView();
+		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+		offscreen.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		offscreen.textureDescriptorSet->AllocateDescriptorSets();
+		offscreen.textureDescriptorSet->BindCombinedImage(0, &texDescriptor);	// NOTE: It's hard to know that the texture must be bound to binding=0
+		offscreen.textureDescriptorSet->UpdateDescriptorSets();
+	}
+
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
 	{
 		// Load the model
@@ -133,6 +183,15 @@ namespace ECS
 	void RenderSystem::Process()
 	{
 		mTerrain->Update();
+
+		mTerrainCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+		mTerrainCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+		mTerrainCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+
+		mTerrain->Render(mTerrainCommandBuffer);
+		mTerrainCommandBuffer->End();
+
+		RenderOffscreen();
 		
 		// From Renderer.cpp
 		if (mCamera != nullptr)
@@ -169,6 +228,8 @@ namespace ECS
 				mCommandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+				textureDescriptorSet = offscreen.textureDescriptorSet->descriptorSet;
+				//textureDescriptorSet = offscreen.colorTexture->GetDescriptorSet()->descriptorSet;
 
 				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
@@ -257,6 +318,36 @@ namespace ECS
 
 		mCommandBuffer->End();
 	}
+
+	void RenderSystem::RenderOffscreen()
+	{
+		VkClearValue clearValues[2];
+		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
+		clearValues[1].depthStencil = { 1.0f, 0 };
+
+		VkRenderPassBeginInfo renderPassBeginInfo = {};
+		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassBeginInfo.renderPass = offscreen.renderPass->GetVkHandle();
+		renderPassBeginInfo.renderArea.extent.width = offscreen.width;
+		renderPassBeginInfo.renderArea.extent.height = offscreen.height;
+		renderPassBeginInfo.clearValueCount = 2;
+		renderPassBeginInfo.pClearValues = clearValues;
+		renderPassBeginInfo.framebuffer = offscreen.frameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
+
+		// Begin command buffer recording & the render pass
+		offscreen.commandBuffer->Begin();
+		vkCmdBeginRenderPass(offscreen.commandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);	// VK_SUBPASS_CONTENTS_INLINE
+
+		offscreen.commandBuffer->CmdSetViewPort(offscreen.width, offscreen.height);
+		offscreen.commandBuffer->CmdSetScissor(offscreen.width, offscreen.height);
+
+		mTerrain->Render(offscreen.commandBuffer);
+
+		vkCmdEndRenderPass(offscreen.commandBuffer->GetVkHandle());
+
+		offscreen.commandBuffer->Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
+	}
+
 
 	void RenderSystem::AddDebugCube(vec3 pos, vec4 color, float size)
 	{

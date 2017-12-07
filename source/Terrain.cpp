@@ -128,12 +128,11 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	/* 
 		Initialize Vulkan handles
 	*/
-	mCommandBuffer = renderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 	// NOTE: This must be done before Init()
 	// Move to effect?
-	mMarchingCubesEffect.edgeTableTex = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, sizeof(int));
-	mMarchingCubesEffect.triangleTableTex = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, sizeof(int));
+	mMarchingCubesEffect.edgeTableTex = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, 1, sizeof(int));
+	mMarchingCubesEffect.triangleTableTex = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, 1, sizeof(int));
 
 	/* Experimentation */
 	const uint32_t w = 32;
@@ -143,8 +142,8 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	float texture3d[w * h * d];
 	GenerateNoiseTexture(texture3d, w, h, d);
 
-	mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, sizeof(float), d);
-	mTerrainEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, sizeof(float), d);
+	mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
+	mTerrainEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
 
 	mTerrainEffect.Init(renderer);
 	mMarchingCubesEffect.Init(renderer);
@@ -275,6 +274,37 @@ void Terrain::GenerateBlocks(float time)
 	}
 }
 
+void Terrain::Render(Vulkan::CommandBuffer* commandBuffer)
+{
+	for (auto blockIter : mBlockList)
+	{
+		Block* block = blockIter.second;
+		if (block->IsVisible() && block->IsGenerated())
+		{
+			mTerrainEffect.SetPipeline(block->pipelineType);
+				
+			commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
+			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet0->descriptorSet};
+			commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+			commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
+
+			// Push the world matrix constant
+			Vulkan::PushConstantBasicBlock pushConstantBlock;
+			pushConstantBlock.world = glm::mat4();
+			pushConstantBlock.color = block->GetColor();
+
+			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+			commandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
+		}
+	}
+}
+
 void Terrain::Update()
 {
 	static float time = 0.0f;
@@ -292,44 +322,6 @@ void Terrain::Update()
 	mTerrainEffect.per_frame_ps.data.fogStart = 115000.0f; // Test
 	mTerrainEffect.per_frame_ps.data.fogDistance = 5400.0f;
 	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
-
-	VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
-
-	// Build mesh rendering command buffer
-	mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
-
-	mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-	mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-
-	for (auto blockIter : mBlockList)
-	{
-		Block* block = blockIter.second;
-		if (block->IsVisible() && block->IsGenerated())
-		{
-			mTerrainEffect.SetPipeline(block->pipelineType);
-				
-			mCommandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
-			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet0->descriptorSet};
-			mCommandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-
-			mCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
-
-			// Push the world matrix constant
-			Vulkan::PushConstantBasicBlock pushConstantBlock;
-			pushConstantBlock.world = glm::mat4();
-			pushConstantBlock.color = block->GetColor();
-
-			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-			mCommandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			mCommandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
-		}
-	}
-
-	mCommandBuffer->End();
 }
 
 void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

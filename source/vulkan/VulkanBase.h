@@ -78,6 +78,8 @@ namespace Vulkan
 #if defined(_WIN32)
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
+		// TODO: TEMP: should be protected
+		FrameBuffers*					mFrameBuffers = nullptr;
 
 	protected:
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
@@ -85,7 +87,6 @@ namespace Vulkan
 
 		Instance*						mInstance = nullptr;
 		Device*							mDevice = nullptr;
-		FrameBuffers*					mFrameBuffers = nullptr;
 		Queue*							mQueue = nullptr;
 		CommandPool*					mCommandPool = nullptr;
 		Window*							mWindow = nullptr;

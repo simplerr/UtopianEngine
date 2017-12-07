@@ -20,5 +20,6 @@ namespace Vulkan
 		VkImage mImage;
 		VkImageView mImageView;
 		VkDeviceMemory mDeviceMemory;
+		VkFormat mFormat;
 	};
 }

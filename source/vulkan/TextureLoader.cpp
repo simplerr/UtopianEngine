@@ -73,7 +73,7 @@ namespace Vulkan
 			}
 		}
 
-		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
+		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
 		texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		
 		mTextureMap[filename] = texture;
@@ -86,7 +86,7 @@ namespace Vulkan
 		return texture;
 	}
 
-	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t pixelSize, uint32_t depth, VkImageAspectFlagBits aspectMask)
+	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask)
 	{
 		VkDevice device =  mDevice->GetVkDevice();	
 		VkDeviceSize imageSize = width * height * depth * pixelSize; // NOTE: Assumes each pixel is stored as U8
@@ -117,11 +117,14 @@ namespace Vulkan
 		VkSubresourceLayout stagingImageLayout;
 		vkGetImageSubresourceLayout(device, stagingImage, &subresource, &stagingImageLayout);
 
-		uint8_t* mappedMemory;
-		VulkanDebug::ErrorCheck(vkMapMemory(device, stagingMemory, 0, imageSize, 0, (void **)&mappedMemory));
-		// Size of the font texture is WIDTH * HEIGHT * 1 byte (only one channel)
-		memcpy(mappedMemory, data, imageSize);
-		vkUnmapMemory(device, stagingMemory);
+		if (data != nullptr)
+		{
+			uint8_t* mappedMemory;
+			VulkanDebug::ErrorCheck(vkMapMemory(device, stagingMemory, 0, imageSize, 0, (void **)&mappedMemory));
+			// Size of the font texture is WIDTH * HEIGHT * 1 byte (only one channel)
+			memcpy(mappedMemory, data, imageSize);
+			vkUnmapMemory(device, stagingMemory);
+		}
 
 		// Create the final image
 		CreateImage(width,
@@ -129,7 +132,7 @@ namespace Vulkan
 					  depth,
 					  format,																		// VkFormat
 					  VK_IMAGE_TILING_OPTIMAL,														// VkImageTiling
-					  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,					// VkImageUsageFlags
+					  VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,					// VkImageUsageFlags
 					  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,											// VkMemoryPropertyFlags
 					  &texture->image,																// VkImage
 					  &texture->deviceMemory);														// VkDeviceMemory
@@ -139,7 +142,7 @@ namespace Vulkan
 
 		CopyImage(stagingImage, texture->image, aspectMask, width, height, depth);
 
-		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, aspectMask);
+		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, aspectMask);
 
 		// Create the image view
 		CreateImageView(texture->image, format, &texture->imageView, depth, aspectMask);
@@ -173,7 +176,7 @@ namespace Vulkan
 		imageInfo.arrayLayers = 1;
 		imageInfo.format = format;
 		imageInfo.tiling = tiling;
-		imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+		//imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 		imageInfo.usage = usage;
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -220,6 +223,11 @@ namespace Vulkan
 		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
 			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		}
+		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
 		}
 		else {
 			throw std::invalid_argument("unsupported layout transition!");
@@ -280,6 +288,12 @@ namespace Vulkan
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
+		viewInfo.components = {
+			VK_COMPONENT_SWIZZLE_R,
+			VK_COMPONENT_SWIZZLE_G,
+			VK_COMPONENT_SWIZZLE_B,
+			VK_COMPONENT_SWIZZLE_A
+		};
 
 		VulkanDebug::ErrorCheck(vkCreateImageView(mDevice->GetVkDevice(), &viewInfo, nullptr, imageView));
 	}
