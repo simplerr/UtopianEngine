@@ -259,42 +259,7 @@ namespace ECS
 			}
 		}
 
-		// Draw debug boxes
-		//for (EntityCache entityCache : mEntities)
-		//{
-		//	mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(VulkanLib::PipelineType::PIPELINE_TEST));
-		//	//mCommandBuffer->CmdBindDescriptorSet(mRenderer->GetPipelineLayout(), mRenderer->GetDescriptorSet());
-
-		//	//VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, mRenderer->mTextureDescriptorSet->descriptorSet };
-		//	//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
-
-		//	VulkanLib::BoundingBox meshBoundingBox = entityCache.meshComponent->GetBoundingBox();
-		//	meshBoundingBox.Update(entityCache.transformComponent->GetWorldMatrix()); 
-
-		//	mat4 world = mat4();
-		//	float width = meshBoundingBox.GetWidth();
-		//	float height = meshBoundingBox.GetHeight();
-		//	float depth = meshBoundingBox.GetDepth();
-		//	world = glm::translate(world, -entityCache.transformComponent->GetPosition());
-		//	world = glm::scale(world, glm::vec3(width, height, depth));
-
-		//	PushConstantDebugBlock pushConstantBlock;
-		//	pushConstantBlock.world = world;
-		//	pushConstantBlock.color = VulkanLib::Color::White;
-
-		//	mCommandBuffer->CmdPushConstants(mRenderer->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-		//	mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-		//	mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-		//	mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-		//}
-
-		//mCommandBuffer->CmdBindPipeline(mRenderer->GetPipeline(VulkanLib::PipelineType::PIPELINE_DEBUG));
-		////mCommandBuffer->CmdBindDescriptorSet(mRenderer->GetPipelineLayout(), mRenderer->GetDescriptorSet());
-
-		////VkDescriptorSet descriptorSets[3] = { mRenderer->mCameraDescriptorSet->descriptorSet, mRenderer->mLightDescriptorSet->descriptorSet, mRenderer->mTestTexture.descriptorSet->descriptorSet };
-		////vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mRenderer->GetPipelineLayout()->GetVkHandle(), 0, 3, descriptorSets, 0, NULL);
-
-		//// Draw debug cubes for the origin and each axis
+		// Draw debug cubes for the origin and each axis
 		for (int i = 0; i < mDebugCubes.size(); i++)
 		{
 			DebugCube debugCube = mDebugCubes[i];

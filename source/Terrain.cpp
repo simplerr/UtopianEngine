@@ -353,58 +353,12 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				UpdateBlockList();
 			}
-			/*if (wParam == 'P')
-			{
-				mUpdateTimer = !mUpdateTimer;
-			}
-			if (wParam == 'G')
-			{
-				uint32_t* mapped;
-				mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
-				uint32_t count = *(uint32_t*)mapped;
-				mCounterSSBO.UnmapMemory();
-
-				Vulkan::VulkanDebug::ConsolePrint(*mapped, "numVertices: ");
-				DumpDebug();
-			}
-			if (wParam == 'H')
-			{
-				mDrawGeneratedBuffer = !mDrawGeneratedBuffer;
-				uint32_t* mapped;
-				mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
-				mNumVertices = *(uint32_t*)mapped;
-				mCounterSSBO.UnmapMemory();
-			}*/
+		
 			break;
 	}
 }
 
 void Terrain::DumpDebug()
 {
-	//// Storage buffer test
-	//std::ofstream fout("vertices.txt");
-
-	//Vulkan::VulkanDebug::ConsolePrint("TEST OUTPUT STORAGE");
-
-	//void* mappedData;
-	//mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, &mappedData);
-	//uint32_t numVertices = *(uint32_t*)mappedData;
-	//mCounterSSBO.UnmapMemory();
-
-	//fout << "numVertices: " << numVertices << std::endl;
-
-	//mVertexSSBO.MapMemory(0, numVertices * sizeof(GeometryVertex), 0, &mappedData);
-
-	//GeometryVertex* data = (GeometryVertex*)mappedData;
-	//for (uint32_t i = 0; i < numVertices; i++)
-	//{
-	//	GeometryVertex d = *data;
-	//	fout << "[x: " << d.pos.x << " y: " << d.pos.y << " z: " << d.pos.z << " w: " << d.pos.w << "] [nx: " << d.normal.x << " ny: " << d.normal.y << " nz: " << d.normal.z << " nw: " << d.normal.w << "]" << std::endl;
-
-	//	data++;
-	//}
-
-	//mVertexSSBO.UnmapMemory();
-
-	//fout.close();
+	
 }
