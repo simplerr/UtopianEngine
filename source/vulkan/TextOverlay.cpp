@@ -28,7 +28,7 @@ namespace Vulkan
 
 		// Create a renderpass that loads the current framebuffer content
 		// and renders the text as an overlay
-		mRenderPass = new RenderPass(renderer->GetDevice(), renderer->GetColorFormat(), renderer->GetDepthFormat(), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+		mRenderPass = new RenderPass(renderer->GetDevice(), renderer->GetColorFormat(), renderer->GetDepthFormat(), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, false);
 		mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		mRenderPass->Create();
 

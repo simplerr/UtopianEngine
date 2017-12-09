@@ -4,7 +4,7 @@
 
 namespace Vulkan
 {
-	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout)
+	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout, bool create)
 		: Handle(device, vkDestroyRenderPass)
 	{
 		// Color attachment
@@ -15,7 +15,7 @@ namespace Vulkan
 		attachments[COLOR_ATTACHMENT].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[COLOR_ATTACHMENT].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		attachments[COLOR_ATTACHMENT].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		attachments[COLOR_ATTACHMENT].finalLayout = colorImageLayout;
+		attachments[COLOR_ATTACHMENT].finalLayout = colorImageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 																	
 		// Depth attachment											
 		attachments[DEPTH_ATTACHMENT].format = depthFormat;
@@ -26,6 +26,11 @@ namespace Vulkan
 		attachments[DEPTH_ATTACHMENT].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;		
 		attachments[DEPTH_ATTACHMENT].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;			
 		attachments[DEPTH_ATTACHMENT].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;	
+
+		if (create)
+		{
+			Create();
+		}
 	}
 
 	void RenderPass::Create()

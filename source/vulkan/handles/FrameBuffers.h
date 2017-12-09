@@ -14,8 +14,6 @@ namespace Vulkan
 	class FrameBuffers
 	{
 	public:
-		// TODO:: Remove this when Image and Texture are fixed
-		FrameBuffers(Device* device, RenderPass* renderPass, VkImageView depthView, VkImageView colorView, uint32_t width, uint32_t height);
 		FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height);
 		FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, VulkanSwapChain* swapChain, uint32_t width, uint32_t height);
 		~FrameBuffers();

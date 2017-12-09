@@ -134,13 +134,10 @@ namespace ECS
 		offscreen.height = 512;
 
 		offscreen.commandBuffer = new Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-
 		offscreen.colorImage = new Vulkan::ImageColor(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_R8G8B8A8_UNORM);
 		offscreen.depthImage = new Vulkan::ImageDepth(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_D32_SFLOAT_S8_UINT);
-
 		offscreen.renderPass = new Vulkan::RenderPass(mRenderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		offscreen.renderPass->Create();
-		offscreen.frameBuffer = new Vulkan::FrameBuffers(mRenderer->GetDevice(), offscreen.renderPass, offscreen.depthImage->GetView(), offscreen.colorImage->GetView(), offscreen.width, offscreen.height);
+		offscreen.frameBuffer = new Vulkan::FrameBuffers(mRenderer->GetDevice(), offscreen.renderPass, offscreen.depthImage, offscreen.colorImage, offscreen.width, offscreen.height);
 
 		VkSamplerCreateInfo samplerInfo = {};
 		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;

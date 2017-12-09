@@ -7,27 +7,6 @@
 
 namespace Vulkan
 {
-	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, VkImageView depthView, VkImageView colorView, uint32_t width, uint32_t height)
-		: mDevice(device)
-	{
-		VkImageView attachments[2];
-		attachments[0] = colorView;
-		attachments[1] = depthView;
-
-		VkFramebufferCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.renderPass = renderPass->GetVkHandle();
-		createInfo.attachmentCount = 2;
-		createInfo.pAttachments = attachments;
-		createInfo.width = width;
-		createInfo.height = height;
-		createInfo.layers = 1;
-
-		// Create a single frame buffer
-		mFrameBuffers.resize(1);
-		VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
-	}
-
 	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height)
 		: mDevice(device)
 	{
