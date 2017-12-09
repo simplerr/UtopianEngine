@@ -54,9 +54,8 @@ namespace Vulkan
 		mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		mCounterSSBO.UpdateMemory(device->GetVkDevice());
 
-		DescriptorSetLayout setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
-		mDescriptorSet0 = new Vulkan::DescriptorSet(device, &setLayout0, mDescriptorPool);
-		mDescriptorSet0->AllocateDescriptorSets();
+		DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
+		mDescriptorSet0 = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
 		mDescriptorSet0->BindCombinedImage(BINDING_0, &edgeTableTex->GetTextureDescriptorInfo());
 		mDescriptorSet0->BindCombinedImage(BINDING_1, &triangleTableTex->GetTextureDescriptorInfo());
 		mDescriptorSet0->BindCombinedImage(BINDING_2, &texture3d->GetTextureDescriptorInfo());
@@ -64,9 +63,8 @@ namespace Vulkan
 		mDescriptorSet0->BindStorageBuffer(BINDING_4, &mCounterSSBO.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
-		DescriptorSetLayout setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
-		mDescriptorSet1 = new Vulkan::DescriptorSet(device, &setLayout1, mDescriptorPool);
-		mDescriptorSet1->AllocateDescriptorSets();
+		DescriptorSetLayout* setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
+		mDescriptorSet1 = new Vulkan::DescriptorSet(device, setLayout1, mDescriptorPool);
 	}
 
 	void MarchingCubesEffect::CreatePipeline(Renderer* renderer)

@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include <map>
 #include "vulkan/VulkanHelpers.h"
 #include "vulkan/handles/Handle.h"
 
@@ -10,6 +11,8 @@ namespace Vulkan
 	class DescriptorSetLayout;
 	class DescriptorPool;
 	class Device;
+	class Sampler;
+	class Image;
 
 	/*
 	Wraps VkDescriptorSetLayout and VkDescriptorSet to make them easier to work with
@@ -18,25 +21,26 @@ namespace Vulkan
 	{
 	public:
 		DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
-		DescriptorSet(Device* device, VkDescriptorSetLayout setLayout, DescriptorPool* descriptorPool);
-		void Cleanup(VkDevice device);
+		~DescriptorSet();
 
-		void AllocateDescriptorSets();
 		void UpdateDescriptorSets();
 
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
+		void BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler);
 
+		// NOTE: TODO: Legacy
 		void UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);	// Will be used for changing the texture
 
 		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+
 	private:
 		Device* mDevice;
 		DescriptorSetLayout* mSetLayout;
-		VkDescriptorSetLayout mVkSetLayout; // NOTE: HACK
 		DescriptorPool* mDescriptorPool;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
+		std::map<int, VkDescriptorImageInfo> mImageInfoMap;
 	};
 
 	/*

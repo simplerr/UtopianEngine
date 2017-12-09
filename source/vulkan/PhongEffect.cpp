@@ -54,16 +54,14 @@ namespace Vulkan
 		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		
 		// per_frame_vs
-		VkDescriptorSetLayout setLayout0 = mPipelineInterface.GetVkDescriptorSetLayout(SET_0);
+		Vulkan::DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
 		mCameraDescriptorSet = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
-		mCameraDescriptorSet->AllocateDescriptorSets();
 		mCameraDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
 		mCameraDescriptorSet->UpdateDescriptorSets();
 
 		// per_frame_ps
-		VkDescriptorSetLayout setLayout1 = mPipelineInterface.GetVkDescriptorSetLayout(SET_1);
+		Vulkan::DescriptorSetLayout* setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
 		mLightDescriptorSet = new Vulkan::DescriptorSet(device, setLayout1, mDescriptorPool);
-		mLightDescriptorSet->AllocateDescriptorSets();
 		mLightDescriptorSet->BindUniformBuffer(0, &per_frame_ps.GetDescriptor());
 		mLightDescriptorSet->UpdateDescriptorSets();
 	}

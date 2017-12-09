@@ -30,3 +30,6 @@
 * colorImageViews in FrameBuffers.h might depend a bit too much on the SwapChain class
 	Perhaps pass an Image* instead similar to depthStencil
 * TextureLoader and Texture should reuse the code in Image
+
+9/12
+* BindCombinedImage should also supporting updating the bound descriptor like BindStorageBuffer does.

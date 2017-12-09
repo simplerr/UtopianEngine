@@ -196,8 +196,8 @@ void Terrain::UpdateBlockList()
 					glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, y*mVoxelsInBlock*mVoxelSize, z*mVoxelsInBlock*mVoxelSize);
 					glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
 					color = glm::vec3(0.0f, 0.7f, 0.0f);
-					Vulkan::DescriptorSetLayout setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
-					Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, &setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
+					Vulkan::DescriptorSetLayout* setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
+					Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
 
 					mBlockList[blockKey] = block;
 

@@ -21,6 +21,7 @@
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/FrameBuffers.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/Sampler.h"
 #include "vulkan/Mesh.h"
 #include "Camera.h"
 #include "vulkan/StaticModel.h"
@@ -105,7 +106,6 @@ namespace ECS
 		mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
-		mDescriptorSet->AllocateDescriptorSets();
 		mDescriptorSet->BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
 		mDescriptorSet->UpdateDescriptorSets();
 
@@ -138,32 +138,10 @@ namespace ECS
 		offscreen.depthImage = new Vulkan::ImageDepth(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 		offscreen.renderPass = new Vulkan::RenderPass(mRenderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		offscreen.frameBuffer = new Vulkan::FrameBuffers(mRenderer->GetDevice(), offscreen.renderPass, offscreen.depthImage, offscreen.colorImage, offscreen.width, offscreen.height);
-
-		VkSamplerCreateInfo samplerInfo = {};
-		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = VK_FILTER_LINEAR;
-		samplerInfo.minFilter = VK_FILTER_LINEAR;
-		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.anisotropyEnable = VK_TRUE;
-		samplerInfo.maxAnisotropy = 16;
-		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-		samplerInfo.unnormalizedCoordinates = VK_FALSE;
-		samplerInfo.compareEnable = VK_FALSE;
-		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
-		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-
-		Vulkan::VulkanDebug::ErrorCheck(vkCreateSampler(mRenderer->GetDevice()->GetVkDevice(), &samplerInfo, nullptr, &offscreen.sampler));
-
-		VkDescriptorImageInfo texDescriptor = {};
-		texDescriptor.sampler = offscreen.sampler;
-		texDescriptor.imageView = offscreen.colorImage->GetView();
-		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		offscreen.sampler = new Vulkan::Sampler(mRenderer->GetDevice());
 
 		offscreen.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		offscreen.textureDescriptorSet->AllocateDescriptorSets();
-		offscreen.textureDescriptorSet->BindCombinedImage(0, &texDescriptor);	// NOTE: It's hard to know that the texture must be bound to binding=0
+		offscreen.textureDescriptorSet->BindCombinedImage(0, offscreen.colorImage, offscreen.sampler);	// NOTE: It's hard to know that the texture must be bound to binding=0
 		offscreen.textureDescriptorSet->UpdateDescriptorSets();
 	}
 

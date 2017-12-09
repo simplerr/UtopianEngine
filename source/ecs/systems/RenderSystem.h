@@ -26,6 +26,7 @@ namespace Vulkan
 	class Texture;
 	class FrameBuffers;
 	class RenderPass;
+	class Sampler;
 
 	class GeometryUniformBuffer : public ShaderBuffer
 	{
@@ -134,7 +135,7 @@ namespace ECS
 			Vulkan::Pipeline* pipeline;
 			Vulkan::CommandBuffer* commandBuffer;
 			Vulkan::DescriptorSet* textureDescriptorSet;
-			VkSampler sampler;
+			Vulkan::Sampler* sampler;
 			uint32_t width, height;
 		} offscreen;
 	};

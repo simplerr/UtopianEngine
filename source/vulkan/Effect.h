@@ -34,7 +34,7 @@ namespace Vulkan
 
 		void SetPipeline(uint32_t pipelineType);
 		VkPipelineLayout GetPipelineLayout();
-		DescriptorSetLayout GetDescriptorSetLayout(uint32_t descriptorSet);
+		DescriptorSetLayout* GetDescriptorSetLayout(uint32_t descriptorSet);
 		Pipeline2* GetPipeline();
 		DescriptorPool* GetDescriptorPool();
 		VertexDescription* GetVertexDescription();

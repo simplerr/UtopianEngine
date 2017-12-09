@@ -19,7 +19,6 @@ namespace Vulkan
 	void Texture::CreateDescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
 		mDescriptorSet = new DescriptorSet(device, setLayout, descriptorPool);
-		mDescriptorSet->AllocateDescriptorSets();
 		mDescriptorSet->BindCombinedImage(0, &GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
 		mDescriptorSet->UpdateDescriptorSets();
 	}

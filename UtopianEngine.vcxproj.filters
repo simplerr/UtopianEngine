@@ -261,6 +261,9 @@
     <ClCompile Include="source\vulkan\OffscreenEffect.cpp">
       <Filter>Source Files\vulkan\effects\offscreen</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Sampler.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -454,6 +457,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\OffscreenEffect.h">
       <Filter>Source Files\vulkan\effects\offscreen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\Sampler.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

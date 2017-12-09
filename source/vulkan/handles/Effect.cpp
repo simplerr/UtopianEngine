@@ -28,7 +28,7 @@ namespace Vulkan
 		return mPipelineInterface.GetPipelineLayout();
 	}
 
-	DescriptorSetLayout Effect::GetDescriptorSetLayout(uint32_t descriptorSet)
+	DescriptorSetLayout* Effect::GetDescriptorSetLayout(uint32_t descriptorSet)
 	{
 		return mPipelineInterface.GetDescriptorSetLayout(descriptorSet);
 	}
