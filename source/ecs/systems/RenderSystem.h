@@ -129,8 +129,6 @@ namespace ECS
 		struct {
 			Vulkan::FrameBuffers* frameBuffer;
 			Vulkan::RenderPass* renderPass;
-			Vulkan::Texture* colorTexture;
-			Vulkan::Texture* depthTexture;
 			Vulkan::Image* colorImage;
 			Vulkan::Image* depthImage;
 			Vulkan::Pipeline* pipeline;

@@ -132,13 +132,11 @@ namespace ECS
 	{
 		offscreen.width = 512;
 		offscreen.height = 512;
-		offscreen.colorTexture = mRenderer->mTextureLoader->CreateTexture(nullptr, VK_FORMAT_R8G8B8A8_UNORM, offscreen.width, offscreen.height, 1, sizeof(uint32_t), VK_IMAGE_ASPECT_COLOR_BIT);
-		offscreen.depthTexture = mRenderer->mTextureLoader->CreateTexture(nullptr, VK_FORMAT_R8G8B8A8_UNORM, offscreen.width, offscreen.height, 1, sizeof(uint32_t), (VkImageAspectFlagBits)(VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT));
 
 		offscreen.commandBuffer = new Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
 
-		offscreen.colorImage = new Vulkan::Image(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_COLOR_BIT);
-		offscreen.depthImage = new Vulkan::Image(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+		offscreen.colorImage = new Vulkan::ImageColor(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_R8G8B8A8_UNORM);
+		offscreen.depthImage = new Vulkan::ImageDepth(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		offscreen.renderPass = new Vulkan::RenderPass(mRenderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		offscreen.renderPass->Create();
@@ -229,7 +227,6 @@ namespace ECS
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 				textureDescriptorSet = offscreen.textureDescriptorSet->descriptorSet;
-				//textureDescriptorSet = offscreen.colorTexture->GetDescriptorSet()->descriptorSet;
 
 				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);

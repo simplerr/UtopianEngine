@@ -64,4 +64,24 @@ namespace Vulkan
 	{
 		return mImageView;
 	}
+
+	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format)
+		: Image(device, width, height, format,
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				VK_IMAGE_ASPECT_COLOR_BIT)
+	{
+
+	}
+
+	ImageDepth::ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format)
+		: Image(device, width, height, format, 
+				VK_IMAGE_TILING_OPTIMAL,
+				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+				VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT)
+	{
+
+	}
 }

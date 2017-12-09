@@ -22,4 +22,16 @@ namespace Vulkan
 		VkDeviceMemory mDeviceMemory;
 		VkFormat mFormat;
 	};
+
+	class ImageColor : public Image
+	{
+	public:
+		ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format);
+	};
+
+	class ImageDepth : public Image
+	{
+	public:
+		ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format);
+	};
 }
