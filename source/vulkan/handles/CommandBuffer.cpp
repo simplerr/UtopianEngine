@@ -115,6 +115,16 @@ namespace Vulkan
 		vkFreeCommandBuffers(GetDevice(), commandPool->GetVkHandle(), 1, &mHandle);
 	}
 
+	void CommandBuffer::CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBeginInfo, VkSubpassContents subpassContents)
+	{
+		vkCmdBeginRenderPass(mHandle, &renderPassBeginInfo, subpassContents);
+	}
+
+	void CommandBuffer::CmdEndRenderPass()
+	{
+		vkCmdEndRenderPass(mHandle);
+	}
+
 	void CommandBuffer::CmdSetViewPort(float width, float height)
 	{
 		// Update dynamic viewport state

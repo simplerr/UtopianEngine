@@ -30,6 +30,8 @@ namespace Vulkan
 		void Flush(VkQueue queue, CommandPool* commandPool, bool free = false);
 		void Cleanup(CommandPool* commandPool);
 
+		void CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBeginInfo, VkSubpassContents subpassContents);
+		void CmdEndRenderPass();
 		void CmdSetViewPort(float width, float height);
 		void CmdSetScissor(uint32_t width, uint32_t height);
 		void CmdBindPipeline(Pipeline* pipeline);

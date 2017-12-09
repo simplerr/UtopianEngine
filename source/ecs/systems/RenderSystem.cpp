@@ -273,14 +273,14 @@ namespace ECS
 
 		// Begin command buffer recording & the render pass
 		offscreen.commandBuffer->Begin();
-		vkCmdBeginRenderPass(offscreen.commandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);	// VK_SUBPASS_CONTENTS_INLINE
+		offscreen.commandBuffer->CmdBeginRenderPass(renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		offscreen.commandBuffer->CmdSetViewPort(offscreen.width, offscreen.height);
 		offscreen.commandBuffer->CmdSetScissor(offscreen.width, offscreen.height);
 
 		mTerrain->Render(offscreen.commandBuffer);
 
-		vkCmdEndRenderPass(offscreen.commandBuffer->GetVkHandle());
+		offscreen.commandBuffer->CmdEndRenderPass();
 
 		offscreen.commandBuffer->Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 	}

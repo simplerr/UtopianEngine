@@ -151,7 +151,7 @@ namespace Vulkan
 
 		// Begin command buffer recording & the render pass
 		mPrimaryCommandBuffer->Begin();
-		vkCmdBeginRenderPass(mPrimaryCommandBuffer->GetVkHandle(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
+		mPrimaryCommandBuffer->CmdBeginRenderPass(renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
 		std::vector<VkCommandBuffer> commandBuffers;
 		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
@@ -169,7 +169,7 @@ namespace Vulkan
 		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), commandBuffers.size(), commandBuffers.data());
 
 		// End command buffer recording & the render pass
-		vkCmdEndRenderPass(mPrimaryCommandBuffer->GetVkHandle());
+		mPrimaryCommandBuffer->CmdEndRenderPass();
 		mPrimaryCommandBuffer->End();
 	}
 
