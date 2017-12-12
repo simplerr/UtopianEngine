@@ -23,6 +23,7 @@
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/Mesh.h"
+#include "vulkan/ScreenGui.h"
 #include "Camera.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/VertexDescription.h"
@@ -114,6 +115,9 @@ namespace ECS
 		mGeometryPipeline->Create();
 
 		PrepareOffscreen();
+
+		mScreenGui = new Vulkan::ScreenGui(mRenderer);
+		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, offscreen.colorImage, offscreen.sampler);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -224,10 +228,10 @@ namespace ECS
 				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 
 				// Try the geometry shader pipeline
-				//mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
-				//vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
-				//mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-				//mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				/*mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
+				mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);*/
 			}
 		}
 
@@ -252,6 +256,8 @@ namespace ECS
 			mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 			mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
+
+		mScreenGui->Render(mRenderer, mCommandBuffer);
 
 		mCommandBuffer->End();
 	}

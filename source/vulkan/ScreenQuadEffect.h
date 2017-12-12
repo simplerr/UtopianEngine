@@ -19,33 +19,26 @@ namespace Vulkan
 	class Shader;
 	class Texture;
 
-	struct BasicVertex
-	{
-		glm::vec4 position;
-		glm::vec4 normal;
-	};
-
-	/** \brief Most basic effect
+	/** \brief 
 	*
-	* Simply transforms each vertex and sets a pixel color
+	* This effect expects the vertices to be in NDC space and simply applies a texture to them.
+	* Should be used for rendering texture quads to the screen.
 	**/
-	class OffscreenEffect : public Effect
+	class ScreenQuadEffect : public Effect
 	{
 	public:
-		class UniformBufferVS : public Vulkan::ShaderBuffer
+		struct Vertex
 		{
-		public:
-			virtual void UpdateMemory(VkDevice device);
-			virtual int GetSize();
-
-			struct {
-				glm::mat4 projection;
-				glm::mat4 view;
-				glm::vec3 eyePos;
-			} data;
+			glm::vec3 position;
+			glm::vec2 uv;
 		};
 
-		OffscreenEffect();
+		struct PushConstantBlock
+		{
+			glm::mat4 world;
+		};
+
+		ScreenQuadEffect();
 
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
@@ -55,7 +48,6 @@ namespace Vulkan
 		virtual void CreatePipeline(Renderer* renderer);
 		virtual void UpdateMemory(Device* device);
 
-		UniformBufferVS per_frame_vs;	// Same name in terrain.vert
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 	private:
 	};

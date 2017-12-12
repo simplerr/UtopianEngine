@@ -6,7 +6,7 @@ namespace Vulkan
 {
 	Effect::Effect()
 	{
-
+		mActivePipeline = 0;
 	}
 
 	void Effect::Init(Renderer* renderer)

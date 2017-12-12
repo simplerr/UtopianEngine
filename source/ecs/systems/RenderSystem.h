@@ -27,6 +27,7 @@ namespace Vulkan
 	class FrameBuffers;
 	class RenderPass;
 	class Sampler;
+	class ScreenGui;
 
 	class GeometryUniformBuffer : public ShaderBuffer
 	{
@@ -138,5 +139,7 @@ namespace ECS
 			Vulkan::Sampler* sampler;
 			uint32_t width, height;
 		} offscreen;
+
+		Vulkan::ScreenGui* mScreenGui;
 	};
 }
