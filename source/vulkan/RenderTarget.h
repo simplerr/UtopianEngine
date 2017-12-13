@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <glm/glm.hpp>
 
 namespace Vulkan
 {
@@ -15,7 +16,6 @@ namespace Vulkan
 	class CommandPool;
 	class DescriptorSet;
 
-	// TODO: Set clear color
 	class RenderTarget
 	{
 	public:
@@ -24,6 +24,8 @@ namespace Vulkan
 
 		void Begin();
 		void End(Vulkan::Queue* queue);
+
+		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
 		Vulkan::Image* GetImage();
 		Vulkan::Sampler* GetSampler();
@@ -42,5 +44,6 @@ namespace Vulkan
 		Vulkan::DescriptorSet* mTextureDescriptorSet;
 		Vulkan::Sampler* mSampler;
 		uint32_t mWidth, mHeight;
+		glm::vec4 mClearColor;
 	};
 }

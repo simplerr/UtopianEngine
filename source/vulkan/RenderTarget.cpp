@@ -21,6 +21,8 @@ namespace Vulkan
 		mRenderPass = new Vulkan::RenderPass(device, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mFrameBuffer = new Vulkan::FrameBuffers(device, mRenderPass, mDepthImage, mColorImage, GetWidth(), GetHeight());
 		mSampler = new Vulkan::Sampler(device);
+
+		SetClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	}
 
 	RenderTarget::~RenderTarget()
@@ -31,7 +33,7 @@ namespace Vulkan
 	void RenderTarget::Begin()
 	{
 		VkClearValue clearValues[2];
-		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
+		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
 		clearValues[1].depthStencil = { 1.0f, 0 };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
@@ -80,5 +82,10 @@ namespace Vulkan
 	Vulkan::CommandBuffer* RenderTarget::GetCommandBuffer()
 	{
 		return mCommandBuffer;
+	}
+
+	void RenderTarget::SetClearColor(float r, float g, float b, float a)
+	{
+		mClearColor = glm::vec4(r, g, b, a);
 	}
 }
