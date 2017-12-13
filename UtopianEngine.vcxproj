@@ -102,6 +102,7 @@
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
+    <ClCompile Include="source\vulkan\RenderTarget.cpp" />
     <ClCompile Include="source\vulkan\ScreenGui.cpp" />
     <ClCompile Include="source\vulkan\ScreenQuadEffect.cpp" />
     <ClCompile Include="source\vulkan\PhongEffect.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="source\Collision.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
+    <ClInclude Include="source\vulkan\RenderTarget.h" />
     <ClInclude Include="source\vulkan\ScreenGui.h" />
     <ClInclude Include="source\vulkan\ScreenQuadEffect.h" />
     <ClInclude Include="source\vulkan\PhongEffect.h" />

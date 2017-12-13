@@ -28,6 +28,7 @@ namespace Vulkan
 	class RenderPass;
 	class Sampler;
 	class ScreenGui;
+	class RenderTarget;
 
 	class GeometryUniformBuffer : public ShaderBuffer
 	{
@@ -129,15 +130,8 @@ namespace ECS
 
 		// Offscreen rendering
 		struct {
-			Vulkan::FrameBuffers* frameBuffer;
-			Vulkan::RenderPass* renderPass;
-			Vulkan::Image* colorImage;
-			Vulkan::Image* depthImage;
-			Vulkan::Pipeline* pipeline;
-			Vulkan::CommandBuffer* commandBuffer;
+			Vulkan::RenderTarget* renderTarget;
 			Vulkan::DescriptorSet* textureDescriptorSet;
-			Vulkan::Sampler* sampler;
-			uint32_t width, height;
 		} offscreen;
 
 		Vulkan::ScreenGui* mScreenGui;

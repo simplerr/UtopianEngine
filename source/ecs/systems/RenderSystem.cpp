@@ -24,6 +24,7 @@
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/Mesh.h"
 #include "vulkan/ScreenGui.h"
+#include "vulkan/RenderTarget.h"
 #include "Camera.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/VertexDescription.h"
@@ -117,7 +118,8 @@ namespace ECS
 		PrepareOffscreen();
 
 		mScreenGui = new Vulkan::ScreenGui(mRenderer);
-		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, offscreen.colorImage, offscreen.sampler);
+		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, offscreen.renderTarget->GetImage(), offscreen.renderTarget->GetSampler());
+		mScreenGui->AddQuad(350, 350, 300, 300, offscreen.renderTarget->GetImage(), offscreen.renderTarget->GetSampler());
 	}
 
 	RenderSystem::~RenderSystem()
@@ -134,18 +136,10 @@ namespace ECS
 
 	void RenderSystem::PrepareOffscreen()
 	{
-		offscreen.width = 512;
-		offscreen.height = 512;
-
-		offscreen.commandBuffer = new Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-		offscreen.colorImage = new Vulkan::ImageColor(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_R8G8B8A8_UNORM);
-		offscreen.depthImage = new Vulkan::ImageDepth(mRenderer->GetDevice(), offscreen.width, offscreen.height, VK_FORMAT_D32_SFLOAT_S8_UINT);
-		offscreen.renderPass = new Vulkan::RenderPass(mRenderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		offscreen.frameBuffer = new Vulkan::FrameBuffers(mRenderer->GetDevice(), offscreen.renderPass, offscreen.depthImage, offscreen.colorImage, offscreen.width, offscreen.height);
-		offscreen.sampler = new Vulkan::Sampler(mRenderer->GetDevice());
+		offscreen.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
 
 		offscreen.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		offscreen.textureDescriptorSet->BindCombinedImage(0, offscreen.colorImage, offscreen.sampler);	// NOTE: It's hard to know that the texture must be bound to binding=0
+		offscreen.textureDescriptorSet->BindCombinedImage(0, offscreen.renderTarget->GetImage(), offscreen.renderTarget->GetSampler());
 		offscreen.textureDescriptorSet->UpdateDescriptorSets();
 	}
 
@@ -264,31 +258,11 @@ namespace ECS
 
 	void RenderSystem::RenderOffscreen()
 	{
-		VkClearValue clearValues[2];
-		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
-		clearValues[1].depthStencil = { 1.0f, 0 };
+		offscreen.renderTarget->Begin();
 
-		VkRenderPassBeginInfo renderPassBeginInfo = {};
-		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBeginInfo.renderPass = offscreen.renderPass->GetVkHandle();
-		renderPassBeginInfo.renderArea.extent.width = offscreen.width;
-		renderPassBeginInfo.renderArea.extent.height = offscreen.height;
-		renderPassBeginInfo.clearValueCount = 2;
-		renderPassBeginInfo.pClearValues = clearValues;
-		renderPassBeginInfo.framebuffer = offscreen.frameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
+		mTerrain->Render(offscreen.renderTarget->GetCommandBuffer());
 
-		// Begin command buffer recording & the render pass
-		offscreen.commandBuffer->Begin();
-		offscreen.commandBuffer->CmdBeginRenderPass(renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-		offscreen.commandBuffer->CmdSetViewPort(offscreen.width, offscreen.height);
-		offscreen.commandBuffer->CmdSetScissor(offscreen.width, offscreen.height);
-
-		mTerrain->Render(offscreen.commandBuffer);
-
-		offscreen.commandBuffer->CmdEndRenderPass();
-
-		offscreen.commandBuffer->Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
+		offscreen.renderTarget->End(mRenderer->GetQueue());
 	}
 
 

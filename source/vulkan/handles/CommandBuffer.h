@@ -27,7 +27,7 @@ namespace Vulkan
 		void Begin();
 		void Begin(RenderPass* renderPass, VkFramebuffer frameBuffer);
 		void End();
-		void Flush(VkQueue queue, CommandPool* commandPool, bool free = false);
+		void Flush(VkQueue queue, CommandPool* commandPool = nullptr, bool free = false);
 		void Cleanup(CommandPool* commandPool);
 
 		void CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBeginInfo, VkSubpassContents subpassContents);

@@ -267,6 +267,9 @@
     <ClCompile Include="source\vulkan\ScreenGui.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\RenderTarget.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -465,6 +468,9 @@
       <Filter>Source Files\vulkan\effects\screenquad</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\ScreenGui.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\RenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
