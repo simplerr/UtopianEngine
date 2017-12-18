@@ -239,4 +239,9 @@ namespace Vulkan
 	{
 		return mYaw;
 	}
+
+	void Camera::SetPosition(glm::vec3 position)
+	{
+		mPosition = position;
+	}
 }	// VulkanLib namespace

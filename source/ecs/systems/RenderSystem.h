@@ -128,11 +128,17 @@ namespace ECS
 			mat4 worldInvTranspose;
 		};
 
-		// Offscreen rendering
+		// Reflection rendering
 		struct {
 			Vulkan::RenderTarget* renderTarget;
 			Vulkan::DescriptorSet* textureDescriptorSet;
-		} offscreen;
+		} reflection;
+
+		// Refraction rendering
+		struct {
+			Vulkan::RenderTarget* renderTarget;
+			Vulkan::DescriptorSet* textureDescriptorSet;
+		} refraction;
 
 		Vulkan::ScreenGui* mScreenGui;
 	};

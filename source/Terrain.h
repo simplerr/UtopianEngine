@@ -84,6 +84,7 @@ public:
 
 	void Update();
 	void Render(Vulkan::CommandBuffer* commandBuffer);
+	void UpdateUniformBuffer();
 
 	/**  
 	* \brief Adds the blocks within the viewing distance range
@@ -96,6 +97,8 @@ public:
 	void GenerateBlocks(float time);
 
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	void SetClippingPlane(glm::vec4 clippingPlane);
 
 private:
 	Vulkan::Renderer* mRenderer;
@@ -116,6 +119,8 @@ private:
 		glm::mat4 world;
 		glm::mat4 worldInvTranspose;
 	};
+
+	glm::vec4 mClippingPlane;
 
 	bool mUpdateTimer = true;
 	bool mDrawGeneratedBuffer = false;

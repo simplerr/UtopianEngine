@@ -526,10 +526,10 @@
     <None Include="data\shaders\phong\phong.vert">
       <Filter>Source Files\vulkan\effects\phong\shaders</Filter>
     </None>
-    <None Include="data\shaders\offscreen\screenquad.frag">
+    <None Include="data\shaders\screenquad\screenquad.frag">
       <Filter>Source Files\vulkan\effects\screenquad\shaders</Filter>
     </None>
-    <None Include="data\shaders\offscreen\screenquad.vert">
+    <None Include="data\shaders\screenquad\screenquad.vert">
       <Filter>Source Files\vulkan\effects\screenquad\shaders</Filter>
     </None>
   </ItemGroup>

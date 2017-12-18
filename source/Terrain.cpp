@@ -159,6 +159,8 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mMarchingCubesEffect.ubo.data.color = vec4(0, 1, 0, 1);
 	mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
 	mMarchingCubesEffect.UpdateMemory(renderer->GetDevice());
+
+	mClippingPlane = glm::vec4(0, 1, 0, 1500);
 }
 
 Terrain::~Terrain()
@@ -314,10 +316,15 @@ void Terrain::Update()
 
 	UpdateBlockList();
 	GenerateBlocks(time);
+	UpdateUniformBuffer();
+}
 
+void Terrain::UpdateUniformBuffer()
+{
 	mTerrainEffect.per_frame_vs.data.projection = mCamera->GetProjection();
 	mTerrainEffect.per_frame_vs.data.view = mCamera->GetView();
 	mTerrainEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
+	mTerrainEffect.per_frame_vs.data.clippingPlane = mClippingPlane;
 	mTerrainEffect.per_frame_ps.data.eyePos = mCamera->GetPosition(); // Test
 	mTerrainEffect.per_frame_ps.data.fogStart = 115000.0f; // Test
 	mTerrainEffect.per_frame_ps.data.fogDistance = 5400.0f;
@@ -361,4 +368,9 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void Terrain::DumpDebug()
 {
 	
+}
+
+void Terrain::SetClippingPlane(glm::vec4 clippingPlane)
+{
+	mClippingPlane = clippingPlane;
 }

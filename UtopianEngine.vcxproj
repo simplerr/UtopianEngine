@@ -217,10 +217,10 @@
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />
     <None Include="data\shaders\marching_cubes\marching_cubes.comp" />
-    <None Include="data\shaders\offscreen\screenquad.frag" />
-    <None Include="data\shaders\offscreen\screenquad.vert" />
     <None Include="data\shaders\phong\phong.frag" />
     <None Include="data\shaders\phong\phong.vert" />
+    <None Include="data\shaders\screenquad\screenquad.frag" />
+    <None Include="data\shaders\screenquad\screenquad.vert" />
     <None Include="data\shaders\terrain\terrain.frag" />
     <None Include="data\shaders\terrain\terrain.vert" />
     <None Include="data\shaders\test\test.frag" />

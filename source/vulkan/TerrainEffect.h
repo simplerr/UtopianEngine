@@ -51,6 +51,7 @@ namespace Vulkan
 			struct {
 				glm::mat4 projection;
 				glm::mat4 view;
+				glm::vec4 clippingPlane;
 				glm::vec3 eyePos;
 			} data;
 		};

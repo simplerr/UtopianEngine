@@ -118,8 +118,8 @@ namespace ECS
 		PrepareOffscreen();
 
 		mScreenGui = new Vulkan::ScreenGui(mRenderer);
-		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, offscreen.renderTarget->GetImage(), offscreen.renderTarget->GetSampler());
-		mScreenGui->AddQuad(350, 350, 300, 300, offscreen.renderTarget->GetImage(), offscreen.renderTarget->GetSampler());
+		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
+		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
 	}
 
 	RenderSystem::~RenderSystem()
@@ -136,11 +136,17 @@ namespace ECS
 
 	void RenderSystem::PrepareOffscreen()
 	{
-		offscreen.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
+		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
 
-		offscreen.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		offscreen.textureDescriptorSet->BindCombinedImage(0, offscreen.renderTarget->GetImage(), offscreen.renderTarget->GetSampler());
-		offscreen.textureDescriptorSet->UpdateDescriptorSets();
+		reflection.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		reflection.textureDescriptorSet->BindCombinedImage(0, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
+		reflection.textureDescriptorSet->UpdateDescriptorSets();
+
+		refraction.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
+
+		refraction.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		refraction.textureDescriptorSet->BindCombinedImage(0, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
+		refraction.textureDescriptorSet->UpdateDescriptorSets();
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
@@ -199,7 +205,7 @@ namespace ECS
 				mCommandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				textureDescriptorSet = offscreen.textureDescriptorSet->descriptorSet;
+				textureDescriptorSet = reflection.textureDescriptorSet->descriptorSet;
 
 				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
@@ -258,11 +264,32 @@ namespace ECS
 
 	void RenderSystem::RenderOffscreen()
 	{
-		offscreen.renderTarget->Begin();
+		glm::vec3 cameraPos = mCamera->GetPosition();
 
-		mTerrain->Render(offscreen.renderTarget->GetCommandBuffer());
+		// Reflection renderpass
+		//mCamera->SetPosition(mCamera->GetPosition() + glm::vec3(0, 10000, 0));
+		mTerrain->SetClippingPlane(glm::vec4(0, -1, 0, 1500));
+		mTerrain->UpdateUniformBuffer();
 
-		offscreen.renderTarget->End(mRenderer->GetQueue());
+		reflection.renderTarget->Begin();	
+
+		mTerrain->Render(reflection.renderTarget->GetCommandBuffer());
+
+		reflection.renderTarget->End(mRenderer->GetQueue());
+
+		// Refraction renderpass
+		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, -1500));
+		mTerrain->UpdateUniformBuffer();
+
+		refraction.renderTarget->Begin();	
+
+		mTerrain->Render(refraction.renderTarget->GetCommandBuffer());
+
+		refraction.renderTarget->End(mRenderer->GetQueue());
+
+		mCamera->SetPosition(cameraPos);
+		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
+		mTerrain->UpdateUniformBuffer();
 	}
 
 

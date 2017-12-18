@@ -43,6 +43,7 @@ namespace Vulkan
 		float GetYaw();
 		void AddOrientation(float yaw, float pitch);
 		void SetOrientation(float yaw, float pitch);
+		void SetPosition(glm::vec3 position);
 		void LookAt(vec3 target);
 		void CapAngles();
 
