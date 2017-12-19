@@ -34,7 +34,7 @@ namespace Vulkan
 
 		void AddVertex(Vertex vertex);
 		void AddVertex(float x, float y, float z);
-		void AddIndex(uint32_t v1, uint32_t v2, uint32_t v3);
+		void AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3);
 		void BuildBuffers(Device* device);
 		void BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>);
 

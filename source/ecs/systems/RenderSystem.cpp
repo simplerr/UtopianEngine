@@ -45,9 +45,9 @@ namespace ECS
 		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
-		mCubeModel = mModelLoader->LoadQuad(renderer->GetDevice());
+		mCubeModel = mModelLoader->LoadGrid(renderer->GetDevice(), 1000.0f, 20);
 
-		AddDebugCube(vec3(77000.0f, 8500.0f, 67000.0f), Vulkan::Color::Red, 12000.0f);
+		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
 		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
 		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
 		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
@@ -136,7 +136,7 @@ namespace ECS
 
 	void RenderSystem::PrepareOffscreen()
 	{
-		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
+		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 1024, 1024);
 
 		reflection.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		reflection.textureDescriptorSet->BindCombinedImage(0, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
@@ -199,6 +199,7 @@ namespace ECS
 		{
 			Vulkan::StaticModel* model = entityCache.meshComponent->GetModel();
 			mPhongEffect.SetPipeline(entityCache.meshComponent->GetPipeline());
+			//mPhongEffect.SetPipeline(Vulkan::PipelineType::PIPELINE_WIREFRAME);
 			
 			for (Vulkan::Mesh* mesh : model->mMeshes)
 			{
@@ -243,6 +244,9 @@ namespace ECS
 			glm::mat4 world = mat4();
 			world = glm::translate(world, debugCube.pos);
 			world = glm::scale(world, glm::vec3(debugCube.size));
+			/*world = glm::rotate(world, glm::radians(-90.0f), vec3(1.0f, 0.0f, 0.0f));
+			world = glm::rotate(world, glm::radians(0.0f), vec3(0.0f, 1.0f, 0.0f));
+			world = glm::rotate(world, glm::radians(0.0f), vec3(0.0f, 0.0f, 1.0f));*/
 
 			PushConstantDebugBlock pushConstantBlock;
 			pushConstantBlock.world = world;
@@ -267,8 +271,9 @@ namespace ECS
 		glm::vec3 cameraPos = mCamera->GetPosition();
 
 		// Reflection renderpass
-		//mCamera->SetPosition(mCamera->GetPosition() + glm::vec3(0, 10000, 0));
-		mTerrain->SetClippingPlane(glm::vec4(0, -1, 0, 1500));
+		mCamera->SetPosition(mCamera->GetPosition() - glm::vec3(0, mCamera->GetPosition().y *  2, 0)); // NOTE: Water is hardcoded to be at y = 0
+		mCamera->SetOrientation(mCamera->GetYaw(), -mCamera->GetPitch());
+		mTerrain->SetClippingPlane(glm::vec4(0, -1, 0, 0));
 		mTerrain->UpdateUniformBuffer();
 
 		reflection.renderTarget->Begin();	
@@ -278,7 +283,9 @@ namespace ECS
 		reflection.renderTarget->End(mRenderer->GetQueue());
 
 		// Refraction renderpass
-		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, -1500));
+		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 0));
+		mCamera->SetPosition(cameraPos);
+		mCamera->SetOrientation(mCamera->GetYaw(), -mCamera->GetPitch());
 		mTerrain->UpdateUniformBuffer();
 
 		refraction.renderTarget->Begin();	
@@ -287,7 +294,6 @@ namespace ECS
 
 		refraction.renderTarget->End(mRenderer->GetQueue());
 
-		mCamera->SetPosition(cameraPos);
 		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
 		mTerrain->UpdateUniformBuffer();
 	}

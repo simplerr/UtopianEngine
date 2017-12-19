@@ -30,6 +30,7 @@ namespace Vulkan
 		StaticModel* GenerateTerrain(Device* device, std::string filename);
 		StaticModel* LoadDebugBox(Device* device);
 		StaticModel* LoadQuad(Device* device);
+		StaticModel* ModelLoader::LoadGrid(Device* device, float cellSize, int numCells);
 	private:
 		int FindValidPath(aiString* texturePath, std::string modelPath);
 		bool TryLongerPath(char* szTemp, aiString* p_szString);

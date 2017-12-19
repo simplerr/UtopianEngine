@@ -229,5 +229,5 @@ void main()
 	ApplyLighting(material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
 
 	OutFragColor = litColor;
-	//OutFragColor = texture(texSampler, InTex);
+	OutFragColor = texture(texSampler, InTex);
 }

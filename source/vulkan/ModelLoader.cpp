@@ -87,7 +87,7 @@ namespace Vulkan
 				{
 					for (int indexId = 0; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId+=3)
 					{
-						mesh->AddIndex(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
+						mesh->AddTriangle(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
 					}
 				}
 
@@ -269,8 +269,45 @@ namespace Vulkan
 		mesh->AddVertex(Vertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 0.0f, 1.0f, ANY, ANY, ANY));
 
 		// Front
-		mesh->AddIndex(1, 2, 0);
-		mesh->AddIndex(3, 0, 2);
+		mesh->AddTriangle(1, 2, 0);
+		mesh->AddTriangle(3, 0, 2);
+
+		mesh->BuildBuffers(device);
+		model->AddMesh(mesh);
+
+		model->Init(device);
+		mModelMap["quad"] = model;
+		return model;
+	}
+
+	StaticModel* ModelLoader::LoadGrid(Device* device, float cellSize, int numCells)
+	{
+		// Check if the model already is loaded
+		if (mModelMap.find("quad") != mModelMap.end())
+			return mModelMap["quad"];
+
+		StaticModel* model = new StaticModel();
+		Mesh* mesh = new Mesh(device);
+
+		float ANY = 0;
+		for (int x = 0; x < numCells; x++)
+		{
+			for (int z = 0; z < numCells; z++)
+			{
+				glm::vec3 position = glm::vec3(x * cellSize, 0.0f, z * cellSize);
+				glm::vec2 texcord = glm::vec2(position.x / (cellSize * (numCells - 1)), position.z / (cellSize * (numCells - 1))); // NOTE: Are the uv coordinates correct?
+				mesh->AddVertex(Vertex(position.x, position.y, position.z, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+			}
+		}
+
+		for (int x = 0; x < numCells - 1; x++)
+		{
+			for (int z = 0; z < numCells - 1; z++)
+			{
+				mesh->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+				mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+			}
+		}
 
 		mesh->BuildBuffers(device);
 		model->AddMesh(mesh);
@@ -302,28 +339,28 @@ namespace Vulkan
 		mesh->AddVertex(-0.5f, 0.5f, -0.5f);
 
 		// Front
-		mesh->AddIndex(0, 2, 1);
-		mesh->AddIndex(2, 0, 3);
+		mesh->AddTriangle(0, 2, 1);
+		mesh->AddTriangle(2, 0, 3);
 
 		// Top
-		mesh->AddIndex(1, 6, 5);
-		mesh->AddIndex(6, 1, 2);
+		mesh->AddTriangle(1, 6, 5);
+		mesh->AddTriangle(6, 1, 2);
 
 		// Back
-		mesh->AddIndex(7, 5, 6);
-		mesh->AddIndex(5, 7, 4);
+		mesh->AddTriangle(7, 5, 6);
+		mesh->AddTriangle(5, 7, 4);
 
 		// Bottom
-		mesh->AddIndex(4, 3, 0);
-		mesh->AddIndex(3, 4, 7);
+		mesh->AddTriangle(4, 3, 0);
+		mesh->AddTriangle(3, 4, 7);
 
 		// Left
-		mesh->AddIndex(4, 1, 5);
-		mesh->AddIndex(1, 4, 0);
+		mesh->AddTriangle(4, 1, 5);
+		mesh->AddTriangle(1, 4, 0);
 
 		// Right
-		mesh->AddIndex(3, 6, 2);
-		mesh->AddIndex(6, 3, 7);
+		mesh->AddTriangle(3, 6, 2);
+		mesh->AddTriangle(6, 3, 7);
 
 		mesh->BuildBuffers(device);		
 		model->AddMesh(mesh);

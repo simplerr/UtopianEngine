@@ -36,7 +36,7 @@ namespace Vulkan
 		AddVertex(Vertex(x, y, z));
 	}
 
-	void Mesh::AddIndex(uint32_t v1, uint32_t v2, uint32_t v3)
+	void Mesh::AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3)
 	{
 		indexVector.push_back(v1);
 		indexVector.push_back(v2);
