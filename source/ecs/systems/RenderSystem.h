@@ -7,6 +7,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PhongEffect.h"
+#include "vulkan/WaterEffect.h"
 
 class Terrain;
 
@@ -122,6 +123,7 @@ namespace ECS
 		Terrain* mTerrain;
 
 		Vulkan::PhongEffect mPhongEffect;
+		Vulkan::WaterEffect mWaterEffect;
 
 		struct PushConstantBlock {
 			mat4 world;
@@ -141,5 +143,7 @@ namespace ECS
 		} refraction;
 
 		Vulkan::ScreenGui* mScreenGui;
+
+		Vulkan::StaticModel* mGridModel;
 	};
 }

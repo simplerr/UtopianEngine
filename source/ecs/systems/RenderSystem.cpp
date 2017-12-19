@@ -45,12 +45,13 @@ namespace ECS
 		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
+		mGridModel = mModelLoader->LoadGrid(renderer->GetDevice(), 1000.0f, 20);
 		mCubeModel = mModelLoader->LoadGrid(renderer->GetDevice(), 1000.0f, 20);
 
-		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
-		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
-		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
-		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
+		//AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
+		//AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
+		//AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
+		//AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mTerrainCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
@@ -120,6 +121,8 @@ namespace ECS
 		mScreenGui = new Vulkan::ScreenGui(mRenderer);
 		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
 		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
+
+		mWaterEffect.Init(mRenderer);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -177,9 +180,14 @@ namespace ECS
 			mPhongEffect.per_frame_vs.camera.viewMatrix = mCamera->GetView();
 			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
 			mPhongEffect.per_frame_vs.camera.eyePos = mCamera->GetPosition();
+
+			mWaterEffect.per_frame_vs.data.projection= mCamera->GetProjection();
+			mWaterEffect.per_frame_vs.data.view = mCamera->GetView();
+			mWaterEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
 		}
 
 		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
+		mWaterEffect.UpdateMemory(mRenderer->GetDevice());
 
 		// TEMP:
 		mUniformBuffer.data.projection = mCamera->GetProjection();
@@ -262,6 +270,29 @@ namespace ECS
 		}
 
 		mScreenGui->Render(mRenderer, mCommandBuffer);
+
+		//
+		// Render water
+		//
+		mCommandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline());
+
+		VkDescriptorSet descriptorSets[1] = { mWaterEffect.mDescriptorSet0->descriptorSet };
+		mCommandBuffer->CmdBindDescriptorSet(&mWaterEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mGridModel->mMeshes[0]->vertices.buffer);
+		mCommandBuffer->CmdBindIndexBuffer(mGridModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+		// Push the world matrix constant
+		Vulkan::PushConstantBasicBlock pushConstantBlock;
+		pushConstantBlock.world = glm::mat4();
+
+		pushConstantBlock.world = glm::translate(glm::mat4(), vec3(92000.0f, 0.0f, 80000.0f));
+		pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+		pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+		pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+		mCommandBuffer->CmdPushConstants(&mWaterEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+		mCommandBuffer->CmdDrawIndexed(mGridModel->GetNumIndices(), 1, 0, 0, 0);
 
 		mCommandBuffer->End();
 	}

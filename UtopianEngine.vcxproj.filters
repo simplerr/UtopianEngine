@@ -82,6 +82,12 @@
     <Filter Include="Source Files\vulkan\effects\screenquad\shaders">
       <UniqueIdentifier>{aebf40db-f2cf-4cec-9c3e-5dd808f44e2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\water">
+      <UniqueIdentifier>{e76d2d4e-f7db-439f-a07b-03cf53c00416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\water\shader">
+      <UniqueIdentifier>{f89a2535-5b4b-400d-b1ed-a87415ea85f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -269,6 +275,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\RenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\WaterEffect.cpp">
+      <Filter>Source Files\vulkan\effects\water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -473,6 +482,9 @@
     <ClInclude Include="source\vulkan\RenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\WaterEffect.h">
+      <Filter>Source Files\vulkan\effects\water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -531,6 +543,12 @@
     </None>
     <None Include="data\shaders\screenquad\screenquad.vert">
       <Filter>Source Files\vulkan\effects\screenquad\shaders</Filter>
+    </None>
+    <None Include="data\shaders\water\water.frag">
+      <Filter>Source Files\vulkan\effects\water\shader</Filter>
+    </None>
+    <None Include="data\shaders\water\water.vert">
+      <Filter>Source Files\vulkan\effects\water\shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

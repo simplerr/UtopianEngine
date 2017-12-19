@@ -87,6 +87,7 @@ namespace Vulkan
 		system("cd data/shaders/terrain/ && generate-spirv.bat");
 		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
 		system("cd data/shaders/screenquad/ && generate-spirv.bat");
+		system("cd data/shaders/water/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Camera* camera)
