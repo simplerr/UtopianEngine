@@ -5,14 +5,16 @@
 
 layout (location = 0) in vec2 InTex;
 
-layout (set = 0, binding = 2) uniform sampler2D texSampler;
+layout (set = 0, binding = 1) uniform sampler2D reflectionTexture;
+layout (set = 0, binding = 2) uniform sampler2D refractionTexture;
 
 layout (location = 0) out vec4 outFragColor;
 
 void main(void)
 {
   vec2 uv = InTex;
-  uv.x *= -1;
-  //outFragColor = texture(texSampler, uv);
-  outFragColor = vec4(0, 0, 1, 1);
+  //uv.x *= -1;
+  outFragColor = texture(reflectionTexture, uv);
+  outFragColor = texture(refractionTexture, uv);
+  //outFragColor = vec4(0, 0, 1, 1);
 }

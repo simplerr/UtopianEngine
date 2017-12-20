@@ -116,13 +116,14 @@ namespace ECS
 		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mPhongEffect.GetVertexDescription(), shader);
 		mGeometryPipeline->Create();
 
+		mWaterEffect.Init(mRenderer);
+		//mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
+
 		PrepareOffscreen();
 
 		mScreenGui = new Vulkan::ScreenGui(mRenderer);
 		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
 		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
-
-		mWaterEffect.Init(mRenderer);
 	}
 
 	RenderSystem::~RenderSystem()
@@ -147,9 +148,14 @@ namespace ECS
 
 		refraction.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
 
-		refraction.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		refraction.textureDescriptorSet->BindCombinedImage(0, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
-		refraction.textureDescriptorSet->UpdateDescriptorSets();
+		//refraction.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		//refraction.textureDescriptorSet->BindCombinedImage(0, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
+		//refraction.textureDescriptorSet->UpdateDescriptorSets();
+
+		mWaterEffect.mDescriptorSet0->BindUniformBuffer(0, &mWaterEffect.per_frame_vs.GetDescriptor());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
