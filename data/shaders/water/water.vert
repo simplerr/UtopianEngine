@@ -9,7 +9,9 @@ layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec4 InTangentL;
 
-layout (location = 0) out vec4 OutClipSpace;
+layout (location = 0) out vec2 OutTexCoord;
+layout (location = 1) out vec4 OutClipSpace;
+layout (location = 2) out float OutMoveFactor;
 
 layout (std140, set = 0, binding = 0) uniform UBO 
 {
@@ -17,6 +19,7 @@ layout (std140, set = 0, binding = 0) uniform UBO
 	mat4 projection;
 	mat4 view;
 	vec3 eyePos;
+	float moveFactor;
 } per_frame_vs;
 
 layout(push_constant) uniform PushConsts {
@@ -29,8 +32,12 @@ out gl_PerVertex
 	vec4 gl_Position;
 };
 
+const float tiling = 0.0005;
+
 void main(void)
 {
 	OutClipSpace = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 	gl_Position = OutClipSpace;
+	OutTexCoord = vec2(InPosL.x / 2.0f + 0.5f, InPosL.z / 2.0f + 0.5f) * tiling;
+	OutMoveFactor = per_frame_vs.moveFactor;
 }

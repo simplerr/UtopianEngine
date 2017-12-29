@@ -21,13 +21,20 @@ layout (std140, set = 0, binding = 1) uniform UBO
 
 void main(void)
 {
+	// Calculate the color based on height
+	vec3 biomeColor = vec3(1.0f, 1.0f, 1.0f);
+	
+	biomeColor = mix(biomeColor, vec3(0, 1, 0), inPosW.y / 5000.0);
+	biomeColor = min(biomeColor, vec3(1, 1, 1));
+
+
 	vec3 lightVec = vec3(1, 1, 1);
 	lightVec = normalize(lightVec);
 
 	float diffuseFactor = max(0, dot(lightVec, inNormal));
 
-	float ambientFactor = 0.1;
-	vec3 color = inColor * ambientFactor + diffuseFactor * inColor;
+	float ambientFactor = 0.3;
+	vec3 color = biomeColor * ambientFactor + diffuseFactor * biomeColor;
 
 	// Apply fogging.
 	float distToEye = length(per_frame_ps.eyePos + inPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
@@ -36,9 +43,4 @@ void main(void)
 	// Blend the fog color and the lit color.
 	color = mix(color, vec3(0.2), fogLerp);
 	outFragColor = vec4(color,  1.0);
-	//outFragColor = vec4(inNormal, 1.0);
-
-	//outFragColor = texture(texture3d, vec3(0, 0, 0)); 
-	//outFragColor = vec4(texelFetch(texture3d, ivec3(4, 15, 5),  0).rgb, 1.0f);
-	//outFragColor = vec4(texture(texture3d, inPosW,  0).rgb, 1.0f);
 }

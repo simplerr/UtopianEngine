@@ -89,6 +89,7 @@ float density(vec3 pos)
 	density = min(sdTorus(pos+vec3(63000, 15500, 69000), t), density);
 	density = min(sdTorus(pos+vec3(-7000, 0, -7000), t2), density);
 	density = min(sdBox(pos+vec3(63000, 15500, 63000), vec3(5000, 5000, 5000)), density);
+	density = min(sdBox(pos+vec3(63000, 0, 93000), vec3(1000, 15000, 1000)), density);
 	//density = sdBox(pos, vec3(10));
 	//return -pos.y;
 	//return min(min(density, -pos.y), sdSphere(pos+vec3(4500, 1000, 4500), 500*abs(sin(ubo.time))));

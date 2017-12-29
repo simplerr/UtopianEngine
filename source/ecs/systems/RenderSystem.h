@@ -145,5 +145,6 @@ namespace ECS
 		Vulkan::ScreenGui* mScreenGui;
 
 		Vulkan::StaticModel* mGridModel;
+		Vulkan::Texture* dudvTexture;
 	};
 }

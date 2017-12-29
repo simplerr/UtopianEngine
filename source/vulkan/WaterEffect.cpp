@@ -14,6 +14,7 @@ namespace Vulkan
 {
 	WaterEffect::WaterEffect()
 	{
+		per_frame_vs.data.moveFactor = 0.0f;
 	}
 
 	void WaterEffect::CreateDescriptorPool(Device* device)
@@ -46,6 +47,7 @@ namespace Vulkan
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
 		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_3, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
 		mPipelineInterface.CreateLayouts(device);
 	}

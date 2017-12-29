@@ -45,7 +45,7 @@ namespace ECS
 		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
-		mGridModel = mModelLoader->LoadGrid(renderer->GetDevice(), 1000.0f, 20);
+		mGridModel = mModelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
 		mCubeModel = mModelLoader->LoadGrid(renderer->GetDevice(), 1000.0f, 20);
 
 		//AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
@@ -142,12 +142,14 @@ namespace ECS
 	{
 		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
+		// TODO: Remove this
 		reflection.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		reflection.textureDescriptorSet->BindCombinedImage(0, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
 		reflection.textureDescriptorSet->UpdateDescriptorSets();
 
 		refraction.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
+		dudvTexture = mTextureLoader->LoadTexture("data/textures/water_dudv.png");
 		//refraction.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		//refraction.textureDescriptorSet->BindCombinedImage(0, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
 		//refraction.textureDescriptorSet->UpdateDescriptorSets();
@@ -155,6 +157,7 @@ namespace ECS
 		mWaterEffect.mDescriptorSet0->BindUniformBuffer(0, &mWaterEffect.per_frame_vs.GetDescriptor());
 		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
 		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(3, &dudvTexture->GetTextureDescriptorInfo());
 		mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
 	}
 
@@ -190,6 +193,11 @@ namespace ECS
 			mWaterEffect.per_frame_vs.data.projection= mCamera->GetProjection();
 			mWaterEffect.per_frame_vs.data.view = mCamera->GetView();
 			mWaterEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
+			mWaterEffect.per_frame_vs.data.moveFactor += 0.0015;
+
+			//if (mWaterEffect.per_frame_vs.data.moveFactor > 0.1f)
+			//	mWaterEffect.per_frame_vs.data.moveFactor = 0.0f;
+
 		}
 
 		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
@@ -292,7 +300,7 @@ namespace ECS
 		Vulkan::PushConstantBasicBlock pushConstantBlock;
 		pushConstantBlock.world = glm::mat4();
 
-		pushConstantBlock.world = glm::translate(glm::mat4(), vec3(92000.0f, 0.0f, 80000.0f));
+		pushConstantBlock.world = glm::translate(glm::mat4(), vec3(123000.0f, 0.0f, 106000.0f));
 		pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
 		pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 		pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
