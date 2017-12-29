@@ -48,10 +48,10 @@ namespace ECS
 
 		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
 
-		//AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
-		//AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
-		//AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
-		//AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
+		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
+		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
+		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
+		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mTerrainCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
@@ -89,32 +89,7 @@ namespace ECS
 		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();
 
 		mPhongEffect.Init(mRenderer);
-
-		//
-		// Geometry shader pipeline
-		//
-		mDescriptorSetLayout = new Vulkan::DescriptorSetLayout(mRenderer->GetDevice());
-		mDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1, VK_SHADER_STAGE_GEOMETRY_BIT);
-		mDescriptorSetLayout->Create();
-
-		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
-		mPipelineLayout->AddDescriptorSetLayout(mDescriptorSetLayout);
-		mPipelineLayout->AddPushConstantRange(VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(PushConstantBlock));
-		mPipelineLayout->Create();
-
-		mDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->Create();
-
-		mUniformBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-		mDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mDescriptorSetLayout, mDescriptorPool);
-		mDescriptorSet->BindUniformBuffer(0, &mUniformBuffer.GetDescriptor());
-		mDescriptorSet->UpdateDescriptorSets();
-
-		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/geometry/base.vert.spv", "data/shaders/geometry/base.frag.spv", "data/shaders/geometry/normaldebug.geom.spv");
-		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mPhongEffect.GetVertexDescription(), shader);
-		mGeometryPipeline->Create();
+		mNormalDebugEffect.Init(mRenderer);
 
 		mWaterRenderer = new WaterRenderer(mRenderer, mModelLoader, mTextureLoader);
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
@@ -129,11 +104,6 @@ namespace ECS
 	{
 		mModelLoader->CleanupModels(mRenderer->GetVkDevice());
 		delete mModelLoader;
-		delete mDescriptorSetLayout;
-		delete mPipelineLayout;
-		delete mDescriptorPool;
-		delete mDescriptorSet;
-		delete mGeometryPipeline;
 		delete mTerrain;
 		delete mWaterRenderer;
 	}
@@ -172,10 +142,9 @@ namespace ECS
 
 		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
 
-		// TEMP:
-		mUniformBuffer.data.projection = mCamera->GetProjection();
-		mUniformBuffer.data.view = mCamera->GetView();
-		mUniformBuffer.UpdateMemory(mRenderer->GetVkDevice());
+		mNormalDebugEffect.per_frame_gs.data.projection = mCamera->GetProjection();
+		mNormalDebugEffect.per_frame_gs.data.view = mCamera->GetView();
+		mNormalDebugEffect.UpdateMemory(mRenderer->GetDevice());
 
 		// Temp
 		VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
@@ -202,7 +171,7 @@ namespace ECS
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
-				Vulkan::PushConstantBlock pushConstantBlock;
+				Vulkan::NormalDebugEffect::PushConstantBlock pushConstantBlock;
 				pushConstantBlock.world = entityCache.transformComponent->GetWorldMatrix();
 				pushConstantBlock.worldInvTranspose = entityCache.transformComponent->GetWorldInverseTransposeMatrix(); // TOOD: This probably also needs to be negated
 
@@ -219,10 +188,10 @@ namespace ECS
 				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 
 				// Try the geometry shader pipeline
-				/*mCommandBuffer->CmdBindPipeline(mGeometryPipeline);
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mDescriptorSet->descriptorSet, 0, NULL);
-				mCommandBuffer->CmdPushConstants(mPipelineLayout, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);*/
+				mCommandBuffer->CmdBindPipeline(mNormalDebugEffect.GetPipeline());
+				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mNormalDebugEffect.GetPipelineLayout(), 0, 1, &mNormalDebugEffect.mDescriptorSet0->descriptorSet, 0, NULL);
+				mCommandBuffer->CmdPushConstants(&mNormalDebugEffect, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
 

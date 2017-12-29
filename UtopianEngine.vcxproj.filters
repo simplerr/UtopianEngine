@@ -88,6 +88,12 @@
     <Filter Include="Source Files\vulkan\effects\water\shader">
       <UniqueIdentifier>{f89a2535-5b4b-400d-b1ed-a87415ea85f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\normal_debug">
+      <UniqueIdentifier>{c55754cb-3544-405c-89d6-f4211a79d321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\normal_debug\shaders">
+      <UniqueIdentifier>{9c20ce3d-c728-4142-9835-28dc1bd97e83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -281,6 +287,9 @@
     </ClCompile>
     <ClCompile Include="source\WaterRenderer.cpp">
       <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\NormalDebugEffect.cpp">
+      <Filter>Source Files\vulkan\effects\normal_debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,6 +500,9 @@
     <ClInclude Include="source\WaterRenderer.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\NormalDebugEffect.h">
+      <Filter>Source Files\vulkan\effects\normal_debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -555,6 +567,15 @@
     </None>
     <None Include="data\shaders\water\water.vert">
       <Filter>Source Files\vulkan\effects\water\shader</Filter>
+    </None>
+    <None Include="data\shaders\normal_debug\base.frag">
+      <Filter>Source Files\vulkan\effects\normal_debug\shaders</Filter>
+    </None>
+    <None Include="data\shaders\normal_debug\base.vert">
+      <Filter>Source Files\vulkan\effects\normal_debug\shaders</Filter>
+    </None>
+    <None Include="data\shaders\normal_debug\normaldebug.geom">
+      <Filter>Source Files\vulkan\effects\normal_debug\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

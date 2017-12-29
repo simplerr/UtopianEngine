@@ -19,44 +19,29 @@ namespace Vulkan
 	class Shader;
 	class Texture;
 
-	class WaterEffect : public Effect
+	class NormalDebugEffect : public Effect
 	{
 	public:
-		class UniformBufferVS : public Vulkan::ShaderBuffer
+		class UniformBufferGS : public ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory(VkDevice device);
 			virtual int GetSize();
 
+			// Public data members
 			struct {
 				glm::mat4 projection;
 				glm::mat4 view;
-				glm::vec3 eyePos;
-				float moveFactor;
-			} data;
-		};
-
-		class UniformBufferPS : public Vulkan::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory(VkDevice device);
-			virtual int GetSize();
-
-			struct {
-				glm::vec3 eyePos;
-				float padding;
-				float fogStart;
-				float fogDistance;
 			} data;
 		};
 
 		struct PushConstantBlock
 		{
 			glm::mat4 world;
-			glm::vec3 color;
+			glm::mat4 worldInvTranspose;
 		};
 
-		WaterEffect();
+		NormalDebugEffect();
 
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
@@ -68,7 +53,6 @@ namespace Vulkan
 
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 
-		UniformBufferVS per_frame_vs;
-		UniformBufferPS per_frame_ps;	// Same name in terrain.frag
+		UniformBufferGS per_frame_gs;
 	};
 }

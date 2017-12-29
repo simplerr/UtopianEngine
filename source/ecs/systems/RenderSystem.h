@@ -8,6 +8,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PhongEffect.h"
 #include "vulkan/WaterEffect.h"
+#include "vulkan/NormalDebugEffect.h"
 #include "WaterRenderer.h"
 
 class Terrain;
@@ -31,30 +32,6 @@ namespace Vulkan
 	class Sampler;
 	class ScreenGui;
 	class RenderTarget;
-
-	class GeometryUniformBuffer : public ShaderBuffer
-	{
-	public:
-		virtual void UpdateMemory(VkDevice device)
-		{
-			// Map uniform buffer and update it
-			uint8_t *mapped;
-			mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-			memcpy(mapped, &data, sizeof(data));
-			mBuffer->UnmapMemory();
-		}
-
-		virtual int GetSize()
-		{
-			return sizeof(data);
-		}
-
-		// Public data members
-		struct {
-			glm::mat4 projection;
-			glm::mat4 view;
-		} data;
-	};
 }
 
 namespace ECS
@@ -109,27 +86,13 @@ namespace ECS
 		Vulkan::CommandBuffer* mTerrainCommandBuffer;
 		Vulkan::CommandBuffer* mOffscreenCommandBuffer;
 		Vulkan::Camera* mCamera;
-
-		std::vector<DebugCube> mDebugCubes;
-
-		// Geometry shader stuff
-		Vulkan::DescriptorPool* mDescriptorPool;
-		Vulkan::DescriptorSetLayout* mDescriptorSetLayout;
-		Vulkan::DescriptorSet* mDescriptorSet;
-		Vulkan::Pipeline* mGeometryPipeline;
-		Vulkan::PipelineLayout* mPipelineLayout;
-		Vulkan::GeometryUniformBuffer  mUniformBuffer;
-
-		Terrain* mTerrain;
-
 		Vulkan::PhongEffect mPhongEffect;
-
-		struct PushConstantBlock {
-			mat4 world;
-			mat4 worldInvTranspose;
-		};
+		Vulkan::NormalDebugEffect mNormalDebugEffect;
 
 		Vulkan::ScreenGui* mScreenGui;
+		Terrain* mTerrain;
 		WaterRenderer* mWaterRenderer;
+
+		std::vector<DebugCube> mDebugCubes;
 	};
 }
