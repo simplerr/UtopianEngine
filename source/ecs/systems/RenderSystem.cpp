@@ -117,6 +117,8 @@ namespace ECS
 		mGeometryPipeline->Create();
 
 		mWaterRenderer = new WaterRenderer(mRenderer, mModelLoader, mTextureLoader);
+		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
+		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
 		mScreenGui = new Vulkan::ScreenGui(mRenderer);
 		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionRenderTarget()->GetImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());

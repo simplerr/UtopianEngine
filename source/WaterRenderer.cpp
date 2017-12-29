@@ -11,7 +11,10 @@
 
 WaterRenderer::WaterRenderer(Vulkan::Renderer* renderer, Vulkan::ModelLoader* modelLoader, Vulkan::TextureLoader* textureLoader)
 {
-	mGridModel = modelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
+	mRenderer = renderer;
+	mModelLoader = modelLoader;
+
+	//mGridModel = modelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
 
 	mWaterEffect.Init(renderer);
 
@@ -38,20 +41,24 @@ void WaterRenderer::Render(Vulkan::Renderer* renderer, Vulkan::CommandBuffer* co
 	VkDescriptorSet descriptorSets[1] = { mWaterEffect.mDescriptorSet0->descriptorSet };
 	commandBuffer->CmdBindDescriptorSet(&mWaterEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-	commandBuffer->CmdBindVertexBuffer(0, 1, &mGridModel->mMeshes[0]->vertices.buffer);
-	commandBuffer->CmdBindIndexBuffer(mGridModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-
 	// Push the world matrix constant
 	Vulkan::WaterEffect::PushConstantBlock pushConstantBlock;
 	pushConstantBlock.world = glm::mat4();
 
-	pushConstantBlock.world = glm::translate(glm::mat4(), vec3(123000.0f, 0.0f, 106000.0f));
-	pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-	pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-	pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+	for (uint32_t i = 0; i < mWaterList.size(); i++)
+	{
+		Vulkan::StaticModel* model = mWaterList[i].gridModel;
+		commandBuffer->CmdBindVertexBuffer(0, 1, &model->mMeshes[0]->vertices.buffer);
+		commandBuffer->CmdBindIndexBuffer(model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-	commandBuffer->CmdPushConstants(&mWaterEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-	commandBuffer->CmdDrawIndexed(mGridModel->GetNumIndices(), 1, 0, 0, 0);
+		pushConstantBlock.world = glm::translate(glm::mat4(), mWaterList[i].position);
+		pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+		pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+		pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+		commandBuffer->CmdPushConstants(&mWaterEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+		commandBuffer->CmdDrawIndexed(model->GetNumIndices(), 1, 0, 0, 0);
+	}
 }
 
 void WaterRenderer::Update(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
@@ -62,6 +69,14 @@ void WaterRenderer::Update(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mWaterEffect.per_frame_vs.data.moveFactor += 0.0015;
 
 	mWaterEffect.UpdateMemory(renderer->GetDevice());
+}
+
+void WaterRenderer::AddWater(glm::vec3 position, uint32_t numCells)
+{
+	Water water;
+	water.gridModel = mModelLoader->LoadGrid(mRenderer->GetDevice(), CELL_SIZE, numCells);
+	water.position = glm::vec3(position.x, 0.0f, position.z); // NOTE: Water can only be placed at y=0
+	mWaterList.push_back(water);
 }
 
 Vulkan::RenderTarget* WaterRenderer::GetReflectionRenderTarget()
