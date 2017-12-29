@@ -140,13 +140,13 @@ namespace ECS
 
 	void RenderSystem::PrepareOffscreen()
 	{
-		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 1024, 1024);
+		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
 		reflection.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		reflection.textureDescriptorSet->BindCombinedImage(0, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
 		reflection.textureDescriptorSet->UpdateDescriptorSets();
 
-		refraction.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), 512, 512);
+		refraction.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
 		//refraction.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 		//refraction.textureDescriptorSet->BindCombinedImage(0, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());

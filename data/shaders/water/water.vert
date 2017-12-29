@@ -9,7 +9,7 @@ layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec4 InTangentL;
 
-layout (location = 0) out vec2 OutTex;
+layout (location = 0) out vec4 OutClipSpace;
 
 layout (std140, set = 0, binding = 0) uniform UBO 
 {
@@ -31,6 +31,6 @@ out gl_PerVertex
 
 void main(void)
 {
-	OutTex = InTex;
-	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+	OutClipSpace = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+	gl_Position = OutClipSpace;
 }
