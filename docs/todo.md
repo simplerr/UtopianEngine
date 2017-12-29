@@ -33,3 +33,6 @@
 
 9/12
 * BindCombinedImage should also supporting updating the bound descriptor like BindStorageBuffer does.
+
+29/12
+* Create debug normal effect

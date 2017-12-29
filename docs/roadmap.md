@@ -15,3 +15,32 @@ be working.
 
 ## Step 3
 * ???
+
+# Update 2017/12/29
+
+## Features to be added
+
+These are some of the higher level features to be added to the rendering engine ordered by priority. 
+Once the majority of these features are implemented the rendering engine should have all the tools needed to create an interesting game world. 
+When that stage is reached then the focus will shift towards creating a game that uses the rendering engine.
+
+- Terrain collision
+- Grass
+- Skybox (animated)
+- Trees
+- Shadows
+- Particle effects
+- Multiple light sources
+- Animation
+- Picking
+- Blur
+- Bloom
+- Terrain editor
+    - Placing and moving objects around
+
+
+### Grass
+- Instanced rendering needs to be added. 
+- The grass should be placed on the terrain so querying the terrain height should be possible
+- The grass should be animated
+- Needs to support large amount of instances
