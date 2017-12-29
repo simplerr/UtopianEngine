@@ -279,6 +279,9 @@
     <ClCompile Include="source\vulkan\WaterEffect.cpp">
       <Filter>Source Files\vulkan\effects\water</Filter>
     </ClCompile>
+    <ClCompile Include="source\WaterRenderer.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -484,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\WaterEffect.h">
       <Filter>Source Files\vulkan\effects\water</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WaterRenderer.h">
+      <Filter>Source Files\terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

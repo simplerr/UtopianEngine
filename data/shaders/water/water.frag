@@ -6,6 +6,7 @@
 layout (location = 0) in vec2 InTexCoord;
 layout (location = 1) in vec4 InClipSpace;
 layout (location = 2) in float InMoveFactor;
+layout (location = 3) in vec3 InToEye;
 
 layout (set = 0, binding = 1) uniform sampler2D reflectionTexture;
 layout (set = 0, binding = 2) uniform sampler2D refractionTexture;
@@ -38,8 +39,14 @@ void main(void)
   vec4 reflectColor = texture(reflectionTexture, reflectTexCoords);
   vec4 refractColor = texture(refractionTexture, refractTexCoords);
 
-  outFragColor = mix(reflectColor, refractColor, 0.5);
-  outFragColor.b += 0.5f;
+  vec3 viewVector = normalize(InToEye);
+  float transparentFactor = dot(viewVector, vec3(0.0f, 1.0f, 0.0f));
+  //transparentFactor = pow(transparentFactor, 0.05f);
+
+  //outFragColor = mix(reflectColor, refractColor, transparentFactor);
+  outFragColor = mix(reflectColor, refractColor, 0.5f);
+  outFragColor = mix(outFragColor, vec4(0.0f, 0.3f, 0.9f, 1.0f), 0.3f);
+  //outFragColor = vec4(viewVector, 1.0f);
 
   //outFragColor = texture(dudvTexture, vec2(InTexCoord.x, InTexCoord.y));
 }

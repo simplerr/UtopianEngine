@@ -26,6 +26,7 @@
 #include "vulkan/ScreenGui.h"
 #include "vulkan/RenderTarget.h"
 #include "Camera.h"
+#include "WaterRenderer.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/VertexDescription.h"
 #include "RenderSystem.h"
@@ -45,8 +46,7 @@ namespace ECS
 		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
-		mGridModel = mModelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
-		mCubeModel = mModelLoader->LoadGrid(renderer->GetDevice(), 1000.0f, 20);
+		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
 
 		//AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
 		//AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
@@ -116,14 +116,11 @@ namespace ECS
 		mGeometryPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mPhongEffect.GetVertexDescription(), shader);
 		mGeometryPipeline->Create();
 
-		mWaterEffect.Init(mRenderer);
-		//mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
-
-		PrepareOffscreen();
+		mWaterRenderer = new WaterRenderer(mRenderer, mModelLoader, mTextureLoader);
 
 		mScreenGui = new Vulkan::ScreenGui(mRenderer);
-		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
-		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
+		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionRenderTarget()->GetImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
+		mScreenGui->AddQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionRenderTarget()->GetImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 	}
 
 	RenderSystem::~RenderSystem()
@@ -136,29 +133,7 @@ namespace ECS
 		delete mDescriptorSet;
 		delete mGeometryPipeline;
 		delete mTerrain;
-	}
-
-	void RenderSystem::PrepareOffscreen()
-	{
-		reflection.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-
-		// TODO: Remove this
-		reflection.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		reflection.textureDescriptorSet->BindCombinedImage(0, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
-		reflection.textureDescriptorSet->UpdateDescriptorSets();
-
-		refraction.renderTarget = new Vulkan::RenderTarget(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-
-		dudvTexture = mTextureLoader->LoadTexture("data/textures/water_dudv.png");
-		//refraction.textureDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
-		//refraction.textureDescriptorSet->BindCombinedImage(0, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
-		//refraction.textureDescriptorSet->UpdateDescriptorSets();
-
-		mWaterEffect.mDescriptorSet0->BindUniformBuffer(0, &mWaterEffect.per_frame_vs.GetDescriptor());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, reflection.renderTarget->GetImage(), reflection.renderTarget->GetSampler());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, refraction.renderTarget->GetImage(), refraction.renderTarget->GetSampler());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(3, &dudvTexture->GetTextureDescriptorInfo());
-		mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
+		delete mWaterRenderer;
 	}
 
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
@@ -190,18 +165,10 @@ namespace ECS
 			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
 			mPhongEffect.per_frame_vs.camera.eyePos = mCamera->GetPosition();
 
-			mWaterEffect.per_frame_vs.data.projection= mCamera->GetProjection();
-			mWaterEffect.per_frame_vs.data.view = mCamera->GetView();
-			mWaterEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
-			mWaterEffect.per_frame_vs.data.moveFactor += 0.0015;
-
-			//if (mWaterEffect.per_frame_vs.data.moveFactor > 0.1f)
-			//	mWaterEffect.per_frame_vs.data.moveFactor = 0.0f;
-
+			mWaterRenderer->Update(mRenderer, mCamera);
 		}
 
 		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
-		mWaterEffect.UpdateMemory(mRenderer->GetDevice());
 
 		// TEMP:
 		mUniformBuffer.data.projection = mCamera->GetProjection();
@@ -228,7 +195,6 @@ namespace ECS
 				mCommandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				textureDescriptorSet = reflection.textureDescriptorSet->descriptorSet;
 
 				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
@@ -288,25 +254,7 @@ namespace ECS
 		//
 		// Render water
 		//
-		mCommandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline());
-
-		VkDescriptorSet descriptorSets[1] = { mWaterEffect.mDescriptorSet0->descriptorSet };
-		mCommandBuffer->CmdBindDescriptorSet(&mWaterEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-
-		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mGridModel->mMeshes[0]->vertices.buffer);
-		mCommandBuffer->CmdBindIndexBuffer(mGridModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-
-		// Push the world matrix constant
-		Vulkan::PushConstantBasicBlock pushConstantBlock;
-		pushConstantBlock.world = glm::mat4();
-
-		pushConstantBlock.world = glm::translate(glm::mat4(), vec3(123000.0f, 0.0f, 106000.0f));
-		pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-		pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-		pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-		mCommandBuffer->CmdPushConstants(&mWaterEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-		mCommandBuffer->CmdDrawIndexed(mGridModel->GetNumIndices(), 1, 0, 0, 0);
+		mWaterRenderer->Render(mRenderer, mCommandBuffer);
 
 		mCommandBuffer->End();
 	}
@@ -321,11 +269,11 @@ namespace ECS
 		mTerrain->SetClippingPlane(glm::vec4(0, -1, 0, 0));
 		mTerrain->UpdateUniformBuffer();
 
-		reflection.renderTarget->Begin();	
+		mWaterRenderer->GetReflectionRenderTarget()->Begin();	
 
-		mTerrain->Render(reflection.renderTarget->GetCommandBuffer());
+		mTerrain->Render(mWaterRenderer->GetReflectionRenderTarget()->GetCommandBuffer());
 
-		reflection.renderTarget->End(mRenderer->GetQueue());
+		mWaterRenderer->GetReflectionRenderTarget()->End(mRenderer->GetQueue());
 
 		// Refraction renderpass
 		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 0));
@@ -333,11 +281,11 @@ namespace ECS
 		mCamera->SetOrientation(mCamera->GetYaw(), -mCamera->GetPitch());
 		mTerrain->UpdateUniformBuffer();
 
-		refraction.renderTarget->Begin();	
+		mWaterRenderer->GetRefractionRenderTarget()->Begin();	
 
-		mTerrain->Render(refraction.renderTarget->GetCommandBuffer());
+		mTerrain->Render(mWaterRenderer->GetRefractionRenderTarget()->GetCommandBuffer());
 
-		refraction.renderTarget->End(mRenderer->GetQueue());
+		mWaterRenderer->GetRefractionRenderTarget()->End(mRenderer->GetQueue());
 
 		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
 		mTerrain->UpdateUniformBuffer();

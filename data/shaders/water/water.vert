@@ -12,6 +12,7 @@ layout (location = 4) in vec4 InTangentL;
 layout (location = 0) out vec2 OutTexCoord;
 layout (location = 1) out vec4 OutClipSpace;
 layout (location = 2) out float OutMoveFactor;
+layout (location = 3) out vec3 OutToEye;
 
 layout (std140, set = 0, binding = 0) uniform UBO 
 {
@@ -32,10 +33,13 @@ out gl_PerVertex
 	vec4 gl_Position;
 };
 
-const float tiling = 0.0005;
+const float tiling = 0.00025;
 
 void main(void)
 {
+	vec4 worldPos = pushConsts.world * vec4(InPosL.xyz, 1.0);
+	OutToEye = per_frame_vs.eyePos - worldPos.xyz;
+	//OutToEye =  vec3(67200, 2700, 67200) - worldPos.xyz;
 	OutClipSpace = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 	gl_Position = OutClipSpace;
 	OutTexCoord = vec2(InPosL.x / 2.0f + 0.5f, InPosL.z / 2.0f + 0.5f) * tiling;

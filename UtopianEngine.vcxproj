@@ -142,6 +142,7 @@
     <ClCompile Include="source\vulkan\VulkanDebug.cpp" />
     <ClCompile Include="source\vulkan\VulkanHelpers.cpp" />
     <ClCompile Include="source\vulkan\WaterEffect.cpp" />
+    <ClCompile Include="source\WaterRenderer.cpp" />
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +213,7 @@
     <ClInclude Include="source\vulkan\VulkanHelpers.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
+    <ClInclude Include="source\WaterRenderer.h" />
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>

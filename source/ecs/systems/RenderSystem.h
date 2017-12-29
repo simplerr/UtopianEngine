@@ -8,6 +8,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PhongEffect.h"
 #include "vulkan/WaterEffect.h"
+#include "WaterRenderer.h"
 
 class Terrain;
 
@@ -96,7 +97,6 @@ namespace ECS
 
 		void AddDebugCube(vec3 pos, vec4 color, float size);
 
-		void PrepareOffscreen();
 		void RenderOffscreen();
 	private:
 		// RenderSystem should not BE a renderer but rather have one, since the usage of Vulkan should not be limited to only the ECS
@@ -123,28 +123,13 @@ namespace ECS
 		Terrain* mTerrain;
 
 		Vulkan::PhongEffect mPhongEffect;
-		Vulkan::WaterEffect mWaterEffect;
 
 		struct PushConstantBlock {
 			mat4 world;
 			mat4 worldInvTranspose;
 		};
 
-		// Reflection rendering
-		struct {
-			Vulkan::RenderTarget* renderTarget;
-			Vulkan::DescriptorSet* textureDescriptorSet;
-		} reflection;
-
-		// Refraction rendering
-		struct {
-			Vulkan::RenderTarget* renderTarget;
-			Vulkan::DescriptorSet* textureDescriptorSet;
-		} refraction;
-
 		Vulkan::ScreenGui* mScreenGui;
-
-		Vulkan::StaticModel* mGridModel;
-		Vulkan::Texture* dudvTexture;
+		WaterRenderer* mWaterRenderer;
 	};
 }
