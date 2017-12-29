@@ -29,6 +29,7 @@ namespace Vulkan
 		memAllocInfo.allocationSize = memReqs.size;
 		uint32_t tmp;
 		memAllocInfo.memoryTypeIndex = mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &tmp); // [NOTE] This is really weird
+		memAllocInfo.memoryTypeIndex = tmp;
 		VulkanDebug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
 
 		if (data != nullptr)
