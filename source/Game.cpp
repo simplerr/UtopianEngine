@@ -34,7 +34,7 @@ namespace Vulkan
 
 		// Create the camera
 		//mCamera = new Vulkan::Camera(mWindow, glm::vec3(6400.0f * 10 - 3200, 2700.0f, 6400.0f * 10 - 3200), 60.0f, 0.1f, 256000.0f);
-		mCamera = new Vulkan::Camera(mWindow, glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200), 60.0f, 0.1f, 256000.0f);
+		mCamera = new Vulkan::Camera(mWindow, glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200), 60.0f, 10.0f, 256000.0f);
 		//mCamera = new Vulkan::Camera(mWindow, glm::vec3(15000.0f, 2700.0f, 15000.0f), 60.0f, 0.1f, 256000.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
