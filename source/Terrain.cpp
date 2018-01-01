@@ -374,3 +374,47 @@ void Terrain::SetClippingPlane(glm::vec4 clippingPlane)
 {
 	mClippingPlane = clippingPlane;
 }
+
+float cosNoise(vec2 pos)
+{
+	float amplitude = 1.0f;
+	float freq = 5500.0f;
+	return amplitude * (sin(pos.x/freq) + sin(pos.y / freq));
+}
+const mat2 m2 = mat2(1.6,-1.2,
+                     1.2, 1.6);
+
+float Terrain::Density(glm::vec3 position)
+{
+	float density = 1;	
+
+	// Magic from Shadertoy: https://www.shadertoy.com/view/MtsSRf
+	float h = 0.0;
+	vec2 q = glm::vec2(position.x * 0.5, position.z*0.5);
+
+    float s = 0.5;
+    for(int i=0; i<6; i++)
+    {
+        h -= s*cosNoise(q); 
+		q = m2*q;// *0.85;
+		q *= 0.85;
+        q += vec2(2.41,8.13);
+        s *= 0.48 + 0.2*h;
+    }
+    h *= 5500.0;
+
+	density = glm::min(-position.y + h, density);
+	//density = min(-pos.y + cosNoise(pos), density);
+
+	return density;
+}
+
+float Terrain::GetHeight(float x, float z)
+{
+	float height = 0.0;
+	glm::vec3 origin = glm::vec3(x, 15000, z);
+	glm::vec3 dir = glm::vec3(0, -1, 0);
+
+
+	return height;
+}

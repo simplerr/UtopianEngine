@@ -100,6 +100,9 @@ public:
 
 	void SetClippingPlane(glm::vec4 clippingPlane);
 
+	float GetHeight(float x, float z);
+	float Density(glm::vec3 position);
+
 private:
 	Vulkan::Renderer* mRenderer;
 	Vulkan::Camera* mCamera;
