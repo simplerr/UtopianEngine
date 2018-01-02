@@ -33,7 +33,7 @@ namespace ECS
 		mTerrain = terrain;
 		mInput = input;
 
-		mObjectTool = new ObjectTool(camera);
+		mObjectTool = new ObjectTool(camera, terrain);
 
 		mPickedId = -1;
 	}

@@ -11,11 +11,12 @@
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-ObjectTool::ObjectTool(Vulkan::Camera* camera)
+ObjectTool::ObjectTool(Vulkan::Camera* camera, Terrain* terrain)
 {
 	// nullptr as default.
 	mSelectedEntity = nullptr;
 	mCamera = camera;
+	mTerrain = terrain;
 
 	//// Create the X axis.
 	//mAxisX = new StaticObject(pImporter, "models/arrow.obj");
@@ -129,11 +130,13 @@ void ObjectTool::Update(Input* pInput, float dt)
 	}
 
 	// Stick to the terain?
-	/*if (pInput->KeyPressed('C')) {
-		float height = mMovingObject->GetWorld()->GetTerrain()->GetHeight(mMovingObject->GetPosition().x, mMovingObject->GetPosition().z);
-		if (height != -std::numeric_limits<float>::infinity())
-			UpdatePosition(vec3(mMovingObject->GetPosition().x, height, mMovingObject->GetPosition().z) - mMovingObject->GetPosition());
-	}*/
+	if (pInput->KeyPressed('C')) {
+		vec3 selectedPos = mSelectedEntity->transformComponent->GetPosition();
+		mSelectedEntity->transformComponent->SetPosition(glm::vec3(selectedPos.x, mTerrain->GetHeight(selectedPos.x, selectedPos.z), selectedPos.z));
+		//float height = mMovingObject->GetWorld()->GetTerrain()->GetHeight(mMovingObject->GetPosition().x, mMovingObject->GetPosition().z);
+		//if (height != -std::numeric_limits<float>::infinity())
+		//	UpdatePosition(vec3(mMovingObject->GetPosition().x, height, mMovingObject->GetPosition().z) - mMovingObject->GetPosition());
+	}
 }
 
 //! Draws the arrow axis.

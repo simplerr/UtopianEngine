@@ -22,12 +22,13 @@ namespace ECS
 }
 
 class Input;
+class Terrain;
 
 //! The tool that move objects around.
 class ObjectTool
 {
 public:
-	ObjectTool(Vulkan::Camera* camera);
+	ObjectTool(Vulkan::Camera* camera, Terrain* terrain);
 	~ObjectTool();
 
 	void Update(Input* pInput, float dt);
@@ -54,6 +55,7 @@ private:
 	MovingAxis	  mMovingAxis;
 	glm::vec3	  mLastPlanePos;
 	Vulkan::Camera* mCamera;
+	Terrain* mTerrain;
 
 	const float PLANE_SIZE = 100000.0;
 };
