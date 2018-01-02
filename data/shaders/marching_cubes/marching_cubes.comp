@@ -113,17 +113,16 @@ float density(vec3 pos)
 	vec2 q = pos.xz*0.5;
 
     float s = 0.5;
-    for(int i=0; i<6; i++)
+    for(int i=0; i<1; i++) // NOTE: Has to be i < 1 for the Terrain::Density() function to match
     {
         h -= s*cosNoise(q); 
         q = m2*q*0.85; 
         q += vec2(2.41,8.13);
         s *= 0.48 + 0.2*h;
     }
-    h *= 5500.0;
+    h *= 10500.0;
 
 	density = min (-pos.y + h, density);
-	//density = min(-pos.y + cosNoise(pos), density);
 
 	return density;
 }

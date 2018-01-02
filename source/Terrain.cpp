@@ -317,6 +317,10 @@ void Terrain::Update()
 	UpdateBlockList();
 	GenerateBlocks(time);
 	UpdateUniformBuffer();
+	
+	/*float x = mCamera->GetPosition().x;
+	float z = mCamera->GetPosition().z;
+	mCamera->SetPosition(glm::vec3(x, GetHeight(x, z) + 100, z));*/
 }
 
 void Terrain::UpdateUniformBuffer()
@@ -357,6 +361,7 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				Vulkan::VulkanDebug::ConsolePrint(blockX, "blockX: ");
 				Vulkan::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
+				Vulkan::VulkanDebug::ConsolePrint(GetHeight(mCamera->GetPosition().x, mCamera->GetPosition().z), "terrain height: ");
 
 				UpdateBlockList();
 			}
@@ -393,7 +398,7 @@ float Terrain::Density(glm::vec3 position)
 	vec2 q = glm::vec2(position.x * 0.5, position.z*0.5);
 
     float s = 0.5;
-    for(int i=0; i<6; i++)
+    for(int i=0; i<1; i++)
     {
         h -= s*cosNoise(q); 
 		q = m2*q;// *0.85;
@@ -401,10 +406,9 @@ float Terrain::Density(glm::vec3 position)
         q += vec2(2.41,8.13);
         s *= 0.48 + 0.2*h;
     }
-    h *= 5500.0;
+    h *= 10500.0;
 
 	density = glm::min(-position.y + h, density);
-	//density = min(-pos.y + cosNoise(pos), density);
 
 	return density;
 }
@@ -412,9 +416,26 @@ float Terrain::Density(glm::vec3 position)
 float Terrain::GetHeight(float x, float z)
 {
 	float height = 0.0;
-	glm::vec3 origin = glm::vec3(x, 15000, z);
+	glm::vec3 origin = glm::vec3(x, 25000, z);
 	glm::vec3 dir = glm::vec3(0, -1, 0);
 
+	float tmax = 100000.0;
+	float t = 0.0;
+	for (uint32_t i = 0; i < 200; i++)
+	{
+		glm::vec3 pos = origin + dir * t;
+		float h = Density(pos);
+
+		if (h > 10.011 || t > tmax)
+			break;
+
+		t += -h * 0.5;
+	}
+
+	if (t < tmax)
+	{
+		height = (origin + dir * t).y;
+	}
 
 	return height;
 }
