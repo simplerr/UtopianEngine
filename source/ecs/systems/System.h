@@ -13,6 +13,13 @@ namespace ECS
 	class PhysicsComponent;
 	class TransformComponent;
 
+	enum SystemId
+	{
+		RENDER_SYSTEM = 0,
+		EDITOR_SYSTEM,
+		PHYSICS_SYSTEM,
+		HEALTH_SYSTEM
+	};
 	struct EntityCache
 	{
 		EntityCache()
@@ -34,11 +41,12 @@ namespace ECS
 	class System
 	{
 	public:
-		System(SystemManager* entityManager, uint32_t componentMask);
+		System(SystemManager* entityManager, uint32_t componentMask, SystemId systemId);
 		virtual ~System();
 		SystemManager* GetEntityManager();
 		bool Accepts(uint32_t mask);
 		uint32_t GetComponentMask();
+		SystemId GetSystemId();
 		
 
 		// The derived systems can store the entities however they want
@@ -57,5 +65,6 @@ namespace ECS
 		SystemManager* mEntityManager;
 		std::vector<EntityCache> mEntities;
 		uint32_t mComponentMask;
+		SystemId mSystemId;
 	};
 }

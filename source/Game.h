@@ -9,6 +9,9 @@ namespace ECS
 	class Entity;
 }
 
+class Terrain;
+class Input;
+
 namespace Vulkan
 {
 	class Renderer;
@@ -35,11 +38,13 @@ namespace Vulkan
 		Renderer* mRenderer;
 		Window* mWindow;
 		Camera* mCamera;
+		Terrain* mTerrain;
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;
 
 		ECS::SystemManager* mEntityManager;
 		ECS::Entity* mTestEntity;
+		Input* mInput;
 	};
 }

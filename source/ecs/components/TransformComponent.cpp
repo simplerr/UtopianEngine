@@ -44,6 +44,18 @@ namespace ECS
 		RebuildWorldMatrix();
 	}
 
+	void TransformComponent::AddScale(float x, float y, float z)
+	{
+		mScale += vec3(x, y, z);
+		RebuildWorldMatrix();
+	}
+	
+	void TransformComponent::AddScale(vec3 scale)
+	{
+		mScale += scale;
+		RebuildWorldMatrix();
+	}
+
 	vec3 TransformComponent::GetPosition()
 	{
 		return mPosition;

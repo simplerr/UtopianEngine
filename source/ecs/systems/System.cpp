@@ -7,10 +7,11 @@
 
 namespace ECS
 {
-	System::System(SystemManager* entityManager, uint32_t componentMask)
+	System::System(SystemManager* entityManager, uint32_t componentMask, SystemId systemId)
 	{
 		mEntityManager = entityManager;
 		mComponentMask = componentMask;
+		mSystemId = systemId;
 	}
 
 	System::~System()
@@ -68,5 +69,10 @@ namespace ECS
 	uint32_t System::GetComponentMask()
 	{
 		return mComponentMask;
+	}
+
+	SystemId System::GetSystemId()
+	{
+		return mSystemId;
 	}
 }

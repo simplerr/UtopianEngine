@@ -64,7 +64,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(SystemManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* cameraj);
+		RenderSystem(SystemManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);

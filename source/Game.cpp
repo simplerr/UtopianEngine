@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Window.h"
 #include "Camera.h"
+#include "Terrain.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include <string>
@@ -15,6 +16,7 @@
 #include "ecs/components/TransformComponent.h"
 #include "ecs/components/PhysicsComponent.h"
 #include "ecs/components/HealthComponent.h"
+#include "Input.h"
 
 namespace Vulkan
 {
@@ -39,8 +41,12 @@ namespace Vulkan
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
+		mTerrain = new Terrain(mRenderer, mCamera);
+		mInput = new Input();
+
 		mEntityManager = new ECS::SystemManager();
-		mEntityManager->Init(mRenderer, mCamera);
+		mEntityManager->Init(mRenderer, mCamera, mTerrain, mInput);
+
 
 		InitScene();
 	}
@@ -50,6 +56,8 @@ namespace Vulkan
 		delete mCamera;
 		delete mEntityManager;
 		delete mRenderer;
+		delete mTerrain;
+		delete mInput;
 	}
 
 	void Game::InitScene()
@@ -117,6 +125,7 @@ namespace Vulkan
 	{
 		mRenderer->Update();
 		mEntityManager->Process();
+		mInput->Update(0);
 
 		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
 		float speed = 5.0f;
@@ -189,6 +198,8 @@ namespace Vulkan
 
 		if (mRenderer != nullptr)
 			mRenderer->HandleMessages(hWnd, uMsg, wParam, lParam);
+
+		mInput->HandleMessages(uMsg, wParam, lParam);
 
 		switch (uMsg)
 		{

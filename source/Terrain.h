@@ -102,6 +102,7 @@ public:
 
 	float GetHeight(float x, float z);
 	float Density(glm::vec3 position);
+	glm::vec3 GetRayIntersection(glm::vec3 origin, glm::vec3 direction);
 
 private:
 	Vulkan::Renderer* mRenderer;

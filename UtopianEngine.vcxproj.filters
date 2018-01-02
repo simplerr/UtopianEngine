@@ -201,9 +201,6 @@
     <ClCompile Include="source\ecs\Entity.cpp">
       <Filter>Source Files\ecs</Filter>
     </ClCompile>
-    <ClCompile Include="source\ecs\systems\PickingSystem.cpp">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClCompile>
     <ClCompile Include="source\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -290,6 +287,15 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\NormalDebugEffect.cpp">
       <Filter>Source Files\vulkan\effects\normal_debug</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ecs\systems\EditorSystem.cpp">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ObjectTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Input.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -410,9 +416,6 @@
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\ecs\systems\PickingSystem.h">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClInclude>
     <ClInclude Include="source\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -502,6 +505,15 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\NormalDebugEffect.h">
       <Filter>Source Files\vulkan\effects\normal_debug</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ecs\systems\EditorSystem.h">
+      <Filter>Source Files\ecs\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ObjectTool.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Input.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

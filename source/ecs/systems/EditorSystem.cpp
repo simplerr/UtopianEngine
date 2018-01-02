@@ -13,9 +13,12 @@
 #include "ecs/components/PhysicsComponent.h"
 #include "ecs/SystemManager.h"
 #include "ecs/Entity.h"
-#include "PickingSystem.h"
+#include "EditorSystem.h"
 #include "Camera.h"
 #include "Collision.h"
+#include "ObjectTool.h"
+#include "Input.h"
+#include <glm/gtx/intersect.hpp>
 
 // [TODO] Move
 #define WINDOW_WIDTH 1600.0f
@@ -23,18 +26,24 @@
 
 namespace ECS
 {
-	PickingSystem::PickingSystem(SystemManager* entityManager, Vulkan::Camera* camera)
-		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT)
+	EditorSystem::EditorSystem(SystemManager* entityManager, Vulkan::Camera* camera, Terrain* terrain, Input* input)
+		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT, SystemId::EDITOR_SYSTEM)
 	{
 		mCamera = camera;
+		mTerrain = terrain;
+		mInput = input;
+
+		mObjectTool = new ObjectTool(camera);
+
+		mPickedId = -1;
 	}
 
-	void PickingSystem::Process()
+	void EditorSystem::Process()
 	{
-
+		mObjectTool->Update(mInput, 0);
 	}
 
-	void PickingSystem::PerformPicking()
+	void EditorSystem::PerformPicking()
 	{
 		Vulkan::Ray ray = mCamera->GetPickingRay();
 
@@ -64,8 +73,12 @@ namespace ECS
 			}
 		}
 
+		mPickedId = pickedId;
+
 		if(pickedId != -1)
 		{
+			mObjectTool->SetSelectedEntity(&mEntities[pickedId]);
+
 			// Do something with the entity that was picked
 			//if (mEntities[pickedId].healthComponent != nullptr)
 			//{
@@ -79,30 +92,55 @@ namespace ECS
 			}
 			else
 			{
-				uint32_t maxSpeed = 20;
-				uint32_t maxRotation = 100;
-				float divider = 90.0f;
-				ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
-				physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
-				physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
-				physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
-				GetEntityManager()->AddComponent(mEntities[pickedId].entity, physicsComponent);
+				//uint32_t maxSpeed = 20;
+				//uint32_t maxRotation = 100;
+				//float divider = 90.0f;
+				//ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
+				//physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
+				//physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
+				//physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
+				//GetEntityManager()->AddComponent(mEntities[pickedId].entity, physicsComponent);
 			}
+		}
+		else
+		{
+			mObjectTool->SetSelectedEntity(nullptr);
 		}
 	}
 
-	void PickingSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	void EditorSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
 		{
 		case WM_LBUTTONDOWN:
 			PerformPicking();
 			break;
+		case WM_MOUSEWHEEL:
+			short scrollDirection = HIWORD(wParam);
+			if (scrollDirection < 0)
+			{
+				mEntities[mPickedId].transformComponent->AddScale(glm::vec3(SCALING_SPEED));
+			}
+			else
+			{
+				mEntities[mPickedId].transformComponent->AddScale(glm::vec3(-SCALING_SPEED));
+			}
+			break;
 		}
 	}
 
-	Entity* PickingSystem::GetPickedEntity()
+	Entity* EditorSystem::GetPickedEntity()
 	{
 		return nullptr;
+	}
+
+	void EditorSystem::SaveToFile()
+	{
+
+	}
+
+	void EditorSystem::LoadFromFile()
+	{
+
 	}
 }

@@ -6,8 +6,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
 #include "ecs/Entity.h"
+#include "ecs/SystemManager.h"
 #include "ecs/components/MeshComponent.h"
 #include "ecs/components/TransformComponent.h"
+#include "ecs/components/HealthComponent.h"
+#include "ecs/components/PhysicsComponent.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/ShaderManager.h"
 #include "vulkan/ModelLoader.h"
@@ -38,11 +41,12 @@
 
 namespace ECS
 {
-	RenderSystem::RenderSystem(SystemManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* camera)
-		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT)
+	RenderSystem::RenderSystem(SystemManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain)
+		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT, SystemId::RENDER_SYSTEM)
 	{
 		mRenderer = renderer;
 		mCamera = camera;
+		mTerrain = terrain;
 		mTextureLoader = mRenderer->mTextureLoader;
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 
@@ -56,10 +60,6 @@ namespace ECS
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mTerrainCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
-		//
-		// Terrain
-		// 
-		mTerrain = new Terrain(mRenderer, mCamera);
 		//mCommandBuffer->ToggleActive();
 
 		// NOTE: This must run before PhongEffect::Init()
@@ -104,7 +104,6 @@ namespace ECS
 	{
 		mModelLoader->CleanupModels(mRenderer->GetVkDevice());
 		delete mModelLoader;
-		delete mTerrain;
 		delete mWaterRenderer;
 	}
 
@@ -119,7 +118,6 @@ namespace ECS
 	void RenderSystem::Process()
 	{
 		mTerrain->Update();
-
 		mTerrainCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
 		mTerrainCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 		mTerrainCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
@@ -270,6 +268,45 @@ namespace ECS
 
 	void RenderSystem::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		switch (uMsg)
+		{
+		//case WM_LBUTTONDOWN:
+
+		//	// Perform ray-terrain intersection and place object
+		//	Vulkan::Ray ray = mCamera->GetPickingRay();
+		//	glm::vec3 position = mTerrain->GetRayIntersection(ray.origin, ray.direction);
+
+		//	ECS::TransformComponent* transformComponent = new ECS::TransformComponent(position);
+		//	//transformComponent->SetRotation(glm::vec3(180, 30, 40));
+		//	transformComponent->SetRotation(glm::vec3(180.0f, 0.0f, 0.0f));
+		//	transformComponent->SetScale(glm::vec3(250.0f));
+
+		//	// Mesh
+		//	ECS::MeshComponent* meshComponent = nullptr;
+		//	//if (x == 0) {
+		//	//	meshComponent = new ECS::MeshComponent("data/models/Crate/Crate1.obj", PipelineType::PIPELINE_BASIC);
+		//	//	transformComponent->SetScale(glm::vec3(35.0f));
+		//	//}
+		//	//else { 
+		//		meshComponent = new ECS::MeshComponent("data/models/adventure_village/HouseAttic.obj", Vulkan::PipelineType::PIPELINE_BASIC);
+		//		//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", Vulkan::PipelineType::PIPELINE_BASIC);
+		//		//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", Vulkan::PipelineType::PIPELINE_WIREFRAME);
+		//		//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", Vulkan::PipelineType::PIPELINE_BASIC);
+		//	//}
+
+		//	// Health
+		//	ECS::HealthComponent* healthComponent = new ECS::HealthComponent(100);
+
+		//	// Create component list
+		//	ECS::ComponentList componentList;
+		//	componentList.push_back(meshComponent);
+		//	componentList.push_back(transformComponent);
+		//	componentList.push_back(healthComponent);
+		//	
+		//	mEntityManager->AddEntity(componentList);
+		//	break;
+		}
+
 		mTerrain->HandleMessages(hWnd, uMsg, wParam, lParam);
 	}
 }

@@ -415,15 +415,22 @@ float Terrain::Density(glm::vec3 position)
 
 float Terrain::GetHeight(float x, float z)
 {
-	float height = 0.0;
 	glm::vec3 origin = glm::vec3(x, 25000, z);
 	glm::vec3 dir = glm::vec3(0, -1, 0);
 
+	glm::vec3 intersection = GetRayIntersection(origin, dir);
+
+	return intersection.y;
+}
+
+glm::vec3 Terrain::GetRayIntersection(glm::vec3 origin, glm::vec3 direction)
+{
+	glm::vec3 intersection = glm::vec3();
 	float tmax = 100000.0;
 	float t = 0.0;
 	for (uint32_t i = 0; i < 200; i++)
 	{
-		glm::vec3 pos = origin + dir * t;
+		glm::vec3 pos = origin + direction * t;
 		float h = Density(pos);
 
 		if (h > 10.011 || t > tmax)
@@ -434,8 +441,8 @@ float Terrain::GetHeight(float x, float z)
 
 	if (t < tmax)
 	{
-		height = (origin + dir * t).y;
+		intersection = (origin + direction * t);
 	}
 
-	return height;
+	return intersection;
 }

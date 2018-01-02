@@ -10,6 +10,9 @@ namespace Vulkan
 	class Camera;
 }
 
+class Terrain;
+class Input;
+
 namespace ECS
 {
 	class System;
@@ -17,7 +20,6 @@ namespace ECS
 	class Component;
 	class RenderSystem;
 	class PhysicsSystem;
-	class PickingSystem;
 	class HealthSystem;
 
 	typedef std::vector<Entity*> EntityList;
@@ -29,7 +31,7 @@ namespace ECS
 		SystemManager();
 		~SystemManager();
 
-		void Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
+		void Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain, Input* input);
 
 		void AddSystem(ECS::System* system);
 		Entity* AddEntity(ComponentList& components);

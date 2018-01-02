@@ -22,6 +22,8 @@ namespace ECS
 		void SetScale(vec3 scale);
 
 		void AddRotation(float x, float y, float z);
+		void AddScale(float x, float y, float z);
+		void AddScale(vec3 scale);
 
 		vec3 GetPosition();
 		vec3 GetRotation();

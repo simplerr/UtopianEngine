@@ -2,7 +2,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "systems/RenderSystem.h"
 #include "systems/PhysicsSystem.h"
-#include "systems/PickingSystem.h"
+#include "systems/EditorSystem.h"
 #include "systems/HealthSystem.h"
 #include "components/Component.h"
 #include "SystemManager.h"
@@ -30,13 +30,13 @@ namespace ECS
 		}
 	}
 
-	void SystemManager::Init(Vulkan::Renderer* renderer,  Vulkan::Camera* camera)
+	void SystemManager::Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain, Input* input)
 	{
 		// Create all ECS::System
 		AddSystem(new ECS::PhysicsSystem(this));
-		AddSystem(new ECS::PickingSystem(this, camera));
+		AddSystem(new ECS::EditorSystem(this, camera, terrain, input));
 		AddSystem(new ECS::HealthSystem(this));
-		AddSystem(new ECS::RenderSystem(this, renderer, camera));
+		AddSystem(new ECS::RenderSystem(this, renderer, camera, terrain));
 	}
 
 	void SystemManager::AddSystem(ECS::System* system)
