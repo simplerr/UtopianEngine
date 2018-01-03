@@ -100,6 +100,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MarchingCubes.cpp" />
     <ClCompile Include="source\ObjectTool.cpp" />
+    <ClCompile Include="source\SceneRenderer.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="source\MarchingCubes.h" />
     <ClInclude Include="source\ObjectTool.h" />
     <ClInclude Include="source\Platform.h" />
+    <ClInclude Include="source\SceneRenderer.h" />
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />

@@ -33,7 +33,7 @@ namespace ECS
 	void SystemManager::Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain, Input* input)
 	{
 		// Create all ECS::System
-		AddSystem(new ECS::PhysicsSystem(this));
+		AddSystem(new ECS::PhysicsSystem(this)); // terrain
 		AddSystem(new ECS::EditorSystem(this, camera, terrain, input));
 		AddSystem(new ECS::HealthSystem(this));
 		AddSystem(new ECS::RenderSystem(this, renderer, camera, terrain));
@@ -159,5 +159,16 @@ namespace ECS
 		default:
 			break;
 		}
+	}
+	
+	ECS::System* SystemManager::GetSystem(SystemId id)
+	{
+		for (System* system : mSystems)
+		{
+			if (system->GetSystemId() == id)
+				return system;
+		}
+
+		return nullptr;
 	}
 }

@@ -3,6 +3,7 @@
 #include <Window.h>
 #include <vector>
 #include "ecs/components/Component.h"
+#include "ecs/systems/System.h"
 
 namespace Vulkan
 {
@@ -47,6 +48,8 @@ namespace ECS
 		void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+		ECS::System* GetSystem(SystemId id);
 	private:
 		// All the ECS::System 
 		std::vector<ECS::System*> mSystems;

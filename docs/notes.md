@@ -38,3 +38,26 @@ RenderSystem::OnEntityRemoved(entity)
 {
 	mRenderer->RemoveModelInstance(entity.model);	
 }
+
+Editor/Terrain/World/RenderSystem
+- Terrain is not related to the ECS at all
+- Water is also not related to the ECS, same for grass
+- Could be placed in World
+- The responsibility of RenderSystem should ONLY be to handle rendering
+of MeshComponents
+- Load/Save should be placed in World
+	- If world does not contain Entities this is false
+- How does World communicate with RenderSystem? 
+
+- PhysicsSystem needs Terrain::Intersect()
+- EditorSystem needs Terrain::Intersect()
+
+Ideas:
+World has Terrain and RenderSystem
+
+WorldRenderer renders World + RenderSystem (handles reflections, deferred etc.)
+
+Other possible Components:
+- BillboardComponent
+- ParticleSystemComponent
+- Should these be handled by RenderSystem or have separate Systems?

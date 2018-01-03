@@ -13,6 +13,7 @@
 #include "Device.h"
 #include "ShaderManager.h"
 #include "TextOverlay.h"
+#include "ModelLoader.h"
 #include "handles/DescriptorSet.h"
 #include "handles/CommandBuffer.h"
 #include "handles/CommandPool.h"
@@ -67,6 +68,7 @@ namespace Vulkan
 		PrepareCommandBuffers();
 
 		mTextureLoader = new Vulkan::TextureLoader(this, GetQueue()->GetVkHandle());
+		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 		mTextOverlay = new TextOverlay(this);
 		mPrepared = true;
 	}

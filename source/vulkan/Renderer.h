@@ -32,6 +32,7 @@ namespace Vulkan
 	class DescriptorPool;
 	class TextOverlay;
 	class TextureLoader;
+	class ModelLoader;
 
 	enum PipelineType
 	{
@@ -112,5 +113,6 @@ namespace Vulkan
 	public:
 		ShaderManager*					mShaderManager = nullptr;
 		TextureLoader*					mTextureLoader = nullptr;
+		ModelLoader*					mModelLoader = nullptr;
 	};
 }	// VulkanLib namespace

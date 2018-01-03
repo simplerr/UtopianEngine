@@ -40,8 +40,6 @@ namespace ECS
 	- Adding/removing Components to entities
 	- Changing properties through UI
 
-	Design:
-	- Editor needs to be informed when PickingSystem picks an entity
 	*/
 	class EditorSystem : public System
 	{

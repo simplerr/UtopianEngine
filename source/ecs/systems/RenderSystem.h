@@ -68,13 +68,18 @@ namespace ECS
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);
+
+		// Empty, everything is placed in Render()
 		virtual void Process();
+
+		// RenderSystem is treated differently from the other systems.
+		// Render() wil be called from the SceneRenderer() which is required for the
+		// multi pass techniques to work.
+		void Render();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 		void AddDebugCube(vec3 pos, vec4 color, float size);
-
-		void RenderOffscreen();
 	private:
 		// RenderSystem should not BE a renderer but rather have one, since the usage of Vulkan should not be limited to only the ECS
 		// renderer needs to be available for HUDS, debugging etc
@@ -89,9 +94,7 @@ namespace ECS
 		Vulkan::PhongEffect mPhongEffect;
 		Vulkan::NormalDebugEffect mNormalDebugEffect;
 
-		Vulkan::ScreenGui* mScreenGui;
 		Terrain* mTerrain;
-		WaterRenderer* mWaterRenderer;
 
 		std::vector<DebugCube> mDebugCubes;
 	};

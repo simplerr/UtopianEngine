@@ -16,7 +16,9 @@
 #include "ecs/components/TransformComponent.h"
 #include "ecs/components/PhysicsComponent.h"
 #include "ecs/components/HealthComponent.h"
+#include "ecs/systems/RenderSystem.h"
 #include "Input.h"
+#include "SceneRenderer.h"
 
 namespace Vulkan
 {
@@ -41,12 +43,13 @@ namespace Vulkan
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
-		mTerrain = new Terrain(mRenderer, mCamera);
 		mInput = new Input();
 
+		mSceneRenderer = new SceneRenderer(mRenderer, mCamera);
 		mEntityManager = new ECS::SystemManager();
-		mEntityManager->Init(mRenderer, mCamera, mTerrain, mInput);
-
+		mEntityManager->Init(mRenderer, mCamera, mSceneRenderer->GetTerrain(), mInput);
+		ECS::RenderSystem* renderSystem = dynamic_cast<ECS::RenderSystem*>(mEntityManager->GetSystem(ECS::SystemId::RENDER_SYSTEM));
+		mSceneRenderer->SetRenderSystem(renderSystem);
 
 		InitScene();
 	}
@@ -56,8 +59,8 @@ namespace Vulkan
 		delete mCamera;
 		delete mEntityManager;
 		delete mRenderer;
-		delete mTerrain;
 		delete mInput;
+		delete mSceneRenderer;
 	}
 
 	void Game::InitScene()
@@ -126,6 +129,7 @@ namespace Vulkan
 		mRenderer->Update();
 		mEntityManager->Process();
 		mInput->Update(0);
+		mSceneRenderer->Update();
 
 		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
 		float speed = 5.0f;
@@ -134,6 +138,7 @@ namespace Vulkan
 
 	void Game::Draw()
 	{
+		mSceneRenderer->Render();
 		mRenderer->Render();
 	}
 	
