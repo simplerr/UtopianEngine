@@ -73,9 +73,9 @@ void SceneRenderer::RenderScene()
     mTerrainCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
     mTerrain->Render(mTerrainCommandBuffer);
-    mTerrainCommandBuffer->End();
+    mRenderSystem->Render(mTerrainCommandBuffer);
 
-    mRenderSystem->Render();
+    mTerrainCommandBuffer->End();
 }
 
 void SceneRenderer::RenderOffscreen()
@@ -91,6 +91,7 @@ void SceneRenderer::RenderOffscreen()
     mWaterRenderer->GetReflectionRenderTarget()->Begin();	
 
     mTerrain->Render(mWaterRenderer->GetReflectionRenderTarget()->GetCommandBuffer());
+	mRenderSystem->Render(mWaterRenderer->GetReflectionRenderTarget()->GetCommandBuffer());
     // RendeScene() instead
 
     mWaterRenderer->GetReflectionRenderTarget()->End(mRenderer->GetQueue());
@@ -104,6 +105,7 @@ void SceneRenderer::RenderOffscreen()
     mWaterRenderer->GetRefractionRenderTarget()->Begin();	
 
     mTerrain->Render(mWaterRenderer->GetRefractionRenderTarget()->GetCommandBuffer());
+	mRenderSystem->Render(mWaterRenderer->GetRefractionRenderTarget()->GetCommandBuffer());
     // RendeScene() instead
 
     mWaterRenderer->GetRefractionRenderTarget()->End(mRenderer->GetQueue());

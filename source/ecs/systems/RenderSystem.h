@@ -75,7 +75,7 @@ namespace ECS
 		// RenderSystem is treated differently from the other systems.
 		// Render() wil be called from the SceneRenderer() which is required for the
 		// multi pass techniques to work.
-		void Render();
+		void Render(Vulkan::CommandBuffer* commandBuffer);
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

@@ -105,7 +105,7 @@ namespace ECS
 		entityCache.meshComponent->SetModel(model);
 	}
 
-	void RenderSystem::Render()
+	void RenderSystem::Render(Vulkan::CommandBuffer* commandBuffer)
 	{
 		// From Renderer.cpp
 		if (mCamera != nullptr)
@@ -122,14 +122,11 @@ namespace ECS
 		mNormalDebugEffect.per_frame_gs.data.view = mCamera->GetView();
 		mNormalDebugEffect.UpdateMemory(mRenderer->GetDevice());
 
-		// Temp
-		VkCommandBuffer commandBuffer = mCommandBuffer->GetVkHandle();
-
 		// Build mesh rendering command buffer
-		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+		/*commandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
 
-		mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-		mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+		commandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+		commandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());*/
 
 		for (EntityCache entityCache : mEntities)
 		{
@@ -139,12 +136,12 @@ namespace ECS
 			
 			for (Vulkan::Mesh* mesh : model->mMeshes)
 			{
-				mCommandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
+				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 
 				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
 				Vulkan::NormalDebugEffect::PushConstantBlock pushConstantBlock;
@@ -157,17 +154,17 @@ namespace ECS
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-				mCommandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				commandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
-				mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mesh->vertices.buffer);
-				mCommandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				commandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mesh->vertices.buffer);
+				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 
 				// Try the geometry shader pipeline
-				mCommandBuffer->CmdBindPipeline(mNormalDebugEffect.GetPipeline());
-				vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mNormalDebugEffect.GetPipelineLayout(), 0, 1, &mNormalDebugEffect.mDescriptorSet0->descriptorSet, 0, NULL);
-				mCommandBuffer->CmdPushConstants(&mNormalDebugEffect, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-				mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				commandBuffer->CmdBindPipeline(mNormalDebugEffect.GetPipeline());
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mNormalDebugEffect.GetPipelineLayout(), 0, 1, &mNormalDebugEffect.mDescriptorSet0->descriptorSet, 0, NULL);
+				commandBuffer->CmdPushConstants(&mNormalDebugEffect, VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
 
@@ -190,13 +187,11 @@ namespace ECS
 			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-			mCommandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			mCommandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-			mCommandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-			mCommandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+			commandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer->CmdBindVertexBuffer(VERTEX_BUFFER_BIND_ID, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+			commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
-
-		mCommandBuffer->End();
 	}
 
 	void RenderSystem::Process()
