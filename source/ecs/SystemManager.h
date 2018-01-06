@@ -4,6 +4,7 @@
 #include <vector>
 #include "ecs/components/Component.h"
 #include "ecs/systems/System.h"
+#include "scene/SceneEntity.h"
 
 namespace Vulkan
 {
@@ -32,7 +33,7 @@ namespace ECS
 		SystemManager();
 		~SystemManager();
 
-		void Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain, Input* input);
+		void Init();
 
 		void AddSystem(ECS::System* system);
 		Entity* AddEntity(ComponentList& components);

@@ -5,8 +5,8 @@
 
 namespace ECS
 {
-	HealthSystem::HealthSystem(SystemManager* entityManager)
-		: System(entityManager, Type::HEALTH_COMPONENT, SystemId::HEALTH_SYSTEM)
+	HealthSystem::HealthSystem()
+		: System(Type::HEALTH_COMPONENT, SystemId::HEALTH_SYSTEM)
 	{
 
 	}

@@ -30,17 +30,15 @@ namespace ECS
 		}
 	}
 
-	void SystemManager::Init(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain, Input* input)
+	void SystemManager::Init()
 	{
-		// Create all ECS::System
-		AddSystem(new ECS::PhysicsSystem(this)); // terrain
-		AddSystem(new ECS::EditorSystem(this, camera, terrain, input));
-		AddSystem(new ECS::HealthSystem(this));
-		AddSystem(new ECS::RenderSystem(this, renderer, camera, terrain));
+
 	}
 
 	void SystemManager::AddSystem(ECS::System* system)
 	{
+		system->SetSystemManager(this);
+
 		mSystems.push_back(system);
 	}
 

@@ -26,8 +26,8 @@
 
 namespace ECS
 {
-	EditorSystem::EditorSystem(SystemManager* entityManager, Vulkan::Camera* camera, Terrain* terrain, Input* input)
-		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT, SystemId::EDITOR_SYSTEM)
+	EditorSystem::EditorSystem(Vulkan::Camera* camera, Terrain* terrain, Input* input)
+		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT | Type::HEALTH_COMPONENT, SystemId::EDITOR_SYSTEM)
 	{
 		mCamera = camera;
 		mTerrain = terrain;

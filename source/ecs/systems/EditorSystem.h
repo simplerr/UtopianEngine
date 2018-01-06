@@ -44,7 +44,7 @@ namespace ECS
 	class EditorSystem : public System
 	{
 	public:
-		EditorSystem(SystemManager* entityManager, Vulkan::Camera* camera, Terrain* terrain, Input* input);
+		EditorSystem(Vulkan::Camera* camera, Terrain* terrain, Input* input);
 		void Process();
 		void PerformPicking();
 

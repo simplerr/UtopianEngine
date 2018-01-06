@@ -17,8 +17,22 @@
 #include "ecs/components/PhysicsComponent.h"
 #include "ecs/components/HealthComponent.h"
 #include "ecs/systems/RenderSystem.h"
+#include "ecs/systems/PhysicsSystem.h"
+#include "ecs/systems/HealthSystem.h"
+#include "ecs/systems/EditorSystem.h"
 #include "Input.h"
 #include "SceneRenderer.h"
+
+// Testing
+#include "scene/SceneEntity.h"
+#include "scene/SceneComponent.h"
+#include "scene/CTransform.h"
+#include "scene/CRenderable.h"
+#include "scene/ObjectManager.h"
+#include "scene/SceneManager.h"
+#include "scene/ActorRenderer.h"
+
+using namespace Scene;
 
 namespace Vulkan
 {
@@ -47,11 +61,20 @@ namespace Vulkan
 
 		mSceneRenderer = new SceneRenderer(mRenderer, mCamera);
 		mEntityManager = new ECS::SystemManager();
-		mEntityManager->Init(mRenderer, mCamera, mSceneRenderer->GetTerrain(), mInput);
+
+		mEntityManager->Init(); // NOTE: Not used// Create all ECS::System
+		mEntityManager->AddSystem(new ECS::PhysicsSystem());
+		mEntityManager->AddSystem(new ECS::EditorSystem(mCamera, mTerrain, mInput));
+		mEntityManager->AddSystem(new ECS::HealthSystem());
+		mEntityManager->AddSystem(new ECS::RenderSystem(mRenderer, mCamera, mTerrain));
+
 		ECS::RenderSystem* renderSystem = dynamic_cast<ECS::RenderSystem*>(mEntityManager->GetSystem(ECS::SystemId::RENDER_SYSTEM));
 		mSceneRenderer->SetRenderSystem(renderSystem);
 
 		InitScene();
+
+		InitTestScene();
+		ObjectManager::Instance().PrintObjects();
 	}
 
 	Game::~Game()
@@ -61,6 +84,49 @@ namespace Vulkan
 		delete mRenderer;
 		delete mInput;
 		delete mSceneRenderer;
+	}
+
+	void Game::InitTestScene()
+	{
+		ObjectManager::Start();
+		SceneManager::Start();
+		ActorRenderer::Start(mRenderer, mCamera);
+
+		/*auto entity = mEntityManager->Create("Scope");
+		entity->AddComponent<CTransform>(vec3(0, 1, 2));
+		entity->AddComponent<CStaticMesh>("data/models/teapot.obj");*/
+
+		SharedPtr<SceneEntity> ptr;
+		{
+			auto entity = SceneEntity::Create("Scope");
+			auto ent2 = entity;
+			ptr = entity;
+		}
+
+		auto entity = SceneEntity::Create("Teapot");
+
+		CTransform* transform = entity->AddComponent<CTransform>(vec3(67000, 5000, 67000));
+		transform->SetScale(vec3(150.0f));
+
+		CRenderable* mesh = entity->AddComponent<CRenderable>();
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
+
+		Object o = ObjectManager::Instance().GetObjectHandle(transform->GetId());
+
+		CTransform* test = entity->GetComponent<CTransform>();
+		CRenderable* test1 = entity->GetComponent<CRenderable>();
+
+		ObjectManager::Instance().PrintObjects();
+
+		/*CMesh* mesh = entity->AddComponent<CMesh>("data/models/teapot.obj");
+		mesh->SetPipeline(PipelineType::PIPELINE_BASIC);
+
+		CLight* light = entity->AddComponent<CLight>();
+		CParticleSystem* particleSystem = entity->AddComponent<CParticleSystem>();
+
+		Entity* cameraEntity = Entity::Create("Camera");
+		CCamera* camera = cameraEntity->AddComponent<CCamera>();
+		camera->SetPosition(vec3(0, 0, 0));*/
 	}
 
 	void Game::InitScene()
@@ -99,7 +165,7 @@ namespace Vulkan
 						//meshComponent = new ECS::MeshComponent("data/models/adventure_village/StreetLightTall.obj", PipelineType::PIPELINE_BASIC);
 						//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
 						//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_WIREFRAME);
-						meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_BASIC);
+						meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
 					//}
 
 					// Health
@@ -126,6 +192,7 @@ namespace Vulkan
 
 	void Game::Update()
 	{
+		SceneManager::Instance().Update();
 		mRenderer->Update();
 		mEntityManager->Process();
 		mInput->Update(0);
@@ -139,6 +206,7 @@ namespace Vulkan
 	void Game::Draw()
 	{
 		mSceneRenderer->Render();
+		ActorRenderer::Instance().RenderAll();
 		mRenderer->Render();
 	}
 	

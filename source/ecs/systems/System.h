@@ -41,8 +41,11 @@ namespace ECS
 	class System
 	{
 	public:
-		System(SystemManager* entityManager, uint32_t componentMask, SystemId systemId);
+		System(uint32_t componentMask, SystemId systemId);
 		virtual ~System();
+
+		void SetSystemManager(SystemManager* manager);
+
 		SystemManager* GetEntityManager();
 		bool Accepts(uint32_t mask);
 		uint32_t GetComponentMask();

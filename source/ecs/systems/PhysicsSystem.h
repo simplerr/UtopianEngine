@@ -17,7 +17,7 @@ namespace ECS
 	class PhysicsSystem : public System
 	{
 	public:
-		PhysicsSystem(SystemManager* entityManager);
+		PhysicsSystem();
 		void Process();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

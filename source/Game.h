@@ -33,6 +33,7 @@ namespace Vulkan
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		void InitScene();	
+		void InitTestScene();	
 		bool IsClosing();
 
 		// Move all of these to other locations

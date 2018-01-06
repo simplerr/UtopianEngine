@@ -41,8 +41,8 @@
 
 namespace ECS
 {
-	RenderSystem::RenderSystem(SystemManager* entityManager, Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain)
-		: System(entityManager, Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT, SystemId::RENDER_SYSTEM)
+	RenderSystem::RenderSystem(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain)
+		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT, SystemId::RENDER_SYSTEM)
 	{
 		mRenderer = renderer;
 		mCamera = camera;

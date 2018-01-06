@@ -5,8 +5,8 @@
 
 namespace ECS
 {
-	PhysicsSystem::PhysicsSystem(SystemManager* entityManager)
-		: System(entityManager, Type::PHYSICS_COMPONENT, SystemId::PHYSICS_SYSTEM)
+	PhysicsSystem::PhysicsSystem()
+		: System(Type::PHYSICS_COMPONENT, SystemId::PHYSICS_SYSTEM)
 	{
 	}
 

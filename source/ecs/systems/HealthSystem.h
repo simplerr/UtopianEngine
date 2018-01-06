@@ -15,7 +15,7 @@ namespace ECS
 	class HealthSystem : public System
 	{
 	public:
-		HealthSystem(SystemManager* entityManager);
+		HealthSystem();
 
 		void Process();
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
