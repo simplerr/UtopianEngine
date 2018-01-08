@@ -83,11 +83,11 @@ namespace Scene
 
 				// Push the world matrix constant
 				PushConstantBlock pushConstantBlock;
+				Transform transform = renderable->GetTransform();
 				mat4 world;
-				world = glm::translate(world, renderable->pos);
-				world = glm::scale(world, renderable->scale);
+				world = glm::translate(world, transform.GetPosition());
+				world = glm::scale(world, transform.GetScale());
 				pushConstantBlock.world = world;
-				//pushConstantBlock.worldInvTranspose = entityCache.transformComponent->GetWorldInverseTransposeMatrix(); // TOOD: This probably also needs to be negated
 
 				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];

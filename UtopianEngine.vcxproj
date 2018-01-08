@@ -109,7 +109,8 @@
     <ClCompile Include="source\scene\SceneComponent.cpp" />
     <ClCompile Include="source\scene\CTransform.cpp" />
     <ClCompile Include="source\scene\SceneEntity.cpp" />
-    <ClCompile Include="source\scene\SceneManager.cpp" />
+    <ClCompile Include="source\scene\World.cpp" />
+    <ClCompile Include="source\scene\SceneNode.cpp" />
     <ClCompile Include="source\scene\Transform.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="source\ecs\systems\RenderSystem.h" />
     <ClInclude Include="source\ecs\systems\System.h" />
     <ClInclude Include="source\Game.h" />
+    <ClInclude Include="source\Exception.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\Light.h" />
     <ClInclude Include="source\MarchingCubes.h" />
@@ -192,7 +194,8 @@
     <ClInclude Include="source\scene\CTransform.h" />
     <ClInclude Include="source\scene\SceneEntity.h" />
     <ClInclude Include="source\scene\CRenderable.h" />
-    <ClInclude Include="source\scene\SceneManager.h" />
+    <ClInclude Include="source\scene\World.h" />
+    <ClInclude Include="source\scene\SceneNode.h" />
     <ClInclude Include="source\scene\Transform.h" />
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />

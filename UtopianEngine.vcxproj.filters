@@ -321,9 +321,6 @@
     <ClCompile Include="source\scene\ObjectManager.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\SceneManager.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene\Renderable.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -334,6 +331,12 @@
       <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="source\scene\Transform.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\SceneNode.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\World.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -578,9 +581,6 @@
     <ClInclude Include="source\scene\Module.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\SceneManager.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene\Renderable.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -592,6 +592,15 @@
     </ClInclude>
     <ClInclude Include="source\scene\Transform.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneNode.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\World.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Exception.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

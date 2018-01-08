@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "scene/SceneNode.h"
 #include "scene/SceneComponent.h"
 #include "Common.h"
 
@@ -12,7 +13,7 @@ namespace Scene
 {
 	class SceneEntity;
 
-	class Renderable
+	class Renderable : public SceneNode
 	{
 	public:
 		Renderable();
@@ -24,9 +25,6 @@ namespace Scene
 
 		Vulkan::StaticModel* GetModel();
 		void SetModel(Vulkan::StaticModel* model);
-
-		glm::vec3 pos;
-		glm::vec3 scale;
 
 	private:
 		Vulkan::StaticModel* mModel;

@@ -29,7 +29,7 @@
 #include "scene/CTransform.h"
 #include "scene/CRenderable.h"
 #include "scene/ObjectManager.h"
-#include "scene/SceneManager.h"
+#include "scene/World.h"
 #include "scene/ActorRenderer.h"
 
 using namespace Scene;
@@ -89,7 +89,7 @@ namespace Vulkan
 	void Game::InitTestScene()
 	{
 		ObjectManager::Start();
-		SceneManager::Start();
+		World::Start();
 		ActorRenderer::Start(mRenderer, mCamera);
 
 		/*auto entity = mEntityManager->Create("Scope");
@@ -192,7 +192,7 @@ namespace Vulkan
 
 	void Game::Update()
 	{
-		SceneManager::Instance().Update();
+		World::Instance().Update();
 		mRenderer->Update();
 		mEntityManager->Process();
 		mInput->Update(0);

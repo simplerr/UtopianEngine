@@ -6,12 +6,14 @@
 #include "Common.h"
 #include "scene/Object.h"
 #include "scene/ObjectManager.h"
-#include "scene/SceneManager.h"
+#include "scene/World.h"
 
 using namespace std;
 
 namespace Scene
 {
+	class CTransform;
+
 	class SceneEntity : public Object
 	{
 	public:
@@ -27,7 +29,7 @@ namespace Scene
 			SharedPtr<T> newComponent(new T(this, std::forward<Args>(args)...));
 
 			ObjectManager::Instance().RegisterObject(newComponent);
-			SceneManager::Instance().NotifyComponentCreated(newComponent.get());
+			World::Instance().NotifyComponentCreated(newComponent.get());
 
 			mComponents.push_back(newComponent.get());
 
@@ -35,7 +37,7 @@ namespace Scene
 		}
 
 		template <typename T>
-		T* GetComponent()
+		T* GetComponent() const
 		{
 			static_assert((std::is_base_of<SceneComponent, T>::value), "Specified type is not a valid Component.");
 
@@ -45,7 +47,7 @@ namespace Scene
 		}
 
 		template <typename T>
-		T* GetComponent(uint32_t type)
+		T* GetComponent(uint32_t type) const
 		{
 			for(auto& entry : mComponents)
 			{
@@ -56,7 +58,11 @@ namespace Scene
 			return nullptr;
 		}
 
+		const Transform& GetTransform() const;
+
 	private:
-		std::vector<Scene::SceneComponent*> mComponents;
+		vector<SceneComponent*> mComponents;
+		CTransform* mT = nullptr;
+		bool mHasTransform;
 	};
 }

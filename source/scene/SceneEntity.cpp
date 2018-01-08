@@ -1,6 +1,8 @@
 #include "SceneEntity.h"
 #include "scene/ObjectManager.h"
+#include "scene/CTransform.h"
 #include "ecs/SystemManager.h"
+#include "Exception.h"
 
 namespace Scene
 {
@@ -19,5 +21,15 @@ namespace Scene
 		// Let SceneManager assign root node
 
 		return entity;
+	}
+
+	const Transform& SceneEntity::GetTransform() const
+	{
+		CTransform* transform = GetComponent<CTransform>();
+
+		if (transform == nullptr)
+			THROW_EXCEPTION(Exception, "No CTransform component");
+
+		return transform->GetTransform();
 	}
 }
