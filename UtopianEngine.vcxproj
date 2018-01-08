@@ -110,6 +110,7 @@
     <ClCompile Include="source\scene\CTransform.cpp" />
     <ClCompile Include="source\scene\SceneEntity.cpp" />
     <ClCompile Include="source\scene\SceneManager.cpp" />
+    <ClCompile Include="source\scene\Transform.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="source\scene\SceneEntity.h" />
     <ClInclude Include="source\scene\CRenderable.h" />
     <ClInclude Include="source\scene\SceneManager.h" />
+    <ClInclude Include="source\scene\Transform.h" />
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />

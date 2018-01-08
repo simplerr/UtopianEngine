@@ -8,7 +8,7 @@
 
 namespace Scene
 {
-	CTransform::CTransform(SceneEntity* parent, vec3 position)
+	CTransform::CTransform(SceneEntity* parent, const vec3& position)
 		: SceneComponent(parent)
 	{
 		SetName("CTransform");
@@ -21,77 +21,75 @@ namespace Scene
 	{
 	}
 
-	void CTransform::SetPosition(vec3 position)
+
+	void CTransform::SetTransform(const Transform& transform)
 	{
-		mPosition = position;
-		RebuildWorldMatrix();
+		mTransform = transform;
 	}
 
-	void CTransform::SetRotation(vec3 rotation)
+	void CTransform::SetPosition(const vec3& position)
 	{
-		mRotation = rotation;
-		RebuildWorldMatrix();
+		mTransform.SetPosition(position);
 	}
 
-	void CTransform::SetScale(vec3 scale)
+	void CTransform::SetRotation(const vec3& rotation)
 	{
-		mScale = scale;
-		RebuildWorldMatrix();
+		mTransform.SetRotation(rotation);
+	}
+
+	void CTransform::SetScale(const vec3& scale)
+	{
+		mTransform.SetScale(scale);
 	}
 
 	void CTransform::AddRotation(float x, float y, float z)
 	{
-		mRotation += vec3(x, y, z);
-		RebuildWorldMatrix();
+		mTransform.AddRotation(x, y, z);
+	}
+	
+	void CTransform::AddRotation(const vec3& rotation)
+	{
+		mTransform.AddRotation(rotation);
 	}
 
 	void CTransform::AddScale(float x, float y, float z)
 	{
-		mScale += vec3(x, y, z);
-		RebuildWorldMatrix();
+		mTransform.AddScale(x, y, z);
 	}
 
-	void CTransform::AddScale(vec3 scale)
+	void CTransform::AddScale(const vec3& scale)
 	{
-		mScale += scale;
-		RebuildWorldMatrix();
+		mTransform.AddScale(scale);
 	}
 
-	vec3 CTransform::GetPosition()
+
+	const Scene::Transform& CTransform::GetTransform() const
 	{
-		return mPosition;
+		return mTransform;
 	}
 
-	vec3 CTransform::GetRotation()
+	const vec3& CTransform::GetPosition() const
 	{
-		return mRotation;
+		return mTransform.GetPosition();
 	}
 
-	vec3 CTransform::GetScale()
+	const vec3& CTransform::GetRotation() const
 	{
-		return mScale;
+		return mTransform.GetRotation();
 	}
 
-	mat4 CTransform::GetWorldMatrix()
+	const vec3& CTransform::GetScale() const
 	{
-		return mWorld;
+		return mTransform.GetScale();
 	}
 
-	mat4 CTransform::GetWorldInverseTransposeMatrix()
+	const mat4& CTransform::GetWorldMatrix() const
 	{
-		return glm::inverseTranspose(mWorld);
+		return mTransform.GetWorldMatrix();
 	}
 
-	void CTransform::RebuildWorldMatrix()
+	const mat4& CTransform::GetWorldInverseTransposeMatrix() const
 	{
-		mat4 world;
-
-		world = glm::translate(world, mPosition);
-		world = glm::rotate(world, glm::radians(mRotation.x), vec3(1.0f, 0.0f, 0.0f));
-		world = glm::rotate(world, glm::radians(mRotation.y), vec3(0.0f, 1.0f, 0.0f));
-		world = glm::rotate(world, glm::radians(mRotation.z), vec3(0.0f, 0.0f, 1.0f));
-		world = glm::scale(world, mScale);
-
-		mWorld = world;
+		return mTransform.GetWorldInverseTransposeMatrix();
 	}
 }

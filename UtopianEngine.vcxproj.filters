@@ -333,6 +333,9 @@
     <ClCompile Include="source\scene\ActorRenderer.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\Transform.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -585,6 +588,9 @@
       <Filter>Source Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\scene\ActorRenderer.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\Transform.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
