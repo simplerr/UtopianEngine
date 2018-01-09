@@ -117,9 +117,6 @@
     <ClCompile Include="source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\ecs\components\MeshComponent.cpp">
       <Filter>Source Files\ecs\components</Filter>
     </ClCompile>
@@ -339,6 +336,12 @@
     <ClCompile Include="source\scene\World.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\CLight.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\Light.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -354,9 +357,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\ecs\components\Component.h">
@@ -601,6 +601,15 @@
     </ClInclude>
     <ClInclude Include="source\Exception.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\CLight.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\Light.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LightData.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

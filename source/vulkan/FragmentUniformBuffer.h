@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "ShaderBuffer.h"
-#include "Light.h"
+#include "LightData.h"
 
 /*
 	The uniform buffer that the Phong fragment shader uses
@@ -19,7 +19,7 @@ public:
 	virtual int GetSize();
 
 	// Public data members
-	std::vector<Vulkan::Light> lights;
+	std::vector<Vulkan::LightData> lights;
 
 	struct {
 		float numLights;

@@ -35,7 +35,8 @@
 #include "RenderSystem.h"
 #include "Colors.h"
 #include "Terrain.h"
-#include "Light.h"
+#include "LightData.h"
+#include "scene/Light.h"
 
 #define VERTEX_BUFFER_BIND_ID 0
 
@@ -64,26 +65,26 @@ namespace ECS
 
 		// NOTE: This must run before PhongEffect::Init()
 		// Create the fragment shader uniform buffer
-		Vulkan::Light light;
+		Scene::Light light;
 		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
-		light.SetPosition(600, -800, 600);
-		light.SetDirection(1, -1, 1);
+		light.SetPosition(vec3(600, -800, 600));
+		light.SetDirection(vec3(1, -1, 1));
 		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.8f, 1.0f);
 		light.SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
 		light.SetRange(100000);
 		light.SetSpot(4.0f);
-		mPhongEffect.per_frame_ps.lights.push_back(light);
+		mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
 
 		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
-		light.SetPosition(600, -800, 600);
-		light.SetDirection(-1, -1, -1);
+		light.SetPosition(vec3(600, -800, 600));
+		light.SetDirection(vec3(-1, -1, -1));
 		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.5f, 1.0f);
 		light.SetType(Vulkan::LightType::SPOT_LIGHT);
 		light.SetRange(100000);
 		light.SetSpot(4.0f);
-		mPhongEffect.per_frame_ps.lights.push_back(light);
+		mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
 
 		// Important to call this before Create() since # lights affects the total size
 		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();

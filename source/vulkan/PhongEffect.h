@@ -5,7 +5,7 @@
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
-#include "Light.h"
+#include "LightData.h"
 
 namespace Vulkan
 {
@@ -61,7 +61,7 @@ namespace Vulkan
 			virtual int GetSize();
 
 			// Public data members
-			std::vector<Vulkan::Light> lights;
+			std::vector<Vulkan::LightData> lights;
 
 			struct {
 				float numLights;

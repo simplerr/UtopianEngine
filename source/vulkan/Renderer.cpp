@@ -8,7 +8,7 @@
 #include "StaticModel.h"
 #include "Camera.h"
 #include "VulkanHelpers.h"
-#include "Light.h"
+#include "LightData.h"
 #include "TextureLoader.h"
 #include "Device.h"
 #include "ShaderManager.h"

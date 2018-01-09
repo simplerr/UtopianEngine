@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 #include "ShaderBuffer.h"
-#include "Light.h"
+#include "LightData.h"
 
 /*
 The big uniform buffer that contains everything

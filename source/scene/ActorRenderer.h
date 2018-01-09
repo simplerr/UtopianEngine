@@ -15,6 +15,7 @@ namespace Vulkan
 namespace Scene
 {
 	class Renderable;
+	class Light;
 
 	class ActorRenderer : public Module<ActorRenderer>
 	{
@@ -31,9 +32,12 @@ namespace Scene
 		void RenderAll();
 
 		void AddRenderable(Renderable* renderable);
+		void AddLight(Light* light);
 
 	private:
 		std::vector<Renderable*> mRenderables;
+		std::vector<Light*> mLights;
+
 		Vulkan::Renderer* mRenderer;
 		Vulkan::Camera* mCamera;
 		Vulkan::CommandBuffer* mCommandBuffer;
