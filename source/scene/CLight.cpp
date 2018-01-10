@@ -7,7 +7,7 @@ namespace Scene
 	CLight::CLight(SceneEntity* parent)
 		: SceneComponent(parent)
 	{
-
+		SetName("CLight");
 	}
 
 	CLight::~CLight()

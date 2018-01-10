@@ -28,6 +28,7 @@
 #include "scene/SceneComponent.h"
 #include "scene/CTransform.h"
 #include "scene/CRenderable.h"
+#include "scene/CLight.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/ActorRenderer.h"
@@ -92,30 +93,49 @@ namespace Vulkan
 		World::Start();
 		ActorRenderer::Start(mRenderer, mCamera);
 
-		/*auto entity = mEntityManager->Create("Scope");
-		entity->AddComponent<CTransform>(vec3(0, 1, 2));
-		entity->AddComponent<CStaticMesh>("data/models/teapot.obj");*/
+		// Add teapot
+		auto teapot = SceneEntity::Create("Teapot");
 
-		SharedPtr<SceneEntity> ptr;
-		{
-			auto entity = SceneEntity::Create("Scope");
-			auto ent2 = entity;
-			ptr = entity;
-		}
-
-		auto entity = SceneEntity::Create("Teapot");
-
-		CTransform* transform = entity->AddComponent<CTransform>(vec3(67000, 5000, 67000));
+		CTransform* transform = teapot->AddComponent<CTransform>(vec3(67000, 5000, 67000));
 		transform->SetScale(vec3(150.0f));
 
-		CRenderable* mesh = entity->AddComponent<CRenderable>();
+		CRenderable* mesh = teapot->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
 
-		Object o = ObjectManager::Instance().GetObjectHandle(transform->GetId());
+		// Add light
+		auto light = SceneEntity::Create("Light");
 
-		CTransform* test = entity->GetComponent<CTransform>();
-		CRenderable* test1 = entity->GetComponent<CRenderable>();
+		//light->AddComponent<CTransform>(vec3(87000, 5000, 67000));
+		light->AddComponent<CTransform>(vec3(0, 0.5, 0));
 
+		CLight* lightComponent = light->AddComponent<CLight>();
+		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
+		lightComponent->SetMaterials(vec4(1, 0, 0, 1), vec4(0, 1, 0, 1), vec4(0, 0, 1, 1));
+		lightComponent->SetDirection(vec3(1, -1, 1));
+		lightComponent->SetAtt(0, 1, 0);
+		lightComponent->SetIntensity(0.1f, 1.0f, 1.0f);
+		lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		lightComponent->SetRange(100000);
+		lightComponent->SetSpot(4.0f);
+
+		// Add light
+		auto light2 = SceneEntity::Create("Light2");
+
+		//light->AddComponent<CTransform>(vec3(87000, 5000, 67000));
+		light2->AddComponent<CTransform>(vec3(0, 0.5, 0));
+
+		lightComponent = light2->AddComponent<CLight>();
+		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
+		lightComponent->SetDirection(vec3(-1, -1, -1));
+		lightComponent->SetAtt(1, 1, 0);
+		lightComponent->SetIntensity(0.3f, 1.0f, 1.0f);
+		lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		lightComponent->SetRange(100000);
+		lightComponent->SetSpot(4.0f);
+
+		World::Instance().Update();
+
+		ActorRenderer::Instance().InitShader();
 		ObjectManager::Instance().PrintObjects();
 
 		/*CMesh* mesh = entity->AddComponent<CMesh>("data/models/teapot.obj");

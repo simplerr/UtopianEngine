@@ -29,6 +29,7 @@ namespace Vulkan
 			this->specular = specular;
 		}
 
+		vec4 padding; // Note: This padding corresponds to the padding in glsl Light struct
 		vec4 ambient;
 		vec4 diffuse;
 		vec4 specular;	// w = SpecPower

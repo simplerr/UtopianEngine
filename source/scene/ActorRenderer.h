@@ -29,6 +29,8 @@ namespace Scene
 		ActorRenderer(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
 		~ActorRenderer();
 
+		void InitShader();
+
 		void RenderAll();
 
 		void AddRenderable(Renderable* renderable);

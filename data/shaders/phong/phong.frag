@@ -35,15 +35,18 @@ struct Light
 
 	vec3 intensity;
 	float id;
+
+	// Note: this padding corresponds to the padding in Vulkan::Material
+	vec4 pad;
 };
 
 layout (std140, set = 1, binding = 0) uniform UBO 
 {
-	Light lights[2];
-
 	// Constants
 	float numLights;
 	vec3 garbage;
+
+	Light lights[10];
 } per_frame_ps;
 
 layout (location = 0) out vec4 OutFragColor;
@@ -54,9 +57,9 @@ void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec
 	Light light = per_frame_ps.lights[lightIndex];
 
 	// Initialize outputs.
-	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	ambient = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	spec    = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// The light vector aims opposite the direction the light rays travel.
 	vec3 lightVec = light.dir;
@@ -66,7 +69,6 @@ void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec
 
 	// Add diffuse and specular term, provided the surface is in 
 	// the line of site of the light.
-	
 	float diffuseFactor = dot(lightVec, normal);
 
 	// Flatten to avoid dynamic branching.
@@ -229,5 +231,6 @@ void main()
 	ApplyLighting(material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
 
 	OutFragColor = litColor;
-	OutFragColor = texture(texSampler, InTex);
+
+	//OutFragColor = texture(texSampler, InTex);
 }

@@ -60,13 +60,13 @@ namespace Vulkan
 			virtual void UpdateMemory(VkDevice device);
 			virtual int GetSize();
 
-			// Public data members
-			std::vector<Vulkan::LightData> lights;
-
 			struct {
 				float numLights;
 				glm::vec3 garbage;
 			} constants;
+
+			// Public data members
+			std::vector<Vulkan::LightData> lights;
 		};
 
 		// Override the base class interfaces

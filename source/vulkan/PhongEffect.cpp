@@ -129,16 +129,16 @@ namespace Vulkan
 		// Map and update the light data
 		uint8_t* mapped;
 		uint32_t dataOffset = 0;
-		uint32_t dataSize = lights.size() * sizeof(Vulkan::LightData);
+		uint32_t dataSize = sizeof(constants);
 		mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
-		memcpy(mapped, lights.data(), dataSize);
+		memcpy(mapped, &constants.numLights, dataSize);
 		mBuffer->UnmapMemory();
 
 		// Map and update number of lights
 		dataOffset += dataSize;
-		dataSize = sizeof(constants);
+		dataSize = lights.size() * sizeof(Vulkan::LightData);
 		mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
-		memcpy(mapped, &constants.numLights, dataSize);
+		memcpy(mapped, lights.data(), dataSize);
 		mBuffer->UnmapMemory();
 	}
 

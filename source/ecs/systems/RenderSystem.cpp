@@ -66,8 +66,8 @@ namespace ECS
 		// NOTE: This must run before PhongEffect::Init()
 		// Create the fragment shader uniform buffer
 		Scene::Light light;
-		light.SetMaterials(vec4(1, 1, 1, 1), vec4(1, 1, 1, 1), vec4(1, 1, 1, 32));
-		light.SetPosition(vec3(600, -800, 600));
+		light.SetMaterial(vec4(1, 0, 0, 1));
+		//light.SetPosition(vec3(600, -800, 600));
 		light.SetDirection(vec3(1, -1, 1));
 		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.8f, 1.0f);
@@ -76,18 +76,19 @@ namespace ECS
 		light.SetSpot(4.0f);
 		mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
 
-		light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
-		light.SetPosition(vec3(600, -800, 600));
-		light.SetDirection(vec3(-1, -1, -1));
-		light.SetAtt(1, 0, 0);
-		light.SetIntensity(0.2f, 0.5f, 1.0f);
-		light.SetType(Vulkan::LightType::SPOT_LIGHT);
-		light.SetRange(100000);
-		light.SetSpot(4.0f);
-		mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
+		//light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
+		////light.SetPosition(vec3(600, -800, 600));
+		//light.SetDirection(vec3(-1, -1, -1));
+		//light.SetAtt(1, 0, 0);
+		//light.SetIntensity(0.2f, 0.5f, 1.0f);
+		//light.SetType(Vulkan::LightType::SPOT_LIGHT);
+		//light.SetRange(100000);
+		//light.SetSpot(4.0f);
+		//mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
 
 		// Important to call this before Create() since # lights affects the total size
 		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();
+		mPhongEffect.per_frame_ps.constants.numLights = 1;
 
 		mPhongEffect.Init(mRenderer);
 		mNormalDebugEffect.Init(mRenderer);

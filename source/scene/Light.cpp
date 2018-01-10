@@ -6,7 +6,14 @@ namespace Scene
 
 	Light::Light()
 	{
-
+		// Default values
+		SetMaterial(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		SetDirection(vec3(1.0f, 1.0f, 1.0f));
+		SetRange(1000000.0f);
+		SetSpot(100.0f);
+		SetAtt(1.0f, 1.0f, 1.0f);
+		SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		SetIntensity(1.0f, 1.0f, 1.0f);
 	}
 
 	Light::~Light()
@@ -35,25 +42,20 @@ namespace Scene
 	const Vulkan::LightData& Light::GetLightData()
 	{
 		// Todo: Is this ok?
-		mLightData.position = GetPosition();
+		mLightData.position = GetTransform().GetPosition();
 		return mLightData;
 	}
 
 	void Light::SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular)
 	{
 		mLightData.material = Vulkan::Material(ambient, diffuse, specular);
-		mLightData.intensity = vec3(1.0f, 0.0f, 0.0f);
+		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
 	}
 
 	void Light::SetMaterial(const vec4& color)
 	{
 		mLightData.material = Vulkan::Material(color);
-		mLightData.intensity = vec3(1.0f, 0.0f, 0.0f);
-	}
-
-	void Light::SetPosition(const vec3 & position)
-	{
-		mLightData.position = position;
+		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
 	}
 
 	void Light::SetDirection(const vec3& direction)
@@ -84,11 +86,6 @@ namespace Scene
 	void Light::SetIntensity(float ambient, float diffuse, float specular)
 	{
 		mLightData.intensity = vec3(ambient, diffuse, specular);
-	}
-
-	const vec3& Light::GetPosition() const
-	{
-		return mLightData.position;
 	}
 
 	const vec3& Light::GetDirection() const
