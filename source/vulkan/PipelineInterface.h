@@ -1,16 +1,13 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 #include <vector>
 #include <map>
 #include "vulkan/handles/DescriptorSetLayout.h"
 
 namespace Vulkan
 {
-	class PipelineLayout;
-	class Device;
-	class DescriptorSetLayout;
-
 	class PipelineInterface
 	{
 	public:

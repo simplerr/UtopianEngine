@@ -3,17 +3,11 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <map>
-#include "vulkan/VulkanHelpers.h"
 #include "vulkan/handles/Handle.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class DescriptorSetLayout;
-	class DescriptorPool;
-	class Device;
-	class Sampler;
-	class Image;
-
 	/*
 	Wraps VkDescriptorSetLayout and VkDescriptorSet to make them easier to work with
 	*/

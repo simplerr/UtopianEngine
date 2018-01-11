@@ -3,14 +3,13 @@
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 
 #define VERTEX_SHADER_IDX 0
 #define PIXEL_SHADER_IDX 1
 
 namespace Vulkan
 {
-	class Device;
-
 	class Shader
 	{
 	public:

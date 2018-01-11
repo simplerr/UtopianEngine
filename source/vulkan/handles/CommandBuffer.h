@@ -1,22 +1,11 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 #include "Handle.h"
 
 namespace Vulkan
 {
-	class Device;
-	class CommandPool;
-	class RenderPass;
-	class Renderer;
-	class Pipeline;
-	class Pipeline2;
-	class ComputePipeline;
-	class PipelineLayout;
-	class DescriptorSet;
-	class Buffer;
-	class Effect;
-
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{
 	public:

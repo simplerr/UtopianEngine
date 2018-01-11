@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include "Handle.h"
+#include "vulkan/VulkanInclude.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
 /* Defines to improve readability */
@@ -21,14 +22,6 @@
 
 namespace Vulkan
 {
-	class VertexDescription;
-	class RenderPass;
-	class PipelineLayout;
-	class Device;
-	class Shader;
-	class DescriptorSetLayout;
-	class PipelineInterface;
-
 	class Pipeline2 : public Handle<VkPipeline>
 	{
 	public:

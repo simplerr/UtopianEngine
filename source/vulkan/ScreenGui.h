@@ -2,15 +2,10 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 #include "vulkan/ScreenQuadEffect.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Renderer;
-	class Buffer;
-	class CommandBuffer;
-	class Image;
-	class Sampler;
-
 	class ScreenGui
 	{
 	public:

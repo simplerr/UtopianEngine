@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 
 #include "../../external/stb/stb_font_consolas_24_latin1.inl"
 
@@ -24,16 +25,6 @@
 
 namespace Vulkan
 {
-	class Device;
-	class Renderer;
-	class CommandBuffer;
-	class RenderPass;
-	class Pipeline;
-	class Texture;
-	class PipelineLayout;
-	class VertexDescription;
-	class Buffer;
-
 	// Mostly self-contained text overlay class
 	class TextOverlay
 	{

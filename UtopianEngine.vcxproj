@@ -131,7 +131,6 @@
     <ClCompile Include="source\vulkan\handles\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
     <ClCompile Include="source\vulkan\Device.cpp" />
-    <ClCompile Include="source\vulkan\FragmentUniformBuffer.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandPool.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSet.cpp" />
@@ -152,11 +151,9 @@
     <ClCompile Include="source\vulkan\TextOverlay.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
-    <ClCompile Include="source\vulkan\VertexUniformBuffer.cpp" />
     <ClCompile Include="source\vulkan\Renderer.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
     <ClCompile Include="source\vulkan\VulkanDebug.cpp" />
-    <ClCompile Include="source\vulkan\VulkanHelpers.cpp" />
     <ClCompile Include="source\vulkan\WaterEffect.cpp" />
     <ClCompile Include="source\WaterRenderer.cpp" />
     <ClCompile Include="source\Window.cpp" />
@@ -219,7 +216,6 @@
     <ClInclude Include="source\vulkan\handles\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
     <ClInclude Include="source\vulkan\Device.h" />
-    <ClInclude Include="source\vulkan\FragmentUniformBuffer.h" />
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h" />
     <ClInclude Include="source\vulkan\handles\CommandPool.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSet.h" />
@@ -242,11 +238,10 @@
     <ClInclude Include="source\vulkan\ShaderBuffer.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />
     <ClInclude Include="source\vulkan\VertexDescription.h" />
-    <ClInclude Include="source\vulkan\VertexUniformBuffer.h" />
     <ClInclude Include="source\vulkan\Renderer.h" />
     <ClInclude Include="source\vulkan\VulkanBase.h" />
     <ClInclude Include="source\vulkan\VulkanDebug.h" />
-    <ClInclude Include="source\vulkan\VulkanHelpers.h" />
+    <ClInclude Include="source\vulkan\VulkanInclude.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
     <ClInclude Include="source\WaterRenderer.h" />

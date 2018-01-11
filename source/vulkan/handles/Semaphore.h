@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Handle.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
 	class Semaphore : public Handle<VkSemaphore>
 	{
 	public:

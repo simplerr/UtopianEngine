@@ -171,9 +171,6 @@
     <ClCompile Include="source\vulkan\handles\Semaphore.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\FragmentUniformBuffer.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\ModelLoader.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -186,16 +183,10 @@
     <ClCompile Include="source\vulkan\TextureLoader.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\VertexUniformBuffer.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\VulkanBase.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\VulkanDebug.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\VulkanHelpers.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\Device.cpp">
@@ -419,9 +410,6 @@
     <ClInclude Include="source\vulkan\handles\Semaphore.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\FragmentUniformBuffer.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\ModelLoader.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -437,16 +425,10 @@
     <ClInclude Include="source\vulkan\VertexDescription.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\VertexUniformBuffer.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\VulkanBase.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\VulkanDebug.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\VulkanHelpers.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\Device.h">
@@ -610,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="source\LightData.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanInclude.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,15 +3,10 @@
 #include <vulkan\vulkan.h>
 #include <map>
 #include "vulkan/PipelineInterface.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Renderer;
-	class Device;
-	class DescriptorPool;
-	class VertexDescription;
-	class Pipeline2;
-
 	/* 
 	 * Base class for all effects.
 	 *

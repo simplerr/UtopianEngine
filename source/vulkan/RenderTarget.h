@@ -2,20 +2,10 @@
 
 #include <stdint.h>
 #include <glm/glm.hpp>
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-	class FrameBuffers;
-	class RenderPass;
-	class Sampler;
-	class Image;
-	class Queue;
-	class Pipeline;
-	class CommandBuffer;
-	class CommandPool;
-	class DescriptorSet;
-
 	class RenderTarget
 	{
 	public:

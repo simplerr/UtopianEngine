@@ -6,6 +6,7 @@
 
 #include <vulkan/vulkan.h>
 #include "vulkan/vulkanswapchain.hpp"
+#include "vulkan/VulkanInclude.h"
 #include "Window.h"
 #include "Timer.h"
 
@@ -29,16 +30,6 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 
 namespace Vulkan
 {
-	class Device;
-	class CommandPool;
-	class Semaphore;
-	class Image;
-	class RenderPass;
-	class Instance;
-	class FrameBuffers;
-	class ShaderManager;
-	class Queue;
-
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
 	{

@@ -2,15 +2,12 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
+#include "vulkan/VulkanInclude.h"
 
 class VulkanSwapChain;
 
 namespace Vulkan
 {
-	class Device;
-	class RenderPass;
-	class Image;
-
 	class FrameBuffers
 	{
 	public:

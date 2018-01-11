@@ -7,14 +7,12 @@
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include "vulkan/VulkanInclude.h"
 #include "vulkan/Vertex.h"
 #include "Collision.h"
 
 namespace Vulkan
 {
-	class Device;
-	class Texture;
-
 	class Mesh
 	{
 	public:

@@ -3,11 +3,10 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "Handle.h" 
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-
 	class DescriptorSetLayout : public Handle<VkDescriptorSetLayout>
 	{
 	public:

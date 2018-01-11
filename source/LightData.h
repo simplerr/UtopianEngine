@@ -29,6 +29,7 @@ namespace Vulkan
 			this->specular = specular;
 		}
 
+		// https://www.khronos.org/registry/OpenGL/specs/gl/glspec45.core.pdf#page=159
 		vec4 padding; // Note: This padding corresponds to the padding in glsl Light struct
 		vec4 ambient;
 		vec4 diffuse;

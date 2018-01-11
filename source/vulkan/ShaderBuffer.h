@@ -1,12 +1,10 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-	class Buffer;
-
 	/*
 		Base class for uniform and storage buffer.
 	*/

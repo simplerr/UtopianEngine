@@ -2,11 +2,10 @@
 
 #include <vulkan/vulkan.h>
 #include "Handle.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-
 	class Image : public Handle<VkImage>
 	{
 	public:

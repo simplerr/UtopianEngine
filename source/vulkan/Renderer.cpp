@@ -7,7 +7,6 @@
 #include "VulkanDebug.h"
 #include "StaticModel.h"
 #include "Camera.h"
-#include "VulkanHelpers.h"
 #include "LightData.h"
 #include "TextureLoader.h"
 #include "Device.h"

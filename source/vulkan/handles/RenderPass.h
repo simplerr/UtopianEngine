@@ -3,11 +3,10 @@
 #include <array>
 #include <vulkan/vulkan.h>
 #include "Handle.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-
 	enum RenderPassAttachment
 	{
 		COLOR_ATTACHMENT = 0,

@@ -4,11 +4,10 @@
 #include <functional>
 #include <vulkan/vulkan.h>
 #include "vulkan/Device.h" 
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-
 	template<typename T>
 	class Handle
 	{

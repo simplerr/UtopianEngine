@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vulkan/VulkanInclude.h"
 #include "Platform.h"
 #include "Timer.h"
 
@@ -15,11 +16,6 @@ class SceneRenderer;
 
 namespace Vulkan
 {
-	class Renderer;
-	class Window;
-	class Camera;
-	class ModelLoader;
-
 	class Game
 	{
 	public:

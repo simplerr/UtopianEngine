@@ -1,14 +1,10 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-	class DescriptorSet;
-	class DescriptorPool;
-	class DescriptorSetLayout;
-
 	class Texture
 	{
 	public:

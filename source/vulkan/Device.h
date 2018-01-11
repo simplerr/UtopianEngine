@@ -1,11 +1,10 @@
 #pragma once
 
 #include <vulkan\vulkan.h>
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Instance;
-
 	class Device
 	{
 	public:

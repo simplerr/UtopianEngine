@@ -1,16 +1,10 @@
 #pragma once
 #include <vector>
+#include "vulkan/VulkanInclude.h"
 #include "scene/Object.h"
 #include "scene/Module.h"
 #include "Common.h"
 #include "vulkan/PhongEffect.h"
-
-namespace Vulkan
-{
-	class Camera;
-	class Renderer;
-	class CommandBuffer;
-}
 
 namespace Scene
 {

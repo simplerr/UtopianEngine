@@ -3,11 +3,7 @@
 #include "scene/SceneNode.h"
 #include "scene/SceneComponent.h"
 #include "Common.h"
-
-namespace Vulkan
-{
-	class StaticModel;
-}
+#include "vulkan/VulkanInclude.h"
 
 namespace Scene
 {

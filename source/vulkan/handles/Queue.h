@@ -2,14 +2,10 @@
 
 #include <vulkan/vulkan.h>
 #include "Handle.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class CommandBuffer;
-	class Fence;
-	class Semaphore;
-	class Device;
-
 	class Queue : public Handle<VkQueue>
 	{
 	public:

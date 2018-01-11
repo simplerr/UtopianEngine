@@ -3,18 +3,12 @@
 #include <map>
 #include <string>
 #include <vulkan/vulkan.h>
+#include "vulkan/VulkanInclude.h"
 
 #define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
 
 namespace Vulkan
 {
-	class Device;
-	class DescriptorSet;
-	class DescriptorSetLayout;
-	class DescriptorPool;
-	class Renderer;
-	class Texture;
-
 	class TextureLoader
 	{
 	public:

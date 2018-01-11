@@ -10,14 +10,12 @@
 #include "vulkan/Mesh.h"
 #include "Collision.h"
 #include "Vertex.h"
+#include "vulkan/VulkanInclude.h"
 
 using namespace glm;
 
 namespace Vulkan
 {
-	class Device;
-
-
 	class StaticModel
 	{
 	public:

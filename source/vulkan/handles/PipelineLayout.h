@@ -3,13 +3,10 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 #include "Handle.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {
-	class Device;
-	class DescriptorSet;
-	class DescriptorSetLayout;
-
 	class PipelineLayout : public Handle<VkPipelineLayout>
 	{
 	public:

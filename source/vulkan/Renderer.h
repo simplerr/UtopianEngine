@@ -7,11 +7,10 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <glm/gtc/matrix_transform.hpp>
-#include "FragmentUniformBuffer.h"
+#include "vulkan/VulkanInclude.h"
 #include "VulkanBase.h"
 #include "VertexDescription.h"
 #include "ShaderBuffer.h"
-#include "VertexUniformBuffer.h"
 
 using namespace glm;
 
@@ -22,18 +21,6 @@ namespace ECS
 
 namespace Vulkan
 {
-	class Camera;
-	class CommandBuffer;
-	class Pipeline;
-	class PipelineLayout;
-	class Fence;
-	class DescriptorSetLayout;
-	class DescriptorSet;
-	class DescriptorPool;
-	class TextOverlay;
-	class TextureLoader;
-	class ModelLoader;
-
 	enum PipelineType
 	{
 		PIPELINE_BASIC,
