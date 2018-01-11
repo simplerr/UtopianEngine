@@ -5,9 +5,9 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <vector>
-#include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <map>
+#include "vulkan/VulkanInclude.h"
 
 namespace Vulkan
 {

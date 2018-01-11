@@ -6,7 +6,6 @@
 
 #include <vector>
 #include <glm/glm.hpp>
-#include <vulkan/vulkan.h>
 #include "vulkan/Mesh.h"
 #include "Collision.h"
 #include "Vertex.h"

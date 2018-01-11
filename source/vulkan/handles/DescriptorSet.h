@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
 #include <vector>
 #include <map>
 #include "vulkan/handles/Handle.h"

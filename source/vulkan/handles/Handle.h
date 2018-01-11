@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <functional>
-#include <vulkan/vulkan.h>
 #include "vulkan/Device.h" 
 #include "vulkan/VulkanInclude.h"
 

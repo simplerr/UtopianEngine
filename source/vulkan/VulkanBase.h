@@ -4,7 +4,6 @@
 #pragma comment(linker, "/subsystem:windows")
 #endif
 
-#include <vulkan/vulkan.h>
 #include "vulkan/vulkanswapchain.hpp"
 #include "vulkan/VulkanInclude.h"
 #include "Window.h"

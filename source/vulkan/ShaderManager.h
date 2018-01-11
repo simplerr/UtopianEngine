@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <vulkan/vulkan.h>
 #include "vulkan/VulkanInclude.h"
 
 #define VERTEX_SHADER_IDX 0

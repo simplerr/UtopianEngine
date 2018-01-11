@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_inverse.hpp>
 
 #include <vector>
-#include <vulkan/vulkan.h>
 #include "vulkan/VulkanInclude.h"
 
 #include "../../external/stb/stb_font_consolas_24_latin1.inl"

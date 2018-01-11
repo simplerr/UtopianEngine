@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include "vulkan/VulkanInclude.h"
 #include "Platform.h"
 
 #define ENUM_TO_STR(x) #x

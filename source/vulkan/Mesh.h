@@ -4,7 +4,6 @@
 #define GLM_FORCE_RIGHT_HANDED 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
-#include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include "vulkan/VulkanInclude.h"

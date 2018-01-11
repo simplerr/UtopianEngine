@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <vulkan/vulkan.h>
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
 

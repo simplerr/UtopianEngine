@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.h>
+
 // Forward declarations
 namespace Vulkan
 {

@@ -11,5 +11,3 @@
 #include <xcb/xcb.h>
 
 #endif
-
-#include <vulkan/vulkan.h>
