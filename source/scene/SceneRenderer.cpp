@@ -21,8 +21,6 @@ namespace Scene
 		mCamera = camera;
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
-		mTerrain = new Terrain(mRenderer, mCamera);
-
 		mWaterRenderer = new WaterRenderer(mRenderer, renderer->mModelLoader, renderer->mTextureLoader);
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
@@ -34,7 +32,6 @@ namespace Scene
 
 	SceneRenderer::~SceneRenderer()
 	{
-		delete mTerrain;
 		delete mScreenGui;
 		delete mWaterRenderer;
 	}

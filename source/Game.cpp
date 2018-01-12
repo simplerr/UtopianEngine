@@ -49,38 +49,32 @@ namespace Vulkan
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 
+		mInput = make_shared<Input>();
+
 		// Create the camera
-		mCamera = make_shared<Vulkan::Camera>(mWindow, glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200), 60.0f, 10.0f, 256000.0f);
+		vec3 cameraPos = glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200);
+		mCamera = make_shared<Vulkan::Camera>(mWindow, cameraPos, 60.0f, 10.0f, 256000.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera.get());
 
-		mInput = make_shared<Input>();
-
-		mEntityManager = new ECS::SystemManager();
-		mEntityManager->Init(); // NOTE: Not used// Create all ECS::System
-		mEntityManager->AddSystem(new ECS::PhysicsSystem());
-		mEntityManager->AddSystem(new ECS::EditorSystem(mCamera.get(), mTerrain.get(), mInput.get()));
-		mEntityManager->AddSystem(new ECS::HealthSystem());
-		mEntityManager->AddSystem(new ECS::RenderSystem(mRenderer.get(), mCamera.get(), mTerrain.get()));
-
-		ECS::RenderSystem* renderSystem = dynamic_cast<ECS::RenderSystem*>(mEntityManager->GetSystem(ECS::SystemId::RENDER_SYSTEM));
+		mTerrain = make_shared<Terrain>(mRenderer.get(), mCamera.get());
 
 		InitScene();
 
-		InitTestScene();
 		ObjectManager::Instance().PrintObjects();
 	}
 
 	Game::~Game()
 	{
-		delete mEntityManager;
+
 	}
 
-	void Game::InitTestScene()
+	void Game::InitScene()
 	{
 		ObjectManager::Start();
 		World::Start();
 		SceneRenderer::Start(mRenderer.get(), mCamera.get());
+		SceneRenderer::Instance().SetTerrain(mTerrain.get());
 
 		// Add teapot
 		auto teapot = SceneEntity::Create("Teapot");
@@ -138,78 +132,12 @@ namespace Vulkan
 		camera->SetPosition(vec3(0, 0, 0));*/
 	}
 
-	void Game::InitScene()
-	{
-		int size = 3;
-		int space = 300;
-		int i = 0;
-		for (int x = 0; x < size; x++)
-		{
-			for (int y = 0; y < size; y++)
-			{
-				for (int z = 0; z < size; z++)
-				{
-					// Transform
-					ECS::TransformComponent* transformComponent = new ECS::TransformComponent(vec3(67000 + 4000 + x * space,  y * space, 67000 + z * space));
-					//transformComponent->SetRotation(glm::vec3(180, 30, 40));
-					transformComponent->SetRotation(glm::vec3(180.0f, 0.0f, 0.0f));
-					transformComponent->SetScale(glm::vec3(50.0f));
-
-					// Physics
-					uint32_t maxSpeed = 2;
-					uint32_t maxRotation = 100;
-					float divider = 90.0f;
-					ECS::PhysicsComponent* physicsComponent = new ECS::PhysicsComponent();
-					physicsComponent->SetVelocity(glm::vec3(rand() % maxSpeed, rand() % maxSpeed, rand() % maxSpeed));
-					physicsComponent->SetRotationSpeed(glm::vec3((rand() % maxRotation) / divider, (rand() % maxRotation) / divider, (rand() % maxRotation) / divider));
-					physicsComponent->SetScaleSpeed(glm::vec3(0.0f));
-
-					// Mesh
-					ECS::MeshComponent* meshComponent = nullptr;
-					//if (x == 0) {
-					//	meshComponent = new ECS::MeshComponent("data/models/Crate/Crate1.obj", PipelineType::PIPELINE_BASIC);
-					//	transformComponent->SetScale(glm::vec3(35.0f));
-					//}
-					//else { 
-						//meshComponent = new ECS::MeshComponent("data/models/adventure_village/StreetLightTall.obj", PipelineType::PIPELINE_BASIC);
-						//meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
-						//meshComponent = new ECS::MeshComponent("data/models/teapot.obj", PipelineType::PIPELINE_WIREFRAME);
-						meshComponent = new ECS::MeshComponent("data/models/suzanne.obj", PipelineType::PIPELINE_BASIC);
-					//}
-
-					// Health
-					ECS::HealthComponent* healthComponent = new ECS::HealthComponent(100);
-
-					// Create component list
-					ECS::ComponentList componentList;
-					componentList.push_back(meshComponent);
-					componentList.push_back(transformComponent);
-					componentList.push_back(healthComponent);
-					//componentList.push_back(physicsComponent);
-					
-					// TEMPORARY
-					if(i < 1)
-						mEntityManager->AddEntity(componentList);
-
-					i++;
-				}
-			}
-		}
-
-		mTestEntity = mEntityManager->GetEntity(0u);
-	}
-
 	void Game::Update()
 	{
 		World::Instance().Update();
 		SceneRenderer::Instance().Update();
 		mRenderer->Update();
-		mEntityManager->Process();
 		mInput->Update(0);
-
-		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
-		float speed = 5.0f;
-		//transform->AddRotation(glm::radians(speed), glm::radians(speed), glm::radians(speed));
 	}
 
 	void Game::Draw()
@@ -275,8 +203,6 @@ namespace Vulkan
 
 	void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		mEntityManager->HandleMessages(hWnd, uMsg, wParam, lParam);
-
 		if (mRenderer != nullptr)
 			mRenderer->HandleMessages(hWnd, uMsg, wParam, lParam);
 

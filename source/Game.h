@@ -5,12 +5,6 @@
 #include "Timer.h"
 #include "Common.h"
 
-namespace ECS
-{
-	class SystemManager;
-	class Entity;
-}
-
 class Terrain;
 class Input;
 
@@ -34,7 +28,6 @@ namespace Vulkan
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	private:
 		void InitScene();	
-		void InitTestScene();	
 		bool IsClosing();
 
 		// Move all of these to other locations
@@ -46,8 +39,5 @@ namespace Vulkan
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;
-
-		ECS::SystemManager* mEntityManager;
-		ECS::Entity* mTestEntity;
 	};
 }
