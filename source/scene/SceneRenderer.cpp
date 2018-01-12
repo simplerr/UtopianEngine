@@ -164,6 +164,11 @@ namespace Scene
 		mLights.push_back(light);
 	}
 
+	void SceneRenderer::AddCamera(Vulkan::Camera * camera)
+	{
+		mCameras.push_back(camera);
+	}
+
 	void SceneRenderer::SetTerrain(Terrain* terrain)
 	{
 		mTerrain = terrain;

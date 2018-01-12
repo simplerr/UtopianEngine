@@ -3,6 +3,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 #include "Input.h"
+#include "scene/SceneRenderer.h"
 
 namespace Vulkan
 {
@@ -31,6 +32,19 @@ namespace Vulkan
 		mYaw = mPitch = 0.0f;
 		mLastX = mLastY = -1;
 		mWindow = window;
+	}
+
+	SharedPtr<Camera> Camera::Create()
+	{
+		SharedPtr<Camera> instance(new Camera());
+		instance->Initialize();
+
+		return instance;
+	}
+
+	void Camera::Initialize()
+	{
+		Scene::SceneRenderer::Instance().AddCamera(this);
 	}
 
 	void Camera::Update()

@@ -36,6 +36,8 @@ namespace Scene
 
 		void AddRenderable(Renderable* renderable);
 		void AddLight(Light* light);
+		void AddCamera(Vulkan::Camera* camera);
+
 		void SetTerrain(Terrain* terrain);
 
 	private:

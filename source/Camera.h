@@ -7,6 +7,8 @@
 #include <glm/glm.hpp>
 #include "Platform.h"
 #include "Collision.h"
+#include "utility/Common.h"
+#include "scene/SceneNode.h"
 
 using namespace glm;
 
@@ -14,11 +16,14 @@ namespace Vulkan
 {
 	class Window;
 
-	class Camera
+	class Camera : public Scene::SceneNode
 	{
 	public:
 		Camera();
 		Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
+
+		static SharedPtr<Camera> Create();
+		void Initialize();
 
 		void Update();
 
