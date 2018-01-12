@@ -49,8 +49,6 @@ namespace Vulkan
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 
-		mInput = make_shared<Input>();
-
 		// Create the camera
 		vec3 cameraPos = glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200);
 		mCamera = make_shared<Vulkan::Camera>(mWindow, cameraPos, 60.0f, 10.0f, 256000.0f);
@@ -73,6 +71,7 @@ namespace Vulkan
 	{
 		ObjectManager::Start();
 		World::Start();
+		Input::Start();
 		SceneRenderer::Start(mRenderer.get(), mCamera.get());
 		SceneRenderer::Instance().SetTerrain(mTerrain.get());
 
@@ -137,7 +136,6 @@ namespace Vulkan
 		World::Instance().Update();
 		SceneRenderer::Instance().Update();
 		mRenderer->Update();
-		mInput->Update(0);
 	}
 
 	void Game::Draw()
@@ -181,6 +179,9 @@ namespace Vulkan
 				Update();
 				Draw();
 
+				// Note: This must be called after Camera::Update()
+				Input::Instance().Update(0);
+
 				mRenderer->SubmitFrame();
 
 				// Frame end
@@ -206,7 +207,7 @@ namespace Vulkan
 		if (mRenderer != nullptr)
 			mRenderer->HandleMessages(hWnd, uMsg, wParam, lParam);
 
-		mInput->HandleMessages(uMsg, wParam, lParam);
+		Input::Instance().HandleMessages(uMsg, wParam, lParam);
 
 		switch (uMsg)
 		{

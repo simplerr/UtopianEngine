@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "scene/SceneNode.h"
 #include "scene/SceneComponent.h"
-#include "Common.h"
+#include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
 
 namespace Scene

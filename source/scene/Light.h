@@ -3,7 +3,7 @@
 #include "scene/SceneNode.h"
 #include "scene/SceneComponent.h"
 #include "LightData.h"
-#include "Common.h"
+#include "utility/Common.h"
 
 namespace Scene
 {

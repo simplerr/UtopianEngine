@@ -13,7 +13,8 @@ namespace Scene
 		{
 			TRANSFORM = 0,
 			STATIC_MESH,
-			LIGHT
+			LIGHT,
+			CAMERA
 		};
 
 		SceneComponent(SceneEntity* parent);

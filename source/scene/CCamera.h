@@ -1,26 +1,28 @@
 #pragma once
 #include "scene/SceneComponent.h"
-#include "scene/Renderable.h"
+#include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
 namespace Scene
 {
 	class SceneEntity;
 
-	class CRenderable : public SceneComponent
+	class CCamera : public SceneComponent
 	{
 	public:
-		CRenderable(SceneEntity* parent);
-		~CRenderable();
+		CCamera(SceneEntity* parent);
+		~CCamera();
 
 		void Update() override;
 		void OnCreated() override;
 
-		void SetModel(Vulkan::StaticModel* model);
+		// Setters
+
+		// Getters
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::STATIC_MESH;
+			return SceneComponent::ComponentType::CAMERA;
 		}
 
 		virtual uint32_t GetType() {
@@ -28,6 +30,6 @@ namespace Scene
 		}
 
 	private:
-		SharedPtr<Renderable> mInternal;
+		SharedPtr<Vulkan::Camera> mInternal;
 	};
 }

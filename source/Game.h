@@ -3,7 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "Platform.h"
 #include "Timer.h"
-#include "Common.h"
+#include "utility/Common.h"
 
 class Terrain;
 class Input;
@@ -34,7 +34,6 @@ namespace Vulkan
 		SharedPtr<Renderer> mRenderer;
 		SharedPtr<Camera> mCamera;
 		SharedPtr<Terrain> mTerrain;
-		SharedPtr<Input>  mInput;
 		Window* mWindow;
 		Timer mTimer;
 		std::string mTestCaseName;

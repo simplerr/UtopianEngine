@@ -99,6 +99,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MarchingCubes.cpp" />
     <ClCompile Include="source\ObjectTool.cpp" />
+    <ClCompile Include="source\scene\CCamera.cpp" />
     <ClCompile Include="source\scene\SceneRenderer.cpp" />
     <ClCompile Include="source\scene\CLight.cpp" />
     <ClCompile Include="source\scene\CRenderable.cpp" />
@@ -181,10 +182,10 @@
     <ClInclude Include="source\MarchingCubes.h" />
     <ClInclude Include="source\ObjectTool.h" />
     <ClInclude Include="source\Platform.h" />
+    <ClInclude Include="source\scene\CCamera.h" />
     <ClInclude Include="source\scene\SceneRenderer.h" />
     <ClInclude Include="source\scene\CLight.h" />
     <ClInclude Include="source\scene\Light.h" />
-    <ClInclude Include="source\scene\Module.h" />
     <ClInclude Include="source\scene\Object.h" />
     <ClInclude Include="source\scene\ObjectManager.h" />
     <ClInclude Include="source\scene\Renderable.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
+    <ClInclude Include="source\utility\Module.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\NormalDebugEffect.h" />

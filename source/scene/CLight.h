@@ -2,7 +2,7 @@
 #include "scene/SceneComponent.h"
 #include "scene/Light.h"
 #include "LightData.h"
-#include "Common.h"
+#include "utility/Common.h"
 
 namespace Scene
 {

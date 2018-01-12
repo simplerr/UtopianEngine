@@ -3,8 +3,8 @@
 #include <map>
 #include "scene/SceneComponent.h"
 #include "scene/SceneNode.h"
-#include "scene/Module.h"
-#include "Common.h"
+#include "utility/Module.h"
+#include "utility/Common.h"
 
 namespace Scene
 {

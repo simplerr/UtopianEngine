@@ -227,8 +227,5 @@ namespace Vulkan
 
 		// Default message handling
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
-
-		// Let the camera handle user input
-		mCamera->HandleMessages(hwnd, msg, wParam, lParam);
 	}
 }	// VulkanLib namespace

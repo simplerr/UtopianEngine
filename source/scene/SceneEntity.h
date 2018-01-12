@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <vector>
 #include "scene/SceneComponent.h"
-#include "Common.h"
+#include "utility/Common.h"
 #include "scene/Object.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"

@@ -1,6 +1,11 @@
 #include "Input.h"
 #include "Camera.h"
 
+Input& gInput()
+{
+	return Input::Instance();
+}
+
 //! Constructor.
 Input::Input()
 {
@@ -15,7 +20,8 @@ Input::Input()
 	mMousePosition.y = mousePosition.y;
 
 	// No delta movement to start with
-	mDx = mDy = 0.0f;
+	mMouseDelta = vec2(0.0f);
+	mMousePosition = vec2(-1.0f);
 }
 
 //! Cleanup.
@@ -30,6 +36,8 @@ Input::~Input()
 */
 void Input::Update(float dt)
 {
+	mMouseDelta = vec2(0.0f);
+
 	// Set the old states.
 	memcpy(mLastKeyState, mKeyState, sizeof(mKeyState));
 
@@ -53,14 +61,37 @@ LRESULT Input::HandleMessages(UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-	case WM_MOUSEMOVE: {
-		SetMousePosition(vec3(LOWORD(lParam), HIWORD(lParam), 0));
-		return 0;
+		case WM_MBUTTONDOWN:
+		{
+			mMousePosition.x = LOWORD(lParam);
+			mMousePosition.y = HIWORD(lParam);
+			break;
+		}
+		case WM_MOUSEMOVE:
+		{
+			if (wParam & MK_MBUTTON)
+			{
+				int x = LOWORD(lParam);
+				int y = HIWORD(lParam);
+
+				if (mMousePosition.x == -1 && mMousePosition.y == -1) {
+					mMousePosition.x = x;
+					mMousePosition.y = y;
+					break;
+				}
+
+				mMouseDelta.x = x - mMousePosition.x;
+				mMouseDelta.y = mMousePosition.y - y;		// Other way around
+
+				mMousePosition.x = x;
+				mMousePosition.y = y;
+			}
+
+			break;
+		}
 	}
-	case WM_LBUTTONDOWN: {
-		return 0;
-	}
-	}
+
+	return 0;
 }
 
 //! Checks if the key was pressed.
@@ -109,7 +140,7 @@ bool Input::KeyReleased(int key)
 /**
 @return The mouse position.
 */
-vec3 Input::GetMousePosition()
+vec2 Input::GetMousePosition()
 {
 	return mMousePosition;
 }
@@ -121,22 +152,22 @@ vec3 Input::GetMousePosition()
 */
 void Input::SetMousePosition(vec3 pos)
 {
-	mDx = pos.x - GetMousePosition().x;
-	mDy = pos.y - GetMousePosition().y;
-
+	//mDx = pos.x - GetMousePosition().x;
+	//mDy = pos.y - GetMousePosition().y;
+	
 	mMousePosition = pos;
 }
 
 //! Returns horizontal delta movement.
 float Input::MouseDx()
 {
-	return -1;
+	return mMouseDelta.x;
 }
 
 //! Returns vertical delta movement.
 float Input::MouseDy()
 {
-	return -1;
+	return mMouseDelta.y;
 }
 
 float Input::MouseDz()

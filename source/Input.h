@@ -1,9 +1,10 @@
 #pragma once
 #include <Windows.h>
 #include <glm/glm.hpp>
+#include "utility/Module.h"
 
 //! Wrapper for input with keyboard and mouse.
-class Input
+class Input : public Module<Input>
 {
 public:
 	Input();
@@ -19,7 +20,7 @@ public:
 
 	//Ray GetWorldPickingRay();
 
-	glm::vec3 GetMousePosition();
+	glm::vec2 GetMousePosition();
 	float	MouseDx();
 	float	MouseDy();
 	float	MouseDz();
@@ -30,6 +31,8 @@ private:
 	unsigned char mLastKeyState[256];
 	unsigned char mKeyState[256];
 
-	glm::vec3 mMousePosition;
-	float mDx, mDy;
+	glm::vec2 mMousePosition;
+	glm::vec2 mMouseDelta;
 };
+
+Input& gInput();

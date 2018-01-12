@@ -100,6 +100,9 @@
     <Filter Include="Source Files\scene">
       <UniqueIdentifier>{7ad10947-836d-485d-a60b-f8dfda93b248}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\utility">
+      <UniqueIdentifier>{0ce3b1c7-52a2-4ecd-bde8-34ffa1353e31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -330,6 +333,9 @@
     <ClCompile Include="source\scene\SceneRenderer.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\CCamera.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -554,9 +560,6 @@
     <ClInclude Include="source\scene\Object.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\Module.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene\Renderable.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -589,6 +592,12 @@
     </ClInclude>
     <ClInclude Include="source\scene\SceneRenderer.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\CCamera.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\Module.h">
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

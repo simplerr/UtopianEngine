@@ -1,8 +1,8 @@
 #pragma once
 #include <map>
 #include "scene/Object.h"
-#include "scene/Module.h"
-#include "Common.h"
+#include "utility/Module.h"
+#include "utility/Common.h"
 
 namespace Scene
 {

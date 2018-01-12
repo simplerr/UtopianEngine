@@ -22,10 +22,6 @@ namespace Vulkan
 
 		void Update();
 
-#if defined(_WIN32)
-		void HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-#endif
-
 		Ray GetPickingRay();
 
 		vec3 GetDirection();

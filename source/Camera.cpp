@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
+#include "Input.h"
 
 namespace Vulkan
 {
@@ -34,82 +35,36 @@ namespace Vulkan
 
 	void Camera::Update()
 	{
-#if defined(_WIN32)
-
-		if (GetAsyncKeyState('W')) {
+		if (gInput().KeyDown('W')) {
 			vec3 dir = GetDirection();
 			mPosition += mSpeed * dir;
 
 		}
-		if (GetAsyncKeyState('S')) {
+		if (gInput().KeyDown('S')) {
 			vec3 dir = GetDirection();
 			mPosition -= mSpeed * dir;
 
 		}
-		if (GetAsyncKeyState('A')) {
+		if (gInput().KeyDown('A')) {
 			vec3 right = GetRight();
 			mPosition += mSpeed * right;
 
 		}
-		if (GetAsyncKeyState('D')) {
+		if (gInput().KeyDown('D')) {
 			vec3 right = GetRight();
 			mPosition -= mSpeed * right;
-
 		}
 
-#endif
-	}
-
-#if defined(_WIN32)
-	void Camera::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (msg)
+		if (gInput().KeyDown(VK_MBUTTON))
 		{
-
-		case WM_MBUTTONDOWN:
-		{
-			mLastX = LOWORD(lParam);
-			mLastY = HIWORD(lParam);
-			break;
-		}
-		case WM_MOUSEMOVE:
-		{
-			if (wParam & MK_MBUTTON)
-			{
-				int x = LOWORD(lParam);
-				int y = HIWORD(lParam);
-
-				if (mLastX == -1 && mLastY == -1) {
-					mLastX = x;
-					mLastY = y;
-					break;
-				}
-
-				float dx = x - mLastX;
-				float dy = mLastY - y;		// Other way around
-
-				mYaw += dx * mSensitivity;
-				mPitch += (dy * mSensitivity);
-
-				CapAngles();
-
-				mLastX = x;
-				mLastY = y;
-			}
-
-			break;
-		}
-		case WM_KEYDOWN:
-			if (wParam == VK_SPACE)
-			{
-				Vulkan::VulkanDebug::ConsolePrint(mPosition, "Camera pos: ");
-			}
-			break;
-		default:
-			break;
+			VulkanDebug::ConsolePrint(gInput().MouseDx(), "Mouse Dx: ");
+			VulkanDebug::ConsolePrint(gInput().MouseDy(), "Mouse Dy: ");
+			mYaw += gInput().MouseDx() * mSensitivity;
+			mPitch += gInput().MouseDy() * mSensitivity;
+			CapAngles();
+			GetPickingRay();
 		}
 	}
-#endif
 
 	Ray Camera::GetPickingRay()
 	{
@@ -120,10 +75,7 @@ namespace Vulkan
 		mat4 inverseView = glm::inverse(viewMatrix);
 		mat4 inverseProjection = glm::inverse(projectionMatrix);
 
-		// [TODO] Move
-		POINT cursorPos;
-		GetCursorPos(&cursorPos);
-		ScreenToClient(mWindow->GetHwnd(), &cursorPos);
+		vec2 cursorPos = gInput().GetMousePosition();
 
 		float vx = (+2.0f * cursorPos.x / mWindow->GetWidth() - 1.0f);
 		float vy = (-2.0f * cursorPos.y / mWindow->GetHeight() + 1.0f);

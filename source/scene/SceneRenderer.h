@@ -2,8 +2,8 @@
 #include <vector>
 #include "vulkan/VulkanInclude.h"
 #include "scene/Object.h"
-#include "scene/Module.h"
-#include "Common.h"
+#include "utility/Module.h"
+#include "utility/Common.h"
 #include "vulkan/PhongEffect.h"
 
 class Terrain;
@@ -41,6 +41,7 @@ namespace Scene
 	private:
 		std::vector<Renderable*> mRenderables;
 		std::vector<Light*> mLights;
+		std::vector<Vulkan::Camera*> mCameras;
 
 		Vulkan::Renderer* mRenderer;
 		Vulkan::Camera* mCamera;
