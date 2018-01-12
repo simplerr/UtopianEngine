@@ -36,34 +36,32 @@ using namespace Scene;
 
 namespace Vulkan
 {
-	Game::Game(Window* window)
+	Game::Game(Window* window) 
+		: mWindow(window)
 	{
 		srand(time(NULL));
 
 		mIsClosing = false;
-		mRenderer = new Renderer();
 
 		Vulkan::VulkanDebug::TogglePerformanceWarnings();
 
+		mRenderer = make_shared<Renderer>();
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 
-		mWindow = window;
-
 		// Create the camera
-		mCamera = new Vulkan::Camera(mWindow, glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200), 60.0f, 10.0f, 256000.0f);
+		mCamera = make_shared<Vulkan::Camera>(mWindow, glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200), 60.0f, 10.0f, 256000.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
-		mRenderer->SetCamera(mCamera);
+		mRenderer->SetCamera(mCamera.get());
 
-		mInput = new Input();
+		mInput = make_shared<Input>();
 
 		mEntityManager = new ECS::SystemManager();
-
 		mEntityManager->Init(); // NOTE: Not used// Create all ECS::System
 		mEntityManager->AddSystem(new ECS::PhysicsSystem());
-		mEntityManager->AddSystem(new ECS::EditorSystem(mCamera, mTerrain, mInput));
+		mEntityManager->AddSystem(new ECS::EditorSystem(mCamera.get(), mTerrain.get(), mInput.get()));
 		mEntityManager->AddSystem(new ECS::HealthSystem());
-		mEntityManager->AddSystem(new ECS::RenderSystem(mRenderer, mCamera, mTerrain));
+		mEntityManager->AddSystem(new ECS::RenderSystem(mRenderer.get(), mCamera.get(), mTerrain.get()));
 
 		ECS::RenderSystem* renderSystem = dynamic_cast<ECS::RenderSystem*>(mEntityManager->GetSystem(ECS::SystemId::RENDER_SYSTEM));
 
@@ -75,17 +73,14 @@ namespace Vulkan
 
 	Game::~Game()
 	{
-		delete mCamera;
 		delete mEntityManager;
-		delete mRenderer;
-		delete mInput;
 	}
 
 	void Game::InitTestScene()
 	{
 		ObjectManager::Start();
 		World::Start();
-		SceneRenderer::Start(mRenderer, mCamera);
+		SceneRenderer::Start(mRenderer.get(), mCamera.get());
 
 		// Add teapot
 		auto teapot = SceneEntity::Create("Teapot");

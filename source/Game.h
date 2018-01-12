@@ -3,6 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "Platform.h"
 #include "Timer.h"
+#include "Common.h"
 
 namespace ECS
 {
@@ -37,17 +38,16 @@ namespace Vulkan
 		bool IsClosing();
 
 		// Move all of these to other locations
-		Renderer* mRenderer;
+		SharedPtr<Renderer> mRenderer;
+		SharedPtr<Camera> mCamera;
+		SharedPtr<Terrain> mTerrain;
+		SharedPtr<Input>  mInput;
 		Window* mWindow;
-		Camera* mCamera;
-		Terrain* mTerrain;
-		Scene::SceneRenderer*  mSceneRenderer;
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;
 
 		ECS::SystemManager* mEntityManager;
 		ECS::Entity* mTestEntity;
-		Input* mInput;
 	};
 }
