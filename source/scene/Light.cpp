@@ -1,5 +1,5 @@
 #include "scene/Light.h"
-#include "scene/ActorRenderer.h"
+#include "scene/SceneRenderer.h"
 
 namespace Scene
 {
@@ -31,7 +31,7 @@ namespace Scene
 
 	void Light::Initialize()
 	{
-		ActorRenderer::Instance().AddLight(this);
+		SceneRenderer::Instance().AddLight(this);
 	}
 
 	void Light::SetLightData(const Vulkan::LightData& lightData)

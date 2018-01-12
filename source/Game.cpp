@@ -21,7 +21,6 @@
 #include "ecs/systems/HealthSystem.h"
 #include "ecs/systems/EditorSystem.h"
 #include "Input.h"
-#include "SceneRenderer.h"
 
 // Testing
 #include "scene/SceneEntity.h"
@@ -31,7 +30,7 @@
 #include "scene/CLight.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
-#include "scene/ActorRenderer.h"
+#include "scene/SceneRenderer.h"
 
 using namespace Scene;
 
@@ -52,15 +51,12 @@ namespace Vulkan
 		mWindow = window;
 
 		// Create the camera
-		//mCamera = new Vulkan::Camera(mWindow, glm::vec3(6400.0f * 10 - 3200, 2700.0f, 6400.0f * 10 - 3200), 60.0f, 0.1f, 256000.0f);
 		mCamera = new Vulkan::Camera(mWindow, glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200), 60.0f, 10.0f, 256000.0f);
-		//mCamera = new Vulkan::Camera(mWindow, glm::vec3(15000.0f, 2700.0f, 15000.0f), 60.0f, 0.1f, 256000.0f);
 		mCamera->LookAt(glm::vec3(0, 0, 0));
 		mRenderer->SetCamera(mCamera);
 
 		mInput = new Input();
 
-		mSceneRenderer = new SceneRenderer(mRenderer, mCamera);
 		mEntityManager = new ECS::SystemManager();
 
 		mEntityManager->Init(); // NOTE: Not used// Create all ECS::System
@@ -70,7 +66,6 @@ namespace Vulkan
 		mEntityManager->AddSystem(new ECS::RenderSystem(mRenderer, mCamera, mTerrain));
 
 		ECS::RenderSystem* renderSystem = dynamic_cast<ECS::RenderSystem*>(mEntityManager->GetSystem(ECS::SystemId::RENDER_SYSTEM));
-		mSceneRenderer->SetRenderSystem(renderSystem);
 
 		InitScene();
 
@@ -84,14 +79,13 @@ namespace Vulkan
 		delete mEntityManager;
 		delete mRenderer;
 		delete mInput;
-		delete mSceneRenderer;
 	}
 
 	void Game::InitTestScene()
 	{
 		ObjectManager::Start();
 		World::Start();
-		ActorRenderer::Start(mRenderer, mCamera);
+		SceneRenderer::Start(mRenderer, mCamera);
 
 		// Add teapot
 		auto teapot = SceneEntity::Create("Teapot");
@@ -135,7 +129,7 @@ namespace Vulkan
 
 		World::Instance().Update();
 
-		ActorRenderer::Instance().InitShader();
+		SceneRenderer::Instance().InitShader();
 		ObjectManager::Instance().PrintObjects();
 
 		/*CMesh* mesh = entity->AddComponent<CMesh>("data/models/teapot.obj");
@@ -213,10 +207,10 @@ namespace Vulkan
 	void Game::Update()
 	{
 		World::Instance().Update();
+		SceneRenderer::Instance().Update();
 		mRenderer->Update();
 		mEntityManager->Process();
 		mInput->Update(0);
-		mSceneRenderer->Update();
 
 		ECS::TransformComponent* transform = dynamic_cast<ECS::TransformComponent*>(mTestEntity->GetComponent(ECS::TRANSFORM_COMPONENT));
 		float speed = 5.0f;
@@ -225,8 +219,7 @@ namespace Vulkan
 
 	void Game::Draw()
 	{
-		mSceneRenderer->Render();
-		ActorRenderer::Instance().RenderAll();
+		SceneRenderer::Instance().Render();
 		mRenderer->Render();
 	}
 	

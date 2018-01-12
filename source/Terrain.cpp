@@ -160,7 +160,7 @@ Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
 	mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
 	mMarchingCubesEffect.UpdateMemory(renderer->GetDevice());
 
-	mClippingPlane = glm::vec4(0, 1, 0, 1500);
+	mClippingPlane = glm::vec4(0, 1, 0, 1500000);
 }
 
 Terrain::~Terrain()

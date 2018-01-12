@@ -1,5 +1,5 @@
 #include "scene/Renderable.h"
-#include "scene/ActorRenderer.h"
+#include "scene/SceneRenderer.h"
 
 namespace Scene
 {
@@ -24,7 +24,7 @@ namespace Scene
 	void Renderable::Initialize()
 	{
 		// Add new instance to the Renderer (scene)
-		ActorRenderer::Instance().AddRenderable(this);
+		SceneRenderer::Instance().AddRenderable(this);
 	}
 
 	Vulkan::StaticModel* Renderable::GetModel()

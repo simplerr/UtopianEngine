@@ -12,7 +12,11 @@ namespace ECS
 
 class Terrain;
 class Input;
-class SceneRenderer;
+
+namespace Scene
+{
+	class SceneRenderer;
+}
 
 namespace Vulkan
 {
@@ -37,7 +41,7 @@ namespace Vulkan
 		Window* mWindow;
 		Camera* mCamera;
 		Terrain* mTerrain;
-		SceneRenderer*  mSceneRenderer;
+		Scene::SceneRenderer*  mSceneRenderer;
 		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;

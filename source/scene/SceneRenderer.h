@@ -6,12 +6,15 @@
 #include "Common.h"
 #include "vulkan/PhongEffect.h"
 
+class Terrain;
+class WaterRenderer;
+
 namespace Scene
 {
 	class Renderable;
 	class Light;
 
-	class ActorRenderer : public Module<ActorRenderer>
+	class SceneRenderer : public Module<SceneRenderer>
 	{
 		struct PushConstantBlock
 		{
@@ -20,15 +23,20 @@ namespace Scene
 		};
 
 	public:
-		ActorRenderer(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
-		~ActorRenderer();
+		SceneRenderer(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
+		~SceneRenderer();
 
 		void InitShader();
 
-		void RenderAll();
+		void Update();
+		void RenderNodes(Vulkan::CommandBuffer* commandBuffer);
+		void RenderScene(Vulkan::CommandBuffer* commandBuffer);
+		void Render();
+		void RenderOffscreen();
 
 		void AddRenderable(Renderable* renderable);
 		void AddLight(Light* light);
+		void SetTerrain(Terrain* terrain);
 
 	private:
 		std::vector<Renderable*> mRenderables;
@@ -38,5 +46,8 @@ namespace Scene
 		Vulkan::Camera* mCamera;
 		Vulkan::CommandBuffer* mCommandBuffer;
 		Vulkan::PhongEffect mPhongEffect;
+		Vulkan::ScreenGui* mScreenGui;
+		Terrain* mTerrain;
+		WaterRenderer* mWaterRenderer;
 	};
 }

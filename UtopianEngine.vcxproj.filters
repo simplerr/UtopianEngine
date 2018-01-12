@@ -291,9 +291,6 @@
     <ClCompile Include="source\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\SceneRenderer.cpp">
-      <Filter>Source Files\renderer</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene\CTransform.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -315,9 +312,6 @@
     <ClCompile Include="source\scene\CRenderable.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\ActorRenderer.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene\Transform.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -331,6 +325,9 @@
       <Filter>Source Files\scene</Filter>
     </ClCompile>
     <ClCompile Include="source\scene\Light.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\SceneRenderer.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -542,9 +539,6 @@
     <ClInclude Include="source\Common.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\SceneRenderer.h">
-      <Filter>Source Files\renderer</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene\CTransform.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -567,9 +561,6 @@
       <Filter>Source Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\scene\CRenderable.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\ActorRenderer.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\scene\Transform.h">
@@ -595,6 +586,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\VulkanInclude.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\SceneRenderer.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

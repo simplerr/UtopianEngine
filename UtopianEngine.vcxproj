@@ -99,8 +99,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MarchingCubes.cpp" />
     <ClCompile Include="source\ObjectTool.cpp" />
-    <ClCompile Include="source\SceneRenderer.cpp" />
-    <ClCompile Include="source\scene\ActorRenderer.cpp" />
+    <ClCompile Include="source\scene\SceneRenderer.cpp" />
     <ClCompile Include="source\scene\CLight.cpp" />
     <ClCompile Include="source\scene\CRenderable.cpp" />
     <ClCompile Include="source\scene\Light.cpp" />
@@ -182,8 +181,7 @@
     <ClInclude Include="source\MarchingCubes.h" />
     <ClInclude Include="source\ObjectTool.h" />
     <ClInclude Include="source\Platform.h" />
-    <ClInclude Include="source\SceneRenderer.h" />
-    <ClInclude Include="source\scene\ActorRenderer.h" />
+    <ClInclude Include="source\scene\SceneRenderer.h" />
     <ClInclude Include="source\scene\CLight.h" />
     <ClInclude Include="source\scene\Light.h" />
     <ClInclude Include="source\scene\Module.h" />
