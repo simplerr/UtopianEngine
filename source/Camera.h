@@ -37,21 +37,17 @@ namespace Vulkan
 		mat4 GetProjection();
 		mat4 GetMatrix();
 		vec3 GetRight();
-		vec3 GetPosition();
 		vec3 GetTarget();
 		vec3 GetUp();
 		float GetPitch();
 		float GetYaw();
 		void AddOrientation(float yaw, float pitch);
 		void SetOrientation(float yaw, float pitch);
-		void SetPosition(glm::vec3 position);
 		void LookAt(vec3 target);
 		void CapAngles();
 
 		// [NOTE][HACK] Vulkan & OpenGL have different pitch movement
 		int hack = 1;
-
-		vec3 mPosition;
 	private:
 		Window* mWindow;
 		vec3 mUp;

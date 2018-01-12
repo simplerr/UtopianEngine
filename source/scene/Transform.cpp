@@ -44,6 +44,11 @@ namespace Scene
 		RebuildWorldMatrix();
 	}
 
+	void Transform::AddTranslation(const vec3& translation)
+	{
+		mPosition += translation;
+	}
+
 	void Transform::AddRotation(float x, float y, float z)
 	{
 		mRotation += vec3(x, y, z);

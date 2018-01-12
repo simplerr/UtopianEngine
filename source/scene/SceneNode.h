@@ -13,9 +13,22 @@ namespace Scene
 		SceneNode();
 		~SceneNode();
 		
+		// Setters
 		void SetTransform(const Transform& transform);
+		void SetPosition(const vec3& position);
+		void SetRotation(const vec3& rotation);
+		void SetScale(const vec3& scale);
 
+		void AddTranslation(const vec3& translation);
+		void AddRotation(const vec3& rotation);
+		void AddScale(const vec3& scale);
+
+		// Getters
 		const Transform& GetTransform() const;
+		const vec3& GetPosition() const;
+		const vec3& GetRotation() const;
+		const vec3& GetScale() const;
+		const mat4& GetWorldMatrix() const;
 	private:
 		Transform mTransform;
 

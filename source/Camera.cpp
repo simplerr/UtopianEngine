@@ -9,7 +9,7 @@ namespace Vulkan
 {
 	Camera::Camera()
 	{
-		mPosition = glm::vec3(7, 7, 7);
+		SetPosition(glm::vec3(7, 7, 7));
 		mUp = glm::vec3(0, 1, 0);
 
 		mYaw = mPitch = 0.0f;
@@ -23,7 +23,7 @@ namespace Vulkan
 
 	Camera::Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
-		this->mPosition = position;
+		SetPosition(position);
 		this->mFov = fieldOfView;
 		this->mAspectRatio = (float)window->GetWidth() / (float)window->GetHeight();
 		this->mNearPlane = nearPlane;
@@ -51,28 +51,26 @@ namespace Vulkan
 	{
 		if (gInput().KeyDown('W')) {
 			vec3 dir = GetDirection();
-			mPosition += mSpeed * dir;
+			AddTranslation(mSpeed * dir);
 
 		}
 		if (gInput().KeyDown('S')) {
 			vec3 dir = GetDirection();
-			mPosition -= mSpeed * dir;
+			AddTranslation(mSpeed * -dir);
 
 		}
 		if (gInput().KeyDown('A')) {
 			vec3 right = GetRight();
-			mPosition += mSpeed * right;
+			AddTranslation(mSpeed * right);
 
 		}
 		if (gInput().KeyDown('D')) {
 			vec3 right = GetRight();
-			mPosition -= mSpeed * right;
+			AddTranslation(mSpeed * -right);
 		}
 
 		if (gInput().KeyDown(VK_MBUTTON))
 		{
-			VulkanDebug::ConsolePrint(gInput().MouseDx(), "Mouse Dx: ");
-			VulkanDebug::ConsolePrint(gInput().MouseDy(), "Mouse Dy: ");
 			mYaw += gInput().MouseDx() * mSensitivity;
 			mPitch += gInput().MouseDy() * mSensitivity;
 			CapAngles();
@@ -121,11 +119,6 @@ namespace Vulkan
 		return r;
 	}
 
-	vec3 Camera::GetPosition()
-	{
-		return mPosition;
-	}
-
 	vec3 Camera::GetTarget()
 	{
 		return GetPosition() + GetDirection();
@@ -163,7 +156,7 @@ namespace Vulkan
 	{
 		//mat4 viewMatrix = glm::lookAt(GetPosition(), GetTarget(), GetUp());
 		//return viewMatrix;
-		return GetOrientation() * glm::translate(mat4(), mPosition);
+		return GetOrientation() * glm::translate(mat4(), GetPosition());
 	}
 
 	mat4 Camera::GetProjection()
@@ -178,7 +171,7 @@ namespace Vulkan
 
 	void Camera::LookAt(vec3 target)
 	{
-		vec3 dir = glm::normalize(target - mPosition);
+		vec3 dir = glm::normalize(target - GetPosition());
 		mPitch = glm::degrees(asinf(dir.y));
 		mYaw = -glm::degrees(atan2f(dir.x, dir.z));		// Note the - signs
 	}
@@ -204,10 +197,5 @@ namespace Vulkan
 	float Camera::GetYaw()
 	{
 		return mYaw;
-	}
-
-	void Camera::SetPosition(glm::vec3 position)
-	{
-		mPosition = position;
 	}
 }	// VulkanLib namespace
