@@ -1,13 +1,18 @@
 #include "scene/CCamera.h"
 #include "scene/World.h"
+#include "scene/SceneEntity.h"
 #include "Camera.h"
 
 namespace Scene
 {
-	CCamera::CCamera(SceneEntity* parent)
+	CCamera::CCamera(SceneEntity* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane)
 		: SceneComponent(parent)
 	{
+		mInternal = Vulkan::Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
+		auto transform = GetParent()->GetTransform();
+		mInternal->SetPosition(transform.GetPosition());
 
+		//World::Instance().BindNode(mInternal, GetParent());
 	}
 
 	CCamera::~CCamera()
@@ -17,14 +22,12 @@ namespace Scene
 
 	void CCamera::Update()
 	{
-
+		mInternal->Update();
 	}
 
 	void CCamera::OnCreated()
 	{
-		mInternal = Vulkan::Camera::Create();
 
-		World::Instance().BindNode(mInternal, GetParent());
 	}
 
 	void CCamera::LookAt(const vec3& target)
@@ -40,6 +43,36 @@ namespace Scene
 	void CCamera::SetOrientation(float yaw, float pitch)
 	{
 		mInternal->SetOrientation(yaw, pitch);
+	}
+
+	void CCamera::SetFov(float fov)
+	{
+		mInternal->SetFov(fov);
+	}
+
+	void CCamera::SetNearPlane(float nearPlane)
+	{
+		mInternal->SetNearPlane(nearPlane);
+	}
+
+	void CCamera::SetFarPlane(float farPlane)
+	{
+		mInternal->SetFarPlane(farPlane);
+	}
+
+	void CCamera::SetAspectRatio(float aspectRatio)
+	{
+		mInternal->SetAspectRatio(aspectRatio);
+	}
+
+	void CCamera::SetWindow(Vulkan::Window* window)
+	{
+		mInternal->SetWindow(window);
+	}
+	
+	void CCamera::SetMainCamera()
+	{
+		mInternal->SetMainCamera();
 	}
 
 	const vec3& CCamera::GetDirection() const

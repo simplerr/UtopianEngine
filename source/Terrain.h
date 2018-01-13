@@ -79,7 +79,7 @@ bool operator<(BlockKey const& a, BlockKey const& b);
 class Terrain
 {
 public:
-	Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
+	Terrain(Vulkan::Renderer* renderer);
 	~Terrain();
 
 	void Update();
@@ -106,7 +106,6 @@ public:
 
 private:
 	Vulkan::Renderer* mRenderer;
-	Vulkan::Camera* mCamera;
 
 	// Experimentation
 	Vulkan::TerrainEffect mTerrainEffect;

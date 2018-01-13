@@ -96,6 +96,11 @@ namespace Vulkan
 		mCamera = camera;
 	}
 
+	Camera* Renderer::GetCamera()
+	{
+		return mCamera;
+	}
+
 	DescriptorSetLayout* Renderer::GetTextureDescriptorSetLayout()
 	{
 		return mTextureDescriptorSetLayout;

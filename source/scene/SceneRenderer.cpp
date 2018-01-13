@@ -15,10 +15,11 @@
 
 namespace Scene
 {
-	SceneRenderer::SceneRenderer(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
+	SceneRenderer::SceneRenderer(Vulkan::Renderer* renderer)
 	{
+		mMainCamera = nullptr;
+		mMainCamera = renderer->GetCamera();
 		mRenderer = renderer;
-		mCamera = camera;
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		mWaterRenderer = new WaterRenderer(mRenderer, renderer->mModelLoader, renderer->mTextureLoader);
@@ -52,18 +53,18 @@ namespace Scene
 	void SceneRenderer::Update()
 	{
 		mTerrain->Update();
-		mWaterRenderer->Update(mRenderer, mCamera);
+		mWaterRenderer->Update(mRenderer, mMainCamera);
 	}
 
 	void SceneRenderer::RenderNodes(Vulkan::CommandBuffer* commandBuffer)
 	{
 		// From Renderer.cpp
-		if (mCamera != nullptr)
+		if (mMainCamera != nullptr)
 		{
-			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
-			mPhongEffect.per_frame_vs.camera.viewMatrix = mCamera->GetView();
-			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
-			mPhongEffect.per_frame_vs.camera.eyePos = mCamera->GetPosition();
+			mPhongEffect.per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
+			mPhongEffect.per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
+			mPhongEffect.per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
+			mPhongEffect.per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
 		}
 
 		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
@@ -127,11 +128,11 @@ namespace Scene
 
 	void SceneRenderer::RenderOffscreen()
 	{
-		glm::vec3 cameraPos = mCamera->GetPosition();
+		glm::vec3 cameraPos = mMainCamera->GetPosition();
 
 		// Reflection renderpass
-		mCamera->SetPosition(mCamera->GetPosition() - glm::vec3(0, mCamera->GetPosition().y *  2, 0)); // NOTE: Water is hardcoded to be at y = 0
-		mCamera->SetOrientation(mCamera->GetYaw(), -mCamera->GetPitch());
+		mMainCamera->SetPosition(mMainCamera->GetPosition() - glm::vec3(0, mMainCamera->GetPosition().y *  2, 0)); // NOTE: Water is hardcoded to be at y = 0
+		mMainCamera->SetOrientation(mMainCamera->GetYaw(), -mMainCamera->GetPitch());
 		mTerrain->SetClippingPlane(glm::vec4(0, -1, 0, 0));
 		mTerrain->UpdateUniformBuffer();
 
@@ -141,8 +142,8 @@ namespace Scene
 
 		// Refraction renderpass
 		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 0));
-		mCamera->SetPosition(cameraPos);
-		mCamera->SetOrientation(mCamera->GetYaw(), -mCamera->GetPitch());
+		mMainCamera->SetPosition(cameraPos);
+		mMainCamera->SetOrientation(mMainCamera->GetYaw(), -mMainCamera->GetPitch());
 		mTerrain->UpdateUniformBuffer();
 
 		mWaterRenderer->GetRefractionRenderTarget()->Begin();	
@@ -164,9 +165,15 @@ namespace Scene
 		mLights.push_back(light);
 	}
 
-	void SceneRenderer::AddCamera(Vulkan::Camera * camera)
+	void SceneRenderer::AddCamera(Vulkan::Camera* camera)
 	{
 		mCameras.push_back(camera);
+	}
+
+	void SceneRenderer::SetMainCamera(Vulkan::Camera* camera)
+	{
+		mRenderer->SetCamera(camera);
+		mMainCamera = camera;
 	}
 
 	void SceneRenderer::SetTerrain(Terrain* terrain)

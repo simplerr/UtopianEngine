@@ -28,6 +28,7 @@
 #include "scene/CTransform.h"
 #include "scene/CRenderable.h"
 #include "scene/CLight.h"
+#include "scene/CCamera.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/SceneRenderer.h"
@@ -49,13 +50,7 @@ namespace Vulkan
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 
-		// Create the camera
-		vec3 cameraPos = glm::vec3(6400.0f * 10 + 3200, 2700.0f, 6400.0f * 10 + 3200);
-		mCamera = make_shared<Vulkan::Camera>(mWindow, cameraPos, 60.0f, 10.0f, 256000.0f);
-		mCamera->LookAt(glm::vec3(0, 0, 0));
-		mRenderer->SetCamera(mCamera.get());
-
-		mTerrain = make_shared<Terrain>(mRenderer.get(), mCamera.get());
+		mTerrain = make_shared<Terrain>(mRenderer.get());
 
 		InitScene();
 
@@ -72,8 +67,15 @@ namespace Vulkan
 		ObjectManager::Start();
 		World::Start();
 		Input::Start();
-		SceneRenderer::Start(mRenderer.get(), mCamera.get());
+		SceneRenderer::Start(mRenderer.get());
 		SceneRenderer::Instance().SetTerrain(mTerrain.get());
+		
+		// Add camera
+		auto cameraEntity = SceneEntity::Create("Camera");
+		cameraEntity->AddComponent<CTransform>(vec3(67000, 2700, 67000));
+		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
+		camera->LookAt(vec3(0, 0, 0));
+		camera->SetMainCamera();
 
 		// Add teapot
 		auto teapot = SceneEntity::Create("Teapot");

@@ -73,6 +73,7 @@ namespace Vulkan
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
 		void SetCamera(Camera* camera);
+		Camera* GetCamera();
 
 	private:
 		bool							mPrepared = false;

@@ -22,10 +22,16 @@ namespace Vulkan
 		Camera();
 		Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 
-		static SharedPtr<Camera> Create();
+		static SharedPtr<Camera> Create(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 		void Initialize();
 
 		void Update();
+
+		void SetFov(float fov);
+		void SetNearPlane(float nearPlane);
+		void SetFarPlane(float farPlane);
+		void SetWindow(Vulkan::Window* window);
+		void SetAspectRatio(float aspectRatio);
 
 		Ray GetPickingRay();
 
@@ -45,6 +51,8 @@ namespace Vulkan
 		void SetOrientation(float yaw, float pitch);
 		void LookAt(vec3 target);
 		void CapAngles();
+
+		void SetMainCamera();
 
 		// [NOTE][HACK] Vulkan & OpenGL have different pitch movement
 		int hack = 1;

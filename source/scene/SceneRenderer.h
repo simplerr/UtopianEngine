@@ -23,7 +23,7 @@ namespace Scene
 		};
 
 	public:
-		SceneRenderer(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
+		SceneRenderer(Vulkan::Renderer* renderer);
 		~SceneRenderer();
 
 		void InitShader();
@@ -37,6 +37,7 @@ namespace Scene
 		void AddRenderable(Renderable* renderable);
 		void AddLight(Light* light);
 		void AddCamera(Vulkan::Camera* camera);
+		void SetMainCamera(Vulkan::Camera* camera);
 
 		void SetTerrain(Terrain* terrain);
 
@@ -44,9 +45,9 @@ namespace Scene
 		std::vector<Renderable*> mRenderables;
 		std::vector<Light*> mLights;
 		std::vector<Vulkan::Camera*> mCameras;
+		Vulkan::Camera* mMainCamera;
 
 		Vulkan::Renderer* mRenderer;
-		Vulkan::Camera* mCamera;
 		Vulkan::CommandBuffer* mCommandBuffer;
 		Vulkan::PhongEffect mPhongEffect;
 		Vulkan::ScreenGui* mScreenGui;

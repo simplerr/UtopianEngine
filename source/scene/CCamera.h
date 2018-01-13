@@ -13,7 +13,7 @@ namespace Scene
 	class CCamera : public SceneComponent
 	{
 	public:
-		CCamera(SceneEntity* parent);
+		CCamera(SceneEntity* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane);
 		~CCamera();
 
 		void Update() override;
@@ -23,6 +23,12 @@ namespace Scene
 		void LookAt(const vec3& target);
 		void AddOrientation(float yaw, float pitch);
 		void SetOrientation(float yaw, float pitch);
+		void SetFov(float fov);
+		void SetNearPlane(float nearPlane);
+		void SetFarPlane(float farPlane);
+		void SetAspectRatio(float aspectRatio);
+		void SetWindow(Vulkan::Window* window);
+		void SetMainCamera();
 
 		// Getters
 		const vec3& GetDirection() const;

@@ -34,12 +34,17 @@ namespace Vulkan
 		mWindow = window;
 	}
 
-	SharedPtr<Camera> Camera::Create()
+	SharedPtr<Camera> Camera::Create(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
-		SharedPtr<Camera> instance(new Camera());
+		SharedPtr<Camera> instance(new Camera(window, position, fieldOfView, nearPlane, farPlane));
 		instance->Initialize();
 
 		return instance;
+	}
+
+	void Camera::SetMainCamera()
+	{
+		Scene::SceneRenderer::Instance().SetMainCamera(this);
 	}
 
 	void Camera::Initialize()
@@ -76,6 +81,31 @@ namespace Vulkan
 			CapAngles();
 			GetPickingRay();
 		}
+	}
+
+	void Camera::SetFov(float fov)
+	{
+		mFov = fov;
+	}
+
+	void Camera::SetNearPlane(float nearPlane)
+	{
+		mNearPlane = nearPlane;
+	}
+
+	void Camera::SetFarPlane(float farPlane)
+	{
+		mFarPlane = farPlane;
+	}
+
+	void Camera::SetWindow(Vulkan::Window* window)
+	{
+		mWindow = window;
+	}
+
+	void Camera::SetAspectRatio(float aspectRatio)
+	{
+		mAspectRatio = aspectRatio;
 	}
 
 	Ray Camera::GetPickingRay()

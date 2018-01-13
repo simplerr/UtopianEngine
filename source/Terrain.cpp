@@ -120,10 +120,9 @@ void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
 	}
 }
 
-Terrain::Terrain(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
+Terrain::Terrain(Vulkan::Renderer* renderer)
 {
 	mRenderer = renderer;
-	mCamera = camera;
 
 	/* 
 		Initialize Vulkan handles
@@ -175,7 +174,7 @@ void Terrain::UpdateBlockList()
 	// 2) Are they already added? 
 	// 3) Add them
 
-	glm::vec3 cameraPos = mCamera->GetPosition();
+	glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
 	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 	int32_t blockY = cameraPos.y / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
@@ -228,8 +227,8 @@ void Terrain::GenerateBlocks(float time)
 			const uint32_t h = 16;
 			const uint32_t d = 16;
 
-			mMarchingCubesEffect.ubo.data.projection = mCamera->GetProjection();
-			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
+			mMarchingCubesEffect.ubo.data.projection = mRenderer->GetCamera()->GetProjection();
+			mMarchingCubesEffect.ubo.data.view = mRenderer->GetCamera()->GetView();
 			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
 			mMarchingCubesEffect.ubo.data.time = time;
 
@@ -325,11 +324,11 @@ void Terrain::Update()
 
 void Terrain::UpdateUniformBuffer()
 {
-	mTerrainEffect.per_frame_vs.data.projection = mCamera->GetProjection();
-	mTerrainEffect.per_frame_vs.data.view = mCamera->GetView();
-	mTerrainEffect.per_frame_vs.data.eyePos = mCamera->GetPosition();
+	mTerrainEffect.per_frame_vs.data.projection = mRenderer->GetCamera()->GetProjection();
+	mTerrainEffect.per_frame_vs.data.view = mRenderer->GetCamera()->GetView();
+	mTerrainEffect.per_frame_vs.data.eyePos = mRenderer->GetCamera()->GetPosition();
 	mTerrainEffect.per_frame_vs.data.clippingPlane = mClippingPlane;
-	mTerrainEffect.per_frame_ps.data.eyePos = mCamera->GetPosition(); // Test
+	mTerrainEffect.per_frame_ps.data.eyePos = mRenderer->GetCamera()->GetPosition(); // Test
 	mTerrainEffect.per_frame_ps.data.fogStart = 115000.0f; // Test
 	mTerrainEffect.per_frame_ps.data.fogDistance = 5400.0f;
 	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
@@ -354,14 +353,14 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				Vulkan::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
 				Vulkan::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
 
-				glm::vec3 cameraPos = mCamera->GetPosition();
+				glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
 				int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
 				int32_t blockY = 0;
 				int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
 
 				Vulkan::VulkanDebug::ConsolePrint(blockX, "blockX: ");
 				Vulkan::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
-				Vulkan::VulkanDebug::ConsolePrint(GetHeight(mCamera->GetPosition().x, mCamera->GetPosition().z), "terrain height: ");
+				Vulkan::VulkanDebug::ConsolePrint(GetHeight(mRenderer->GetCamera()->GetPosition().x, mRenderer->GetCamera()->GetPosition().z), "terrain height: ");
 
 				UpdateBlockList();
 			}
