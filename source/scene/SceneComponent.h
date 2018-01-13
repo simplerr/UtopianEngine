@@ -14,7 +14,8 @@ namespace Scene
 			TRANSFORM = 0,
 			STATIC_MESH,
 			LIGHT,
-			CAMERA
+			CAMERA,
+			FREE_CAMERA
 		};
 
 		SceneComponent(SceneEntity* parent);

@@ -336,6 +336,9 @@
     <ClCompile Include="source\scene\CCamera.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\CNoClip.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -598,6 +601,9 @@
     </ClInclude>
     <ClInclude Include="source\utility\Module.h">
       <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\CNoClip.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

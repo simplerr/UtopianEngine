@@ -42,6 +42,11 @@ namespace Scene
 		mTransform.SetScale(scale);
 	}
 
+	void CTransform::AddTranslation(const vec3& translation)
+	{
+		mTransform.AddTranslation(translation);
+	}
+
 	void CTransform::AddRotation(float x, float y, float z)
 	{
 		mTransform.AddRotation(x, y, z);

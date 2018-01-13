@@ -19,13 +19,10 @@ namespace Vulkan
 	class Camera : public Scene::SceneNode
 	{
 	public:
-		Camera();
 		Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 
 		static SharedPtr<Camera> Create(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 		void Initialize();
-
-		void Update();
 
 		void SetFov(float fov);
 		void SetNearPlane(float nearPlane);
@@ -66,10 +63,5 @@ namespace Vulkan
 		float mNearPlane;
 		float mFarPlane;
 		float mAspectRatio;
-
-		float mSensitivity = 0.2f;
-		float mSpeed = 100.5f;
-
-		int mLastX, mLastY;
 	};
 }	// VulkanLib namespace

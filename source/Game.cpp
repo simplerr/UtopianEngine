@@ -29,6 +29,7 @@
 #include "scene/CRenderable.h"
 #include "scene/CLight.h"
 #include "scene/CCamera.h"
+#include "scene/CNoClip.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/SceneRenderer.h"
@@ -76,6 +77,9 @@ namespace Vulkan
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
 		camera->LookAt(vec3(0, 0, 0));
 		camera->SetMainCamera();
+
+		cameraEntity->AddComponent<CNoClip>(300.0f);
+
 
 		// Add teapot
 		auto teapot = SceneEntity::Create("Teapot");

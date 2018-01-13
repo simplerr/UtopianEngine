@@ -7,20 +7,6 @@
 
 namespace Vulkan
 {
-	Camera::Camera()
-	{
-		SetPosition(glm::vec3(7, 7, 7));
-		mUp = glm::vec3(0, 1, 0);
-
-		mYaw = mPitch = 0.0f;
-		mFov = 60.0f;
-		mNearPlane = 0.1f;
-		mFarPlane = 256.0f;
-		mAspectRatio = 4.0f / 3.0f;
-
-		mLastX = mLastY = -1;
-	}
-
 	Camera::Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
 		SetPosition(position);
@@ -30,7 +16,6 @@ namespace Vulkan
 		this->mFarPlane = farPlane;
 		mUp = glm::vec3(0, 1, 0);
 		mYaw = mPitch = 0.0f;
-		mLastX = mLastY = -1;
 		mWindow = window;
 	}
 
@@ -50,37 +35,6 @@ namespace Vulkan
 	void Camera::Initialize()
 	{
 		Scene::SceneRenderer::Instance().AddCamera(this);
-	}
-
-	void Camera::Update()
-	{
-		if (gInput().KeyDown('W')) {
-			vec3 dir = GetDirection();
-			AddTranslation(mSpeed * dir);
-
-		}
-		if (gInput().KeyDown('S')) {
-			vec3 dir = GetDirection();
-			AddTranslation(mSpeed * -dir);
-
-		}
-		if (gInput().KeyDown('A')) {
-			vec3 right = GetRight();
-			AddTranslation(mSpeed * right);
-
-		}
-		if (gInput().KeyDown('D')) {
-			vec3 right = GetRight();
-			AddTranslation(mSpeed * -right);
-		}
-
-		if (gInput().KeyDown(VK_MBUTTON))
-		{
-			mYaw += gInput().MouseDx() * mSensitivity;
-			mPitch += gInput().MouseDy() * mSensitivity;
-			CapAngles();
-			GetPickingRay();
-		}
 	}
 
 	void Camera::SetFov(float fov)

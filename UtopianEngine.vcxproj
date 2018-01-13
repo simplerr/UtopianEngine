@@ -100,6 +100,7 @@
     <ClCompile Include="source\MarchingCubes.cpp" />
     <ClCompile Include="source\ObjectTool.cpp" />
     <ClCompile Include="source\scene\CCamera.cpp" />
+    <ClCompile Include="source\scene\CNoClip.cpp" />
     <ClCompile Include="source\scene\SceneRenderer.cpp" />
     <ClCompile Include="source\scene\CLight.cpp" />
     <ClCompile Include="source\scene\CRenderable.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="source\ObjectTool.h" />
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\scene\CCamera.h" />
+    <ClInclude Include="source\scene\CNoClip.h" />
     <ClInclude Include="source\scene\SceneRenderer.h" />
     <ClInclude Include="source\scene\CLight.h" />
     <ClInclude Include="source\scene\Light.h" />

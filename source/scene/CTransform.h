@@ -20,6 +20,8 @@ namespace Scene
 		void SetRotation(const vec3& rotation);
 		void SetScale(const vec3& scale);
 
+		void AddTranslation(const vec3& translation);
+
 		void AddRotation(float x, float y, float z);
 		void AddRotation(const vec3& rotation);
 		void AddScale(float x, float y, float z);

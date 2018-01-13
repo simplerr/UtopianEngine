@@ -12,7 +12,7 @@ namespace Scene
 		auto transform = GetParent()->GetTransform();
 		mInternal->SetPosition(transform.GetPosition());
 
-		//World::Instance().BindNode(mInternal, GetParent());
+		World::Instance().BindNode(mInternal, GetParent());
 	}
 
 	CCamera::~CCamera()
@@ -22,7 +22,7 @@ namespace Scene
 
 	void CCamera::Update()
 	{
-		mInternal->Update();
+
 	}
 
 	void CCamera::OnCreated()

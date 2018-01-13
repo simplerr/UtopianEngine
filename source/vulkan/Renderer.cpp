@@ -196,8 +196,6 @@ namespace Vulkan
 
 	void Renderer::Render()
 	{
-		mCamera->Update();
-
 		if (mPrepared) {
 			Draw();
 		}
