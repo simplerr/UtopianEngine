@@ -15,7 +15,8 @@ namespace Scene
 			STATIC_MESH,
 			LIGHT,
 			CAMERA,
-			FREE_CAMERA
+			FREE_CAMERA,
+			ORBIT
 		};
 
 		SceneComponent(SceneEntity* parent);

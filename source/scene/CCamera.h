@@ -38,7 +38,6 @@ namespace Scene
 		float GetPitch() const;
 		float GetYaw() const;
 
-
 		// Type identification
 		static uint32_t GetStaticType() {
 			return SceneComponent::ComponentType::CAMERA;
