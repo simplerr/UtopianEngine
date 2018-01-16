@@ -44,5 +44,6 @@ namespace Scene
 		vec3 mTarget;
 		float mSpeed;
 		float mRadius;
+		float mCounter;
 	};
 }

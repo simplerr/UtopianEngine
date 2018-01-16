@@ -13,6 +13,9 @@ namespace Scene
 		SetSpeed(speed);
 		SetRadius(15000);
 		SetTarget(mTransform->GetPosition());
+
+		// Random orbit position
+		mCounter = rand() % 100;
 	}
 
 	COrbit::~COrbit()
@@ -21,15 +24,15 @@ namespace Scene
 
 	void COrbit::Update()
 	{
-		static float counter = 0.0f;
+		float x = cosf(mCounter) * mRadius;
+		float z = sinf(mCounter) * mRadius;
 
-		float x = cosf(counter) * mRadius;
-		float z = sinf(counter) * mRadius;
+		mTransform->SetPosition(vec3(mTarget.x + x, mTransform->GetPosition().y, mTarget.z + z));
 
-		mTransform->SetTransform(vec3(mTarget.x + x, mTransform->GetPosition().y, mTarget.z + z));
-		mCamera->LookAt(mTarget);
+		if (mCamera != nullptr)
+			mCamera->LookAt(mTarget);
 
-		counter += mSpeed;
+		mCounter += mSpeed;
 	}
 
 	void COrbit::OnCreated()

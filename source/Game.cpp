@@ -74,7 +74,7 @@ namespace Vulkan
 		
 		// Add camera
 		auto cameraEntity = SceneEntity::Create("Camera");
-		cameraEntity->AddComponent<CTransform>(vec3(1.0f, 10300.0f, 68000.0f));
+		cameraEntity->AddComponent<CTransform>(vec3(67001.0f, 10300.0f, 68000.0f));
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
 		camera->SetMainCamera();
 
@@ -86,9 +86,21 @@ namespace Vulkan
 		auto teapot = SceneEntity::Create("Teapot");
 
 		CTransform* transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
-		transform->SetScale(vec3(150.0f));
+		transform->SetScale(vec3(50.0f));
 
 		CRenderable* mesh = teapot->AddComponent<CRenderable>();
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
+
+		// Add teapot #2
+		teapot = SceneEntity::Create("Teapot");
+
+		transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
+		transform->SetScale(vec3(150.0f));
+
+		orbit = teapot->AddComponent<COrbit>(-0.01f);
+		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
+
+		mesh = teapot->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
 
 		// Add light
