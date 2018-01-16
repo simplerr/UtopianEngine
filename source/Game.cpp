@@ -31,6 +31,7 @@
 #include "scene/CCamera.h"
 #include "scene/CNoClip.h"
 #include "scene/COrbit.h"
+#include "scene/CPlayerControl.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/SceneRenderer.h"
@@ -81,6 +82,8 @@ namespace Vulkan
 		cameraEntity->AddComponent<CNoClip>(300.0f);
 		COrbit* orbit = cameraEntity->AddComponent<COrbit>(0.01f);
 		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
+
+		cameraEntity->AddComponent<CPlayerControl>();
 
 		// Add teapot
 		auto teapot = SceneEntity::Create("Teapot");

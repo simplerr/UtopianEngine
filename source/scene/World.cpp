@@ -40,7 +40,10 @@ namespace Scene
 		// Update every active component
 		for (auto& entry : mActiveComponents)
 		{
-			entry->Update();
+			if (entry->IsActive())
+			{
+				entry->Update();
+			}
 		}
 	}
 }

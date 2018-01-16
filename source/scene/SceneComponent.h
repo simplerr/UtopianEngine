@@ -16,7 +16,8 @@ namespace Scene
 			LIGHT,
 			CAMERA,
 			FREE_CAMERA,
-			ORBIT
+			ORBIT,
+			PLAYER_CONTROL
 		};
 
 		SceneComponent(SceneEntity* parent);
@@ -29,7 +30,13 @@ namespace Scene
 
 		SceneEntity* GetParent() { return mParent; }
 
+		void SetActive(bool active) { mActive = active; }
+		void Activate() { mActive = true; }
+		void Deactivate() { mActive = false; }
+		bool IsActive() const { return mActive; }
+
 	private:
 		SceneEntity* mParent;
+		bool mActive;
 	};
 }

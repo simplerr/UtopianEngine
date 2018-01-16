@@ -58,4 +58,9 @@ namespace Scene
 	{
 		return mSpeed;
 	}
+
+	const vec3& COrbit::GetTarget() const
+	{
+		return mTarget;
+	}
 }

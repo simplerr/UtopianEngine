@@ -342,6 +342,9 @@
     <ClCompile Include="source\scene\COrbit.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\CPlayerControl.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -609,6 +612,9 @@
       <Filter>Source Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\scene\COrbit.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\CPlayerControl.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>

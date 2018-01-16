@@ -11,28 +11,20 @@ namespace Scene
 	class SceneEntity;
 	class CCamera;
 	class CTransform;
+	class COrbit;
+	class CNoClip;
 
-	class COrbit : public SceneComponent
+	class CPlayerControl : public SceneComponent
 	{
 	public:
-		COrbit(SceneEntity* parent, float speed);
-		~COrbit();
+		CPlayerControl(SceneEntity* parent);
+		~CPlayerControl();
 
 		void Update() override;
-		void OnCreated() override;
-
-		// Setters
-		void SetSpeed(float speed);
-		void SetRadius(float radius);
-		void SetTarget(const vec3& target);
-
-		// Getters
-		float GetSpeed() const;
-		const vec3& GetTarget() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::ORBIT;
+			return SceneComponent::ComponentType::FREE_CAMERA;
 		}
 
 		virtual uint32_t GetType() {
@@ -41,6 +33,8 @@ namespace Scene
 
 	private:
 		CCamera* mCamera; // For convenience
+		CNoClip* mNoClip;
+		COrbit* mOrbit;
 		CTransform* mTransform;
 		vec3 mTarget;
 		float mSpeed;
