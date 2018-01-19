@@ -34,7 +34,8 @@ namespace Vulkan
 	{
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface.AddUniformBuffer(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
+		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);	// pushConsts
 		mPipelineInterface.CreateLayouts(device);
 	}
@@ -44,11 +45,10 @@ namespace Vulkan
 		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet0 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_vs.GetDescriptor());
-		mDescriptorSet0->BindUniformBuffer(BINDING_1, &per_frame_ps.GetDescriptor());
-		mDescriptorSet0->BindCombinedImage(BINDING_2, &texture3d->GetTextureDescriptorInfo());
-		mDescriptorSet0->UpdateDescriptorSets();
+		mDescriptorSet1 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_1), mDescriptorPool);
+		mDescriptorSet1->BindUniformBuffer(BINDING_0, &per_frame_ps.GetDescriptor());
+		mDescriptorSet1->BindCombinedImage(BINDING_1, &texture3d->GetTextureDescriptorInfo());
+		mDescriptorSet1->UpdateDescriptorSets();
 	}
 
 	void TerrainEffect::CreatePipeline(Renderer* renderer)

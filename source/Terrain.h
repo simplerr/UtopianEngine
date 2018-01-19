@@ -83,7 +83,7 @@ public:
 	~Terrain();
 
 	void Update();
-	void Render(Vulkan::CommandBuffer* commandBuffer);
+	void Render(Vulkan::CommandBuffer* commandBuffer, Vulkan::DescriptorSet* commonDescriptorSet);
 	void UpdateUniformBuffer();
 
 	/**  

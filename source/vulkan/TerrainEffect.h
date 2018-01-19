@@ -86,7 +86,7 @@ namespace Vulkan
 		/* Shader descriptors */
 		UniformBufferVS per_frame_vs;	// Same name in terrain.vert
 		UniformBufferPS per_frame_ps;	// Same name in terrain.frag
-		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
+		DescriptorSet* mDescriptorSet1; // set = 1 in GLSL
 		Vulkan::Texture* texture3d;
 	};
 }

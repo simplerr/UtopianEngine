@@ -275,7 +275,7 @@ void Terrain::GenerateBlocks(float time)
 	}
 }
 
-void Terrain::Render(Vulkan::CommandBuffer* commandBuffer)
+void Terrain::Render(Vulkan::CommandBuffer* commandBuffer, Vulkan::DescriptorSet* commonDescriptorSet)
 {
 	for (auto blockIter : mBlockList)
 	{
@@ -285,8 +285,8 @@ void Terrain::Render(Vulkan::CommandBuffer* commandBuffer)
 			mTerrainEffect.SetPipeline(block->pipelineType);
 				
 			commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
-			VkDescriptorSet descriptorSets[1] = {mTerrainEffect.mDescriptorSet0->descriptorSet};
-			commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+			VkDescriptorSet descriptorSets[2] = {commonDescriptorSet->descriptorSet, mTerrainEffect.mDescriptorSet1->descriptorSet};
+			commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 			commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 

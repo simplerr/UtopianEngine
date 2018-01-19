@@ -134,7 +134,7 @@ namespace Scene
 
 	void SceneRenderer::RenderScene(Vulkan::CommandBuffer* commandBuffer)
 	{
-		mTerrain->Render(commandBuffer);
+		mTerrain->Render(commandBuffer, mCommonDescriptorSet);
 		RenderNodes(commandBuffer);
 	}
 
