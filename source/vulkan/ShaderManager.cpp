@@ -124,4 +124,19 @@ namespace Vulkan
 			return nullptr;
 		}
 	}
+
+	void ShaderCreateInfo::AddVertexShaderSource(std::string source)
+	{
+		mVertexShaderSources.push_back(source);
+	}
+
+	void ShaderCreateInfo::AddPixelShaderSource(std::string source)
+	{
+		mPixelShaderSources.push_back(source);
+	}
+
+	void ShaderCreateInfo::AddGeometryShaderSource(std::string source)
+	{
+		mGeometryShaderSources.push_back(source);
+	}
 }

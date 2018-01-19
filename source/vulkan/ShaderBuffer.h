@@ -20,7 +20,7 @@ namespace Vulkan
 		void UnmapMemory();
 
 		// This is where the data gets transfered to device memory w/ vkMapMemory,vkUnmapMemory and memcpy
-		virtual void UpdateMemory(VkDevice device) = 0;
+		virtual void UpdateMemory() = 0;
 
 		virtual int GetSize() = 0;
 

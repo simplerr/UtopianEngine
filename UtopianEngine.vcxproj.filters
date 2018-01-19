@@ -617,6 +617,12 @@
     <ClInclude Include="source\scene\CPlayerControl.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
+    <ClInclude Include="source\utility\Utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\CommonBuffers.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">

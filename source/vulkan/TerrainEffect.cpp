@@ -70,11 +70,11 @@ namespace Vulkan
 
 	void TerrainEffect::UpdateMemory(Device* device)
 	{
-		per_frame_vs.UpdateMemory(device->GetVkDevice());
-		per_frame_ps.UpdateMemory(device->GetVkDevice());
+		per_frame_vs.UpdateMemory();
+		per_frame_ps.UpdateMemory();
 	}
 
-	void TerrainEffect::UniformBufferVS::UpdateMemory(VkDevice device)
+	void TerrainEffect::UniformBufferVS::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;
@@ -88,7 +88,7 @@ namespace Vulkan
 		return sizeof(data);
 	}
 
-	void TerrainEffect::UniformBufferPS::UpdateMemory(VkDevice device)
+	void TerrainEffect::UniformBufferPS::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;

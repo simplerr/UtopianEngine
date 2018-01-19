@@ -13,9 +13,9 @@ namespace Vulkan
 		}
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-		for (uint32_t i = 0; i < mDescriptorSetLayouts.size(); i++)
+		for (auto& setLayout : mDescriptorSetLayouts)
 		{
-			descriptorSetLayouts.push_back(mDescriptorSetLayouts[i].GetVkHandle());
+			descriptorSetLayouts.push_back(setLayout.second.GetVkHandle());
 		}
 
 		// Create a VkPipelineLayout from all the VkDescriptorSetLayouts and Push Constant ranges

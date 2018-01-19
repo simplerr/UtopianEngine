@@ -37,6 +37,32 @@ namespace Scene
 		delete mWaterRenderer;
 	}
 
+	void SceneRenderer::InitShaderResources()
+	{
+		for (auto& light : mLights)
+		{
+			per_frame_ps.lights.push_back(light->GetLightData());
+		}
+
+		per_frame_ps.constants.numLights = per_frame_ps.lights.size();
+
+		per_frame_vs.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		per_frame_ps.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+		mCommonDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
+		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
+		mCommonDescriptorPool->Create();
+
+		mCommonDescriptorSetLayout.AddUniformBuffer(0, VK_SHADER_STAGE_VERTEX_BIT);
+		mCommonDescriptorSetLayout.AddUniformBuffer(1, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mCommonDescriptorSetLayout.Create(mRenderer->GetDevice());
+
+		mCommonDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), &mCommonDescriptorSetLayout, mCommonDescriptorPool);
+		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
+		mCommonDescriptorSet->UpdateDescriptorSets();
+	}
+
 	void SceneRenderer::InitShader()
 	{
 		// Important to do this before PhongEffect::Init()
@@ -61,13 +87,14 @@ namespace Scene
 		// From Renderer.cpp
 		if (mMainCamera != nullptr)
 		{
-			mPhongEffect.per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
-			mPhongEffect.per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
-			mPhongEffect.per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
-			mPhongEffect.per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
+			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
+			per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
+			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
+			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
 		}
 
-		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
+		per_frame_vs.UpdateMemory();
+		per_frame_ps.UpdateMemory();
 
 		for (auto& renderable : mRenderables)
 		{
@@ -80,8 +107,9 @@ namespace Scene
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 
-				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
+				//VkDescriptorSet descriptorSets[2] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, textureDescriptorSet };
+				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
 				PushConstantBlock pushConstantBlock;

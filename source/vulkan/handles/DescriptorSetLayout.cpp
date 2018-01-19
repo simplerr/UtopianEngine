@@ -25,6 +25,21 @@ namespace Vulkan
 		mLayoutBindings.push_back(layoutBinding);
 	}
 
+	void DescriptorSetLayout::AddUniformBuffer(uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
+	{
+		AddBinding(binding, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, descriptorCount, stageFlags);
+	}
+
+	void DescriptorSetLayout::AddStorageBuffer(uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
+	{
+		AddBinding(binding, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, descriptorCount, stageFlags);
+	}
+
+	void DescriptorSetLayout::AddCombinedImageSampler(uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
+	{
+		AddBinding(binding, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, descriptorCount, stageFlags);
+	}
+
 	void DescriptorSetLayout::Create()
 	{
 		VkDescriptorSetLayoutCreateInfo createInfo = {};

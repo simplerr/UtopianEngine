@@ -36,7 +36,7 @@ namespace Vulkan
 		class VertexUniformBuffer : public ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device);
+			virtual void UpdateMemory();
 			virtual int GetSize();
 
 			// Public data members
@@ -57,7 +57,7 @@ namespace Vulkan
 		class FragmentUniformBuffer : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device);
+			virtual void UpdateMemory();
 			virtual int GetSize();
 
 			struct {
@@ -86,8 +86,7 @@ namespace Vulkan
 		VertexUniformBuffer per_frame_vs;
 		FragmentUniformBuffer per_frame_ps;
 
-		DescriptorSet* mCameraDescriptorSet;
-		DescriptorSet* mLightDescriptorSet;
+		DescriptorSet* mCommonDescriptorSet;
 
 		// TODO: Should this really be here?
 		const uint32_t					MAX_NUM_TEXTURES = 64;

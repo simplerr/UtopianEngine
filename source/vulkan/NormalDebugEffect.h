@@ -25,7 +25,7 @@ namespace Vulkan
 		class UniformBufferGS : public ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device);
+			virtual void UpdateMemory();
 			virtual int GetSize();
 
 			// Public data members

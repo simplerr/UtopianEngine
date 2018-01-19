@@ -142,8 +142,8 @@ namespace ECS
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 
-				VkDescriptorSet descriptorSets[3] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, mPhongEffect.mLightDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 3, descriptorSets, 0, NULL);
+				VkDescriptorSet descriptorSets[2] = { mPhongEffect.mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
 				Vulkan::NormalDebugEffect::PushConstantBlock pushConstantBlock;

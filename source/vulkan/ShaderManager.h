@@ -9,6 +9,18 @@
 
 namespace Vulkan
 {
+	class ShaderCreateInfo
+	{
+	public:
+		void AddVertexShaderSource(std::string source);
+		void AddPixelShaderSource(std::string source);
+		void AddGeometryShaderSource(std::string source);
+	private:
+		std::vector<std::string> mVertexShaderSources;
+		std::vector<std::string> mPixelShaderSources;
+		std::vector<std::string> mGeometryShaderSources;
+	};
+
 	class Shader
 	{
 	public:

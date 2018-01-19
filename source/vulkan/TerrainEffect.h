@@ -45,7 +45,7 @@ namespace Vulkan
 		class UniformBufferVS : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device);
+			virtual void UpdateMemory();
 			virtual int GetSize();
 
 			struct {
@@ -59,7 +59,7 @@ namespace Vulkan
 		class UniformBufferPS : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device);
+			virtual void UpdateMemory();
 			virtual int GetSize();
 
 			struct {

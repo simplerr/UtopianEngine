@@ -7,6 +7,7 @@
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/Vertex.h"
+#include "utility/Utility.h"
 
 namespace Vulkan
 {
@@ -42,8 +43,8 @@ namespace Vulkan
 	void PhongEffect::CreatePipelineInterface(Device* device)
 	{
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.AddUniformBuffer(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_2, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
 		mPipelineInterface.CreateLayouts(device);
 	}
@@ -55,15 +56,10 @@ namespace Vulkan
 		
 		// per_frame_vs
 		Vulkan::DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
-		mCameraDescriptorSet = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
-		mCameraDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
-		mCameraDescriptorSet->UpdateDescriptorSets();
-
-		// per_frame_ps
-		Vulkan::DescriptorSetLayout* setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
-		mLightDescriptorSet = new Vulkan::DescriptorSet(device, setLayout1, mDescriptorPool);
-		mLightDescriptorSet->BindUniformBuffer(0, &per_frame_ps.GetDescriptor());
-		mLightDescriptorSet->UpdateDescriptorSets();
+		mCommonDescriptorSet = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
+		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
+		mCommonDescriptorSet->UpdateDescriptorSets();
 	}
 
 	void PhongEffect::CreatePipeline(Renderer* renderer)
@@ -106,11 +102,11 @@ namespace Vulkan
 
 	void PhongEffect::UpdateMemory(Device* device)
 	{
-		per_frame_vs.UpdateMemory(device->GetVkDevice());
-		per_frame_ps.UpdateMemory(device->GetVkDevice());
+		per_frame_vs.UpdateMemory();
+		per_frame_ps.UpdateMemory();
 	}
 
-	void PhongEffect::VertexUniformBuffer::UpdateMemory(VkDevice device)
+	void PhongEffect::VertexUniformBuffer::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;
@@ -124,7 +120,7 @@ namespace Vulkan
 		return sizeof(camera) + sizeof(constants);
 	}
 
-	void PhongEffect::FragmentUniformBuffer::UpdateMemory(VkDevice device)
+	void PhongEffect::FragmentUniformBuffer::UpdateMemory()
 	{
 		// Map and update the light data
 		uint8_t* mapped;

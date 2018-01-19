@@ -52,7 +52,7 @@ namespace Vulkan
 		ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-		mCounterSSBO.UpdateMemory(device->GetVkDevice());
+		mCounterSSBO.UpdateMemory();
 
 		DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
 		mDescriptorSet0 = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
@@ -76,8 +76,8 @@ namespace Vulkan
 
 	void MarchingCubesEffect::UpdateMemory(Device* device)
 	{
-		ubo.UpdateMemory(device->GetVkDevice());
-		mCounterSSBO.UpdateMemory(device->GetVkDevice());
+		ubo.UpdateMemory();
+		mCounterSSBO.UpdateMemory();
 	}
 
 	ComputePipeline* MarchingCubesEffect::GetComputePipeline()
@@ -95,7 +95,7 @@ namespace Vulkan
 		return mDescriptorSet1->descriptorSet;
 	}
 
-	void MarchingCubesEffect::UniformBuffer::UpdateMemory(VkDevice device)
+	void MarchingCubesEffect::UniformBuffer::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;

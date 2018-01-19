@@ -75,11 +75,11 @@ namespace Vulkan
 
 	void WaterEffect::UpdateMemory(Device* device)
 	{
-		per_frame_vs.UpdateMemory(device->GetVkDevice());
-		per_frame_ps.UpdateMemory(device->GetVkDevice());
+		per_frame_vs.UpdateMemory();
+		per_frame_ps.UpdateMemory();
 	}
 
-	void WaterEffect::UniformBufferVS::UpdateMemory(VkDevice device)
+	void WaterEffect::UniformBufferVS::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;
@@ -93,7 +93,7 @@ namespace Vulkan
 		return sizeof(data);
 	}
 
-	void WaterEffect::UniformBufferPS::UpdateMemory(VkDevice device)
+	void WaterEffect::UniformBufferPS::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;

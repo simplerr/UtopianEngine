@@ -33,7 +33,7 @@ void main(void)
 
 	float diffuseFactor = max(0, dot(lightVec, inNormal));
 
-	float ambientFactor = 0.3;
+	float ambientFactor = 0.1;
 	vec3 color = biomeColor * ambientFactor + diffuseFactor * biomeColor;
 
 	// Apply fogging.

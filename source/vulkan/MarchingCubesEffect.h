@@ -30,7 +30,7 @@ namespace Vulkan
 		class UniformBuffer : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device);
+			virtual void UpdateMemory();
 			virtual int GetSize();
 
 			// Public data members
@@ -47,7 +47,7 @@ namespace Vulkan
 		class CounterSSBO : public Vulkan::ShaderBuffer
 		{
 		public:
-			virtual void UpdateMemory(VkDevice device)
+			virtual void UpdateMemory()
 			{
 				// Map vertex counter
 				uint8_t *mapped;

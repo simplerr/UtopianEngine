@@ -5,6 +5,8 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 #include "vulkan/PhongEffect.h"
+#include "scene/CommonBuffers.h"
+#include "vulkan/handles/DescriptorSetLayout.h"
 
 class Terrain;
 class WaterRenderer;
@@ -26,6 +28,7 @@ namespace Scene
 		SceneRenderer(Vulkan::Renderer* renderer);
 		~SceneRenderer();
 
+		void InitShaderResources();
 		void InitShader();
 
 		void Update();
@@ -53,5 +56,12 @@ namespace Scene
 		Vulkan::ScreenGui* mScreenGui;
 		Terrain* mTerrain;
 		WaterRenderer* mWaterRenderer;
+
+		// Low level rendering 
+		CameraUniformBuffer per_frame_vs;
+		LightUniformBuffer per_frame_ps;
+		Vulkan::DescriptorSetLayout mCommonDescriptorSetLayout;
+		Vulkan::DescriptorSet* mCommonDescriptorSet;
+		Vulkan::DescriptorPool* mCommonDescriptorPool;
 	};
 }

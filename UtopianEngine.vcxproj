@@ -187,6 +187,7 @@
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\scene\CCamera.h" />
     <ClInclude Include="source\scene\CNoClip.h" />
+    <ClInclude Include="source\scene\CommonBuffers.h" />
     <ClInclude Include="source\scene\COrbit.h" />
     <ClInclude Include="source\scene\CPlayerControl.h" />
     <ClInclude Include="source\scene\SceneRenderer.h" />
@@ -206,6 +207,7 @@
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Collision.h" />
     <ClInclude Include="source\utility\Module.h" />
+    <ClInclude Include="source\utility\Utility.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\NormalDebugEffect.h" />

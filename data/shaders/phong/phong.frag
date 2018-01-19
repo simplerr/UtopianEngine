@@ -3,7 +3,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (set = 2, binding = 0) uniform sampler2D texSampler;
+layout (set = 1, binding = 0) uniform sampler2D texSampler;
 
 layout (location = 0) in vec3 InPosW;
 layout (location = 1) in vec3 InNormalW;
@@ -40,7 +40,7 @@ struct Light
 	vec4 pad;
 };
 
-layout (std140, set = 1, binding = 0) uniform UBO 
+layout (std140, set = 0, binding = 1) uniform UBO 
 {
 	// Constants
 	float numLights;

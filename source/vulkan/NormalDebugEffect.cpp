@@ -69,10 +69,10 @@ namespace Vulkan
 
 	void NormalDebugEffect::UpdateMemory(Device* device)
 	{
-		per_frame_gs.UpdateMemory(device->GetVkDevice());
+		per_frame_gs.UpdateMemory();
 	}
 
-	void NormalDebugEffect::UniformBufferGS::UpdateMemory(VkDevice device)
+	void NormalDebugEffect::UniformBufferGS::UpdateMemory()
 	{
 		// Map uniform buffer and update it
 		uint8_t *mapped;
