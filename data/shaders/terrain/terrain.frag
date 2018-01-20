@@ -100,7 +100,7 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// The vector from the surface to the light.
-	vec3 lightVec = light.pos - pos;
+	vec3 lightVec = pos - light.pos;
 		
 	// The distance from surface to light.
 	float d = length(lightVec);
@@ -133,8 +133,8 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	// Attenuate
 	float att = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
 
-	//diffuse *= att;
-	//spec    *= att;
+	diffuse *= att;
+	spec    *= att;
 }
 
 //! Computes the colors for a spot light.
@@ -252,9 +252,4 @@ void main(void)
 	//litColor = vec4(mix(litColor.rgb, vec3(0.2), fogLerp), 1.0f);
 
 	OutFragColor = litColor;
-	//OutFragColor = vec4(biomeColor, 1.0f);
-
-	//if (light_ubo.lights[0].type == 1.0f)
-	//	OutFragColor = vec4(1, 0, 0, 1);
-
 }

@@ -215,7 +215,7 @@ void ApplyLighting(Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4
 void main() 
 {
 	// Interpolating normal can unnormalize it, so normalize it.
-    vec3 normalW = -normalize(InNormalW); // Note: negating the normal
+    vec3 normalW = normalize(InNormalW); // Note: negating the normal
 
 	vec3 toEyeW = normalize(InEyePosW - InPosW);
 

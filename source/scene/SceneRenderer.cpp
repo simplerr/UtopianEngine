@@ -118,6 +118,7 @@ namespace Scene
 				world = glm::translate(world, transform.GetPosition());
 				world = glm::scale(world, transform.GetScale());
 				pushConstantBlock.world = world;
+				pushConstantBlock.world = renderable->GetTransform().GetWorldMatrix();
 
 				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
