@@ -56,7 +56,7 @@ layout (std140, set = 0, binding = 2) uniform UBO1
 	float padding;
 	float fogStart;
 	float fogDistance;
-} per_frame_ps;
+} fog_ubo;
 
 //! Computes the colors for directional light.
 void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
@@ -246,10 +246,10 @@ void main(void)
 
 	// Apply fogging.
 	float distToEye = length(InEyePosW + InPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
-	float fogLerp = clamp((distToEye - per_frame_ps.fogStart) / per_frame_ps.fogDistance, 0.0, 1.0); 
+	float fogLerp = clamp((distToEye - fog_ubo.fogStart) / fog_ubo.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
-	litColor = vec4(mix(litColor.rgb, per_frame_ps.fogColor, fogLerp), 1.0f);
+	litColor = vec4(mix(litColor.rgb, fog_ubo.fogColor, fogLerp), 1.0f);
 
 	//if (per_frame_ps.fogStart == 41500.0f)
 	//	litColor = vec4(1, 0, 0, 1);

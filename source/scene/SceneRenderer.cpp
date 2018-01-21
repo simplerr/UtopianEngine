@@ -143,7 +143,7 @@ namespace Scene
 		RenderScene(mCommandBuffer);
 
 		mScreenGui->Render(mRenderer, mCommandBuffer);
-		//mWaterRenderer->Render(mRenderer, mCommandBuffer);
+		mWaterRenderer->Render(mRenderer, mCommandBuffer);
 
 		mCommandBuffer->End();
 	}

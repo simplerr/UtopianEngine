@@ -100,7 +100,7 @@ namespace Vulkan
 		// Add house
 		house = SceneEntity::Create("House_2");
 
-		transform = house->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
+		transform = house->AddComponent<CTransform>(vec3(81000.0f, 300.0f, 78000.0f));
 		transform->SetScale(vec3(550.0f));
 		transform->SetRotation(vec3(180, 0, 0));
 

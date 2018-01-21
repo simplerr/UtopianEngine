@@ -49,6 +49,14 @@ layout (std140, set = 0, binding = 1) uniform UBO
 	Light lights[10];
 } per_frame_ps;
 
+layout (std140, set = 0, binding = 2) uniform UBO1
+{
+	vec3 fogColor;
+	float padding;
+	float fogStart;
+	float fogDistance;
+} fog_ubo;
+
 layout (location = 0) out vec4 OutFragColor;
 
 //! Computes the colors for directional light.
@@ -230,7 +238,12 @@ void main()
 	vec4 litColor;
 	ApplyLighting(material, InPosW, normalW, toEyeW, texColor, shadow, litColor);
 
-	OutFragColor = litColor;
+	// Apply fogging.
+	float distToEye = length(InEyePosW + InPosW); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
+	float fogLerp = clamp((distToEye - fog_ubo.fogStart) / fog_ubo.fogDistance, 0.0, 1.0); 
 
-	//OutFragColor = texture(texSampler, InTex);
+	// Blend the fog color and the lit color.
+	litColor = vec4(mix(litColor.rgb, fog_ubo.fogColor, fogLerp), 1.0f);
+
+	OutFragColor = litColor;
 }
