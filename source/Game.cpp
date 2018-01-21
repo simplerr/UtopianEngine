@@ -130,27 +130,27 @@ namespace Vulkan
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
 
 		// Add light
-		//auto light = SceneEntity::Create("Light");
+		auto light = SceneEntity::Create("DirectionalLight");
 
-		//light->AddComponent<CTransform>(vec3(87000, 5000, 67000));
-		//light->AddComponent<CTransform>(vec3(0, 0.5, 0));
+		light->AddComponent<CTransform>(vec3(87000, 5000, 67000));
+		light->AddComponent<CTransform>(vec3(0, 0.5, 0));
 
-		//CLight* lightComponent = light->AddComponent<CLight>();
-		//lightComponent->SetMaterial(vec4(1, 1, 1, 1));
-		////lightComponent->SetMaterials(vec4(1, 0, 0, 1), vec4(1, 1, 1, 1), vec4(0, 0, 1, 1));
-		//lightComponent->SetDirection(vec3(1, 0, 0));
-		//lightComponent->SetAtt(0, 1, 0);
-		//lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
-		//lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
-		//lightComponent->SetRange(100000);
-		//lightComponent->SetSpot(4.0f);
+		CLight* lightComponent = light->AddComponent<CLight>();
+		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
+		//lightComponent->SetMaterials(vec4(1, 0, 0, 1), vec4(1, 1, 1, 1), vec4(0, 0, 1, 1));
+		lightComponent->SetDirection(vec3(1, 0, 0));
+		lightComponent->SetAtt(0, 1, 0);
+		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
+		lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		lightComponent->SetRange(100000);
+		lightComponent->SetSpot(4.0f);
 
 		// Add light
-		auto light2 = SceneEntity::Create("Light2");
+		auto light2 = SceneEntity::Create("PointLight");
 
 		light2->AddComponent<CTransform>(vec3(-74400.0f, -6200.0f, -78000.0f));
 
-		auto lightComponent = light2->AddComponent<CLight>();
+		lightComponent = light2->AddComponent<CLight>();
 		lightComponent->SetMaterial(vec4(1, 0, 0, 1));
 		lightComponent->SetDirection(vec3(0, -1, 0));
 		lightComponent->SetAtt(0, 0.00, 0.00000002);
@@ -158,6 +158,20 @@ namespace Vulkan
 		lightComponent->SetType(Vulkan::LightType::POINT_LIGHT);
 		lightComponent->SetRange(400000);
 		lightComponent->SetSpot(4.0f);
+
+		// Add spot light
+		auto spotLight = SceneEntity::Create("SpotLight");
+
+		spotLight->AddComponent<CTransform>(vec3(-104400.0f, -6200.0f, -78000.0f));
+
+		lightComponent = spotLight->AddComponent<CLight>();
+		lightComponent->SetMaterial(vec4(0, 0, 1, 1));
+		lightComponent->SetDirection(vec3(1, 1, 1));
+		lightComponent->SetAtt(0, 0.00, 0.000000002);
+		lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
+		lightComponent->SetType(Vulkan::LightType::SPOT_LIGHT);
+		lightComponent->SetRange(400000);
+		lightComponent->SetSpot(8.0f);
 
 		World::Instance().Update();
 

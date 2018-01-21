@@ -148,7 +148,7 @@ void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, 
 	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// The vector from the surface to the light.
-	vec3 lightVec = light.pos - pos;
+	vec3 lightVec = pos - light.pos;
 		
 	// The distance from surface to light.
 	float d = length(lightVec);
