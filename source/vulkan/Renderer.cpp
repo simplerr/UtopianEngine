@@ -101,6 +101,16 @@ namespace Vulkan
 		return mCamera;
 	}
 
+	void Renderer::SetClearColor(glm::vec4 color)
+	{
+		mClearColor = color;
+	}
+
+	glm::vec4 Renderer::GetClearColor()
+	{
+		return mClearColor;
+	}
+
 	DescriptorSetLayout* Renderer::GetTextureDescriptorSetLayout()
 	{
 		return mTextureDescriptorSetLayout;
@@ -144,7 +154,7 @@ namespace Vulkan
 	void Renderer::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
 	{
 		VkClearValue clearValues[2];
-		clearValues[0].color = { 0.2f, 0.2f, 0.2f, 0.0f };
+		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, 1.0f };
 		clearValues[1].depthStencil = { 1.0f, 0 };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};

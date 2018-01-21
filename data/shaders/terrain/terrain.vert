@@ -17,7 +17,7 @@ layout (std140, set = 0, binding = 0) uniform UBO
 	mat4 projection;
 	mat4 view;
 	
-	vec4 lightDir;
+	vec4 clippingPlane;
 	vec3 eyePos;
 
 	float t;
@@ -47,6 +47,5 @@ void main(void)
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 
-	vec4 clipPlane = vec4(0.0, 1.0, 0.0, 1500);	
-	//gl_ClipDistance[0] = dot(pushConsts.world * vec4(InPosL.xyz, 1.0), per_frame_vs.clippingPlane);	
+	gl_ClipDistance[0] = dot(pushConsts.world * vec4(InPosL.xyz, 1.0), per_frame_vs.clippingPlane);	
 }

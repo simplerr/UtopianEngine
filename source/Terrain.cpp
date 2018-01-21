@@ -324,13 +324,9 @@ void Terrain::Update()
 
 void Terrain::UpdateUniformBuffer()
 {
-	mTerrainEffect.per_frame_vs.data.projection = mRenderer->GetCamera()->GetProjection();
-	mTerrainEffect.per_frame_vs.data.view = mRenderer->GetCamera()->GetView();
-	mTerrainEffect.per_frame_vs.data.eyePos = mRenderer->GetCamera()->GetPosition();
-	mTerrainEffect.per_frame_vs.data.clippingPlane = mClippingPlane;
-	mTerrainEffect.per_frame_ps.data.eyePos = mRenderer->GetCamera()->GetPosition(); // Test
-	mTerrainEffect.per_frame_ps.data.fogStart = 115000.0f; // Test
-	mTerrainEffect.per_frame_ps.data.fogDistance = 5400.0f;
+	mTerrainEffect.per_frame_ps.data.fogColor = mRenderer->GetClearColor();
+	mTerrainEffect.per_frame_ps.data.fogStart = 41500.0f; // Test
+	mTerrainEffect.per_frame_ps.data.fogDistance = 15400.0f;
 	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
 }
 

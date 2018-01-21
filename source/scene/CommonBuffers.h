@@ -28,7 +28,7 @@ namespace Scene
 		struct {
 			glm::mat4 projectionMatrix;
 			glm::mat4 viewMatrix;
-			glm::vec4 lightDir = glm::vec4(1.0f, -1.0f, 1.0f, 1.0f);
+			glm::vec4 clippingPlane;
 			glm::vec3 eyePos;
 			float t;
 		} camera;

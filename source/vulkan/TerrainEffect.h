@@ -63,7 +63,7 @@ namespace Vulkan
 			virtual int GetSize();
 
 			struct {
-				glm::vec3 eyePos;
+				glm::vec3 fogColor;
 				float padding;
 				float fogStart;
 				float fogDistance;
@@ -84,7 +84,6 @@ namespace Vulkan
 		TerrainEffect();
 
 		/* Shader descriptors */
-		UniformBufferVS per_frame_vs;	// Same name in terrain.vert
 		UniformBufferPS per_frame_ps;	// Same name in terrain.frag
 		DescriptorSet* mDescriptorSet1; // set = 1 in GLSL
 		Vulkan::Texture* texture3d;

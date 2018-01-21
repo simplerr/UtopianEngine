@@ -53,10 +53,10 @@ namespace ECS
 
 		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
 
-		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Color::Red, 1.0f);
-		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Color::Red, 70.0f);
-		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Color::Green, 70.0f);
-		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Color::Blue, 70.0f);
+		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Colors::Red, 1.0f);
+		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Colors::Red, 70.0f);
+		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Colors::Green, 70.0f);
+		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Colors::Blue, 70.0f);
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mTerrainCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);

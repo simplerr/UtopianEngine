@@ -35,6 +35,7 @@
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/SceneRenderer.h"
+#include "utility/Utility.h"
 
 using namespace Scene;
 
@@ -52,6 +53,7 @@ namespace Vulkan
 		mRenderer = make_shared<Renderer>();
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
+		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
 
 		mTerrain = make_shared<Terrain>(mRenderer.get());
 

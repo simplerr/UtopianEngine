@@ -84,18 +84,6 @@ namespace Scene
 
 	void SceneRenderer::RenderNodes(Vulkan::CommandBuffer* commandBuffer)
 	{
-		// From Renderer.cpp
-		if (mMainCamera != nullptr)
-		{
-			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
-			per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
-			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
-			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
-		}
-
-		per_frame_vs.UpdateMemory();
-		per_frame_ps.UpdateMemory();
-
 		for (auto& renderable : mRenderables)
 		{
 			Vulkan::StaticModel* model = renderable->GetModel();
@@ -135,6 +123,8 @@ namespace Scene
 
 	void SceneRenderer::RenderScene(Vulkan::CommandBuffer* commandBuffer)
 	{
+		UpdateUniformBuffers();
+
 		mTerrain->Render(commandBuffer, mCommonDescriptorSet);
 		RenderNodes(commandBuffer);
 	}
@@ -162,27 +152,39 @@ namespace Scene
 		// Reflection renderpass
 		mMainCamera->SetPosition(mMainCamera->GetPosition() - glm::vec3(0, mMainCamera->GetPosition().y *  2, 0)); // NOTE: Water is hardcoded to be at y = 0
 		mMainCamera->SetOrientation(mMainCamera->GetYaw(), -mMainCamera->GetPitch());
-		mTerrain->SetClippingPlane(glm::vec4(0, -1, 0, 0));
-		mTerrain->UpdateUniformBuffer();
+		SetClippingPlane(glm::vec4(0, -1, 0, 0));
 
 		mWaterRenderer->GetReflectionRenderTarget()->Begin();	
 		RenderScene(mWaterRenderer->GetReflectionRenderTarget()->GetCommandBuffer());
 		mWaterRenderer->GetReflectionRenderTarget()->End(mRenderer->GetQueue());
 
 		// Refraction renderpass
-		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 0));
+		SetClippingPlane(glm::vec4(0, 1, 0, 0));
 		mMainCamera->SetPosition(cameraPos);
 		mMainCamera->SetOrientation(mMainCamera->GetYaw(), -mMainCamera->GetPitch());
-		mTerrain->UpdateUniformBuffer();
 
 		mWaterRenderer->GetRefractionRenderTarget()->Begin();	
 		RenderScene(mWaterRenderer->GetRefractionRenderTarget()->GetCommandBuffer());
 		mWaterRenderer->GetRefractionRenderTarget()->End(mRenderer->GetQueue());
 
-		mTerrain->SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
-		mTerrain->UpdateUniformBuffer();
+		SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
+		UpdateUniformBuffers();
 	}
 
+	void SceneRenderer::UpdateUniformBuffers()
+	{
+		// From Renderer.cpp
+		if (mMainCamera != nullptr)
+		{
+			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
+			per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
+			per_frame_vs.camera.clippingPlane = mClippingPlane;
+			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
+		}
+
+		per_frame_vs.UpdateMemory();
+		per_frame_ps.UpdateMemory();
+	}
 
 	void SceneRenderer::AddRenderable(Renderable* renderable)
 	{
@@ -208,5 +210,10 @@ namespace Scene
 	void SceneRenderer::SetTerrain(Terrain* terrain)
 	{
 		mTerrain = terrain;
+	}
+
+	void SceneRenderer::SetClippingPlane(glm::vec4 clippingPlane)
+	{
+		mClippingPlane = clippingPlane;
 	}
 }

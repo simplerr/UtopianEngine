@@ -52,7 +52,7 @@ layout (std140, set = 0, binding = 1) uniform UBO0
 
 layout (std140, set = 1, binding = 0) uniform UBO1
 {
-	vec3 eyePos;
+	vec3 fogColor;
 	float padding;
 	float fogStart;
 	float fogDistance;
@@ -249,7 +249,10 @@ void main(void)
 	float fogLerp = clamp((distToEye - per_frame_ps.fogStart) / per_frame_ps.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
-	//litColor = vec4(mix(litColor.rgb, vec3(0.2), fogLerp), 1.0f);
+	litColor = vec4(mix(litColor.rgb, per_frame_ps.fogColor, fogLerp), 1.0f);
+
+	//if (per_frame_ps.fogStart == 41500.0f)
+	//	litColor = vec4(1, 0, 0, 1);
 
 	OutFragColor = litColor;
 }

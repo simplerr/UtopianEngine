@@ -42,7 +42,6 @@ namespace Vulkan
 
 	void TerrainEffect::CreateDescriptorSets(Device* device)
 	{
-		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mDescriptorSet1 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_1), mDescriptorPool);
@@ -70,7 +69,6 @@ namespace Vulkan
 
 	void TerrainEffect::UpdateMemory(Device* device)
 	{
-		per_frame_vs.UpdateMemory();
 		per_frame_ps.UpdateMemory();
 	}
 

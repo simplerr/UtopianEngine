@@ -118,6 +118,7 @@
     <ClCompile Include="source\scene\Transform.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\utility\Utility.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
     <ClCompile Include="source\vulkan\NormalDebugEffect.cpp" />

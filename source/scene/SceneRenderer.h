@@ -36,6 +36,7 @@ namespace Scene
 		void RenderScene(Vulkan::CommandBuffer* commandBuffer);
 		void Render();
 		void RenderOffscreen();
+		void UpdateUniformBuffers();
 
 		void AddRenderable(Renderable* renderable);
 		void AddLight(Light* light);
@@ -43,6 +44,7 @@ namespace Scene
 		void SetMainCamera(Vulkan::Camera* camera);
 
 		void SetTerrain(Terrain* terrain);
+		void SetClippingPlane(glm::vec4 clippingPlane);
 
 	private:
 		std::vector<Renderable*> mRenderables;
@@ -63,5 +65,6 @@ namespace Scene
 		Vulkan::DescriptorSetLayout mCommonDescriptorSetLayout;
 		Vulkan::DescriptorSet* mCommonDescriptorSet;
 		Vulkan::DescriptorPool* mCommonDescriptorPool;
+		glm::vec4 mClippingPlane;
 	};
 }

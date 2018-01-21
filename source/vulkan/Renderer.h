@@ -75,6 +75,9 @@ namespace Vulkan
 		void SetCamera(Camera* camera);
 		Camera* GetCamera();
 
+		void SetClearColor(glm::vec4 color);
+		glm::vec4 GetClearColor();
+
 	private:
 		bool							mPrepared = false;
 
@@ -96,6 +99,7 @@ namespace Vulkan
 
 		Camera*							mCamera;
 		TextOverlay*					mTextOverlay;
+		glm::vec4						mClearColor;
 
 		// TODO: NOTE: HACK
 	public:
