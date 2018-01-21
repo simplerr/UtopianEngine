@@ -34,6 +34,7 @@ namespace Vulkan
 	{
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
 		mPipelineInterface.AddUniformBuffer(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);					// per_frame_ps UBO
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBasicBlock), VK_SHADER_STAGE_VERTEX_BIT);	// pushConsts
@@ -42,12 +43,7 @@ namespace Vulkan
 
 	void TerrainEffect::CreateDescriptorSets(Device* device)
 	{
-		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-		mDescriptorSet1 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_1), mDescriptorPool);
-		mDescriptorSet1->BindUniformBuffer(BINDING_0, &per_frame_ps.GetDescriptor());
-		mDescriptorSet1->BindCombinedImage(BINDING_1, &texture3d->GetTextureDescriptorInfo());
-		mDescriptorSet1->UpdateDescriptorSets();
+		
 	}
 
 	void TerrainEffect::CreatePipeline(Renderer* renderer)
@@ -69,34 +65,5 @@ namespace Vulkan
 
 	void TerrainEffect::UpdateMemory(Device* device)
 	{
-		per_frame_ps.UpdateMemory();
-	}
-
-	void TerrainEffect::UniformBufferVS::UpdateMemory()
-	{
-		// Map uniform buffer and update it
-		uint8_t *mapped;
-		mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-		memcpy(mapped, &data, sizeof(data));
-		mBuffer->UnmapMemory();
-	}
-
-	int TerrainEffect::UniformBufferVS::GetSize()
-	{
-		return sizeof(data);
-	}
-
-	void TerrainEffect::UniformBufferPS::UpdateMemory()
-	{
-		// Map uniform buffer and update it
-		uint8_t *mapped;
-		mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-		memcpy(mapped, &data, sizeof(data));
-		mBuffer->UnmapMemory();
-	}
-
-	int TerrainEffect::UniformBufferPS::GetSize()
-	{
-		return sizeof(data);
 	}
 }

@@ -62,6 +62,7 @@ namespace Scene
 		// Low level rendering 
 		CameraUniformBuffer per_frame_vs;
 		LightUniformBuffer per_frame_ps;
+		FogUniformBuffer fog_ubo;
 		Vulkan::DescriptorSetLayout mCommonDescriptorSetLayout;
 		Vulkan::DescriptorSet* mCommonDescriptorSet;
 		Vulkan::DescriptorPool* mCommonDescriptorPool;

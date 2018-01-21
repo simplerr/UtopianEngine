@@ -142,7 +142,6 @@ Terrain::Terrain(Vulkan::Renderer* renderer)
 	GenerateNoiseTexture(texture3d, w, h, d);
 
 	mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
-	mTerrainEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
 
 	mTerrainEffect.Init(renderer);
 	mMarchingCubesEffect.Init(renderer);
@@ -285,8 +284,8 @@ void Terrain::Render(Vulkan::CommandBuffer* commandBuffer, Vulkan::DescriptorSet
 			mTerrainEffect.SetPipeline(block->pipelineType);
 				
 			commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline());
-			VkDescriptorSet descriptorSets[2] = {commonDescriptorSet->descriptorSet, mTerrainEffect.mDescriptorSet1->descriptorSet};
-			commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+			VkDescriptorSet descriptorSets[1] = {commonDescriptorSet->descriptorSet};
+			commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 			commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
@@ -324,9 +323,6 @@ void Terrain::Update()
 
 void Terrain::UpdateUniformBuffer()
 {
-	mTerrainEffect.per_frame_ps.data.fogColor = mRenderer->GetClearColor();
-	mTerrainEffect.per_frame_ps.data.fogStart = 41500.0f; // Test
-	mTerrainEffect.per_frame_ps.data.fogDistance = 15400.0f;
 	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
 }
 

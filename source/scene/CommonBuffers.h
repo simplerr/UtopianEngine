@@ -73,4 +73,29 @@ namespace Scene
 		// Public data members
 		std::vector<Vulkan::LightData> lights;
 	};
+
+	class FogUniformBuffer : public Vulkan::ShaderBuffer
+	{
+	public:
+		virtual void UpdateMemory()
+		{
+			// Map uniform buffer and update it
+			uint8_t *mapped;
+			mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
+			memcpy(mapped, &data, sizeof(data));
+			mBuffer->UnmapMemory();
+		}
+
+		virtual int GetSize()
+		{
+			return sizeof(data);
+		}
+
+		struct {
+			glm::vec3 fogColor;
+			float padding;
+			float fogStart;
+			float fogDistance;
+		} data;
+	};
 }

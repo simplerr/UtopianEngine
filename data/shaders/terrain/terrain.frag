@@ -50,7 +50,7 @@ layout (std140, set = 0, binding = 1) uniform UBO0
 	Light lights[10];
 } light_ubo;
 
-layout (std140, set = 1, binding = 0) uniform UBO1
+layout (std140, set = 0, binding = 2) uniform UBO1
 {
 	vec3 fogColor;
 	float padding;

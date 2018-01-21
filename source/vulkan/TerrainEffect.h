@@ -42,34 +42,6 @@ namespace Vulkan
 			SOLID
 		};
 
-		class UniformBufferVS : public Vulkan::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory();
-			virtual int GetSize();
-
-			struct {
-				glm::mat4 projection;
-				glm::mat4 view;
-				glm::vec4 clippingPlane;
-				glm::vec3 eyePos;
-			} data;
-		};
-
-		class UniformBufferPS : public Vulkan::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory();
-			virtual int GetSize();
-
-			struct {
-				glm::vec3 fogColor;
-				float padding;
-				float fogStart;
-				float fogDistance;
-			} data;
-		};
-
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
 		virtual void CreateVertexDescription(Device* device);
@@ -82,10 +54,5 @@ namespace Vulkan
 		virtual void UpdateMemory(Device* device);
 
 		TerrainEffect();
-
-		/* Shader descriptors */
-		UniformBufferPS per_frame_ps;	// Same name in terrain.frag
-		DescriptorSet* mDescriptorSet1; // set = 1 in GLSL
-		Vulkan::Texture* texture3d;
 	};
 }

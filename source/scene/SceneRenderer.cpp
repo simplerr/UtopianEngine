@@ -48,18 +48,21 @@ namespace Scene
 
 		per_frame_vs.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		per_frame_ps.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		fog_ubo.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mCommonDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
-		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
+		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3);
 		mCommonDescriptorPool->Create();
 
 		mCommonDescriptorSetLayout.AddUniformBuffer(0, VK_SHADER_STAGE_VERTEX_BIT);
 		mCommonDescriptorSetLayout.AddUniformBuffer(1, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mCommonDescriptorSetLayout.AddUniformBuffer(2, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mCommonDescriptorSetLayout.Create(mRenderer->GetDevice());
 
 		mCommonDescriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), &mCommonDescriptorSetLayout, mCommonDescriptorPool);
 		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(2, &fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
 	}
 
@@ -182,8 +185,13 @@ namespace Scene
 			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
 		}
 
+		fog_ubo.data.fogColor = mRenderer->GetClearColor();
+		fog_ubo.data.fogStart = 41500.0f;
+		fog_ubo.data.fogDistance = 15400.0f;
+
 		per_frame_vs.UpdateMemory();
 		per_frame_ps.UpdateMemory();
+		fog_ubo.UpdateMemory();
 	}
 
 	void SceneRenderer::AddRenderable(Renderable* renderable)
