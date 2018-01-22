@@ -33,42 +33,6 @@ namespace Vulkan
 			DEBUG
 		};
 
-		class VertexUniformBuffer : public ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory();
-			virtual int GetSize();
-
-			// Public data members
-			struct {
-				glm::mat4 projectionMatrix;
-				glm::mat4 viewMatrix;
-				glm::vec4 lightDir = glm::vec4(1.0f, -1.0f, 1.0f, 1.0f);
-				glm::vec3 eyePos;
-				float t;
-			} camera;
-
-			struct {
-				bool useInstancing;
-				glm::vec3 garbage;
-			} constants; // Currently unused
-		};
-
-		class FragmentUniformBuffer : public Vulkan::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory();
-			virtual int GetSize();
-
-			struct {
-				float numLights;
-				glm::vec3 garbage;
-			} constants;
-
-			// Public data members
-			std::vector<Vulkan::LightData> lights;
-		};
-
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
 		virtual void CreateVertexDescription(Device* device);
@@ -81,10 +45,6 @@ namespace Vulkan
 		virtual void UpdateMemory(Device* device);
 
 		PhongEffect();
-
-		/* Shader descriptors */
-		VertexUniformBuffer per_frame_vs;
-		FragmentUniformBuffer per_frame_ps;
 
 		DescriptorSet* mCommonDescriptorSet;
 

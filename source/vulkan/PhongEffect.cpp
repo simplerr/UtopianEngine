@@ -52,15 +52,6 @@ namespace Vulkan
 
 	void PhongEffect::CreateDescriptorSets(Device* device)
 	{
-		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		
-		// per_frame_vs
-		Vulkan::DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
-		mCommonDescriptorSet = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
-		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
-		mCommonDescriptorSet->UpdateDescriptorSets();
 	}
 
 	void PhongEffect::CreatePipeline(Renderer* renderer)
@@ -103,44 +94,5 @@ namespace Vulkan
 
 	void PhongEffect::UpdateMemory(Device* device)
 	{
-		per_frame_vs.UpdateMemory();
-		per_frame_ps.UpdateMemory();
-	}
-
-	void PhongEffect::VertexUniformBuffer::UpdateMemory()
-	{
-		// Map uniform buffer and update it
-		uint8_t *mapped;
-		mBuffer->MapMemory(0, sizeof(camera), 0, (void**)&mapped);
-		memcpy(mapped, &camera, sizeof(camera));
-		mBuffer->UnmapMemory();
-	}
-
-	int PhongEffect::VertexUniformBuffer::GetSize()
-	{
-		return sizeof(camera) + sizeof(constants);
-	}
-
-	void PhongEffect::FragmentUniformBuffer::UpdateMemory()
-	{
-		// Map and update the light data
-		uint8_t* mapped;
-		uint32_t dataOffset = 0;
-		uint32_t dataSize = sizeof(constants);
-		mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
-		memcpy(mapped, &constants.numLights, dataSize);
-		mBuffer->UnmapMemory();
-
-		// Map and update number of lights
-		dataOffset += dataSize;
-		dataSize = lights.size() * sizeof(Vulkan::LightData);
-		mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
-		memcpy(mapped, lights.data(), dataSize);
-		mBuffer->UnmapMemory();
-	}
-
-	int PhongEffect::FragmentUniformBuffer::GetSize()
-	{
-		return lights.size() * sizeof(Vulkan::LightData) + sizeof(constants);
 	}
 }

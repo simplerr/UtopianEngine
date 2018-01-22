@@ -51,7 +51,7 @@ namespace Scene
 		fog_ubo.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mCommonDescriptorPool = new Vulkan::DescriptorPool(mRenderer->GetDevice());
-		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3);
+		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100);
 		mCommonDescriptorPool->Create();
 
 		mCommonDescriptorSetLayout.AddUniformBuffer(0, VK_SHADER_STAGE_VERTEX_BIT);
@@ -68,14 +68,6 @@ namespace Scene
 
 	void SceneRenderer::InitShader()
 	{
-		// Important to do this before PhongEffect::Init()
-		for (auto& light : mLights)
-		{
-			mPhongEffect.per_frame_ps.lights.push_back(light->GetLightData());
-		}
-
-		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();
-
 		mPhongEffect.Init(mRenderer);
 	}
 

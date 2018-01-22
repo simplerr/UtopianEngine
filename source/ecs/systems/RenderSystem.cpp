@@ -74,7 +74,7 @@ namespace ECS
 		light.SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
 		light.SetRange(100000);
 		light.SetSpot(4.0f);
-		mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
+		//mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
 
 		//light.SetMaterials(vec4(1, 0, 0, 1), vec4(1, 0, 0, 1), vec4(1, 0, 0, 32));
 		////light.SetPosition(vec3(600, -800, 600));
@@ -87,8 +87,6 @@ namespace ECS
 		//mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
 
 		// Important to call this before Create() since # lights affects the total size
-		mPhongEffect.per_frame_ps.constants.numLights = mPhongEffect.per_frame_ps.lights.size();
-		mPhongEffect.per_frame_ps.constants.numLights = 1;
 
 		mPhongEffect.Init(mRenderer);
 		mNormalDebugEffect.Init(mRenderer);
@@ -112,10 +110,10 @@ namespace ECS
 		// From Renderer.cpp
 		if (mCamera != nullptr)
 		{
-			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
+			/*mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
 			mPhongEffect.per_frame_vs.camera.viewMatrix = mCamera->GetView();
 			mPhongEffect.per_frame_vs.camera.projectionMatrix = mCamera->GetProjection();
-			mPhongEffect.per_frame_vs.camera.eyePos = mCamera->GetPosition();
+			mPhongEffect.per_frame_vs.camera.eyePos = mCamera->GetPosition();*/
 		}
 
 		mPhongEffect.UpdateMemory(mRenderer->GetDevice());
