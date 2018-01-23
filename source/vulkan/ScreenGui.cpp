@@ -1,6 +1,7 @@
 #include <vector>
 #include "vulkan/ScreenGui.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/handles/Texture.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -60,6 +61,16 @@ namespace Vulkan
 
 		textureQuad.descriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
 		textureQuad.descriptorSet->BindCombinedImage(0, image, sampler);
+		textureQuad.descriptorSet->UpdateDescriptorSets();
+		mQuadList.push_back(textureQuad);
+	}
+
+	void ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture)
+	{
+		TextureQuad textureQuad = TextureQuad(left, top, width, height);
+
+		textureQuad.descriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad.descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());
 		textureQuad.descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);
 	}

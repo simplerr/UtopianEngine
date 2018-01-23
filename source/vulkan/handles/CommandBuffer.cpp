@@ -147,6 +147,11 @@ namespace Vulkan
 		vkCmdSetScissor(mHandle, 0, 1, &scissor);		
 	}
 
+	void CommandBuffer::CmdSetScissor(const VkRect2D& rect)
+	{
+		vkCmdSetScissor(mHandle, 0, 1, &rect);
+	}
+
 	void CommandBuffer::CmdBindPipeline(Pipeline* pipeline)
 	{
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());

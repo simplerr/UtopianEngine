@@ -22,6 +22,7 @@ namespace Vulkan
 		void CmdEndRenderPass();
 		void CmdSetViewPort(float width, float height);
 		void CmdSetScissor(uint32_t width, uint32_t height);
+		void CmdSetScissor(const VkRect2D& rect);
 		void CmdBindPipeline(Pipeline* pipeline);
 		void CmdBindPipeline(Pipeline2* pipeline);
 		void CmdBindPipeline(ComputePipeline* pipeline);

@@ -45,11 +45,48 @@ namespace Vulkan
 	{
 		mSubmitInfo.pCommandBuffers = &commandBuffer->mHandle;					// Draw commands for the current command buffer
 		mSubmitInfo.commandBufferCount = 1;
-		VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &mSubmitInfo, renderFence->GetVkHandle()));
+
+		if (renderFence == nullptr)
+			VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &mSubmitInfo, VK_NULL_HANDLE));
+		else
+			VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &mSubmitInfo, renderFence->GetVkHandle()));
+	}
+
+	void Queue::Submit(CommandBuffer* commandBuffer, VkSubmitInfo submitInfo)
+	{
+		mSubmitInfo = submitInfo;
+		mSubmitInfo.pCommandBuffers = &commandBuffer->mHandle;					// Draw commands for the current command buffer
+		mSubmitInfo.commandBufferCount = 1;
+
+		VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &mSubmitInfo, VK_NULL_HANDLE));
+	}
+
+	void Queue::Submit(CommandBuffer* commandBuffer, Semaphore* waitSemaphore, Semaphore* signalSemaphore, VkPipelineStageFlags stageFlags)
+	{
+		// Setup default submit info
+		mSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		mSubmitInfo.waitSemaphoreCount = 1;
+		mSubmitInfo.signalSemaphoreCount = 1;
+		mSubmitInfo.pWaitSemaphores = &waitSemaphore->mHandle;							// Waits for swapChain.acquireNextImage to complete
+		mSubmitInfo.pSignalSemaphores = &signalSemaphore->mHandle;						// swapChain.queuePresent will wait for this submit to complete
+		mSubmitInfo.pWaitDstStageMask = &stageFlags;
+		VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &mSubmitInfo, VK_NULL_HANDLE));
 	}
 
 	void Queue::WaitIdle()
 	{
 		VulkanDebug::ErrorCheck(vkQueueWaitIdle(GetVkHandle()));
+	}
+
+	void Queue::SetWaitSemaphore(Semaphore* semaphore)
+	{
+		mSubmitInfo.pWaitSemaphores = &semaphore->mHandle;
+		mSubmitInfo.waitSemaphoreCount = 1;
+	}
+
+	void Queue::SetSignalSemaphore(Semaphore* semaphore)
+	{
+		mSubmitInfo.pSignalSemaphores = &semaphore->mHandle;
+		mSubmitInfo.signalSemaphoreCount = 1;
 	}
 }

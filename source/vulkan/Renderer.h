@@ -48,6 +48,7 @@ namespace Vulkan
 		~Renderer();
 
 		void Prepare();
+		void PostInitPrepare();
 
 		void SetupDescriptorSetLayout();
 		void SetupDescriptorPool();
@@ -58,6 +59,10 @@ namespace Vulkan
 		virtual void Render();
 		virtual void Update();
 		void Draw();
+
+		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler);
+		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture);
+		void UpdateOverlay();
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -86,8 +91,8 @@ namespace Vulkan
 		// inputState is the pVertexInputState when creating the graphics pipeline
 		
 		CommandBuffer*					mPrimaryCommandBuffer;
+		CommandBuffer*					mScreenGuiCommandBuffer;
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
-		Fence*							mRenderFence;
 
 		/* 
 			They descriptor set layout for textures is handled by Renderer
@@ -106,5 +111,8 @@ namespace Vulkan
 		ShaderManager*					mShaderManager = nullptr;
 		TextureLoader*					mTextureLoader = nullptr;
 		ModelLoader*					mModelLoader = nullptr;
+		UIOverlay*						mUiOverlay = nullptr;
+		ScreenGui*						mScreenGui = nullptr;
+
 	};
 }	// VulkanLib namespace

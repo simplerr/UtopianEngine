@@ -4,7 +4,21 @@
 
 namespace Vulkan
 {
+	Buffer::Buffer()
+	{
+	}
+
 	Buffer::Buffer(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
+	{
+		Create(device, usageFlags, memoryPropertyFlags, size, data);
+	}
+	
+	Buffer::~Buffer()
+	{
+		Destroy();
+	}
+
+	void Buffer::Create(Device * device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data)
 	{
 		mDevice = device;
 
@@ -40,21 +54,38 @@ namespace Vulkan
 		}
 		VulkanDebug::ErrorCheck(vkBindBufferMemory(vkDevice, mBuffer, mMemory, 0));
 	}
-	
-	Buffer::~Buffer()
+
+	void Buffer::Destroy()
 	{
-		vkDestroyBuffer(mDevice->GetVkDevice(), mBuffer, nullptr);
+		if (mBuffer != VK_NULL_HANDLE)
+			vkDestroyBuffer(mDevice->GetVkDevice(), mBuffer, nullptr);
+
+		if (mMemory != VK_NULL_HANDLE)
 		vkFreeMemory(mDevice->GetVkDevice(), mMemory, nullptr);
 	}
 
 	void Buffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
 	{
 		VulkanDebug::ErrorCheck(vkMapMemory(mDevice->GetVkDevice(), mMemory, offset, size, flags, data));
+		mMapped = true;
 	}
 
 	void Buffer::UnmapMemory()
 	{
-		vkUnmapMemory(mDevice->GetVkDevice(), mMemory);
+		if (mMapped)
+			vkUnmapMemory(mDevice->GetVkDevice(), mMemory);
+
+		mMapped = false;
+	}
+
+	VkResult Buffer::Flush(VkDeviceSize size, VkDeviceSize offset)
+	{
+		VkMappedMemoryRange mappedRange = {};
+		mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		mappedRange.memory = mMemory;
+		mappedRange.offset = offset;
+		mappedRange.size = size;
+		return vkFlushMappedMemoryRanges(mDevice->GetVkDevice(), 1, &mappedRange);
 	}
 
 	VkBuffer Buffer::GetVkBuffer()

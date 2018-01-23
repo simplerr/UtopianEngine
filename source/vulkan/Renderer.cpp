@@ -24,6 +24,8 @@
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
 #include "ecs/systems/RenderSystem.h"
+#include "VulkanUIOverlay.h"
+#include "ScreenGui.h"
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
@@ -41,7 +43,6 @@ namespace Vulkan
 	{
 		delete mDescriptorPool;
 		delete mTextureDescriptorSetLayout;
-		delete mRenderFence;
 		delete mPrimaryCommandBuffer;
 
 		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
@@ -52,13 +53,13 @@ namespace Vulkan
 		delete mShaderManager;
 		delete mTextOverlay;
 		delete mTextureLoader;
+		delete mScreenGui;
 	}
 
 	void Renderer::Prepare()
 	{
 		VulkanBase::Prepare();
 
-		mRenderFence = new Fence(mDevice, VK_FLAGS_NONE);
 		mShaderManager = new ShaderManager(mDevice);
 
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
@@ -69,13 +70,21 @@ namespace Vulkan
 		mTextureLoader = new Vulkan::TextureLoader(this, GetQueue()->GetVkHandle());
 		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
 		mTextOverlay = new TextOverlay(this);
+		mScreenGui = new ScreenGui(this);
+
 		mPrepared = true;
+	}
+
+	void Renderer::PostInitPrepare()
+	{
+		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
 
 	void Renderer::PrepareCommandBuffers()
 	{
 		// Create the primary and secondary command buffers
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		mScreenGuiCommandBuffer = CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void Renderer::CompileShaders()
@@ -89,6 +98,7 @@ namespace Vulkan
 		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
 		system("cd data/shaders/screenquad/ && generate-spirv.bat");
 		system("cd data/shaders/water/ && generate-spirv.bat");
+		system("cd data/shaders/imgui/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Camera* camera)
@@ -192,16 +202,33 @@ namespace Vulkan
 
 	void Renderer::Draw()
 	{
+		// Render screen overlay UI
+
+		mScreenGuiCommandBuffer->Begin(GetRenderPass(), GetCurrentFrameBuffer());
+		mScreenGuiCommandBuffer->CmdSetViewPort(GetWindowWidth(), GetWindowHeight());
+		mScreenGuiCommandBuffer->CmdSetScissor(GetWindowWidth(), GetWindowHeight());
+
+		mScreenGui->Render(this, mScreenGuiCommandBuffer);
+
+		mScreenGuiCommandBuffer->End();
+
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
-		mQueue->Submit(mPrimaryCommandBuffer, mRenderFence);
+		mQueue->Submit(mPrimaryCommandBuffer, nullptr);
+	}
 
-		// Wait for all command buffers to complete
-		mRenderFence->Wait(); 
+	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler)
+	{
+		mScreenGui->AddQuad(left, top, width, height, image, sampler);
+	}
+
+	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture)
+	{
+		mScreenGui->AddQuad(left, top, width, height, texture);
 	}
 
 	void Renderer::Render()
@@ -213,6 +240,8 @@ namespace Vulkan
 
 	void Renderer::Update()
 	{
+		UpdateOverlay();
+
 		if (mTextOverlay->IsVisible())
 		{
 			mTextOverlay->BeginTextUpdate();
@@ -240,5 +269,30 @@ namespace Vulkan
 
 		// Default message handling
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
+	}
+
+	void Renderer::UpdateOverlay()
+	{
+		// Use ImGui functions between here and Render()
+		ImGui::NewFrame();
+
+		// This creates a window
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::SetNextWindowPos(ImVec2(10, 10));
+		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+		ImGui::Begin("Utopian v0.1", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+		
+		static float testInput = 0.0f;
+		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
+		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
+		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
+		ImGui::TextUnformatted("Helloll");
+
+		// ImGui functions end here
+		ImGui::End();
+		ImGui::PopStyleVar();
+		ImGui::Render();
+
+		mUiOverlay->update();
 	}
 }	// VulkanLib namespace

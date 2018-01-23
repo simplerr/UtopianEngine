@@ -59,6 +59,8 @@ namespace Vulkan
 
 		InitScene();
 
+		mRenderer->PostInitPrepare();
+
 		ObjectManager::Instance().PrintObjects();
 	}
 

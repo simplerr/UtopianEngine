@@ -55,7 +55,6 @@ namespace Scene
 		Vulkan::Renderer* mRenderer;
 		Vulkan::CommandBuffer* mCommandBuffer;
 		Vulkan::PhongEffect mPhongEffect;
-		Vulkan::ScreenGui* mScreenGui;
 		Terrain* mTerrain;
 		WaterRenderer* mWaterRenderer;
 

@@ -103,6 +103,15 @@
     <Filter Include="Source Files\utility">
       <UniqueIdentifier>{0ce3b1c7-52a2-4ecd-bde8-34ffa1353e31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\external">
+      <UniqueIdentifier>{bbe3eb5b-1ef1-4192-a376-c2dfed6f22a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\imgui">
+      <UniqueIdentifier>{ef086332-9e61-4844-acc5-338e98475e68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\imgui\shader">
+      <UniqueIdentifier>{ba516b85-6693-4347-a9bc-aa7cf15d56c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -347,6 +356,18 @@
     </ClCompile>
     <ClCompile Include="source\utility\Utility.cpp">
       <Filter>Source Files\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="external\VulkanUIOverlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\imgui.cpp">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\imgui_draw.cpp">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\ImguiEffect.cpp">
+      <Filter>Source Files\vulkan\effects\imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -626,6 +647,18 @@
     <ClInclude Include="source\utility\Utility.h">
       <Filter>Source Files\utility</Filter>
     </ClInclude>
+    <ClInclude Include="external\VulkanUIOverlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\imgui\imgui.h">
+      <Filter>Source Files\external</Filter>
+    </ClInclude>
+    <ClInclude Include="external\imgui\imgui_internal.h">
+      <Filter>Source Files\external</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\ImguiEffect.h">
+      <Filter>Source Files\vulkan\effects\imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -699,6 +732,12 @@
     </None>
     <None Include="data\shaders\normal_debug\normaldebug.geom">
       <Filter>Source Files\vulkan\effects\normal_debug\shaders</Filter>
+    </None>
+    <None Include="data\shaders\imgui\uioverlay.frag">
+      <Filter>Source Files\vulkan\effects\imgui\shader</Filter>
+    </None>
+    <None Include="data\shaders\imgui\uioverlay.vert">
+      <Filter>Source Files\vulkan\effects\imgui\shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

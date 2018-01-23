@@ -36,6 +36,7 @@ namespace Vulkan
 		void Render(Renderer* renderer, CommandBuffer* commandBuffer);
 
 		void AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler);
+		void AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture);
 	private:
 		Vulkan::Renderer* mRenderer;
 		Vulkan::ScreenQuadEffect mEffect;

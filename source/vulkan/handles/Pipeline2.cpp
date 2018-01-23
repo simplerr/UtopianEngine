@@ -33,6 +33,18 @@ namespace Vulkan
 		// Color blend state
 		mBlendAttachmentState.colorWriteMask = 0xf;
 		mBlendAttachmentState.blendEnable = VK_FALSE;			// Blending disabled
+
+		// Depth and stencil state
+		mDepthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		mDepthStencilState.depthTestEnable = VK_TRUE;
+		mDepthStencilState.depthWriteEnable = VK_TRUE;
+		mDepthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+		mDepthStencilState.depthBoundsTestEnable = VK_FALSE;
+		mDepthStencilState.back.failOp = VK_STENCIL_OP_KEEP;
+		mDepthStencilState.back.passOp = VK_STENCIL_OP_KEEP;
+		mDepthStencilState.back.compareOp = VK_COMPARE_OP_ALWAYS;
+		mDepthStencilState.stencilTestEnable = VK_FALSE;			// Stencil disabled
+		mDepthStencilState.front = mDepthStencilState.back;
 	}
 
 	void Pipeline2::Create()
@@ -60,19 +72,6 @@ namespace Vulkan
 		dynamicState.pDynamicStates = dynamicStateEnables.data();
 		dynamicState.dynamicStateCount = dynamicStateEnables.size();
 
-		// Depth and stencil state
-		VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
-		depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-		depthStencilState.depthTestEnable = VK_TRUE;
-		depthStencilState.depthWriteEnable = VK_TRUE;
-		depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
-		depthStencilState.depthBoundsTestEnable = VK_FALSE;
-		depthStencilState.back.failOp = VK_STENCIL_OP_KEEP;
-		depthStencilState.back.passOp = VK_STENCIL_OP_KEEP;
-		depthStencilState.back.compareOp = VK_COMPARE_OP_ALWAYS;
-		depthStencilState.stencilTestEnable = VK_FALSE;			// Stencil disabled
-		depthStencilState.front = depthStencilState.back;
-
 		// Multi sampling state
 		VkPipelineMultisampleStateCreateInfo multisampleState = {};
 		multisampleState.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
@@ -96,7 +95,7 @@ namespace Vulkan
 		pipelineCreateInfo.pColorBlendState = &colorBlendState;
 		pipelineCreateInfo.pViewportState = &viewportState;
 		pipelineCreateInfo.pDynamicState = &dynamicState;
-		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
+		pipelineCreateInfo.pDepthStencilState = &mDepthStencilState;
 		pipelineCreateInfo.pMultisampleState = &multisampleState;
 		pipelineCreateInfo.stageCount = mShader->shaderStages.size();
 		pipelineCreateInfo.pStages = mShader->shaderStages.data();

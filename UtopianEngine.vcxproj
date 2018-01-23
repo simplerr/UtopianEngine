@@ -80,6 +80,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="external\imgui\imgui.cpp" />
+    <ClCompile Include="external\imgui\imgui_draw.cpp" />
+    <ClCompile Include="external\VulkanUIOverlay.cpp" />
     <ClCompile Include="source\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Collision.cpp" />
@@ -120,6 +123,7 @@
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\utility\Utility.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
+    <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
     <ClCompile Include="source\vulkan\NormalDebugEffect.cpp" />
     <ClCompile Include="source\vulkan\RenderTarget.cpp" />
@@ -163,6 +167,9 @@
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="external\imgui\imgui.h" />
+    <ClInclude Include="external\imgui\imgui_internal.h" />
+    <ClInclude Include="external\VulkanUIOverlay.h" />
     <ClInclude Include="source\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
@@ -210,6 +217,7 @@
     <ClInclude Include="source\utility\Module.h" />
     <ClInclude Include="source\utility\Utility.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
+    <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\NormalDebugEffect.h" />
     <ClInclude Include="source\vulkan\RenderTarget.h" />
@@ -260,6 +268,8 @@
     <None Include="data\shaders\geometry\base.frag" />
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />
+    <None Include="data\shaders\imgui\uioverlay.frag" />
+    <None Include="data\shaders\imgui\uioverlay.vert" />
     <None Include="data\shaders\marching_cubes\marching_cubes.comp" />
     <None Include="data\shaders\normal_debug\base.frag" />
     <None Include="data\shaders\normal_debug\base.vert" />

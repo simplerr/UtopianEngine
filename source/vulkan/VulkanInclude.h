@@ -45,6 +45,7 @@ namespace Vulkan
 	class VulkanBase;
 	class Effect;
 	class Shader;
+	class UIOverlay;
 
 	// Should be moved
 	class Camera;

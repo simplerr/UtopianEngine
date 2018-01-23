@@ -43,6 +43,13 @@ namespace Vulkan
 		virtual uint32_t GetSize() { return sizeof(glm::vec4); }
 	};
 
+	class U32Attribute : public VertexAttribute
+	{
+	public:
+		virtual VkFormat GetFormat() { return VK_FORMAT_R8G8B8A8_UNORM; }
+		virtual uint32_t GetSize() { return sizeof(unsigned int); }
+	};
+
 	/*
 	Contains the binding information used to bind the vertex data in C++ to GLSL
 	Make sure you add attributes with a format that corresponds to  your vertex format

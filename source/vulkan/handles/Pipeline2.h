@@ -37,6 +37,7 @@ namespace Vulkan
 		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo mInputAssemblyState = {};
 		VkPipelineColorBlendAttachmentState mBlendAttachmentState = {};
+		VkPipelineDepthStencilStateCreateInfo mDepthStencilState = {};
 	private:
 		RenderPass* mRenderPass = nullptr;
 		VertexDescription* mVertexDescription = nullptr;

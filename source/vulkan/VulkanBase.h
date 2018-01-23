@@ -83,6 +83,7 @@ namespace Vulkan
 		RenderPass*						mRenderPass = nullptr;
 		Semaphore*						mPresentComplete = nullptr;
 		Semaphore*						mRenderComplete = nullptr;
+		Semaphore*						mOverlayComplete = nullptr;
 		Image*							mDepthStencil = nullptr;
 
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
