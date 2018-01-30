@@ -16,7 +16,6 @@
 #include "handles/Instance.h"
 #include "handles/FrameBuffers.h"
 #include "handles/Queue.h"
-#include "VulkanUIOverlay.h"
 
 /*
 -	Right now this code assumes that queueFamilyIndex is = 0 in all places,
@@ -100,11 +99,6 @@ namespace Vulkan
 
 	void VulkanBase::SubmitFrame()
 	{
-		//mQueue->Submit(mUiOverlay->GetCommandBuffer(), mRenderComplete, mOverlayComplete, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
-
-		//mQueue->SetWaitSemaphore(mPresentComplete);
-		//mQueue->SetSignalSemaphore(mRenderComplete);
-
 		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mFrameBuffers->mCurrentFrameBuffer, mRenderComplete->GetVkHandle()));
 		mQueue->WaitIdle();
 	}

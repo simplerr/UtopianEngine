@@ -24,7 +24,7 @@
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
 #include "ecs/systems/RenderSystem.h"
-#include "VulkanUIOverlay.h"
+#include "vulkan/UIOverlay.h"
 #include "ScreenGui.h"
 
 #define VK_FLAGS_NONE 0
@@ -296,6 +296,6 @@ namespace Vulkan
 		ImGui::PopStyleVar();
 		ImGui::Render();
 
-		mUiOverlay->update();
+		mUiOverlay->Update();
 	}
 }	// VulkanLib namespace

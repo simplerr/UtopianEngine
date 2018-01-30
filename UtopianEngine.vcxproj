@@ -82,7 +82,6 @@
   <ItemGroup>
     <ClCompile Include="external\imgui\imgui.cpp" />
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
-    <ClCompile Include="external\VulkanUIOverlay.cpp" />
     <ClCompile Include="source\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Collision.cpp" />
@@ -162,6 +161,7 @@
     <ClCompile Include="source\vulkan\Renderer.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
     <ClCompile Include="source\vulkan\VulkanDebug.cpp" />
+    <ClCompile Include="source\vulkan\UIOverlay.cpp" />
     <ClCompile Include="source\vulkan\WaterEffect.cpp" />
     <ClCompile Include="source\WaterRenderer.cpp" />
     <ClCompile Include="source\Window.cpp" />
@@ -169,7 +169,6 @@
   <ItemGroup>
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
-    <ClInclude Include="external\VulkanUIOverlay.h" />
     <ClInclude Include="source\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
@@ -260,6 +259,7 @@
     <ClInclude Include="source\vulkan\VulkanDebug.h" />
     <ClInclude Include="source\vulkan\VulkanInclude.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
+    <ClInclude Include="source\vulkan\UIOverlay.h" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
     <ClInclude Include="source\WaterRenderer.h" />
     <ClInclude Include="source\Window.h" />
