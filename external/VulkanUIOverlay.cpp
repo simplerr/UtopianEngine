@@ -126,7 +126,7 @@ namespace Vulkan
 				scissorRect.extent.width = (uint32_t)(pcmd->ClipRect.z - pcmd->ClipRect.x);
 				scissorRect.extent.height = (uint32_t)(pcmd->ClipRect.w - pcmd->ClipRect.y);
 				mCommandBuffer->CmdSetScissor(scissorRect);
-				mCommandBuffer->CmdDrawIndexed(pcmd->ElemCount, 1, 0, vertexOffset, 0);
+				mCommandBuffer->CmdDrawIndexed(pcmd->ElemCount, 1, indexOffset, vertexOffset, 0);
 				indexOffset += pcmd->ElemCount;
 			}
 			vertexOffset += cmd_list->VtxBuffer.Size;

@@ -78,6 +78,8 @@ namespace Vulkan
 	void Renderer::PostInitPrepare()
 	{
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
+
+		UpdateOverlay();
 	}
 
 	void Renderer::PrepareCommandBuffers()
@@ -281,12 +283,13 @@ namespace Vulkan
 		ImGui::SetNextWindowPos(ImVec2(10, 10));
 		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
 		ImGui::Begin("Utopian v0.1", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+
+		ImGui::PushItemWidth(300.0f);
 		
 		static float testInput = 0.0f;
 		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
-		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
-		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
-		ImGui::TextUnformatted("Helloll");
+
+		ImGui::PopItemWidth();
 
 		// ImGui functions end here
 		ImGui::End();
