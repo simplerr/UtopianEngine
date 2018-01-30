@@ -18,6 +18,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/Buffer.h"
+#include "Input.h"
 
 namespace Vulkan 
 {
@@ -115,6 +116,13 @@ namespace Vulkan
 	/** Update vertex and index buffer containing the imGui elements when required */
 	void UIOverlay::Update()
 	{
+		// Update mouse state
+		ImGuiIO& io = ImGui::GetIO();
+		glm::vec2 mousePos = gInput().GetMousePosition();
+		io.MousePos = ImVec2(mousePos.x, mousePos.y);
+		io.MouseDown[0] = gInput().KeyDown(VK_MBUTTON);
+		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON);
+
 		ImDrawData* imDrawData = ImGui::GetDrawData();
 		bool updateCmdBuffers = false;
 
