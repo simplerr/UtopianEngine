@@ -44,3 +44,19 @@ When that stage is reached then the focus will shift towards creating a game tha
 - The grass should be placed on the terrain so querying the terrain height should be possible
 - The grass should be animated
 - Needs to support large amount of instances
+
+# Update 2018/02/01
+
+Thoughts regarding the editor:
+
+- There should be a list of all the placed Entities in the world 
+- Entities can be selected both from this list and by selecting them in the world
+- The selected entity should have some kind of highlight
+- Once selected all the components connected to the Entity should be displayed and configurable
+- New entities can be created
+- Components can be added/removed from Entities
+- Toggle forward/deferrened, SSAO, wireframe etc.
+
+- Renderer settings and post processing effects should also be configurable in the Editor
+- The state of every Entity and Component should be serializeable
+- A goal of the editor is to make it easier to prototype and test new rendering techniques by modifying parameters
