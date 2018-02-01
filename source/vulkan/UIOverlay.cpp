@@ -120,7 +120,7 @@ namespace Vulkan
 		ImGuiIO& io = ImGui::GetIO();
 		glm::vec2 mousePos = gInput().GetMousePosition();
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-		io.MouseDown[0] = gInput().KeyDown(VK_MBUTTON);
+		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON);
 		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON);
 
 		ImDrawData* imDrawData = ImGui::GetDrawData();

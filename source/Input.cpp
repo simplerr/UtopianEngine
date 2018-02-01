@@ -61,31 +61,22 @@ LRESULT Input::HandleMessages(UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-		case WM_MBUTTONDOWN:
-		{
-			mMousePosition.x = LOWORD(lParam);
-			mMousePosition.y = HIWORD(lParam);
-			break;
-		}
 		case WM_MOUSEMOVE:
 		{
-			if (wParam & MK_MBUTTON)
-			{
-				int x = LOWORD(lParam);
-				int y = HIWORD(lParam);
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
 
-				if (mMousePosition.x == -1 && mMousePosition.y == -1) {
-					mMousePosition.x = x;
-					mMousePosition.y = y;
-					break;
-				}
-
-				mMouseDelta.x = x - mMousePosition.x;
-				mMouseDelta.y = mMousePosition.y - y;		// Other way around
-
+			if (mMousePosition.x == -1 && mMousePosition.y == -1) {
 				mMousePosition.x = x;
 				mMousePosition.y = y;
+				break;
 			}
+
+			mMouseDelta.x = x - mMousePosition.x;
+			mMouseDelta.y = mMousePosition.y - y;		// Other way around
+
+			mMousePosition.x = x;
+			mMousePosition.y = y;
 
 			break;
 		}
