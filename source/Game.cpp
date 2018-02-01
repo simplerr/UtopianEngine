@@ -21,6 +21,7 @@
 #include "ecs/systems/HealthSystem.h"
 #include "ecs/systems/EditorSystem.h"
 #include "Input.h"
+#include "imgui/imgui.h"
 
 // Testing
 #include "scene/SceneEntity.h"
@@ -177,7 +178,7 @@ namespace Vulkan
 		lightComponent->SetRange(400000);
 		lightComponent->SetSpot(8.0f);
 
-		World::Instance().Update();
+		//World::Instance().Update();
 
 		SceneRenderer::Instance().InitShaderResources();
 		SceneRenderer::Instance().InitShader();
@@ -196,9 +197,13 @@ namespace Vulkan
 
 	void Game::Update()
 	{
+		mRenderer->BeginUiUpdate();
+
 		World::Instance().Update();
 		SceneRenderer::Instance().Update();
 		mRenderer->Update();
+
+		mRenderer->EndUiUpdate();
 	}
 
 	void Game::Draw()

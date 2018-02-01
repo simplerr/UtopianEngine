@@ -187,4 +187,12 @@ namespace Vulkan
 	{
 		return mCommandBuffer;
 	}
+
+	void UIOverlay::TextV(const char* format, ...)
+	{
+		va_list args;
+		va_start(args, format);
+		ImGui::TextV(format, args);
+		va_end(args);
+	}
 }

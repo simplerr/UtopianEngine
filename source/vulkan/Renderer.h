@@ -66,6 +66,9 @@ namespace Vulkan
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+		void BeginUiUpdate();
+		void EndUiUpdate();
+
 		// 
 		//	High level code
 		//

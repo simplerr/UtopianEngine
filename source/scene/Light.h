@@ -34,6 +34,7 @@ namespace Scene
 		const vec3& GetDirection() const;
 		const vec3& GetAtt() const;
 		const vec3& GetIntensity() const;
+		Vulkan::LightData* GetLightDataPtr();
 		Vulkan::Material GetMaterial() const;
 		float	 GetRange() const;
 		float	 GetSpot() const;

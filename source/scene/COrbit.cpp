@@ -2,6 +2,7 @@
 #include "scene/CTransform.h"
 #include "scene/CCamera.h"
 #include "scene/SceneEntity.h"
+#include "imgui/imgui.h"
 
 namespace Scene
 {
@@ -24,6 +25,8 @@ namespace Scene
 
 	void COrbit::Update()
 	{
+		ImGui::SliderFloat("Orbit speed:", &mSpeed, 0.001f, 1.0f);
+
 		float x = cosf(mCounter) * mRadius;
 		float z = sinf(mCounter) * mRadius;
 

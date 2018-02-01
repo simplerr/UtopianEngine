@@ -1,6 +1,7 @@
 #include "scene/CLight.h"
 #include "scene/SceneNode.h"
 #include "scene/World.h"
+#include "imgui/imgui.h"
 
 namespace Scene
 {
@@ -17,7 +18,7 @@ namespace Scene
 
 	void CLight::Update()
 	{
-
+		ImGui::SliderFloat("Light intensity", &mInternal->GetLightDataPtr()->intensity.x, 0.0f, 1.0f);
 	}
 
 	void CLight::OnCreated()

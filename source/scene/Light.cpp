@@ -103,6 +103,11 @@ namespace Scene
 		return mLightData.intensity;
 	}
 
+	Vulkan::LightData* Light::GetLightDataPtr()
+	{
+		return &mLightData;
+	}
+
 	Vulkan::Material Light::GetMaterial() const
 	{
 		return mLightData.material;

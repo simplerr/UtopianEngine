@@ -71,6 +71,16 @@ namespace Scene
 
 	void SceneRenderer::Update()
 	{
+		per_frame_ps.lights.clear();
+		for (auto& light : mLights)
+		{
+			per_frame_ps.lights.push_back(light->GetLightData());
+		}
+
+		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(2, &fog_ubo.GetDescriptor());
+		mCommonDescriptorSet->UpdateDescriptorSets();
 		mTerrain->Update();
 		mWaterRenderer->Update(mRenderer, mMainCamera);
 	}

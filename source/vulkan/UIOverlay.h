@@ -34,6 +34,8 @@ namespace Vulkan
 
 		Vulkan::CommandBuffer* GetCommandBuffer() const;
 
+		static void TextV(const char* format, ...);
+
 	private:
 		Vulkan::Renderer* mRenderer;
 		Vulkan::CommandBuffer* mCommandBuffer;

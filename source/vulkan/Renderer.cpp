@@ -78,8 +78,6 @@ namespace Vulkan
 	void Renderer::PostInitPrepare()
 	{
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
-
-		UpdateOverlay();
 	}
 
 	void Renderer::PrepareCommandBuffers()
@@ -273,11 +271,20 @@ namespace Vulkan
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
 	}
 
+	void Renderer::BeginUiUpdate()
+	{
+		ImGui::NewFrame();
+	}
+
+	void Renderer::EndUiUpdate()
+	{
+		ImGui::Render();
+
+		mUiOverlay->Update();
+	}
+
 	void Renderer::UpdateOverlay()
 	{
-		// Use ImGui functions between here and Render()
-		ImGui::NewFrame();
-
 		// This creates a window
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 		ImGui::SetNextWindowPos(ImVec2(10, 10));
@@ -285,17 +292,25 @@ namespace Vulkan
 		ImGui::Begin("Utopian v0.1", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 
 		ImGui::PushItemWidth(300.0f);
-		
+
+		glm::vec3 pos = mCamera->GetPosition();
+		glm::vec3 dir = mCamera->GetDirection();
+
+		UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+		UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
+
 		static float testInput = 0.0f;
 		ImGui::SliderFloat("Slider", &testInput, 0.0f, 10.0f);
+
+		if (ImGui::Button("Press me"))
+		{
+			volatile int a = 1;
+		}
 
 		ImGui::PopItemWidth();
 
 		// ImGui functions end here
 		ImGui::End();
 		ImGui::PopStyleVar();
-		ImGui::Render();
-
-		mUiOverlay->Update();
 	}
 }	// VulkanLib namespace
