@@ -19,12 +19,6 @@ namespace Scene
 
 	class SceneRenderer : public Module<SceneRenderer>
 	{
-		struct PushConstantBlock
-		{
-			glm::mat4 world;
-			glm::mat4 worldInvTranspose;
-		};
-
 	public:
 		SceneRenderer(Vulkan::Renderer* renderer);
 		~SceneRenderer();

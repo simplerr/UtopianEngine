@@ -96,22 +96,10 @@ namespace Scene
 			Vulkan::StaticModel* model = renderable->GetModel();
 			mPhongEffect.SetPipeline(0);
 
-			// Push the world matrix constant
-			PushConstantBlock pushConstantBlock;
-
 			for (Vulkan::Mesh* mesh : model->mMeshes)
 			{
-				Transform transform = renderable->GetTransform();
-				mat4 world;
-				world = glm::translate(world, transform.GetPosition());
-				world = glm::scale(world, transform.GetScale());
-				world = glm::scale(world, glm::vec3(15000));
-				pushConstantBlock.world = world;
-				pushConstantBlock.world = renderable->GetTransform().GetWorldMatrix();
-
-				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+				// Push the world matrix constant
+				Vulkan::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
 
 				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
@@ -119,7 +107,7 @@ namespace Scene
 				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
-				commandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				commandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
@@ -131,16 +119,14 @@ namespace Scene
 			boundingBox.Update(renderable->GetWorldMatrix());
 			Transform transform = renderable->GetTransform();
 			glm::vec3 translation = transform.GetPosition() + glm::vec3(0, boundingBox.GetHeight() / 2, 0);
-			pushConstantBlock.world = glm::translate(glm::mat4(), translation);
-			pushConstantBlock.world = glm::scale(pushConstantBlock.world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
+			mat4 world = glm::translate(glm::mat4(), translation);
+			world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+			Vulkan::PushConstantBlock pushConsts(world);
 
 			commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline());
 			commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
-			commandBuffer->CmdPushConstants(&mColorEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer->CmdPushConstants(&mColorEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
 			commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 			commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);

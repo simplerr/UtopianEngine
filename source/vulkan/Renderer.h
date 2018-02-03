@@ -36,9 +36,24 @@ namespace Vulkan
 	};
 
 	struct PushConstantBlock {
+		PushConstantBlock() {
+			world = mat4();
+			worldInvTranspose = mat4();
+		}
+
+		PushConstantBlock(mat4 w) {
+			world = w;
+			worldInvTranspose = mat4();
+
+			// Note: This needs to be done to have the physical world match the rendered world.
+			// See https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/ for more information.
+			world[3][0] = -world[3][0];
+			world[3][1] = -world[3][1];
+			world[3][2] = -world[3][2];
+		}
+		
 		mat4 world;
 		mat4 worldInvTranspose;
-		//vec3 color;
 	};
 
 	class Renderer : public VulkanBase

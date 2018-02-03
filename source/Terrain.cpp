@@ -248,16 +248,9 @@ void Terrain::GenerateBlocks(float time)
 			commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
 			// Push the world matrix constant
-			Vulkan::PushConstantBlock pushConstantBlock;
-			pushConstantBlock.world = glm::mat4();
+			Vulkan::PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->GetPosition()));
 
-			glm::vec3 position = block->GetPosition();
-			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer.CmdDispatch(32, 32, 32);
 			commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
 
