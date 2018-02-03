@@ -27,7 +27,7 @@ namespace Scene
 		virtual void OnCreated() { };
 		virtual void Update() { };
 
-		const Vulkan::BoundingBox GetBoundingBox() const;
+		const virtual Vulkan::BoundingBox GetBoundingBox() const;
 
 		virtual uint32_t GetType() = 0;
 

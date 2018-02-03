@@ -44,6 +44,19 @@ namespace Scene
 		}
 
 		template <typename T>
+		bool HasComponent() const
+		{
+			bool result = false;
+			for(auto& entry : mComponents)
+			{
+				if (entry->GetType() == T::GetStaticType())
+					result = true;
+			}
+
+			return result;
+		}
+
+		template <typename T>
 		T* GetComponent() const
 		{
 			static_assert((std::is_base_of<SceneComponent, T>::value), "Specified type is not a valid Component.");

@@ -1,6 +1,8 @@
 #include "scene/Renderable.h"
 #include "scene/SceneRenderer.h"
 #include "vulkan/StaticModel.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include "Collision.h"
 
 namespace Scene
 {
@@ -40,6 +42,12 @@ namespace Scene
 
 	const Vulkan::BoundingBox Renderable::GetBoundingBox() const
 	{
-		return mModel->GetBoundingBox();
+		Vulkan::BoundingBox boundingBox = mModel->GetBoundingBox();
+		mat4 world;
+		world = glm::translate(world, GetPosition() + vec3(0.0f, boundingBox.GetHeight() / 2, 0.0f));
+		world = glm::scale(world, GetScale());
+		boundingBox.Update(world);
+
+		return boundingBox;
 	}
 }

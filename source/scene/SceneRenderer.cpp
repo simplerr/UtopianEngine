@@ -116,9 +116,7 @@ namespace Scene
 
 			// Draw the AABB
 			Vulkan::BoundingBox boundingBox = renderable->GetBoundingBox();
-			boundingBox.Update(renderable->GetWorldMatrix());
-			Transform transform = renderable->GetTransform();
-			glm::vec3 translation = transform.GetPosition() + glm::vec3(0, boundingBox.GetHeight() / 2, 0);
+			glm::vec3 translation = renderable->GetTransform().GetPosition() + glm::vec3(0, boundingBox.GetHeight() / 2, 0);
 			mat4 world = glm::translate(glm::mat4(), translation);
 			world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 

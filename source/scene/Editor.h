@@ -17,6 +17,8 @@ namespace Scene
 
 		void Draw();
 	private:
+		bool IsEntitySelected();
+
 		Vulkan::Renderer* mRenderer;
 		World* mWorld;
 		SceneEntity* mSelectedEntity;

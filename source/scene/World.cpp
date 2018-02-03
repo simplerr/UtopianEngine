@@ -1,6 +1,8 @@
 #include "scene/World.h"
 #include "scene/SceneEntity.h"
+#include "scene/CRenderable.h"
 #include "Collision.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Scene
 {
@@ -28,13 +30,15 @@ namespace Scene
 		float minDistance = FLT_MAX;
 		for (auto& entity : mEntities)
 		{
-			Vulkan::BoundingBox boundingBox = entity->GetBoundingBox();
-			boundingBox.Update(entity->GetTransform().GetWorldMatrix());
-
-			float distance = FLT_MAX;
-			if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)
+			if (entity->HasComponent<CRenderable>())
 			{
-				selectedEntity = entity;
+				Vulkan::BoundingBox boundingBox = entity->GetBoundingBox();
+
+				float distance = FLT_MAX;
+				if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)
+				{
+					selectedEntity = entity;
+				}
 			}
 		}
 

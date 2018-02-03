@@ -5,13 +5,14 @@
 #include "scene/World.h"
 #include "scene/SceneEntity.h"
 #include "scene/CTransform.h"
+#include "vulkan/UIOverlay.h"
 
 namespace Scene
 {
 	Editor::Editor(Vulkan::Renderer* renderer, World* world)
 		: mRenderer(renderer), mWorld(world)
 	{
-
+		mSelectedEntity = nullptr;
 	}
 
 	Editor::~Editor()
@@ -20,6 +21,8 @@ namespace Scene
 
 	void Editor::Update()
 	{
+		UpdateUi();
+
 		// Was an Entity selected?
 		if (gInput().KeyPressed(VK_LBUTTON))
 		{
@@ -38,9 +41,18 @@ namespace Scene
 
 	void Editor::UpdateUi()
 	{
+		if (IsEntitySelected())
+		{
+			Vulkan::UIOverlay::TextV("Entity selected = [%s]", mSelectedEntity->GetName().c_str());
+		}
 	}
 
 	void Editor::Draw()
 	{
+	}
+
+	bool Editor::IsEntitySelected()
+	{
+		return mSelectedEntity != nullptr;
 	}
 }

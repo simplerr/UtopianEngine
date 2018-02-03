@@ -27,7 +27,7 @@ namespace Scene
 	Vulkan::BoundingBox SceneEntity::GetBoundingBox() const
 	{
 		Vulkan::BoundingBox boundingBox;
-		boundingBox.Init(GetTransform().GetPosition(), glm::vec3(5000.0f));
+		//boundingBox.Init(GetTransform().GetPosition(), glm::vec3(5000.0f));
 		boundingBox.Init(glm::vec3(0.0f), glm::vec3(0.0f));
 
 		for (auto& component : mComponents)
