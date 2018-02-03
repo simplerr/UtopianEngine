@@ -369,6 +369,9 @@
     <ClCompile Include="source\vulkan\UIOverlay.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\Editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -658,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\UIOverlay.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\Editor.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

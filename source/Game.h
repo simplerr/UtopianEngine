@@ -11,6 +11,7 @@ class Input;
 namespace Scene
 {
 	class SceneRenderer;
+	class Editor;
 }
 
 namespace Vulkan
@@ -34,6 +35,7 @@ namespace Vulkan
 		SharedPtr<Renderer> mRenderer;
 		SharedPtr<Camera> mCamera;
 		SharedPtr<Terrain> mTerrain;
+		SharedPtr<Scene::Editor> mEditor;
 		Window* mWindow;
 		Timer mTimer;
 		std::string mTestCaseName;

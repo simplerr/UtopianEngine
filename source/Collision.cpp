@@ -43,6 +43,24 @@ namespace Vulkan
 		mVertices.push_back(glm::vec3(min.x, max.y, min.z));
 	}
 
+	void BoundingBox::Init(glm::vec3 position, glm::vec3 extents)
+	{
+		mMin = position;
+		mMax = position + extents;
+
+		// Front
+		mVertices.push_back(glm::vec3(mMin.x, mMin.y, mMax.z));
+		mVertices.push_back(glm::vec3(mMax.x, mMin.y, mMax.z));
+		mVertices.push_back(glm::vec3(mMax.x, mMax.y, mMax.z));
+		mVertices.push_back(glm::vec3(mMin.x, mMax.y, mMax.z));
+
+		// Back
+		mVertices.push_back(glm::vec3(mMin.x, mMin.y, mMin.z));
+		mVertices.push_back(glm::vec3(mMax.x, mMin.y, mMin.z));
+		mVertices.push_back(glm::vec3(mMax.x, mMax.y, mMin.z));
+		mVertices.push_back(glm::vec3(mMin.x, mMax.y, mMin.z));
+	}
+
 	void BoundingBox::Update(glm::mat4 worldMatrix)
 	{
 		glm::vec3 min = glm::vec3(FLT_MAX);

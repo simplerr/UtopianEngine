@@ -25,6 +25,7 @@ namespace Vulkan
 		BoundingBox() {}
 
 		void Init(const std::vector<Vertex>& vertices);
+		void Init(glm::vec3 position, glm::vec3 extents);
 		void Update(glm::mat4 worldMatrix);
 		bool RayIntersect(const Ray& ray, float& dist);
 

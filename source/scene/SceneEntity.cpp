@@ -17,10 +17,19 @@ namespace Scene
 		SharedPtr<SceneEntity> entity(new SceneEntity(name));
 
 		ObjectManager::Instance().RegisterObject(entity);
+		World::Instance().NotifyEntityCreated(entity.get());
 
 		// Let SceneManager assign root node
 
 		return entity;
+	}
+
+	Vulkan::BoundingBox SceneEntity::GetBoundingBox() const
+	{
+		Vulkan::BoundingBox boundingBox;
+		boundingBox.Init(GetTransform().GetPosition(), glm::vec3(10000.0f));
+
+		return boundingBox;
 	}
 
 	const Transform& SceneEntity::GetTransform() const

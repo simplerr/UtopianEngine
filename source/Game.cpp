@@ -36,6 +36,7 @@
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/SceneRenderer.h"
+#include "scene/Editor.h"
 #include "utility/Utility.h"
 
 using namespace Scene;
@@ -77,6 +78,19 @@ namespace Vulkan
 		Input::Start();
 		SceneRenderer::Start(mRenderer.get());
 		SceneRenderer::Instance().SetTerrain(mTerrain.get());
+
+		// *** Editor 
+		mEditor = make_shared<Editor>(mRenderer.get(), &World::Instance());
+
+		// Add house
+		auto house = SceneEntity::Create("House_1");
+
+		CTransform* transform = house->AddComponent<CTransform>(vec3(61000.0f, 300.0f, 78000.0f));
+		transform->SetScale(vec3(550.0f));
+		transform->SetRotation(vec3(180, 0, 0));
+
+		CRenderable* mesh = house->AddComponent<CRenderable>();
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
 		
 		// Add camera
 		auto cameraEntity = SceneEntity::Create("Camera");
@@ -89,16 +103,6 @@ namespace Vulkan
 		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
 
 		cameraEntity->AddComponent<CPlayerControl>();
-
-		// Add house
-		auto house = SceneEntity::Create("House_1");
-
-		CTransform* transform = house->AddComponent<CTransform>(vec3(61000.0f, 300.0f, 78000.0f));
-		transform->SetScale(vec3(550.0f));
-		transform->SetRotation(vec3(180, 0, 0));
-
-		CRenderable* mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
 
 		// Add house
 		house = SceneEntity::Create("House_2");
@@ -201,6 +205,7 @@ namespace Vulkan
 
 		World::Instance().Update();
 		SceneRenderer::Instance().Update();
+		mEditor->Update();
 		mRenderer->Update();
 
 		mRenderer->EndUiUpdate();
@@ -209,6 +214,7 @@ namespace Vulkan
 	void Game::Draw()
 	{
 		SceneRenderer::Instance().Render();
+		mEditor->Draw();
 		mRenderer->Render();
 	}
 	

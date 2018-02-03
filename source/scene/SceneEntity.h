@@ -7,6 +7,7 @@
 #include "scene/Object.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
+#include "Collision.h"
 
 using namespace std;
 
@@ -21,6 +22,12 @@ namespace Scene
 
 		static SharedPtr<SceneEntity> Create(string name);
 
+		Vulkan::BoundingBox GetBoundingBox() const;
+		const Transform& GetTransform() const;
+
+		/*
+		 * Component management functions
+		*/
 		template<class T, class... Args>
 		T* AddComponent(Args &&... args)
 		{
@@ -58,11 +65,8 @@ namespace Scene
 			return nullptr;
 		}
 
-		const Transform& GetTransform() const;
-
 	private:
 		vector<SceneComponent*> mComponents;
-		CTransform* mT = nullptr;
 		bool mHasTransform;
 	};
 }

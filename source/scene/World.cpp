@@ -1,5 +1,6 @@
 #include "scene/World.h"
 #include "scene/SceneEntity.h"
+#include "Collision.h"
 
 namespace Scene
 {
@@ -20,6 +21,24 @@ namespace Scene
 		mActiveComponents.push_back(component);
 	}
 
+	SceneEntity* World::RayIntersection(const Vulkan::Ray& ray)
+	{
+		SceneEntity* selectedEntity = nullptr;
+
+		float minDistance = FLT_MAX;
+		for (auto& entity : mEntities)
+		{
+			Vulkan::BoundingBox boundingBox = entity->GetBoundingBox();
+
+			float distance = FLT_MAX;
+			if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)
+			{
+				selectedEntity = entity;
+			}
+		}
+
+		return selectedEntity;
+	}
 
 	void World::BindNode(const SharedPtr<SceneNode>& node, SceneEntity* entity)
 	{
@@ -45,5 +64,10 @@ namespace Scene
 				entry->Update();
 			}
 		}
+	}
+
+	void World::NotifyEntityCreated(SceneEntity * entity)
+	{
+		mEntities.push_back(entity);
 	}
 }

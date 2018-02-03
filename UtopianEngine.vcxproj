@@ -105,6 +105,7 @@
     <ClCompile Include="source\scene\CNoClip.cpp" />
     <ClCompile Include="source\scene\COrbit.cpp" />
     <ClCompile Include="source\scene\CPlayerControl.cpp" />
+    <ClCompile Include="source\scene\Editor.cpp" />
     <ClCompile Include="source\scene\SceneRenderer.cpp" />
     <ClCompile Include="source\scene\CLight.cpp" />
     <ClCompile Include="source\scene\CRenderable.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="source\scene\CommonBuffers.h" />
     <ClInclude Include="source\scene\COrbit.h" />
     <ClInclude Include="source\scene\CPlayerControl.h" />
+    <ClInclude Include="source\scene\Editor.h" />
     <ClInclude Include="source\scene\SceneRenderer.h" />
     <ClInclude Include="source\scene\CLight.h" />
     <ClInclude Include="source\scene\Light.h" />

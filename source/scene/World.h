@@ -5,6 +5,7 @@
 #include "scene/SceneNode.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
+#include "Collision.h"
 
 namespace Scene
 {
@@ -28,11 +29,16 @@ namespace Scene
 		~World();
 	
 		void Update();
+		void NotifyEntityCreated(SceneEntity* entity);
+
 		void NotifyComponentCreated(SceneComponent* component);
+
+		SceneEntity* RayIntersection(const Vulkan::Ray& ray);
 
 		/* The bound SceneNodes transform will be synchronized with the SceneEntity in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, SceneEntity* entity);
 	private:
+		vector<SceneEntity*> mEntities;
 		vector<SceneComponent*> mActiveComponents;
 		map<SceneNode*, BoundNode> mBoundNodes;
 	};
