@@ -1,5 +1,6 @@
 #include "scene/Renderable.h"
 #include "scene/SceneRenderer.h"
+#include "vulkan/StaticModel.h"
 
 namespace Scene
 {
@@ -35,5 +36,10 @@ namespace Scene
 	void Renderable::SetModel(Vulkan::StaticModel* model)
 	{
 		mModel = model;
+	}
+
+	const Vulkan::BoundingBox Renderable::GetBoundingBox() const
+	{
+		return mModel->GetBoundingBox();
 	}
 }

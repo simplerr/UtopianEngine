@@ -29,6 +29,7 @@ namespace Scene
 		for (auto& entity : mEntities)
 		{
 			Vulkan::BoundingBox boundingBox = entity->GetBoundingBox();
+			boundingBox.Update(entity->GetTransform().GetWorldMatrix());
 
 			float distance = FLT_MAX;
 			if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)

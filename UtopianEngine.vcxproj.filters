@@ -372,6 +372,9 @@
     <ClCompile Include="source\scene\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\ColorEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -665,6 +668,9 @@
     <ClInclude Include="source\scene\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\ColorEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -745,6 +751,8 @@
     <None Include="data\shaders\imgui\uioverlay.vert">
       <Filter>Source Files\vulkan\effects\imgui\shader</Filter>
     </None>
+    <None Include="data\shaders\color\color.frag" />
+    <None Include="data\shaders\color\color.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\todo.md">

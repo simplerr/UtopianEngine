@@ -1,5 +1,6 @@
 #pragma once
 #include "scene/Object.h"
+#include "Collision.h"
 
 namespace Scene
 {
@@ -25,6 +26,8 @@ namespace Scene
 
 		virtual void OnCreated() { };
 		virtual void Update() { };
+
+		const Vulkan::BoundingBox GetBoundingBox() const;
 
 		virtual uint32_t GetType() = 0;
 

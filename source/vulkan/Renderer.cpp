@@ -99,6 +99,7 @@ namespace Vulkan
 		system("cd data/shaders/screenquad/ && generate-spirv.bat");
 		system("cd data/shaders/water/ && generate-spirv.bat");
 		system("cd data/shaders/imgui/ && generate-spirv.bat");
+		system("cd data/shaders/color/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Camera* camera)

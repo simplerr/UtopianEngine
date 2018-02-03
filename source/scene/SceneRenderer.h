@@ -5,6 +5,7 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 #include "vulkan/PhongEffect.h"
+#include "vulkan/ColorEffect.h"
 #include "scene/CommonBuffers.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
@@ -55,7 +56,9 @@ namespace Scene
 		Vulkan::Renderer* mRenderer;
 		Vulkan::CommandBuffer* mCommandBuffer;
 		Vulkan::PhongEffect mPhongEffect;
+		Vulkan::ColorEffect mColorEffect;
 		Terrain* mTerrain;
+		Vulkan::StaticModel* mCubeModel;
 		WaterRenderer* mWaterRenderer;
 
 		// Low level rendering 

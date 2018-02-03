@@ -105,14 +105,14 @@ namespace Vulkan
 		cameraEntity->AddComponent<CPlayerControl>();
 
 		// Add house
-		house = SceneEntity::Create("House_2");
+		house = SceneEntity::Create("Well_1");
 
 		transform = house->AddComponent<CTransform>(vec3(81000.0f, 300.0f, 78000.0f));
 		transform->SetScale(vec3(550.0f));
 		transform->SetRotation(vec3(180, 0, 0));
 
 		mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/Well.obj"));
 
 		// Add street light
 		house = SceneEntity::Create("Street light");

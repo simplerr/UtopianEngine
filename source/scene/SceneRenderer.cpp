@@ -12,6 +12,7 @@
 #include "WaterRenderer.h"
 #include "vulkan/ScreenGui.h"
 #include "vulkan/RenderTarget.h"
+#include "vulkan/ModelLoader.h"
 
 namespace Scene
 {
@@ -28,6 +29,8 @@ namespace Scene
 
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionRenderTarget()->GetImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionRenderTarget()->GetImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
+
+		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 	}
 
 	SceneRenderer::~SceneRenderer()
@@ -67,6 +70,7 @@ namespace Scene
 	void SceneRenderer::InitShader()
 	{
 		mPhongEffect.Init(mRenderer);
+		mColorEffect.Init(mRenderer);
 	}
 
 	void SceneRenderer::Update()
@@ -92,22 +96,16 @@ namespace Scene
 			Vulkan::StaticModel* model = renderable->GetModel();
 			mPhongEffect.SetPipeline(0);
 
+			// Push the world matrix constant
+			PushConstantBlock pushConstantBlock;
+
 			for (Vulkan::Mesh* mesh : model->mMeshes)
 			{
-				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
-
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-
-				//VkDescriptorSet descriptorSets[2] = { mPhongEffect.mCameraDescriptorSet->descriptorSet, textureDescriptorSet };
-				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
-
-				// Push the world matrix constant
-				PushConstantBlock pushConstantBlock;
 				Transform transform = renderable->GetTransform();
 				mat4 world;
 				world = glm::translate(world, transform.GetPosition());
 				world = glm::scale(world, transform.GetScale());
+				world = glm::scale(world, glm::vec3(15000));
 				pushConstantBlock.world = world;
 				pushConstantBlock.world = renderable->GetTransform().GetWorldMatrix();
 
@@ -115,12 +113,37 @@ namespace Scene
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
+				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
+
+				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
+
 				commandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
+
+			// Draw the AABB
+			Vulkan::BoundingBox boundingBox = renderable->GetBoundingBox();
+			boundingBox.Update(renderable->GetWorldMatrix());
+			Transform transform = renderable->GetTransform();
+			glm::vec3 translation = transform.GetPosition() + glm::vec3(0, boundingBox.GetHeight() / 2, 0);
+			pushConstantBlock.world = glm::translate(glm::mat4(), translation);
+			pushConstantBlock.world = glm::scale(pushConstantBlock.world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
+
+			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+			commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline());
+			commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
+			commandBuffer->CmdPushConstants(&mColorEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+			commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+			commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 		}
 	}
 
@@ -182,6 +205,9 @@ namespace Scene
 			per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
 			per_frame_vs.camera.clippingPlane = mClippingPlane;
 			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
+
+			mColorEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
+			mColorEffect.per_frame_vs.data.view = mMainCamera->GetView();
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();
@@ -191,6 +217,7 @@ namespace Scene
 		per_frame_vs.UpdateMemory();
 		per_frame_ps.UpdateMemory();
 		fog_ubo.UpdateMemory();
+		mColorEffect.UpdateMemory(mRenderer->GetDevice());
 	}
 
 	void SceneRenderer::AddRenderable(Renderable* renderable)

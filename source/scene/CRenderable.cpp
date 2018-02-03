@@ -33,4 +33,9 @@ namespace Scene
 	{
 		mInternal->SetModel(model);
 	}
+
+	const Vulkan::BoundingBox CRenderable::GetBoundingBox() const
+	{
+		return mInternal->GetBoundingBox();
+	}
 }

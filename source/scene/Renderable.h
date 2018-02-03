@@ -22,6 +22,8 @@ namespace Scene
 		Vulkan::StaticModel* GetModel();
 		void SetModel(Vulkan::StaticModel* model);
 
+		const Vulkan::BoundingBox GetBoundingBox() const;
+
 	private:
 		Vulkan::StaticModel* mModel;
 	};

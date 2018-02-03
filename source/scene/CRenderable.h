@@ -27,6 +27,8 @@ namespace Scene
 			return GetStaticType();
 		}
 
+		const Vulkan::BoundingBox GetBoundingBox() const;
+
 	private:
 		SharedPtr<Renderable> mInternal;
 	};
