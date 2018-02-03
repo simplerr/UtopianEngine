@@ -34,6 +34,16 @@ namespace Scene
 		mInternal->SetModel(model);
 	}
 
+	void CRenderable::EnableBoundingBox()
+	{
+		mInternal->SetDrawBoundingBox(true);
+	}
+
+	void CRenderable::DisableBoundingBox()
+	{
+		mInternal->SetDrawBoundingBox(false);
+	}
+
 	const Vulkan::BoundingBox CRenderable::GetBoundingBox() const
 	{
 		return mInternal->GetBoundingBox();

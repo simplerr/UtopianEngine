@@ -23,14 +23,18 @@ namespace Scene
 		void AddRotation(const vec3& rotation);
 		void AddScale(const vec3& scale);
 
+		void SetDrawBoundingBox(bool draw);
+
 		// Getters
 		const Transform& GetTransform() const;
 		const vec3& GetPosition() const;
 		const vec3& GetRotation() const;
 		const vec3& GetScale() const;
 		const mat4& GetWorldMatrix() const;
+
+		bool IsBoundingBoxVisible() const;
 	private:
 		Transform mTransform;
-
+		bool mDrawBoundingBox;
 	};
 }

@@ -108,35 +108,34 @@ namespace Vulkan
 		house = SceneEntity::Create("Well_1");
 
 		transform = house->AddComponent<CTransform>(vec3(81000.0f, 300.0f, 78000.0f));
-		transform->SetScale(vec3(550.0f));
+		transform->SetScale(vec3(1550.0f));
 		transform->SetRotation(vec3(180, 0, 0));
 
 		mesh = house->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/Well.obj"));
 
 		// Add street light
-		house = SceneEntity::Create("Street light");
+		house = SceneEntity::Create("Stone");
 
 		transform = house->AddComponent<CTransform>(vec3(74400.0f, 6200.0f, 78000.0f));
 		transform->SetScale(vec3(1350.0f));
 		transform->SetRotation(vec3(180, 0, 0));
 
 		mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StreetLightTall.obj"));
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
 
-
-		// Add teapot #2
-		auto teapot = SceneEntity::Create("Teapot");
+		// Add orbiting entity
+		auto teapot = SceneEntity::Create("Window");
 
 		transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
-		transform->SetScale(vec3(50.0f));
-		transform->SetRotation(vec3(180, 180, 180));
+		transform->SetScale(vec3(1050.0f));
+		transform->SetRotation(vec3(0, 180, 180));
 
 		orbit = teapot->AddComponent<COrbit>(-0.01f);
 		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
 
 		mesh = teapot->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseTower.obj"));
 
 		// Add light
 		auto light = SceneEntity::Create("DirectionalLight");

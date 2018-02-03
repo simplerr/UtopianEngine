@@ -5,6 +5,7 @@
 #include "scene/World.h"
 #include "scene/SceneEntity.h"
 #include "scene/CTransform.h"
+#include "scene/CRenderable.h"
 #include "vulkan/UIOverlay.h"
 
 namespace Scene
@@ -31,10 +32,19 @@ namespace Scene
 			SceneEntity* selectedEntity = mWorld->RayIntersection(ray);
 			if (selectedEntity != nullptr)
 			{
+				if (IsEntitySelected())
+				{
+					auto renderable = mSelectedEntity->GetComponent<CRenderable>();
+					renderable->DisableBoundingBox();
+				}
+
 				mSelectedEntity = selectedEntity;
 
 				auto transform = selectedEntity->GetComponent<CTransform>();
 				transform->SetScale(transform->GetScale() * 1.3f);
+
+				auto renderable = selectedEntity->GetComponent<CRenderable>();
+				renderable->EnableBoundingBox();
 			}
 		}
 	}

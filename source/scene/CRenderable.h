@@ -18,6 +18,9 @@ namespace Scene
 
 		void SetModel(Vulkan::StaticModel* model);
 
+		void EnableBoundingBox();
+		void DisableBoundingBox();
+
 		// Type identification
 		static uint32_t GetStaticType() {
 			return SceneComponent::ComponentType::STATIC_MESH;

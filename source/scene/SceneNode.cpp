@@ -5,7 +5,7 @@ namespace Scene
 
 	SceneNode::SceneNode()
 	{
-
+		mDrawBoundingBox = false;
 	}
 
 	SceneNode::~SceneNode()
@@ -48,6 +48,11 @@ namespace Scene
 		mTransform.AddScale(scale);
 	}
 
+	void SceneNode::SetDrawBoundingBox(bool draw)
+	{
+		mDrawBoundingBox = draw;
+	}
+
 	const Transform& SceneNode::GetTransform() const
 	{
 		return mTransform;
@@ -71,5 +76,10 @@ namespace Scene
 	const mat4& SceneNode::GetWorldMatrix() const
 	{
 		return mTransform.GetWorldMatrix();
+	}
+
+	bool SceneNode::IsBoundingBoxVisible() const
+	{
+		return mDrawBoundingBox;
 	}
 }
