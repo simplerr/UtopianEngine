@@ -197,7 +197,8 @@ bool intersectPlane(vec3 n, vec3 p0, vec3 origin, vec3 dir, float &t)
 vec3 TransformTool::MoveAxisX(vec3 pos, vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
-	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f), pos, dir, dist);
+	float y = mSelectedActor->GetTransform().GetPosition().y;
+	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, y, 0.0f), pos, dir, dist);
 
 	float dx;
 	if (intersection)
@@ -260,7 +261,8 @@ vec3 TransformTool::MoveAxisY(vec3 pos, vec3 dir)
 vec3 TransformTool::MoveAxisZ(vec3 pos, vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
-	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f), pos, dir, dist);
+	float y = mSelectedActor->GetTransform().GetPosition().y;
+	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, y, 0.0f), pos, dir, dist);
 
 	float dz;
 	if (intersection)
