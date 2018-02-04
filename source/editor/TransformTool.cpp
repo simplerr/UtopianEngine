@@ -47,9 +47,9 @@ TransformTool::TransformTool(Vulkan::Camera* camera, Terrain* terrain)
 //! Cleanup.
 TransformTool::~TransformTool()
 {
-	delete mAxisX;
-	delete mAxisY;
-	delete mAxisZ;
+	//delete mAxisX;
+	//delete mAxisY;
+	//delete mAxisZ;
 }
 
 void TransformTool::InitStartingPosition(Input* pInput, vec3& dir, vec3& cameraPos, float& dist)

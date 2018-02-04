@@ -28,7 +28,7 @@ namespace Scene
 		World* mWorld;
 		Terrain* mTerrain;
 		ActorInspector* mActorInspector;
-		TransformTool* mObjectTool;
+		TransformTool* mTransformTool;
 		Actor* mSelectedActor;
 	};
 }

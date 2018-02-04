@@ -20,18 +20,18 @@ namespace Scene
 
 		mActorInspector = new ActorInspector();
 
-		mObjectTool = new TransformTool(renderer->GetCamera(), mTerrain);
+		mTransformTool = new TransformTool(renderer->GetCamera(), mTerrain);
 	}
 
 	Editor::~Editor()
 	{
 		delete mActorInspector;
-		delete mObjectTool;
+		delete mTransformTool;
 	}
 
 	void Editor::Update()
 	{
-		mObjectTool->Update(&gInput(), 0); // Note: Hack
+		mTransformTool->Update(&gInput(), 0); // Note: Hack
 
 		UpdateUi();
 
@@ -82,6 +82,6 @@ namespace Scene
 
 		// Create inspector UI
 		mActorInspector->SetActor(mSelectedActor);
-		mObjectTool->SetActor(mSelectedActor);
+		mTransformTool->SetActor(mSelectedActor);
 	}
 }
