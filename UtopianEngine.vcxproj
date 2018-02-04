@@ -115,7 +115,7 @@
     <ClCompile Include="source\scene\Renderable.cpp" />
     <ClCompile Include="source\scene\SceneComponent.cpp" />
     <ClCompile Include="source\scene\CTransform.cpp" />
-    <ClCompile Include="source\scene\SceneEntity.cpp" />
+    <ClCompile Include="source\scene\Actor.cpp" />
     <ClCompile Include="source\scene\World.cpp" />
     <ClCompile Include="source\scene\SceneNode.cpp" />
     <ClCompile Include="source\scene\Transform.cpp" />
@@ -208,7 +208,7 @@
     <ClInclude Include="source\scene\Renderable.h" />
     <ClInclude Include="source\scene\SceneComponent.h" />
     <ClInclude Include="source\scene\CTransform.h" />
-    <ClInclude Include="source\scene\SceneEntity.h" />
+    <ClInclude Include="source\scene\Actor.h" />
     <ClInclude Include="source\scene\CRenderable.h" />
     <ClInclude Include="source\scene\World.h" />
     <ClInclude Include="source\scene\SceneNode.h" />

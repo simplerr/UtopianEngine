@@ -7,7 +7,7 @@
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 
 	class Light : public SceneNode
 	{

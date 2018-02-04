@@ -6,12 +6,12 @@
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 
 	class CLight : public SceneComponent
 	{
 	public:
-		CLight(SceneEntity* parent);
+		CLight(Actor* parent);
 		~CLight();
 
 		void Update() override;

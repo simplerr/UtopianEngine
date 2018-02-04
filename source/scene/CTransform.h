@@ -7,12 +7,12 @@ using namespace glm;
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 
 	class CTransform : public SceneComponent
 	{
 	public:
-		CTransform(SceneEntity* parent, const vec3& position);
+		CTransform(Actor* parent, const vec3& position);
 		~CTransform();
 
 		void SetTransform(const Transform& transform);

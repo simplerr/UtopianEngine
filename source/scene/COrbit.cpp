@@ -1,12 +1,12 @@
 #include "scene/COrbit.h"
 #include "scene/CTransform.h"
 #include "scene/CCamera.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "imgui/imgui.h"
 
 namespace Scene
 {
-	COrbit::COrbit(SceneEntity* parent, float speed)
+	COrbit::COrbit(Actor* parent, float speed)
 		: SceneComponent(parent)
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();

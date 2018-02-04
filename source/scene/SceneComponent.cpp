@@ -1,9 +1,9 @@
 #include "SceneComponent.h"
-#include "SceneEntity.h"
+#include "Actor.h"
 
 namespace Scene
 {
-	SceneComponent::SceneComponent(SceneEntity* parent)
+	SceneComponent::SceneComponent(Actor* parent)
 		: mParent(parent)
 	{
 		SetActive(true);

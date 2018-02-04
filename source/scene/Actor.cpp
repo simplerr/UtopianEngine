@@ -1,4 +1,4 @@
-#include "SceneEntity.h"
+#include "Actor.h"
 #include "scene/ObjectManager.h"
 #include "scene/CTransform.h"
 #include "ecs/SystemManager.h"
@@ -6,15 +6,15 @@
 
 namespace Scene
 {
-	SceneEntity::SceneEntity(string name)
+	Actor::Actor(string name)
 		: Object(name)
 	{
 
 	}
 
-	SharedPtr<SceneEntity> SceneEntity::Create(string name)
+	SharedPtr<Actor> Actor::Create(string name)
 	{
-		SharedPtr<SceneEntity> entity(new SceneEntity(name));
+		SharedPtr<Actor> entity(new Actor(name));
 
 		ObjectManager::Instance().RegisterObject(entity);
 		World::Instance().NotifyEntityCreated(entity.get());
@@ -24,7 +24,7 @@ namespace Scene
 		return entity;
 	}
 
-	Vulkan::BoundingBox SceneEntity::GetBoundingBox() const
+	Vulkan::BoundingBox Actor::GetBoundingBox() const
 	{
 		Vulkan::BoundingBox boundingBox;
 		//boundingBox.Init(GetTransform().GetPosition(), glm::vec3(5000.0f));
@@ -42,7 +42,7 @@ namespace Scene
 		return boundingBox;
 	}
 
-	const Transform& SceneEntity::GetTransform() const
+	const Transform& Actor::GetTransform() const
 	{
 		CTransform* transform = GetComponent<CTransform>();
 

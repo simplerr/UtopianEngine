@@ -1,12 +1,12 @@
 #include "scene/CRenderable.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "scene/Renderable.h"
 #include "scene/CTransform.h"
 #include "scene/World.h"
 
 namespace Scene
 {
-	CRenderable::CRenderable(SceneEntity* parent)
+	CRenderable::CRenderable(Actor* parent)
 		: SceneComponent(parent)
 	{
 		SetName("CStaticMesh");

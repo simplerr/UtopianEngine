@@ -4,7 +4,7 @@
 namespace Scene
 {
 	class World;
-	class SceneEntity;
+	class Actor;
 
 	class Editor
 	{
@@ -21,6 +21,6 @@ namespace Scene
 
 		Vulkan::Renderer* mRenderer;
 		World* mWorld;
-		SceneEntity* mSelectedEntity;
+		Actor* mSelectedEntity;
 	};
 }

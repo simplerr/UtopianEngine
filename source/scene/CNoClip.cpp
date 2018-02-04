@@ -1,12 +1,12 @@
 #include "scene/CNoClip.h"
 #include "scene/CCamera.h"
 #include "scene/CTransform.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "Input.h"
 
 namespace Scene
 {
-	CNoClip::CNoClip(SceneEntity* parent, float speed)
+	CNoClip::CNoClip(Actor* parent, float speed)
 		: SceneComponent(parent)
 	{
 		SetSpeed(speed);

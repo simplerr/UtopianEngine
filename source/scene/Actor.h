@@ -15,12 +15,12 @@ namespace Scene
 {
 	class CTransform;
 
-	class SceneEntity : public Object
+	class Actor : public Object
 	{
 	public:
-		SceneEntity(string name);
+		Actor(string name);
 
-		static SharedPtr<SceneEntity> Create(string name);
+		static SharedPtr<Actor> Create(string name);
 
 		Vulkan::BoundingBox GetBoundingBox() const;
 		const Transform& GetTransform() const;

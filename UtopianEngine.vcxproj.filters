@@ -306,9 +306,6 @@
     <ClCompile Include="source\scene\CTransform.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\SceneEntity.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene\SceneComponent.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -374,6 +371,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\ColorEffect.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\Actor.cpp">
+      <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -587,9 +587,6 @@
     <ClInclude Include="source\scene\CTransform.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\SceneEntity.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene\SceneComponent.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -670,6 +667,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\ColorEffect.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\Actor.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

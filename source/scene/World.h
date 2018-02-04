@@ -9,13 +9,13 @@
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 	class SceneNode;
 
 	struct BoundNode
 	{
 		SharedPtr<SceneNode> node;
-		SceneEntity* entity;
+		Actor* entity;
 	};
 
 	/*
@@ -29,16 +29,16 @@ namespace Scene
 		~World();
 	
 		void Update();
-		void NotifyEntityCreated(SceneEntity* entity);
+		void NotifyEntityCreated(Actor* entity);
 
 		void NotifyComponentCreated(SceneComponent* component);
 
-		SceneEntity* RayIntersection(const Vulkan::Ray& ray);
+		Actor* RayIntersection(const Vulkan::Ray& ray);
 
 		/* The bound SceneNodes transform will be synchronized with the SceneEntity in Update() */
-		void BindNode(const SharedPtr<SceneNode>& node, SceneEntity* entity);
+		void BindNode(const SharedPtr<SceneNode>& node, Actor* entity);
 	private:
-		vector<SceneEntity*> mEntities;
+		vector<Actor*> mEntities;
 		vector<SceneComponent*> mActiveComponents;
 		map<SceneNode*, BoundNode> mBoundNodes;
 	};

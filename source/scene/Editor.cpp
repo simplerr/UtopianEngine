@@ -3,7 +3,7 @@
 #include "vulkan/Renderer.h"
 #include "Camera.h"
 #include "scene/World.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "scene/CTransform.h"
 #include "scene/CRenderable.h"
 #include "vulkan/UIOverlay.h"
@@ -29,7 +29,7 @@ namespace Scene
 		{
 			Vulkan::Ray ray = mRenderer->GetCamera()->GetPickingRay();
 
-			SceneEntity* selectedEntity = mWorld->RayIntersection(ray);
+			Actor* selectedEntity = mWorld->RayIntersection(ray);
 			if (selectedEntity != nullptr)
 			{
 				if (IsEntitySelected())

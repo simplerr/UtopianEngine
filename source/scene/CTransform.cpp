@@ -8,7 +8,7 @@
 
 namespace Scene
 {
-	CTransform::CTransform(SceneEntity* parent, const vec3& position)
+	CTransform::CTransform(Actor* parent, const vec3& position)
 		: SceneComponent(parent)
 	{
 		SetName("CTransform");

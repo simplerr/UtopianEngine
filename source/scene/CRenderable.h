@@ -5,12 +5,12 @@
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 
 	class CRenderable : public SceneComponent
 	{
 	public:
-		CRenderable(SceneEntity* parent);
+		CRenderable(Actor* parent);
 		~CRenderable();
 
 		void Update() override;

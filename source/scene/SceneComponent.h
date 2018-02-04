@@ -4,7 +4,7 @@
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 
 	class SceneComponent : public Object
 	{
@@ -21,7 +21,7 @@ namespace Scene
 			PLAYER_CONTROL
 		};
 
-		SceneComponent(SceneEntity* parent);
+		SceneComponent(Actor* parent);
 		virtual ~SceneComponent();
 
 		virtual void OnCreated() { };
@@ -31,7 +31,7 @@ namespace Scene
 
 		virtual uint32_t GetType() = 0;
 
-		SceneEntity* GetParent() { return mParent; }
+		Actor* GetParent() { return mParent; }
 
 		void SetActive(bool active) { mActive = active; }
 		void Activate() { mActive = true; }
@@ -39,7 +39,7 @@ namespace Scene
 		bool IsActive() const { return mActive; }
 
 	private:
-		SceneEntity* mParent;
+		Actor* mParent;
 		bool mActive;
 	};
 }

@@ -8,7 +8,7 @@ using namespace glm;
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 	class CCamera;
 	class CTransform;
 	class COrbit;
@@ -17,7 +17,7 @@ namespace Scene
 	class CPlayerControl : public SceneComponent
 	{
 	public:
-		CPlayerControl(SceneEntity* parent);
+		CPlayerControl(Actor* parent);
 		~CPlayerControl();
 
 		void Update() override;

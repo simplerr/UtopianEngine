@@ -24,7 +24,7 @@
 #include "imgui/imgui.h"
 
 // Testing
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "scene/SceneComponent.h"
 #include "scene/CTransform.h"
 #include "scene/CRenderable.h"
@@ -83,7 +83,7 @@ namespace Vulkan
 		mEditor = make_shared<Editor>(mRenderer.get(), &World::Instance());
 
 		// Add house
-		auto house = SceneEntity::Create("House_1");
+		auto house = Actor::Create("House_1");
 
 		CTransform* transform = house->AddComponent<CTransform>(vec3(61000.0f, 300.0f, 78000.0f));
 		transform->SetScale(vec3(550.0f));
@@ -93,7 +93,7 @@ namespace Vulkan
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
 		
 		// Add camera
-		auto cameraEntity = SceneEntity::Create("Camera");
+		auto cameraEntity = Actor::Create("Camera");
 		cameraEntity->AddComponent<CTransform>(vec3(67001.0f, 10300.0f, 68000.0f));
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
 		camera->SetMainCamera();
@@ -105,7 +105,7 @@ namespace Vulkan
 		cameraEntity->AddComponent<CPlayerControl>();
 
 		// Add house
-		house = SceneEntity::Create("Well_1");
+		house = Actor::Create("Well_1");
 
 		transform = house->AddComponent<CTransform>(vec3(81000.0f, 300.0f, 78000.0f));
 		transform->SetScale(vec3(1550.0f));
@@ -115,7 +115,7 @@ namespace Vulkan
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/Well.obj"));
 
 		// Add street light
-		house = SceneEntity::Create("Stone");
+		house = Actor::Create("Stone");
 
 		transform = house->AddComponent<CTransform>(vec3(74400.0f, 6200.0f, 78000.0f));
 		transform->SetScale(vec3(1350.0f));
@@ -125,7 +125,7 @@ namespace Vulkan
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
 
 		// Add orbiting entity
-		auto teapot = SceneEntity::Create("Window");
+		auto teapot = Actor::Create("Window");
 
 		transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
 		transform->SetScale(vec3(1050.0f));
@@ -138,7 +138,7 @@ namespace Vulkan
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseTower.obj"));
 
 		// Add light
-		auto light = SceneEntity::Create("DirectionalLight");
+		auto light = Actor::Create("DirectionalLight");
 
 		light->AddComponent<CTransform>(vec3(87000, 5000, 67000));
 		light->AddComponent<CTransform>(vec3(0, 0.5, 0));
@@ -154,7 +154,7 @@ namespace Vulkan
 		lightComponent->SetSpot(4.0f);
 
 		// Add light
-		auto light2 = SceneEntity::Create("PointLight");
+		auto light2 = Actor::Create("PointLight");
 
 		light2->AddComponent<CTransform>(vec3(-74400.0f, -6200.0f, -78000.0f));
 
@@ -168,7 +168,7 @@ namespace Vulkan
 		lightComponent->SetSpot(4.0f);
 
 		// Add spot light
-		auto spotLight = SceneEntity::Create("SpotLight");
+		auto spotLight = Actor::Create("SpotLight");
 
 		spotLight->AddComponent<CTransform>(vec3(-104400.0f, -6200.0f, -78000.0f));
 

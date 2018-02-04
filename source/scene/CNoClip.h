@@ -8,14 +8,14 @@ using namespace glm;
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 	class CCamera;
 	class CTransform;
 
 	class CNoClip : public SceneComponent
 	{
 	public:
-		CNoClip(SceneEntity* parent, float speed);
+		CNoClip(Actor* parent, float speed);
 		~CNoClip();
 
 		void Update() override;

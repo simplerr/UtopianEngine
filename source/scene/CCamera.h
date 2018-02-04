@@ -8,12 +8,12 @@ using namespace glm;
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 
 	class CCamera : public SceneComponent
 	{
 	public:
-		CCamera(SceneEntity* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane);
+		CCamera(Actor* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane);
 		~CCamera();
 
 		void Update() override;

@@ -8,14 +8,14 @@ using namespace glm;
 
 namespace Scene
 {
-	class SceneEntity;
+	class Actor;
 	class CCamera;
 	class CTransform;
 
 	class COrbit : public SceneComponent
 	{
 	public:
-		COrbit(SceneEntity* parent, float speed);
+		COrbit(Actor* parent, float speed);
 		~COrbit();
 
 		void Update() override;

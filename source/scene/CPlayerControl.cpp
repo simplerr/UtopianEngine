@@ -3,12 +3,12 @@
 #include "scene/CTransform.h"
 #include "scene/CCamera.h"
 #include "scene/CPlayerControl.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "Input.h"
 
 namespace Scene
 {
-	CPlayerControl::CPlayerControl(SceneEntity* parent)
+	CPlayerControl::CPlayerControl(Actor* parent)
 		: SceneComponent(parent)
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();

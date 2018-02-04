@@ -4,7 +4,7 @@
 #include <vector>
 #include "ecs/components/Component.h"
 #include "ecs/systems/System.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 
 namespace Vulkan
 {

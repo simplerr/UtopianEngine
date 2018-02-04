@@ -1,5 +1,5 @@
 #include "scene/World.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "scene/CRenderable.h"
 #include "Collision.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -23,9 +23,9 @@ namespace Scene
 		mActiveComponents.push_back(component);
 	}
 
-	SceneEntity* World::RayIntersection(const Vulkan::Ray& ray)
+	Actor* World::RayIntersection(const Vulkan::Ray& ray)
 	{
-		SceneEntity* selectedEntity = nullptr;
+		Actor* selectedEntity = nullptr;
 
 		float minDistance = FLT_MAX;
 		for (auto& entity : mEntities)
@@ -45,7 +45,7 @@ namespace Scene
 		return selectedEntity;
 	}
 
-	void World::BindNode(const SharedPtr<SceneNode>& node, SceneEntity* entity)
+	void World::BindNode(const SharedPtr<SceneNode>& node, Actor* entity)
 	{
 		BoundNode binding;
 		binding.node = node;
@@ -71,7 +71,7 @@ namespace Scene
 		}
 	}
 
-	void World::NotifyEntityCreated(SceneEntity * entity)
+	void World::NotifyEntityCreated(Actor * entity)
 	{
 		mEntities.push_back(entity);
 	}

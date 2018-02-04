@@ -1,11 +1,11 @@
 #include "scene/CCamera.h"
 #include "scene/World.h"
-#include "scene/SceneEntity.h"
+#include "scene/Actor.h"
 #include "Camera.h"
 
 namespace Scene
 {
-	CCamera::CCamera(SceneEntity* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane)
+	CCamera::CCamera(Actor* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane)
 		: SceneComponent(parent)
 	{
 		mInternal = Vulkan::Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
