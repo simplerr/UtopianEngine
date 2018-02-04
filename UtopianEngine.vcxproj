@@ -93,7 +93,6 @@
     <ClCompile Include="source\ecs\SystemManager.cpp" />
     <ClCompile Include="source\ecs\systems\HealthSystem.cpp" />
     <ClCompile Include="source\ecs\systems\PhysicsSystem.cpp" />
-    <ClCompile Include="source\ecs\systems\EditorSystem.cpp" />
     <ClCompile Include="source\ecs\systems\RenderSystem.cpp" />
     <ClCompile Include="source\ecs\systems\System.cpp" />
     <ClCompile Include="source\editor\ActorInspector.cpp" />
@@ -102,7 +101,7 @@
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MarchingCubes.cpp" />
-    <ClCompile Include="source\ObjectTool.cpp" />
+    <ClCompile Include="source\editor\TransformTool.cpp" />
     <ClCompile Include="source\scene\CCamera.cpp" />
     <ClCompile Include="source\scene\CNoClip.cpp" />
     <ClCompile Include="source\scene\COrbit.cpp" />
@@ -186,7 +185,6 @@
     <ClInclude Include="source\ecs\SystemManager.h" />
     <ClInclude Include="source\ecs\systems\HealthSystem.h" />
     <ClInclude Include="source\ecs\systems\PhysicsSystem.h" />
-    <ClInclude Include="source\ecs\systems\EditorSystem.h" />
     <ClInclude Include="source\ecs\systems\RenderSystem.h" />
     <ClInclude Include="source\ecs\systems\System.h" />
     <ClInclude Include="source\editor\ActorInspector.h" />
@@ -196,7 +194,7 @@
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\LightData.h" />
     <ClInclude Include="source\MarchingCubes.h" />
-    <ClInclude Include="source\ObjectTool.h" />
+    <ClInclude Include="source\editor\TransformTool.h" />
     <ClInclude Include="source\Platform.h" />
     <ClInclude Include="source\scene\CCamera.h" />
     <ClInclude Include="source\scene\CNoClip.h" />

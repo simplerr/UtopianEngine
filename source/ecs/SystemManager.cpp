@@ -2,7 +2,6 @@
 #include "vulkan/VulkanDebug.h"
 #include "systems/RenderSystem.h"
 #include "systems/PhysicsSystem.h"
-#include "systems/EditorSystem.h"
 #include "systems/HealthSystem.h"
 #include "components/Component.h"
 #include "SystemManager.h"

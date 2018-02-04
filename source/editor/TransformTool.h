@@ -21,20 +21,25 @@ namespace ECS
 	class EntityCache;
 }
 
+namespace Scene
+{
+	class Actor;
+}
+
 class Input;
 class Terrain;
 
 //! The tool that move objects around.
-class ObjectTool
+class TransformTool
 {
 public:
-	ObjectTool(Vulkan::Camera* camera, Terrain* terrain);
-	~ObjectTool();
+	TransformTool(Vulkan::Camera* camera, Terrain* terrain);
+	~TransformTool();
 
 	void Update(Input* pInput, float dt);
 	void Draw();
 	bool IsMovingObject();
-	void SetSelectedEntity(ECS::EntityCache* entityCache);
+	void SetActor(Scene::Actor* actor);
 
 	// These are only supposed to be called by an BaseInspector type.
 	void SetPosition(glm::vec3 position);
@@ -51,7 +56,7 @@ private:
 	Vulkan::StaticModel* mAxisX;
 	Vulkan::StaticModel* mAxisY;
 	Vulkan::StaticModel* mAxisZ;
-	ECS::EntityCache* mSelectedEntity;
+	Scene::Actor* mSelectedActor;
 	MovingAxis	  mMovingAxis;
 	glm::vec3	  mLastPlanePos;
 	Vulkan::Camera* mCamera;

@@ -1,6 +1,9 @@
 #pragma once
 #include "vulkan/VulkanInclude.h"
 
+class TransformTool;
+class Terrain;
+
 namespace Scene
 {
 	class World;
@@ -10,7 +13,7 @@ namespace Scene
 	class Editor
 	{
 	public:
-		Editor(Vulkan::Renderer* renderer, World* world);
+		Editor(Vulkan::Renderer* renderer, World* world, Terrain* terrain);
 		~Editor();
 
 		void Update();
@@ -23,7 +26,9 @@ namespace Scene
 
 		Vulkan::Renderer* mRenderer;
 		World* mWorld;
+		Terrain* mTerrain;
 		ActorInspector* mActorInspector;
+		TransformTool* mObjectTool;
 		Actor* mSelectedActor;
 	};
 }

@@ -8,24 +8,31 @@
 #include "scene/CRenderable.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
+#include "Terrain.h"
+#include "editor/TransformTool.h"
 
 namespace Scene
 {
-	Editor::Editor(Vulkan::Renderer* renderer, World* world)
-		: mRenderer(renderer), mWorld(world)
+	Editor::Editor(Vulkan::Renderer* renderer, World* world, Terrain* terrain)
+		: mRenderer(renderer), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
 
 		mActorInspector = new ActorInspector();
+
+		mObjectTool = new TransformTool(renderer->GetCamera(), mTerrain);
 	}
 
 	Editor::~Editor()
 	{
 		delete mActorInspector;
+		delete mObjectTool;
 	}
 
 	void Editor::Update()
 	{
+		mObjectTool->Update(&gInput(), 0); // Note: Hack
+
 		UpdateUi();
 
 		// Was an Entity selected?
@@ -75,5 +82,6 @@ namespace Scene
 
 		// Create inspector UI
 		mActorInspector->SetActor(mSelectedActor);
+		mObjectTool->SetActor(mSelectedActor);
 	}
 }

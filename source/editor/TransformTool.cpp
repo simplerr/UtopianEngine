@@ -1,4 +1,4 @@
-#include "ObjectTool.h"
+#include "TransformTool.h"
 #include "Camera.h"
 #include <limits>
 #include "Effects.h"
@@ -8,13 +8,15 @@
 #include <glm/gtx/intersect.hpp>
 #include "ecs/systems/System.h"
 #include "ecs/components/TransformComponent.h"
+#include "scene/Actor.h"
+#include "scene/CTransform.h"
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-ObjectTool::ObjectTool(Vulkan::Camera* camera, Terrain* terrain)
+TransformTool::TransformTool(Vulkan::Camera* camera, Terrain* terrain)
 {
 	// nullptr as default.
-	mSelectedEntity = nullptr;
+	mSelectedActor = nullptr;
 	mCamera = camera;
 	mTerrain = terrain;
 
@@ -43,14 +45,14 @@ ObjectTool::ObjectTool(Vulkan::Camera* camera, Terrain* terrain)
 }
 
 //! Cleanup.
-ObjectTool::~ObjectTool()
+TransformTool::~TransformTool()
 {
 	delete mAxisX;
 	delete mAxisY;
 	delete mAxisZ;
 }
 
-void ObjectTool::InitStartingPosition(Input* pInput, vec3& dir, vec3& cameraPos, float& dist)
+void TransformTool::InitStartingPosition(Input* pInput, vec3& dir, vec3& cameraPos, float& dist)
 {
 	dist = std::numeric_limits<float>::infinity();
 	cameraPos = mCamera->GetPosition();
@@ -62,9 +64,9 @@ void ObjectTool::InitStartingPosition(Input* pInput, vec3& dir, vec3& cameraPos,
 }
 
 //! Poll for input and perform actions.
-void ObjectTool::Update(Input* pInput, float dt)
+void TransformTool::Update(Input* pInput, float dt)
 {
-	if (mSelectedEntity == nullptr)
+	if (mSelectedActor == nullptr)
 		return;
 
 	float dist;
@@ -131,8 +133,9 @@ void ObjectTool::Update(Input* pInput, float dt)
 
 	// Stick to the terain?
 	if (pInput->KeyPressed('C')) {
-		vec3 selectedPos = mSelectedEntity->transformComponent->GetPosition();
-		mSelectedEntity->transformComponent->SetPosition(glm::vec3(selectedPos.x, mTerrain->GetHeight(selectedPos.x, selectedPos.z), selectedPos.z));
+		Scene::CTransform* transform = mSelectedActor->GetComponent<Scene::CTransform>();
+		vec3 position = transform->GetPosition();
+		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));
 		//float height = mMovingObject->GetWorld()->GetTerrain()->GetHeight(mMovingObject->GetPosition().x, mMovingObject->GetPosition().z);
 		//if (height != -std::numeric_limits<float>::infinity())
 		//	UpdatePosition(vec3(mMovingObject->GetPosition().x, height, mMovingObject->GetPosition().z) - mMovingObject->GetPosition());
@@ -140,7 +143,7 @@ void ObjectTool::Update(Input* pInput, float dt)
 }
 
 //! Draws the arrow axis.
-void ObjectTool::Draw()
+void TransformTool::Draw()
 {
 	// Disable the depth test.
 	//ID3D11DepthStencilState* oldState = nullptr;
@@ -164,12 +167,11 @@ void ObjectTool::Draw()
 }
 
 //! Updates the moving objects position.
-void ObjectTool::UpdatePosition(vec3 delta)
+void TransformTool::UpdatePosition(vec3 delta)
 {
-	if (mSelectedEntity != nullptr) {
-		mSelectedEntity->transformComponent->SetPosition(mSelectedEntity->transformComponent->GetPosition() + delta);
-		if (delta != vec3(0))
-			int a = 1;
+	if (mSelectedActor != nullptr) {
+		Scene::CTransform* transform = mSelectedActor->GetComponent<Scene::CTransform>();
+		transform->AddTranslation(delta);
 		//onPositionChange(mMovingObject->GetPosition());
 	}
 
@@ -192,7 +194,7 @@ bool intersectPlane(vec3 n, vec3 p0, vec3 origin, vec3 dir, float &t)
 }
 
 //! Move the object on the X axis.
-vec3 ObjectTool::MoveAxisX(vec3 pos, vec3 dir)
+vec3 TransformTool::MoveAxisX(vec3 pos, vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
 	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f), pos, dir, dist);
@@ -215,7 +217,7 @@ vec3 ObjectTool::MoveAxisX(vec3 pos, vec3 dir)
 }
 
 //! Move the object on the Y axis.
-vec3 ObjectTool::MoveAxisY(vec3 pos, vec3 dir)
+vec3 TransformTool::MoveAxisY(vec3 pos, vec3 dir)
 {
 	//// Top right triangle.
 	//vec3 right = GetCamera()->GetRight();
@@ -255,7 +257,7 @@ vec3 ObjectTool::MoveAxisY(vec3 pos, vec3 dir)
 }
 
 //! Move the object on the Z axis.
-vec3 ObjectTool::MoveAxisZ(vec3 pos, vec3 dir)
+vec3 TransformTool::MoveAxisZ(vec3 pos, vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
 	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f), pos, dir, dist);
@@ -278,7 +280,7 @@ vec3 ObjectTool::MoveAxisZ(vec3 pos, vec3 dir)
 }
 
 //! Scales the axis arrows so they allways have the same size on the screen.
-void ObjectTool::ScaleAxisArrows()
+void TransformTool::ScaleAxisArrows()
 {
 	//vec3 diff = GLib::GetCamera()->GetPosition() - mMovingObject->GetPosition();
 	//float dist = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
@@ -289,27 +291,24 @@ void ObjectTool::ScaleAxisArrows()
 	//SetPosition(mMovingObject->GetPosition());
 }
 
-//! Set the moving object.
-void ObjectTool::SetSelectedEntity(ECS::EntityCache* entityCache)
-{
-	mSelectedEntity = entityCache;
-
-	if (mSelectedEntity != nullptr)
-		mSelectedEntity->transformComponent->SetScale(glm::vec3(300));
-	//mAxisX->SetPosition(pObject->GetPosition());
-
-	//SetPosition(pObject->GetPosition());
-}
-
 //! Sets the axis positions.
-void ObjectTool::SetPosition(vec3 position)
+void TransformTool::SetPosition(vec3 position)
 {
 	//mAxisX->SetPosition(position + vec3(mAxisX->GetBoundingBox().Extents.x*0.81, 0, 0));
 	//mAxisY->SetPosition(position + vec3(0, mAxisY->GetBoundingBox().Extents.y*0.81, 0));
 	//mAxisZ->SetPosition(position + vec3(0, 0, mAxisZ->GetBoundingBox().Extents.z*0.81));
 }
 
-bool ObjectTool::IsMovingObject()
+bool TransformTool::IsMovingObject()
 {
 	return mMovingAxis == NONE ? false : true;
+}
+
+void TransformTool::SetActor(Scene::Actor* actor)
+{
+	mSelectedActor = actor;
+
+	//mAxisX->SetPosition(pObject->GetPosition());
+
+	//SetPosition(pObject->GetPosition());
 }

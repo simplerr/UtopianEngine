@@ -19,7 +19,6 @@
 #include "ecs/systems/RenderSystem.h"
 #include "ecs/systems/PhysicsSystem.h"
 #include "ecs/systems/HealthSystem.h"
-#include "ecs/systems/EditorSystem.h"
 #include "Input.h"
 #include "imgui/imgui.h"
 
@@ -63,6 +62,10 @@ namespace Vulkan
 
 		mRenderer->PostInitPrepare();
 
+		// Note: Needs to be called after a camera have been added to the scene
+		mEditor = make_shared<Editor>(mRenderer.get(), &World::Instance(), mTerrain.get());
+
+
 		ObjectManager::Instance().PrintObjects();
 	}
 
@@ -78,9 +81,6 @@ namespace Vulkan
 		Input::Start();
 		SceneRenderer::Start(mRenderer.get());
 		SceneRenderer::Instance().SetTerrain(mTerrain.get());
-
-		// *** Editor 
-		mEditor = make_shared<Editor>(mRenderer.get(), &World::Instance());
 
 		// Add house
 		auto house = Actor::Create("House_1");
