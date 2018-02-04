@@ -5,6 +5,7 @@ namespace Scene
 {
 	class World;
 	class Actor;
+	class ActorInspector;
 
 	class Editor
 	{
@@ -17,10 +18,12 @@ namespace Scene
 
 		void Draw();
 	private:
-		bool IsEntitySelected();
+		bool IsActorSelected();
+		void OnActorSelected(Actor* actor);
 
 		Vulkan::Renderer* mRenderer;
 		World* mWorld;
-		Actor* mSelectedEntity;
+		ActorInspector* mActorInspector;
+		Actor* mSelectedActor;
 	};
 }

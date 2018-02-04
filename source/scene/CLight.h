@@ -20,6 +20,8 @@ namespace Scene
 		// Setters
 		void SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular);
 		void SetMaterial(const vec4& color);
+		void SetMaterial(const Vulkan::Material& material);
+
 		void SetDirection(const vec3& direction);
 		void SetDirection(float x, float y, float z);
 		void SetRange(float range);
@@ -27,15 +29,18 @@ namespace Scene
 		void SetAtt(float a0, float a1, float a2);
 		void SetType(Vulkan::LightType type);
 		void SetIntensity(float ambient, float diffuse, float specular);
+		void SetIntensity(vec3 intensity);
+
 
 		// Getters
+		const Vulkan::LightData& GetLightData() const;
 		const vec3& GetDirection() const;
 		const vec3& GetAtt() const;
 		const vec3& GetIntensity() const;
 		Vulkan::Material GetMaterial() const;
 		float	 GetRange() const;
 		float	 GetSpot() const;
-		int		 GetType() const;
+		int		 GetLightType() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {

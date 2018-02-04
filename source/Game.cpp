@@ -36,7 +36,7 @@
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
 #include "scene/SceneRenderer.h"
-#include "scene/Editor.h"
+#include "editor/Editor.h"
 #include "utility/Utility.h"
 
 using namespace Scene;
@@ -114,8 +114,8 @@ namespace Vulkan
 		mesh = house->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/Well.obj"));
 
-		// Add street light
-		house = Actor::Create("Stone");
+		// Add actor w/ directional light component
+		house = Actor::Create("Stone DirectionalLight");
 
 		transform = house->AddComponent<CTransform>(vec3(74400.0f, 6200.0f, 78000.0f));
 		transform->SetScale(vec3(1350.0f));
@@ -124,6 +124,15 @@ namespace Vulkan
 		mesh = house->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
 
+		CLight* lightComponent = house->AddComponent<CLight>();
+		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
+		lightComponent->SetDirection(vec3(1, 0, 0));
+		lightComponent->SetAtt(0, 0.00, 0.00000002);
+		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
+		lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		lightComponent->SetRange(100000);
+		lightComponent->SetSpot(4.0f);
+
 		// Add orbiting entity
 		auto teapot = Actor::Create("Window");
 
@@ -131,27 +140,11 @@ namespace Vulkan
 		transform->SetScale(vec3(1050.0f));
 		transform->SetRotation(vec3(0, 180, 180));
 
-		orbit = teapot->AddComponent<COrbit>(-0.01f);
-		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
+		/*orbit = teapot->AddComponent<COrbit>(-0.01f);
+		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));*/
 
 		mesh = teapot->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseTower.obj"));
-
-		// Add light
-		auto light = Actor::Create("DirectionalLight");
-
-		light->AddComponent<CTransform>(vec3(87000, 5000, 67000));
-		light->AddComponent<CTransform>(vec3(0, 0.5, 0));
-
-		CLight* lightComponent = light->AddComponent<CLight>();
-		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
-		//lightComponent->SetMaterials(vec4(1, 0, 0, 1), vec4(1, 1, 1, 1), vec4(0, 0, 1, 1));
-		lightComponent->SetDirection(vec3(1, 0, 0));
-		lightComponent->SetAtt(0, 1, 0);
-		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
-		lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
-		lightComponent->SetRange(100000);
-		lightComponent->SetSpot(4.0f);
 
 		// Add light
 		auto light2 = Actor::Create("PointLight");

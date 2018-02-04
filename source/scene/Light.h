@@ -22,6 +22,8 @@ namespace Scene
 		void SetLightData(const Vulkan::LightData& lightData);
 		void SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular);
 		void SetMaterial(const vec4& color);
+		void SetMaterial(const Vulkan::Material & material);
+
 		void SetDirection(const vec3& direction);
 		void SetRange(float range);
 		void SetSpot(float spot);
@@ -35,6 +37,7 @@ namespace Scene
 		const vec3& GetAtt() const;
 		const vec3& GetIntensity() const;
 		Vulkan::LightData* GetLightDataPtr();
+		const Vulkan::LightData& GetLightData() const;
 		Vulkan::Material GetMaterial() const;
 		float	 GetRange() const;
 		float	 GetSpot() const;

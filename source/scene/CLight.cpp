@@ -18,7 +18,6 @@ namespace Scene
 
 	void CLight::Update()
 	{
-		ImGui::SliderFloat("Light intensity", &mInternal->GetLightDataPtr()->intensity.x, 0.0f, 1.0f);
 	}
 
 	void CLight::OnCreated()
@@ -36,6 +35,11 @@ namespace Scene
 	void CLight::SetMaterial(const vec4& color)
 	{
 		mInternal->SetMaterial(color);
+	}
+
+	void CLight::SetMaterial(const Vulkan::Material& material)
+	{
+		mInternal->SetMaterial(material);
 	}
 
 	void CLight::SetDirection(const vec3& direction)
@@ -73,6 +77,16 @@ namespace Scene
 		mInternal->SetIntensity(ambient, diffuse, specular);
 	}
 
+	void CLight::SetIntensity(vec3 intensity)
+	{
+		SetIntensity(intensity.x, intensity.y, intensity.z);
+	}
+
+	const Vulkan::LightData& CLight::GetLightData() const
+	{
+		return mInternal->GetLightData();
+	}
+
 	const vec3& CLight::GetDirection() const
 	{
 		return mInternal->GetDirection();
@@ -103,7 +117,7 @@ namespace Scene
 		return mInternal->GetSpot();
 	}
 
-	int CLight::GetType() const
+	int CLight::GetLightType() const
 	{
 		return mInternal->GetType();
 	}

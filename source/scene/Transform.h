@@ -34,7 +34,7 @@ namespace Scene
 		const mat4& GetWorldInverseTransposeMatrix() const;
 
 		void RebuildWorldMatrix();
-	private:
+	//private:
 
 		mat4 mWorld;
 		vec3 mPosition;

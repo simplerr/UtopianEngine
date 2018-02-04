@@ -58,6 +58,11 @@ namespace Scene
 		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
 	}
 
+	void Light::SetMaterial(const Vulkan::Material & material)
+	{
+		mLightData.material = material;
+	}
+
 	void Light::SetDirection(const vec3& direction)
 	{
 		mLightData.direction = normalize(direction);
@@ -106,6 +111,11 @@ namespace Scene
 	Vulkan::LightData* Light::GetLightDataPtr()
 	{
 		return &mLightData;
+	}
+
+	const Vulkan::LightData& Light::GetLightData() const
+	{
+		return mLightData;
 	}
 
 	Vulkan::Material Light::GetMaterial() const

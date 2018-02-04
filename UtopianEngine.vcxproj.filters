@@ -366,14 +366,20 @@
     <ClCompile Include="source\vulkan\UIOverlay.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\Editor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\ColorEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\scene\Actor.cpp">
       <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\editor\Editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\editor\ActorInspector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\editor\ComponentInspector.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -662,14 +668,20 @@
     <ClInclude Include="source\vulkan\UIOverlay.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\Editor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\ColorEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\scene\Actor.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\Editor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\ActorInspector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\ComponentInspector.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

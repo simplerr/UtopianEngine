@@ -96,6 +96,8 @@
     <ClCompile Include="source\ecs\systems\EditorSystem.cpp" />
     <ClCompile Include="source\ecs\systems\RenderSystem.cpp" />
     <ClCompile Include="source\ecs\systems\System.cpp" />
+    <ClCompile Include="source\editor\ActorInspector.cpp" />
+    <ClCompile Include="source\editor\ComponentInspector.cpp" />
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -105,7 +107,7 @@
     <ClCompile Include="source\scene\CNoClip.cpp" />
     <ClCompile Include="source\scene\COrbit.cpp" />
     <ClCompile Include="source\scene\CPlayerControl.cpp" />
-    <ClCompile Include="source\scene\Editor.cpp" />
+    <ClCompile Include="source\editor\Editor.cpp" />
     <ClCompile Include="source\scene\SceneRenderer.cpp" />
     <ClCompile Include="source\scene\CLight.cpp" />
     <ClCompile Include="source\scene\CRenderable.cpp" />
@@ -187,6 +189,8 @@
     <ClInclude Include="source\ecs\systems\EditorSystem.h" />
     <ClInclude Include="source\ecs\systems\RenderSystem.h" />
     <ClInclude Include="source\ecs\systems\System.h" />
+    <ClInclude Include="source\editor\ActorInspector.h" />
+    <ClInclude Include="source\editor\ComponentInspector.h" />
     <ClInclude Include="source\Game.h" />
     <ClInclude Include="source\Exception.h" />
     <ClInclude Include="source\Input.h" />
@@ -199,7 +203,7 @@
     <ClInclude Include="source\scene\CommonBuffers.h" />
     <ClInclude Include="source\scene\COrbit.h" />
     <ClInclude Include="source\scene\CPlayerControl.h" />
-    <ClInclude Include="source\scene\Editor.h" />
+    <ClInclude Include="source\editor\Editor.h" />
     <ClInclude Include="source\scene\SceneRenderer.h" />
     <ClInclude Include="source\scene\CLight.h" />
     <ClInclude Include="source\scene\Light.h" />
