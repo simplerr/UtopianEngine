@@ -6,6 +6,7 @@ namespace Scene
 	SceneNode::SceneNode()
 	{
 		mDrawBoundingBox = false;
+		mDrawBoundingBox = true;
 	}
 
 	SceneNode::~SceneNode()

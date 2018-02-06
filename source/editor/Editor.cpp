@@ -20,7 +20,7 @@ namespace Scene
 
 		mActorInspector = new ActorInspector();
 
-		mTransformTool = new TransformTool(renderer->GetCamera(), mTerrain);
+		mTransformTool = new TransformTool(renderer, mTerrain);
 	}
 
 	Editor::~Editor()

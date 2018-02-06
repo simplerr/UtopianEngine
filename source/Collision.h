@@ -29,9 +29,9 @@ namespace Vulkan
 		void Update(glm::mat4 worldMatrix);
 		bool RayIntersect(const Ray& ray, float& dist);
 
-		float GetWidth();
-		float GetHeight();
-		float GetDepth();
+		float GetWidth() const;
+		float GetHeight() const;
+		float GetDepth() const;
 		glm::vec3 GetMin() const;
 		glm::vec3 GetMax() const;
 

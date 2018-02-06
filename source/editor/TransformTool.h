@@ -1,5 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "vulkan/ColorEffect.h"
+#include "utility/Common.h"
 
 enum MovingAxis
 {
@@ -24,6 +26,7 @@ namespace ECS
 namespace Scene
 {
 	class Actor;
+	class Renderable;
 }
 
 class Input;
@@ -33,11 +36,11 @@ class Terrain;
 class TransformTool
 {
 public:
-	TransformTool(Vulkan::Camera* camera, Terrain* terrain);
+	TransformTool(Vulkan::Renderer* renderer, Terrain* terrain);
 	~TransformTool();
 
 	void Update(Input* pInput, float dt);
-	void Draw();
+	void Draw(Vulkan::CommandBuffer* commandBuffer);
 	bool IsMovingObject();
 	void SetActor(Scene::Actor* actor);
 
@@ -53,14 +56,16 @@ private:
 	void ScaleAxisArrows();
 
 private:
-	Vulkan::StaticModel* mAxisX;
-	Vulkan::StaticModel* mAxisY;
-	Vulkan::StaticModel* mAxisZ;
+	SharedPtr<Scene::Renderable> mAxisX;
+	SharedPtr<Scene::Renderable> mAxisY;
+	SharedPtr<Scene::Renderable> mAxisZ;
 	Scene::Actor* mSelectedActor;
 	MovingAxis	  mMovingAxis;
 	glm::vec3	  mLastPlanePos;
 	Vulkan::Camera* mCamera;
 	Terrain* mTerrain;
+	Vulkan::ColorEffect mColorEffect;
 
+	const float AXIS_SCALE = 30.0f;
 	const float PLANE_SIZE = 100000.0;
 };

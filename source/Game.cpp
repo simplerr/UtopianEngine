@@ -107,12 +107,12 @@ namespace Vulkan
 		// Add house
 		house = Actor::Create("Well_1");
 
-		transform = house->AddComponent<CTransform>(vec3(81000.0f, 300.0f, 78000.0f));
+		transform = house->AddComponent<CTransform>(vec3(91000.0f, 300.0f, 78000.0f));
 		transform->SetScale(vec3(1550.0f));
 		transform->SetRotation(vec3(180, 0, 0));
 
 		mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/Well.obj"));
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/arrow.obj"));
 
 		// Add actor w/ directional light component
 		house = Actor::Create("Stone DirectionalLight");

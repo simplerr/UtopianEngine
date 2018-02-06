@@ -10,38 +10,64 @@
 #include "ecs/components/TransformComponent.h"
 #include "scene/Actor.h"
 #include "scene/CTransform.h"
+#include "vulkan/Renderer.h"
+#include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/ModelLoader.h"
+#include "scene/Renderable.h"
+#include "scene/SceneRenderer.h"
+#include "Collision.h"
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-TransformTool::TransformTool(Vulkan::Camera* camera, Terrain* terrain)
+TransformTool::TransformTool(Vulkan::Renderer* renderer, Terrain* terrain)
 {
 	// nullptr as default.
 	mSelectedActor = nullptr;
-	mCamera = camera;
+	mCamera = renderer->GetCamera();
 	mTerrain = terrain;
 
-	//// Create the X axis.
-	//mAxisX = new StaticObject(pImporter, "models/arrow.obj");
+	auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/arrow.obj");
+
+	mAxisX = Scene::Renderable::Create();
+	mAxisX->SetScale(vec3(AXIS_SCALE));
+	mAxisX->SetRotation(vec3(0.0f, 0.0f, 90.0f));
+	mAxisX->SetModel(model);
+	//mAxisX->SetPipeline(COLOR_NO_DEPTH_TEST);
+
+	mAxisY = Scene::Renderable::Create();
+	mAxisY->SetScale(vec3(AXIS_SCALE));
+	mAxisY->SetRotation(vec3(180.0f, 0.0f, 0.0f));
+	mAxisY->SetModel(model);
+
+	mAxisZ = Scene::Renderable::Create();
+	mAxisZ->SetScale(vec3(AXIS_SCALE));
+	mAxisZ->SetRotation(vec3(90.0f, 0.0f, 0.0f));
+	mAxisZ->SetModel(model);
+
+	/*Scene::SceneRenderer::Instance().AddRenderable(mAxisX.get());
+	Scene::SceneRenderer::Instance().AddRenderable(mAxisY.get());
+	Scene::SceneRenderer::Instance().AddRenderable(mAxisZ.get());*/
+
 	//mAxisX->SetPosition(vec3(0, 30, 30));
 	//mAxisX->SetMaterials(Material(Colors::Green));
 	//mAxisX->SetRotation(vec3(3.14f / 2.0f, 3.14f / 2.0f, 0));
 	//mAxisX->SetScale(vec3(1.50f, 1.50f, 1.50f));
 
 	//// Create the Y axis.
-	//mAxisY = new StaticObject(pImporter, "models/arrow.obj");
 	//mAxisY->SetPosition(vec3(0, 30, 30));
 	//mAxisY->SetMaterials(Material(Colors::Red));
 	//mAxisY->SetRotation(vec3(0, 1, 0));
 	//mAxisY->SetScale(vec3(1.50f, 1.50f, 1.50f));
 
 	//// Create the Z axis.
-	//mAxisZ = new StaticObject(pImporter, "models/arrow.obj");
 	//mAxisZ->SetPosition(vec3(0, 30, 30));
 	//mAxisZ->SetMaterials(Material(Colors::Blue));
 	//mAxisZ->SetRotation(vec3(0, 3.14f / 2.0f, 3.14f / 2.0f));
 	//mAxisZ->SetScale(vec3(1.50f, 1.50f, 1.50f));
 
 	mMovingAxis = NONE;
+
+	mColorEffect.Init(renderer);
 }
 
 //! Cleanup.
@@ -79,6 +105,26 @@ void TransformTool::Update(Input* pInput, float dt)
 	if (pInput->KeyPressed(VK_LBUTTON))
 	{
 		InitStartingPosition(pInput, dir, pos, dist);
+
+		Vulkan::Ray ray = mCamera->GetPickingRay();
+		float distance = FLT_MAX;
+
+		Vulkan::BoundingBox boundingBoxX = mAxisX->GetBoundingBox();
+		Vulkan::BoundingBox boundingBoxY = mAxisY->GetBoundingBox();
+		Vulkan::BoundingBox boundingBoxZ = mAxisZ->GetBoundingBox();
+
+		if (boundingBoxX.RayIntersect(ray, distance))
+		{
+			mMovingAxis = X_AXIS;
+		}
+		else if (boundingBoxY.RayIntersect(ray, distance))
+		{
+			mMovingAxis = Y_AXIS;
+		}
+		else if (boundingBoxZ.RayIntersect(ray, distance))
+		{
+			mMovingAxis = Z_AXIS;
+		}
 
 		// Find out which axis arrow was pressed.
 		/*if (mAxisX->RayIntersect(XMLoadFloat3(&pos), XMLoadFloat3(&dir), dist))
@@ -143,7 +189,7 @@ void TransformTool::Update(Input* pInput, float dt)
 }
 
 //! Draws the arrow axis.
-void TransformTool::Draw()
+void TransformTool::Draw(Vulkan::CommandBuffer* commandBuffer)
 {
 	// Disable the depth test.
 	//ID3D11DepthStencilState* oldState = nullptr;
@@ -175,9 +221,9 @@ void TransformTool::UpdatePosition(vec3 delta)
 		//onPositionChange(mMovingObject->GetPosition());
 	}
 
-	//mAxisX->SetPosition(mAxisX->GetPosition() + delta);
-	//mAxisY->SetPosition(mAxisY->GetPosition() + delta);
-	//mAxisZ->SetPosition(mAxisZ->GetPosition() + delta);
+	mAxisX->SetPosition(mAxisX->GetPosition() + delta);
+	mAxisY->SetPosition(mAxisY->GetPosition() + delta);
+	mAxisZ->SetPosition(mAxisZ->GetPosition() + delta);
 }
 
 bool intersectPlane(vec3 n, vec3 p0, vec3 origin, vec3 dir, float &t)
@@ -284,21 +330,22 @@ vec3 TransformTool::MoveAxisZ(vec3 pos, vec3 dir)
 //! Scales the axis arrows so they allways have the same size on the screen.
 void TransformTool::ScaleAxisArrows()
 {
-	//vec3 diff = GLib::GetCamera()->GetPosition() - mMovingObject->GetPosition();
-	//float dist = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
-	//float scale = dist / 60.0f;
-	//mAxisX->SetScale(vec3(scale, scale, scale));
-	//mAxisY->SetScale(vec3(scale, scale, scale));
-	//mAxisZ->SetScale(vec3(scale, scale, scale));
-	//SetPosition(mMovingObject->GetPosition());
+	vec3 diff = mCamera->GetPosition() - mSelectedActor->GetTransform().GetPosition();
+	float dist = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
+	float scale = dist / AXIS_SCALE;
+	mAxisX->SetScale(vec3(scale, scale, scale));
+	mAxisY->SetScale(vec3(scale, scale, scale));
+	mAxisZ->SetScale(vec3(scale, scale, scale));
+	SetPosition(mSelectedActor->GetTransform().GetPosition());
 }
 
 //! Sets the axis positions.
 void TransformTool::SetPosition(vec3 position)
 {
-	//mAxisX->SetPosition(position + vec3(mAxisX->GetBoundingBox().Extents.x*0.81, 0, 0));
-	//mAxisY->SetPosition(position + vec3(0, mAxisY->GetBoundingBox().Extents.y*0.81, 0));
-	//mAxisZ->SetPosition(position + vec3(0, 0, mAxisZ->GetBoundingBox().Extents.z*0.81));
+	float offset = 1.50f;
+	mAxisX->SetPosition(position + vec3(mAxisX->GetBoundingBox().GetHeight() * offset, 0, 0));
+	mAxisY->SetPosition(position + vec3(0, mAxisY->GetBoundingBox().GetHeight() * offset, 0));
+	mAxisZ->SetPosition(position + vec3(0, 0, -mAxisZ->GetBoundingBox().GetHeight() * offset));
 }
 
 bool TransformTool::IsMovingObject()
@@ -310,7 +357,5 @@ void TransformTool::SetActor(Scene::Actor* actor)
 {
 	mSelectedActor = actor;
 
-	//mAxisX->SetPosition(pObject->GetPosition());
-
-	//SetPosition(pObject->GetPosition());
+	SetPosition(mSelectedActor->GetTransform().GetPosition());
 }

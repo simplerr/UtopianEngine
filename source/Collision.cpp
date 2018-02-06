@@ -135,15 +135,15 @@ namespace Vulkan
 		return true;
 	}
 
-	float BoundingBox::GetWidth() {
+	float BoundingBox::GetWidth() const {
 		return mMax.x - mMin.x;
 	}
 
-	float BoundingBox::GetHeight() {
+	float BoundingBox::GetHeight() const {
 		return mMax.y - mMin.y;
 	}
 
-	float BoundingBox::GetDepth() {
+	float BoundingBox::GetDepth() const {
 		return mMax.z - mMin.z;
 	}
 

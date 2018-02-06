@@ -45,6 +45,9 @@ namespace Scene
 		Vulkan::BoundingBox boundingBox = mModel->GetBoundingBox();
 		mat4 world;
 		world = glm::translate(world, GetPosition() + vec3(0.0f, boundingBox.GetHeight() / 2, 0.0f));
+		/*world = glm::rotate(world, glm::radians(GetRotation().x), vec3(1.0f, 0.0f, 0.0f));
+		world = glm::rotate(world, glm::radians(GetRotation().y), vec3(0.0f, 1.0f, 0.0f));
+		world = glm::rotate(world, glm::radians(GetRotation().z), vec3(0.0f, 0.0f, 1.0f));*/
 		world = glm::scale(world, GetScale());
 		boundingBox.Update(world);
 
