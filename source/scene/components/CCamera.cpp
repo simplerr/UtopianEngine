@@ -1,6 +1,6 @@
-#include "scene/CCamera.h"
+#include "scene/components/CCamera.h"
 #include "scene/World.h"
-#include "scene/Actor.h"
+#include "scene/components/Actor.h"
 #include "Camera.h"
 
 namespace Utopian

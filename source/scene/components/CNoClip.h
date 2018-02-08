@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
@@ -11,16 +11,23 @@ namespace Utopian
 	class Actor;
 	class CCamera;
 	class CTransform;
-	class COrbit;
-	class CNoClip;
 
-	class CPlayerControl : public Component
+	class CNoClip : public Component
 	{
 	public:
-		CPlayerControl(Actor* parent);
-		~CPlayerControl();
+		CNoClip(Actor* parent, float speed);
+		~CNoClip();
 
 		void Update() override;
+		void OnCreated() override;
+
+		// Setters
+		void SetSpeed(float speed);
+		void SetSensitivity(float sensitivity);
+
+		// Getters
+		float GetSpeed() const;
+		float GetSensitivity() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {
@@ -33,12 +40,8 @@ namespace Utopian
 
 	private:
 		CCamera* mCamera; // For convenience
-		CNoClip* mNoClip;
-		COrbit* mOrbit;
 		CTransform* mTransform;
-		vec3 mTarget;
+		float mSensitivity;
 		float mSpeed;
-		float mRadius;
-		float mCounter;
 	};
 }

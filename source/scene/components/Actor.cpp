@@ -1,6 +1,6 @@
 #include "Actor.h"
 #include "scene/ObjectManager.h"
-#include "scene/CTransform.h"
+#include "scene/components/CTransform.h"
 #include "utility/Exception.h"
 
 namespace Utopian

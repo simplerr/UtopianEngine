@@ -6,8 +6,8 @@
 #include "Input.h"
 #include "vulkan/VulkanDebug.h"
 #include <glm/gtx/intersect.hpp>
-#include "scene/Actor.h"
-#include "scene/CTransform.h"
+#include "scene/components/Actor.h"
+#include "scene/components/CTransform.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ModelLoader.h"

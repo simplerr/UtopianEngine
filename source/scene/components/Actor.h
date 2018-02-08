@@ -2,7 +2,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "utility/Common.h"
 #include "scene/Object.h"
 #include "scene/ObjectManager.h"

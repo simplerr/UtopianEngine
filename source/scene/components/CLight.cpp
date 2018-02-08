@@ -1,4 +1,4 @@
-#include "scene/CLight.h"
+#include "scene/components/CLight.h"
 #include "scene/SceneNode.h"
 #include "scene/World.h"
 #include "imgui/imgui.h"

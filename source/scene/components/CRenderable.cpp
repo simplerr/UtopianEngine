@@ -1,7 +1,7 @@
-#include "scene/CRenderable.h"
-#include "scene/Actor.h"
+#include "scene/components/CRenderable.h"
+#include "scene/components/Actor.h"
 #include "scene/Renderable.h"
-#include "scene/CTransform.h"
+#include "scene/components/CTransform.h"
 #include "scene/World.h"
 
 namespace Utopian

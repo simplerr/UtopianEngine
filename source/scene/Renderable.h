@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "scene/SceneNode.h"
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
 

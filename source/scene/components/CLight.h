@@ -1,5 +1,5 @@
 #pragma once
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "scene/Light.h"
 #include "LightData.h"
 #include "utility/Common.h"

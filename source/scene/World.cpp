@@ -1,6 +1,6 @@
 #include "scene/World.h"
-#include "scene/Actor.h"
-#include "scene/CRenderable.h"
+#include "scene/components/Actor.h"
+#include "scene/components/CRenderable.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian

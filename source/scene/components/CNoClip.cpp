@@ -1,7 +1,7 @@
-#include "scene/CNoClip.h"
-#include "scene/CCamera.h"
-#include "scene/CTransform.h"
-#include "scene/Actor.h"
+#include "scene/components/CNoClip.h"
+#include "scene/components/CCamera.h"
+#include "scene/components/CTransform.h"
+#include "scene/components/Actor.h"
 #include "Input.h"
 
 namespace Utopian

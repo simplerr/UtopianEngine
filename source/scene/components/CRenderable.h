@@ -1,5 +1,5 @@
 #pragma once
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "scene/Renderable.h"
 #include "utility/Common.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 

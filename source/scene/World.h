@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
-#include "scene/Component.h"
+#include "scene/components/Component.h"
 #include "scene/SceneNode.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
