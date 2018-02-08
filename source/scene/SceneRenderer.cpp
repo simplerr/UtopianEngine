@@ -16,7 +16,7 @@
 
 namespace Utopian
 {
-	SceneRenderer::SceneRenderer(Utopian::Vk::Renderer* renderer)
+	SceneRenderer::SceneRenderer(Vk::Renderer* renderer)
 	{
 		mMainCamera = nullptr;
 		mMainCamera = renderer->GetCamera();
@@ -51,7 +51,7 @@ namespace Utopian
 		per_frame_ps.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		fog_ubo.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mCommonDescriptorPool = new Utopian::Vk::DescriptorPool(mRenderer->GetDevice());
+		mCommonDescriptorPool = new Vk::DescriptorPool(mRenderer->GetDevice());
 		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100);
 		mCommonDescriptorPool->Create();
 
@@ -60,7 +60,7 @@ namespace Utopian
 		mCommonDescriptorSetLayout.AddUniformBuffer(2, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mCommonDescriptorSetLayout.Create(mRenderer->GetDevice());
 
-		mCommonDescriptorSet = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), &mCommonDescriptorSetLayout, mCommonDescriptorPool);
+		mCommonDescriptorSet = new Vk::DescriptorSet(mRenderer->GetDevice(), &mCommonDescriptorSetLayout, mCommonDescriptorPool);
 		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(2, &fog_ubo.GetDescriptor());
@@ -89,17 +89,17 @@ namespace Utopian
 		mWaterRenderer->Update(mRenderer, mMainCamera);
 	}
 
-	void SceneRenderer::RenderNodes(Utopian::Vk::CommandBuffer* commandBuffer)
+	void SceneRenderer::RenderNodes(Vk::CommandBuffer* commandBuffer)
 	{
 		for (auto& renderable : mRenderables)
 		{
-			Utopian::Vk::StaticModel* model = renderable->GetModel();
+			Vk::StaticModel* model = renderable->GetModel();
 			mPhongEffect.SetPipeline(0);
 
-			for (Utopian::Vk::Mesh* mesh : model->mMeshes)
+			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
-				Utopian::Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
 
 				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
@@ -117,12 +117,12 @@ namespace Utopian
 			// Draw the AABB
 			if (renderable->IsBoundingBoxVisible())
 			{
-				Utopian::Vk::BoundingBox boundingBox = renderable->GetBoundingBox();
+				BoundingBox boundingBox = renderable->GetBoundingBox();
 				glm::vec3 translation = renderable->GetTransform().GetPosition() + glm::vec3(0, boundingBox.GetHeight() / 2, 0);
 				mat4 world = glm::translate(glm::mat4(), translation);
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-				Utopian::Vk::PushConstantBlock pushConsts(world);
+				Vk::PushConstantBlock pushConsts(world);
 
 				commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline());
 				commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
@@ -134,7 +134,7 @@ namespace Utopian
 		}
 	}
 
-	void SceneRenderer::RenderScene(Utopian::Vk::CommandBuffer* commandBuffer)
+	void SceneRenderer::RenderScene(Vk::CommandBuffer* commandBuffer)
 	{
 		UpdateUniformBuffers();
 
@@ -217,12 +217,12 @@ namespace Utopian
 		mLights.push_back(light);
 	}
 
-	void SceneRenderer::AddCamera(Utopian::Vk::Camera* camera)
+	void SceneRenderer::AddCamera(Camera* camera)
 	{
 		mCameras.push_back(camera);
 	}
 
-	void SceneRenderer::SetMainCamera(Utopian::Vk::Camera* camera)
+	void SceneRenderer::SetMainCamera(Camera* camera)
 	{
 		mRenderer->SetCamera(camera);
 		mMainCamera = camera;

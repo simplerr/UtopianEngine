@@ -2,49 +2,41 @@
 
 #include <vector>
 #include "vulkan/WaterEffect.h"
+#include "vulkan/VulkanInclude.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
-	class CommandBuffer;
-	class RenderTarget;
-	class Texture;
-	class TextureLoader;
-	class StaticModel;
-	class Renderer;
-	class ModelLoader;
-	class Camera;
-}
-
-class WaterRenderer
-{
-public:
-	WaterRenderer(Utopian::Vk::Renderer* renderer, Utopian::Vk::ModelLoader* modelLoader, Utopian::Vk::TextureLoader* textureLoader);
-	~WaterRenderer();
-
-	void Render(Utopian::Vk::Renderer* renderer, Utopian::Vk::CommandBuffer* commandBuffer);
-	void Update(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera);
-
-	void AddWater(glm::vec3 position, uint32_t numCells);
-
-	Utopian::Vk::RenderTarget* GetReflectionRenderTarget();
-	Utopian::Vk::RenderTarget* GetRefractionRenderTarget();
-
-private:
-	struct Water
+	class WaterRenderer
 	{
-		Utopian::Vk::StaticModel* gridModel;
-		glm::vec3 position;
+	public:
+		WaterRenderer(Vk::Renderer* renderer, Vk::ModelLoader* modelLoader, Vk::TextureLoader* textureLoader);
+		~WaterRenderer();
+
+		void Render(Vk::Renderer* renderer, Vk::CommandBuffer* commandBuffer);
+		void Update(Vk::Renderer* renderer, Camera* camera);
+
+		void AddWater(glm::vec3 position, uint32_t numCells);
+
+		Vk::RenderTarget* GetReflectionRenderTarget();
+		Vk::RenderTarget* GetRefractionRenderTarget();
+
+	private:
+		struct Water
+		{
+			Vk::StaticModel* gridModel;
+			glm::vec3 position;
+		};
+
+		Vk::Renderer* mRenderer;
+		Vk::ModelLoader* mModelLoader;
+
+		Vk::WaterEffect mWaterEffect;
+		Vk::RenderTarget* mReflectionRenderTarget;
+		Vk::RenderTarget* mRefractionRenderTarget;
+		Vk::Texture* dudvTexture;
+		Vk::StaticModel* mGridModel;
+		std::vector<Water> mWaterList;
+
+		const uint32_t CELL_SIZE = 2000.0f;
 	};
-
-	Utopian::Vk::Renderer* mRenderer;
-	Utopian::Vk::ModelLoader* mModelLoader;
-
-	Utopian::Vk::WaterEffect mWaterEffect;
-	Utopian::Vk::RenderTarget* mReflectionRenderTarget;
-	Utopian::Vk::RenderTarget* mRefractionRenderTarget;
-	Utopian::Vk::Texture* dudvTexture;
-	Utopian::Vk::StaticModel* mGridModel;
-	std::vector<Water> mWaterList;
-
-	const uint32_t CELL_SIZE = 2000.0f;
-};
+}

@@ -27,7 +27,7 @@ namespace Utopian
 		virtual void OnCreated() { };
 		virtual void Update() { };
 
-		const virtual Utopian::Vk::BoundingBox GetBoundingBox() const;
+		const virtual Utopian::BoundingBox GetBoundingBox() const;
 
 		virtual uint32_t GetType() = 0;
 

@@ -22,7 +22,7 @@ namespace Utopian
 
 		static SharedPtr<Actor> Create(string name);
 
-		Utopian::Vk::BoundingBox GetBoundingBox() const;
+		BoundingBox GetBoundingBox() const;
 		const Transform& GetTransform() const;
 
 		/*

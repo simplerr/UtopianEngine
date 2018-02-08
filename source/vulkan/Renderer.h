@@ -95,8 +95,8 @@ namespace Utopian::Vk
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
-		void SetCamera(Camera* camera);
-		Camera* GetCamera();
+		void SetCamera(Utopian::Camera* camera);
+		Utopian::Camera* GetCamera();
 
 		void SetClearColor(glm::vec4 color);
 		glm::vec4 GetClearColor();

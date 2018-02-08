@@ -78,7 +78,7 @@ TransformTool::~TransformTool()
 	//delete mAxisZ;
 }
 
-void TransformTool::InitStartingPosition(Input* pInput, vec3& dir, vec3& cameraPos, float& dist)
+void TransformTool::InitStartingPosition(Utopian::Input* pInput, vec3& dir, vec3& cameraPos, float& dist)
 {
 	dist = std::numeric_limits<float>::infinity();
 	cameraPos = mCamera->GetPosition();
@@ -90,7 +90,7 @@ void TransformTool::InitStartingPosition(Input* pInput, vec3& dir, vec3& cameraP
 }
 
 //! Poll for input and perform actions.
-void TransformTool::Update(Input* pInput, float dt)
+void TransformTool::Update(Utopian::Input* pInput, float dt)
 {
 	if (mSelectedActor == nullptr)
 		return;
@@ -106,12 +106,12 @@ void TransformTool::Update(Input* pInput, float dt)
 	{
 		InitStartingPosition(pInput, dir, pos, dist);
 
-		Utopian::Vk::Ray ray = mCamera->GetPickingRay();
+		Utopian::Ray ray = mCamera->GetPickingRay();
 		float distance = FLT_MAX;
 
-		Utopian::Vk::BoundingBox boundingBoxX = mAxisX->GetBoundingBox();
-		Utopian::Vk::BoundingBox boundingBoxY = mAxisY->GetBoundingBox();
-		Utopian::Vk::BoundingBox boundingBoxZ = mAxisZ->GetBoundingBox();
+		Utopian::BoundingBox boundingBoxX = mAxisX->GetBoundingBox();
+		Utopian::BoundingBox boundingBoxY = mAxisY->GetBoundingBox();
+		Utopian::BoundingBox boundingBoxZ = mAxisZ->GetBoundingBox();
 
 		if (boundingBoxX.RayIntersect(ray, distance))
 		{

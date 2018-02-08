@@ -33,7 +33,7 @@ namespace Utopian
 
 		// Move all of these to other locations
 		SharedPtr<Vk::Renderer> mRenderer;
-		SharedPtr<Vk::Camera> mCamera;
+		SharedPtr<Camera> mCamera;
 		SharedPtr<Terrain> mTerrain;
 		SharedPtr<Editor> mEditor;
 		Window* mWindow;

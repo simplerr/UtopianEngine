@@ -31,7 +31,7 @@ namespace ECS
 		return mModel;
 	}
 
-	Utopian::Vk::BoundingBox MeshComponent::GetBoundingBox()
+	Utopian::BoundingBox MeshComponent::GetBoundingBox()
 	{
 		return mModel->GetBoundingBox();
 	}

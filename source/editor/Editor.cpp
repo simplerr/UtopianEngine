@@ -38,7 +38,7 @@ namespace Utopian
 		// Was an Entity selected?
 		if (gInput().KeyPressed(VK_LBUTTON))
 		{
-			Utopian::Vk::Ray ray = mRenderer->GetCamera()->GetPickingRay();
+			Ray ray = mRenderer->GetCamera()->GetPickingRay();
 
 			Actor* selectedActor = mWorld->RayIntersection(ray);
 			if (selectedActor != nullptr && selectedActor != mSelectedActor)

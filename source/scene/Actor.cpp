@@ -24,15 +24,15 @@ namespace Utopian
 		return entity;
 	}
 
-	Utopian::Vk::BoundingBox Actor::GetBoundingBox() const
+	BoundingBox Actor::GetBoundingBox() const
 	{
-		Utopian::Vk::BoundingBox boundingBox;
+		BoundingBox boundingBox;
 		//boundingBox.Init(GetTransform().GetPosition(), glm::vec3(5000.0f));
 		boundingBox.Init(glm::vec3(0.0f), glm::vec3(0.0f));
 
 		for (auto& component : mComponents)
 		{
-			Utopian::Vk::BoundingBox box = component->GetBoundingBox();
+			BoundingBox box = component->GetBoundingBox();
 			if (box.GetMin() == glm::vec3(0.0f) && box.GetMax() == glm::vec3(0.0f))
 				continue;
 			else

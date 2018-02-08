@@ -5,7 +5,7 @@
 #include "Input.h"
 #include "scene/SceneRenderer.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
 	Camera::Camera(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
@@ -82,7 +82,7 @@ namespace Utopian::Vk
 		rayDir = inverseView * rayDir;
 		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
 
-		return Utopian::Vk::Ray(GetPosition(), rayFinalDir);
+		return Utopian::Ray(GetPosition(), rayFinalDir);
 	}
 
 	vec3 Camera::GetDirection()

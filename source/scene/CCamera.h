@@ -48,6 +48,6 @@ namespace Utopian
 		}
 
 	private:
-		SharedPtr<Utopian::Vk::Camera> mInternal;
+		SharedPtr<Utopian::Camera> mInternal;
 	};
 }

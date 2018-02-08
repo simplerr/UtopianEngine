@@ -42,7 +42,7 @@
 
 namespace ECS
 {
-	RenderSystem::RenderSystem(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera, Terrain* terrain)
+	RenderSystem::RenderSystem(Utopian::Vk::Renderer* renderer, Utopian::Camera* camera, Terrain* terrain)
 		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT, SystemId::RENDER_SYSTEM)
 	{
 		mRenderer = renderer;

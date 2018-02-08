@@ -13,7 +13,7 @@
 
 using namespace glm;
 
-namespace Utopian::Vk
+namespace Utopian
 {
 	class Window;
 

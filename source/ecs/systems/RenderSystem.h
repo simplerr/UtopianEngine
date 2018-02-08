@@ -16,7 +16,6 @@ class Terrain;
 namespace Utopian::Vk
 {
 	class Renderer;
-	class Camera;
 	class ModelLoader;
 	class TextureLoader;
 	class StaticModel;
@@ -32,6 +31,11 @@ namespace Utopian::Vk
 	class Sampler;
 	class ScreenGui;
 	class RenderTarget;
+}
+
+namespace Utopian
+{
+	class Camera;
 }
 
 namespace ECS
@@ -64,7 +68,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera, Terrain* terrain);
+		RenderSystem(Utopian::Vk::Renderer* renderer, Utopian::Camera* camera, Terrain* terrain);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);
@@ -90,7 +94,7 @@ namespace ECS
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 		Utopian::Vk::CommandBuffer* mTerrainCommandBuffer;
 		Utopian::Vk::CommandBuffer* mOffscreenCommandBuffer;
-		Utopian::Vk::Camera* mCamera;
+		Utopian::Camera* mCamera;
 		Utopian::Vk::PhongEffect mPhongEffect;
 		Utopian::Vk::NormalDebugEffect mNormalDebugEffect;
 

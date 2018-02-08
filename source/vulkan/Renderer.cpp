@@ -102,12 +102,12 @@ namespace Utopian::Vk
 		system("cd data/shaders/color/ && generate-spirv.bat");
 	}
 
-	void Renderer::SetCamera(Camera* camera)
+	void Renderer::SetCamera(Utopian::Camera* camera)
 	{
 		mCamera = camera;
 	}
 
-	Camera* Renderer::GetCamera()
+	Utopian::Camera* Renderer::GetCamera()
 	{
 		return mCamera;
 	}

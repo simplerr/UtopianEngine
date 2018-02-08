@@ -23,7 +23,7 @@ namespace Utopian
 		mActiveComponents.push_back(component);
 	}
 
-	Actor* World::RayIntersection(const Utopian::Vk::Ray& ray)
+	Actor* World::RayIntersection(const Ray& ray)
 	{
 		Actor* selectedEntity = nullptr;
 
@@ -32,7 +32,7 @@ namespace Utopian
 		{
 			if (entity->HasComponent<CRenderable>())
 			{
-				Utopian::Vk::BoundingBox boundingBox = entity->GetBoundingBox();
+				BoundingBox boundingBox = entity->GetBoundingBox();
 
 				float distance = FLT_MAX;
 				if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)

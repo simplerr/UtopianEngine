@@ -46,13 +46,11 @@ namespace Utopian::Vk
 	class Effect;
 	class Shader;
 	class UIOverlay;
-
-	// Should be moved
-	class Camera;
 }
 
 namespace Utopian
 {
 	// Should be moved
 	class Window;
+	class Camera;
 }

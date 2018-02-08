@@ -30,7 +30,7 @@ namespace Utopian
 		Utopian::Vk::StaticModel* GetModel();
 		void SetModel(Utopian::Vk::StaticModel* model);
 
-		const Utopian::Vk::BoundingBox GetBoundingBox() const;
+		const BoundingBox GetBoundingBox() const;
 
 	private:
 		Utopian::Vk::StaticModel* mModel;

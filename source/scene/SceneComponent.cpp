@@ -14,9 +14,9 @@ namespace Utopian
 
 	}
 
-	const Utopian::Vk::BoundingBox SceneComponent::GetBoundingBox() const
+	const BoundingBox SceneComponent::GetBoundingBox() const
 	{
-		Utopian::Vk::BoundingBox boundingBox;
+		BoundingBox boundingBox;
 
 		boundingBox.Init(vec3(0.0f), vec3(0.0f));
 

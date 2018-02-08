@@ -8,7 +8,7 @@ namespace Utopian
 	CCamera::CCamera(Actor* parent, Utopian::Window* window, float fieldOfView, float nearPlane, float farPlane)
 		: SceneComponent(parent)
 	{
-		mInternal = Utopian::Vk::Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
+		mInternal = Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
 		auto transform = GetParent()->GetTransform();
 		mInternal->SetPosition(transform.GetPosition());
 

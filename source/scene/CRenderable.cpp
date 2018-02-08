@@ -44,7 +44,7 @@ namespace Utopian
 		mInternal->SetDrawBoundingBox(false);
 	}
 
-	const Utopian::Vk::BoundingBox CRenderable::GetBoundingBox() const
+	const BoundingBox CRenderable::GetBoundingBox() const
 	{
 		return mInternal->GetBoundingBox();
 	}

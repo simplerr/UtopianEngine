@@ -30,7 +30,7 @@ namespace Utopian
 			return GetStaticType();
 		}
 
-		const Utopian::Vk::BoundingBox GetBoundingBox() const;
+		const BoundingBox GetBoundingBox() const;
 
 	private:
 		SharedPtr<Renderable> mInternal;

@@ -1,15 +1,15 @@
 #include  "Collision.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
-	void BoundingBox::Init(const std::vector<Vertex>& vertices)
+	void BoundingBox::Init(const std::vector<Vk::Vertex>& vertices)
 	{
 		glm::vec3 min = glm::vec3(FLT_MAX);
 		glm::vec3 max = glm::vec3(-FLT_MAX);
 
 		for (int i = 0; i < vertices.size(); i++)
 		{
-			Vertex vertex = vertices[i];
+			Vk::Vertex vertex = vertices[i];
 
 			if (vertex.Pos.x < min.x)
 				min.x = vertex.Pos.x;

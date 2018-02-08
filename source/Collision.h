@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include "vulkan/Vertex.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
 	struct Ray
 	{
@@ -24,7 +24,7 @@ namespace Utopian::Vk
 	public:
 		BoundingBox() {}
 
-		void Init(const std::vector<Vertex>& vertices);
+		void Init(const std::vector<Vk::Vertex>& vertices);
 		void Init(glm::vec3 position, glm::vec3 extents);
 		void Update(glm::mat4 worldMatrix);
 		bool RayIntersect(const Ray& ray, float& dist);

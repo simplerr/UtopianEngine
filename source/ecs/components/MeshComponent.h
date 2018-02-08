@@ -24,7 +24,7 @@ namespace ECS
 
 		Utopian::Vk::PipelineType GetPipeline();
 		Utopian::Vk::StaticModel* GetModel();
-		Utopian::Vk::BoundingBox GetBoundingBox();
+		Utopian::BoundingBox GetBoundingBox();
 
 		std::string GetFilename();
 

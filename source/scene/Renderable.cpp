@@ -40,9 +40,9 @@ namespace Utopian
 		mModel = model;
 	}
 
-	const Utopian::Vk::BoundingBox Renderable::GetBoundingBox() const
+	const BoundingBox Renderable::GetBoundingBox() const
 	{
-		Utopian::Vk::BoundingBox boundingBox = mModel->GetBoundingBox();
+		BoundingBox boundingBox = mModel->GetBoundingBox();
 		mat4 world;
 		world = glm::translate(world, GetPosition() + vec3(0.0f, 0*boundingBox.GetHeight() / 2, 0.0f));
 		//world = glm::rotate(world, glm::radians(GetRotation().x), vec3(1.0f, 0.0f, 0.0f));
