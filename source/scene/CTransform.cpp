@@ -9,7 +9,7 @@
 namespace Utopian
 {
 	CTransform::CTransform(Actor* parent, const vec3& position)
-		: SceneComponent(parent)
+		: Component(parent)
 	{
 		SetName("CTransform");
 		SetPosition(position);

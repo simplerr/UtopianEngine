@@ -1,5 +1,5 @@
 #pragma once
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "scene/Renderable.h"
 #include "utility/Common.h"
 
@@ -7,7 +7,7 @@ namespace Utopian
 {
 	class Actor;
 
-	class CRenderable : public SceneComponent
+	class CRenderable : public Component
 	{
 	public:
 		CRenderable(Actor* parent);
@@ -23,7 +23,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::STATIC_MESH;
+			return Component::ComponentType::STATIC_MESH;
 		}
 
 		virtual uint32_t GetType() {

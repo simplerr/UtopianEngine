@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <map>
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "scene/SceneNode.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
@@ -31,7 +31,7 @@ namespace Utopian
 		void Update();
 		void NotifyEntityCreated(Actor* entity);
 
-		void NotifyComponentCreated(SceneComponent* component);
+		void NotifyComponentCreated(Component* component);
 
 		Actor* RayIntersection(const Ray& ray);
 
@@ -39,7 +39,7 @@ namespace Utopian
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* entity);
 	private:
 		vector<Actor*> mEntities;
-		vector<SceneComponent*> mActiveComponents;
+		vector<Component*> mActiveComponents;
 		map<SceneNode*, BoundNode> mBoundNodes;
 	};
 }

@@ -6,7 +6,7 @@
 namespace Utopian
 {
 	CLight::CLight(Actor* parent)
-		: SceneComponent(parent)
+		: Component(parent)
 	{
 		SetName("CLight");
 	}

@@ -7,7 +7,7 @@
 namespace Utopian
 {
 	COrbit::COrbit(Actor* parent, float speed)
-		: SceneComponent(parent)
+		: Component(parent)
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();
 		mCamera = GetParent()->GetComponent<CCamera>();

@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "SceneComponent.h"
+#include "Component.h"
 #include "scene/Transform.h"
 
 using namespace glm;
@@ -9,7 +9,7 @@ namespace Utopian
 {
 	class Actor;
 
-	class CTransform : public SceneComponent
+	class CTransform : public Component
 	{
 	public:
 		CTransform(Actor* parent, const vec3& position);
@@ -36,7 +36,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::TRANSFORM;
+			return Component::ComponentType::TRANSFORM;
 		}
 
 		virtual uint32_t GetType() {

@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
@@ -12,7 +12,7 @@ namespace Utopian
 	class CCamera;
 	class CTransform;
 
-	class COrbit : public SceneComponent
+	class COrbit : public Component
 	{
 	public:
 		COrbit(Actor* parent, float speed);
@@ -32,7 +32,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::ORBIT;
+			return Component::ComponentType::ORBIT;
 		}
 
 		virtual uint32_t GetType() {

@@ -7,7 +7,7 @@
 namespace Utopian
 {
 	CNoClip::CNoClip(Actor* parent, float speed)
-		: SceneComponent(parent)
+		: Component(parent)
 	{
 		SetSpeed(speed);
 		SetSensitivity(0.2f);

@@ -6,7 +6,7 @@ namespace Utopian
 {
 	class Actor;
 
-	class SceneComponent : public Object
+	class Component : public Object
 	{
 	public:
 
@@ -21,8 +21,8 @@ namespace Utopian
 			PLAYER_CONTROL
 		};
 
-		SceneComponent(Actor* parent);
-		virtual ~SceneComponent();
+		Component(Actor* parent);
+		virtual ~Component();
 
 		virtual void OnCreated() { };
 		virtual void Update() { };

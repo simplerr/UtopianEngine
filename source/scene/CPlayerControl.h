@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
@@ -14,7 +14,7 @@ namespace Utopian
 	class COrbit;
 	class CNoClip;
 
-	class CPlayerControl : public SceneComponent
+	class CPlayerControl : public Component
 	{
 	public:
 		CPlayerControl(Actor* parent);
@@ -24,7 +24,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::FREE_CAMERA;
+			return Component::ComponentType::FREE_CAMERA;
 		}
 
 		virtual uint32_t GetType() {

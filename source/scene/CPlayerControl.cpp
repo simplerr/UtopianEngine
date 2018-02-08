@@ -9,7 +9,7 @@
 namespace Utopian
 {
 	CPlayerControl::CPlayerControl(Actor* parent)
-		: SceneComponent(parent)
+		: Component(parent)
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();
 		mCamera = GetParent()->GetComponent<CCamera>();

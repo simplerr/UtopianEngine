@@ -7,7 +7,7 @@
 namespace Utopian
 {
 	CRenderable::CRenderable(Actor* parent)
-		: SceneComponent(parent)
+		: Component(parent)
 	{
 		SetName("CStaticMesh");
 	}

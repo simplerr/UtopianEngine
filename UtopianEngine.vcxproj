@@ -103,7 +103,7 @@
     <ClCompile Include="source\scene\Object.cpp" />
     <ClCompile Include="source\scene\ObjectManager.cpp" />
     <ClCompile Include="source\scene\Renderable.cpp" />
-    <ClCompile Include="source\scene\SceneComponent.cpp" />
+    <ClCompile Include="source\scene\Component.cpp" />
     <ClCompile Include="source\scene\CTransform.cpp" />
     <ClCompile Include="source\scene\Actor.cpp" />
     <ClCompile Include="source\scene\World.cpp" />
@@ -188,7 +188,7 @@
     <ClInclude Include="source\scene\Object.h" />
     <ClInclude Include="source\scene\ObjectManager.h" />
     <ClInclude Include="source\scene\Renderable.h" />
-    <ClInclude Include="source\scene\SceneComponent.h" />
+    <ClInclude Include="source\scene\Component.h" />
     <ClInclude Include="source\scene\CTransform.h" />
     <ClInclude Include="source\scene\Actor.h" />
     <ClInclude Include="source\scene\CRenderable.h" />

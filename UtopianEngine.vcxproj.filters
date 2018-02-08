@@ -255,9 +255,6 @@
     <ClCompile Include="source\scene\CTransform.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\SceneComponent.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\scene\Object.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -350,6 +347,9 @@
     </ClCompile>
     <ClCompile Include="source\scene\terrain\MarchingCubes.cpp">
       <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\Component.cpp">
+      <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -506,9 +506,6 @@
     <ClInclude Include="source\scene\CTransform.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\SceneComponent.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\scene\ObjectManager.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -622,6 +619,9 @@
     </ClInclude>
     <ClInclude Include="source\scene\terrain\MarchingCubes.h">
       <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\Component.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

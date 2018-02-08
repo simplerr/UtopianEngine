@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "scene/SceneNode.h"
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "LightData.h"
 #include "utility/Common.h"
 

@@ -15,7 +15,7 @@
 
 // Testing
 #include "scene/Actor.h"
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "scene/CTransform.h"
 #include "scene/CRenderable.h"
 #include "scene/CLight.h"

@@ -1,20 +1,20 @@
-#include "SceneComponent.h"
+#include "Component.h"
 #include "Actor.h"
 
 namespace Utopian
 {
-	SceneComponent::SceneComponent(Actor* parent)
+	Component::Component(Actor* parent)
 		: mParent(parent)
 	{
 		SetActive(true);
 	}
 
-	SceneComponent::~SceneComponent()
+	Component::~Component()
 	{
 
 	}
 
-	const BoundingBox SceneComponent::GetBoundingBox() const
+	const BoundingBox Component::GetBoundingBox() const
 	{
 		BoundingBox boundingBox;
 

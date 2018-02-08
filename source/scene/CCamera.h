@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
@@ -10,7 +10,7 @@ namespace Utopian
 {
 	class Actor;
 
-	class CCamera : public SceneComponent
+	class CCamera : public Component
 	{
 	public:
 		CCamera(Actor* parent, Utopian::Window* window, float fieldOfView, float nearPlane, float farPlane);
@@ -40,7 +40,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::CAMERA;
+			return Component::ComponentType::CAMERA;
 		}
 
 		virtual uint32_t GetType() {

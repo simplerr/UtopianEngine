@@ -15,7 +15,7 @@ namespace Utopian
 
 	}
 
-	void World::NotifyComponentCreated(SceneComponent* component)
+	void World::NotifyComponentCreated(Component* component)
 	{
 		component->OnCreated();
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "scene/Light.h"
 #include "LightData.h"
 #include "utility/Common.h"
@@ -8,7 +8,7 @@ namespace Utopian
 {
 	class Actor;
 
-	class CLight : public SceneComponent
+	class CLight : public Component
 	{
 	public:
 		CLight(Actor* parent);
@@ -44,7 +44,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return SceneComponent::ComponentType::LIGHT;
+			return Component::ComponentType::LIGHT;
 		}
 
 		virtual uint32_t GetType() {

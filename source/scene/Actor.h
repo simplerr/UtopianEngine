@@ -2,7 +2,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
-#include "scene/SceneComponent.h"
+#include "scene/Component.h"
 #include "utility/Common.h"
 #include "scene/Object.h"
 #include "scene/ObjectManager.h"
@@ -31,7 +31,7 @@ namespace Utopian
 		template<class T, class... Args>
 		T* AddComponent(Args &&... args)
 		{
-			static_assert((std::is_base_of<SceneComponent, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<Component, T>::value), "Specified type is not a valid Component.");
 
 			SharedPtr<T> newComponent(new T(this, std::forward<Args>(args)...));
 
@@ -59,7 +59,7 @@ namespace Utopian
 		template <typename T>
 		T* GetComponent() const
 		{
-			static_assert((std::is_base_of<SceneComponent, T>::value), "Specified type is not a valid Component.");
+			static_assert((std::is_base_of<Component, T>::value), "Specified type is not a valid Component.");
 
 			T* component = GetComponent<T>(0);// T::GetType());
 
@@ -79,7 +79,7 @@ namespace Utopian
 		}
 
 	private:
-		vector<SceneComponent*> mComponents;
+		vector<Component*> mComponents;
 		bool mHasTransform;
 	};
 }
