@@ -7,7 +7,7 @@
 #include "scene/Object.h"
 #include "scene/ObjectManager.h"
 #include "scene/World.h"
-#include "Collision.h"
+#include "utility/math/Ray.h"
 
 using namespace std;
 

@@ -12,17 +12,6 @@ enum MovingAxis
 	NONE
 };
 
-namespace Utopian::Vk
-{
-	class StaticModel;
-	class Camera;
-}
-
-namespace ECS
-{
-	class EntityCache;
-}
-
 namespace Utopian
 {
 	class Actor;

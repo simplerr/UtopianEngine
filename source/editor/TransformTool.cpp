@@ -13,7 +13,7 @@
 #include "vulkan/ModelLoader.h"
 #include "scene/Renderable.h"
 #include "scene/SceneRenderer.h"
-#include "Collision.h"
+#include "utility/math/Ray.h"
 
 #define GLM_FORCE_RIGHT_HANDED 
 

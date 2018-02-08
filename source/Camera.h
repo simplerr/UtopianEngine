@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 #include "Platform.h"
-#include "Collision.h"
+#include "utility/math/Ray.h"
 #include "utility/Common.h"
 #include "scene/SceneNode.h"
 #include "vulkan/VulkanInclude.h"

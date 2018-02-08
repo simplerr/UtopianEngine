@@ -1,6 +1,6 @@
 #pragma once
 #include "scene/Object.h"
-#include "Collision.h"
+#include "utility/math/BoundingBox.h"
 
 namespace Utopian
 {

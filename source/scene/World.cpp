@@ -1,7 +1,6 @@
 #include "scene/World.h"
 #include "scene/Actor.h"
 #include "scene/CRenderable.h"
-#include "Collision.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian

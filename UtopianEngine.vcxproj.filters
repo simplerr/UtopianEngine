@@ -189,9 +189,6 @@
     <ClCompile Include="source\vulkan\Device.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\Collision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\Mesh.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -348,6 +345,12 @@
     <ClCompile Include="source\editor\TransformTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\utility\math\BoundingBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utility\math\Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Platform.h">
@@ -430,9 +433,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
       <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Collision.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\Vertex.h">
       <Filter>Source Files\vulkan</Filter>
@@ -613,6 +613,15 @@
     </ClInclude>
     <ClInclude Include="source\editor\TransformTool.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\math\BoundingBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\math\Ray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\math\Sphere.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

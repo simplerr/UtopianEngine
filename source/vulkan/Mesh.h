@@ -8,7 +8,7 @@
 #include <vector>
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/Vertex.h"
-#include "Collision.h"
+#include "utility/math/BoundingBox.h"
 
 namespace Utopian::Vk
 {

@@ -2,7 +2,7 @@
 #include "scene/SceneRenderer.h"
 #include "vulkan/StaticModel.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "Collision.h"
+#include "utility/math/BoundingBox.h"
 
 namespace Utopian
 {

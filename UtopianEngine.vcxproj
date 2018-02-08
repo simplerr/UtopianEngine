@@ -84,7 +84,6 @@
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
     <ClCompile Include="source\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
-    <ClCompile Include="source\Collision.cpp" />
     <ClCompile Include="source\editor\ActorInspector.cpp" />
     <ClCompile Include="source\editor\ComponentInspector.cpp" />
     <ClCompile Include="source\Game.cpp" />
@@ -112,6 +111,8 @@
     <ClCompile Include="source\scene\Transform.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
     <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\utility\math\BoundingBox.cpp" />
+    <ClCompile Include="source\utility\math\Sphere.cpp" />
     <ClCompile Include="source\utility\Utility.cpp" />
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
@@ -196,7 +197,9 @@
     <ClInclude Include="source\scene\Transform.h" />
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Timer.h" />
-    <ClInclude Include="source\Collision.h" />
+    <ClInclude Include="source\utility\math\BoundingBox.h" />
+    <ClInclude Include="source\utility\math\Ray.h" />
+    <ClInclude Include="source\utility\math\Sphere.h" />
     <ClInclude Include="source\utility\Module.h" />
     <ClInclude Include="source\utility\Utility.h" />
     <ClInclude Include="source\vulkan\ColorEffect.h" />

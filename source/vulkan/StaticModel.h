@@ -7,7 +7,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "vulkan/Mesh.h"
-#include "Collision.h"
+#include "utility/math/BoundingBox.h"
 #include "Vertex.h"
 #include "vulkan/VulkanInclude.h"
 

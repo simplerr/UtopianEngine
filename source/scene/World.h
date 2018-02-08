@@ -5,7 +5,7 @@
 #include "scene/SceneNode.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
-#include "Collision.h"
+#include "utility/math/Ray.h"
 
 namespace Utopian
 {
