@@ -2,17 +2,17 @@
 #include "Camera.h"
 #include <limits>
 #include "Effects.h"
-#include "scene/terrain/Terrain.h"
+#include "core/terrain/Terrain.h"
 #include "Input.h"
 #include "vulkan/VulkanDebug.h"
 #include <glm/gtx/intersect.hpp>
-#include "scene/components/Actor.h"
-#include "scene/components/CTransform.h"
+#include "core/components/Actor.h"
+#include "core/components/CTransform.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ModelLoader.h"
-#include "scene/Renderable.h"
-#include "scene/SceneRenderer.h"
+#include "core/renderer/Renderable.h"
+#include "core/renderer/SceneRenderer.h"
 #include "utility/math/Ray.h"
 
 #define GLM_FORCE_RIGHT_HANDED 

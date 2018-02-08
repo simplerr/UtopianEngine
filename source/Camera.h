@@ -8,7 +8,7 @@
 #include "utility/Platform.h"
 #include "utility/math/Ray.h"
 #include "utility/Common.h"
-#include "scene/SceneNode.h"
+#include "core/SceneNode.h"
 #include "vulkan/VulkanInclude.h"
 
 using namespace glm;

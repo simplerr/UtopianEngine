@@ -252,30 +252,6 @@
     <ClCompile Include="source\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\Object.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\ObjectManager.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\Renderable.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\Transform.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\SceneNode.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\World.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\Light.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\SceneRenderer.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\utility\Utility.cpp">
       <Filter>Source Files\utility</Filter>
     </ClCompile>
@@ -315,40 +291,64 @@
     <ClCompile Include="source\utility\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\terrain\Block.cpp">
+    <ClCompile Include="source\core\components\Actor.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\CCamera.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\CLight.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\CNoClip.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\Component.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\COrbit.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\CPlayerControl.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\CRenderable.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\components\CTransform.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\terrain\Block.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\terrain\Terrain.cpp">
+    <ClCompile Include="source\core\terrain\MarchingCubes.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\terrain\MarchingCubes.cpp">
+    <ClCompile Include="source\core\terrain\Terrain.cpp">
       <Filter>Source Files\terrain</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\Actor.cpp">
+    <ClCompile Include="source\core\Object.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\CCamera.cpp">
+    <ClCompile Include="source\core\ObjectManager.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\CLight.cpp">
+    <ClCompile Include="source\core\SceneNode.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\CNoClip.cpp">
+    <ClCompile Include="source\core\Transform.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\COrbit.cpp">
+    <ClCompile Include="source\core\World.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\CPlayerControl.cpp">
+    <ClCompile Include="source\core\renderer\SceneRenderer.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\CRenderable.cpp">
+    <ClCompile Include="source\core\renderer\Light.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\scene\components\CTransform.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
-    <ClCompile Include="source\scene\components\Component.cpp">
+    <ClCompile Include="source\core\renderer\Renderable.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -503,41 +503,14 @@
     <ClInclude Include="source\Common.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\ObjectManager.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\Object.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\Renderable.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\Transform.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\SceneNode.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\World.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\Light.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\LightData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\VulkanInclude.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\SceneRenderer.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\Module.h">
       <Filter>Source Files\utility</Filter>
-    </ClInclude>
-    <ClInclude Include="source\scene\CommonBuffers.h">
-      <Filter>Source Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\Utility.h">
       <Filter>Source Files\utility</Filter>
@@ -587,40 +560,67 @@
     <ClInclude Include="source\utility\Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\terrain\Block.h">
+    <ClInclude Include="source\core\components\Actor.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CCamera.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CLight.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CNoClip.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\Component.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\COrbit.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CPlayerControl.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CRenderable.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CTransform.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\terrain\Block.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\terrain\Terrain.h">
+    <ClInclude Include="source\core\terrain\MarchingCubes.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\terrain\MarchingCubes.h">
+    <ClInclude Include="source\core\terrain\Terrain.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\Actor.h">
+    <ClInclude Include="source\core\CommonBuffers.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\CCamera.h">
+    <ClInclude Include="source\core\Object.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\CLight.h">
+    <ClInclude Include="source\core\ObjectManager.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\CNoClip.h">
+    <ClInclude Include="source\core\SceneNode.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\COrbit.h">
+    <ClInclude Include="source\core\Transform.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\CPlayerControl.h">
+    <ClInclude Include="source\core\World.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\CRenderable.h">
+    <ClInclude Include="source\core\renderer\SceneRenderer.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\CTransform.h">
+    <ClInclude Include="source\core\renderer\Light.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\scene\components\Component.h">
+    <ClInclude Include="source\core\renderer\Renderable.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>

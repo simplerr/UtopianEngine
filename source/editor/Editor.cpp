@@ -2,13 +2,13 @@
 #include "Input.h"
 #include "vulkan/Renderer.h"
 #include "Camera.h"
-#include "scene/World.h"
-#include "scene/components/Actor.h"
-#include "scene/components/CTransform.h"
-#include "scene/components/CRenderable.h"
+#include "core/World.h"
+#include "core/components/Actor.h"
+#include "core/components/CTransform.h"
+#include "core/components/CRenderable.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
-#include "scene/terrain/Terrain.h"
+#include "core/terrain/Terrain.h"
 #include "editor/TransformTool.h"
 
 namespace Utopian

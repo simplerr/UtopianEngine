@@ -3,7 +3,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 #include "Input.h"
-#include "scene/SceneRenderer.h"
+#include "core/renderer/SceneRenderer.h"
 
 namespace Utopian
 {

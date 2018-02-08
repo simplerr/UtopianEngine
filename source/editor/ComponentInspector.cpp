@@ -1,7 +1,7 @@
 #include "ComponentInspector.h"
 #include "vulkan/UIOverlay.h"
-#include "scene/components/CTransform.h"
-#include "scene/components/CLight.h"
+#include "core/components/CTransform.h"
+#include "core/components/CLight.h"
 
 Utopian::ComponentInspector::ComponentInspector()
 {
