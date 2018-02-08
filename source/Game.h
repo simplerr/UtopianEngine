@@ -1,8 +1,8 @@
 #pragma once
 
 #include "vulkan/VulkanInclude.h"
-#include "Platform.h"
-#include "Timer.h"
+#include "utility/Platform.h"
+#include "utility/Timer.h"
 #include "utility/Common.h"
 
 class Terrain;

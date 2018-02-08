@@ -110,7 +110,7 @@
     <ClCompile Include="source\scene\SceneNode.cpp" />
     <ClCompile Include="source\scene\Transform.cpp" />
     <ClCompile Include="source\Terrain.cpp" />
-    <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\utility\Timer.cpp" />
     <ClCompile Include="source\utility\math\BoundingBox.cpp" />
     <ClCompile Include="source\utility\math\Sphere.cpp" />
     <ClCompile Include="source\utility\Utility.cpp" />
@@ -170,12 +170,12 @@
     <ClInclude Include="source\editor\ActorInspector.h" />
     <ClInclude Include="source\editor\ComponentInspector.h" />
     <ClInclude Include="source\Game.h" />
-    <ClInclude Include="source\Exception.h" />
+    <ClInclude Include="source\utility\Exception.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\LightData.h" />
     <ClInclude Include="source\MarchingCubes.h" />
     <ClInclude Include="source\editor\TransformTool.h" />
-    <ClInclude Include="source\Platform.h" />
+    <ClInclude Include="source\utility\Platform.h" />
     <ClInclude Include="source\scene\CCamera.h" />
     <ClInclude Include="source\scene\CNoClip.h" />
     <ClInclude Include="source\scene\CommonBuffers.h" />
@@ -196,7 +196,7 @@
     <ClInclude Include="source\scene\SceneNode.h" />
     <ClInclude Include="source\scene\Transform.h" />
     <ClInclude Include="source\Terrain.h" />
-    <ClInclude Include="source\Timer.h" />
+    <ClInclude Include="source\utility\Timer.h" />
     <ClInclude Include="source\utility\math\BoundingBox.h" />
     <ClInclude Include="source\utility\math\Ray.h" />
     <ClInclude Include="source\utility\math\Sphere.h" />

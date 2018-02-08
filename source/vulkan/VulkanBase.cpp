@@ -3,7 +3,7 @@
 #include <cassert>
 #include <sstream>
 #include <chrono>
-#include "Platform.h"
+#include "utility/Platform.h"
 #include "VulkanBase.h"
 #include "Device.h"
 #include "VulkanDebug.h"

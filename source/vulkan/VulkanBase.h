@@ -7,7 +7,7 @@
 #include "vulkan/vulkanswapchain.hpp"
 #include "vulkan/VulkanInclude.h"
 #include "Window.h"
-#include "Timer.h"
+#include "utility/Timer.h"
 
 /*
 Resources

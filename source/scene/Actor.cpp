@@ -1,7 +1,7 @@
 #include "Actor.h"
 #include "scene/ObjectManager.h"
 #include "scene/CTransform.h"
-#include "Exception.h"
+#include "utility/Exception.h"
 
 namespace Utopian
 {
