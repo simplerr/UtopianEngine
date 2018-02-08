@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include <limits>
 #include "Effects.h"
-#include "Terrain.h"
+#include "scene/terrain/Terrain.h"
 #include "Input.h"
 #include "vulkan/VulkanDebug.h"
 #include <glm/gtx/intersect.hpp>

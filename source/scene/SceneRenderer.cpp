@@ -8,7 +8,7 @@
 #include "vulkan/Mesh.h"
 #include "vulkan/StaticModel.h"
 #include "scene/Light.h"
-#include "Terrain.h"
+#include "scene/terrain/Terrain.h"
 #include "WaterRenderer.h"
 #include "vulkan/ScreenGui.h"
 #include "vulkan/RenderTarget.h"

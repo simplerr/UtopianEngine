@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "Window.h"
 #include "Camera.h"
-#include "Terrain.h"
+#include "scene/terrain/Terrain.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include <string>

@@ -207,17 +207,8 @@
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\Terrain.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Block.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
-    <ClCompile Include="source\MarchingCubes.cpp">
-      <Filter>Source Files\terrain</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\Pipeline2.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
@@ -351,6 +342,15 @@
     <ClCompile Include="source\utility\Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\scene\terrain\Block.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\terrain\Terrain.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\scene\terrain\MarchingCubes.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -455,20 +455,11 @@
     <ClInclude Include="source\vulkan\ShaderBuffer.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\Terrain.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\Effect.h">
       <Filter>Source Files\vulkan\effects</Filter>
     </ClInclude>
-    <ClInclude Include="source\Block.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\handles\ComputePipeline.h">
       <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
-    <ClInclude Include="source\MarchingCubes.h">
-      <Filter>Source Files\terrain</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Pipeline2.h">
       <Filter>Source Files\vulkan\handles</Filter>
@@ -622,6 +613,15 @@
     </ClInclude>
     <ClInclude Include="source\utility\Platform.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\terrain\Block.h">
+      <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\terrain\Terrain.h">
+      <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene\terrain\MarchingCubes.h">
+      <Filter>Source Files\terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

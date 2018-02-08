@@ -8,7 +8,7 @@
 #include "scene/CRenderable.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
-#include "Terrain.h"
+#include "scene/terrain/Terrain.h"
 #include "editor/TransformTool.h"
 
 namespace Utopian

@@ -82,14 +82,14 @@
   <ItemGroup>
     <ClCompile Include="external\imgui\imgui.cpp" />
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
-    <ClCompile Include="source\Block.cpp" />
+    <ClCompile Include="source\scene\terrain\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\editor\ActorInspector.cpp" />
     <ClCompile Include="source\editor\ComponentInspector.cpp" />
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\MarchingCubes.cpp" />
+    <ClCompile Include="source\scene\terrain\MarchingCubes.cpp" />
     <ClCompile Include="source\editor\TransformTool.cpp" />
     <ClCompile Include="source\scene\CCamera.cpp" />
     <ClCompile Include="source\scene\CNoClip.cpp" />
@@ -109,7 +109,7 @@
     <ClCompile Include="source\scene\World.cpp" />
     <ClCompile Include="source\scene\SceneNode.cpp" />
     <ClCompile Include="source\scene\Transform.cpp" />
-    <ClCompile Include="source\Terrain.cpp" />
+    <ClCompile Include="source\scene\terrain\Terrain.cpp" />
     <ClCompile Include="source\utility\Timer.cpp" />
     <ClCompile Include="source\utility\math\BoundingBox.cpp" />
     <ClCompile Include="source\utility\math\Sphere.cpp" />
@@ -163,7 +163,7 @@
   <ItemGroup>
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
-    <ClInclude Include="source\Block.h" />
+    <ClInclude Include="source\scene\terrain\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
     <ClInclude Include="source\Common.h" />
@@ -173,7 +173,7 @@
     <ClInclude Include="source\utility\Exception.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\LightData.h" />
-    <ClInclude Include="source\MarchingCubes.h" />
+    <ClInclude Include="source\scene\terrain\MarchingCubes.h" />
     <ClInclude Include="source\editor\TransformTool.h" />
     <ClInclude Include="source\utility\Platform.h" />
     <ClInclude Include="source\scene\CCamera.h" />
@@ -195,7 +195,7 @@
     <ClInclude Include="source\scene\World.h" />
     <ClInclude Include="source\scene\SceneNode.h" />
     <ClInclude Include="source\scene\Transform.h" />
-    <ClInclude Include="source\Terrain.h" />
+    <ClInclude Include="source\scene\terrain\Terrain.h" />
     <ClInclude Include="source\utility\Timer.h" />
     <ClInclude Include="source\utility\math\BoundingBox.h" />
     <ClInclude Include="source\utility\math\Ray.h" />
