@@ -129,21 +129,6 @@
     <ClCompile Include="source\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\ecs\components\MeshComponent.cpp">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\components\PhysicsComponent.cpp">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\components\TransformComponent.cpp">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\systems\PhysicsSystem.cpp">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\systems\RenderSystem.cpp">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
@@ -204,23 +189,11 @@
     <ClCompile Include="source\vulkan\Device.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\ecs\Entity.cpp">
-      <Filter>Source Files\ecs</Filter>
-    </ClCompile>
     <ClCompile Include="source\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\Mesh.cpp">
       <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\components\HealthComponent.cpp">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\systems\HealthSystem.cpp">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\systems\System.cpp">
-      <Filter>Source Files\ecs\systems</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
@@ -269,9 +242,6 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\PhongEffect.cpp">
       <Filter>Source Files\vulkan\effects\phong</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ecs\SystemManager.cpp">
-      <Filter>Source Files\ecs</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\Sampler.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
@@ -395,27 +365,6 @@
     <ClInclude Include="source\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\ecs\components\Component.h">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\components\MeshComponent.h">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\components\PhysicsComponent.h">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\components\TransformComponent.h">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\systems\PhysicsSystem.h">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\systems\RenderSystem.h">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\systems\System.h">
-      <Filter>Source Files\ecs\systems</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
@@ -479,9 +428,6 @@
     <ClInclude Include="source\vulkan\Device.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\ecs\Entity.h">
-      <Filter>Source Files\ecs</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -496,12 +442,6 @@
     </ClInclude>
     <ClInclude Include="source\Colors.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\components\HealthComponent.h">
-      <Filter>Source Files\ecs\components</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\systems\HealthSystem.h">
-      <Filter>Source Files\ecs\systems</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h">
       <Filter>Source Files\vulkan\handles</Filter>
@@ -550,9 +490,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\PhongEffect.h">
       <Filter>Source Files\vulkan\effects\phong</Filter>
-    </ClInclude>
-    <ClInclude Include="source\ecs\SystemManager.h">
-      <Filter>Source Files\ecs</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Sampler.h">
       <Filter>Source Files\vulkan\handles</Filter>

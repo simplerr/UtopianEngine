@@ -10,15 +10,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "vulkan/ModelLoader.h"
-#include "ecs/SystemManager.h"
-#include "ecs/Entity.h"
-#include "ecs/components/MeshComponent.h"
-#include "ecs/components/TransformComponent.h"
-#include "ecs/components/PhysicsComponent.h"
-#include "ecs/components/HealthComponent.h"
-#include "ecs/systems/RenderSystem.h"
-#include "ecs/systems/PhysicsSystem.h"
-#include "ecs/systems/HealthSystem.h"
 #include "Input.h"
 #include "imgui/imgui.h"
 

@@ -23,7 +23,6 @@
 #include "handles/FrameBuffers.h"
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
-#include "ecs/systems/RenderSystem.h"
 #include "vulkan/UIOverlay.h"
 #include "ScreenGui.h"
 
