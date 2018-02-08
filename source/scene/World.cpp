@@ -4,7 +4,7 @@
 #include "Collision.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace Scene
+namespace Utopian
 {
 	World::World()
 	{
@@ -23,7 +23,7 @@ namespace Scene
 		mActiveComponents.push_back(component);
 	}
 
-	Actor* World::RayIntersection(const Vulkan::Ray& ray)
+	Actor* World::RayIntersection(const Utopian::Vk::Ray& ray)
 	{
 		Actor* selectedEntity = nullptr;
 
@@ -32,7 +32,7 @@ namespace Scene
 		{
 			if (entity->HasComponent<CRenderable>())
 			{
-				Vulkan::BoundingBox boundingBox = entity->GetBoundingBox();
+				Utopian::Vk::BoundingBox boundingBox = entity->GetBoundingBox();
 
 				float distance = FLT_MAX;
 				if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)

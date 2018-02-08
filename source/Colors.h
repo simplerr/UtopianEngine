@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	namespace Colors
 	{

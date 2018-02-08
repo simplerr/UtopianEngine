@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/handles/Buffer.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ShaderBuffer::~ShaderBuffer()
 	{

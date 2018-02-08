@@ -7,7 +7,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class DescriptorSetLayout;

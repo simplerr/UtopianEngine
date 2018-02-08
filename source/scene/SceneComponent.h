@@ -2,7 +2,7 @@
 #include "scene/Object.h"
 #include "Collision.h"
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 
@@ -27,7 +27,7 @@ namespace Scene
 		virtual void OnCreated() { };
 		virtual void Update() { };
 
-		const virtual Vulkan::BoundingBox GetBoundingBox() const;
+		const virtual Utopian::Vk::BoundingBox GetBoundingBox() const;
 
 		virtual uint32_t GetType() = 0;
 

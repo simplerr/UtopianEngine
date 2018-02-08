@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Collision.h"
 
-namespace Scene
+namespace Utopian
 {
 	Renderable::Renderable()
 	{
@@ -30,24 +30,24 @@ namespace Scene
 		SceneRenderer::Instance().AddRenderable(this);
 	}
 
-	Vulkan::StaticModel* Renderable::GetModel()
+	Utopian::Vk::StaticModel* Renderable::GetModel()
 	{
 		return mModel;
 	}
 
-	void Renderable::SetModel(Vulkan::StaticModel* model)
+	void Renderable::SetModel(Utopian::Vk::StaticModel* model)
 	{
 		mModel = model;
 	}
 
-	const Vulkan::BoundingBox Renderable::GetBoundingBox() const
+	const Utopian::Vk::BoundingBox Renderable::GetBoundingBox() const
 	{
-		Vulkan::BoundingBox boundingBox = mModel->GetBoundingBox();
+		Utopian::Vk::BoundingBox boundingBox = mModel->GetBoundingBox();
 		mat4 world;
-		world = glm::translate(world, GetPosition() + vec3(0.0f, boundingBox.GetHeight() / 2, 0.0f));
-		/*world = glm::rotate(world, glm::radians(GetRotation().x), vec3(1.0f, 0.0f, 0.0f));
-		world = glm::rotate(world, glm::radians(GetRotation().y), vec3(0.0f, 1.0f, 0.0f));
-		world = glm::rotate(world, glm::radians(GetRotation().z), vec3(0.0f, 0.0f, 1.0f));*/
+		world = glm::translate(world, GetPosition() + vec3(0.0f, 0*boundingBox.GetHeight() / 2, 0.0f));
+		//world = glm::rotate(world, glm::radians(GetRotation().x), vec3(1.0f, 0.0f, 0.0f));
+		//world = glm::rotate(world, glm::radians(GetRotation().y), vec3(0.0f, 1.0f, 0.0f));
+		//world = glm::rotate(world, glm::radians(GetRotation().z), vec3(0.0f, 0.0f, 1.0f));
 		world = glm::scale(world, GetScale());
 		boundingBox.Update(world);
 

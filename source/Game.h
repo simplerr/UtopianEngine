@@ -8,13 +8,13 @@
 class Terrain;
 class Input;
 
-namespace Scene
+namespace Utopian
 {
 	class SceneRenderer;
 	class Editor;
 }
 
-namespace Vulkan
+namespace Utopian
 {
 	class Game
 	{
@@ -32,10 +32,10 @@ namespace Vulkan
 		bool IsClosing();
 
 		// Move all of these to other locations
-		SharedPtr<Renderer> mRenderer;
-		SharedPtr<Camera> mCamera;
+		SharedPtr<Vk::Renderer> mRenderer;
+		SharedPtr<Vk::Camera> mCamera;
 		SharedPtr<Terrain> mTerrain;
-		SharedPtr<Scene::Editor> mEditor;
+		SharedPtr<Editor> mEditor;
 		Window* mWindow;
 		Timer mTimer;
 		std::string mTestCaseName;

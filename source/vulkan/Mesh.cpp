@@ -10,7 +10,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "Mesh.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Mesh::Mesh(Device* device)
 	{

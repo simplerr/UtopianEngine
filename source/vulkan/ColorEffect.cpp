@@ -10,7 +10,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/Vertex.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ColorEffect::ColorEffect()
 	{
@@ -18,7 +18,7 @@ namespace Vulkan
 
 	void ColorEffect::CreateDescriptorPool(Device* device)
 	{
-		mDescriptorPool = new Vulkan::DescriptorPool(device);
+		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 		mDescriptorPool->Create();
 	}
@@ -26,7 +26,7 @@ namespace Vulkan
 	void ColorEffect::CreateVertexDescription(Device* device)
 	{
 		// First tell Vulkan about how large each vertex is, the binding ID and the inputRate
-		mVertexDescription = new Vulkan::VertexDescription();
+		mVertexDescription = new Utopian::Vk::VertexDescription();
 		mVertexDescription->AddBinding(BINDING_0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
 
 		// We need to tell Vulkan about the memory layout for each attribute
@@ -51,7 +51,7 @@ namespace Vulkan
 	{
 		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet0 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
+		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
 		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_vs.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}

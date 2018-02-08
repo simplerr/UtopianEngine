@@ -16,7 +16,7 @@
 
 using namespace glm;
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ModelLoader::ModelLoader(TextureLoader* textureLoader)
 	{

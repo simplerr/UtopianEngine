@@ -5,7 +5,7 @@
 #include "LightData.h"
 #include "utility/Common.h"
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 
@@ -19,31 +19,31 @@ namespace Scene
 
 		static SharedPtr<Light> Create();
 
-		void SetLightData(const Vulkan::LightData& lightData);
+		void SetLightData(const Utopian::Vk::LightData& lightData);
 		void SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular);
 		void SetMaterial(const vec4& color);
-		void SetMaterial(const Vulkan::Material & material);
+		void SetMaterial(const Utopian::Vk::Material & material);
 
 		void SetDirection(const vec3& direction);
 		void SetRange(float range);
 		void SetSpot(float spot);
 		void SetAtt(float a0, float a1, float a2);
-		void SetType(Vulkan::LightType type);
+		void SetType(Utopian::Vk::LightType type);
 		void SetIntensity(float ambient, float diffuse, float specular);
 
 		// Getters
-		const Vulkan::LightData& GetLightData();
+		const Utopian::Vk::LightData& GetLightData();
 		const vec3& GetDirection() const;
 		const vec3& GetAtt() const;
 		const vec3& GetIntensity() const;
-		Vulkan::LightData* GetLightDataPtr();
-		const Vulkan::LightData& GetLightData() const;
-		Vulkan::Material GetMaterial() const;
+		Utopian::Vk::LightData* GetLightDataPtr();
+		const Utopian::Vk::LightData& GetLightData() const;
+		Utopian::Vk::Material GetMaterial() const;
 		float	 GetRange() const;
 		float	 GetSpot() const;
 		int		 GetType() const;
 
 	private:
-		Vulkan::LightData mLightData;
+		Utopian::Vk::LightData mLightData;
 	};
 }

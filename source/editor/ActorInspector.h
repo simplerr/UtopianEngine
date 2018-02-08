@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 	class ComponentInspector;

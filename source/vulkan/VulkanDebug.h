@@ -11,7 +11,7 @@
 
 #define ENUM_TO_STR(x) #x
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	namespace VulkanDebug
 	{

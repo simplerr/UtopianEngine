@@ -16,7 +16,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/VertexDescription.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	TextOverlay::TextOverlay(Renderer* renderer)
 	{
@@ -45,7 +45,7 @@ namespace Vulkan
 		// NOTE: Uses the descriptor set layout for the texture from the Renderer
 		// If more descriptors where to be needed they should be added as a separate descriptor set
 		// This is cheating a bit since the shader don't use more than a sampler
-		mPipelineLayout = new Vulkan::PipelineLayout(mRenderer->GetDevice());
+		mPipelineLayout = new Utopian::Vk::PipelineLayout(mRenderer->GetDevice());
 		mPipelineLayout->AddDescriptorSetLayout(mRenderer->GetTextureDescriptorSetLayout());
 		mPipelineLayout->Create();
 
@@ -56,8 +56,8 @@ namespace Vulkan
 		mVertexDescription->AddAttribute(0, Vec2Attribute());
 
 		// Create the pipeline
-		Vulkan::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
-		mPipeline = new Vulkan::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
+		Utopian::Vk::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
+		mPipeline = new Utopian::Vk::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 		
         // Why triangle strip?
 		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;

@@ -3,7 +3,7 @@
 #include "scene/Renderable.h"
 #include "utility/Common.h"
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 
@@ -16,7 +16,7 @@ namespace Scene
 		void Update() override;
 		void OnCreated() override;
 
-		void SetModel(Vulkan::StaticModel* model);
+		void SetModel(Utopian::Vk::StaticModel* model);
 
 		void EnableBoundingBox();
 		void DisableBoundingBox();
@@ -30,7 +30,7 @@ namespace Scene
 			return GetStaticType();
 		}
 
-		const Vulkan::BoundingBox GetBoundingBox() const;
+		const Utopian::Vk::BoundingBox GetBoundingBox() const;
 
 	private:
 		SharedPtr<Renderable> mInternal;

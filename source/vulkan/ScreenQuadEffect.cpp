@@ -9,7 +9,7 @@
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ScreenQuadEffect::ScreenQuadEffect()
 	{
@@ -17,17 +17,17 @@ namespace Vulkan
 
 	void ScreenQuadEffect::CreateDescriptorPool(Device* device)
 	{
-		mDescriptorPool = new Vulkan::DescriptorPool(device);
+		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4);
 		mDescriptorPool->Create();
 	}
 
 	void ScreenQuadEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Vulkan::VertexDescription();
+		mVertexDescription = new Utopian::Vk::VertexDescription();
 		mVertexDescription->AddBinding(BINDING_0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
-		mVertexDescription->AddAttribute(BINDING_0, Vulkan::Vec3Attribute());	// InPosL
-		mVertexDescription->AddAttribute(BINDING_0, Vulkan::Vec2Attribute());	// InTex	
+		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec3Attribute());	// InPosL
+		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec2Attribute());	// InTex	
 	}
 
 	void ScreenQuadEffect::CreatePipelineInterface(Device* device)
@@ -40,7 +40,7 @@ namespace Vulkan
 
 	void ScreenQuadEffect::CreateDescriptorSets(Device* device)
 	{
-		mDescriptorSet0 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
+		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
 	}
 
 	void ScreenQuadEffect::CreatePipeline(Renderer* renderer)

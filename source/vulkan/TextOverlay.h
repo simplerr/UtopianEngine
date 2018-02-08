@@ -22,7 +22,7 @@
 // Max. number of chars the text overlay buffer can hold
 #define TEXTOVERLAY_MAX_CHAR_COUNT 2048
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	// Mostly self-contained text overlay class
 	class TextOverlay

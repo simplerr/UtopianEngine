@@ -5,7 +5,7 @@
 
 using namespace glm;
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 

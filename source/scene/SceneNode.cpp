@@ -1,6 +1,6 @@
 #include "scene/SceneNode.h"
 
-namespace Scene
+namespace Utopian
 {
 
 	SceneNode::SceneNode()

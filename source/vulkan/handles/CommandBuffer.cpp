@@ -11,7 +11,7 @@
 #include "CommandPool.h"
 #include "RenderPass.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	CommandBuffer::CommandBuffer(Device* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
 		: Handle(device, nullptr)

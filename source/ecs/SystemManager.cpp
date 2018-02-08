@@ -150,7 +150,7 @@ namespace ECS
 		case WM_KEYDOWN:
 			if (wParam == VK_SPACE)
 			{
-				Vulkan::VulkanDebug::ConsolePrint("TODO: Add entity systems debug printing");
+				Utopian::Vk::VulkanDebug::ConsolePrint("TODO: Add entity systems debug printing");
 			}
 			break;
 		default:

@@ -4,7 +4,7 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 
-namespace Scene
+namespace Utopian
 {
 	/* 
 		ObjectManager is responsible for the lifetime of every Object.

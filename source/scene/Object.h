@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-namespace Scene
+namespace Utopian
 {
 	class Object
 	{

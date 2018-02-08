@@ -3,17 +3,17 @@
 #include "scene/CTransform.h"
 #include "scene/CLight.h"
 
-Scene::ComponentInspector::ComponentInspector()
+Utopian::ComponentInspector::ComponentInspector()
 {
 }
 
-Scene::TransformInspector::TransformInspector(CTransform* transform)
+Utopian::TransformInspector::TransformInspector(CTransform* transform)
 {
 	mComponent = transform;
 	mTransform = mComponent->GetTransform();
 }
 
-void Scene::TransformInspector::UpdateUi()
+void Utopian::TransformInspector::UpdateUi()
 {
 	mTransform = mComponent->GetTransform();
 
@@ -28,12 +28,12 @@ void Scene::TransformInspector::UpdateUi()
 	}
 }
 
-Scene::RenderableInspector::RenderableInspector(CRenderable* renderable)
+Utopian::RenderableInspector::RenderableInspector(CRenderable* renderable)
 {
 	mRenderable = renderable;
 }
 
-void Scene::RenderableInspector::UpdateUi()
+void Utopian::RenderableInspector::UpdateUi()
 {
 	if (ImGui::CollapsingHeader("Renderable", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -41,14 +41,14 @@ void Scene::RenderableInspector::UpdateUi()
 	}
 }
 
-Scene::LightInspector::LightInspector(CLight* light)
+Utopian::LightInspector::LightInspector(CLight* light)
 {
 	mLight = light;
 	mLightData = mLight->GetLightData();
 	mType = light->GetLightType();
 }
 
-void Scene::LightInspector::UpdateUi()
+void Utopian::LightInspector::UpdateUi()
 {
 	if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
 	{
@@ -69,6 +69,6 @@ void Scene::LightInspector::UpdateUi()
 		mLight->SetMaterial(mLightData.material);
 		mLight->SetRange(mLightData.range);
 		mLight->SetSpot(mLightData.spot);
-		mLight->SetType((Vulkan::LightType)mType);
+		mLight->SetType((Utopian::Vk::LightType)mType);
 	}
 }

@@ -4,7 +4,7 @@
 #include "scene/Actor.h"
 #include "Input.h"
 
-namespace Scene
+namespace Utopian
 {
 	CNoClip::CNoClip(Actor* parent, float speed)
 		: SceneComponent(parent)

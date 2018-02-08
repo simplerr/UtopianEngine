@@ -11,7 +11,7 @@
 
 using namespace std;
 
-namespace Scene
+namespace Utopian
 {
 	class CTransform;
 
@@ -22,7 +22,7 @@ namespace Scene
 
 		static SharedPtr<Actor> Create(string name);
 
-		Vulkan::BoundingBox GetBoundingBox() const;
+		Utopian::Vk::BoundingBox GetBoundingBox() const;
 		const Transform& GetTransform() const;
 
 		/*

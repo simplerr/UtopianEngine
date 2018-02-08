@@ -19,27 +19,27 @@
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-TransformTool::TransformTool(Vulkan::Renderer* renderer, Terrain* terrain)
+TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 {
 	// nullptr as default.
 	mSelectedActor = nullptr;
 	mCamera = renderer->GetCamera();
 	mTerrain = terrain;
 
-	auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/arrow.obj");
+	auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj");
 
-	mAxisX = Scene::Renderable::Create();
+	mAxisX = Utopian::Renderable::Create();
 	mAxisX->SetScale(vec3(AXIS_SCALE));
 	mAxisX->SetRotation(vec3(0.0f, 0.0f, 90.0f));
 	mAxisX->SetModel(model);
 	//mAxisX->SetPipeline(COLOR_NO_DEPTH_TEST);
 
-	mAxisY = Scene::Renderable::Create();
+	mAxisY = Utopian::Renderable::Create();
 	mAxisY->SetScale(vec3(AXIS_SCALE));
 	mAxisY->SetRotation(vec3(180.0f, 0.0f, 0.0f));
 	mAxisY->SetModel(model);
 
-	mAxisZ = Scene::Renderable::Create();
+	mAxisZ = Utopian::Renderable::Create();
 	mAxisZ->SetScale(vec3(AXIS_SCALE));
 	mAxisZ->SetRotation(vec3(90.0f, 0.0f, 0.0f));
 	mAxisZ->SetModel(model);
@@ -106,12 +106,12 @@ void TransformTool::Update(Input* pInput, float dt)
 	{
 		InitStartingPosition(pInput, dir, pos, dist);
 
-		Vulkan::Ray ray = mCamera->GetPickingRay();
+		Utopian::Vk::Ray ray = mCamera->GetPickingRay();
 		float distance = FLT_MAX;
 
-		Vulkan::BoundingBox boundingBoxX = mAxisX->GetBoundingBox();
-		Vulkan::BoundingBox boundingBoxY = mAxisY->GetBoundingBox();
-		Vulkan::BoundingBox boundingBoxZ = mAxisZ->GetBoundingBox();
+		Utopian::Vk::BoundingBox boundingBoxX = mAxisX->GetBoundingBox();
+		Utopian::Vk::BoundingBox boundingBoxY = mAxisY->GetBoundingBox();
+		Utopian::Vk::BoundingBox boundingBoxZ = mAxisZ->GetBoundingBox();
 
 		if (boundingBoxX.RayIntersect(ray, distance))
 		{
@@ -174,12 +174,12 @@ void TransformTool::Update(Input* pInput, float dt)
 		UpdatePosition(MoveAxisZ(pos, dir));
 		UpdatePosition(MoveAxisX(pos, dir));
 
-		Vulkan::VulkanDebug::ConsolePrint(dir, "picking dir:");
+		Utopian::Vk::VulkanDebug::ConsolePrint(dir, "picking dir:");
 	}
 
 	// Stick to the terain?
 	if (pInput->KeyPressed('C')) {
-		Scene::CTransform* transform = mSelectedActor->GetComponent<Scene::CTransform>();
+		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		vec3 position = transform->GetPosition();
 		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));
 		//float height = mMovingObject->GetWorld()->GetTerrain()->GetHeight(mMovingObject->GetPosition().x, mMovingObject->GetPosition().z);
@@ -189,7 +189,7 @@ void TransformTool::Update(Input* pInput, float dt)
 }
 
 //! Draws the arrow axis.
-void TransformTool::Draw(Vulkan::CommandBuffer* commandBuffer)
+void TransformTool::Draw(Utopian::Vk::CommandBuffer* commandBuffer)
 {
 	// Disable the depth test.
 	//ID3D11DepthStencilState* oldState = nullptr;
@@ -216,7 +216,7 @@ void TransformTool::Draw(Vulkan::CommandBuffer* commandBuffer)
 void TransformTool::UpdatePosition(vec3 delta)
 {
 	if (mSelectedActor != nullptr) {
-		Scene::CTransform* transform = mSelectedActor->GetComponent<Scene::CTransform>();
+		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		transform->AddTranslation(delta);
 		//onPositionChange(mMovingObject->GetPosition());
 	}
@@ -353,7 +353,7 @@ bool TransformTool::IsMovingObject()
 	return mMovingAxis == NONE ? false : true;
 }
 
-void TransformTool::SetActor(Scene::Actor* actor)
+void TransformTool::SetActor(Utopian::Actor* actor)
 {
 	mSelectedActor = actor;
 

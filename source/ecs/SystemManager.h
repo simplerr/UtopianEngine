@@ -6,7 +6,7 @@
 #include "ecs/systems/System.h"
 #include "scene/Actor.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class Camera;

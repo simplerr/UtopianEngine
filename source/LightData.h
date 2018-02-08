@@ -4,7 +4,7 @@
 
 using namespace glm;
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	enum LightType
 	{

@@ -5,7 +5,7 @@
 #include <map>
 #include "vulkan/handles/DescriptorSetLayout.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class PipelineInterface
 	{

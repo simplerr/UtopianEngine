@@ -2,7 +2,7 @@
 
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	/*
 		Base class for uniform and storage buffer.

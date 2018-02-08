@@ -4,7 +4,7 @@
 #include "scene/Actor.h"
 #include "imgui/imgui.h"
 
-namespace Scene
+namespace Utopian
 {
 	COrbit::COrbit(Actor* parent, float speed)
 		: SceneComponent(parent)

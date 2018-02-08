@@ -15,7 +15,7 @@
 #include "vulkan/ImguiEffect.h"
 #include "vulkan/handles/Buffer.h"
 
-namespace Vulkan 
+namespace Utopian::Vk 
 {
 	class Texture;
 
@@ -23,7 +23,7 @@ namespace Vulkan
 	class UIOverlay 
 	{
 	public:
-		UIOverlay(uint32_t width, uint32_t height, Vulkan::Renderer* renderer);
+		UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::Renderer* renderer);
 		~UIOverlay();
 
 		void Update();
@@ -32,16 +32,16 @@ namespace Vulkan
 		void PrepareResources();
 		void UpdateCommandBuffers();
 
-		Vulkan::CommandBuffer* GetCommandBuffer() const;
+		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
 
 		static void TextV(const char* format, ...);
 
 	private:
-		Vulkan::Renderer* mRenderer;
-		Vulkan::CommandBuffer* mCommandBuffer;
-		Vulkan::Buffer mVertexBuffer;
-		Vulkan::Buffer mIndexBuffer;
-		Vulkan::ImguiEffect mImguiEffect;
+		Utopian::Vk::Renderer* mRenderer;
+		Utopian::Vk::CommandBuffer* mCommandBuffer;
+		Utopian::Vk::Buffer mVertexBuffer;
+		Utopian::Vk::Buffer mIndexBuffer;
+		Utopian::Vk::ImguiEffect mImguiEffect;
 
 		ImDrawVert* mMappedVertices;
 		ImDrawIdx* mMappedIndices;

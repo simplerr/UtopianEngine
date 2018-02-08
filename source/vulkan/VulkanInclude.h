@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 
 // Forward declarations
-namespace Vulkan
+namespace Utopian::Vk
 {
 	// Handles
 	class Buffer;
@@ -49,5 +49,10 @@ namespace Vulkan
 
 	// Should be moved
 	class Camera;
+}
+
+namespace Utopian
+{
+	// Should be moved
 	class Window;
 }

@@ -5,7 +5,7 @@
 #include "Device.h"
 #include "VulkanDebug.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Shader::Shader()
 	{

@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "Fence.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Fence::Fence(Device* device, VkFenceCreateFlags flags)
 		: Handle(device, vkDestroyFence)

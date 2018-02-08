@@ -10,7 +10,7 @@
 #include "vulkan/Vertex.h"
 #include "Collision.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Mesh
 	{

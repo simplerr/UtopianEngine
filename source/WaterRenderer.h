@@ -3,7 +3,7 @@
 #include <vector>
 #include "vulkan/WaterEffect.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class CommandBuffer;
 	class RenderTarget;
@@ -18,32 +18,32 @@ namespace Vulkan
 class WaterRenderer
 {
 public:
-	WaterRenderer(Vulkan::Renderer* renderer, Vulkan::ModelLoader* modelLoader, Vulkan::TextureLoader* textureLoader);
+	WaterRenderer(Utopian::Vk::Renderer* renderer, Utopian::Vk::ModelLoader* modelLoader, Utopian::Vk::TextureLoader* textureLoader);
 	~WaterRenderer();
 
-	void Render(Vulkan::Renderer* renderer, Vulkan::CommandBuffer* commandBuffer);
-	void Update(Vulkan::Renderer* renderer, Vulkan::Camera* camera);
+	void Render(Utopian::Vk::Renderer* renderer, Utopian::Vk::CommandBuffer* commandBuffer);
+	void Update(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera);
 
 	void AddWater(glm::vec3 position, uint32_t numCells);
 
-	Vulkan::RenderTarget* GetReflectionRenderTarget();
-	Vulkan::RenderTarget* GetRefractionRenderTarget();
+	Utopian::Vk::RenderTarget* GetReflectionRenderTarget();
+	Utopian::Vk::RenderTarget* GetRefractionRenderTarget();
 
 private:
 	struct Water
 	{
-		Vulkan::StaticModel* gridModel;
+		Utopian::Vk::StaticModel* gridModel;
 		glm::vec3 position;
 	};
 
-	Vulkan::Renderer* mRenderer;
-	Vulkan::ModelLoader* mModelLoader;
+	Utopian::Vk::Renderer* mRenderer;
+	Utopian::Vk::ModelLoader* mModelLoader;
 
-	Vulkan::WaterEffect mWaterEffect;
-	Vulkan::RenderTarget* mReflectionRenderTarget;
-	Vulkan::RenderTarget* mRefractionRenderTarget;
-	Vulkan::Texture* dudvTexture;
-	Vulkan::StaticModel* mGridModel;
+	Utopian::Vk::WaterEffect mWaterEffect;
+	Utopian::Vk::RenderTarget* mReflectionRenderTarget;
+	Utopian::Vk::RenderTarget* mRefractionRenderTarget;
+	Utopian::Vk::Texture* dudvTexture;
+	Utopian::Vk::StaticModel* mGridModel;
 	std::vector<Water> mWaterList;
 
 	const uint32_t CELL_SIZE = 2000.0f;

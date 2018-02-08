@@ -6,7 +6,7 @@
 #include "../external/assimp/assimp/Importer.hpp"
 #include "vulkan/Vertex.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	struct AssimpMesh
 	{

@@ -7,7 +7,7 @@
 #include "imgui/imgui.h"
 #include "vulkan/UIOverlay.h"
 
-namespace Scene
+namespace Utopian
 {
 	ActorInspector::ActorInspector()
 	{
@@ -41,7 +41,7 @@ namespace Scene
 		}
 	}
 
-	void ActorInspector::SetActor(Scene::Actor* actor)
+	void ActorInspector::SetActor(Utopian::Actor* actor)
 	{
 		mActor = actor;
 

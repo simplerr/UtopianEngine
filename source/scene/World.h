@@ -7,7 +7,7 @@
 #include "utility/Common.h"
 #include "Collision.h"
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 	class SceneNode;
@@ -33,7 +33,7 @@ namespace Scene
 
 		void NotifyComponentCreated(SceneComponent* component);
 
-		Actor* RayIntersection(const Vulkan::Ray& ray);
+		Actor* RayIntersection(const Utopian::Vk::Ray& ray);
 
 		/* The bound SceneNodes transform will be synchronized with the SceneEntity in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* entity);

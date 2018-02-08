@@ -4,7 +4,7 @@
 #include "vulkan/TerrainEffect.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool)
+Block::Block(Utopian::Vk::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool)
 {
 	mPosition = position;
 	mColor = color;
@@ -13,12 +13,12 @@ Block::Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, ui
 	mVoxelSize = voxelSize;
 
 	uint32_t size = blockSize*blockSize*blockSize * 5 * 3;
-	mVertexBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, nullptr);
+	mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, nullptr);
 	mBufferInfo.buffer = mVertexBuffer->GetVkBuffer();
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;
 
-	pipelineType = Vulkan::TerrainEffect::PipelineType2::SOLID;
+	pipelineType = Utopian::Vk::TerrainEffect::PipelineType2::SOLID;
 	//if (rand() % 2 == 0)
 	//	pipelineType = Vulkan::TerrainEffect::PipelineType2::WIREFRAME;
 	//else
@@ -35,7 +35,7 @@ VkDescriptorBufferInfo Block::GetBufferInfo()
 	return mBufferInfo;
 }
 
-Vulkan::Buffer* Block::GetVertexBuffer()
+Utopian::Vk::Buffer* Block::GetVertexBuffer()
 {
 	return mVertexBuffer;
 }

@@ -2,7 +2,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "Instance.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Instance::Instance(std::string appName, bool enableValidation)
 	{

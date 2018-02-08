@@ -4,7 +4,7 @@
 #include "ecs/SystemManager.h"
 #include "Exception.h"
 
-namespace Scene
+namespace Utopian
 {
 	Actor::Actor(string name)
 		: Object(name)
@@ -24,15 +24,15 @@ namespace Scene
 		return entity;
 	}
 
-	Vulkan::BoundingBox Actor::GetBoundingBox() const
+	Utopian::Vk::BoundingBox Actor::GetBoundingBox() const
 	{
-		Vulkan::BoundingBox boundingBox;
+		Utopian::Vk::BoundingBox boundingBox;
 		//boundingBox.Init(GetTransform().GetPosition(), glm::vec3(5000.0f));
 		boundingBox.Init(glm::vec3(0.0f), glm::vec3(0.0f));
 
 		for (auto& component : mComponents)
 		{
-			Vulkan::BoundingBox box = component->GetBoundingBox();
+			Utopian::Vk::BoundingBox box = component->GetBoundingBox();
 			if (box.GetMin() == glm::vec3(0.0f) && box.GetMax() == glm::vec3(0.0f))
 				continue;
 			else

@@ -120,7 +120,7 @@ void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
 	}
 }
 
-Terrain::Terrain(Vulkan::Renderer* renderer)
+Terrain::Terrain(Utopian::Vk::Renderer* renderer)
 {
 	mRenderer = renderer;
 
@@ -196,7 +196,7 @@ void Terrain::UpdateBlockList()
 					glm::vec3 position = glm::vec3(x*mVoxelsInBlock*mVoxelSize, y*mVoxelsInBlock*mVoxelSize, z*mVoxelsInBlock*mVoxelSize);
 					glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
 					//color = glm::vec3(0.0f, 0.7f, 0.0f);
-					Vulkan::DescriptorSetLayout* setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
+					Utopian::Vk::DescriptorSetLayout* setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
 					Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
 
 					mBlockList[blockKey] = block;
@@ -239,7 +239,7 @@ void Terrain::GenerateBlocks(float time)
 			mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
 			mMarchingCubesEffect.mDescriptorSet1->UpdateDescriptorSets();
 
-			Vulkan::CommandBuffer commandBuffer = Vulkan::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
 			// TODO: Use the firstSet parameter to only update the Block descriptor
@@ -248,7 +248,7 @@ void Terrain::GenerateBlocks(float time)
 			commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
 			// Push the world matrix constant
-			Vulkan::PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->GetPosition()));
+			Utopian::Vk::PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->GetPosition()));
 
 			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer.CmdDispatch(32, 32, 32);
@@ -267,7 +267,7 @@ void Terrain::GenerateBlocks(float time)
 	}
 }
 
-void Terrain::Render(Vulkan::CommandBuffer* commandBuffer, Vulkan::DescriptorSet* commonDescriptorSet)
+void Terrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::DescriptorSet* commonDescriptorSet)
 {
 	for (auto blockIter : mBlockList)
 	{
@@ -283,7 +283,7 @@ void Terrain::Render(Vulkan::CommandBuffer* commandBuffer, Vulkan::DescriptorSet
 			commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
 			// Push the world matrix constant
-			Vulkan::PushConstantBasicBlock pushConstantBlock;
+			Utopian::Vk::PushConstantBasicBlock pushConstantBlock;
 			pushConstantBlock.world = glm::mat4();
 			pushConstantBlock.color = block->GetColor();
 
@@ -335,17 +335,17 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					numVertices += block->GetNumVertices();
 				}
 
-				Vulkan::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
-				Vulkan::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
+				Utopian::Vk::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
+				Utopian::Vk::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
 
 				glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
 				int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
 				int32_t blockY = 0;
 				int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
 
-				Vulkan::VulkanDebug::ConsolePrint(blockX, "blockX: ");
-				Vulkan::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
-				Vulkan::VulkanDebug::ConsolePrint(GetHeight(mRenderer->GetCamera()->GetPosition().x, mRenderer->GetCamera()->GetPosition().z), "terrain height: ");
+				Utopian::Vk::VulkanDebug::ConsolePrint(blockX, "blockX: ");
+				Utopian::Vk::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
+				Utopian::Vk::VulkanDebug::ConsolePrint(GetHeight(mRenderer->GetCamera()->GetPosition().x, mRenderer->GetCamera()->GetPosition().z), "terrain height: ");
 
 				UpdateBlockList();
 			}

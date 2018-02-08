@@ -6,7 +6,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ScreenGui::ScreenGui(Renderer* renderer)
 	{
@@ -18,11 +18,11 @@ namespace Vulkan
 			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }
 		};
 
-		mVertexBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vertex), vertices.data());
+		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vertex), vertices.data());
 
 		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
-		mIndexBuffer = new Vulkan::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
+		mIndexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 
 		mEffect.Init(renderer);
 
@@ -55,21 +55,21 @@ namespace Vulkan
 		}
 	}
 
-	void ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler)
+	void ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler)
 	{
 		TextureQuad textureQuad = TextureQuad(left, top, width, height);
 
-		textureQuad.descriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad.descriptorSet = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
 		textureQuad.descriptorSet->BindCombinedImage(0, image, sampler);
 		textureQuad.descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);
 	}
 
-	void ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture)
+	void ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture)
 	{
 		TextureQuad textureQuad = TextureQuad(left, top, width, height);
 
-		textureQuad.descriptorSet = new Vulkan::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad.descriptorSet = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
 		textureQuad.descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());
 		textureQuad.descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);

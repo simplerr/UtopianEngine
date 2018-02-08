@@ -2,7 +2,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/Device.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Effect::Effect()
 	{

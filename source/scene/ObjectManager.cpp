@@ -1,7 +1,7 @@
 #include "scene/ObjectManager.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace Scene
+namespace Utopian
 {
 	ObjectManager::ObjectManager()
 		: mNextAvailableId(0)
@@ -36,7 +36,7 @@ namespace Scene
 	{
 		for (auto& entry : mObjects)
 		{
-			Vulkan::VulkanDebug::ConsolePrint("Name: " + entry.second->GetName() + ", Id: " + to_string(entry.second->GetId()) + ", Use count: " + to_string(entry.second.use_count()));
+			Utopian::Vk::VulkanDebug::ConsolePrint("Name: " + entry.second->GetName() + ", Id: " + to_string(entry.second->GetId()) + ", Use count: " + to_string(entry.second.use_count()));
 		}
 	}
 }

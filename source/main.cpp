@@ -11,12 +11,12 @@
 #include "Game.h"
 #include "Camera.h"
 
-using namespace Vulkan;
+using namespace Utopian::Vk;
 
 // The Vulkan application
 //VulkanLib::renderer renderer;
 
-Vulkan::Game* gGame = nullptr;
+Utopian::Game* gGame = nullptr;
 
 #if defined(_WIN32)
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -45,7 +45,7 @@ int main(const int argc, const char *argv[])
 	/*
 	Create the window
 	*/
-	Vulkan::Window window = Vulkan::Window(1500, 950);
+	Utopian::Window window = Utopian::Window(1500, 950);
 
 #if defined(_WIN32)			// Win32
 	window.SetupWindow(hInstance, WndProc);
@@ -54,7 +54,7 @@ int main(const int argc, const char *argv[])
 #endif
 
 	// Create the game
-	gGame = new Vulkan::Game(&window);
+	gGame = new Utopian::Game(&window);
 
 	// Game loop
 	gGame->RenderLoop();

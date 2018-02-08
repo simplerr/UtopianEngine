@@ -1,6 +1,6 @@
 #include "scene/Object.h"
 
-namespace Scene
+namespace Utopian
 {
 	Object::Object()
 	{

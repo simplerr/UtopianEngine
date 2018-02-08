@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include "scene/CTransform.h"
 
-namespace Scene
+namespace Utopian
 {
 	CTransform::CTransform(Actor* parent, const vec3& position)
 		: SceneComponent(parent)
@@ -68,7 +68,7 @@ namespace Scene
 	}
 
 
-	const Scene::Transform& CTransform::GetTransform() const
+	const Utopian::Transform& CTransform::GetTransform() const
 	{
 		return mTransform;
 	}

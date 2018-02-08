@@ -3,7 +3,7 @@
 #include "scene/World.h"
 #include "imgui/imgui.h"
 
-namespace Scene
+namespace Utopian
 {
 	CLight::CLight(Actor* parent)
 		: SceneComponent(parent)
@@ -37,7 +37,7 @@ namespace Scene
 		mInternal->SetMaterial(color);
 	}
 
-	void CLight::SetMaterial(const Vulkan::Material& material)
+	void CLight::SetMaterial(const Utopian::Vk::Material& material)
 	{
 		mInternal->SetMaterial(material);
 	}
@@ -67,7 +67,7 @@ namespace Scene
 		mInternal->SetAtt(a0, a1, a2);
 	}
 
-	void CLight::SetType(Vulkan::LightType type)
+	void CLight::SetType(Utopian::Vk::LightType type)
 	{
 		mInternal->SetType(type);
 	}
@@ -82,7 +82,7 @@ namespace Scene
 		SetIntensity(intensity.x, intensity.y, intensity.z);
 	}
 
-	const Vulkan::LightData& CLight::GetLightData() const
+	const Utopian::Vk::LightData& CLight::GetLightData() const
 	{
 		return mInternal->GetLightData();
 	}
@@ -102,7 +102,7 @@ namespace Scene
 		return mInternal->GetIntensity();
 	}
 
-	Vulkan::Material CLight::GetMaterial() const
+	Utopian::Vk::Material CLight::GetMaterial() const
 	{
 		return mInternal->GetMaterial();
 	}

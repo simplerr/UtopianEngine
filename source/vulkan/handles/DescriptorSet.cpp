@@ -5,7 +5,7 @@
 #include "DescriptorSet.h"
 #include "DescriptorSetLayout.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	DescriptorSet::DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{

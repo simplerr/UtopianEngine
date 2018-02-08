@@ -13,7 +13,7 @@
 
 class Terrain;
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class Camera;
@@ -64,7 +64,7 @@ namespace ECS
 	class RenderSystem : public System
 	{
 	public:
-		RenderSystem(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain);
+		RenderSystem(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera, Terrain* terrain);
 		~RenderSystem();
 
 		void OnEntityAdded(const EntityCache& entityCache);
@@ -75,7 +75,7 @@ namespace ECS
 		// RenderSystem is treated differently from the other systems.
 		// Render() wil be called from the SceneRenderer() which is required for the
 		// multi pass techniques to work.
-		void Render(Vulkan::CommandBuffer* commandBuffer);
+		void Render(Utopian::Vk::CommandBuffer* commandBuffer);
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -83,16 +83,16 @@ namespace ECS
 	private:
 		// RenderSystem should not BE a renderer but rather have one, since the usage of Vulkan should not be limited to only the ECS
 		// renderer needs to be available for HUDS, debugging etc
-		Vulkan::Renderer* mRenderer;
-		Vulkan::ModelLoader* mModelLoader;
-		Vulkan::TextureLoader* mTextureLoader;
-		Vulkan::StaticModel* mCubeModel;
-		Vulkan::CommandBuffer* mCommandBuffer;
-		Vulkan::CommandBuffer* mTerrainCommandBuffer;
-		Vulkan::CommandBuffer* mOffscreenCommandBuffer;
-		Vulkan::Camera* mCamera;
-		Vulkan::PhongEffect mPhongEffect;
-		Vulkan::NormalDebugEffect mNormalDebugEffect;
+		Utopian::Vk::Renderer* mRenderer;
+		Utopian::Vk::ModelLoader* mModelLoader;
+		Utopian::Vk::TextureLoader* mTextureLoader;
+		Utopian::Vk::StaticModel* mCubeModel;
+		Utopian::Vk::CommandBuffer* mCommandBuffer;
+		Utopian::Vk::CommandBuffer* mTerrainCommandBuffer;
+		Utopian::Vk::CommandBuffer* mOffscreenCommandBuffer;
+		Utopian::Vk::Camera* mCamera;
+		Utopian::Vk::PhongEffect mPhongEffect;
+		Utopian::Vk::NormalDebugEffect mNormalDebugEffect;
 
 		Terrain* mTerrain;
 

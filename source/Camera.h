@@ -9,25 +9,26 @@
 #include "Collision.h"
 #include "utility/Common.h"
 #include "scene/SceneNode.h"
+#include "vulkan/VulkanInclude.h"
 
 using namespace glm;
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Window;
 
-	class Camera : public Scene::SceneNode
+	class Camera : public Utopian::SceneNode
 	{
 	public:
-		Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
+		Camera(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 
-		static SharedPtr<Camera> Create(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
+		static SharedPtr<Camera> Create(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane);
 		void Initialize();
 
 		void SetFov(float fov);
 		void SetNearPlane(float nearPlane);
 		void SetFarPlane(float farPlane);
-		void SetWindow(Vulkan::Window* window);
+		void SetWindow(Utopian::Window* window);
 		void SetAspectRatio(float aspectRatio);
 
 		Ray GetPickingRay();
@@ -54,7 +55,7 @@ namespace Vulkan
 		// [NOTE][HACK] Vulkan & OpenGL have different pitch movement
 		int hack = 1;
 	private:
-		Window* mWindow;
+		Utopian::Window* mWindow;
 		vec3 mUp;
 
 		float mPitch;	// Vertical angle

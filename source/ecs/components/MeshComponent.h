@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "Collision.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	enum PipelineType;
 	class StaticModel;
@@ -17,20 +17,20 @@ namespace ECS
 	class MeshComponent : public Component
 	{
 	public:
-		MeshComponent(std::string filename, Vulkan::PipelineType pipeline);
+		MeshComponent(std::string filename, Utopian::Vk::PipelineType pipeline);
 
-		void SetModel(Vulkan::StaticModel* model);
-		void SetPipeline(Vulkan::PipelineType pipeline);
+		void SetModel(Utopian::Vk::StaticModel* model);
+		void SetPipeline(Utopian::Vk::PipelineType pipeline);
 
-		Vulkan::PipelineType GetPipeline();
-		Vulkan::StaticModel* GetModel();
-		Vulkan::BoundingBox GetBoundingBox();
+		Utopian::Vk::PipelineType GetPipeline();
+		Utopian::Vk::StaticModel* GetModel();
+		Utopian::Vk::BoundingBox GetBoundingBox();
 
 		std::string GetFilename();
 
 	private:
-		Vulkan::PipelineType mPipeline;
-		Vulkan::StaticModel* mModel;
+		Utopian::Vk::PipelineType mPipeline;
+		Utopian::Vk::StaticModel* mModel;
 		std::string mFilename;
 
 		// Material

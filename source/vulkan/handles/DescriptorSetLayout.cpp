@@ -1,7 +1,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	DescriptorSetLayout::DescriptorSetLayout(Device* device)
 		: Handle(device, vkDestroyDescriptorSetLayout)

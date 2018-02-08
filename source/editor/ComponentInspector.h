@@ -2,7 +2,7 @@
 #include "scene/Transform.h"
 #include "LightData.h"
 
-namespace Scene
+namespace Utopian
 {
 	class CTransform;
 	class CRenderable;
@@ -46,7 +46,7 @@ namespace Scene
 		virtual void UpdateUi() override;
 	private:
 		CLight* mLight;
-		Vulkan::LightData mLightData;
+		Utopian::Vk::LightData mLightData;
 		int mType;
 	};
 }

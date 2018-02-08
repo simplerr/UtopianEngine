@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class RenderTarget
 	{
@@ -13,26 +13,26 @@ namespace Vulkan
 		~RenderTarget();
 
 		void Begin();
-		void End(Vulkan::Queue* queue);
+		void End(Utopian::Vk::Queue* queue);
 
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
-		Vulkan::Image* GetImage();
-		Vulkan::Sampler* GetSampler();
-		Vulkan::CommandBuffer* GetCommandBuffer();
+		Utopian::Vk::Image* GetImage();
+		Utopian::Vk::Sampler* GetSampler();
+		Utopian::Vk::CommandBuffer* GetCommandBuffer();
 
 		uint32_t GetWidth();
 		uint32_t GetHeight();
 
 	private:
-		Vulkan::FrameBuffers* mFrameBuffer;
-		Vulkan::RenderPass* mRenderPass;
-		Vulkan::Image* mColorImage;
-		Vulkan::Image* mDepthImage;
-		Vulkan::Pipeline* mPipeline;
-		Vulkan::CommandBuffer* mCommandBuffer;
-		Vulkan::DescriptorSet* mTextureDescriptorSet;
-		Vulkan::Sampler* mSampler;
+		Utopian::Vk::FrameBuffers* mFrameBuffer;
+		Utopian::Vk::RenderPass* mRenderPass;
+		Utopian::Vk::Image* mColorImage;
+		Utopian::Vk::Image* mDepthImage;
+		Utopian::Vk::Pipeline* mPipeline;
+		Utopian::Vk::CommandBuffer* mCommandBuffer;
+		Utopian::Vk::DescriptorSet* mTextureDescriptorSet;
+		Utopian::Vk::Sampler* mSampler;
 		uint32_t mWidth, mHeight;
 		glm::vec4 mClearColor;
 	};

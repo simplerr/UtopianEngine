@@ -6,14 +6,14 @@
 
 using namespace glm;
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 
 	class CCamera : public SceneComponent
 	{
 	public:
-		CCamera(Actor* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane);
+		CCamera(Actor* parent, Utopian::Window* window, float fieldOfView, float nearPlane, float farPlane);
 		~CCamera();
 
 		void Update() override;
@@ -27,7 +27,7 @@ namespace Scene
 		void SetNearPlane(float nearPlane);
 		void SetFarPlane(float farPlane);
 		void SetAspectRatio(float aspectRatio);
-		void SetWindow(Vulkan::Window* window);
+		void SetWindow(Utopian::Window* window);
 		void SetMainCamera();
 
 		// Getters
@@ -48,6 +48,6 @@ namespace Scene
 		}
 
 	private:
-		SharedPtr<Vulkan::Camera> mInternal;
+		SharedPtr<Utopian::Vk::Camera> mInternal;
 	};
 }

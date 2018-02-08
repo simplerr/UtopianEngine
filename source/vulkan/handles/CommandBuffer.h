@@ -3,7 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "Handle.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{

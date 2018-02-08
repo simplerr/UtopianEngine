@@ -2,7 +2,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/ShaderManager.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ComputePipeline::ComputePipeline(Device* device, PipelineInterface* pipelineInterface, Shader* shader)
 		: Handle(device, vkDestroyPipeline)

@@ -32,7 +32,7 @@
 	https://0fps.net/2012/07/12/smooth-voxel-terrain-part-2/
 */
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Buffer;
 	class Renderer;
@@ -79,11 +79,11 @@ bool operator<(BlockKey const& a, BlockKey const& b);
 class Terrain
 {
 public:
-	Terrain(Vulkan::Renderer* renderer);
+	Terrain(Utopian::Vk::Renderer* renderer);
 	~Terrain();
 
 	void Update();
-	void Render(Vulkan::CommandBuffer* commandBuffer, Vulkan::DescriptorSet* commonDescriptorSet);
+	void Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::DescriptorSet* commonDescriptorSet);
 	void UpdateUniformBuffer();
 
 	/**  
@@ -105,11 +105,11 @@ public:
 	glm::vec3 GetRayIntersection(glm::vec3 origin, glm::vec3 direction);
 
 private:
-	Vulkan::Renderer* mRenderer;
+	Utopian::Vk::Renderer* mRenderer;
 
 	// Experimentation
-	Vulkan::TerrainEffect mTerrainEffect;
-	Vulkan::MarchingCubesEffect mMarchingCubesEffect;
+	Utopian::Vk::TerrainEffect mTerrainEffect;
+	Utopian::Vk::MarchingCubesEffect mMarchingCubesEffect;
 
 	//std::vector<Block*> mBlockList;
 	const int32_t mVoxelsInBlock = 32;

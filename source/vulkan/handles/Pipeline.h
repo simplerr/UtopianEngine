@@ -4,7 +4,7 @@
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Pipeline : public Handle<VkPipeline>
 	{

@@ -5,7 +5,7 @@
 #include "Image.h"
 #include "RenderPass.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height)
 		: mDevice(device)

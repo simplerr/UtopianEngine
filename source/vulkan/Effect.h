@@ -5,7 +5,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	/* 
 	 * Base class for all effects.

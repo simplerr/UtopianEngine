@@ -12,7 +12,7 @@ enum MovingAxis
 	NONE
 };
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class StaticModel;
 	class Camera;
@@ -23,7 +23,7 @@ namespace ECS
 	class EntityCache;
 }
 
-namespace Scene
+namespace Utopian
 {
 	class Actor;
 	class Renderable;
@@ -36,13 +36,13 @@ class Terrain;
 class TransformTool
 {
 public:
-	TransformTool(Vulkan::Renderer* renderer, Terrain* terrain);
+	TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain);
 	~TransformTool();
 
 	void Update(Input* pInput, float dt);
-	void Draw(Vulkan::CommandBuffer* commandBuffer);
+	void Draw(Utopian::Vk::CommandBuffer* commandBuffer);
 	bool IsMovingObject();
-	void SetActor(Scene::Actor* actor);
+	void SetActor(Utopian::Actor* actor);
 
 	// These are only supposed to be called by an BaseInspector type.
 	void SetPosition(glm::vec3 position);
@@ -56,15 +56,15 @@ private:
 	void ScaleAxisArrows();
 
 private:
-	SharedPtr<Scene::Renderable> mAxisX;
-	SharedPtr<Scene::Renderable> mAxisY;
-	SharedPtr<Scene::Renderable> mAxisZ;
-	Scene::Actor* mSelectedActor;
+	SharedPtr<Utopian::Renderable> mAxisX;
+	SharedPtr<Utopian::Renderable> mAxisY;
+	SharedPtr<Utopian::Renderable> mAxisZ;
+	Utopian::Actor* mSelectedActor;
 	MovingAxis	  mMovingAxis;
 	glm::vec3	  mLastPlanePos;
-	Vulkan::Camera* mCamera;
+	Utopian::Vk::Camera* mCamera;
 	Terrain* mTerrain;
-	Vulkan::ColorEffect mColorEffect;
+	Utopian::Vk::ColorEffect mColorEffect;
 
 	const float AXIS_SCALE = 30.0f;
 	const float PLANE_SIZE = 100000.0;

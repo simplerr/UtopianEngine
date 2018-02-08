@@ -1,6 +1,6 @@
 #include "Window.h"
 
-namespace Vulkan
+namespace Utopian
 {
 	Window::Window(int width, int height)
 	{

@@ -19,7 +19,7 @@
 #define BINDING_3 3
 #define BINDING_4 4
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Pipeline2 : public Handle<VkPipeline>
 	{

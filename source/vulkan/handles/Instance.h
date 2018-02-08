@@ -3,7 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include <string>
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Instance 
 	{

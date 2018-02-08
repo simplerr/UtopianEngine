@@ -7,7 +7,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "LightData.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class DescriptorSetLayout;

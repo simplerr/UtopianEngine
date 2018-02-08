@@ -12,7 +12,7 @@
 #include "vulkan/Vertex.h"
 #include "imgui/imgui.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	ImguiEffect::ImguiEffect()
 	{
@@ -27,7 +27,7 @@ namespace Vulkan
 
 	void ImguiEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Vulkan::VertexDescription();
+		mVertexDescription = new Utopian::Vk::VertexDescription();
 		mVertexDescription->AddBinding(BINDING_0, sizeof(ImDrawVert), VK_VERTEX_INPUT_RATE_VERTEX);
 
 		mVertexDescription->AddAttribute(BINDING_0, Vec2Attribute());	// Location 0 : Position
@@ -44,7 +44,7 @@ namespace Vulkan
 
 	void ImguiEffect::CreateDescriptorSets(Device* device)
 	{
-		mDescriptorSet0 = new Vulkan::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
+		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
 		mDescriptorSet0->BindCombinedImage(BINDING_0, &mTexture->GetTextureDescriptorInfo());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
@@ -52,7 +52,7 @@ namespace Vulkan
 	void ImguiEffect::CreatePipeline(Renderer* renderer)
 	{
 		// Render pass
-		mRenderPass = new Vulkan::RenderPass(renderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderPass = new Utopian::Vk::RenderPass(renderer->GetDevice(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		//mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		mRenderPass->Create();
 

@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include "Transform.h"
 
-namespace Scene
+namespace Utopian
 {
 	Transform::Transform(const vec3& position)
 	{

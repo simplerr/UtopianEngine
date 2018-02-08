@@ -5,9 +5,9 @@
 #include "vulkan/handles/Buffer.h"
 #include "LightData.h"
 
-namespace Scene
+namespace Utopian
 {
-	class CameraUniformBuffer : public Vulkan::ShaderBuffer
+	class CameraUniformBuffer : public Utopian::Vk::ShaderBuffer
 	{
 	public:
 		virtual void UpdateMemory()
@@ -39,7 +39,7 @@ namespace Scene
 		} constants; // Currently unused
 	};
 
-	class LightUniformBuffer : public Vulkan::ShaderBuffer
+	class LightUniformBuffer : public Utopian::Vk::ShaderBuffer
 	{
 	public:
 		virtual void UpdateMemory()
@@ -54,7 +54,7 @@ namespace Scene
 
 			// Map and update number of lights
 			dataOffset += dataSize;
-			dataSize = lights.size() * sizeof(Vulkan::LightData);
+			dataSize = lights.size() * sizeof(Utopian::Vk::LightData);
 			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
 			memcpy(mapped, lights.data(), dataSize);
 			mBuffer->UnmapMemory();
@@ -62,7 +62,7 @@ namespace Scene
 
 		virtual int GetSize()
 		{
-			return lights.size() * sizeof(Vulkan::LightData) + sizeof(constants);
+			return lights.size() * sizeof(Utopian::Vk::LightData) + sizeof(constants);
 		}
 
 		struct {
@@ -71,10 +71,10 @@ namespace Scene
 		} constants;
 
 		// Public data members
-		std::vector<Vulkan::LightData> lights;
+		std::vector<Utopian::Vk::LightData> lights;
 	};
 
-	class FogUniformBuffer : public Vulkan::ShaderBuffer
+	class FogUniformBuffer : public Utopian::Vk::ShaderBuffer
 	{
 	public:
 		virtual void UpdateMemory()

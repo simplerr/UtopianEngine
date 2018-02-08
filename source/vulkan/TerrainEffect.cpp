@@ -7,7 +7,7 @@
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	TerrainEffect::TerrainEffect()
 	{
@@ -16,7 +16,7 @@ namespace Vulkan
 
 	void TerrainEffect::CreateDescriptorPool(Device* device)
 	{
-		mDescriptorPool = new Vulkan::DescriptorPool(device);
+		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1);
 		mDescriptorPool->Create();
@@ -24,10 +24,10 @@ namespace Vulkan
 
 	void TerrainEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Vulkan::VertexDescription();
+		mVertexDescription = new Utopian::Vk::VertexDescription();
 		mVertexDescription->AddBinding(BINDING_0, sizeof(BasicVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
-		mVertexDescription->AddAttribute(BINDING_0, Vulkan::Vec4Attribute());	// InPosL
-		mVertexDescription->AddAttribute(BINDING_0, Vulkan::Vec4Attribute());	// InNormal	
+		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec4Attribute());	// InPosL
+		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec4Attribute());	// InNormal	
 	}
 
 	void TerrainEffect::CreatePipelineInterface(Device* device)
@@ -48,15 +48,15 @@ namespace Vulkan
 
 	void TerrainEffect::CreatePipeline(Renderer* renderer)
 	{
-		Vulkan::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
+		Utopian::Vk::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
 
-		Pipeline2* pipeline = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2* pipeline = new Utopian::Vk::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->Create();
 		mPipelines[PipelineType2::WIREFRAME] = pipeline;
 
-		Pipeline2* pipeline1 = new Vulkan::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2* pipeline1 = new Utopian::Vk::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline1->SetPipelineInterface(&mPipelineInterface);
 		pipeline1->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline1->Create();

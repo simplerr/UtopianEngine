@@ -42,7 +42,7 @@
 
 namespace ECS
 {
-	RenderSystem::RenderSystem(Vulkan::Renderer* renderer, Vulkan::Camera* camera, Terrain* terrain)
+	RenderSystem::RenderSystem(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera, Terrain* terrain)
 		: System(Type::MESH_COMPONENT | Type::TRANSFORM_COMPONENT, SystemId::RENDER_SYSTEM)
 	{
 		mRenderer = renderer;
@@ -53,10 +53,10 @@ namespace ECS
 
 		mCubeModel = mModelLoader->LoadDebugBox(renderer->GetDevice());
 
-		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Vulkan::Colors::Red, 1.0f);
-		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Vulkan::Colors::Red, 70.0f);
-		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Vulkan::Colors::Green, 70.0f);
-		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Vulkan::Colors::Blue, 70.0f);
+		AddDebugCube(vec3(92000.0f, 0.0f, 80000.0f), Utopian::Vk::Colors::Red, 1.0f);
+		AddDebugCube(vec3(2000.0f, 0.0f, 0.0f), Utopian::Vk::Colors::Red, 70.0f);
+		AddDebugCube(vec3(0.0f, 2000.0f, 0.0f), Utopian::Vk::Colors::Green, 70.0f);
+		AddDebugCube(vec3(0.0f, 0.0f, 2000.0f), Utopian::Vk::Colors::Blue, 70.0f);
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mTerrainCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
@@ -65,13 +65,13 @@ namespace ECS
 
 		// NOTE: This must run before PhongEffect::Init()
 		// Create the fragment shader uniform buffer
-		Scene::Light light;
+		Utopian::Light light;
 		light.SetMaterial(vec4(1, 0, 0, 1));
 		//light.SetPosition(vec3(600, -800, 600));
 		light.SetDirection(vec3(1, -1, 1));
 		light.SetAtt(1, 0, 0);
 		light.SetIntensity(0.2f, 0.8f, 1.0f);
-		light.SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		light.SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
 		light.SetRange(100000);
 		light.SetSpot(4.0f);
 		//mPhongEffect.per_frame_ps.lights.push_back(light.GetLightData());
@@ -100,12 +100,12 @@ namespace ECS
 	void RenderSystem::OnEntityAdded(const EntityCache& entityCache)
 	{
 		// Load the model
-		Vulkan::StaticModel* model = mModelLoader->LoadModel(mRenderer->GetDevice(), entityCache.meshComponent->GetFilename());
+		Utopian::Vk::StaticModel* model = mModelLoader->LoadModel(mRenderer->GetDevice(), entityCache.meshComponent->GetFilename());
 
 		entityCache.meshComponent->SetModel(model);
 	}
 
-	void RenderSystem::Render(Vulkan::CommandBuffer* commandBuffer)
+	void RenderSystem::Render(Utopian::Vk::CommandBuffer* commandBuffer)
 	{
 		// From Renderer.cpp
 		if (mCamera != nullptr)
@@ -130,11 +130,11 @@ namespace ECS
 
 		for (EntityCache entityCache : mEntities)
 		{
-			Vulkan::StaticModel* model = entityCache.meshComponent->GetModel();
+			Utopian::Vk::StaticModel* model = entityCache.meshComponent->GetModel();
 			mPhongEffect.SetPipeline(entityCache.meshComponent->GetPipeline());
 			//mPhongEffect.SetPipeline(Vulkan::PipelineType::PIPELINE_WIREFRAME);
 			
-			for (Vulkan::Mesh* mesh : model->mMeshes)
+			for (Utopian::Vk::Mesh* mesh : model->mMeshes)
 			{
 				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
@@ -144,7 +144,7 @@ namespace ECS
 				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
 				// Push the world matrix constant
-				Vulkan::NormalDebugEffect::PushConstantBlock pushConstantBlock;
+				Utopian::Vk::NormalDebugEffect::PushConstantBlock pushConstantBlock;
 				pushConstantBlock.world = entityCache.transformComponent->GetWorldMatrix();
 				pushConstantBlock.worldInvTranspose = entityCache.transformComponent->GetWorldInverseTransposeMatrix(); // TOOD: This probably also needs to be negated
 

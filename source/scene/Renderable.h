@@ -5,7 +5,15 @@
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
 
-namespace Scene
+namespace Vk::Test
+{
+	class A
+	{
+
+	};
+}
+
+namespace Utopian
 {
 	class Actor;
 
@@ -19,12 +27,12 @@ namespace Scene
 
 		static SharedPtr<Renderable> Create();
 
-		Vulkan::StaticModel* GetModel();
-		void SetModel(Vulkan::StaticModel* model);
+		Utopian::Vk::StaticModel* GetModel();
+		void SetModel(Utopian::Vk::StaticModel* model);
 
-		const Vulkan::BoundingBox GetBoundingBox() const;
+		const Utopian::Vk::BoundingBox GetBoundingBox() const;
 
 	private:
-		Vulkan::StaticModel* mModel;
+		Utopian::Vk::StaticModel* mModel;
 	};
 }

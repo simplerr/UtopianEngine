@@ -6,7 +6,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class DescriptorSetLayout;
@@ -27,7 +27,7 @@ namespace Vulkan
 	class MarchingCubesEffect : public Effect
 	{
 	public:
-		class UniformBuffer : public Vulkan::ShaderBuffer
+		class UniformBuffer : public Utopian::Vk::ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory();
@@ -44,7 +44,7 @@ namespace Vulkan
 			} data;
 		};
 
-		class CounterSSBO : public Vulkan::ShaderBuffer
+		class CounterSSBO : public Utopian::Vk::ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory()
@@ -85,9 +85,9 @@ namespace Vulkan
 
 		/* Shader descriptors */
 		UniformBuffer ubo;
-		Vulkan::Texture* edgeTableTex;
-		Vulkan::Texture* triangleTableTex;
-		Vulkan::Texture* texture3d;
+		Utopian::Vk::Texture* edgeTableTex;
+		Utopian::Vk::Texture* triangleTableTex;
+		Utopian::Vk::Texture* texture3d;
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 		DescriptorSet* mDescriptorSet1; // set = 1 in GLSL
 
@@ -95,6 +95,6 @@ namespace Vulkan
 
 		const uint32_t NUM_MAX_STORAGE_BUFFERS = 40;
 	private:
-		Vulkan::ComputePipeline* mComputePipeline;
+		Utopian::Vk::ComputePipeline* mComputePipeline;
 	};
 }

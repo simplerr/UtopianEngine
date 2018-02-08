@@ -1,7 +1,7 @@
 #pragma once
 #include "scene/Transform.h"
 
-namespace Scene
+namespace Utopian
 {
 	/*
 		Represents a node in the scene graph.

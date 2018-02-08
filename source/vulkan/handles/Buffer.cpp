@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Buffer::Buffer()
 	{

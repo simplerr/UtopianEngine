@@ -3,7 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "PipelineLayout.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	PipelineLayout::PipelineLayout(Device* device)
 		: Handle(device, vkDestroyPipelineLayout)

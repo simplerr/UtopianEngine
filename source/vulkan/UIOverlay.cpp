@@ -20,9 +20,9 @@
 #include "vulkan/handles/Buffer.h"
 #include "Input.h"
 
-namespace Vulkan 
+namespace Utopian::Vk 
 {
-	UIOverlay::UIOverlay(uint32_t width, uint32_t height, Vulkan::Renderer* renderer)
+	UIOverlay::UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::Renderer* renderer)
 		: mRenderer(renderer)
 	{
 		// Color scheme
@@ -183,7 +183,7 @@ namespace Vulkan
 		UpdateCommandBuffers();
 	}
 
-	Vulkan::CommandBuffer* UIOverlay::GetCommandBuffer() const
+	Utopian::Vk::CommandBuffer* UIOverlay::GetCommandBuffer() const
 	{
 		return mCommandBuffer;
 	}

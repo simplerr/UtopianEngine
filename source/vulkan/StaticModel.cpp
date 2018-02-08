@@ -2,7 +2,7 @@
 #include "VulkanDebug.h"
 #include "Device.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	StaticModel::StaticModel()
 	{

@@ -1,7 +1,7 @@
 #include "SceneComponent.h"
 #include "Actor.h"
 
-namespace Scene
+namespace Utopian
 {
 	SceneComponent::SceneComponent(Actor* parent)
 		: mParent(parent)
@@ -14,9 +14,9 @@ namespace Scene
 
 	}
 
-	const Vulkan::BoundingBox SceneComponent::GetBoundingBox() const
+	const Utopian::Vk::BoundingBox SceneComponent::GetBoundingBox() const
 	{
-		Vulkan::BoundingBox boundingBox;
+		Utopian::Vk::BoundingBox boundingBox;
 
 		boundingBox.Init(vec3(0.0f), vec3(0.0f));
 

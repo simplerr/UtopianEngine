@@ -1,7 +1,7 @@
 #include "scene/Light.h"
 #include "scene/SceneRenderer.h"
 
-namespace Scene
+namespace Utopian
 {
 
 	Light::Light()
@@ -12,7 +12,7 @@ namespace Scene
 		SetRange(1000000.0f);
 		SetSpot(100.0f);
 		SetAtt(1.0f, 1.0f, 1.0f);
-		SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
 		SetIntensity(1.0f, 1.0f, 1.0f);
 	}
 
@@ -21,7 +21,7 @@ namespace Scene
 
 	}
 
-	SharedPtr<Scene::Light> Light::Create()
+	SharedPtr<Utopian::Light> Light::Create()
 	{
 		SharedPtr<Light> instance(new Light());
 		instance->Initialize();
@@ -34,12 +34,12 @@ namespace Scene
 		SceneRenderer::Instance().AddLight(this);
 	}
 
-	void Light::SetLightData(const Vulkan::LightData& lightData)
+	void Light::SetLightData(const Utopian::Vk::LightData& lightData)
 	{
 		mLightData = lightData;
 	}
 
-	const Vulkan::LightData& Light::GetLightData()
+	const Utopian::Vk::LightData& Light::GetLightData()
 	{
 		// Todo: Is this ok?
 		mLightData.position = GetTransform().GetPosition();
@@ -48,17 +48,17 @@ namespace Scene
 
 	void Light::SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular)
 	{
-		mLightData.material = Vulkan::Material(ambient, diffuse, specular);
+		mLightData.material = Utopian::Vk::Material(ambient, diffuse, specular);
 		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
 	}
 
 	void Light::SetMaterial(const vec4& color)
 	{
-		mLightData.material = Vulkan::Material(color);
+		mLightData.material = Utopian::Vk::Material(color);
 		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
 	}
 
-	void Light::SetMaterial(const Vulkan::Material & material)
+	void Light::SetMaterial(const Utopian::Vk::Material & material)
 	{
 		mLightData.material = material;
 	}
@@ -83,7 +83,7 @@ namespace Scene
 		mLightData.att = vec3(a0, a1, a2);
 	}
 
-	void Light::SetType(Vulkan::LightType type)
+	void Light::SetType(Utopian::Vk::LightType type)
 	{
 		mLightData.type = type;
 	}
@@ -108,17 +108,17 @@ namespace Scene
 		return mLightData.intensity;
 	}
 
-	Vulkan::LightData* Light::GetLightDataPtr()
+	Utopian::Vk::LightData* Light::GetLightDataPtr()
 	{
 		return &mLightData;
 	}
 
-	const Vulkan::LightData& Light::GetLightData() const
+	const Utopian::Vk::LightData& Light::GetLightData() const
 	{
 		return mLightData;
 	}
 
-	Vulkan::Material Light::GetMaterial() const
+	Utopian::Vk::Material Light::GetMaterial() const
 	{
 		return mLightData.material;
 	}

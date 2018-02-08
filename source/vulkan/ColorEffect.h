@@ -6,7 +6,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class DescriptorSetLayout;
@@ -28,7 +28,7 @@ namespace Vulkan
 			glm::mat4 worldInvTranspose;
 		};
 
-		class UniformBufferVS : public Vulkan::ShaderBuffer
+		class UniformBufferVS : public Utopian::Vk::ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory() {

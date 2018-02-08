@@ -8,19 +8,19 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	RenderTarget::RenderTarget(Device* device, CommandPool* commandPool, uint32_t width, uint32_t height)
 	{
 		mWidth = width;
 		mHeight = height;
 
-		mCommandBuffer = new Vulkan::CommandBuffer(device, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-		mColorImage = new Vulkan::ImageColor(device, GetWidth(), GetHeight(), VK_FORMAT_R8G8B8A8_UNORM);
-		mDepthImage = new Vulkan::ImageDepth(device, GetWidth(), GetHeight(), VK_FORMAT_D32_SFLOAT_S8_UINT);
-		mRenderPass = new Vulkan::RenderPass(device, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		mFrameBuffer = new Vulkan::FrameBuffers(device, mRenderPass, mDepthImage, mColorImage, GetWidth(), GetHeight());
-		mSampler = new Vulkan::Sampler(device);
+		mCommandBuffer = new Utopian::Vk::CommandBuffer(device, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
+		mColorImage = new Utopian::Vk::ImageColor(device, GetWidth(), GetHeight(), VK_FORMAT_R8G8B8A8_UNORM);
+		mDepthImage = new Utopian::Vk::ImageDepth(device, GetWidth(), GetHeight(), VK_FORMAT_D32_SFLOAT_S8_UINT);
+		mRenderPass = new Utopian::Vk::RenderPass(device, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mFrameBuffer = new Utopian::Vk::FrameBuffers(device, mRenderPass, mDepthImage, mColorImage, GetWidth(), GetHeight());
+		mSampler = new Utopian::Vk::Sampler(device);
 
 		SetClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	}
@@ -53,7 +53,7 @@ namespace Vulkan
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
 	}
 
-	void RenderTarget::End(Vulkan::Queue* queue)
+	void RenderTarget::End(Utopian::Vk::Queue* queue)
 	{
 		mCommandBuffer->CmdEndRenderPass();
 		mCommandBuffer->Flush(queue->GetVkHandle());
@@ -69,17 +69,17 @@ namespace Vulkan
 		return mHeight;
 	}
 
-	Vulkan::Image* RenderTarget::GetImage()
+	Utopian::Vk::Image* RenderTarget::GetImage()
 	{
 		return mColorImage;
 	}
 
-	Vulkan::Sampler* RenderTarget::GetSampler()
+	Utopian::Vk::Sampler* RenderTarget::GetSampler()
 	{
 		return mSampler;
 	}
 
-	Vulkan::CommandBuffer* RenderTarget::GetCommandBuffer()
+	Utopian::Vk::CommandBuffer* RenderTarget::GetCommandBuffer()
 	{
 		return mCommandBuffer;
 	}

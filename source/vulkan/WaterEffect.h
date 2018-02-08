@@ -6,7 +6,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class DescriptorSetLayout;
@@ -22,7 +22,7 @@ namespace Vulkan
 	class WaterEffect : public Effect
 	{
 	public:
-		class UniformBufferVS : public Vulkan::ShaderBuffer
+		class UniformBufferVS : public Utopian::Vk::ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory();
@@ -36,7 +36,7 @@ namespace Vulkan
 			} data;
 		};
 
-		class UniformBufferPS : public Vulkan::ShaderBuffer
+		class UniformBufferPS : public Utopian::Vk::ShaderBuffer
 		{
 		public:
 			virtual void UpdateMemory();

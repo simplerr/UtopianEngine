@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "CommandPool.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	CommandPool::CommandPool()
 		: Handle(vkDestroyCommandPool)

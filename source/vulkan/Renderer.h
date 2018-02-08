@@ -19,7 +19,7 @@ namespace ECS
 	class RenderSystem;
 }
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	enum PipelineType
 	{
@@ -75,8 +75,8 @@ namespace Vulkan
 		virtual void Update();
 		void Draw();
 
-		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler);
-		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture);
+		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler);
+		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture);
 		void UpdateOverlay();
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

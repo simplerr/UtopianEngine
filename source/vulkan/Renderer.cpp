@@ -31,7 +31,7 @@
 #define VERTEX_BUFFER_BIND_ID 0
 #define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
@@ -67,8 +67,8 @@ namespace Vulkan
 		SetupDescriptorPool();
 		PrepareCommandBuffers();
 
-		mTextureLoader = new Vulkan::TextureLoader(this, GetQueue()->GetVkHandle());
-		mModelLoader = new Vulkan::ModelLoader(mTextureLoader);
+		mTextureLoader = new Utopian::Vk::TextureLoader(this, GetQueue()->GetVkHandle());
+		mModelLoader = new Utopian::Vk::ModelLoader(mTextureLoader);
 		mTextOverlay = new TextOverlay(this);
 		mScreenGui = new ScreenGui(this);
 
@@ -222,12 +222,12 @@ namespace Vulkan
 		mQueue->Submit(mPrimaryCommandBuffer, nullptr);
 	}
 
-	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler)
+	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler)
 	{
 		mScreenGui->AddQuad(left, top, width, height, image, sampler);
 	}
 
-	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture)
+	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture)
 	{
 		mScreenGui->AddQuad(left, top, width, height, texture);
 	}

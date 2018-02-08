@@ -5,7 +5,7 @@
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class Renderer;
 	class Buffer;
@@ -26,7 +26,7 @@ struct GeometryVertex
 	glm::vec4 normal;
 };
 	
-class VertexSSBO : public Vulkan::ShaderBuffer
+class VertexSSBO : public Utopian::Vk::ShaderBuffer
 {
 public:
 	virtual void UpdateMemory(VkDevice device)
@@ -50,10 +50,10 @@ public:
 class Block
 {
 public:
-	Block(Vulkan::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Vulkan::DescriptorSetLayout* desscriptorSetLayout, Vulkan::DescriptorPool* descriptorPool);
+	Block(Utopian::Vk::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool);
 	~Block();
 
-	Vulkan::Buffer* GetVertexBuffer();
+	Utopian::Vk::Buffer* GetVertexBuffer();
 
 	/* True if a vertex buffer has been generated for this block */
 	bool IsGenerated();
@@ -78,7 +78,7 @@ public:
 	uint32_t pipelineType;
 
 private:
-	Vulkan::Buffer* mVertexBuffer;
+	Utopian::Vk::Buffer* mVertexBuffer;
 	VkDescriptorBufferInfo mBufferInfo;
 	glm::vec3 mPosition;
 	glm::vec3 mColor;

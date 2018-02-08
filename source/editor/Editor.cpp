@@ -11,9 +11,9 @@
 #include "Terrain.h"
 #include "editor/TransformTool.h"
 
-namespace Scene
+namespace Utopian
 {
-	Editor::Editor(Vulkan::Renderer* renderer, World* world, Terrain* terrain)
+	Editor::Editor(Utopian::Vk::Renderer* renderer, World* world, Terrain* terrain)
 		: mRenderer(renderer), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
@@ -38,7 +38,7 @@ namespace Scene
 		// Was an Entity selected?
 		if (gInput().KeyPressed(VK_LBUTTON))
 		{
-			Vulkan::Ray ray = mRenderer->GetCamera()->GetPickingRay();
+			Utopian::Vk::Ray ray = mRenderer->GetCamera()->GetPickingRay();
 
 			Actor* selectedActor = mWorld->RayIntersection(ray);
 			if (selectedActor != nullptr && selectedActor != mSelectedActor)

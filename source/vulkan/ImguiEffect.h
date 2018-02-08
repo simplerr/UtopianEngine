@@ -4,7 +4,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/Effect.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class ImguiEffect : public Effect
 	{
@@ -25,7 +25,7 @@ namespace Vulkan
 		virtual void UpdateMemory(Device* device);
 
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
-		Vulkan::Texture* mTexture;
-		Vulkan::RenderPass* mRenderPass;
+		Utopian::Vk::Texture* mTexture;
+		Utopian::Vk::RenderPass* mRenderPass;
 	};
 }

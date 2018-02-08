@@ -9,7 +9,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/RenderTarget.h"
 
-WaterRenderer::WaterRenderer(Vulkan::Renderer* renderer, Vulkan::ModelLoader* modelLoader, Vulkan::TextureLoader* textureLoader)
+WaterRenderer::WaterRenderer(Utopian::Vk::Renderer* renderer, Utopian::Vk::ModelLoader* modelLoader, Utopian::Vk::TextureLoader* textureLoader)
 {
 	mRenderer = renderer;
 	mModelLoader = modelLoader;
@@ -18,8 +18,8 @@ WaterRenderer::WaterRenderer(Vulkan::Renderer* renderer, Vulkan::ModelLoader* mo
 
 	mWaterEffect.Init(renderer);
 
-	mReflectionRenderTarget = new Vulkan::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight());
-	mRefractionRenderTarget = new Vulkan::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight());
+	mReflectionRenderTarget = new Utopian::Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight());
+	mRefractionRenderTarget = new Utopian::Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight());
 	dudvTexture = textureLoader->LoadTexture("data/textures/water_dudv.png");
 
 	mWaterEffect.mDescriptorSet0->BindUniformBuffer(0, &mWaterEffect.per_frame_vs.GetDescriptor());
@@ -34,7 +34,7 @@ WaterRenderer::~WaterRenderer()
 
 }
 
-void WaterRenderer::Render(Vulkan::Renderer* renderer, Vulkan::CommandBuffer* commandBuffer)
+void WaterRenderer::Render(Utopian::Vk::Renderer* renderer, Utopian::Vk::CommandBuffer* commandBuffer)
 {
 	commandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline());
 
@@ -42,12 +42,12 @@ void WaterRenderer::Render(Vulkan::Renderer* renderer, Vulkan::CommandBuffer* co
 	commandBuffer->CmdBindDescriptorSet(&mWaterEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 	// Push the world matrix constant
-	Vulkan::WaterEffect::PushConstantBlock pushConstantBlock;
+	Utopian::Vk::WaterEffect::PushConstantBlock pushConstantBlock;
 	pushConstantBlock.world = glm::mat4();
 
 	for (uint32_t i = 0; i < mWaterList.size(); i++)
 	{
-		Vulkan::StaticModel* model = mWaterList[i].gridModel;
+		Utopian::Vk::StaticModel* model = mWaterList[i].gridModel;
 		commandBuffer->CmdBindVertexBuffer(0, 1, &model->mMeshes[0]->vertices.buffer);
 		commandBuffer->CmdBindIndexBuffer(model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 
@@ -61,7 +61,7 @@ void WaterRenderer::Render(Vulkan::Renderer* renderer, Vulkan::CommandBuffer* co
 	}
 }
 
-void WaterRenderer::Update(Vulkan::Renderer* renderer, Vulkan::Camera* camera)
+void WaterRenderer::Update(Utopian::Vk::Renderer* renderer, Utopian::Vk::Camera* camera)
 {
 	mWaterEffect.per_frame_vs.data.projection= camera->GetProjection();
 	mWaterEffect.per_frame_vs.data.view = camera->GetView();
@@ -79,12 +79,12 @@ void WaterRenderer::AddWater(glm::vec3 position, uint32_t numCells)
 	mWaterList.push_back(water);
 }
 
-Vulkan::RenderTarget* WaterRenderer::GetReflectionRenderTarget()
+Utopian::Vk::RenderTarget* WaterRenderer::GetReflectionRenderTarget()
 {
 	return mReflectionRenderTarget;
 }
 
-Vulkan::RenderTarget* WaterRenderer::GetRefractionRenderTarget()
+Utopian::Vk::RenderTarget* WaterRenderer::GetRefractionRenderTarget()
 {
 	return mRefractionRenderTarget;
 }

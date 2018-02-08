@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout, bool create)
 		: Handle(device, vkDestroyRenderPass)

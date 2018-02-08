@@ -7,7 +7,7 @@
 #include "RenderPass.h"
 #include "PipelineLayout.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Pipeline2::Pipeline2(Device* device, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
 		: Handle(device, vkDestroyPipeline)

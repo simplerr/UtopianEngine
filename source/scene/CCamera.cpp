@@ -3,12 +3,12 @@
 #include "scene/Actor.h"
 #include "Camera.h"
 
-namespace Scene
+namespace Utopian
 {
-	CCamera::CCamera(Actor* parent, Vulkan::Window* window, float fieldOfView, float nearPlane, float farPlane)
+	CCamera::CCamera(Actor* parent, Utopian::Window* window, float fieldOfView, float nearPlane, float farPlane)
 		: SceneComponent(parent)
 	{
-		mInternal = Vulkan::Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
+		mInternal = Utopian::Vk::Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
 		auto transform = GetParent()->GetTransform();
 		mInternal->SetPosition(transform.GetPosition());
 
@@ -65,7 +65,7 @@ namespace Scene
 		mInternal->SetAspectRatio(aspectRatio);
 	}
 
-	void CCamera::SetWindow(Vulkan::Window* window)
+	void CCamera::SetWindow(Utopian::Window* window)
 	{
 		mInternal->SetWindow(window);
 	}

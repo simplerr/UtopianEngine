@@ -3,7 +3,7 @@
 #include <cassert>
 #include "VulkanDebug.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	namespace VulkanDebug
 	{

@@ -5,7 +5,7 @@
 
 class VulkanSwapChain;
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class FrameBuffers
 	{

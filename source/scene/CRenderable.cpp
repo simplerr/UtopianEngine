@@ -4,7 +4,7 @@
 #include "scene/CTransform.h"
 #include "scene/World.h"
 
-namespace Scene
+namespace Utopian
 {
 	CRenderable::CRenderable(Actor* parent)
 		: SceneComponent(parent)
@@ -29,7 +29,7 @@ namespace Scene
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
-	void CRenderable::SetModel(Vulkan::StaticModel* model)
+	void CRenderable::SetModel(Utopian::Vk::StaticModel* model)
 	{
 		mInternal->SetModel(model);
 	}
@@ -44,7 +44,7 @@ namespace Scene
 		mInternal->SetDrawBoundingBox(false);
 	}
 
-	const Vulkan::BoundingBox CRenderable::GetBoundingBox() const
+	const Utopian::Vk::BoundingBox CRenderable::GetBoundingBox() const
 	{
 		return mInternal->GetBoundingBox();
 	}

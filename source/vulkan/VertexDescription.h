@@ -9,7 +9,7 @@
 #include <map>
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	/*
 	Interface for all the different vertex attribute

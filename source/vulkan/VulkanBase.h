@@ -27,7 +27,7 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 */
 
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	// This is the base class that contains common code for creating a Vulkan application
 	class VulkanBase
@@ -41,7 +41,7 @@ namespace Vulkan
 		virtual void Update() = 0;
 		virtual void Render() = 0;
 
-		void InitSwapchain(Window* window);
+		void InitSwapchain(Utopian::Window* window);
 		void SetupSwapchain();
 
 		void PrepareFrame();

@@ -9,7 +9,7 @@
 #include "vulkan/Vertex.h"
 #include "utility/Utility.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	PhongEffect::PhongEffect()
 	{
@@ -27,7 +27,7 @@ namespace Vulkan
 	void PhongEffect::CreateVertexDescription(Device* device)
 	{
 		// First tell Vulkan about how large each vertex is, the binding ID and the inputRate
-		mVertexDescription = new Vulkan::VertexDescription();
+		mVertexDescription = new Utopian::Vk::VertexDescription();
 		mVertexDescription->AddBinding(BINDING_0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
 
 		// We need to tell Vulkan about the memory layout for each attribute

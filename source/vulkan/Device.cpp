@@ -4,7 +4,7 @@
 #include "handles/Instance.h"
 #include "VulkanDebug.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Device::Device(Instance* instance, bool enableValidation)
 	{

@@ -4,7 +4,7 @@
 class TransformTool;
 class Terrain;
 
-namespace Scene
+namespace Utopian
 {
 	class World;
 	class Actor;
@@ -13,7 +13,7 @@ namespace Scene
 	class Editor
 	{
 	public:
-		Editor(Vulkan::Renderer* renderer, World* world, Terrain* terrain);
+		Editor(Utopian::Vk::Renderer* renderer, World* world, Terrain* terrain);
 		~Editor();
 
 		void Update();
@@ -24,7 +24,7 @@ namespace Scene
 		bool IsActorSelected();
 		void OnActorSelected(Actor* actor);
 
-		Vulkan::Renderer* mRenderer;
+		Utopian::Vk::Renderer* mRenderer;
 		World* mWorld;
 		Terrain* mTerrain;
 		ActorInspector* mActorInspector;

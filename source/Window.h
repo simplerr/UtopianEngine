@@ -2,7 +2,7 @@
 
 #include "Platform.h"
 
-namespace Vulkan
+namespace Utopian
 {
 	// Wrapper class for the platform dependent window code
 	class Window

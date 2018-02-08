@@ -5,7 +5,7 @@
 #include "vulkan/handles/Handle.h"
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	/*
 	Wraps VkDescriptorSetLayout and VkDescriptorSet to make them easier to work with

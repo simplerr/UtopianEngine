@@ -38,9 +38,9 @@
 #include "editor/Editor.h"
 #include "utility/Utility.h"
 
-using namespace Scene;
+using namespace Utopian;
 
-namespace Vulkan
+namespace Utopian
 {
 	Game::Game(Window* window) 
 		: mWindow(window)
@@ -49,9 +49,9 @@ namespace Vulkan
 
 		mIsClosing = false;
 
-		Vulkan::VulkanDebug::TogglePerformanceWarnings();
+		Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
 
-		mRenderer = make_shared<Renderer>();
+		mRenderer = make_shared<Vk::Renderer>();
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
@@ -107,9 +107,9 @@ namespace Vulkan
 		// Add house
 		house = Actor::Create("Well_1");
 
-		transform = house->AddComponent<CTransform>(vec3(91000.0f, 300.0f, 78000.0f));
+		transform = house->AddComponent<CTransform>(vec3(91000.0f, 6300.0f, 78000.0f));
 		transform->SetScale(vec3(1550.0f));
-		transform->SetRotation(vec3(180, 0, 0));
+		transform->SetRotation(vec3(0, 0, 0));
 
 		mesh = house->AddComponent<CRenderable>();
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/arrow.obj"));
@@ -129,7 +129,7 @@ namespace Vulkan
 		lightComponent->SetDirection(vec3(1, 0, 0));
 		lightComponent->SetAtt(0, 0.00, 0.00000002);
 		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
-		lightComponent->SetType(Vulkan::LightType::DIRECTIONAL_LIGHT);
+		lightComponent->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
 		lightComponent->SetRange(100000);
 		lightComponent->SetSpot(4.0f);
 
@@ -156,7 +156,7 @@ namespace Vulkan
 		lightComponent->SetDirection(vec3(0, -1, 0));
 		lightComponent->SetAtt(0, 0.00, 0.00000002);
 		lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
-		lightComponent->SetType(Vulkan::LightType::POINT_LIGHT);
+		lightComponent->SetType(Utopian::Vk::LightType::POINT_LIGHT);
 		lightComponent->SetRange(400000);
 		lightComponent->SetSpot(4.0f);
 
@@ -170,7 +170,7 @@ namespace Vulkan
 		lightComponent->SetDirection(vec3(1, 1, 1));
 		lightComponent->SetAtt(0, 0.00, 0.000000002);
 		lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
-		lightComponent->SetType(Vulkan::LightType::SPOT_LIGHT);
+		lightComponent->SetType(Utopian::Vk::LightType::SPOT_LIGHT);
 		lightComponent->SetRange(400000);
 		lightComponent->SetSpot(8.0f);
 

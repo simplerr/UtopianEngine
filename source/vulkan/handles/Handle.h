@@ -5,7 +5,7 @@
 #include "vulkan/Device.h" 
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	template<typename T>
 	class Handle

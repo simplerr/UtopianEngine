@@ -1,7 +1,7 @@
 #include "Timer.h"
 #include <fstream>
 
-namespace Vulkan
+namespace Utopian
 {
 	void Timer::FrameBegin()
 	{

@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include "vulkan/Vertex.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	struct Ray
 	{

@@ -12,7 +12,7 @@
 class Terrain;
 class WaterRenderer;
 
-namespace Scene
+namespace Utopian
 {
 	class Renderable;
 	class Light;
@@ -20,23 +20,23 @@ namespace Scene
 	class SceneRenderer : public Module<SceneRenderer>
 	{
 	public:
-		SceneRenderer(Vulkan::Renderer* renderer);
+		SceneRenderer(Utopian::Vk::Renderer* renderer);
 		~SceneRenderer();
 
 		void InitShaderResources();
 		void InitShader();
 
 		void Update();
-		void RenderNodes(Vulkan::CommandBuffer* commandBuffer);
-		void RenderScene(Vulkan::CommandBuffer* commandBuffer);
+		void RenderNodes(Utopian::Vk::CommandBuffer* commandBuffer);
+		void RenderScene(Utopian::Vk::CommandBuffer* commandBuffer);
 		void Render();
 		void RenderOffscreen();
 		void UpdateUniformBuffers();
 
 		void AddRenderable(Renderable* renderable);
 		void AddLight(Light* light);
-		void AddCamera(Vulkan::Camera* camera);
-		void SetMainCamera(Vulkan::Camera* camera);
+		void AddCamera(Utopian::Vk::Camera* camera);
+		void SetMainCamera(Utopian::Vk::Camera* camera);
 
 		void SetTerrain(Terrain* terrain);
 		void SetClippingPlane(glm::vec4 clippingPlane);
@@ -44,24 +44,24 @@ namespace Scene
 	private:
 		std::vector<Renderable*> mRenderables;
 		std::vector<Light*> mLights;
-		std::vector<Vulkan::Camera*> mCameras;
-		Vulkan::Camera* mMainCamera;
+		std::vector<Utopian::Vk::Camera*> mCameras;
+		Utopian::Vk::Camera* mMainCamera;
 
-		Vulkan::Renderer* mRenderer;
-		Vulkan::CommandBuffer* mCommandBuffer;
-		Vulkan::PhongEffect mPhongEffect;
-		Vulkan::ColorEffect mColorEffect;
+		Utopian::Vk::Renderer* mRenderer;
+		Utopian::Vk::CommandBuffer* mCommandBuffer;
+		Utopian::Vk::PhongEffect mPhongEffect;
+		Utopian::Vk::ColorEffect mColorEffect;
 		Terrain* mTerrain;
-		Vulkan::StaticModel* mCubeModel;
+		Utopian::Vk::StaticModel* mCubeModel;
 		WaterRenderer* mWaterRenderer;
 
 		// Low level rendering 
 		CameraUniformBuffer per_frame_vs;
 		LightUniformBuffer per_frame_ps;
 		FogUniformBuffer fog_ubo;
-		Vulkan::DescriptorSetLayout mCommonDescriptorSetLayout;
-		Vulkan::DescriptorSet* mCommonDescriptorSet;
-		Vulkan::DescriptorPool* mCommonDescriptorPool;
+		Utopian::Vk::DescriptorSetLayout mCommonDescriptorSetLayout;
+		Utopian::Vk::DescriptorSet* mCommonDescriptorSet;
+		Utopian::Vk::DescriptorPool* mCommonDescriptorPool;
 		glm::vec4 mClippingPlane;
 	};
 }

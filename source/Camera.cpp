@@ -5,9 +5,9 @@
 #include "Input.h"
 #include "scene/SceneRenderer.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
-	Camera::Camera(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
+	Camera::Camera(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
 		SetPosition(position);
 		this->mFov = fieldOfView;
@@ -19,7 +19,7 @@ namespace Vulkan
 		mWindow = window;
 	}
 
-	SharedPtr<Camera> Camera::Create(Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
+	SharedPtr<Camera> Camera::Create(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
 		SharedPtr<Camera> instance(new Camera(window, position, fieldOfView, nearPlane, farPlane));
 		instance->Initialize();
@@ -29,12 +29,12 @@ namespace Vulkan
 
 	void Camera::SetMainCamera()
 	{
-		Scene::SceneRenderer::Instance().SetMainCamera(this);
+		Utopian::SceneRenderer::Instance().SetMainCamera(this);
 	}
 
 	void Camera::Initialize()
 	{
-		Scene::SceneRenderer::Instance().AddCamera(this);
+		Utopian::SceneRenderer::Instance().AddCamera(this);
 	}
 
 	void Camera::SetFov(float fov)
@@ -52,7 +52,7 @@ namespace Vulkan
 		mFarPlane = farPlane;
 	}
 
-	void Camera::SetWindow(Vulkan::Window* window)
+	void Camera::SetWindow(Utopian::Window* window)
 	{
 		mWindow = window;
 	}
@@ -82,7 +82,7 @@ namespace Vulkan
 		rayDir = inverseView * rayDir;
 		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
 
-		return Vulkan::Ray(GetPosition(), rayFinalDir);
+		return Utopian::Vk::Ray(GetPosition(), rayFinalDir);
 	}
 
 	vec3 Camera::GetDirection()

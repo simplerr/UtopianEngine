@@ -1,7 +1,7 @@
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	Texture::Texture(Device* device)
 	{

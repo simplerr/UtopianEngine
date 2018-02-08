@@ -4,7 +4,7 @@
 #include "vulkan/ScreenQuadEffect.h"
 #include "vulkan/VulkanInclude.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	class ScreenGui
 	{
@@ -22,7 +22,7 @@ namespace Vulkan
 			uint32_t top;
 			uint32_t width;
 			uint32_t height;
-			Vulkan::DescriptorSet* descriptorSet;
+			Utopian::Vk::DescriptorSet* descriptorSet;
 		};
 
 		struct Vertex
@@ -35,13 +35,13 @@ namespace Vulkan
 
 		void Render(Renderer* renderer, CommandBuffer* commandBuffer);
 
-		void AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Image* image, Vulkan::Sampler* sampler);
-		void AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Vulkan::Texture* texture);
+		void AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler);
+		void AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture);
 	private:
-		Vulkan::Renderer* mRenderer;
-		Vulkan::ScreenQuadEffect mEffect;
-		Vulkan::Buffer* mVertexBuffer;
-		Vulkan::Buffer* mIndexBuffer;
+		Utopian::Vk::Renderer* mRenderer;
+		Utopian::Vk::ScreenQuadEffect mEffect;
+		Utopian::Vk::Buffer* mVertexBuffer;
+		Utopian::Vk::Buffer* mIndexBuffer;
 
 		std::vector<TextureQuad> mQuadList;
 	};

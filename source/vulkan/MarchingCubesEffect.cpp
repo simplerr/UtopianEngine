@@ -9,7 +9,7 @@
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	MarchingCubesEffect::MarchingCubesEffect()
 	{
@@ -18,7 +18,7 @@ namespace Vulkan
 
 	void MarchingCubesEffect::CreateDescriptorPool(Device* device)
 	{
-		mDescriptorPool = new Vulkan::DescriptorPool(device);
+		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, NUM_MAX_STORAGE_BUFFERS); // NOTE:
@@ -55,7 +55,7 @@ namespace Vulkan
 		mCounterSSBO.UpdateMemory();
 
 		DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
-		mDescriptorSet0 = new Vulkan::DescriptorSet(device, setLayout0, mDescriptorPool);
+		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, setLayout0, mDescriptorPool);
 		mDescriptorSet0->BindCombinedImage(BINDING_0, &edgeTableTex->GetTextureDescriptorInfo());
 		mDescriptorSet0->BindCombinedImage(BINDING_1, &triangleTableTex->GetTextureDescriptorInfo());
 		mDescriptorSet0->BindCombinedImage(BINDING_2, &texture3d->GetTextureDescriptorInfo());
@@ -64,13 +64,13 @@ namespace Vulkan
 		mDescriptorSet0->UpdateDescriptorSets();
 
 		DescriptorSetLayout* setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
-		mDescriptorSet1 = new Vulkan::DescriptorSet(device, setLayout1, mDescriptorPool);
+		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, setLayout1, mDescriptorPool);
 	}
 
 	void MarchingCubesEffect::CreatePipeline(Renderer* renderer)
 	{
-		Vulkan::Shader* computeShader = renderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
-		mComputePipeline = new Vulkan::ComputePipeline(renderer->GetDevice(), &mPipelineInterface, computeShader);
+		Utopian::Vk::Shader* computeShader = renderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
+		mComputePipeline = new Utopian::Vk::ComputePipeline(renderer->GetDevice(), &mPipelineInterface, computeShader);
 		mComputePipeline->Create();
 	}
 

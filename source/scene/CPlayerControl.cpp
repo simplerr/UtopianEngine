@@ -6,7 +6,7 @@
 #include "scene/Actor.h"
 #include "Input.h"
 
-namespace Scene
+namespace Utopian
 {
 	CPlayerControl::CPlayerControl(Actor* parent)
 		: SceneComponent(parent)

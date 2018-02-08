@@ -22,7 +22,7 @@
 no looping is done to find a queue that have the proper support
 */
 
-namespace Vulkan
+namespace Utopian::Vk
 {
 	VulkanBase::VulkanBase(bool enableValidation)
 	{
@@ -103,7 +103,7 @@ namespace Vulkan
 		mQueue->WaitIdle();
 	}
 
-	void VulkanBase::InitSwapchain(Window* window)
+	void VulkanBase::InitSwapchain(Utopian::Window* window)
 	{
 		mWindow = window;
 
