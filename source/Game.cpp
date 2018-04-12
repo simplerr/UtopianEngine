@@ -73,17 +73,17 @@ namespace Utopian
 		SceneRenderer::Start(mRenderer.get());
 		SceneRenderer::Instance().SetTerrain(mTerrain.get());
 
-		// Add house
-		auto house = Actor::Create("House_1");
+		//// Add house
+		//auto house = Actor::Create("House_1");
 
-		CTransform* transform = house->AddComponent<CTransform>(vec3(61000.0f, 300.0f, 78000.0f));
-		transform->SetScale(vec3(550.0f));
-		transform->SetRotation(vec3(180, 0, 0));
+		//CTransform* transform = house->AddComponent<CTransform>(vec3(61000.0f, 300.0f, 78000.0f));
+		//transform->SetScale(vec3(550.0f));
+		//transform->SetRotation(vec3(180, 0, 0));
 
-		CRenderable* mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
-		
-		// Add camera
+		//CRenderable* mesh = house->AddComponent<CRenderable>();
+		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
+		//
+		//// Add camera
 		auto cameraEntity = Actor::Create("Camera");
 		cameraEntity->AddComponent<CTransform>(vec3(67001.0f, 10300.0f, 68000.0f));
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
@@ -95,25 +95,26 @@ namespace Utopian
 
 		cameraEntity->AddComponent<CPlayerControl>();
 
-		// Add house
-		house = Actor::Create("Well_1");
+		//// Add house
+		//house = Actor::Create("Well_1");
 
-		transform = house->AddComponent<CTransform>(vec3(91000.0f, 6300.0f, 78000.0f));
-		transform->SetScale(vec3(1550.0f));
-		transform->SetRotation(vec3(0, 0, 0));
+		//transform = house->AddComponent<CTransform>(vec3(91000.0f, 6300.0f, 78000.0f));
+		//transform->SetScale(vec3(1550.0f));
+		//transform->SetRotation(vec3(0, 0, 0));
 
-		mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/arrow.obj"));
+		//mesh = house->AddComponent<CRenderable>();
+		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/arrow.obj"));
 
 		// Add actor w/ directional light component
-		house = Actor::Create("Stone DirectionalLight");
+		auto house = Actor::Create("Stone DirectionalLight");
 
-		transform = house->AddComponent<CTransform>(vec3(74400.0f, 6200.0f, 78000.0f));
-		transform->SetScale(vec3(1350.0f));
-		transform->SetRotation(vec3(180, 0, 0));
+		auto transform = house->AddComponent<CTransform>(vec3(74400.0f, 6200.0f, 78000.0f));
+		transform->SetScale(vec3(50.0f));
+		transform->SetRotation(vec3(0, 0, 0));
 
-		mesh = house->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
+		auto mesh = house->AddComponent<CRenderable>();
+		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
 
 		CLight* lightComponent = house->AddComponent<CLight>();
 		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
@@ -125,47 +126,47 @@ namespace Utopian
 		lightComponent->SetSpot(4.0f);
 
 		// Add orbiting entity
-		auto teapot = Actor::Create("Window");
+		//auto teapot = Actor::Create("Window");
 
-		transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
-		transform->SetScale(vec3(1050.0f));
-		transform->SetRotation(vec3(0, 180, 180));
+		//transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
+		//transform->SetScale(vec3(1050.0f));
+		//transform->SetRotation(vec3(0, 180, 180));
 
-		/*orbit = teapot->AddComponent<COrbit>(-0.01f);
-		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));*/
+		///*orbit = teapot->AddComponent<COrbit>(-0.01f);
+		//orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));*/
 
-		mesh = teapot->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseTower.obj"));
+		//mesh = teapot->AddComponent<CRenderable>();
+		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseTower.obj"));
 
-		// Add light
-		auto light2 = Actor::Create("PointLight");
+		//// Add light
+		//auto light2 = Actor::Create("PointLight");
 
-		light2->AddComponent<CTransform>(vec3(-74400.0f, -6200.0f, -78000.0f));
+		//light2->AddComponent<CTransform>(vec3(-74400.0f, -6200.0f, -78000.0f));
 
-		lightComponent = light2->AddComponent<CLight>();
-		lightComponent->SetMaterial(vec4(1, 0, 0, 1));
-		lightComponent->SetDirection(vec3(0, -1, 0));
-		lightComponent->SetAtt(0, 0.00, 0.00000002);
-		lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
-		lightComponent->SetType(Utopian::Vk::LightType::POINT_LIGHT);
-		lightComponent->SetRange(400000);
-		lightComponent->SetSpot(4.0f);
+		//lightComponent = light2->AddComponent<CLight>();
+		//lightComponent->SetMaterial(vec4(1, 0, 0, 1));
+		//lightComponent->SetDirection(vec3(0, -1, 0));
+		//lightComponent->SetAtt(0, 0.00, 0.00000002);
+		//lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
+		//lightComponent->SetType(Utopian::Vk::LightType::POINT_LIGHT);
+		//lightComponent->SetRange(400000);
+		//lightComponent->SetSpot(4.0f);
 
-		// Add spot light
-		auto spotLight = Actor::Create("SpotLight");
+		//// Add spot light
+		//auto spotLight = Actor::Create("SpotLight");
 
-		spotLight->AddComponent<CTransform>(vec3(-104400.0f, -6200.0f, -78000.0f));
+		//spotLight->AddComponent<CTransform>(vec3(-104400.0f, -6200.0f, -78000.0f));
 
-		lightComponent = spotLight->AddComponent<CLight>();
-		lightComponent->SetMaterial(vec4(0, 0, 1, 1));
-		lightComponent->SetDirection(vec3(1, 1, 1));
-		lightComponent->SetAtt(0, 0.00, 0.000000002);
-		lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
-		lightComponent->SetType(Utopian::Vk::LightType::SPOT_LIGHT);
-		lightComponent->SetRange(400000);
-		lightComponent->SetSpot(8.0f);
+		//lightComponent = spotLight->AddComponent<CLight>();
+		//lightComponent->SetMaterial(vec4(0, 0, 1, 1));
+		//lightComponent->SetDirection(vec3(1, 1, 1));
+		//lightComponent->SetAtt(0, 0.00, 0.000000002);
+		//lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
+		//lightComponent->SetType(Utopian::Vk::LightType::SPOT_LIGHT);
+		//lightComponent->SetRange(400000);
+		//lightComponent->SetSpot(8.0f);
 
-		//World::Instance().Update();
+		World::Instance().Update();
 
 		SceneRenderer::Instance().InitShaderResources();
 		SceneRenderer::Instance().InitShader();

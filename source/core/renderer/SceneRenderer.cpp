@@ -13,6 +13,7 @@
 #include "vulkan/ScreenGui.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/ModelLoader.h"
+#include "vulkan/UIOverlay.h"
 
 namespace Utopian
 {
@@ -118,8 +119,15 @@ namespace Utopian
 			if (renderable->IsBoundingBoxVisible())
 			{
 				BoundingBox boundingBox = renderable->GetBoundingBox();
-				glm::vec3 translation = renderable->GetTransform().GetPosition() + glm::vec3(0, boundingBox.GetHeight() / 2, 0);
+				vec3 pos = renderable->GetTransform().GetPosition();
+				vec3 rotation = renderable->GetTransform().GetRotation();
+				//glm::vec3 translation = vec3(pos.x, pos.y, pos.z);
+				//glm::vec3 translation = vec3(pos.x, pos.y - boundingBox.GetHeight() / 2, pos.z);
+				glm::vec3 translation = vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
 				mat4 world = glm::translate(glm::mat4(), translation);
+				//world = glm::rotate(world, glm::radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
+				//world = glm::rotate(world, glm::radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
+				//world = glm::rotate(world, glm::radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
 				Vk::PushConstantBlock pushConsts(world);
@@ -130,6 +138,8 @@ namespace Utopian
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+
+				//ImGui::InputFloat3("Min", &boundingBox.GetMin(), 2);
 			}
 		}
 	}

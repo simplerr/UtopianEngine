@@ -24,22 +24,23 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mCamera = renderer->GetCamera();
 	mTerrain = terrain;
 
-	auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj");
+	//auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/adventure_village/StonePlatform_centered.obj");
+	auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/cube.obj");
 
 	mAxisX = Utopian::Renderable::Create();
-	mAxisX->SetScale(vec3(AXIS_SCALE));
-	mAxisX->SetRotation(vec3(0.0f, 0.0f, 90.0f));
+	mAxisX->SetScale(vec3(AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE, AXIS_SCALE));
+	//mAxisX->SetRotation(vec3(180.0f, 60.0f, 0.0f));
 	mAxisX->SetModel(model);
 	//mAxisX->SetPipeline(COLOR_NO_DEPTH_TEST);
 
 	mAxisY = Utopian::Renderable::Create();
-	mAxisY->SetScale(vec3(AXIS_SCALE));
-	mAxisY->SetRotation(vec3(180.0f, 0.0f, 0.0f));
+	mAxisY->SetScale(vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
+	//mAxisY->SetRotation(vec3(180.0f, 0.0f, 0.0f));
 	mAxisY->SetModel(model);
 
 	mAxisZ = Utopian::Renderable::Create();
-	mAxisZ->SetScale(vec3(AXIS_SCALE));
-	mAxisZ->SetRotation(vec3(90.0f, 0.0f, 0.0f));
+	mAxisZ->SetScale(vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
+	//mAxisZ->SetRotation(vec3(90.0f, 0.0f, 0.0f));
 	mAxisZ->SetModel(model);
 
 	/*Scene::SceneRenderer::Instance().AddRenderable(mAxisX.get());
@@ -331,19 +332,19 @@ void TransformTool::ScaleAxisArrows()
 	vec3 diff = mCamera->GetPosition() - mSelectedActor->GetTransform().GetPosition();
 	float dist = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
 	float scale = dist / AXIS_SCALE;
-	mAxisX->SetScale(vec3(scale, scale, scale));
-	mAxisY->SetScale(vec3(scale, scale, scale));
-	mAxisZ->SetScale(vec3(scale, scale, scale));
+	mAxisX->SetScale(vec3(scale * AXIS_SCALE_MAIN, scale, scale));
+	mAxisY->SetScale(vec3(scale, scale * AXIS_SCALE_MAIN, scale));
+	mAxisZ->SetScale(vec3(scale, scale, scale  * AXIS_SCALE_MAIN));
 	SetPosition(mSelectedActor->GetTransform().GetPosition());
 }
 
 //! Sets the axis positions.
 void TransformTool::SetPosition(vec3 position)
 {
-	float offset = 1.50f;
-	mAxisX->SetPosition(position + vec3(mAxisX->GetBoundingBox().GetHeight() * offset, 0, 0));
-	mAxisY->SetPosition(position + vec3(0, mAxisY->GetBoundingBox().GetHeight() * offset, 0));
-	mAxisZ->SetPosition(position + vec3(0, 0, -mAxisZ->GetBoundingBox().GetHeight() * offset));
+	float offset = 1.00f;
+	mAxisX->SetPosition(position + vec3(mAxisX->GetBoundingBox().GetWidth() / 2.0f * offset, 0, 0));
+	mAxisY->SetPosition(position + vec3(0, mAxisY->GetBoundingBox().GetHeight() / 2.0f * offset, 0));
+	mAxisZ->SetPosition(position + vec3(0, 0, -mAxisZ->GetBoundingBox().GetDepth() / 2.0f * offset));
 }
 
 bool TransformTool::IsMovingObject()

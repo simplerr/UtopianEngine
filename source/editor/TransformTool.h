@@ -55,6 +55,7 @@ private:
 	MovingAxis	  mMovingAxis;
 	glm::vec3	  mLastPlanePos;
 
-	const float AXIS_SCALE = 30.0f;
+	const float AXIS_SCALE = 90.0f;
+	const float AXIS_SCALE_MAIN = 10.0f;
 	const float PLANE_SIZE = 100000.0;
 };
