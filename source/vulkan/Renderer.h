@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <map>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 #include "vulkan/VulkanInclude.h"
 #include "VulkanBase.h"
 #include "VertexDescription.h"
@@ -38,22 +39,26 @@ namespace Utopian::Vk
 	struct PushConstantBlock {
 		PushConstantBlock() {
 			world = mat4();
+			color = vec4(1.0f);
 			worldInvTranspose = mat4();
 		}
 
-		PushConstantBlock(mat4 w) {
+		PushConstantBlock(mat4 w, vec4 c = vec4(1.0f)) {
 			world = w;
-			worldInvTranspose = mat4();
+			color = c;
 
 			// Note: This needs to be done to have the physical world match the rendered world.
 			// See https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/ for more information.
 			world[3][0] = -world[3][0];
 			world[3][1] = -world[3][1];
 			world[3][2] = -world[3][2];
+
+			worldInvTranspose = glm::inverseTranspose(world);
 		}
 		
 		mat4 world;
 		mat4 worldInvTranspose;
+		vec4 color;
 	};
 
 	class Renderer : public VulkanBase

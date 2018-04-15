@@ -34,7 +34,7 @@ layout (std140, set = 0, binding = 0) uniform UBO
 layout(push_constant) uniform PushConsts {
 	 mat4 world;		
 	 mat4 worldInvTranspose;
-	 //vec3 color;	
+	 vec4 color;	
 } pushConsts;
 
 out gl_PerVertex
@@ -45,7 +45,7 @@ out gl_PerVertex
 
 void main() 
 {
-	OutColor = vec3(1.0f, 1.0f, 1.0f);	//pushConsts.color; 
+	OutColor = pushConsts.color.rgb; 
 	OutEyePosW = per_frame_vs.eyePos;
 
 	// Transform to world space.

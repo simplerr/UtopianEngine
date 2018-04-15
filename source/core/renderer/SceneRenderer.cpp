@@ -100,7 +100,7 @@ namespace Utopian
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), vec4(1, 1, 0, 1));
 
 				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 
@@ -130,7 +130,7 @@ namespace Utopian
 				//world = glm::rotate(world, glm::radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-				Vk::PushConstantBlock pushConsts(world);
+				Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
 
 				commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline());
 				commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);

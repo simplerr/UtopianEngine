@@ -16,6 +16,7 @@ layout (std140, set = 0, binding = 0) uniform UBO
 layout (push_constant) uniform PushConstants {
 	 mat4 world;		
 	 mat4 worldInv;		
+	 vec4 color;
 } pushConstants;
 
 layout (location = 0) out vec3 OutColor;
@@ -27,7 +28,7 @@ out gl_PerVertex
 
 void main() 
 {
-	OutColor = InColor;
+	OutColor = pushConstants.color.rgb;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

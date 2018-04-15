@@ -22,12 +22,6 @@ namespace Utopian::Vk
 	class ColorEffect : public Effect
 	{
 	public:
-		struct PushConstantBlock
-		{
-			glm::mat4 world;
-			glm::mat4 worldInvTranspose;
-		};
-
 		class UniformBufferVS : public Utopian::Vk::ShaderBuffer
 		{
 		public:
