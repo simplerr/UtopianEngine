@@ -6,7 +6,6 @@ namespace Utopian
 	SceneNode::SceneNode()
 	{
 		mDrawBoundingBox = false;
-		mDrawBoundingBox = true;
 	}
 
 	SceneNode::~SceneNode()

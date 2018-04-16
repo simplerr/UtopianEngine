@@ -14,6 +14,7 @@
 #include "core/renderer/Renderable.h"
 #include "core/renderer/SceneRenderer.h"
 #include "utility/math/Ray.h"
+#include "Colors.h"
 
 #define GLM_FORCE_RIGHT_HANDED 
 
@@ -29,18 +30,20 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 
 	mAxisX = Utopian::Renderable::Create();
 	mAxisX->SetScale(vec3(AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE, AXIS_SCALE));
-	//mAxisX->SetRotation(vec3(180.0f, 60.0f, 0.0f));
+	mAxisX->SetColor(Utopian::Vk::Colors::Red);
+	mAxisX->SetPipeline(Utopian::Vk::PipelineType2::DEBUG);
 	mAxisX->SetModel(model);
-	//mAxisX->SetPipeline(COLOR_NO_DEPTH_TEST);
 
 	mAxisY = Utopian::Renderable::Create();
 	mAxisY->SetScale(vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
-	//mAxisY->SetRotation(vec3(180.0f, 0.0f, 0.0f));
+	mAxisY->SetColor(Utopian::Vk::Colors::Green);
+	mAxisY->SetPipeline(Utopian::Vk::PipelineType2::DEBUG);
 	mAxisY->SetModel(model);
 
 	mAxisZ = Utopian::Renderable::Create();
 	mAxisZ->SetScale(vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
-	//mAxisZ->SetRotation(vec3(90.0f, 0.0f, 0.0f));
+	mAxisZ->SetColor(Utopian::Vk::Colors::Blue);
+	mAxisZ->SetPipeline(Utopian::Vk::PipelineType2::DEBUG);
 	mAxisZ->SetModel(model);
 
 	/*Scene::SceneRenderer::Instance().AddRenderable(mAxisX.get());

@@ -18,6 +18,14 @@ namespace Utopian::Vk
 	class VertexDescription;
 	class Shader;
 
+	enum PipelineType2
+	{
+		BASIC = 0,
+		WIREFRAME,
+		TEST,
+		DEBUG
+	};
+
 	/** \brief Most basic effect
 	*
 	* Simply transforms each vertex and sets a pixel color
@@ -25,14 +33,6 @@ namespace Utopian::Vk
 	class PhongEffect : public Effect
 	{
 	public:
-		enum PipelineType2
-		{
-			BASIC = 0,
-			WIREFRAME,
-			TEST,
-			DEBUG
-		};
-
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
 		virtual void CreateVertexDescription(Device* device);

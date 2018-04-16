@@ -95,12 +95,14 @@ namespace Utopian
 		for (auto& renderable : mRenderables)
 		{
 			Vk::StaticModel* model = renderable->GetModel();
-			mPhongEffect.SetPipeline(0);
+
+			// Todo:: should be able to use other pipelines that PhongEffect
+			mPhongEffect.SetPipeline(renderable->GetPipeline());
 
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), vec4(1, 1, 0, 1));
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
 				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
 

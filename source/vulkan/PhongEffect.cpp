@@ -86,8 +86,8 @@ namespace Utopian::Vk
 		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;
 		// TODO: Disable depth test
+		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;
 		pipeline->Create();
 		mPipelines[PipelineType2::DEBUG] = pipeline;
 	}
