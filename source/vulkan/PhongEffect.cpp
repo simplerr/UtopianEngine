@@ -13,7 +13,7 @@ namespace Utopian::Vk
 {
 	PhongEffect::PhongEffect()
 	{
-		SetPipeline(PipelineType2::BASIC);
+		SetPipeline(0);
 	}
 
 	void PhongEffect::CreateDescriptorPool(Device* device)
@@ -65,14 +65,14 @@ namespace Utopian::Vk
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->Create();
-		mPipelines[PipelineType2::BASIC] = pipeline;
+		mPipelines[Variation::NORMAL] = pipeline;
 
 		// Wireframe pipeline
 		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->Create();
-		mPipelines[PipelineType2::WIREFRAME] = pipeline;
+		mPipelines[Variation::WIREFRAME] = pipeline;
 
 		// Test pipeline
 		Shader* testShader = renderer->mShaderManager->CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
@@ -81,7 +81,7 @@ namespace Utopian::Vk
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;
 		pipeline->Create();
-		mPipelines[PipelineType2::TEST] = pipeline;
+		mPipelines[Variation::TEST] = pipeline;
 
 		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
@@ -89,7 +89,7 @@ namespace Utopian::Vk
 		// TODO: Disable depth test
 		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;
 		pipeline->Create();
-		mPipelines[PipelineType2::DEBUG] = pipeline;
+		mPipelines[Variation::DEBUG] = pipeline;
 	}
 
 	void PhongEffect::UpdateMemory(Device* device)

@@ -38,8 +38,8 @@ namespace Utopian::Vk
 	public:
 		enum PipelineType2
 		{
-			WIREFRAME = 0,
-			SOLID
+			SOLID = 0,
+			WIREFRAME 
 		};
 
 		// Override the base class interfaces

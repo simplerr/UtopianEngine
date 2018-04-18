@@ -33,9 +33,9 @@ namespace Utopian::Vk
 		return mPipelineInterface.GetDescriptorSetLayout(descriptorSet);
 	}
 
-	Pipeline2* Effect::GetPipeline()
+	Pipeline2* Effect::GetPipeline(uint32_t variation)
 	{
-		return mPipelines[mActivePipeline];
+		return mPipelines[variation];
 	}
 
 	DescriptorPool* Effect::GetDescriptorPool()

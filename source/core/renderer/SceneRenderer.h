@@ -63,5 +63,7 @@ namespace Utopian
 		Vk::DescriptorSet* mCommonDescriptorSet;
 		Vk::DescriptorPool* mCommonDescriptorPool;
 		glm::vec4 mClippingPlane;
+
+		std::map<uint32_t, Vk::Effect*> mEffects;
 	};
 }

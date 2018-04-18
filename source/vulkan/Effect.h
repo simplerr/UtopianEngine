@@ -7,6 +7,28 @@
 
 namespace Utopian::Vk
 {
+	enum EffectType {
+		PHONG = 0,
+		COLOR
+	};
+
+	class Mat
+	{
+	public:
+		Mat() {
+			effectType = EffectType::PHONG;
+			variation = 0;
+		}
+
+		Mat(EffectType effectType, uint32_t variation) {
+			this->effectType = effectType;
+			this->variation = variation;
+		}
+	//private:
+		uint32_t effectType;
+		uint32_t variation;
+	};
+
 	/* 
 	 * Base class for all effects.
 	 *
@@ -30,7 +52,7 @@ namespace Utopian::Vk
 		void SetPipeline(uint32_t pipelineType);
 		VkPipelineLayout GetPipelineLayout();
 		DescriptorSetLayout* GetDescriptorSetLayout(uint32_t descriptorSet);
-		Pipeline2* GetPipeline();
+		Pipeline2* GetPipeline(uint32_t variation);
 		DescriptorPool* GetDescriptorPool();
 		VertexDescription* GetVertexDescription();
 

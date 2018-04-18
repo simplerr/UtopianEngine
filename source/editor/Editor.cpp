@@ -78,7 +78,7 @@ namespace Utopian
 
 		// Enable bounding box rendering
 		auto renderable = mSelectedActor->GetComponent<CRenderable>();
-		renderable->EnableBoundingBox();
+		//renderable->EnableBoundingBox();
 
 		// Create inspector UI
 		mActorInspector->SetActor(mSelectedActor);

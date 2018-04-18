@@ -62,10 +62,10 @@ namespace Utopian::Vk
 
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
-		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;
 		pipeline->Create();
-		mPipelines[0] = pipeline;
+		mPipelines[Variation::NORMAL] = pipeline;
 	}
 
 	void ColorEffect::UpdateMemory(Device* device)

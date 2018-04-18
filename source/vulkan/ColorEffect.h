@@ -22,6 +22,10 @@ namespace Utopian::Vk
 	class ColorEffect : public Effect
 	{
 	public:
+		enum Variation {
+			NORMAL = 0
+		};
+
 		class UniformBufferVS : public Utopian::Vk::ShaderBuffer
 		{
 		public:

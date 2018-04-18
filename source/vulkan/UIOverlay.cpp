@@ -77,7 +77,7 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdSetViewPort(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 		mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 
-		mCommandBuffer->CmdBindPipeline(mImguiEffect.GetPipeline());
+		mCommandBuffer->CmdBindPipeline(mImguiEffect.GetPipeline(0));
 		VkDescriptorSet descriptorSets[1] = { mImguiEffect.mDescriptorSet0->descriptorSet };
 		vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mImguiEffect.GetPipelineLayout(), 0, 1, descriptorSets, 0, NULL);
 

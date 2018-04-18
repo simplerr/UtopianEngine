@@ -66,6 +66,12 @@ namespace Utopian
 		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(2, &fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
+
+		mEffects[Vk::EffectType::PHONG] = new Vk::PhongEffect();
+		mEffects[Vk::EffectType::PHONG]->Init(mRenderer);
+
+		mEffects[Vk::EffectType::COLOR] = new Vk::ColorEffect();
+		mEffects[Vk::EffectType::COLOR]->Init(mRenderer);
 	}
 
 	void SceneRenderer::InitShader()
@@ -97,20 +103,19 @@ namespace Utopian
 			Vk::StaticModel* model = renderable->GetModel();
 
 			// Todo:: should be able to use other pipelines that PhongEffect
-			mPhongEffect.SetPipeline(renderable->GetPipeline());
 
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
-				commandBuffer->CmdBindPipeline(mPhongEffect.GetPipeline());
+				commandBuffer->CmdBindPipeline(mEffects[renderable->GetMaterial().effectType]->GetPipeline(renderable->GetMaterial().variation));
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect.GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mEffects[Vk::EffectType::PHONG]->GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
-				commandBuffer->CmdPushConstants(&mPhongEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdPushConstants(mEffects[Vk::EffectType::PHONG], VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
@@ -134,7 +139,7 @@ namespace Utopian
 
 				Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
 
-				commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline());
+				commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline(0));
 				commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
 				commandBuffer->CmdPushConstants(&mColorEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);

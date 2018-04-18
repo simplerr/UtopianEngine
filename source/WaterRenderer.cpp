@@ -38,7 +38,7 @@ namespace Utopian
 
 	void WaterRenderer::Render(Vk::Renderer* renderer, Vk::CommandBuffer* commandBuffer)
 	{
-		commandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline());
+		commandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline(0));
 
 		VkDescriptorSet descriptorSets[1] = { mWaterEffect.mDescriptorSet0->descriptorSet };
 		commandBuffer->CmdBindDescriptorSet(&mWaterEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);

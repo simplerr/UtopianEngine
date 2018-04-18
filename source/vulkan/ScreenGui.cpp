@@ -31,7 +31,7 @@ namespace Utopian::Vk
 
 	void ScreenGui::Render(Renderer* renderer, CommandBuffer* commandBuffer)
 	{
-		commandBuffer->CmdBindPipeline(mEffect.GetPipeline());
+		commandBuffer->CmdBindPipeline(mEffect.GetPipeline(0));
 		commandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer);
 		commandBuffer->CmdBindIndexBuffer(mIndexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
