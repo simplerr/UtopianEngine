@@ -28,8 +28,13 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
+		/*  Deferred rendering experimentation */
+		mDeferredRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), 512, 512);
+		mDeferredRenderTarget->SetClearColor(0, 0, 1, 1);
+
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionRenderTarget()->GetImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionRenderTarget()->GetImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredRenderTarget->GetImage(), mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 	}
@@ -78,6 +83,7 @@ namespace Utopian
 	{
 		mPhongEffect.Init(mRenderer);
 		mColorEffect.Init(mRenderer);
+		mDeferredEffect.Init(mRenderer);
 	}
 
 	void SceneRenderer::Update()
@@ -197,7 +203,38 @@ namespace Utopian
 		mWaterRenderer->GetRefractionRenderTarget()->End(mRenderer->GetQueue());
 
 		SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
+
 		UpdateUniformBuffers();
+
+		/*  Deferred rendering experimentation */
+		/************************************************************************/
+		/*                                                                      */
+		/************************************************************************/
+
+		mDeferredRenderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = mDeferredRenderTarget->GetCommandBuffer();
+
+		for (auto& renderable : mRenderables)
+		{
+			Vk::StaticModel* model = renderable->GetModel();
+
+			// Todo:: should be able to use other pipelines that PhongEffect
+
+			for (Vk::Mesh* mesh : model->mMeshes)
+			{
+				// Push the world matrix constant
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+				
+				commandBuffer->CmdBindPipeline(mDeferredEffect.GetPipeline(0));
+				commandBuffer->CmdBindDescriptorSet(&mDeferredEffect, 1, &mDeferredEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				commandBuffer->CmdPushConstants(&mDeferredEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
+				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+			}
+		}
+
+		mDeferredRenderTarget->End(mRenderer->GetQueue());
 	}
 
 	void SceneRenderer::UpdateUniformBuffers()
@@ -212,6 +249,9 @@ namespace Utopian
 
 			mColorEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
 			mColorEffect.per_frame_vs.data.view = mMainCamera->GetView();
+
+			mDeferredEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
+			mDeferredEffect.per_frame_vs.data.view = mMainCamera->GetView();
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();
@@ -222,6 +262,7 @@ namespace Utopian
 		per_frame_ps.UpdateMemory();
 		fog_ubo.UpdateMemory();
 		mColorEffect.UpdateMemory(mRenderer->GetDevice());
+		mDeferredEffect.UpdateMemory(mRenderer->GetDevice());
 	}
 
 	void SceneRenderer::AddRenderable(Renderable* renderable)

@@ -21,7 +21,7 @@ namespace Utopian::Vk
 		mRenderPass = new Utopian::Vk::RenderPass(device, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mFrameBuffer = new Utopian::Vk::FrameBuffers(device, mRenderPass, mDepthImage, mColorImage, GetWidth(), GetHeight());
 		mSampler = new Utopian::Vk::Sampler(device);
-
+		
 		SetClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	}
 

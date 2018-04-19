@@ -112,6 +112,12 @@
     <Filter Include="Source Files\vulkan\effects\imgui\shader">
       <UniqueIdentifier>{ba516b85-6693-4347-a9bc-aa7cf15d56c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\deferred">
+      <UniqueIdentifier>{5819a46d-cc78-40aa-bd8f-e2709850e683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\deferred\shaders">
+      <UniqueIdentifier>{6b99be89-bdbb-4b8b-b2f6-7be7c2d1c480}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -350,6 +356,9 @@
     </ClCompile>
     <ClCompile Include="source\core\renderer\Renderable.cpp">
       <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\DeferredEffect.cpp">
+      <Filter>Source Files\vulkan\effects\deferred</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -623,6 +632,9 @@
     <ClInclude Include="source\core\renderer\Renderable.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\DeferredEffect.h">
+      <Filter>Source Files\vulkan\effects\deferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -705,6 +717,12 @@
     </None>
     <None Include="data\shaders\color\color.frag" />
     <None Include="data\shaders\color\color.vert" />
+    <None Include="data\shaders\deferred\deferred.frag">
+      <Filter>Source Files\vulkan\effects\deferred\shaders</Filter>
+    </None>
+    <None Include="data\shaders\deferred\deferred.vert">
+      <Filter>Source Files\vulkan\effects\deferred\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\todo.md">

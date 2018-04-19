@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include <vector>
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
 
@@ -21,9 +21,15 @@ namespace Utopian::Vk
 		*/
 		RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout, bool create = true);
 		void Create();
-		
+
+		// Note: The order of which these are called is important!
+		void AddColorAttachment(VkFormat format, VkImageLayout imageLayout);
+		void AddDepthAttachment(VkFormat format, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
 		// Descriptors for the attachments used by this renderpass
 		// This is public so that it can be modified before creating the render pass
-		std::array<VkAttachmentDescription, 2> attachments = {};
+		std::vector<VkAttachmentDescription> attachments;
+		std::vector<VkAttachmentReference> colorReferences;
+		std::vector<VkAttachmentReference> depthReferences;
 	};
 }

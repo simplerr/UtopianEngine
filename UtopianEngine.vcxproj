@@ -115,6 +115,7 @@
     <ClCompile Include="source\utility\math\Sphere.cpp" />
     <ClCompile Include="source\utility\Utility.cpp" />
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
+    <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="source\utility\Module.h" />
     <ClInclude Include="source\utility\Utility.h" />
     <ClInclude Include="source\vulkan\ColorEffect.h" />
+    <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
@@ -255,6 +257,8 @@
   <ItemGroup>
     <None Include="data\shaders\color\color.frag" />
     <None Include="data\shaders\color\color.vert" />
+    <None Include="data\shaders\deferred\deferred.frag" />
+    <None Include="data\shaders\deferred\deferred.vert" />
     <None Include="data\shaders\geometry\base.frag" />
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />

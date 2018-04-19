@@ -1,3 +1,4 @@
+#include <array>
 #include "RenderPass.h"
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
@@ -7,25 +8,8 @@ namespace Utopian::Vk
 	RenderPass::RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout, bool create)
 		: Handle(device, vkDestroyRenderPass)
 	{
-		// Color attachment
-		attachments[COLOR_ATTACHMENT].format = colorFormat;
-		attachments[COLOR_ATTACHMENT].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachments[COLOR_ATTACHMENT].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[COLOR_ATTACHMENT].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[COLOR_ATTACHMENT].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[COLOR_ATTACHMENT].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		attachments[COLOR_ATTACHMENT].finalLayout = colorImageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
-																	
-		// Depth attachment											
-		attachments[DEPTH_ATTACHMENT].format = depthFormat;
-		attachments[DEPTH_ATTACHMENT].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;						
-		attachments[DEPTH_ATTACHMENT].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;				
-		attachments[DEPTH_ATTACHMENT].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;		
-		attachments[DEPTH_ATTACHMENT].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;		
-		attachments[DEPTH_ATTACHMENT].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;			
-		attachments[DEPTH_ATTACHMENT].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;	
+		AddColorAttachment(colorFormat, colorImageLayout);
+		AddDepthAttachment(depthFormat);
 
 		if (create)
 		{
@@ -89,5 +73,49 @@ namespace Utopian::Vk
 		renderPassInfo.pDependencies = dependencies.data();							
 		
 		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetDevice(), &renderPassInfo, nullptr, &mHandle));
-	}	
+	}
+
+	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout)
+	{
+		VkAttachmentDescription attachment = {};
+		attachment.format = format;
+		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		attachment.finalLayout = imageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+
+		attachments.push_back(attachment);
+
+		VkAttachmentReference colorReference = {};
+		colorReference.attachment = attachments.size();
+		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
+
+		colorReferences.push_back(colorReference);
+
+	}
+
+	void RenderPass::AddDepthAttachment(VkFormat format, VkImageLayout imageLayout)
+	{
+		VkAttachmentDescription attachment = {};
+
+		attachment.format = format;
+		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+		attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		attachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		attachments.push_back(attachment);
+
+		VkAttachmentReference depthReference = {};
+		depthReference.attachment = attachments.size();
+		depthReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		depthReferences.push_back(depthReference);
+	}
 }
