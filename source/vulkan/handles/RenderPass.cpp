@@ -17,17 +17,14 @@ namespace Utopian::Vk
 		}
 	}
 
+	RenderPass::RenderPass(Device * device)
+		: Handle(device, vkDestroyRenderPass)
+	{
+
+	}
+
 	void RenderPass::Create()
 	{
-		// Setup attachment references																			
-		VkAttachmentReference colorReference = {};
-		colorReference.attachment = 0;											
-		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
-
-		VkAttachmentReference depthReference = {};
-		depthReference.attachment = 1;									
-		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;		
-
 		std::array<VkSubpassDependency, 2> dependencies;
 
 		// First dependency at the start of the renderpass
@@ -54,8 +51,8 @@ namespace Utopian::Vk
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		subpassDescription.colorAttachmentCount = 1;							
-		subpassDescription.pColorAttachments = &colorReference;				
-		subpassDescription.pDepthStencilAttachment = &depthReference;	
+		subpassDescription.pColorAttachments = colorReferences.data();				
+		subpassDescription.pDepthStencilAttachment = depthReferences.data();	
 		subpassDescription.inputAttachmentCount = 0;				
 		subpassDescription.pInputAttachments = nullptr;			
 		subpassDescription.preserveAttachmentCount = 0;		
@@ -77,6 +74,12 @@ namespace Utopian::Vk
 
 	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout)
 	{
+		VkAttachmentReference colorReference = {};
+		colorReference.attachment = attachments.size();
+		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
+
+		colorReferences.push_back(colorReference);
+
 		VkAttachmentDescription attachment = {};
 		attachment.format = format;
 		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -88,17 +91,15 @@ namespace Utopian::Vk
 		attachment.finalLayout = imageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 
 		attachments.push_back(attachment);
-
-		VkAttachmentReference colorReference = {};
-		colorReference.attachment = attachments.size();
-		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
-
-		colorReferences.push_back(colorReference);
-
 	}
 
 	void RenderPass::AddDepthAttachment(VkFormat format, VkImageLayout imageLayout)
 	{
+		VkAttachmentReference depthReference = {};
+		depthReference.attachment = attachments.size();
+		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		depthReferences.push_back(depthReference);
 		VkAttachmentDescription attachment = {};
 
 		attachment.format = format;
@@ -111,11 +112,5 @@ namespace Utopian::Vk
 		attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		attachments.push_back(attachment);
-
-		VkAttachmentReference depthReference = {};
-		depthReference.attachment = attachments.size();
-		depthReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		depthReferences.push_back(depthReference);
 	}
 }

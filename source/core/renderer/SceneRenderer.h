@@ -70,5 +70,12 @@ namespace Utopian
 
 		/*  Deferred rendering experimentation */
 		Vk::RenderTarget* mDeferredRenderTarget;
+
+		struct {
+			Vk::Image* position;
+			Vk::Image* normal;
+			Vk::Image* albedo;
+			Vk::Image* depth;
+		} mDeferredImages;
 	};
 }

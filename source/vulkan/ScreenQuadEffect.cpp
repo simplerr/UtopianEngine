@@ -18,7 +18,7 @@ namespace Utopian::Vk
 	void ScreenQuadEffect::CreateDescriptorPool(Device* device)
 	{
 		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4);
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 10);
 		mDescriptorPool->Create();
 	}
 

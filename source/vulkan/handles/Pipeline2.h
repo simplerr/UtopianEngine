@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <map>
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
@@ -36,8 +37,8 @@ namespace Utopian::Vk
 
 		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo mInputAssemblyState = {};
-		VkPipelineColorBlendAttachmentState mBlendAttachmentState = {};
 		VkPipelineDepthStencilStateCreateInfo mDepthStencilState = {};
+		std::vector<VkPipelineColorBlendAttachmentState> mBlendAttachmentState;
 	private:
 		RenderPass* mRenderPass = nullptr;
 		VertexDescription* mVertexDescription = nullptr;

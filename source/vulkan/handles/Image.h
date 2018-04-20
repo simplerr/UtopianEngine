@@ -14,6 +14,7 @@ namespace Utopian::Vk
 		~Image();
 
 		VkImageView GetView();
+		VkFormat GetFormat();
 	private:
 		VkImage mImage;
 		VkImageView mImageView;

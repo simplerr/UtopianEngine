@@ -7,6 +7,11 @@
 
 namespace Utopian::Vk
 {
+	FrameBuffers::FrameBuffers(Device* device)
+		: mDevice(device)
+	{
+	}
+
 	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height)
 		: mDevice(device)
 	{
@@ -58,6 +63,27 @@ namespace Utopian::Vk
 		{
 			vkDestroyFramebuffer(mDevice->GetVkDevice(), mFrameBuffers[i], nullptr);
 		}
+	}
+
+	void FrameBuffers::AddAttachmentImage(Image* image)
+	{
+		mAttachments.push_back(image->GetView());
+	}
+
+	void FrameBuffers::Create(RenderPass* renderPass, uint32_t width, uint32_t height)
+	{
+		VkFramebufferCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		createInfo.renderPass = renderPass->GetVkHandle();
+		createInfo.attachmentCount = mAttachments.size();
+		createInfo.pAttachments = mAttachments.data();
+		createInfo.width = width;
+		createInfo.height = height;
+		createInfo.layers = 1;
+
+		// Create a single frame buffer
+		mFrameBuffers.resize(1);
+		VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
 	}
 
 	VkFramebuffer FrameBuffers::GetFrameBuffer(uint32_t index)

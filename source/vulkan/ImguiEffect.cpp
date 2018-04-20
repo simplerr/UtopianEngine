@@ -62,14 +62,14 @@ namespace Utopian::Vk
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 
 		// Customize the pipeline with blending
-		pipeline->mBlendAttachmentState.blendEnable = VK_TRUE;
-		pipeline->mBlendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		pipeline->mBlendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		pipeline->mBlendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		pipeline->mBlendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
-		pipeline->mBlendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		pipeline->mBlendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		pipeline->mBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
+		pipeline->mBlendAttachmentState[0].blendEnable = VK_TRUE;
+		pipeline->mBlendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		pipeline->mBlendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		pipeline->mBlendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		pipeline->mBlendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		pipeline->mBlendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		pipeline->mBlendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		pipeline->mBlendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
 
 		// The front facing order is reversed in the Imgui vertex buffer
 		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;

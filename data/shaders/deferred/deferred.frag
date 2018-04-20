@@ -2,10 +2,13 @@
 
 layout (location = 0) in vec3 InColor;
 
-layout (location = 1) out vec4 OutColor;
+layout (location = 0) out vec4 outPosition;
+layout (location = 1) out vec4 outNormal;
+layout (location = 2) out vec4 outAlbedo;
 
 void main() 
 {
-	OutColor = vec4(InColor, 1.0f);
-	OutColor = vec4(1, 0, 0, 1.0f);
+	outPosition = vec4(1, 0, 0, 1.0f);
+	outNormal = vec4(1, 1, 1, 1.0f);
+	outAlbedo = vec4(1, 0, 1, 1.0f);
 }

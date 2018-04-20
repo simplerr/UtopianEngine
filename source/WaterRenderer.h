@@ -20,6 +20,9 @@ namespace Utopian
 		Vk::RenderTarget* GetReflectionRenderTarget();
 		Vk::RenderTarget* GetRefractionRenderTarget();
 
+		Vk::Image* GetReflectionImage();
+		Vk::Image* GetRefractionImage();
+
 	private:
 		struct Water
 		{
@@ -38,5 +41,15 @@ namespace Utopian
 		std::vector<Water> mWaterList;
 
 		const uint32_t CELL_SIZE = 2000.0f;
+
+		struct {
+			Utopian::Vk::Image* colorImage;
+			Utopian::Vk::Image* depthImage;
+		} mReflectionImages;
+
+		struct {
+			Utopian::Vk::Image* colorImage;
+			Utopian::Vk::Image* depthImage;
+		} mRefractionImages;
 	};
 }

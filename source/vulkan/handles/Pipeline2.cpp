@@ -31,8 +31,14 @@ namespace Utopian::Vk
 		mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 
 		// Color blend state
-		mBlendAttachmentState.colorWriteMask = 0xf;
-		mBlendAttachmentState.blendEnable = VK_FALSE;			// Blending disabled
+		for (uint32_t i = 0; i < renderPass->colorReferences.size(); i++) {
+			VkPipelineColorBlendAttachmentState colorBlend = {};
+			colorBlend.colorWriteMask = 0xf;
+			colorBlend.blendEnable = VK_FALSE;					// Blending disabled
+			mBlendAttachmentState.push_back(colorBlend);
+		}
+		//mBlendAttachmentState.colorWriteMask = 0xf;
+		//mBlendAttachmentState.blendEnable = VK_FALSE;			// Blending disabled
 
 		// Depth and stencil state
 		mDepthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -54,8 +60,8 @@ namespace Utopian::Vk
 		// ...
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 		colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		colorBlendState.attachmentCount = 1;
-		colorBlendState.pAttachments = &mBlendAttachmentState;
+		colorBlendState.attachmentCount = mBlendAttachmentState.size();
+		colorBlendState.pAttachments = mBlendAttachmentState.data();
 
 		// Viewport state
 		VkPipelineViewportStateCreateInfo viewportState = {};

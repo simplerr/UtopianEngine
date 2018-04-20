@@ -65,6 +65,11 @@ namespace Utopian::Vk
 		return mImageView;
 	}
 
+	VkFormat Image::GetFormat()
+	{
+		return mFormat;
+	}
+
 	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format)
 		: Image(device, width, height, format,
 				VK_IMAGE_TILING_OPTIMAL,

@@ -4,6 +4,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/Image.h"
 #include "Camera.h"
 #include "vulkan/Mesh.h"
 #include "vulkan/StaticModel.h"
@@ -28,13 +29,26 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
+		mDeferredImages.position = new Vk::ImageColor(renderer->GetDevice(), 512, 512, VK_FORMAT_R8G8B8A8_UNORM);
+		mDeferredImages.normal = new Vk::ImageColor(renderer->GetDevice(), 512, 512, VK_FORMAT_R8G8B8A8_UNORM);
+		mDeferredImages.albedo = new Vk::ImageColor(renderer->GetDevice(), 512, 512, VK_FORMAT_R8G8B8A8_UNORM);
+		mDeferredImages.depth = new Vk::ImageDepth(renderer->GetDevice(), 512, 512, VK_FORMAT_D32_SFLOAT_S8_UINT);
+
 		/*  Deferred rendering experimentation */
 		mDeferredRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), 512, 512);
-		mDeferredRenderTarget->SetClearColor(0, 0, 1, 1);
+		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.position);
+		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.normal);
+		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.albedo);
+		mDeferredRenderTarget->AddDepthAttachment(mDeferredImages.depth);
+		mDeferredRenderTarget->Create();
 
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionRenderTarget()->GetImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionRenderTarget()->GetImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredRenderTarget->GetImage(), mDeferredRenderTarget->GetSampler());
+		mDeferredRenderTarget->SetClearColor(1, 1, 1, 1);
+
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredImages.position, mDeferredRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.normal, mDeferredRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.albedo, mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 	}
@@ -81,6 +95,9 @@ namespace Utopian
 
 	void SceneRenderer::InitShader()
 	{
+		// Note: Todo:
+		mDeferredEffect.SetRenderPass(mDeferredRenderTarget->GetRenderPass());
+
 		mPhongEffect.Init(mRenderer);
 		mColorEffect.Init(mRenderer);
 		mDeferredEffect.Init(mRenderer);

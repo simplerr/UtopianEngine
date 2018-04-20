@@ -60,7 +60,7 @@ namespace Utopian::Vk
 	{
 		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/deferred/deferred.vert.spv", "data/shaders/deferred/deferred.frag.spv");
 
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), mRenderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;
@@ -71,5 +71,10 @@ namespace Utopian::Vk
 	void DeferredEffect::UpdateMemory(Device* device)
 	{
 		per_frame_vs.UpdateMemory();
+	}
+
+	void DeferredEffect::SetRenderPass(RenderPass* renderPass)
+	{
+		mRenderPass = renderPass;
 	}
 }

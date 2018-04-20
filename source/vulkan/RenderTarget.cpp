@@ -16,10 +16,8 @@ namespace Utopian::Vk
 		mHeight = height;
 
 		mCommandBuffer = new Utopian::Vk::CommandBuffer(device, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-		mColorImage = new Utopian::Vk::ImageColor(device, GetWidth(), GetHeight(), VK_FORMAT_R8G8B8A8_UNORM);
-		mDepthImage = new Utopian::Vk::ImageDepth(device, GetWidth(), GetHeight(), VK_FORMAT_D32_SFLOAT_S8_UINT);
-		mRenderPass = new Utopian::Vk::RenderPass(device, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		mFrameBuffer = new Utopian::Vk::FrameBuffers(device, mRenderPass, mDepthImage, mColorImage, GetWidth(), GetHeight());
+		mRenderPass = new Utopian::Vk::RenderPass(device);
+		mFrameBuffer = new Utopian::Vk::FrameBuffers(device);
 		mSampler = new Utopian::Vk::Sampler(device);
 		
 		SetClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -30,18 +28,38 @@ namespace Utopian::Vk
 
 	}
 
+	void RenderTarget::AddColorAttachment(Image* image, VkImageLayout imageLayout)
+	{
+		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout);
+		mFrameBuffer->AddAttachmentImage(image);
+	}
+
+	void RenderTarget::AddDepthAttachment(Image* image)
+	{
+		mRenderPass->AddDepthAttachment(image->GetFormat());
+		mFrameBuffer->AddAttachmentImage(image);
+	}
+
+	void RenderTarget::Create()
+	{
+		mRenderPass->Create();
+		mFrameBuffer->Create(mRenderPass, GetWidth(), GetHeight());
+	}
+
 	void RenderTarget::Begin()
 	{
-		VkClearValue clearValues[2];
+		VkClearValue clearValues[4];
 		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
-		clearValues[1].depthStencil = { 1.0f, 0 };
+		clearValues[1].color = { 1, 0, 0, 1 };
+		clearValues[2].color = { 1, 0, 0, 1 };
+		clearValues[3].depthStencil = { 1.0f, 0 };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
 		renderPassBeginInfo.renderArea.extent.width = GetWidth();
 		renderPassBeginInfo.renderArea.extent.height = GetHeight();
-		renderPassBeginInfo.clearValueCount = 2;
+		renderPassBeginInfo.clearValueCount = 4;
 		renderPassBeginInfo.pClearValues = clearValues;
 		renderPassBeginInfo.framebuffer = mFrameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
 
@@ -69,11 +87,6 @@ namespace Utopian::Vk
 		return mHeight;
 	}
 
-	Utopian::Vk::Image* RenderTarget::GetImage()
-	{
-		return mColorImage;
-	}
-
 	Utopian::Vk::Sampler* RenderTarget::GetSampler()
 	{
 		return mSampler;
@@ -82,6 +95,11 @@ namespace Utopian::Vk
 	Utopian::Vk::CommandBuffer* RenderTarget::GetCommandBuffer()
 	{
 		return mCommandBuffer;
+	}
+
+	RenderPass* RenderTarget::GetRenderPass()
+	{
+		return mRenderPass;
 	}
 
 	void RenderTarget::SetClearColor(float r, float g, float b, float a)

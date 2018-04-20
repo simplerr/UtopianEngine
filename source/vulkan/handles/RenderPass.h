@@ -20,6 +20,7 @@ namespace Utopian::Vk
 			          this allows for modifying the renderpass configuration.
 		*/
 		RenderPass(Device* device, VkFormat colorFormat, VkFormat depthFormat, VkImageLayout colorImageLayout, bool create = true);
+		RenderPass(Device* device);
 		void Create();
 
 		// Note: The order of which these are called is important!

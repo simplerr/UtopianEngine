@@ -57,8 +57,13 @@ namespace Utopian::Vk
 		virtual void CreatePipeline(Renderer* renderer);
 		virtual void UpdateMemory(Device* device);
 
+		void SetRenderPass(RenderPass* renderPass);
+
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 		UniformBufferVS per_frame_vs;
+
+		// Todo:
+		RenderPass* mRenderPass;
 	private:
 	};
 }

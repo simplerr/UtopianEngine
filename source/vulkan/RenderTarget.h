@@ -17,9 +17,15 @@ namespace Utopian::Vk
 
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
-		Utopian::Vk::Image* GetImage();
+		/* Note: The order in which these are called is important */
+		void AddColorAttachment(Image* image, VkImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void AddDepthAttachment(Image* image);
+
+		void Create();
+
 		Utopian::Vk::Sampler* GetSampler();
 		Utopian::Vk::CommandBuffer* GetCommandBuffer();
+		RenderPass* GetRenderPass();
 
 		uint32_t GetWidth();
 		uint32_t GetHeight();
@@ -27,8 +33,6 @@ namespace Utopian::Vk
 	private:
 		Utopian::Vk::FrameBuffers* mFrameBuffer;
 		Utopian::Vk::RenderPass* mRenderPass;
-		Utopian::Vk::Image* mColorImage;
-		Utopian::Vk::Image* mDepthImage;
 		Utopian::Vk::Pipeline* mPipeline;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 		Utopian::Vk::DescriptorSet* mTextureDescriptorSet;

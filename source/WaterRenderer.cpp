@@ -6,6 +6,7 @@
 #include "vulkan/Handles/Texture.h"
 #include "vulkan/Handles/CommandBuffer.h"
 #include "vulkan/Handles/DescriptorSet.h"
+#include "vulkan/Handles/Image.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/RenderTarget.h"
 
@@ -18,15 +19,31 @@ namespace Utopian
 
 		//mGridModel = modelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
 
+		uint32_t width = renderer->GetWindowWidth();
+		uint32_t height = renderer->GetWindowHeight();
+
+		/* Create render target and the required images */
+		mReflectionImages.colorImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mReflectionImages.depthImage = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		mReflectionRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		mReflectionRenderTarget->AddColorAttachment(mReflectionImages.colorImage);
+		mReflectionRenderTarget->AddDepthAttachment(mReflectionImages.depthImage);
+		mReflectionRenderTarget->Create();
+
+		mRefractionImages.colorImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mRefractionImages.depthImage = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		mRefractionRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		mRefractionRenderTarget->AddColorAttachment(mRefractionImages.colorImage);
+		mRefractionRenderTarget->AddDepthAttachment(mRefractionImages.depthImage);
+		mRefractionRenderTarget->Create();
+
 		mWaterEffect.Init(renderer);
 
-		mReflectionRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight());
-		mRefractionRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight());
 		dudvTexture = textureLoader->LoadTexture("data/textures/water_dudv.png");
 
 		mWaterEffect.mDescriptorSet0->BindUniformBuffer(0, &mWaterEffect.per_frame_vs.GetDescriptor());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, mReflectionRenderTarget->GetImage(), mReflectionRenderTarget->GetSampler());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, mRefractionRenderTarget->GetImage(), mRefractionRenderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, mReflectionImages.colorImage, mReflectionRenderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, mRefractionImages.colorImage, mRefractionRenderTarget->GetSampler());
 		mWaterEffect.mDescriptorSet0->BindCombinedImage(3, &dudvTexture->GetTextureDescriptorInfo());
 		mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
 	}
@@ -89,5 +106,14 @@ namespace Utopian
 	Vk::RenderTarget* WaterRenderer::GetRefractionRenderTarget()
 	{
 		return mRefractionRenderTarget;
+	}
+	Vk::Image * WaterRenderer::GetReflectionImage()
+	{
+		return mReflectionImages.colorImage;
+	}
+
+	Vk::Image * WaterRenderer::GetRefractionImage()
+	{
+		return mRefractionImages.colorImage;
 	}
 }
