@@ -34,6 +34,11 @@ namespace Utopian
 		mInternal->SetModel(model);
 	}
 
+	void CRenderable::SetColor(glm::vec4 color)
+	{
+		mInternal->SetColor(color);
+	}
+
 	void CRenderable::EnableBoundingBox()
 	{
 		mInternal->SetDrawBoundingBox(true);

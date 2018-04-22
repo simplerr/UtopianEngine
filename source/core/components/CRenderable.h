@@ -17,6 +17,7 @@ namespace Utopian
 		void OnCreated() override;
 
 		void SetModel(Utopian::Vk::StaticModel* model);
+		void SetColor(glm::vec4 color);
 
 		void EnableBoundingBox();
 		void DisableBoundingBox();

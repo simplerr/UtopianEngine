@@ -29,13 +29,16 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		mDeferredImages.position = new Vk::ImageColor(renderer->GetDevice(), 512, 512, VK_FORMAT_R8G8B8A8_UNORM);
-		mDeferredImages.normal = new Vk::ImageColor(renderer->GetDevice(), 512, 512, VK_FORMAT_R8G8B8A8_UNORM);
-		mDeferredImages.albedo = new Vk::ImageColor(renderer->GetDevice(), 512, 512, VK_FORMAT_R8G8B8A8_UNORM);
-		mDeferredImages.depth = new Vk::ImageDepth(renderer->GetDevice(), 512, 512, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		uint32_t width = renderer->GetWindowWidth();
+		uint32_t height = renderer->GetWindowHeight();
+
+		mDeferredImages.position = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		mDeferredImages.normal = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		mDeferredImages.albedo = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mDeferredImages.depth = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		/*  Deferred rendering experimentation */
-		mDeferredRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), 512, 512);
+		mDeferredRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.position);
 		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.normal);
 		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.albedo);
@@ -241,9 +244,12 @@ namespace Utopian
 			{
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
-				
+
+				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+				VkDescriptorSet descriptorSets[2] = { mDeferredEffect.mDescriptorSet0->descriptorSet, textureDescriptorSet };
+
 				commandBuffer->CmdBindPipeline(mDeferredEffect.GetPipeline(0));
-				commandBuffer->CmdBindDescriptorSet(&mDeferredEffect, 1, &mDeferredEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				commandBuffer->CmdBindDescriptorSet(&mDeferredEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 				commandBuffer->CmdPushConstants(&mDeferredEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);

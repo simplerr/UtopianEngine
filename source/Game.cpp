@@ -115,6 +115,7 @@ namespace Utopian
 		auto mesh = house->AddComponent<CRenderable>();
 		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
+		mesh->SetColor(glm::vec4(0.3, 1, 0.2, 1.0));
 
 		CLight* lightComponent = house->AddComponent<CLight>();
 		lightComponent->SetMaterial(vec4(1, 1, 1, 1));

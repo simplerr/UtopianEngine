@@ -50,7 +50,7 @@ namespace Utopian::Vk
 	{
 		VkClearValue clearValues[4];
 		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
-		clearValues[1].color = { 1, 0, 0, 1 };
+		clearValues[1].color = { 0, 0, 1, 1 };
 		clearValues[2].color = { 1, 0, 0, 1 };
 		clearValues[3].depthStencil = { 1.0f, 0 };
 

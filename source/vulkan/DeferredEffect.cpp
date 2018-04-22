@@ -43,6 +43,7 @@ namespace Utopian::Vk
 	{
 		// Descriptor set 0
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
 		mPipelineInterface.CreateLayouts(device);
 	}
@@ -63,7 +64,7 @@ namespace Utopian::Vk
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), mRenderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;
+		pipeline->mDepthStencilState.depthTestEnable = VK_TRUE;
 		pipeline->Create();
 		mPipelines[Variation::NORMAL] = pipeline;
 	}
