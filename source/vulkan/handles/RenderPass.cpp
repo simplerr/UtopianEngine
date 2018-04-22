@@ -50,7 +50,7 @@ namespace Utopian::Vk
 		// Setup a single subpass reference																			
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.colorAttachmentCount = 1;							
+		subpassDescription.colorAttachmentCount = colorReferences.size();							
 		subpassDescription.pColorAttachments = colorReferences.data();				
 		subpassDescription.pDepthStencilAttachment = depthReferences.data();	
 		subpassDescription.inputAttachmentCount = 0;				
