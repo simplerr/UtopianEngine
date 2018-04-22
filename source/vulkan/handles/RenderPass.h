@@ -27,6 +27,8 @@ namespace Utopian::Vk
 		void AddColorAttachment(VkFormat format, VkImageLayout imageLayout);
 		void AddDepthAttachment(VkFormat format, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
+		uint32_t GetNumColorAttachments() const;
+
 		// Descriptors for the attachments used by this renderpass
 		// This is public so that it can be modified before creating the render pass
 		std::vector<VkAttachmentDescription> attachments;

@@ -113,4 +113,9 @@ namespace Utopian::Vk
 
 		attachments.push_back(attachment);
 	}
+
+	uint32_t RenderPass::GetNumColorAttachments() const
+	{
+		return colorReferences.size();
+	}
 }

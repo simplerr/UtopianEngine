@@ -44,23 +44,30 @@ namespace Utopian::Vk
 	{
 		mRenderPass->Create();
 		mFrameBuffer->Create(mRenderPass, GetWidth(), GetHeight());
+
+		for (uint32_t i = 0; i < mRenderPass->GetNumColorAttachments(); i++)
+		{
+			VkClearValue clearValue;
+			clearValue.color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
+			mClearValues.push_back(clearValue);
+		}
+
+		// Note: Always assumes that the depth stencil attachment is the last one
+		VkClearValue clearValue;
+		clearValue.depthStencil = { 1.0f, 0 };
+		mClearValues.push_back(clearValue);
 	}
 
 	void RenderTarget::Begin()
 	{
-		VkClearValue clearValues[4];
-		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
-		clearValues[1].color = { 0, 0, 1, 1 };
-		clearValues[2].color = { 1, 0, 0, 1 };
-		clearValues[3].depthStencil = { 1.0f, 0 };
 
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
 		renderPassBeginInfo.renderArea.extent.width = GetWidth();
 		renderPassBeginInfo.renderArea.extent.height = GetHeight();
-		renderPassBeginInfo.clearValueCount = 4;
-		renderPassBeginInfo.pClearValues = clearValues;
+		renderPassBeginInfo.clearValueCount = mClearValues.size();
+		renderPassBeginInfo.pClearValues = mClearValues.data();
 		renderPassBeginInfo.framebuffer = mFrameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
 
 		// Begin command buffer recording & the render pass

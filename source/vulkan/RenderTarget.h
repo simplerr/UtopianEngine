@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <glm/glm.hpp>
+#include <vector>
 #include "vulkan/VulkanInclude.h"
 
 namespace Utopian::Vk
@@ -39,5 +40,6 @@ namespace Utopian::Vk
 		Utopian::Vk::Sampler* mSampler;
 		uint32_t mWidth, mHeight;
 		glm::vec4 mClearColor;
+		std::vector<VkClearValue> mClearValues;
 	};
 }
