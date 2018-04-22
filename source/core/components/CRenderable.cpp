@@ -39,6 +39,11 @@ namespace Utopian
 		mInternal->SetColor(color);
 	}
 
+	void CRenderable::SetMaterial(Utopian::Vk::Mat material)
+	{
+		mInternal->SetMaterial(material);
+	}
+
 	void CRenderable::EnableBoundingBox()
 	{
 		mInternal->SetDrawBoundingBox(true);

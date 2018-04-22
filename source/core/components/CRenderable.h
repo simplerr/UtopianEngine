@@ -18,6 +18,7 @@ namespace Utopian
 
 		void SetModel(Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
+		void SetMaterial(Utopian::Vk::Mat material);
 
 		void EnableBoundingBox();
 		void DisableBoundingBox();

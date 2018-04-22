@@ -47,11 +47,11 @@ namespace Utopian
 
 		mDeferredRenderTarget->SetClearColor(1, 1, 1, 1);
 
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredImages.position, mDeferredRenderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.normal, mDeferredRenderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.albedo, mDeferredRenderTarget->GetSampler());
+		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
+		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredImages.position, mDeferredRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredImages.normal, mDeferredRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mDeferredImages.albedo, mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 	}
