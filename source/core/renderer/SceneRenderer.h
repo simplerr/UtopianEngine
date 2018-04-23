@@ -6,6 +6,7 @@
 #include "utility/Common.h"
 #include "vulkan/PhongEffect.h"
 #include "vulkan/GBufferEffect.h"
+#include "vulkan/DeferredEffect.h"
 #include "vulkan/ColorEffect.h"
 #include "core/CommonBuffers.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -21,6 +22,13 @@ namespace Utopian
 	class SceneRenderer : public Module<SceneRenderer>
 	{
 	public:
+		/* Todo: Note the local Vertex type, should be moved to common file */
+		struct QuadVertex
+		{
+			glm::vec3 pos;
+			glm::vec2 uv;
+		};
+
 		SceneRenderer(Vk::Renderer* renderer);
 		~SceneRenderer();
 
@@ -53,6 +61,7 @@ namespace Utopian
 		Vk::PhongEffect mPhongEffect;
 		Vk::GBufferEffect mGBufferEffect;
 		Vk::ColorEffect mColorEffect;
+		Vk::DeferredEffect mDeferredEffect;
 		Terrain* mTerrain;
 		Vk::StaticModel* mCubeModel;
 		WaterRenderer* mWaterRenderer;
@@ -70,6 +79,7 @@ namespace Utopian
 
 		/*  Deferred rendering experimentation */
 		Vk::RenderTarget* mGBufferRenderTarget;
+		Vk::RenderTarget* mDeferredRenderTarget;
 
 		struct {
 			Vk::Image* position;
@@ -77,5 +87,14 @@ namespace Utopian
 			Vk::Image* albedo;
 			Vk::Image* depth;
 		} mGBufferImages;
+
+		struct {
+			Utopian::Vk::Image* colorImage;
+			Utopian::Vk::Image* depthImage;
+		} mDeferredImages;
+
+		// Todo: Move
+		Vk::Buffer* mVertexBuffer;
+		Vk::Buffer* mIndexBuffer;
 	};
 }

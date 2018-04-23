@@ -2,6 +2,7 @@
 #include "core/renderer/SceneRenderer.h"
 #include "core/renderer/Renderable.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/Vertex.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Image.h"
@@ -32,28 +33,53 @@ namespace Utopian
 		uint32_t width = renderer->GetWindowWidth();
 		uint32_t height = renderer->GetWindowHeight();
 
+		/* G-buffer */
 		mGBufferImages.position = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBufferImages.normal = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBufferImages.albedo = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		mGBufferImages.depth = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		/*  Deferred rendering experimentation */
 		mGBufferRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		mGBufferRenderTarget->AddColorAttachment(mGBufferImages.position);
 		mGBufferRenderTarget->AddColorAttachment(mGBufferImages.normal);
 		mGBufferRenderTarget->AddColorAttachment(mGBufferImages.albedo);
 		mGBufferRenderTarget->AddDepthAttachment(mGBufferImages.depth);
+		mGBufferRenderTarget->SetClearColor(1, 1, 1, 1);
 		mGBufferRenderTarget->Create();
 
-		mGBufferRenderTarget->SetClearColor(1, 1, 1, 1);
+
+		/* Deferred rendering output */
+		mDeferredImages.colorImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mDeferredImages.depthImage = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		mDeferredRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.colorImage);
+		mDeferredRenderTarget->AddDepthAttachment(mDeferredImages.depthImage);
+		mDeferredRenderTarget->SetClearColor(1, 1, 0, 1);
+		mDeferredRenderTarget->Create();
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.position, mGBufferRenderTarget->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.normal, mGBufferRenderTarget->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.albedo, mGBufferRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.colorImage, mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
+
+		/* TEMPORARY */
+		std::vector<QuadVertex> vertices =
+		{
+			{ glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }
+		};
+
+		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(QuadVertex), vertices.data());
+
+		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
+
+		mIndexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
 	SceneRenderer::~SceneRenderer()
@@ -104,6 +130,14 @@ namespace Utopian
 		mPhongEffect.Init(mRenderer);
 		mColorEffect.Init(mRenderer);
 		mGBufferEffect.Init(mRenderer);
+		mDeferredEffect.Init(mRenderer);
+
+		/* Deferred rendering setup */
+		mDeferredEffect.mDescriptorSet1 = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mDeferredEffect.GetDescriptorSetLayout(1), mDeferredEffect.GetDescriptorPool());
+		mDeferredEffect.mDescriptorSet1->BindCombinedImage(0, mGBufferImages.position, mDeferredRenderTarget->GetSampler());
+		mDeferredEffect.mDescriptorSet1->BindCombinedImage(1, mGBufferImages.normal, mDeferredRenderTarget->GetSampler());
+		mDeferredEffect.mDescriptorSet1->BindCombinedImage(2, mGBufferImages.albedo, mDeferredRenderTarget->GetSampler());
+		mDeferredEffect.mDescriptorSet1->UpdateDescriptorSets();
 	}
 
 	void SceneRenderer::Update()
@@ -231,6 +265,7 @@ namespace Utopian
 		/*                                                                      */
 		/************************************************************************/
 
+		/* G-buffer pass */
 		mGBufferRenderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = mGBufferRenderTarget->GetCommandBuffer();
 
@@ -258,6 +293,20 @@ namespace Utopian
 		}
 
 		mGBufferRenderTarget->End(mRenderer->GetQueue());
+
+		/* Deferred lighting pass */
+		mDeferredRenderTarget->Begin();
+		commandBuffer = mDeferredRenderTarget->GetCommandBuffer();
+
+		commandBuffer->CmdBindPipeline(mDeferredEffect.GetPipeline(0));
+		commandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer);
+		commandBuffer->CmdBindIndexBuffer(mIndexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+		VkDescriptorSet descriptorSets[2] = { mDeferredEffect.mDescriptorSet0->descriptorSet, mDeferredEffect.mDescriptorSet1->descriptorSet };
+		commandBuffer->CmdBindDescriptorSet(&mDeferredEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+		commandBuffer->CmdDrawIndexed(6, 1, 0, 0, 0);
+
+		mDeferredRenderTarget->End(mRenderer->GetQueue());
 	}
 
 	void SceneRenderer::UpdateUniformBuffers()
@@ -275,6 +324,8 @@ namespace Utopian
 
 			mGBufferEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
 			mGBufferEffect.per_frame_vs.data.view = mMainCamera->GetView();
+
+			mDeferredEffect.per_frame_ps.data.eyePos = glm::vec4(mMainCamera->GetPosition(), 1.0f);
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();
@@ -286,6 +337,7 @@ namespace Utopian
 		fog_ubo.UpdateMemory();
 		mColorEffect.UpdateMemory(mRenderer->GetDevice());
 		mGBufferEffect.UpdateMemory(mRenderer->GetDevice());
+		mDeferredEffect.UpdateMemory(mRenderer->GetDevice());
 	}
 
 	void SceneRenderer::AddRenderable(Renderable* renderable)

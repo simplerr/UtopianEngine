@@ -118,6 +118,12 @@
     <Filter Include="Source Files\vulkan\effects\gbuffer\shaders">
       <UniqueIdentifier>{6b99be89-bdbb-4b8b-b2f6-7be7c2d1c480}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\deferred">
+      <UniqueIdentifier>{2902e213-eb50-41dd-b672-61fcb6104e60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\deferred\shaders">
+      <UniqueIdentifier>{f666b832-3d71-4392-9c87-2b94e8a7c42a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -359,6 +365,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\GBufferEffect.cpp">
       <Filter>Source Files\vulkan\effects\gbuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\DeferredEffect.cpp">
+      <Filter>Source Files\vulkan\effects\deferred</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,6 +644,9 @@
     <ClInclude Include="source\vulkan\GBufferEffect.h">
       <Filter>Source Files\vulkan\effects\gbuffer</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\DeferredEffect.h">
+      <Filter>Source Files\vulkan\effects\deferred</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -722,6 +734,12 @@
     </None>
     <None Include="data\shaders\deferred\gbuffer.frag">
       <Filter>Source Files\vulkan\effects\gbuffer\shaders</Filter>
+    </None>
+    <None Include="data\shaders\deferred\deferred.frag">
+      <Filter>Source Files\vulkan\effects\deferred\shaders</Filter>
+    </None>
+    <None Include="data\shaders\deferred\deferred.vert">
+      <Filter>Source Files\vulkan\effects\deferred\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
