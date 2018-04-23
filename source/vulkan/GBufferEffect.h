@@ -19,7 +19,7 @@ namespace Utopian::Vk
 	class Shader;
 	class Texture;
 
-	class DeferredEffect : public Effect
+	class GBufferEffect : public Effect
 	{
 	public:
 		enum Variation {
@@ -47,7 +47,7 @@ namespace Utopian::Vk
 			} data;
 		};
 
-		DeferredEffect();
+		GBufferEffect();
 
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);

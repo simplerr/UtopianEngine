@@ -5,7 +5,7 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 #include "vulkan/PhongEffect.h"
-#include "vulkan/DeferredEffect.h"
+#include "vulkan/GBufferEffect.h"
 #include "vulkan/ColorEffect.h"
 #include "core/CommonBuffers.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -51,7 +51,7 @@ namespace Utopian
 		Vk::Renderer* mRenderer;
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;
-		Vk::DeferredEffect mDeferredEffect;
+		Vk::GBufferEffect mGBufferEffect;
 		Vk::ColorEffect mColorEffect;
 		Terrain* mTerrain;
 		Vk::StaticModel* mCubeModel;
@@ -69,13 +69,13 @@ namespace Utopian
 		std::map<uint32_t, Vk::Effect*> mEffects;
 
 		/*  Deferred rendering experimentation */
-		Vk::RenderTarget* mDeferredRenderTarget;
+		Vk::RenderTarget* mGBufferRenderTarget;
 
 		struct {
 			Vk::Image* position;
 			Vk::Image* normal;
 			Vk::Image* albedo;
 			Vk::Image* depth;
-		} mDeferredImages;
+		} mGBufferImages;
 	};
 }

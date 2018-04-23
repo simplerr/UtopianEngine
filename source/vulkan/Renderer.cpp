@@ -99,7 +99,7 @@ namespace Utopian::Vk
 		system("cd data/shaders/water/ && generate-spirv.bat");
 		system("cd data/shaders/imgui/ && generate-spirv.bat");
 		system("cd data/shaders/color/ && generate-spirv.bat");
-		system("cd data/shaders/deferred/ && generate-spirv.bat");
+		system("cd data/shaders/gbuffer/ && generate-spirv.bat");
 	}
 
 	void Renderer::SetCamera(Utopian::Camera* camera)
