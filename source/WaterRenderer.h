@@ -6,6 +6,11 @@
 
 namespace Utopian
 {
+	namespace Vk
+	{
+		class BasicRenderTarget;
+	}
+
 	class WaterRenderer
 	{
 	public:
@@ -34,22 +39,12 @@ namespace Utopian
 		Vk::ModelLoader* mModelLoader;
 
 		Vk::WaterEffect mWaterEffect;
-		Vk::RenderTarget* mReflectionRenderTarget;
-		Vk::RenderTarget* mRefractionRenderTarget;
+		Vk::BasicRenderTarget* mReflectionRenderTarget;
+		Vk::BasicRenderTarget* mRefractionRenderTarget;
 		Vk::Texture* dudvTexture;
 		Vk::StaticModel* mGridModel;
 		std::vector<Water> mWaterList;
 
 		const uint32_t CELL_SIZE = 2000.0f;
-
-		struct {
-			Utopian::Vk::Image* colorImage;
-			Utopian::Vk::Image* depthImage;
-		} mReflectionImages;
-
-		struct {
-			Utopian::Vk::Image* colorImage;
-			Utopian::Vk::Image* depthImage;
-		} mRefractionImages;
 	};
 }

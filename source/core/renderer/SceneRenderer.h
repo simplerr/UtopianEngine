@@ -19,6 +19,11 @@ namespace Utopian
 	class Light;
 	class WaterRenderer;
 
+	namespace Vk
+	{
+		class BasicRenderTarget;
+	}
+
 	class SceneRenderer : public Module<SceneRenderer>
 	{
 	public:
@@ -72,7 +77,7 @@ namespace Utopian
 
 		/*  Deferred rendering experimentation */
 		Vk::RenderTarget* mGBufferRenderTarget;
-		Vk::RenderTarget* mDeferredRenderTarget;
+		Vk::BasicRenderTarget* mDeferredRenderTarget;
 
 		struct {
 			Vk::Image* position;
@@ -80,10 +85,5 @@ namespace Utopian
 			Vk::Image* albedo;
 			Vk::Image* depth;
 		} mGBufferImages;
-
-		struct {
-			Utopian::Vk::Image* colorImage;
-			Utopian::Vk::Image* depthImage;
-		} mDeferredImages;
 	};
 }

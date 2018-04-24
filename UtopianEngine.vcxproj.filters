@@ -369,6 +369,9 @@
     <ClCompile Include="source\vulkan\DeferredEffect.cpp">
       <Filter>Source Files\vulkan\effects\deferred</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\BasicRenderTarget.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -646,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\DeferredEffect.h">
       <Filter>Source Files\vulkan\effects\deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\BasicRenderTarget.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

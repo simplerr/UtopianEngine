@@ -14,6 +14,7 @@
 #include "WaterRenderer.h"
 #include "vulkan/ScreenGui.h"
 #include "vulkan/RenderTarget.h"
+#include "vulkan/BasicRenderTarget.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/UIOverlay.h"
 
@@ -47,21 +48,15 @@ namespace Utopian
 		mGBufferRenderTarget->SetClearColor(1, 1, 1, 1);
 		mGBufferRenderTarget->Create();
 
-		/* Deferred rendering output */
-		mDeferredImages.colorImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		mDeferredImages.depthImage = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
-		mDeferredRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
-		mDeferredRenderTarget->AddColorAttachment(mDeferredImages.colorImage);
-		mDeferredRenderTarget->AddDepthAttachment(mDeferredImages.depthImage);
-		mDeferredRenderTarget->SetClearColor(1, 1, 0, 1);
-		mDeferredRenderTarget->Create();
+		/* Deferred render target */
+		mDeferredRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.position, mGBufferRenderTarget->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.normal, mGBufferRenderTarget->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.albedo, mGBufferRenderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.colorImage, mDeferredRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredRenderTarget->GetColorImage(), mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 	}

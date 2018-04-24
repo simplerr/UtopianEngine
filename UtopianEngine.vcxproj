@@ -114,6 +114,7 @@
     <ClCompile Include="source\utility\math\BoundingBox.cpp" />
     <ClCompile Include="source\utility\math\Sphere.cpp" />
     <ClCompile Include="source\utility\Utility.cpp" />
+    <ClCompile Include="source\vulkan\BasicRenderTarget.cpp" />
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="source\utility\math\Sphere.h" />
     <ClInclude Include="source\utility\Module.h" />
     <ClInclude Include="source\utility\Utility.h" />
+    <ClInclude Include="source\vulkan\BasicRenderTarget.h" />
     <ClInclude Include="source\vulkan\ColorEffect.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
