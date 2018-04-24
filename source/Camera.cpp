@@ -3,7 +3,7 @@
 #include "vulkan/VulkanDebug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 #include "Input.h"
-#include "core/renderer/SceneRenderer.h"
+#include "core/renderer/RenderingManager.h"
 
 namespace Utopian
 {
@@ -29,12 +29,12 @@ namespace Utopian
 
 	void Camera::SetMainCamera()
 	{
-		Utopian::SceneRenderer::Instance().SetMainCamera(this);
+		Utopian::RenderingManager::Instance().SetMainCamera(this);
 	}
 
 	void Camera::Initialize()
 	{
-		Utopian::SceneRenderer::Instance().AddCamera(this);
+		Utopian::RenderingManager::Instance().AddCamera(this);
 	}
 
 	void Camera::SetFov(float fov)

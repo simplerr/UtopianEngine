@@ -354,9 +354,6 @@
     <ClCompile Include="source\core\World.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\renderer\SceneRenderer.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\renderer\Light.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -371,6 +368,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\BasicRenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\RenderingManager.cpp">
+      <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,9 +635,6 @@
     <ClInclude Include="source\core\World.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\renderer\SceneRenderer.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\renderer\Light.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -652,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\BasicRenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\RenderingManager.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

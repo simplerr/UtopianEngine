@@ -1,5 +1,5 @@
 #include "core/renderer/Light.h"
-#include "core/renderer/SceneRenderer.h"
+#include "core/renderer/RenderingManager.h"
 
 namespace Utopian
 {
@@ -31,7 +31,7 @@ namespace Utopian
 
 	void Light::Initialize()
 	{
-		SceneRenderer::Instance().AddLight(this);
+		RenderingManager::Instance().AddLight(this);
 	}
 
 	void Light::SetLightData(const Utopian::Vk::LightData& lightData)

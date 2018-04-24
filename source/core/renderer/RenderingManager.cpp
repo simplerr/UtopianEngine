@@ -1,5 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include "core/renderer/SceneRenderer.h"
+#include "core/renderer/RenderingManager.h"
 #include "core/renderer/Renderable.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/Vertex.h"
@@ -20,7 +20,7 @@
 
 namespace Utopian
 {
-	SceneRenderer::SceneRenderer(Vk::Renderer* renderer)
+	RenderingManager::RenderingManager(Vk::Renderer* renderer)
 	{
 		mMainCamera = nullptr;
 		mMainCamera = renderer->GetCamera();
@@ -61,12 +61,12 @@ namespace Utopian
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 	}
 
-	SceneRenderer::~SceneRenderer()
+	RenderingManager::~RenderingManager()
 	{
 		delete mWaterRenderer;
 	}
 
-	void SceneRenderer::InitShaderResources()
+	void RenderingManager::InitShaderResources()
 	{
 		for (auto& light : mLights)
 		{
@@ -101,7 +101,7 @@ namespace Utopian
 		mEffects[Vk::EffectType::COLOR]->Init(mRenderer);
 	}
 
-	void SceneRenderer::InitShader()
+	void RenderingManager::InitShader()
 	{
 		// Note: Todo:
 		mGBufferEffect.SetRenderPass(mGBufferRenderTarget->GetRenderPass());
@@ -119,7 +119,7 @@ namespace Utopian
 		mDeferredEffect.mDescriptorSet1->UpdateDescriptorSets();
 	}
 
-	void SceneRenderer::Update()
+	void RenderingManager::Update()
 	{
 		per_frame_ps.lights.clear();
 		for (auto& light : mLights)
@@ -135,7 +135,7 @@ namespace Utopian
 		mWaterRenderer->Update(mRenderer, mMainCamera);
 	}
 
-	void SceneRenderer::RenderNodes(Vk::CommandBuffer* commandBuffer)
+	void RenderingManager::RenderNodes(Vk::CommandBuffer* commandBuffer)
 	{
 		for (auto& renderable : mRenderables)
 		{
@@ -190,7 +190,7 @@ namespace Utopian
 		}
 	}
 
-	void SceneRenderer::RenderScene(Vk::CommandBuffer* commandBuffer)
+	void RenderingManager::RenderScene(Vk::CommandBuffer* commandBuffer)
 	{
 		UpdateUniformBuffers();
 
@@ -198,7 +198,7 @@ namespace Utopian
 		RenderNodes(commandBuffer);
 	}
 
-	void SceneRenderer::Render()
+	void RenderingManager::Render()
 	{
 		RenderOffscreen();
 
@@ -213,7 +213,7 @@ namespace Utopian
 		mCommandBuffer->End();
 	}
 
-	void SceneRenderer::RenderOffscreen()
+	void RenderingManager::RenderOffscreen()
 	{
 		glm::vec3 cameraPos = mMainCamera->GetPosition();
 
@@ -286,7 +286,7 @@ namespace Utopian
 		mDeferredRenderTarget->End(mRenderer->GetQueue());
 	}
 
-	void SceneRenderer::UpdateUniformBuffers()
+	void RenderingManager::UpdateUniformBuffers()
 	{
 		// From Renderer.cpp
 		if (mMainCamera != nullptr)
@@ -317,33 +317,33 @@ namespace Utopian
 		mDeferredEffect.UpdateMemory(mRenderer->GetDevice());
 	}
 
-	void SceneRenderer::AddRenderable(Renderable* renderable)
+	void RenderingManager::AddRenderable(Renderable* renderable)
 	{
 		mRenderables.push_back(renderable);
 	}
 
-	void SceneRenderer::AddLight(Light* light)
+	void RenderingManager::AddLight(Light* light)
 	{
 		mLights.push_back(light);
 	}
 
-	void SceneRenderer::AddCamera(Camera* camera)
+	void RenderingManager::AddCamera(Camera* camera)
 	{
 		mCameras.push_back(camera);
 	}
 
-	void SceneRenderer::SetMainCamera(Camera* camera)
+	void RenderingManager::SetMainCamera(Camera* camera)
 	{
 		mRenderer->SetCamera(camera);
 		mMainCamera = camera;
 	}
 
-	void SceneRenderer::SetTerrain(Terrain* terrain)
+	void RenderingManager::SetTerrain(Terrain* terrain)
 	{
 		mTerrain = terrain;
 	}
 
-	void SceneRenderer::SetClippingPlane(glm::vec4 clippingPlane)
+	void RenderingManager::SetClippingPlane(glm::vec4 clippingPlane)
 	{
 		mClippingPlane = clippingPlane;
 	}

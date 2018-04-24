@@ -25,7 +25,7 @@
 #include "core/components/CPlayerControl.h"
 #include "core/ObjectManager.h"
 #include "core/World.h"
-#include "core/renderer/SceneRenderer.h"
+#include "core/renderer/RenderingManager.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
 
@@ -70,8 +70,8 @@ namespace Utopian
 		ObjectManager::Start();
 		World::Start();
 		Input::Start();
-		SceneRenderer::Start(mRenderer.get());
-		SceneRenderer::Instance().SetTerrain(mTerrain.get());
+		RenderingManager::Start(mRenderer.get());
+		RenderingManager::Instance().SetTerrain(mTerrain.get());
 
 		//// Add house
 		//auto house = Actor::Create("House_1");
@@ -182,8 +182,8 @@ namespace Utopian
 
 		World::Instance().Update();
 
-		SceneRenderer::Instance().InitShaderResources();
-		SceneRenderer::Instance().InitShader();
+		RenderingManager::Instance().InitShaderResources();
+		RenderingManager::Instance().InitShader();
 		ObjectManager::Instance().PrintObjects();
 
 		/*CMesh* mesh = entity->AddComponent<CMesh>("data/models/teapot.obj");
@@ -202,7 +202,7 @@ namespace Utopian
 		mRenderer->BeginUiUpdate();
 
 		World::Instance().Update();
-		SceneRenderer::Instance().Update();
+		RenderingManager::Instance().Update();
 		mEditor->Update();
 		mRenderer->Update();
 
@@ -211,7 +211,7 @@ namespace Utopian
 
 	void Game::Draw()
 	{
-		SceneRenderer::Instance().Render();
+		RenderingManager::Instance().Render();
 		mEditor->Draw();
 		mRenderer->Render();
 	}

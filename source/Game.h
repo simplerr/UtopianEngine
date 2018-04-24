@@ -10,7 +10,7 @@ class Input;
 
 namespace Utopian
 {
-	class SceneRenderer;
+	class RenderingManager;
 	class Editor;
 }
 

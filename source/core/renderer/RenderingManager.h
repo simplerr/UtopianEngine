@@ -24,11 +24,11 @@ namespace Utopian
 		class BasicRenderTarget;
 	}
 
-	class SceneRenderer : public Module<SceneRenderer>
+	class RenderingManager : public Module<RenderingManager>
 	{
 	public:
-		SceneRenderer(Vk::Renderer* renderer);
-		~SceneRenderer();
+		RenderingManager(Vk::Renderer* renderer);
+		~RenderingManager();
 
 		void InitShaderResources();
 		void InitShader();

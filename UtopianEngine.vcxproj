@@ -96,7 +96,7 @@
     <ClCompile Include="source\core\components\COrbit.cpp" />
     <ClCompile Include="source\core\components\CPlayerControl.cpp" />
     <ClCompile Include="source\editor\Editor.cpp" />
-    <ClCompile Include="source\core\renderer\SceneRenderer.cpp" />
+    <ClCompile Include="source\core\renderer\RenderingManager.cpp" />
     <ClCompile Include="source\core\components\CLight.cpp" />
     <ClCompile Include="source\core\components\CRenderable.cpp" />
     <ClCompile Include="source\core\renderer\Light.cpp" />
@@ -185,7 +185,7 @@
     <ClInclude Include="source\core\components\COrbit.h" />
     <ClInclude Include="source\core\components\CPlayerControl.h" />
     <ClInclude Include="source\editor\Editor.h" />
-    <ClInclude Include="source\core\renderer\SceneRenderer.h" />
+    <ClInclude Include="source\core\renderer\RenderingManager.h" />
     <ClInclude Include="source\core\components\CLight.h" />
     <ClInclude Include="source\core\renderer\Light.h" />
     <ClInclude Include="source\core\Object.h" />

@@ -1,5 +1,5 @@
 #include "core/renderer/Renderable.h"
-#include "core/renderer/SceneRenderer.h"
+#include "core/renderer/RenderingManager.h"
 #include "vulkan/StaticModel.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "utility/math/BoundingBox.h"
@@ -28,7 +28,7 @@ namespace Utopian
 	void Renderable::Initialize()
 	{
 		// Add new instance to the Renderer (scene)
-		SceneRenderer::Instance().AddRenderable(this);
+		RenderingManager::Instance().AddRenderable(this);
 	}
 
 	Utopian::Vk::StaticModel* Renderable::GetModel()
