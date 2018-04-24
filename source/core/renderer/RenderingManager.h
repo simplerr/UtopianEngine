@@ -9,6 +9,7 @@
 #include "vulkan/DeferredEffect.h"
 #include "vulkan/ColorEffect.h"
 #include "core/CommonBuffers.h"
+#include "core/renderer/SceneRenderers.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
 class Terrain;
@@ -49,15 +50,12 @@ namespace Utopian
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
 	private:
-		std::vector<Renderable*> mRenderables;
-		std::vector<Light*> mLights;
-		std::vector<Camera*> mCameras;
+		SceneInfo mSceneInfo;
 		Camera* mMainCamera;
 
 		Vk::Renderer* mRenderer;
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;
-		Vk::GBufferEffect mGBufferEffect;
 		Vk::ColorEffect mColorEffect;
 		Vk::DeferredEffect mDeferredEffect;
 		Terrain* mTerrain;
@@ -76,14 +74,7 @@ namespace Utopian
 		std::map<uint32_t, Vk::Effect*> mEffects;
 
 		/*  Deferred rendering experimentation */
-		Vk::RenderTarget* mGBufferRenderTarget;
 		Vk::BasicRenderTarget* mDeferredRenderTarget;
-
-		struct {
-			Vk::Image* position;
-			Vk::Image* normal;
-			Vk::Image* albedo;
-			Vk::Image* depth;
-		} mGBufferImages;
+		GBufferRenderer* mGBufferRenderer;
 	};
 }

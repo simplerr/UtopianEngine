@@ -31,44 +31,31 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		uint32_t width = renderer->GetWindowWidth();
-		uint32_t height = renderer->GetWindowHeight();
-
-		/* G-buffer */
-		mGBufferImages.position = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		mGBufferImages.normal = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		mGBufferImages.albedo = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		mGBufferImages.depth = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
-
-		mGBufferRenderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
-		mGBufferRenderTarget->AddColorAttachment(mGBufferImages.position);
-		mGBufferRenderTarget->AddColorAttachment(mGBufferImages.normal);
-		mGBufferRenderTarget->AddColorAttachment(mGBufferImages.albedo);
-		mGBufferRenderTarget->AddDepthAttachment(mGBufferImages.depth);
-		mGBufferRenderTarget->SetClearColor(1, 1, 1, 1);
-		mGBufferRenderTarget->Create();
+		mGBufferRenderer = new GBufferRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight());
 
 		/* Deferred render target */
-		mDeferredRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		mDeferredRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.position, mGBufferRenderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.normal, mGBufferRenderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferImages.albedo, mGBufferRenderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferRenderer->positionImage, mGBufferRenderer->renderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferRenderer->normalImage, mGBufferRenderer->renderTarget->GetSampler());
+		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferRenderer->albedoImage, mGBufferRenderer->renderTarget->GetSampler());
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredRenderTarget->GetColorImage(), mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
+
 	}
 
 	RenderingManager::~RenderingManager()
 	{
 		delete mWaterRenderer;
+		delete mGBufferRenderer;
 	}
 
 	void RenderingManager::InitShaderResources()
 	{
-		for (auto& light : mLights)
+		for (auto& light : mSceneInfo.lights)
 		{
 			per_frame_ps.lights.push_back(light->GetLightData());
 		}
@@ -104,25 +91,25 @@ namespace Utopian
 	void RenderingManager::InitShader()
 	{
 		// Note: Todo:
-		mGBufferEffect.SetRenderPass(mGBufferRenderTarget->GetRenderPass());
+		//mGBufferEffect.SetRenderPass(mGBufferRenderTarget->GetRenderPass());
 
 		mPhongEffect.Init(mRenderer);
 		mColorEffect.Init(mRenderer);
-		mGBufferEffect.Init(mRenderer);
+		//mGBufferEffect.Init(mRenderer);
 		mDeferredEffect.Init(mRenderer);
 
 		/* Deferred rendering setup */
 		mDeferredEffect.mDescriptorSet1 = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mDeferredEffect.GetDescriptorSetLayout(1), mDeferredEffect.GetDescriptorPool());
-		mDeferredEffect.mDescriptorSet1->BindCombinedImage(0, mGBufferImages.position, mDeferredRenderTarget->GetSampler());
-		mDeferredEffect.mDescriptorSet1->BindCombinedImage(1, mGBufferImages.normal, mDeferredRenderTarget->GetSampler());
-		mDeferredEffect.mDescriptorSet1->BindCombinedImage(2, mGBufferImages.albedo, mDeferredRenderTarget->GetSampler());
+		mDeferredEffect.mDescriptorSet1->BindCombinedImage(0, mGBufferRenderer->positionImage, mDeferredRenderTarget->GetSampler());
+		mDeferredEffect.mDescriptorSet1->BindCombinedImage(1, mGBufferRenderer->normalImage, mDeferredRenderTarget->GetSampler());
+		mDeferredEffect.mDescriptorSet1->BindCombinedImage(2, mGBufferRenderer->albedoImage, mDeferredRenderTarget->GetSampler());
 		mDeferredEffect.mDescriptorSet1->UpdateDescriptorSets();
 	}
 
 	void RenderingManager::Update()
 	{
 		per_frame_ps.lights.clear();
-		for (auto& light : mLights)
+		for (auto& light : mSceneInfo.lights)
 		{
 			per_frame_ps.lights.push_back(light->GetLightData());
 		}
@@ -137,7 +124,7 @@ namespace Utopian
 
 	void RenderingManager::RenderNodes(Vk::CommandBuffer* commandBuffer)
 	{
-		for (auto& renderable : mRenderables)
+		for (auto& renderable : mSceneInfo.renderables)
 		{
 			Vk::StaticModel* model = renderable->GetModel();
 
@@ -245,37 +232,11 @@ namespace Utopian
 		/************************************************************************/
 
 		/* G-buffer pass */
-		mGBufferRenderTarget->Begin();
-		Vk::CommandBuffer* commandBuffer = mGBufferRenderTarget->GetCommandBuffer();
-
-		for (auto& renderable : mRenderables)
-		{
-			Vk::StaticModel* model = renderable->GetModel();
-
-			// Todo:: should be able to use other pipelines that PhongEffect
-
-			for (Vk::Mesh* mesh : model->mMeshes)
-			{
-				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
-
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				VkDescriptorSet descriptorSets[2] = { mGBufferEffect.mDescriptorSet0->descriptorSet, textureDescriptorSet };
-
-				commandBuffer->CmdBindPipeline(mGBufferEffect.GetPipeline(0));
-				commandBuffer->CmdBindDescriptorSet(&mGBufferEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				commandBuffer->CmdPushConstants(&mGBufferEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
-				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-			}
-		}
-
-		mGBufferRenderTarget->End(mRenderer->GetQueue());
+		mGBufferRenderer->render(mRenderer, mSceneInfo);
 
 		/* Deferred lighting pass */
 		mDeferredRenderTarget->Begin();
-		commandBuffer = mDeferredRenderTarget->GetCommandBuffer();
+		Vk::CommandBuffer* commandBuffer = mDeferredRenderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindPipeline(mDeferredEffect.GetPipeline(0));
 		VkDescriptorSet descriptorSets[2] = { mDeferredEffect.mDescriptorSet0->descriptorSet, mDeferredEffect.mDescriptorSet1->descriptorSet };
@@ -299,10 +260,10 @@ namespace Utopian
 			mColorEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
 			mColorEffect.per_frame_vs.data.view = mMainCamera->GetView();
 
-			mGBufferEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
-			mGBufferEffect.per_frame_vs.data.view = mMainCamera->GetView();
-
 			mDeferredEffect.per_frame_ps.data.eyePos = glm::vec4(mMainCamera->GetPosition(), 1.0f);
+
+			mSceneInfo.viewMatrix = mMainCamera->GetView();
+			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();
@@ -313,23 +274,22 @@ namespace Utopian
 		per_frame_ps.UpdateMemory();
 		fog_ubo.UpdateMemory();
 		mColorEffect.UpdateMemory(mRenderer->GetDevice());
-		mGBufferEffect.UpdateMemory(mRenderer->GetDevice());
 		mDeferredEffect.UpdateMemory(mRenderer->GetDevice());
 	}
 
 	void RenderingManager::AddRenderable(Renderable* renderable)
 	{
-		mRenderables.push_back(renderable);
+		mSceneInfo.renderables.push_back(renderable);
 	}
 
 	void RenderingManager::AddLight(Light* light)
 	{
-		mLights.push_back(light);
+		mSceneInfo.lights.push_back(light);
 	}
 
 	void RenderingManager::AddCamera(Camera* camera)
 	{
-		mCameras.push_back(camera);
+		mSceneInfo.cameras.push_back(camera);
 	}
 
 	void RenderingManager::SetMainCamera(Camera* camera)

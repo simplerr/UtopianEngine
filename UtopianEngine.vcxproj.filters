@@ -372,6 +372,9 @@
     <ClCompile Include="source\core\renderer\RenderingManager.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\renderer\SceneRenderers.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -651,6 +654,9 @@
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\core\renderer\RenderingManager.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SceneRenderers.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
