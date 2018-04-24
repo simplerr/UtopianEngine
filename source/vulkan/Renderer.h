@@ -84,6 +84,9 @@ namespace Utopian::Vk
 		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture);
 		void UpdateOverlay();
 
+		// Note: This should probably be moved to some utility class
+		void DrawScreenQuad(CommandBuffer* commandBuffer);
+
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 		void BeginUiUpdate();
@@ -128,6 +131,12 @@ namespace Utopian::Vk
 		Camera*							mCamera;
 		TextOverlay*					mTextOverlay;
 		glm::vec4						mClearColor;
+
+		// Todo: Move
+		struct {
+			Vk::Buffer* vertexBuffer;
+			Vk::Buffer* indexBuffer;
+		} mScreenQuad;
 
 		// TODO: NOTE: HACK
 	public:

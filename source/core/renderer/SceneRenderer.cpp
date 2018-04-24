@@ -47,7 +47,6 @@ namespace Utopian
 		mGBufferRenderTarget->SetClearColor(1, 1, 1, 1);
 		mGBufferRenderTarget->Create();
 
-
 		/* Deferred rendering output */
 		mDeferredImages.colorImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		mDeferredImages.depthImage = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
@@ -65,21 +64,6 @@ namespace Utopian
 		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredImages.colorImage, mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
-
-		/* TEMPORARY */
-		std::vector<Vk::ScreenQuadVertex> vertices =
-		{
-			{ glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
-			{ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
-			{ glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
-			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }
-		};
-
-		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vk::ScreenQuadVertex), vertices.data());
-
-		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
-
-		mIndexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
 	SceneRenderer::~SceneRenderer()
@@ -299,12 +283,10 @@ namespace Utopian
 		commandBuffer = mDeferredRenderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindPipeline(mDeferredEffect.GetPipeline(0));
-		commandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer);
-		commandBuffer->CmdBindIndexBuffer(mIndexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
-
 		VkDescriptorSet descriptorSets[2] = { mDeferredEffect.mDescriptorSet0->descriptorSet, mDeferredEffect.mDescriptorSet1->descriptorSet };
 		commandBuffer->CmdBindDescriptorSet(&mDeferredEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
-		commandBuffer->CmdDrawIndexed(6, 1, 0, 0, 0);
+
+		mRenderer->DrawScreenQuad(commandBuffer);
 
 		mDeferredRenderTarget->End(mRenderer->GetQueue());
 	}

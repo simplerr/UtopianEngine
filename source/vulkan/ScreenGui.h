@@ -34,8 +34,6 @@ namespace Utopian::Vk
 	private:
 		Utopian::Vk::Renderer* mRenderer;
 		Utopian::Vk::ScreenQuadEffect mEffect;
-		Utopian::Vk::Buffer* mVertexBuffer;
-		Utopian::Vk::Buffer* mIndexBuffer;
 
 		std::vector<TextureQuad> mQuadList;
 	};

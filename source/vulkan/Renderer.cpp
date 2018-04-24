@@ -72,6 +72,20 @@ namespace Utopian::Vk
 		mScreenGui = new ScreenGui(this);
 
 		mPrepared = true;
+
+		std::vector<Vk::ScreenQuadVertex> vertices =
+		{
+			{ glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }
+		};
+
+		mScreenQuad.vertexBuffer = new Utopian::Vk::Buffer(GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vk::ScreenQuadVertex), vertices.data());
+
+		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
+
+		mScreenQuad.indexBuffer = new Utopian::Vk::Buffer(GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
 	void Renderer::PostInitPrepare()
@@ -255,6 +269,13 @@ namespace Utopian::Vk
 			mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
 			mTextOverlay->EndTextUpdate();
 		}
+	}
+
+	void Renderer::DrawScreenQuad(CommandBuffer* commandBuffer)
+	{
+		commandBuffer->CmdBindVertexBuffer(0, 1, mScreenQuad.vertexBuffer);
+		commandBuffer->CmdBindIndexBuffer(mScreenQuad.indexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->CmdDrawIndexed(6, 1, 0, 0, 0);
 	}
 
 	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

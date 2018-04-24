@@ -85,9 +85,5 @@ namespace Utopian
 			Utopian::Vk::Image* colorImage;
 			Utopian::Vk::Image* depthImage;
 		} mDeferredImages;
-
-		// Todo: Move
-		Vk::Buffer* mVertexBuffer;
-		Vk::Buffer* mIndexBuffer;
 	};
 }
