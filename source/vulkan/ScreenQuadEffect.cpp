@@ -3,6 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/Pipeline2.h"
@@ -24,10 +25,7 @@ namespace Utopian::Vk
 
 	void ScreenQuadEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Utopian::Vk::VertexDescription();
-		mVertexDescription->AddBinding(BINDING_0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
-		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec3Attribute());	// InPosL
-		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec2Attribute());	// InTex	
+		mVertexDescription = ScreenQuadVertex::GetDescription();
 	}
 
 	void ScreenQuadEffect::CreatePipelineInterface(Device* device)

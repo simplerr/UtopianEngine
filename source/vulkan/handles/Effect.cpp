@@ -43,7 +43,7 @@ namespace Utopian::Vk
 		return mDescriptorPool;
 	}
 
-	VertexDescription* Effect::GetVertexDescription()
+	VertexDescription Effect::GetVertexDescription()
 	{
 		return mVertexDescription;
 	}

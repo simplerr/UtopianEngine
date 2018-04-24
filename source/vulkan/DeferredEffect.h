@@ -22,12 +22,6 @@ namespace Utopian::Vk
 	class DeferredEffect : public Effect
 	{
 	public:
-		/* Todo: Note the local Vertex type, should be moved to common file */
-		struct Vertex
-		{
-			glm::vec3 position;
-			glm::vec2 uv;
-		};
 		enum Variation {
 			NORMAL = 0
 		};

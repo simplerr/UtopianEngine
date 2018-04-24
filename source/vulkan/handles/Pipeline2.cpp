@@ -9,7 +9,7 @@
 
 namespace Utopian::Vk
 {
-	Pipeline2::Pipeline2(Device* device, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
+	Pipeline2::Pipeline2(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, Shader* shader)
 		: Handle(device, vkDestroyPipeline)
 	{
 		mRenderPass = renderPass;
@@ -95,7 +95,7 @@ namespace Utopian::Vk
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineCreateInfo.layout = mPipelineInterface->GetPipelineLayout();
 		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
-		pipelineCreateInfo.pVertexInputState = &mVertexDescription->GetInputState();		// From base - &vertices.inputState;
+		pipelineCreateInfo.pVertexInputState = &mVertexDescription.GetInputState();		// From base - &vertices.inputState;
 		pipelineCreateInfo.pInputAssemblyState = &mInputAssemblyState;
 		pipelineCreateInfo.pRasterizationState = &mRasterizationState;
 		pipelineCreateInfo.pColorBlendState = &colorBlendState;

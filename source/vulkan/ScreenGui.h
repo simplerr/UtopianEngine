@@ -25,12 +25,6 @@ namespace Utopian::Vk
 			Utopian::Vk::DescriptorSet* descriptorSet;
 		};
 
-		struct Vertex
-		{
-			glm::vec3 pos;
-			glm::vec2 uv;
-		};
-
 		ScreenGui(Renderer* renderer);
 
 		void Render(Renderer* renderer, CommandBuffer* commandBuffer);

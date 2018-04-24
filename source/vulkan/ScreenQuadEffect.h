@@ -27,12 +27,6 @@ namespace Utopian::Vk
 	class ScreenQuadEffect : public Effect
 	{
 	public:
-		struct Vertex
-		{
-			glm::vec3 position;
-			glm::vec2 uv;
-		};
-
 		struct PushConstantBlock
 		{
 			glm::mat4 world;

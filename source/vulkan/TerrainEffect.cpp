@@ -3,6 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/Vertex.h"
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/PipelineInterface.h"
@@ -24,10 +25,7 @@ namespace Utopian::Vk
 
 	void TerrainEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Utopian::Vk::VertexDescription();
-		mVertexDescription->AddBinding(BINDING_0, sizeof(BasicVertex), VK_VERTEX_INPUT_RATE_VERTEX);					
-		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec4Attribute());	// InPosL
-		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec4Attribute());	// InNormal	
+		mVertexDescription = TerrainVertex::GetDescription();
 	}
 
 	void TerrainEffect::CreatePipelineInterface(Device* device)

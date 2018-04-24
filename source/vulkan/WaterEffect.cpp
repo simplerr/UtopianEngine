@@ -27,18 +27,7 @@ namespace Utopian::Vk
 
 	void WaterEffect::CreateVertexDescription(Device* device)
 	{
-		// First tell Vulkan about how large each vertex is, the binding ID and the inputRate
-		mVertexDescription = new Utopian::Vk::VertexDescription();
-		mVertexDescription->AddBinding(BINDING_0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
-
-		// We need to tell Vulkan about the memory layout for each attribute
-		// 5 attributes: position, normal, texture coordinates, tangent and color
-		// See Vertex struct
-		mVertexDescription->AddAttribute(BINDING_0, Vec3Attribute());	// Location 0 : Position
-		mVertexDescription->AddAttribute(BINDING_0, Vec3Attribute());	// Location 1 : Color
-		mVertexDescription->AddAttribute(BINDING_0, Vec3Attribute());	// Location 2 : Normal
-		mVertexDescription->AddAttribute(BINDING_0, Vec2Attribute());	// Location 3 : Texture
-		mVertexDescription->AddAttribute(BINDING_0, Vec4Attribute());	// Location 4 : Tangent
+		mVertexDescription = Vertex::GetDescription();
 	}
 
 	void WaterEffect::CreatePipelineInterface(Device* device)

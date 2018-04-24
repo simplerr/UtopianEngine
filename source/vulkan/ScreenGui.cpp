@@ -1,6 +1,7 @@
 #include <vector>
 #include "vulkan/ScreenGui.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -10,7 +11,7 @@ namespace Utopian::Vk
 {
 	ScreenGui::ScreenGui(Renderer* renderer)
 	{
-		std::vector<Vertex> vertices = 
+		std::vector<ScreenQuadVertex> vertices = 
 		{
 			{ glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
 			{ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
@@ -18,7 +19,7 @@ namespace Utopian::Vk
 			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }
 		};
 
-		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vertex), vertices.data());
+		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(ScreenQuadVertex), vertices.data());
 
 		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 

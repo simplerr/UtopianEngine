@@ -26,10 +26,7 @@ namespace Utopian::Vk
 
 	void DeferredEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Utopian::Vk::VertexDescription();
-		mVertexDescription->AddBinding(BINDING_0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
-		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec3Attribute());	// InPosL
-		mVertexDescription->AddAttribute(BINDING_0, Utopian::Vk::Vec2Attribute());	// InTex	
+		mVertexDescription = ScreenQuadVertex::GetDescription();
 	}
 
 	void DeferredEffect::CreatePipelineInterface(Device* device)

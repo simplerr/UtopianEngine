@@ -22,13 +22,6 @@ namespace Utopian
 	class SceneRenderer : public Module<SceneRenderer>
 	{
 	public:
-		/* Todo: Note the local Vertex type, should be moved to common file */
-		struct QuadVertex
-		{
-			glm::vec3 pos;
-			glm::vec2 uv;
-		};
-
 		SceneRenderer(Vk::Renderer* renderer);
 		~SceneRenderer();
 

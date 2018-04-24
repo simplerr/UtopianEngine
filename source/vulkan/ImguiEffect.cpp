@@ -27,12 +27,11 @@ namespace Utopian::Vk
 
 	void ImguiEffect::CreateVertexDescription(Device* device)
 	{
-		mVertexDescription = new Utopian::Vk::VertexDescription();
-		mVertexDescription->AddBinding(BINDING_0, sizeof(ImDrawVert), VK_VERTEX_INPUT_RATE_VERTEX);
+		mVertexDescription.AddBinding(BINDING_0, sizeof(ImDrawVert), VK_VERTEX_INPUT_RATE_VERTEX);
 
-		mVertexDescription->AddAttribute(BINDING_0, Vec2Attribute());	// Location 0 : Position
-		mVertexDescription->AddAttribute(BINDING_0, Vec2Attribute());	// Location 1 : Uv
-		mVertexDescription->AddAttribute(BINDING_0, U32Attribute());	// Location 2 : Color
+		mVertexDescription.AddAttribute(BINDING_0, Vec2Attribute());	// Location 0 : Position
+		mVertexDescription.AddAttribute(BINDING_0, Vec2Attribute());	// Location 1 : Uv
+		mVertexDescription.AddAttribute(BINDING_0, U32Attribute());		// Location 2 : Color
 	}
 
 	void ImguiEffect::CreatePipelineInterface(Device* device)

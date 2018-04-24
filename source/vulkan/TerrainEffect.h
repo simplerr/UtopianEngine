@@ -18,12 +18,6 @@ namespace Utopian::Vk
 	class VertexDescription;
 	class Shader;
 
-	struct BasicVertex
-	{
-		glm::vec4 position;
-		glm::vec4 normal;
-	};
-
 	struct PushConstantBasicBlock {
 		glm::mat4 world;
 		glm::vec3 color;

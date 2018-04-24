@@ -67,7 +67,7 @@ namespace Utopian
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
 
 		/* TEMPORARY */
-		std::vector<QuadVertex> vertices =
+		std::vector<Vk::ScreenQuadVertex> vertices =
 		{
 			{ glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
 			{ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
@@ -75,7 +75,7 @@ namespace Utopian
 			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) }
 		};
 
-		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(QuadVertex), vertices.data());
+		mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vk::ScreenQuadVertex), vertices.data());
 
 		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 

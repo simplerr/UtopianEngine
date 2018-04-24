@@ -4,6 +4,7 @@
 #include <map>
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/VulkanInclude.h"
+#include "vulkan/VertexDescription.h"
 
 namespace Utopian::Vk
 {
@@ -54,12 +55,12 @@ namespace Utopian::Vk
 		DescriptorSetLayout* GetDescriptorSetLayout(uint32_t descriptorSet);
 		Pipeline2* GetPipeline(uint32_t variation);
 		DescriptorPool* GetDescriptorPool();
-		VertexDescription* GetVertexDescription();
+		VertexDescription GetVertexDescription();
 
 	protected:
 		DescriptorPool* mDescriptorPool;
 		PipelineInterface mPipelineInterface;
-		VertexDescription* mVertexDescription;
+		VertexDescription mVertexDescription;
 		std::map<int, Pipeline2*> mPipelines;
 		uint32_t mActivePipeline;
 	};
