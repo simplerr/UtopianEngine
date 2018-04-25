@@ -45,7 +45,7 @@ namespace Utopian::Vk
 
 		/* Updates the memory for the effects descriptors
 		*/
-		virtual void UpdateMemory(Device* device);
+		virtual void UpdateMemory();
 
 		TerrainEffect();
 	};

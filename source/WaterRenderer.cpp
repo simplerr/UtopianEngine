@@ -77,7 +77,7 @@ namespace Utopian
 		mWaterEffect.per_frame_vs.data.eyePos = camera->GetPosition();
 		mWaterEffect.per_frame_vs.data.moveFactor += 0.0015;
 
-		mWaterEffect.UpdateMemory(renderer->GetDevice());
+		mWaterEffect.UpdateMemory();
 	}
 
 	void WaterRenderer::AddWater(glm::vec3 position, uint32_t numCells)

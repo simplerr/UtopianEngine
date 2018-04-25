@@ -57,7 +57,7 @@ namespace Utopian::Vk
 		mPipelines[Variation::NORMAL] = pipeline;
 	}
 
-	void ColorEffect::UpdateMemory(Device* device)
+	void ColorEffect::UpdateMemory()
 	{
 		per_frame_vs.UpdateMemory();
 	}

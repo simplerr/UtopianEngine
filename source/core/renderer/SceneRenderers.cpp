@@ -44,9 +44,7 @@ namespace Utopian
 
 	void GBufferRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
 	{
-		mGBufferEffect.per_frame_vs.data.projection = rendererInput.sceneInfo.projectionMatrix;
-		mGBufferEffect.per_frame_vs.data.view = rendererInput.sceneInfo.viewMatrix;
-		mGBufferEffect.UpdateMemory(renderer->GetDevice());
+		mGBufferEffect.SetCameraData(rendererInput.sceneInfo.viewMatrix, rendererInput.sceneInfo.projectionMatrix);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -81,9 +79,6 @@ namespace Utopian
 
 		effect.Init(renderer);
 
-		/* Deferred rendering setup */
-		effect.mDescriptorSet1 = new Utopian::Vk::DescriptorSet(renderer->GetDevice(), effect.GetDescriptorSetLayout(1), effect.GetDescriptorPool());
-
 		renderer->AddScreenQuad(width - 3*350 - 50, height - 2*350 - 50, 300, 300, renderTarget->GetColorImage(), renderTarget->GetSampler());
 	}
 
@@ -94,14 +89,13 @@ namespace Utopian
 
 	void DeferredRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
 	{
-		effect.per_frame_ps.data.eyePos = glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f);
-		effect.UpdateMemory(renderer->GetDevice());
-
 		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(rendererInput.renderers[0]);
-		effect.mDescriptorSet1->BindCombinedImage(0, gbufferRenderer->positionImage, renderTarget->GetSampler());
-		effect.mDescriptorSet1->BindCombinedImage(1, gbufferRenderer->normalImage, renderTarget->GetSampler());
-		effect.mDescriptorSet1->BindCombinedImage(2, gbufferRenderer->albedoImage, renderTarget->GetSampler());
-		effect.mDescriptorSet1->UpdateDescriptorSets();
+
+		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));
+		effect.BindGBuffer(gbufferRenderer->positionImage,
+						   gbufferRenderer->normalImage,
+						   gbufferRenderer->albedoImage,
+						   gbufferRenderer->renderTarget->GetSampler());
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

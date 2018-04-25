@@ -234,7 +234,7 @@ namespace Utopian
 		per_frame_vs.UpdateMemory();
 		per_frame_ps.UpdateMemory();
 		fog_ubo.UpdateMemory();
-		mColorEffect.UpdateMemory(mRenderer->GetDevice());
+		mColorEffect.UpdateMemory();
 	}
 
 	void RenderingManager::AddRenderable(Renderable* renderable)

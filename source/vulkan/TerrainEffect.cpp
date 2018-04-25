@@ -61,7 +61,7 @@ namespace Utopian::Vk
 		mPipelines[PipelineType2::SOLID] = pipeline1;
 	}
 
-	void TerrainEffect::UpdateMemory(Device* device)
+	void TerrainEffect::UpdateMemory()
 	{
 	}
 }

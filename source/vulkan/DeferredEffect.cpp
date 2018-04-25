@@ -47,7 +47,7 @@ namespace Utopian::Vk
 		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_ps.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
-		// mDescriptorSet1 is initialized in SceneRenderer.cpp
+		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_1), mDescriptorPool);
 	}
 
 	void DeferredEffect::CreatePipeline(Renderer* renderer)
@@ -62,8 +62,22 @@ namespace Utopian::Vk
 		mPipelines[Variation::NORMAL] = pipeline;
 	}
 
-	void DeferredEffect::UpdateMemory(Device* device)
+	void DeferredEffect::UpdateMemory()
 	{
 		per_frame_ps.UpdateMemory();
+	}
+
+	void DeferredEffect::SetEyePos(glm::vec3 eyePos)
+	{
+		per_frame_ps.data.eyePos = glm::vec4(eyePos, 1.0f);
+		per_frame_ps.UpdateMemory();
+	}
+
+	void DeferredEffect::BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler)
+	{
+		mDescriptorSet1->BindCombinedImage(0, positionImage, sampler);
+		mDescriptorSet1->BindCombinedImage(1, normalImage, sampler);
+		mDescriptorSet1->BindCombinedImage(2, albedoImage, sampler);
+		mDescriptorSet1->UpdateDescriptorSets();
 	}
 }

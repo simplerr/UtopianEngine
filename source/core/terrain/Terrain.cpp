@@ -156,7 +156,7 @@ Terrain::Terrain(Utopian::Vk::Renderer* renderer)
 	mMarchingCubesEffect.ubo.data.offsets[7] = vec4(0, mVoxelSize, mVoxelSize, 0);
 	mMarchingCubesEffect.ubo.data.color = vec4(0, 1, 0, 1);
 	mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
-	mMarchingCubesEffect.UpdateMemory(renderer->GetDevice());
+	mMarchingCubesEffect.UpdateMemory();
 
 	mClippingPlane = glm::vec4(0, 1, 0, 1500000);
 }
@@ -233,7 +233,7 @@ void Terrain::GenerateBlocks(float time)
 
 			// Reset block vertex count
 			mMarchingCubesEffect.mCounterSSBO.numVertices = 0;
-			mMarchingCubesEffect.UpdateMemory(mRenderer->GetDevice());
+			mMarchingCubesEffect.UpdateMemory();
 
 			// Bind new vertex buffer SSBO descriptor
 			mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
@@ -316,7 +316,7 @@ void Terrain::Update()
 
 void Terrain::UpdateUniformBuffer()
 {
-	mTerrainEffect.UpdateMemory(mRenderer->GetDevice());
+	mTerrainEffect.UpdateMemory();
 }
 
 void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

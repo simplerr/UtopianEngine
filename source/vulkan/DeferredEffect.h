@@ -48,13 +48,16 @@ namespace Utopian::Vk
 
 		DeferredEffect();
 
+		void SetEyePos(glm::vec3 eyePos);
+		void BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler);
+
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
 		virtual void CreateVertexDescription(Device* device);
 		virtual void CreatePipelineInterface(Device* device);
 		virtual void CreateDescriptorSets(Device* device);
 		virtual void CreatePipeline(Renderer* renderer);
-		virtual void UpdateMemory(Device* device);
+		virtual void UpdateMemory();
 
 		DescriptorSet* mDescriptorSet0;
 		DescriptorSet* mDescriptorSet1;

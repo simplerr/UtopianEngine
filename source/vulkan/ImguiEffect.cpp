@@ -81,7 +81,7 @@ namespace Utopian::Vk
 		mPipelines[0] = pipeline;
 	}
 
-	void ImguiEffect::UpdateMemory(Device* device)
+	void ImguiEffect::UpdateMemory()
 	{
 		
 	}

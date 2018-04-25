@@ -48,7 +48,7 @@ namespace Utopian::Vk
 		virtual void CreatePipelineInterface(Device* device) = 0;
 		virtual void CreateDescriptorSets(Device* device) = 0;
 		virtual void CreatePipeline(Renderer* renderer) = 0;
-		virtual void UpdateMemory(Device* device) = 0;
+		virtual void UpdateMemory() = 0;
 
 		void SetPipeline(uint32_t pipelineType);
 		VkPipelineLayout GetPipelineLayout();

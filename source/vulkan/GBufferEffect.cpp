@@ -58,7 +58,7 @@ namespace Utopian::Vk
 		mPipelines[Variation::NORMAL] = pipeline;
 	}
 
-	void GBufferEffect::UpdateMemory(Device* device)
+	void GBufferEffect::UpdateMemory()
 	{
 		per_frame_vs.UpdateMemory();
 	}
@@ -66,5 +66,12 @@ namespace Utopian::Vk
 	void GBufferEffect::SetRenderPass(RenderPass* renderPass)
 	{
 		mRenderPass = renderPass;
+	}
+
+	void GBufferEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)
+	{
+		per_frame_vs.data.view = view;
+		per_frame_vs.data.projection = projection;
+		UpdateMemory();
 	}
 }

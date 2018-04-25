@@ -52,7 +52,7 @@ namespace Utopian::Vk
 		mPipelines[0] = pipeline;
 	}
 
-	void ScreenQuadEffect::UpdateMemory(Device* device)
+	void ScreenQuadEffect::UpdateMemory()
 	{
 	}
 }

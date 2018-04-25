@@ -74,7 +74,7 @@ namespace Utopian::Vk
 		mComputePipeline->Create();
 	}
 
-	void MarchingCubesEffect::UpdateMemory(Device* device)
+	void MarchingCubesEffect::UpdateMemory()
 	{
 		ubo.UpdateMemory();
 		mCounterSSBO.UpdateMemory();

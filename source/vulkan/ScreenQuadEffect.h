@@ -40,7 +40,7 @@ namespace Utopian::Vk
 		virtual void CreatePipelineInterface(Device* device);
 		virtual void CreateDescriptorSets(Device* device);
 		virtual void CreatePipeline(Renderer* renderer);
-		virtual void UpdateMemory(Device* device);
+		virtual void UpdateMemory();
 
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 	private:

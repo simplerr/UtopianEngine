@@ -62,7 +62,7 @@ namespace Utopian::Vk
 		mPipelines[0] = pipeline;
 	}
 
-	void WaterEffect::UpdateMemory(Device* device)
+	void WaterEffect::UpdateMemory()
 	{
 		per_frame_vs.UpdateMemory();
 		per_frame_ps.UpdateMemory();

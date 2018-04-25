@@ -55,9 +55,10 @@ namespace Utopian::Vk
 		virtual void CreatePipelineInterface(Device* device);
 		virtual void CreateDescriptorSets(Device* device);
 		virtual void CreatePipeline(Renderer* renderer);
-		virtual void UpdateMemory(Device* device);
+		virtual void UpdateMemory();
 
 		void SetRenderPass(RenderPass* renderPass);
+		void SetCameraData(glm::mat4 view, glm::mat4 projection);
 
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 		UniformBufferVS per_frame_vs;

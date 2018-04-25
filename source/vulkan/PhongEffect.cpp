@@ -81,7 +81,7 @@ namespace Utopian::Vk
 		mPipelines[Variation::DEBUG] = pipeline;
 	}
 
-	void PhongEffect::UpdateMemory(Device* device)
+	void PhongEffect::UpdateMemory()
 	{
 	}
 }
