@@ -49,6 +49,8 @@ namespace Utopian
 		void SetTerrain(Terrain* terrain);
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
+		void AddRenderer(BaseRenderer* renderer);
+
 	private:
 		SceneInfo mSceneInfo;
 		Camera* mMainCamera;
@@ -57,7 +59,6 @@ namespace Utopian
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;
 		Vk::ColorEffect mColorEffect;
-		Vk::DeferredEffect mDeferredEffect;
 		Terrain* mTerrain;
 		Vk::StaticModel* mCubeModel;
 		WaterRenderer* mWaterRenderer;
@@ -74,7 +75,8 @@ namespace Utopian
 		std::map<uint32_t, Vk::Effect*> mEffects;
 
 		/*  Deferred rendering experimentation */
-		Vk::BasicRenderTarget* mDeferredRenderTarget;
+		std::vector<BaseRenderer*> mRenderers;
 		GBufferRenderer* mGBufferRenderer;
+		DeferredRenderer* mDeferredRenderer;
 	};
 }

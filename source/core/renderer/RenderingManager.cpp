@@ -31,20 +31,13 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		mGBufferRenderer = new GBufferRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight());
-
-		/* Deferred render target */
-		mDeferredRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), renderer->GetWindowWidth(), renderer->GetWindowHeight(), VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		AddRenderer(new GBufferRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddRenderer(new DeferredRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferRenderer->positionImage, mGBufferRenderer->renderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferRenderer->normalImage, mGBufferRenderer->renderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mGBufferRenderer->albedoImage, mGBufferRenderer->renderTarget->GetSampler());
-		mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 3*350 - 50, mRenderer->GetWindowHeight() - 2*350 - 50, 300, 300, mDeferredRenderTarget->GetColorImage(), mDeferredRenderTarget->GetSampler());
 
 		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
-
 	}
 
 	RenderingManager::~RenderingManager()
@@ -90,20 +83,8 @@ namespace Utopian
 
 	void RenderingManager::InitShader()
 	{
-		// Note: Todo:
-		//mGBufferEffect.SetRenderPass(mGBufferRenderTarget->GetRenderPass());
-
 		mPhongEffect.Init(mRenderer);
 		mColorEffect.Init(mRenderer);
-		//mGBufferEffect.Init(mRenderer);
-		mDeferredEffect.Init(mRenderer);
-
-		/* Deferred rendering setup */
-		mDeferredEffect.mDescriptorSet1 = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mDeferredEffect.GetDescriptorSetLayout(1), mDeferredEffect.GetDescriptorPool());
-		mDeferredEffect.mDescriptorSet1->BindCombinedImage(0, mGBufferRenderer->positionImage, mDeferredRenderTarget->GetSampler());
-		mDeferredEffect.mDescriptorSet1->BindCombinedImage(1, mGBufferRenderer->normalImage, mDeferredRenderTarget->GetSampler());
-		mDeferredEffect.mDescriptorSet1->BindCombinedImage(2, mGBufferRenderer->albedoImage, mDeferredRenderTarget->GetSampler());
-		mDeferredEffect.mDescriptorSet1->UpdateDescriptorSets();
 	}
 
 	void RenderingManager::Update()
@@ -154,13 +135,8 @@ namespace Utopian
 				BoundingBox boundingBox = renderable->GetBoundingBox();
 				vec3 pos = renderable->GetTransform().GetPosition();
 				vec3 rotation = renderable->GetTransform().GetRotation();
-				//glm::vec3 translation = vec3(pos.x, pos.y, pos.z);
-				//glm::vec3 translation = vec3(pos.x, pos.y - boundingBox.GetHeight() / 2, pos.z);
 				glm::vec3 translation = vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
 				mat4 world = glm::translate(glm::mat4(), translation);
-				//world = glm::rotate(world, glm::radians(rotation.x), vec3(1.0f, 0.0f, 0.0f));
-				//world = glm::rotate(world, glm::radians(rotation.y), vec3(0.0f, 1.0f, 0.0f));
-				//world = glm::rotate(world, glm::radians(rotation.z), vec3(0.0f, 0.0f, 1.0f));
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
 				Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
@@ -171,8 +147,6 @@ namespace Utopian
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-
-				//ImGui::InputFloat3("Min", &boundingBox.GetMin(), 2);
 			}
 		}
 	}
@@ -226,25 +200,12 @@ namespace Utopian
 
 		UpdateUniformBuffers();
 
-		/*  Deferred rendering experimentation */
-		/************************************************************************/
-		/*                                                                      */
-		/************************************************************************/
-
 		/* G-buffer pass */
-		mGBufferRenderer->render(mRenderer, mSceneInfo);
-
-		/* Deferred lighting pass */
-		mDeferredRenderTarget->Begin();
-		Vk::CommandBuffer* commandBuffer = mDeferredRenderTarget->GetCommandBuffer();
-
-		commandBuffer->CmdBindPipeline(mDeferredEffect.GetPipeline(0));
-		VkDescriptorSet descriptorSets[2] = { mDeferredEffect.mDescriptorSet0->descriptorSet, mDeferredEffect.mDescriptorSet1->descriptorSet };
-		commandBuffer->CmdBindDescriptorSet(&mDeferredEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
-
-		mRenderer->DrawScreenQuad(commandBuffer);
-
-		mDeferredRenderTarget->End(mRenderer->GetQueue());
+		RendererInput rendererInput(mSceneInfo, mRenderers);
+		for (auto& renderer : mRenderers)
+		{
+			renderer->Render(mRenderer, rendererInput);
+		}
 	}
 
 	void RenderingManager::UpdateUniformBuffers()
@@ -260,10 +221,10 @@ namespace Utopian
 			mColorEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
 			mColorEffect.per_frame_vs.data.view = mMainCamera->GetView();
 
-			mDeferredEffect.per_frame_ps.data.eyePos = glm::vec4(mMainCamera->GetPosition(), 1.0f);
-
+			// Update scene info
 			mSceneInfo.viewMatrix = mMainCamera->GetView();
 			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
+			mSceneInfo.eyePos = mMainCamera->GetPosition();
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();
@@ -274,7 +235,6 @@ namespace Utopian
 		per_frame_ps.UpdateMemory();
 		fog_ubo.UpdateMemory();
 		mColorEffect.UpdateMemory(mRenderer->GetDevice());
-		mDeferredEffect.UpdateMemory(mRenderer->GetDevice());
 	}
 
 	void RenderingManager::AddRenderable(Renderable* renderable)
@@ -306,5 +266,10 @@ namespace Utopian
 	void RenderingManager::SetClippingPlane(glm::vec4 clippingPlane)
 	{
 		mClippingPlane = clippingPlane;
+	}
+
+	void RenderingManager::AddRenderer(BaseRenderer* renderer)
+	{
+		mRenderers.push_back(renderer);
 	}
 }
