@@ -12,12 +12,12 @@ namespace Utopian
 {
 	GBufferRenderer::GBufferRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
-		positionImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		normalImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		albedoImage = new Vk::ImageColor(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		depthImage = new Vk::ImageDepth(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		positionImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		normalImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		albedoImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		depthImage = make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		renderTarget = new Vk::RenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		renderTarget->AddColorAttachment(positionImage);
 		renderTarget->AddColorAttachment(normalImage);
 		renderTarget->AddColorAttachment(albedoImage);
@@ -28,18 +28,13 @@ namespace Utopian
 		mGBufferEffect.SetRenderPass(renderTarget->GetRenderPass());
 		mGBufferEffect.Init(renderer);
 
-		renderer->AddScreenQuad(width - 350 - 50, height - 350, 300, 300, positionImage, renderTarget->GetSampler());
-		renderer->AddScreenQuad(width - 2*350 - 50, height - 350, 300, 300, normalImage, renderTarget->GetSampler());
-		renderer->AddScreenQuad(width - 3*350 - 50, height - 350, 300, 300, albedoImage, renderTarget->GetSampler());
+		renderer->AddScreenQuad(width - 350 - 50, height - 350, 300, 300, positionImage.get(), renderTarget->GetSampler());
+		renderer->AddScreenQuad(width - 2*350 - 50, height - 350, 300, 300, normalImage.get(), renderTarget->GetSampler());
+		renderer->AddScreenQuad(width - 3*350 - 50, height - 350, 300, 300, albedoImage.get(), renderTarget->GetSampler());
 	}
 
 	GBufferRenderer::~GBufferRenderer()
 	{
-		delete positionImage;
-		delete normalImage;
-		delete albedoImage;
-		delete depthImage;
-		delete renderTarget;
 	}
 
 	void GBufferRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
@@ -75,7 +70,7 @@ namespace Utopian
 
 	DeferredRenderer::DeferredRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
-		renderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		renderTarget = make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 
 		effect.Init(renderer);
 
@@ -84,7 +79,6 @@ namespace Utopian
 
 	DeferredRenderer::~DeferredRenderer()
 	{
-		delete renderTarget;
 	}
 
 	void DeferredRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
@@ -92,9 +86,9 @@ namespace Utopian
 		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(rendererInput.renderers[0]);
 
 		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));
-		effect.BindGBuffer(gbufferRenderer->positionImage,
-						   gbufferRenderer->normalImage,
-						   gbufferRenderer->albedoImage,
+		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
+						   gbufferRenderer->normalImage.get(),
+						   gbufferRenderer->albedoImage.get(),
 						   gbufferRenderer->renderTarget->GetSampler());
 
 		renderTarget->Begin();

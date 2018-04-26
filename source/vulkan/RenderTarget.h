@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
@@ -19,8 +20,11 @@ namespace Utopian::Vk
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
 		/* Note: The order in which these are called is important */
-		void AddColorAttachment(Image* image, VkImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void AddColorAttachment(Image* image, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		void AddDepthAttachment(Image* image);
+
+		void AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void AddDepthAttachment(const SharedPtr<Image>& image);
 
 		void Create();
 

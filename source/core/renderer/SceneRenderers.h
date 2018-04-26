@@ -3,6 +3,7 @@
 #include <vector>
 #include "vulkan/GBufferEffect.h"
 #include "vulkan/DeferredEffect.h"
+#include "utility/Common.h"
 
 namespace Utopian
 {
@@ -56,11 +57,11 @@ namespace Utopian
 
 		void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) override;
 
-		Vk::Image* positionImage;
-		Vk::Image* normalImage;
-		Vk::Image* albedoImage;
-		Vk::Image* depthImage;
-		Vk::RenderTarget* renderTarget;
+		SharedPtr<Vk::Image> positionImage;
+		SharedPtr<Vk::Image> normalImage;
+		SharedPtr<Vk::Image> albedoImage;
+		SharedPtr<Vk::Image> depthImage;
+		SharedPtr<Vk::RenderTarget> renderTarget;
 
 		Vk::GBufferEffect mGBufferEffect;
 	private:
@@ -74,7 +75,7 @@ namespace Utopian
 
 		void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) override;
 
-		Vk::BasicRenderTarget* renderTarget;
+		SharedPtr<Vk::BasicRenderTarget> renderTarget;
 
 		Vk::DeferredEffect effect;
 	private:
