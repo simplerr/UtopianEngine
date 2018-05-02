@@ -45,7 +45,6 @@ namespace Utopian::Vk
 	void DeferredEffect::CreateDescriptorSets(Device* device)
 	{
 		eye_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		light_ubo.constants.numLights = 3;
 		light_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		fog_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
@@ -97,13 +96,9 @@ namespace Utopian::Vk
 			light_ubo.lights.push_back(light->GetLightData());
 		}
 
-		light_ubo.UpdateMemory();
+		light_ubo.constants.numLights = light_ubo.lights.size();
 
-		//  Todo: Note: temporary
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, &eye_ubo.GetDescriptor());
-		mDescriptorSet0->BindUniformBuffer(BINDING_1, &light_ubo.GetDescriptor());
-		mDescriptorSet0->BindUniformBuffer(BINDING_2, &fog_ubo.GetDescriptor());
-		mDescriptorSet0->UpdateDescriptorSets();
+		light_ubo.UpdateMemory();
 	}
 
 	void DeferredEffect::SetFogData()
