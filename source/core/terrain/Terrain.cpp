@@ -269,49 +269,55 @@ void Terrain::GenerateBlocks(float time)
 
 void Terrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::DescriptorSet* commonDescriptorSet)
 {
-	for (auto blockIter : mBlockList)
+	if (mEnabled)
 	{
-		Block* block = blockIter.second;
-		if (block->IsVisible() && block->IsGenerated())
+		for (auto blockIter : mBlockList)
 		{
-			mTerrainEffect.SetPipeline(block->pipelineType);
-				
-			commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline(0));
-			VkDescriptorSet descriptorSets[1] = {commonDescriptorSet->descriptorSet};
-			commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+			Block* block = blockIter.second;
+			if (block->IsVisible() && block->IsGenerated())
+			{
+				mTerrainEffect.SetPipeline(block->pipelineType);
 
-			commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
+				commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline(0));
+				VkDescriptorSet descriptorSets[1] = { commonDescriptorSet->descriptorSet };
+				commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-			// Push the world matrix constant
-			Utopian::Vk::PushConstantBasicBlock pushConstantBlock;
-			pushConstantBlock.world = glm::mat4();
-			pushConstantBlock.color = block->GetColor();
+				commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
-			pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+				// Push the world matrix constant
+				Utopian::Vk::PushConstantBasicBlock pushConstantBlock;
+				pushConstantBlock.world = glm::mat4();
+				pushConstantBlock.color = block->GetColor();
 
-			commandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
-			commandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
+				pushConstantBlock.world = glm::translate(glm::mat4(), block->GetPosition());
+				pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
+				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
+				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
+
+				commandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				commandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
+			}
 		}
 	}
 }
 
 void Terrain::Update()
 {
-	static float time = 0.0f;
+	if (mEnabled)
+	{
+		static float time = 0.0f;
 
-	if(mUpdateTimer)
-		time += 0.002f;
+		if (mUpdateTimer)
+			time += 0.002f;
 
-	UpdateBlockList();
-	GenerateBlocks(time);
-	UpdateUniformBuffer();
-	
-	/*float x = mCamera->GetPosition().x;
-	float z = mCamera->GetPosition().z;
-	mCamera->SetPosition(glm::vec3(x, GetHeight(x, z) + 100, z));*/
+		UpdateBlockList();
+		GenerateBlocks(time);
+		UpdateUniformBuffer();
+
+		/*float x = mCamera->GetPosition().x;
+		float z = mCamera->GetPosition().z;
+		mCamera->SetPosition(glm::vec3(x, GetHeight(x, z) + 100, z));*/
+	}
 }
 
 void Terrain::UpdateUniformBuffer()
@@ -429,4 +435,9 @@ glm::vec3 Terrain::GetRayIntersection(glm::vec3 origin, glm::vec3 direction)
 	}
 
 	return intersection;
+}
+
+void Terrain::SetEnabled(bool enabled)
+{
+	mEnabled = enabled;
 }

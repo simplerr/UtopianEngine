@@ -48,6 +48,7 @@ namespace Utopian
 		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
 
 		mTerrain = make_shared<Terrain>(mRenderer.get());
+		mTerrain->SetEnabled(false);
 
 		InitScene();
 
@@ -132,11 +133,12 @@ namespace Utopian
 		auto castle = Actor::Create("Castle");
 
 		transform = castle->AddComponent<CTransform>(vec3(94400.0f, 6200.0f, 78000.0f));
-		transform->SetScale(vec3(500.0f));
+		transform->SetScale(vec3(50.0f));
 		transform->SetRotation(vec3(180, 0, 0));
 
 		mesh = castle->AddComponent<CRenderable>();
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
+		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
+		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
 		//mesh->SetMaterial(Vk::Mat(Vk::EffectType::COLOR, Vk::ColorEffect::NORMAL));
 
 		// Add orbiting entity

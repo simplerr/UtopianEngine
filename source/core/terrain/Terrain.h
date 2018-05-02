@@ -104,6 +104,8 @@ public:
 	float Density(glm::vec3 position);
 	glm::vec3 GetRayIntersection(glm::vec3 origin, glm::vec3 direction);
 
+	void SetEnabled(bool enabled);
+
 private:
 	Utopian::Vk::Renderer* mRenderer;
 
@@ -128,6 +130,7 @@ private:
 	bool mUpdateTimer = true;
 	bool mDrawGeneratedBuffer = false;
 	bool mUseComputeShader = true;
+	bool mEnabled = true;
 	int mNumVertices = 0;
 
 	void DumpDebug();

@@ -74,7 +74,7 @@ namespace Utopian
 
 		effect.Init(renderer);
 
-		renderer->AddScreenQuad(width - 3*350 - 50, height - 2*350 - 50, 300, 300, renderTarget->GetColorImage(), renderTarget->GetSampler());
+		renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 	}
 
 	DeferredRenderer::~DeferredRenderer()

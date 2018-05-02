@@ -237,14 +237,14 @@ namespace Utopian::Vk
 		mQueue->Submit(mPrimaryCommandBuffer, nullptr);
 	}
 
-	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler)
+	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
 	{
-		mScreenGui->AddQuad(left, top, width, height, image, sampler);
+		mScreenGui->AddQuad(left, top, width, height, image, sampler, layer);
 	}
 
-	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture)
+	void Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
 	{
-		mScreenGui->AddQuad(left, top, width, height, texture);
+		mScreenGui->AddQuad(left, top, width, height, texture, layer);
 	}
 
 	void Renderer::Render()
