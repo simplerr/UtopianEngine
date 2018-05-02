@@ -34,6 +34,8 @@ namespace Utopian
 		AddRenderer(new GBufferRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddRenderer(new DeferredRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
+		mRenderingSettings.deferredPipeline = true;
+
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 
@@ -101,6 +103,22 @@ namespace Utopian
 		mCommonDescriptorSet->UpdateDescriptorSets();
 		mTerrain->Update();
 		mWaterRenderer->Update(mRenderer, mMainCamera);
+
+		// Draw UI overlay for rendering settings
+		// It's expected that each rendering node might have it's own settings that can be configured 
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::SetNextWindowPos(ImVec2(10, 150));
+		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+		ImGui::Begin("Rendering settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove);
+		ImGui::PushItemWidth(300.0f);
+
+		ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
+
+		ImGui::PopItemWidth();
+
+		// ImGui functions end here
+		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 
 	void RenderingManager::RenderNodes(Vk::CommandBuffer* commandBuffer)
@@ -201,7 +219,7 @@ namespace Utopian
 		UpdateUniformBuffers();
 
 		/* G-buffer pass */
-		RendererInput rendererInput(mSceneInfo, mRenderers);
+		RendererInput rendererInput(mSceneInfo, mRenderers, mRenderingSettings);
 		for (auto& renderer : mRenderers)
 		{
 			renderer->Render(mRenderer, rendererInput);

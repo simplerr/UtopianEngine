@@ -171,10 +171,10 @@
     <ClInclude Include="source\core\terrain\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
-    <ClInclude Include="source\Common.h" />
     <ClInclude Include="source\editor\ActorInspector.h" />
     <ClInclude Include="source\editor\ComponentInspector.h" />
     <ClInclude Include="source\Game.h" />
+    <ClInclude Include="source\utility\Common.h" />
     <ClInclude Include="source\utility\Exception.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\LightData.h" />

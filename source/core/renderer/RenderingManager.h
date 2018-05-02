@@ -78,5 +78,6 @@ namespace Utopian
 		std::vector<BaseRenderer*> mRenderers;
 		GBufferRenderer* mGBufferRenderer;
 		DeferredRenderer* mDeferredRenderer;
+		RenderingSettings mRenderingSettings;
 	};
 }

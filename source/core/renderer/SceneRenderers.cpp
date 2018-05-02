@@ -7,6 +7,7 @@
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/ScreenGui.h"
 
 namespace Utopian
 {
@@ -74,7 +75,7 @@ namespace Utopian
 
 		effect.Init(renderer);
 
-		renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
+		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 	}
 
 	DeferredRenderer::~DeferredRenderer()
@@ -83,6 +84,8 @@ namespace Utopian
 
 	void DeferredRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
 	{
+		mScreenQuad->SetVisible(rendererInput.renderingSettings.deferredPipeline);
+
 		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(rendererInput.renderers[0]);
 
 		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));

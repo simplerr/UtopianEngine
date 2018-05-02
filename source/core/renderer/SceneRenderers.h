@@ -18,6 +18,7 @@ namespace Utopian
 		class Renderer;
 		class RenderTarget;
 		class BasicRenderTarget;
+		class ScreenQuad;
 	}
 
 	struct SceneInfo
@@ -30,15 +31,21 @@ namespace Utopian
 		glm::vec3 eyePos;
 	};
 
+	struct RenderingSettings
+	{
+		bool deferredPipeline;
+	};
+
 	struct RendererInput
 	{
-		RendererInput(const SceneInfo& sceneInfo, const std::vector<BaseRenderer*>& renderers) 
-			: sceneInfo(sceneInfo), renderers(renderers) {
+		RendererInput(const SceneInfo& sceneInfo, const std::vector<BaseRenderer*>& renderers, const RenderingSettings& renderingSettings) 
+			: sceneInfo(sceneInfo), renderers(renderers) , renderingSettings(renderingSettings) {
 
 		}
 
 		const SceneInfo& sceneInfo;
 		const std::vector<BaseRenderer*>& renderers;
+		const RenderingSettings& renderingSettings;
 	};
 
 	class BaseRenderer
@@ -79,5 +86,6 @@ namespace Utopian
 
 		Vk::DeferredEffect effect;
 	private:
+		SharedPtr<Vk::ScreenQuad> mScreenQuad;
 	};
 }

@@ -8,6 +8,7 @@
 #include <map>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
+#include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
 #include "VulkanBase.h"
 #include "VertexDescription.h"
@@ -22,6 +23,8 @@ namespace ECS
 
 namespace Utopian::Vk
 {
+	class ScreenQuad;
+
 	enum PipelineType
 	{
 		PIPELINE_BASIC,
@@ -80,8 +83,8 @@ namespace Utopian::Vk
 		virtual void Update();
 		void Draw();
 
-		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
-		void AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer = 0u);
+		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
+		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer = 0u);
 		void UpdateOverlay();
 
 		// Note: This should probably be moved to some utility class
