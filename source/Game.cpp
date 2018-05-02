@@ -118,14 +118,6 @@ namespace Utopian
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
 		mesh->SetColor(glm::vec4(0.3, 1, 0.2, 1.0));
 
-		CLight* lightComponent = teapot->AddComponent<CLight>();
-		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
-		lightComponent->SetDirection(vec3(1, 0, 0));
-		lightComponent->SetAtt(0, 0.00, 0.00000002);
-		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
-		lightComponent->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
-		lightComponent->SetRange(100000);
-		lightComponent->SetSpot(4.0f);
 
 		/************************************************************************/
 		/* Castle
@@ -140,6 +132,15 @@ namespace Utopian
 		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
 		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
 		//mesh->SetMaterial(Vk::Mat(Vk::EffectType::COLOR, Vk::ColorEffect::NORMAL));
+
+		CLight* lightComponent = castle->AddComponent<CLight>();
+		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
+		lightComponent->SetDirection(vec3(1, 0, 0));
+		lightComponent->SetAtt(0, 0.00, 0.00000002);
+		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
+		lightComponent->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
+		lightComponent->SetRange(100000);
+		lightComponent->SetSpot(4.0f);
 
 		// Add orbiting entity
 		//auto teapot = Actor::Create("Window");

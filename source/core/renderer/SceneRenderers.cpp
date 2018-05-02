@@ -88,7 +88,9 @@ namespace Utopian
 
 		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(rendererInput.renderers[0]);
 
+		effect.SetFogData();
 		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));
+		effect.SetLightArray(rendererInput.sceneInfo.lights);
 		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
 						   gbufferRenderer->normalImage.get(),
 						   gbufferRenderer->albedoImage.get(),
@@ -97,6 +99,7 @@ namespace Utopian
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
+		// Todo: Should this be moved to the effect instead?
 		commandBuffer->CmdBindPipeline(effect.GetPipeline(0));
 		VkDescriptorSet descriptorSets[2] = { effect.mDescriptorSet0->descriptorSet, effect.mDescriptorSet1->descriptorSet };
 		commandBuffer->CmdBindDescriptorSet(&effect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);

@@ -9,6 +9,7 @@
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/Vertex.h"
+#include "core/renderer/Light.h"
 
 namespace Utopian::Vk
 {
@@ -19,7 +20,7 @@ namespace Utopian::Vk
 	void DeferredEffect::CreateDescriptorPool(Device* device)
 	{
 		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3);
 		mDescriptorPool->Create();
 	}
@@ -32,7 +33,9 @@ namespace Utopian::Vk
 	void DeferredEffect::CreatePipelineInterface(Device* device)
 	{
 		// Descriptor set 0
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -41,10 +44,15 @@ namespace Utopian::Vk
 
 	void DeferredEffect::CreateDescriptorSets(Device* device)
 	{
-		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		eye_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		light_ubo.constants.numLights = 3;
+		light_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		fog_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_ps.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_0, &eye_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_1, &light_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_2, &fog_ubo.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
 		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_1), mDescriptorPool);
@@ -64,13 +72,13 @@ namespace Utopian::Vk
 
 	void DeferredEffect::UpdateMemory()
 	{
-		per_frame_ps.UpdateMemory();
+		eye_ubo.UpdateMemory();
 	}
 
 	void DeferredEffect::SetEyePos(glm::vec3 eyePos)
 	{
-		per_frame_ps.data.eyePos = glm::vec4(eyePos, 1.0f);
-		per_frame_ps.UpdateMemory();
+		eye_ubo.data.eyePos = glm::vec4(eyePos, 1.0f);
+		eye_ubo.UpdateMemory();
 	}
 
 	void DeferredEffect::BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler)
@@ -79,5 +87,31 @@ namespace Utopian::Vk
 		mDescriptorSet1->BindCombinedImage(1, normalImage, sampler);
 		mDescriptorSet1->BindCombinedImage(2, albedoImage, sampler);
 		mDescriptorSet1->UpdateDescriptorSets();
+	}
+
+	void DeferredEffect::SetLightArray(const std::vector<Light*>& lights)
+	{
+		light_ubo.lights.clear();
+		for (auto& light : lights)
+		{
+			light_ubo.lights.push_back(light->GetLightData());
+		}
+
+		light_ubo.UpdateMemory();
+
+		//  Todo: Note: temporary
+		mDescriptorSet0->BindUniformBuffer(BINDING_0, &eye_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_1, &light_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_2, &fog_ubo.GetDescriptor());
+		mDescriptorSet0->UpdateDescriptorSets();
+	}
+
+	void DeferredEffect::SetFogData()
+	{
+		// Todo:
+		fog_ubo.data.fogColor = vec4(1.0f);
+		fog_ubo.data.fogStart = 41500.0f;
+		fog_ubo.data.fogDistance = 15400.0f;
+		fog_ubo.UpdateMemory();
 	}
 }

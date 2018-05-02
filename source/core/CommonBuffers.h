@@ -62,7 +62,7 @@ namespace Utopian
 
 		virtual int GetSize()
 		{
-			return lights.size() * sizeof(Utopian::Vk::LightData) + sizeof(constants);
+			return (NUM_MAX_LIGHTS) * sizeof(Utopian::Vk::LightData) + sizeof(constants);
 		}
 
 		struct {
@@ -70,7 +70,8 @@ namespace Utopian
 			glm::vec3 garbage;
 		} constants;
 
-		// Public data members
+		// Note: Todo:
+		const uint32_t NUM_MAX_LIGHTS = 100;
 		std::vector<Utopian::Vk::LightData> lights;
 	};
 

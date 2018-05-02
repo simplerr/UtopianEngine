@@ -524,9 +524,6 @@
     <ClInclude Include="source\Input.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Common.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\LightData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -658,6 +655,9 @@
     </ClInclude>
     <ClInclude Include="source\core\renderer\SceneRenderers.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\Common.h">
+      <Filter>Source Files\utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,12 @@
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
+#include "core/CommonBuffers.h"
+
+namespace Utopian
+{
+	class Light;
+}
 
 namespace Utopian::Vk
 {
@@ -50,6 +56,8 @@ namespace Utopian::Vk
 
 		void SetEyePos(glm::vec3 eyePos);
 		void BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler);
+		void SetLightArray(const std::vector<Light*>& lights);
+		void SetFogData();
 
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);
@@ -61,7 +69,9 @@ namespace Utopian::Vk
 
 		DescriptorSet* mDescriptorSet0;
 		DescriptorSet* mDescriptorSet1;
-		UniformBufferPS per_frame_ps;
+		UniformBufferPS eye_ubo;
+		LightUniformBuffer light_ubo;
+		FogUniformBuffer fog_ubo;
 	private:
 	};
 }
