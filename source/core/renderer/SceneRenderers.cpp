@@ -110,8 +110,7 @@ namespace Utopian
 
 		// Todo: Should this be moved to the effect instead?
 		commandBuffer->CmdBindPipeline(effect.GetPipeline(0));
-		VkDescriptorSet descriptorSets[2] = { effect.mDescriptorSet0->descriptorSet, effect.mDescriptorSet1->descriptorSet };
-		commandBuffer->CmdBindDescriptorSet(&effect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+		effect.BindDescriptorSets(commandBuffer);
 
 		renderer->DrawScreenQuad(commandBuffer);
 

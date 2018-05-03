@@ -59,6 +59,7 @@ namespace Utopian::Vk
 		void BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler);
 		void SetLightArray(const std::vector<Light*>& lights);
 		void SetFogData(const RenderingSettings& renderingSettings);
+		void BindDescriptorSets(CommandBuffer* commandBuffer);
 
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);

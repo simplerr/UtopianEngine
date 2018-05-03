@@ -6,6 +6,7 @@
 #include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderManager.h"
 #include "vulkan/handles/Pipeline2.h"
+#include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/Vertex.h"
@@ -109,5 +110,11 @@ namespace Utopian::Vk
 		fog_ubo.data.fogStart = renderingSettings.fogStart;
 		fog_ubo.data.fogDistance = renderingSettings.fogDistance;
 		fog_ubo.UpdateMemory();
+	}
+
+	void DeferredEffect::BindDescriptorSets(CommandBuffer* commandBuffer)
+	{
+		VkDescriptorSet descriptorSets[2] = { mDescriptorSet0->descriptorSet, mDescriptorSet1->descriptorSet };
+		commandBuffer->CmdBindDescriptorSet(this, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 	}
 }
