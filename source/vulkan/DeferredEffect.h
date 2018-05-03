@@ -10,6 +10,7 @@
 namespace Utopian
 {
 	class Light;
+	struct RenderingSettings;
 }
 
 namespace Utopian::Vk
@@ -57,7 +58,7 @@ namespace Utopian::Vk
 		void SetEyePos(glm::vec3 eyePos);
 		void BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler);
 		void SetLightArray(const std::vector<Light*>& lights);
-		void SetFogData();
+		void SetFogData(const RenderingSettings& renderingSettings);
 
 		// Override the base class interfaces
 		virtual void CreateDescriptorPool(Device* device);

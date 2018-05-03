@@ -33,7 +33,10 @@ namespace Utopian
 
 	struct RenderingSettings
 	{
+		glm::vec4 fogColor;
 		bool deferredPipeline;
+		float fogStart;
+		float fogDistance;
 	};
 
 	struct RendererInput

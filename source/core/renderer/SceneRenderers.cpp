@@ -88,7 +88,7 @@ namespace Utopian
 
 		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(rendererInput.renderers[0]);
 
-		effect.SetFogData();
+		effect.SetFogData(rendererInput.renderingSettings);
 		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));
 		effect.SetLightArray(rendererInput.sceneInfo.lights);
 		effect.BindGBuffer(gbufferRenderer->positionImage.get(),

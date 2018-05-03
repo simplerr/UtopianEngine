@@ -10,6 +10,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/Vertex.h"
 #include "core/renderer/Light.h"
+#include "core/renderer/SceneRenderers.h"
 
 namespace Utopian::Vk
 {
@@ -101,12 +102,12 @@ namespace Utopian::Vk
 		light_ubo.UpdateMemory();
 	}
 
-	void DeferredEffect::SetFogData()
+	void DeferredEffect::SetFogData(const RenderingSettings& renderingSettings)
 	{
 		// Todo:
-		fog_ubo.data.fogColor = vec4(1.0f);
-		fog_ubo.data.fogStart = 41500.0f;
-		fog_ubo.data.fogDistance = 15400.0f;
+		fog_ubo.data.fogColor = renderingSettings.fogColor;
+		fog_ubo.data.fogStart = renderingSettings.fogStart;
+		fog_ubo.data.fogDistance = renderingSettings.fogDistance;
 		fog_ubo.UpdateMemory();
 	}
 }

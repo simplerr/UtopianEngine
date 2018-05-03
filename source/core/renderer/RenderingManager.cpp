@@ -34,7 +34,11 @@ namespace Utopian
 		AddRenderer(new GBufferRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddRenderer(new DeferredRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
+		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
+		mRenderingSettings.fogColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+		mRenderingSettings.fogStart = 40000.0f;
+		mRenderingSettings.fogDistance = 16000.0f;
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
@@ -113,6 +117,9 @@ namespace Utopian
 		ImGui::PushItemWidth(300.0f);
 
 		ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
+		ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
+		ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
+		ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
 
 		ImGui::PopItemWidth();
 
