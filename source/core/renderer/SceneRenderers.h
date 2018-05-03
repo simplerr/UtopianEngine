@@ -55,7 +55,10 @@ namespace Utopian
 	{
 	public:
 		virtual ~BaseRenderer() {};
+		virtual void Init(const std::vector<BaseRenderer*>& renderers) = 0;
+
 		virtual void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) = 0;
+
 	private:
 	};
 
@@ -65,6 +68,7 @@ namespace Utopian
 		GBufferRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~GBufferRenderer();
 
+		void Init(const std::vector<BaseRenderer*>& renderers) override;
 		void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) override;
 
 		SharedPtr<Vk::Image> positionImage;
@@ -83,6 +87,7 @@ namespace Utopian
 		DeferredRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~DeferredRenderer();
 
+		void Init(const std::vector<BaseRenderer*>& renderers) override;
 		void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) override;
 
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;

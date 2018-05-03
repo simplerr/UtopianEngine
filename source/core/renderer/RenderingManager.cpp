@@ -296,5 +296,6 @@ namespace Utopian
 	void RenderingManager::AddRenderer(BaseRenderer* renderer)
 	{
 		mRenderers.push_back(renderer);
+		renderer->Init(mRenderers);
 	}
 }

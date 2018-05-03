@@ -38,6 +38,10 @@ namespace Utopian
 	{
 	}
 
+	void GBufferRenderer::Init(const std::vector<BaseRenderer*>& renderers)
+	{
+	}
+
 	void GBufferRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
 	{
 		mGBufferEffect.SetCameraData(rendererInput.sceneInfo.viewMatrix, rendererInput.sceneInfo.projectionMatrix);
@@ -82,6 +86,15 @@ namespace Utopian
 	{
 	}
 
+	void DeferredRenderer::Init(const std::vector<BaseRenderer*>& renderers)
+	{
+		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(renderers[0]);
+		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
+						   gbufferRenderer->normalImage.get(),
+						   gbufferRenderer->albedoImage.get(),
+						   gbufferRenderer->renderTarget->GetSampler());
+	}
+
 	void DeferredRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
 	{
 		mScreenQuad->SetVisible(rendererInput.renderingSettings.deferredPipeline);
@@ -91,10 +104,6 @@ namespace Utopian
 		effect.SetFogData(rendererInput.renderingSettings);
 		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));
 		effect.SetLightArray(rendererInput.sceneInfo.lights);
-		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
-						   gbufferRenderer->normalImage.get(),
-						   gbufferRenderer->albedoImage.get(),
-						   gbufferRenderer->renderTarget->GetSampler());
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
