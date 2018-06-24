@@ -1,4 +1,4 @@
-#include "core/renderer/SceneRenderers.h"
+#include "core/renderer/SceneJobs.h"
 #include "core/renderer/Renderable.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/RenderTarget.h"
@@ -11,7 +11,7 @@
 
 namespace Utopian
 {
-	GBufferRenderer::GBufferRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	GBufferJob::GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
 		positionImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		normalImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
@@ -34,22 +34,22 @@ namespace Utopian
 		renderer->AddScreenQuad(width - 3*350 - 50, height - 350, 300, 300, albedoImage.get(), renderTarget->GetSampler());
 	}
 
-	GBufferRenderer::~GBufferRenderer()
+	GBufferJob::~GBufferJob()
 	{
 	}
 
-	void GBufferRenderer::Init(const std::vector<BaseRenderer*>& renderers)
+	void GBufferJob::Init(const std::vector<BaseJob*>& jobs)
 	{
 	}
 
-	void GBufferRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
+	void GBufferJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		mGBufferEffect.SetCameraData(rendererInput.sceneInfo.viewMatrix, rendererInput.sceneInfo.projectionMatrix);
+		mGBufferEffect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-		for (auto& renderable : rendererInput.sceneInfo.renderables)
+		for (auto& renderable : jobInput.sceneInfo.renderables)
 		{
 			Vk::StaticModel* model = renderable->GetModel();
 
@@ -73,7 +73,7 @@ namespace Utopian
 		renderTarget->End(renderer->GetQueue());
 	}
 
-	DeferredRenderer::DeferredRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
 		renderTarget = make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 
@@ -82,28 +82,28 @@ namespace Utopian
 		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 	}
 
-	DeferredRenderer::~DeferredRenderer()
+	DeferredJob::~DeferredJob()
 	{
 	}
 
-	void DeferredRenderer::Init(const std::vector<BaseRenderer*>& renderers)
+	void DeferredJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(renderers[0]);
+		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[0]);
 		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
 						   gbufferRenderer->normalImage.get(),
 						   gbufferRenderer->albedoImage.get(),
 						   gbufferRenderer->renderTarget->GetSampler());
 	}
 
-	void DeferredRenderer::Render(Vk::Renderer* renderer, const RendererInput& rendererInput)
+	void DeferredJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		mScreenQuad->SetVisible(rendererInput.renderingSettings.deferredPipeline);
+		mScreenQuad->SetVisible(jobInput.renderingSettings.deferredPipeline);
 
-		GBufferRenderer* gbufferRenderer = static_cast<GBufferRenderer*>(rendererInput.renderers[0]);
+		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(jobInput.renderers[0]);
 
-		effect.SetFogData(rendererInput.renderingSettings);
-		effect.SetEyePos(glm::vec4(rendererInput.sceneInfo.eyePos, 1.0f));
-		effect.SetLightArray(rendererInput.sceneInfo.lights);
+		effect.SetFogData(jobInput.renderingSettings);
+		effect.SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
+		effect.SetLightArray(jobInput.sceneInfo.lights);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

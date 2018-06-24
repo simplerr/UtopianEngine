@@ -9,7 +9,7 @@
 #include "vulkan/DeferredEffect.h"
 #include "vulkan/ColorEffect.h"
 #include "core/CommonBuffers.h"
-#include "core/renderer/SceneRenderers.h"
+#include "core/renderer/SceneJobs.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
 class Terrain;
@@ -49,7 +49,7 @@ namespace Utopian
 		void SetTerrain(Terrain* terrain);
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
-		void AddRenderer(BaseRenderer* renderer);
+		void AddRenderer(BaseJob* renderer);
 
 	private:
 		SceneInfo mSceneInfo;
@@ -76,9 +76,9 @@ namespace Utopian
 		std::map<uint32_t, Vk::Effect*> mEffects;
 
 		/*  Deferred rendering experimentation */
-		std::vector<BaseRenderer*> mRenderers;
-		GBufferRenderer* mGBufferRenderer;
-		DeferredRenderer* mDeferredRenderer;
+		std::vector<BaseJob*> mRenderers;
+		GBufferJob* mGBufferRenderer;
+		DeferredJob* mDeferredRenderer;
 		RenderingSettings mRenderingSettings;
 	};
 }

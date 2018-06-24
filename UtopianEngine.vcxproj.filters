@@ -372,7 +372,7 @@
     <ClCompile Include="source\core\renderer\RenderingManager.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\renderer\SceneRenderers.cpp">
+    <ClCompile Include="source\core\renderer\SceneJobs.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -653,11 +653,11 @@
     <ClInclude Include="source\core\renderer\RenderingManager.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\renderer\SceneRenderers.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\Common.h">
       <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SceneJobs.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

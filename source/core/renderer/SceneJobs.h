@@ -10,7 +10,7 @@ namespace Utopian
 	class Renderable;
 	class Light;
 	class Camera;
-	class BaseRenderer;
+	class BaseJob;
 
 	namespace Vk
 	{
@@ -39,37 +39,37 @@ namespace Utopian
 		float fogDistance;
 	};
 
-	struct RendererInput
+	struct JobInput
 	{
-		RendererInput(const SceneInfo& sceneInfo, const std::vector<BaseRenderer*>& renderers, const RenderingSettings& renderingSettings) 
+		JobInput(const SceneInfo& sceneInfo, const std::vector<BaseJob*>& renderers, const RenderingSettings& renderingSettings) 
 			: sceneInfo(sceneInfo), renderers(renderers) , renderingSettings(renderingSettings) {
 
 		}
 
 		const SceneInfo& sceneInfo;
-		const std::vector<BaseRenderer*>& renderers;
+		const std::vector<BaseJob*>& renderers;
 		const RenderingSettings& renderingSettings;
 	};
 
-	class BaseRenderer
+	class BaseJob
 	{
 	public:
-		virtual ~BaseRenderer() {};
-		virtual void Init(const std::vector<BaseRenderer*>& renderers) = 0;
+		virtual ~BaseJob() {};
+		virtual void Init(const std::vector<BaseJob*>& jobs) = 0;
 
-		virtual void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) = 0;
+		virtual void Render(Vk::Renderer* renderer, const JobInput& jobInput) = 0;
 
 	private:
 	};
 
-	class GBufferRenderer : public BaseRenderer
+	class GBufferJob : public BaseJob
 	{
 	public:
-		GBufferRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height);
-		~GBufferRenderer();
+		GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~GBufferJob();
 
-		void Init(const std::vector<BaseRenderer*>& renderers) override;
-		void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) override;
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
 
 		SharedPtr<Vk::Image> positionImage;
 		SharedPtr<Vk::Image> normalImage;
@@ -81,14 +81,14 @@ namespace Utopian
 	private:
 	};
 
-	class DeferredRenderer : public BaseRenderer
+	class DeferredJob : public BaseJob
 	{
 	public:
-		DeferredRenderer(Vk::Renderer* renderer, uint32_t width, uint32_t height);
-		~DeferredRenderer();
+		DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~DeferredJob();
 
-		void Init(const std::vector<BaseRenderer*>& renderers) override;
-		void Render(Vk::Renderer* renderer, const RendererInput& rendererInput) override;
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
 
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;
 

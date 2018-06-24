@@ -31,8 +31,8 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		AddRenderer(new GBufferRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddRenderer(new DeferredRenderer(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddRenderer(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddRenderer(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -226,7 +226,7 @@ namespace Utopian
 		UpdateUniformBuffers();
 
 		/* G-buffer pass */
-		RendererInput rendererInput(mSceneInfo, mRenderers, mRenderingSettings);
+		JobInput rendererInput(mSceneInfo, mRenderers, mRenderingSettings);
 		for (auto& renderer : mRenderers)
 		{
 			renderer->Render(mRenderer, rendererInput);
@@ -293,7 +293,7 @@ namespace Utopian
 		mClippingPlane = clippingPlane;
 	}
 
-	void RenderingManager::AddRenderer(BaseRenderer* renderer)
+	void RenderingManager::AddRenderer(BaseJob* renderer)
 	{
 		mRenderers.push_back(renderer);
 		renderer->Init(mRenderers);

@@ -82,7 +82,7 @@
   <ItemGroup>
     <ClCompile Include="external\imgui\imgui.cpp" />
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
-    <ClCompile Include="source\core\renderer\SceneRenderers.cpp" />
+    <ClCompile Include="source\core\renderer\SceneJobs.cpp" />
     <ClCompile Include="source\core\terrain\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\editor\ActorInspector.cpp" />
@@ -167,7 +167,7 @@
   <ItemGroup>
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
-    <ClInclude Include="source\core\renderer\SceneRenderers.h" />
+    <ClInclude Include="source\core\renderer\SceneJobs.h" />
     <ClInclude Include="source\core\terrain\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
