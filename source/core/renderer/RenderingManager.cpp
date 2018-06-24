@@ -186,17 +186,34 @@ namespace Utopian
 
 	void RenderingManager::Render()
 	{
-		RenderOffscreen();
+		if (mRenderingSettings.deferredPipeline == true)
+		{
+			/* Deferred rendering pipeline */
+			mSceneInfo.viewMatrix = mMainCamera->GetView();
+			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
+			mSceneInfo.eyePos = mMainCamera->GetPosition();
 
-		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
-		mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-		mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+			JobInput rendererInput(mSceneInfo, mRenderers, mRenderingSettings);
+			for (auto& renderer : mRenderers)
+			{
+				renderer->Render(mRenderer, rendererInput);
+			}
+		}
+		else
+		{
+			/* Legacy forward rendering pipeline */
+			RenderOffscreen();
 
-		RenderScene(mCommandBuffer);
+			mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+			mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+			mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
 
-		mWaterRenderer->Render(mRenderer, mCommandBuffer);
+			RenderScene(mCommandBuffer);
 
-		mCommandBuffer->End();
+			mWaterRenderer->Render(mRenderer, mCommandBuffer);
+
+			mCommandBuffer->End();
+		}
 	}
 
 	void RenderingManager::RenderOffscreen()
@@ -224,13 +241,6 @@ namespace Utopian
 		SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
 
 		UpdateUniformBuffers();
-
-		/* G-buffer pass */
-		JobInput rendererInput(mSceneInfo, mRenderers, mRenderingSettings);
-		for (auto& renderer : mRenderers)
-		{
-			renderer->Render(mRenderer, rendererInput);
-		}
 	}
 
 	void RenderingManager::UpdateUniformBuffers()
@@ -245,11 +255,6 @@ namespace Utopian
 
 			mColorEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
 			mColorEffect.per_frame_vs.data.view = mMainCamera->GetView();
-
-			// Update scene info
-			mSceneInfo.viewMatrix = mMainCamera->GetView();
-			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
-			mSceneInfo.eyePos = mMainCamera->GetPosition();
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();

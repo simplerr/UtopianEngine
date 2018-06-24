@@ -49,6 +49,7 @@ namespace Utopian
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
+		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)
 		{
 			Vk::StaticModel* model = renderable->GetModel();

@@ -250,4 +250,6 @@ void main()
 	litColor = vec4(mix(litColor.rgb, fog_ubo.fogColor, fogLerp), 1.0f);
 
 	OutFragColor = litColor;
+	// float depth = texture(positionSampler, uv).w;// / 100000.0f;
+	// OutFragColor = vec4(depth, depth, depth, 1.0f);
 }
