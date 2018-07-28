@@ -41,13 +41,13 @@ namespace Utopian
 
 	struct JobInput
 	{
-		JobInput(const SceneInfo& sceneInfo, const std::vector<BaseJob*>& renderers, const RenderingSettings& renderingSettings) 
-			: sceneInfo(sceneInfo), renderers(renderers) , renderingSettings(renderingSettings) {
+		JobInput(const SceneInfo& sceneInfo, const std::vector<BaseJob*>& jobs, const RenderingSettings& renderingSettings) 
+			: sceneInfo(sceneInfo), jobs(jobs) , renderingSettings(renderingSettings) {
 
 		}
 
 		const SceneInfo& sceneInfo;
-		const std::vector<BaseJob*>& renderers;
+		const std::vector<BaseJob*>& jobs;
 		const RenderingSettings& renderingSettings;
 	};
 

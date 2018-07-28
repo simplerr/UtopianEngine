@@ -87,20 +87,18 @@ namespace Utopian
 	{
 	}
 
-	void DeferredJob::Init(const std::vector<BaseJob*>& renderers)
+	void DeferredJob::Init(const std::vector<BaseJob*>& jobs)
 	{
-		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[0]);
-		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
-						   gbufferRenderer->normalImage.get(),
-						   gbufferRenderer->albedoImage.get(),
-						   gbufferRenderer->renderTarget->GetSampler());
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[0]);
+		effect.BindGBuffer(gbufferJob->positionImage.get(),
+						   gbufferJob->normalImage.get(),
+						   gbufferJob->albedoImage.get(),
+						   gbufferJob->renderTarget->GetSampler());
 	}
 
 	void DeferredJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
 		mScreenQuad->SetVisible(jobInput.renderingSettings.deferredPipeline);
-
-		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(jobInput.renderers[0]);
 
 		effect.SetFogData(jobInput.renderingSettings);
 		effect.SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));

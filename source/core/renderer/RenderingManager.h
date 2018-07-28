@@ -49,7 +49,7 @@ namespace Utopian
 		void SetTerrain(Terrain* terrain);
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
-		void AddRenderer(BaseJob* renderer);
+		void AddJob(BaseJob* job);
 
 	private:
 		SceneInfo mSceneInfo;
@@ -76,9 +76,7 @@ namespace Utopian
 		std::map<uint32_t, Vk::Effect*> mEffects;
 
 		/*  Deferred rendering experimentation */
-		std::vector<BaseJob*> mRenderers;
-		GBufferJob* mGBufferRenderer;
-		DeferredJob* mDeferredRenderer;
+		std::vector<BaseJob*> mJobs;
 		RenderingSettings mRenderingSettings;
 	};
 }

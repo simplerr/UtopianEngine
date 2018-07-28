@@ -31,8 +31,8 @@ namespace Utopian
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		AddRenderer(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddRenderer(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -48,8 +48,6 @@ namespace Utopian
 
 	RenderingManager::~RenderingManager()
 	{
-		delete mWaterRenderer;
-		delete mGBufferRenderer;
 	}
 
 	void RenderingManager::InitShaderResources()
@@ -193,10 +191,10 @@ namespace Utopian
 			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
 			mSceneInfo.eyePos = mMainCamera->GetPosition();
 
-			JobInput rendererInput(mSceneInfo, mRenderers, mRenderingSettings);
-			for (auto& renderer : mRenderers)
+			JobInput jobInput(mSceneInfo, mJobs, mRenderingSettings);
+			for (auto& job : mJobs)
 			{
-				renderer->Render(mRenderer, rendererInput);
+				job->Render(mRenderer, jobInput);
 			}
 		}
 		else
@@ -298,9 +296,9 @@ namespace Utopian
 		mClippingPlane = clippingPlane;
 	}
 
-	void RenderingManager::AddRenderer(BaseJob* renderer)
+	void RenderingManager::AddJob(BaseJob* job)
 	{
-		mRenderers.push_back(renderer);
-		renderer->Init(mRenderers);
+		mJobs.push_back(job);
+		renderer->Init(mJobs);
 	}
 }
