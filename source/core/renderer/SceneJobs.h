@@ -3,6 +3,7 @@
 #include <vector>
 #include "vulkan/GBufferEffect.h"
 #include "vulkan/DeferredEffect.h"
+#include "vulkan/SSAOEffect.h"
 #include "utility/Common.h"
 
 namespace Utopian
@@ -37,6 +38,8 @@ namespace Utopian
 		bool deferredPipeline;
 		float fogStart;
 		float fogDistance;
+		float ssaoRadius = 400.0f;
+		float ssaoBias = 0.0f;
 	};
 
 	struct JobInput
@@ -73,6 +76,7 @@ namespace Utopian
 
 		SharedPtr<Vk::Image> positionImage;
 		SharedPtr<Vk::Image> normalImage;
+		SharedPtr<Vk::Image> normalViewImage; // Normals in view space
 		SharedPtr<Vk::Image> albedoImage;
 		SharedPtr<Vk::Image> depthImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
@@ -95,5 +99,22 @@ namespace Utopian
 		Vk::DeferredEffect effect;
 	private:
 		SharedPtr<Vk::ScreenQuad> mScreenQuad;
+	};
+
+	class SSAOJob : public BaseJob
+	{
+	public:
+		SSAOJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~SSAOJob();
+
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+
+		SharedPtr<Vk::Image> ssaoImage;
+		SharedPtr<Vk::RenderTarget> renderTarget;
+
+		Vk::SSAOEffect effect;
+	private:
+		void CreateKernelSamples();
 	};
 }

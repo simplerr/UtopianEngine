@@ -33,6 +33,7 @@ namespace Utopian
 
 		AddJob(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new SSAOJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -118,6 +119,8 @@ namespace Utopian
 		ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
 		ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
 		ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
+		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 1000.0f);
+		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 700.0f);
 
 		ImGui::PopItemWidth();
 
@@ -299,6 +302,6 @@ namespace Utopian
 	void RenderingManager::AddJob(BaseJob* job)
 	{
 		mJobs.push_back(job);
-		renderer->Init(mJobs);
+		job->Init(mJobs);
 	}
 }

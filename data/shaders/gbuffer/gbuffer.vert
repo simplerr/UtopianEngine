@@ -23,6 +23,7 @@ layout (location = 0) out vec3 OutColor;
 layout (location = 1) out vec3 OutPosW;
 layout (location = 2) out vec3 OutNormalW;
 layout (location = 3) out vec2 OutTex;
+layout (location = 4) out vec3 OutNormalV;
 
 out gl_PerVertex 
 {
@@ -34,6 +35,8 @@ void main()
 	OutColor = pushConstants.color.rgb;
 	OutPosW = (pushConstants.world * vec4(InPosL.xyz, 1.0)).xyz;
 	OutNormalW  = mat3(pushConstants.worldInvTranspose) * InNormalL;
+	mat3 normalMatrix = transpose(inverse(mat3(per_frame_vs.view * pushConstants.world)));
+	OutNormalV = normalMatrix * InNormalL;
 	OutTex = InTex;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConstants.world * vec4(InPosL.xyz, 1.0);

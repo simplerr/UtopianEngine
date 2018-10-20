@@ -127,6 +127,7 @@
     <ClCompile Include="source\vulkan\ScreenGui.cpp" />
     <ClCompile Include="source\vulkan\ScreenQuadEffect.cpp" />
     <ClCompile Include="source\vulkan\PhongEffect.cpp" />
+    <ClCompile Include="source\vulkan\SSAOEffect.cpp" />
     <ClCompile Include="source\vulkan\TerrainEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="source\vulkan\ScreenGui.h" />
     <ClInclude Include="source\vulkan\ScreenQuadEffect.h" />
     <ClInclude Include="source\vulkan\PhongEffect.h" />
+    <ClInclude Include="source\vulkan\SSAOEffect.h" />
     <ClInclude Include="source\vulkan\TerrainEffect.h" />
     <ClInclude Include="source\vulkan\Effect.h" />
     <ClInclude Include="source\vulkan\handles\Buffer.h" />
@@ -280,6 +282,9 @@
     <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\screenquad\screenquad.frag" />
     <None Include="data\shaders\screenquad\screenquad.vert" />
+    <None Include="data\shaders\ssao\generate-spirv.bat" />
+    <None Include="data\shaders\ssao\ssao.frag" />
+    <None Include="data\shaders\ssao\ssao.vert" />
     <None Include="data\shaders\terrain\terrain.frag" />
     <None Include="data\shaders\terrain\terrain.vert" />
     <None Include="data\shaders\test\test.frag" />

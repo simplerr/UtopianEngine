@@ -1,6 +1,7 @@
 #include "core/renderer/SceneJobs.h"
 #include "core/renderer/Renderable.h"
 #include "vulkan/Renderer.h"
+#include "vulkan/TextureLoader.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/StaticModel.h"
@@ -8,13 +9,15 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ScreenGui.h"
+#include <random>
 
 namespace Utopian
 {
 	GBufferJob::GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
-		positionImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		normalImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		positionImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
+		normalImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		normalViewImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		albedoImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		depthImage = make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
@@ -22,6 +25,7 @@ namespace Utopian
 		renderTarget->AddColorAttachment(positionImage);
 		renderTarget->AddColorAttachment(normalImage);
 		renderTarget->AddColorAttachment(albedoImage);
+		renderTarget->AddColorAttachment(normalViewImage);
 		renderTarget->AddDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
@@ -114,5 +118,76 @@ namespace Utopian
 		renderer->DrawScreenQuad(commandBuffer);
 
 		renderTarget->End(renderer->GetQueue());
+	}
+
+	SSAOJob::SSAOJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	{
+		ssaoImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		renderTarget = make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget->AddColorAttachment(ssaoImage);
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		effect.SetRenderPass(renderTarget->GetRenderPass());
+		effect.Init(renderer);
+
+		renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, ssaoImage.get(), renderTarget->GetSampler());
+	}
+
+	SSAOJob::~SSAOJob()
+	{
+	}
+
+	void SSAOJob::Init(const std::vector<BaseJob*>& renderers)
+	{
+		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[0]);
+		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
+			gbufferRenderer->normalViewImage.get(),
+			gbufferRenderer->albedoImage.get(),
+			gbufferRenderer->renderTarget->GetSampler());
+
+		CreateKernelSamples();
+	}
+
+	void SSAOJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(jobInput.jobs[0]);
+
+		effect.SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
+		effect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		effect.SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
+
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(effect.GetPipeline(0));
+		effect.BindDescriptorSets(commandBuffer);
+
+		renderer->DrawScreenQuad(commandBuffer);
+
+		renderTarget->End(renderer->GetQueue());
+	}
+
+	void SSAOJob::CreateKernelSamples()
+	{
+		// Kernel samples
+		std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between 0.0 - 1.0
+		std::default_random_engine generator;
+		for (unsigned int i = 0; i < 64; ++i)
+		{
+			glm::vec3 sample(
+				randomFloats(generator) * 2.0 - 1.0,
+				randomFloats(generator) * 2.0 - 1.0,
+				randomFloats(generator) 
+			);
+			sample = glm::normalize(sample);
+			sample *= randomFloats(generator);
+
+			effect.ubo.data.samples[i] = vec4(sample, 0);
+		}
+
+		effect.UpdateMemory();
 	}
 }

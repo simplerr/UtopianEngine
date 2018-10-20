@@ -124,6 +124,12 @@
     <Filter Include="Source Files\vulkan\effects\deferred\shaders">
       <UniqueIdentifier>{f666b832-3d71-4392-9c87-2b94e8a7c42a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\ssao">
+      <UniqueIdentifier>{9bc351c4-fe12-4ea4-9d0a-416528effed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\ssao\shader">
+      <UniqueIdentifier>{18a69f57-639b-4b84-bd29-d3529a79dd1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -374,6 +380,9 @@
     </ClCompile>
     <ClCompile Include="source\core\renderer\SceneJobs.cpp">
       <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\SSAOEffect.cpp">
+      <Filter>Source Files\vulkan\effects\ssao</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -659,6 +668,9 @@
     <ClInclude Include="source\core\renderer\SceneJobs.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\SSAOEffect.h">
+      <Filter>Source Files\vulkan\effects\ssao</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -752,6 +764,15 @@
     </None>
     <None Include="data\shaders\deferred\deferred.vert">
       <Filter>Source Files\vulkan\effects\deferred\shaders</Filter>
+    </None>
+    <None Include="data\shaders\ssao\generate-spirv.bat">
+      <Filter>Source Files\vulkan\effects\ssao\shader</Filter>
+    </None>
+    <None Include="data\shaders\ssao\ssao.frag">
+      <Filter>Source Files\vulkan\effects\ssao\shader</Filter>
+    </None>
+    <None Include="data\shaders\ssao\ssao.vert">
+      <Filter>Source Files\vulkan\effects\ssao\shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
