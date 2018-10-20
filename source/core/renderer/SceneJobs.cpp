@@ -132,7 +132,7 @@ namespace Utopian
 		effect.SetRenderPass(renderTarget->GetRenderPass());
 		effect.Init(renderer);
 
-		renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, ssaoImage.get(), renderTarget->GetSampler());
+		//renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, ssaoImage.get(), renderTarget->GetSampler());
 	}
 
 	SSAOJob::~SSAOJob()
@@ -152,8 +152,6 @@ namespace Utopian
 
 	void SSAOJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(jobInput.jobs[0]);
-
 		effect.SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		effect.SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
@@ -189,5 +187,46 @@ namespace Utopian
 		}
 
 		effect.UpdateMemory();
+	}
+
+	BlurJob::BlurJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	{
+		blurImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		renderTarget = make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget->AddColorAttachment(blurImage);
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		effect.SetRenderPass(renderTarget->GetRenderPass());
+		effect.Init(renderer);
+
+		renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, blurImage.get(), renderTarget->GetSampler());
+	}
+
+	BlurJob::~BlurJob()
+	{
+	}
+
+	void BlurJob::Init(const std::vector<BaseJob*>& renderers)
+	{
+		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[2]);
+		effect.BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
+	}
+
+	void BlurJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		effect.SetSettings(jobInput.renderingSettings.blurRadius);
+
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(effect.GetPipeline(0));
+		effect.BindDescriptorSets(commandBuffer);
+
+		renderer->DrawScreenQuad(commandBuffer);
+
+		renderTarget->End(renderer->GetQueue());
 	}
 }

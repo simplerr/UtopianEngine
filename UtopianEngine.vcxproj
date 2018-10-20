@@ -116,6 +116,7 @@
     <ClCompile Include="source\utility\math\Sphere.cpp" />
     <ClCompile Include="source\utility\Utility.cpp" />
     <ClCompile Include="source\vulkan\BasicRenderTarget.cpp" />
+    <ClCompile Include="source\vulkan\BlurEffect.cpp" />
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="source\utility\Module.h" />
     <ClInclude Include="source\utility\Utility.h" />
     <ClInclude Include="source\vulkan\BasicRenderTarget.h" />
+    <ClInclude Include="source\vulkan\BlurEffect.h" />
     <ClInclude Include="source\vulkan\ColorEffect.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
@@ -263,6 +265,9 @@
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="data\shaders\blur\blur.frag" />
+    <None Include="data\shaders\blur\blur.vert" />
+    <None Include="data\shaders\blur\generate-spirv.bat" />
     <None Include="data\shaders\color\color.frag" />
     <None Include="data\shaders\color\color.vert" />
     <None Include="data\shaders\deferred\deferred.frag" />

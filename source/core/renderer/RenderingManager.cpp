@@ -34,6 +34,7 @@ namespace Utopian
 		AddJob(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new SSAOJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new BlurJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -121,6 +122,7 @@ namespace Utopian
 		ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
 		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 1000.0f);
 		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 700.0f);
+		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
 
 		ImGui::PopItemWidth();
 

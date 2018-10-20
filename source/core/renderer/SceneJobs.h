@@ -4,6 +4,7 @@
 #include "vulkan/GBufferEffect.h"
 #include "vulkan/DeferredEffect.h"
 #include "vulkan/SSAOEffect.h"
+#include "vulkan/BlurEffect.h"
 #include "utility/Common.h"
 
 namespace Utopian
@@ -40,6 +41,7 @@ namespace Utopian
 		float fogDistance;
 		float ssaoRadius = 400.0f;
 		float ssaoBias = 0.0f;
+		int blurRadius = 2;
 	};
 
 	struct JobInput
@@ -116,5 +118,21 @@ namespace Utopian
 		Vk::SSAOEffect effect;
 	private:
 		void CreateKernelSamples();
+	};
+
+	class BlurJob : public BaseJob
+	{
+	public:
+		BlurJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~BlurJob();
+
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+
+		SharedPtr<Vk::Image> blurImage;
+		SharedPtr<Vk::RenderTarget> renderTarget;
+
+		Vk::BlurEffect effect;
+	private:
 	};
 }

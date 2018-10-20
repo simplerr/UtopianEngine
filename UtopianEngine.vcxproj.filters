@@ -130,6 +130,12 @@
     <Filter Include="Source Files\vulkan\effects\ssao\shader">
       <UniqueIdentifier>{18a69f57-639b-4b84-bd29-d3529a79dd1b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\vulkan\effects\blur">
+      <UniqueIdentifier>{4314322c-60f8-45d9-b6df-583a8382a549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\vulkan\effects\blur\shader">
+      <UniqueIdentifier>{2d820ba9-008b-4274-8cc3-46eafa8a7c76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -383,6 +389,9 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\SSAOEffect.cpp">
       <Filter>Source Files\vulkan\effects\ssao</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\BlurEffect.cpp">
+      <Filter>Source Files\vulkan\effects\blur</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -671,6 +680,9 @@
     <ClInclude Include="source\vulkan\SSAOEffect.h">
       <Filter>Source Files\vulkan\effects\ssao</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\BlurEffect.h">
+      <Filter>Source Files\vulkan\effects\blur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -773,6 +785,15 @@
     </None>
     <None Include="data\shaders\ssao\ssao.vert">
       <Filter>Source Files\vulkan\effects\ssao\shader</Filter>
+    </None>
+    <None Include="data\shaders\blur\blur.frag">
+      <Filter>Source Files\vulkan\effects\blur\shader</Filter>
+    </None>
+    <None Include="data\shaders\blur\blur.vert">
+      <Filter>Source Files\vulkan\effects\blur\shader</Filter>
+    </None>
+    <None Include="data\shaders\blur\generate-spirv.bat">
+      <Filter>Source Files\vulkan\effects\blur\shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
