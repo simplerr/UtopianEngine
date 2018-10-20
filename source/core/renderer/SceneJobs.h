@@ -39,7 +39,7 @@ namespace Utopian
 		bool deferredPipeline;
 		float fogStart;
 		float fogDistance;
-		float ssaoRadius = 400.0f;
+		float ssaoRadius = 300.0f;
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
 	};

@@ -94,9 +94,11 @@ namespace Utopian
 	void DeferredJob::Init(const std::vector<BaseJob*>& jobs)
 	{
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[0]);
-		effect.BindGBuffer(gbufferJob->positionImage.get(),
+		BlurJob* blurJob = static_cast<BlurJob*>(jobs[2]);
+		effect.BindImages(gbufferJob->positionImage.get(),
 						   gbufferJob->normalImage.get(),
 						   gbufferJob->albedoImage.get(),
+						   blurJob->blurImage.get(),
 						   gbufferJob->renderTarget->GetSampler());
 	}
 
@@ -210,7 +212,7 @@ namespace Utopian
 
 	void BlurJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[2]);
+		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[1]);
 		effect.BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
 	}
 

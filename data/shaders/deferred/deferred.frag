@@ -7,6 +7,7 @@ layout (location = 0) out vec4 OutFragColor;
 layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
+layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
 
 layout (std140, set = 0, binding = 0) uniform UBO 
 {
@@ -249,7 +250,8 @@ void main()
 	// Blend the fog color and the lit color.
 	litColor = vec4(mix(litColor.rgb, fog_ubo.fogColor, fogLerp), 1.0f);
 
-	OutFragColor = litColor;
+	float ssao = texture(ssaoSampler, uv).r;
+	OutFragColor = litColor * ssao;
 	// float depth = texture(positionSampler, uv).w;// / 100000.0f;
 	// OutFragColor = vec4(depth, depth, depth, 1.0f);
 }

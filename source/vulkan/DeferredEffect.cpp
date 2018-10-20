@@ -23,7 +23,7 @@ namespace Utopian::Vk
 	{
 		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3);
+		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 4);
 		mDescriptorPool->Create();
 	}
 
@@ -41,6 +41,7 @@ namespace Utopian::Vk
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_3, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mPipelineInterface.CreateLayouts(device);
 	}
 
@@ -82,11 +83,12 @@ namespace Utopian::Vk
 		eye_ubo.UpdateMemory();
 	}
 
-	void DeferredEffect::BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler)
+	void DeferredEffect::BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler)
 	{
 		mDescriptorSet1->BindCombinedImage(0, positionImage, sampler);
 		mDescriptorSet1->BindCombinedImage(1, normalImage, sampler);
 		mDescriptorSet1->BindCombinedImage(2, albedoImage, sampler);
+		mDescriptorSet1->BindCombinedImage(3, ssaoImage, sampler);
 		mDescriptorSet1->UpdateDescriptorSets();
 	}
 

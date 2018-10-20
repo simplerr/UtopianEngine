@@ -56,7 +56,7 @@ namespace Utopian::Vk
 		DeferredEffect();
 
 		void SetEyePos(glm::vec3 eyePos);
-		void BindGBuffer(Image* positionImage, Image* normalImage, Image* albedoImage, Sampler* sampler);
+		void BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler);
 		void SetLightArray(const std::vector<Light*>& lights);
 		void SetFogData(const RenderingSettings& renderingSettings);
 		void BindDescriptorSets(CommandBuffer* commandBuffer);
