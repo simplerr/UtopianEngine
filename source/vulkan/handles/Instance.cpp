@@ -11,7 +11,7 @@ namespace Utopian::Vk
 		appInfo.pNext = nullptr;									// Must be NULL
 		appInfo.pApplicationName = appName.c_str();
 		appInfo.pEngineName = appName.c_str();
-		appInfo.apiVersion = VK_API_VERSION_1_0;				// All drivers support this, but use VK_API_VERSION in the future
+		appInfo.apiVersion = VK_MAKE_VERSION(1, 1, 0);
 
 		std::vector<const char*> enabledExtensions = { VK_KHR_SURFACE_EXTENSION_NAME };
 
