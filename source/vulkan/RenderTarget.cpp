@@ -83,7 +83,7 @@ namespace Utopian::Vk
 
 		// Begin command buffer recording & the render pass
 		mCommandBuffer->Begin();
-		mCommandBuffer->CmdBeginRenderPass(renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());

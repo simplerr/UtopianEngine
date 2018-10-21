@@ -36,6 +36,7 @@ namespace Utopian::Vk
 	{
 		srand(time(NULL));
 		mCamera = nullptr;
+		mApplicationCommandBuffers.resize(0);
 	}
 
 	Renderer::~Renderer()
@@ -196,7 +197,7 @@ namespace Utopian::Vk
 
 		// Begin command buffer recording & the render pass
 		mPrimaryCommandBuffer->Begin();
-		mPrimaryCommandBuffer->CmdBeginRenderPass(renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
+		mPrimaryCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
 		std::vector<VkCommandBuffer> commandBuffers;
 		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)

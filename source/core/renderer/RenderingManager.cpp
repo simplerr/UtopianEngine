@@ -27,6 +27,10 @@ namespace Utopian
 		mRenderer = renderer;
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
+		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
+		// The real solution is to cleanup and remove this.
+		mCommandBuffer->ToggleActive();
+
 		mWaterRenderer = new WaterRenderer(mRenderer, renderer->mModelLoader, renderer->mTextureLoader);
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);

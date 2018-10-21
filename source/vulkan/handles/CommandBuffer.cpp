@@ -115,9 +115,9 @@ namespace Utopian::Vk
 		vkFreeCommandBuffers(GetDevice(), commandPool->GetVkHandle(), 1, &mHandle);
 	}
 
-	void CommandBuffer::CmdBeginRenderPass(VkRenderPassBeginInfo renderPassBeginInfo, VkSubpassContents subpassContents)
+	void CommandBuffer::CmdBeginRenderPass(VkRenderPassBeginInfo* renderPassBeginInfo, VkSubpassContents subpassContents)
 	{
-		vkCmdBeginRenderPass(mHandle, &renderPassBeginInfo, subpassContents);
+		vkCmdBeginRenderPass(mHandle, renderPassBeginInfo, subpassContents);
 	}
 
 	void CommandBuffer::CmdEndRenderPass()
