@@ -52,9 +52,9 @@ namespace Utopian::Vk
 		fog_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, &eye_ubo.GetDescriptor());
-		mDescriptorSet0->BindUniformBuffer(BINDING_1, &light_ubo.GetDescriptor());
-		mDescriptorSet0->BindUniformBuffer(BINDING_2, &fog_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_0, eye_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_1, light_ubo.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_2, fog_ubo.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
 		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_1), mDescriptorPool);

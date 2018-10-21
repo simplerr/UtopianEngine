@@ -24,7 +24,7 @@ namespace Utopian::Vk
 
 		virtual int GetSize() = 0;
 
-		VkDescriptorBufferInfo GetDescriptor() { return mDescriptor; }
+		VkDescriptorBufferInfo* GetDescriptor() { return &mDescriptor; }
 		Buffer* GetBuffer() { return mBuffer; }
 
 	protected:

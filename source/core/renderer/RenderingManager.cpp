@@ -75,9 +75,9 @@ namespace Utopian
 		mCommonDescriptorSetLayout.Create(mRenderer->GetDevice());
 
 		mCommonDescriptorSet = new Vk::DescriptorSet(mRenderer->GetDevice(), &mCommonDescriptorSetLayout, mCommonDescriptorPool);
-		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(2, &fog_ubo.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(0, per_frame_vs.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
 
 		mEffects[Vk::EffectType::PHONG] = new Vk::PhongEffect();
@@ -101,9 +101,9 @@ namespace Utopian
 			per_frame_ps.lights.push_back(light->GetLightData());
 		}
 
-		mCommonDescriptorSet->BindUniformBuffer(0, &per_frame_vs.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(1, &per_frame_ps.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(2, &fog_ubo.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(0, per_frame_vs.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
+		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
 		mTerrain->Update();
 		mWaterRenderer->Update(mRenderer, mMainCamera);

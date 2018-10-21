@@ -44,7 +44,7 @@ namespace Utopian::Vk
 	void ImguiEffect::CreateDescriptorSets(Device* device)
 	{
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindCombinedImage(BINDING_0, &mTexture->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindCombinedImage(BINDING_0, mTexture->GetTextureDescriptorInfo());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
 

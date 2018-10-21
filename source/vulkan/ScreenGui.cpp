@@ -63,7 +63,7 @@ namespace Utopian::Vk
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
 		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
-		textureQuad->descriptorSet->BindCombinedImage(0, &texture->GetTextureDescriptorInfo());
+		textureQuad->descriptorSet->BindCombinedImage(0, texture->GetTextureDescriptorInfo());
 		textureQuad->descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);
 

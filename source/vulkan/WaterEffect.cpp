@@ -47,7 +47,7 @@ namespace Utopian::Vk
 		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, &per_frame_vs.GetDescriptor());
+		mDescriptorSet0->BindUniformBuffer(BINDING_0, per_frame_vs.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
 

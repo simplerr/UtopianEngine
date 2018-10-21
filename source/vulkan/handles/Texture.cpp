@@ -19,7 +19,7 @@ namespace Utopian::Vk
 	void Texture::CreateDescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
 		mDescriptorSet = new DescriptorSet(device, setLayout, descriptorPool);
-		mDescriptorSet->BindCombinedImage(0, &GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
+		mDescriptorSet->BindCombinedImage(0, GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
 		mDescriptorSet->UpdateDescriptorSets();
 	}
 
@@ -28,13 +28,13 @@ namespace Utopian::Vk
 		return mDescriptorSet;
 	}
 
-	VkDescriptorImageInfo Texture::GetTextureDescriptorInfo()
+	VkDescriptorImageInfo* Texture::GetTextureDescriptorInfo()
 	{
-		VkDescriptorImageInfo texDescriptor = {};
+		texDescriptor = {};
 		texDescriptor.sampler = sampler;
 		texDescriptor.imageView = imageView;
 		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
-		return texDescriptor;
+		return &texDescriptor;
 	}
 }
