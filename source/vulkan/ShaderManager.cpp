@@ -4,6 +4,9 @@
 #include "ShaderManager.h"
 #include "Device.h"
 #include "VulkanDebug.h"
+#include <glslang/Public/ShaderLang.h>
+#include <glslang/SPIRV/GlslangToSpv.h>
+#include <DirStackFileIncluder.h>
 
 namespace Utopian::Vk
 {
@@ -70,6 +73,15 @@ namespace Utopian::Vk
 		}
 
 		mLoadedShaders.push_back(shader);
+		
+		return shader;
+	}
+
+	Shader* ShaderManager::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
+	{
+		Shader* shader = nullptr;
+
+		glslang::InitializeProcess();
 		
 		return shader;
 	}

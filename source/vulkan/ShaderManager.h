@@ -37,6 +37,7 @@ namespace Utopian::Vk
 		ShaderManager(Device* device);
 		~ShaderManager();
 		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
+		Shader* CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
 		Shader* CreateComputeShader(std::string computeShaderFilename);
 	private:
 		VkShaderModule LoadShader(std::string filename, VkShaderStageFlagBits stage);

@@ -1,3 +1,6 @@
 [submodule "external/imgui"]
 	path = external/imgui
 	url = git@github.com:ocornut/imgui.git
+[submodule "external/glslang"]
+	path = external/glslang
+	url = git@github.com:KhronosGroup/glslang.git
