@@ -60,8 +60,7 @@ namespace Utopian::Vk
 
 	void SSAOEffect::CreatePipeline(Renderer* renderer)
 	{
-		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/ssao/ssao.vert.spv", "data/shaders/ssao/ssao.frag.spv");
-		Shader* shader2 = renderer->mShaderManager->CreateShaderOnline("data/shaders/ssao/ssao.vert.spv", "data/shaders/ssao/ssao.frag.spv");
+		Shader* shader = renderer->mShaderManager->CreateShaderOnline("data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag");
 
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
