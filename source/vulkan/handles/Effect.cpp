@@ -14,8 +14,8 @@ namespace Utopian::Vk
 		CreateDescriptorPool(renderer->GetDevice());
 		CreateVertexDescription(renderer->GetDevice());
 		CreatePipelineInterface(renderer->GetDevice());
-		CreateDescriptorSets(renderer->GetDevice());
 		CreatePipeline(renderer); // To access the shader manager.
+		CreateDescriptorSets(renderer->GetDevice());
 	}
 
 	void Effect::SetPipeline(uint32_t pipelineType)

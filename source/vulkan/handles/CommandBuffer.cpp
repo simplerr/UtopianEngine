@@ -167,6 +167,11 @@ namespace Utopian::Vk
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetVkHandle());
 	}
 
+	void CommandBuffer::CmdBindPipeline(VkPipeline pipeline)
+	{
+		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	}
+
 	void CommandBuffer::CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet)
 	{
 		vkCmdBindDescriptorSets(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet->descriptorSet, 0, NULL);
@@ -175,6 +180,11 @@ namespace Utopian::Vk
 	void CommandBuffer::CmdBindDescriptorSet(Effect* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
 	{
 		vkCmdBindDescriptorSets(mHandle, bindPoint, effect->GetPipelineLayout(), firstSet, descriptorSetCount, descriptorSets, 0, NULL);
+	}
+
+	void CommandBuffer::CmdBindDescriptorSet(VkPipelineLayout pipelineLayout, uint32_t descriptorSetCount, VkDescriptorSet * descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
+	{
+		vkCmdBindDescriptorSets(mHandle, bindPoint, pipelineLayout, firstSet, descriptorSetCount, descriptorSets, 0, NULL);
 	}
 
 	void CommandBuffer::CmdPushConstants(PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)

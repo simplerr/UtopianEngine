@@ -4,7 +4,6 @@
 #include "ShaderManager.h"
 #include "Device.h"
 #include "VulkanDebug.h"
-#include <glslang/Public/ShaderLang.h>
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <DirStackFileIncluder.h>
 #include <ResourceLimits.h>
@@ -126,11 +125,22 @@ namespace Utopian::Vk
 	{
 		shaderStages.push_back(shaderStageCreateInfo);
 	}
+
+	void Shader::AddCompiledShader(CompiledShader compiledShader)
+	{
+		compiledShaders.push_back(compiledShader);
+
+		VkPipelineShaderStageCreateInfo shaderCreateInfo = {};
+		shaderCreateInfo.module = compiledShader.shaderModule;
+		shaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderCreateInfo.pName = "main";
+		shaderCreateInfo.stage = compiledShader.shaderStage;
+		AddShaderStage(shaderCreateInfo);
+	}
 	
 	ShaderManager::ShaderManager(Device* device)
 		: mDevice(device)
 	{
-
 	}
 
 	ShaderManager::~ShaderManager()
@@ -196,7 +206,7 @@ namespace Utopian::Vk
 		return (pos == std::string::npos) ? "" : name.substr(name.rfind('.') + 1);
 	}
 
-	EShLanguage GetShaderStage(const std::string& stage)
+	EShLanguage GetGlslangStage(const std::string& stage)
 	{
 		if (stage == "vert") {
 			return EShLangVertex;
@@ -222,7 +232,18 @@ namespace Utopian::Vk
 		}
 	}
 
-	const std::vector<unsigned int> ShaderManager::CompileShader(std::string filename)
+	VkShaderStageFlagBits GetVulkanShaderStage(const std::string& suffix)
+	{
+		if (suffix == "vert")
+			return VK_SHADER_STAGE_VERTEX_BIT;
+		else if (suffix == "frag")
+			return VK_SHADER_STAGE_FRAGMENT_BIT;
+		else {
+			assert(0 && "Unknown shader stage");
+		}
+	}
+
+	CompiledShader ShaderManager::CompileShader(std::string filename)
 	{
 		glslang::InitializeProcess();
 
@@ -231,7 +252,7 @@ namespace Utopian::Vk
 		std::string glslString((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		const char* glslSource = glslString.c_str();
 
-		EShLanguage shaderType = GetShaderStage(GetSuffix(filename));
+		EShLanguage shaderType = GetGlslangStage(GetSuffix(filename));
 
 		glslang::TShader shader(shaderType);
 		shader.setStrings(&glslSource, 1);
@@ -290,48 +311,125 @@ namespace Utopian::Vk
 		glslang::SpvOptions spvOptions;
 		glslang::GlslangToSpv(*program.getIntermediate(shaderType), spirV, &logger, &spvOptions);
 
-		return spirV;
+		/* Shader reflection */
+		ShaderReflection reflection = ExtractShaderLayout(program);
+
+		CompiledShader compiledShader;
+		compiledShader.spirvBytecode = spirV;
+		compiledShader.reflection = reflection;
+		compiledShader.shaderStage = GetVulkanShaderStage(GetSuffix(filename));
+
+		return compiledShader;
+	}
+
+	/*
+		Currently only supports reflection of UBOs and combines image samplers
+	*/
+	ShaderReflection ShaderManager::ExtractShaderLayout(glslang::TProgram& program)
+	{
+		ShaderReflection reflection;
+
+		program.mapIO();
+		program.buildReflection();
+
+		/* Parse uniform blocks */
+		int numBlocks = program.getNumLiveUniformBlocks();
+		for (int i = 0; i < numBlocks; i++)
+		{
+			const glslang::TType* ttype = program.getUniformBlockTType(i);
+			const glslang::TQualifier& qualifier = ttype->getQualifier();
+			const char* name = program.getUniformBlockName(i);
+
+			if (!qualifier.hasBinding())
+			{
+				assert(0);
+			}
+
+			if (qualifier.storage == glslang::EvqBuffer)	// SSBO
+			{
+				// Todo
+			}
+			else if (qualifier.storage == glslang::EvqUniform)
+			{
+				UniformBlockDesc desc;
+				desc.size = program.getUniformBlockSize(i); // todo: / 4
+				desc.set = qualifier.layoutSet;
+				desc.binding = qualifier.layoutBinding;
+				desc.name = name;
+				reflection.uniformBlocks[desc.name] = desc;
+			}
+		}
+
+		/* Parse individual uniforms */
+		int numUniforms = program.getNumLiveUniformVariables();
+		for (int i = 0; i < numUniforms; i++)
+		{
+			const glslang::TType* ttype = program.getUniformTType(i);
+			const glslang::TQualifier& qualifier = ttype->getQualifier();
+			const char* name = program.getUniformName(i);
+
+			glslang::TBasicType basicType = ttype->getBasicType();
+			if (ttype->getBasicType() == glslang::EbtSampler)
+			{
+				if (!qualifier.hasBinding())
+				{
+					assert(0);
+				}
+
+				UniformVariableDesc desc;
+				desc.name = name;
+				desc.set = qualifier.layoutSet;
+				desc.binding = qualifier.layoutBinding;
+
+				const glslang::TSampler& sampler = ttype->getSampler();
+
+				/* Combined image samplers */
+				if (sampler.isCombined())
+				{
+					switch (sampler.dim)
+					{
+						case glslang::Esd1D:	desc.type = UVT_SAMPLER1D; break;
+						case glslang::Esd2D:	desc.type = UVT_SAMPLER2D; break;
+						case glslang::Esd3D:	desc.type = UVT_SAMPLER3D; break;
+					}
+
+					reflection.combinedSamplers[desc.name] = desc;
+				}
+				else
+				{
+					// Todo: Map uniform variables in UBOs to the correct block (not needed for pipeline layout creation)
+				}
+			}
+		}
+
+		return reflection;
 	}
 
 	Shader* ShaderManager::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
 	{
 		/* Vertex shader */
-		VkPipelineShaderStageCreateInfo vertexShaderCreateInfo = {};
-		vertexShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		vertexShaderCreateInfo.pName = "main";
-		vertexShaderCreateInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-
-		const std::vector<unsigned int> vertexSpirv = CompileShader(vertexShaderFilename);
+		CompiledShader compiledVertexShader = CompileShader(vertexShaderFilename);
 
 		VkShaderModuleCreateInfo moduleCreateInfo{};
 		moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		moduleCreateInfo.codeSize = vertexSpirv.size() * sizeof(unsigned int);
-		moduleCreateInfo.pCode = vertexSpirv.data();
+		moduleCreateInfo.codeSize = compiledVertexShader.spirvBytecode.size() * sizeof(unsigned int);
+		moduleCreateInfo.pCode = compiledVertexShader.spirvBytecode.data();
 
-		VkShaderModule vertexShaderModule;
-		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &vertexShaderModule));
-		vertexShaderCreateInfo.module = vertexShaderModule;
+		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader.shaderModule));
 
 		/* Pixel shader */
-		VkPipelineShaderStageCreateInfo pixelShaderCreateInfo = {};
-		pixelShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		pixelShaderCreateInfo.pName = "main";
-		pixelShaderCreateInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-		const std::vector<unsigned int> pixelSpirv = CompileShader(pixelShaderFilename);
+		CompiledShader compiledPixelShader = CompileShader(pixelShaderFilename);
 
 		moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		moduleCreateInfo.codeSize = pixelSpirv.size() * sizeof(unsigned int);
-		moduleCreateInfo.pCode = pixelSpirv.data();
+		moduleCreateInfo.codeSize = compiledPixelShader.spirvBytecode.size() * sizeof(unsigned int);
+		moduleCreateInfo.pCode = compiledPixelShader.spirvBytecode.data();
 
-		VkShaderModule pixelShaderModule;
-		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &pixelShaderModule));
-		pixelShaderCreateInfo.module = pixelShaderModule;
+		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader.shaderModule));
 
 		Shader* shader = new Shader();
 
-		shader->AddShaderStage(vertexShaderCreateInfo);
-		shader->AddShaderStage(pixelShaderCreateInfo);
+		shader->AddCompiledShader(compiledVertexShader);
+		shader->AddCompiledShader(compiledPixelShader);
 
 		// Todo: geometry shader
 
@@ -389,20 +487,5 @@ namespace Utopian::Vk
 			std::cerr << "Error: Could not open shader file \"" << filename.c_str() << "\"" << std::endl;
 			return nullptr;
 		}
-	}
-
-	void ShaderCreateInfo::AddVertexShaderSource(std::string source)
-	{
-		mVertexShaderSources.push_back(source);
-	}
-
-	void ShaderCreateInfo::AddPixelShaderSource(std::string source)
-	{
-		mPixelShaderSources.push_back(source);
-	}
-
-	void ShaderCreateInfo::AddGeometryShaderSource(std::string source)
-	{
-		mGeometryShaderSources.push_back(source);
 	}
 }

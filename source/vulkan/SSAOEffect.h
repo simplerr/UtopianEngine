@@ -20,7 +20,7 @@ namespace Utopian::Vk
 	class DescriptorSetLayout;
 	class DescriptorPool;
 	class DescriptorSet;
-	class Pipeline2;
+	class Pipeline3;
 	class ComputePipeline;
 	class PipelineLayout;
 	class VertexDescription;
@@ -98,6 +98,8 @@ namespace Utopian::Vk
 		virtual void CreatePipeline(Renderer* renderer);
 		virtual void UpdateMemory();
 
+		VkPipeline GetVkPipeline();
+
 		DescriptorSet* mDescriptorSet0;
 		DescriptorSet* mDescriptorSet1;
 		DescriptorSet* mDescriptorSet2;
@@ -107,5 +109,6 @@ namespace Utopian::Vk
 		UniformBufferPS ubo;
 		SettingsUniformBufferPS ubo_settings;
 	private:
+		Pipeline3* mPipeline;
 	};
 }

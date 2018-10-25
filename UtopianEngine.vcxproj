@@ -123,6 +123,7 @@
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
+    <ClCompile Include="source\vulkan\handles\Pipeline3.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="source\vulkan\ColorEffect.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
+    <ClInclude Include="source\vulkan\handles\Pipeline3.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
