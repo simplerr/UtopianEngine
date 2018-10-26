@@ -26,17 +26,28 @@ namespace Utopian::Vk
 	{
 		UniformVariableType type;
 		std::string name;
-		int set;
-		int binding;
+		uint32_t set;
+		uint32_t binding;
 	};
 
 	/* UBOs */
 	struct UniformBlockDesc
 	{
 		std::string name;
-		int set;
-		int binding;
-		int size;
+		uint32_t set;
+		uint32_t binding;
+		uint32_t size;
+	};
+
+	struct NameMapping
+	{
+		NameMapping() {}
+
+		NameMapping(uint32_t _set, uint32_t _binding) :
+			set(_set), binding(_binding) {}
+
+		uint32_t set;
+		uint32_t binding;
 	};
 
 	struct ShaderReflection
@@ -45,7 +56,7 @@ namespace Utopian::Vk
 		std::map<std::string, UniformVariableDesc> combinedSamplers;
 
 		// Maps text identifier to binding in a specific descriptor set
-		std::map<std::string, uint32_t> bindingMapping;
+		std::map<std::string, NameMapping> nameMappings;
 	};
 
 	struct CompiledShader
@@ -65,6 +76,7 @@ namespace Utopian::Vk
 		void AddCompiledShader(CompiledShader compiledShader);
 
 		int NameToBinding(std::string name);
+		int NameToSet(std::string name);
 
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 		std::vector<CompiledShader> compiledShaders;

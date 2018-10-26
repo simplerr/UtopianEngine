@@ -7,6 +7,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
+#include "vulkan/handles/DescriptorSet.h"
 #include "utility/Common.h"
 
 namespace Utopian::Vk
@@ -20,7 +21,13 @@ namespace Utopian::Vk
 		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
 		void Create();
 
-		void CreatePipelineInterface(const SharedPtr<Shader> shader, Device* device);
+		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
+		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
+		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo);
+		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
+
+		void BindDescriptorSets(CommandBuffer* commandBuffer);
+
 		PipelineInterface* GetPipelineInterface();
 
 		SharedPtr<Shader> GetShader();
@@ -30,9 +37,14 @@ namespace Utopian::Vk
 		VkPipelineDepthStencilStateCreateInfo mDepthStencilState = {};
 		std::vector<VkPipelineColorBlendAttachmentState> mBlendAttachmentState;
 	private:
+		void CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device);
+
 		RenderPass* mRenderPass = nullptr;
 		SharedPtr<Shader> mShader;
 		VertexDescription mVertexDescription;
 		PipelineInterface mPipelineInterface;
+		std::vector<DescriptorSet> mDescriptorSets;
+		std::vector<VkDescriptorSet> mVkDescriptorSets;
+		DescriptorPool mDescriptorPool;
 	};
 }

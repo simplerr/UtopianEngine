@@ -22,19 +22,19 @@ namespace Utopian::Vk
 		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		//imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 
-		VulkanDebug::ErrorCheck(vkCreateImage(GetDevice(), &imageCreateInfo, nullptr, &mImage));
+		VulkanDebug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mImage));
 
 		// Get memory requirements
 		VkMemoryRequirements memRequirments;
-		vkGetImageMemoryRequirements(GetDevice(), mImage, &memRequirments);
+		vkGetImageMemoryRequirements(GetVkDevice(), mImage, &memRequirments);
 
 		VkMemoryAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		allocateInfo.allocationSize = memRequirments.size;
 		device->GetMemoryType(memRequirments.memoryTypeBits, properties, &allocateInfo.memoryTypeIndex);
 
-		VulkanDebug::ErrorCheck(vkAllocateMemory(GetDevice(), &allocateInfo, nullptr, &mDeviceMemory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(GetDevice(), mImage, mDeviceMemory, 0));
+		VulkanDebug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &allocateInfo, nullptr, &mDeviceMemory));
+		VulkanDebug::ErrorCheck(vkBindImageMemory(GetVkDevice(), mImage, mDeviceMemory, 0));
 
 		// Connect the view with the image
 		VkImageViewCreateInfo viewCreateInfo = {};
@@ -49,15 +49,15 @@ namespace Utopian::Vk
 		viewCreateInfo.subresourceRange.layerCount = 1;
 		viewCreateInfo.image = mImage;	
 
-		VulkanDebug::ErrorCheck(vkCreateImageView(GetDevice(), &viewCreateInfo, nullptr, &mImageView));
+		VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
 	}
 
 	Image::~Image()
 	{
 		// Image handles all the cleanup itself
-		vkDestroyImageView(GetDevice(), mImageView, nullptr);
-		vkDestroyImage(GetDevice(), mImage, nullptr);
-		vkFreeMemory(GetDevice(), mDeviceMemory, nullptr);
+		vkDestroyImageView(GetVkDevice(), mImageView, nullptr);
+		vkDestroyImage(GetVkDevice(), mImage, nullptr);
+		vkFreeMemory(GetVkDevice(), mDeviceMemory, nullptr);
 	}
 
 	VkImageView Image::GetView()

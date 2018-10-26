@@ -23,7 +23,7 @@ namespace Utopian::Vk
 
 		// Get the queue from the device
 		// [NOTE] that queueFamilyIndex is hard coded to 0
-		vkGetDeviceQueue(GetDevice(), 0, 0, &mHandle);
+		vkGetDeviceQueue(GetVkDevice(), 0, 0, &mHandle);
 	}
 
 	void Queue::Create(VkSemaphore* waitSemaphore, VkSemaphore* signalSemaphore)
@@ -38,7 +38,7 @@ namespace Utopian::Vk
 
 		// Get the queue from the device
 		// [NOTE] that queueFamilyIndex is hard coded to 0
-		vkGetDeviceQueue(GetDevice(), 0, 0, &mHandle);
+		vkGetDeviceQueue(GetVkDevice(), 0, 0, &mHandle);
 	}
 
 	void Queue::Submit(CommandBuffer* commandBuffer, Fence* renderFence)

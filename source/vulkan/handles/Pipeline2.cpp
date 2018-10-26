@@ -108,7 +108,7 @@ namespace Utopian::Vk
 
 		// Create the colored pipeline	
 		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 	}
 
 	void Pipeline2::SetPipelineInterface(PipelineInterface* pipelineInterface)

@@ -16,8 +16,10 @@ namespace Utopian::Vk
 	public:
 		DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 		DescriptorSet(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool);
+		DescriptorSet();
 		~DescriptorSet();
 
+		void Create(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool);
 		void UpdateDescriptorSets();
 
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
@@ -39,7 +41,6 @@ namespace Utopian::Vk
 	private:
 		Device* mDevice;
 		DescriptorSetLayout* mSetLayout;
-		DescriptorPool* mDescriptorPool;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 		std::map<int, VkDescriptorImageInfo> mImageInfoMap;
 
@@ -58,8 +59,10 @@ namespace Utopian::Vk
 	{
 	public:
 		DescriptorPool(Device* device);
+		DescriptorPool();
 		void AddDescriptor(VkDescriptorType type, uint32_t count);
 		void Create();
+		void Create(Device* device);
 	private:
 		std::vector<VkDescriptorPoolSize> mDescriptorSizes;
 	};

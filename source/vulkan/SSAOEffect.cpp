@@ -12,6 +12,7 @@
 #include "vulkan/Vertex.h"
 #include "core/renderer/Light.h"
 #include "core/renderer/SceneJobs.h"
+#include <memory>
 
 namespace Utopian::Vk
 {
@@ -21,10 +22,7 @@ namespace Utopian::Vk
 
 	void SSAOEffect::CreateDescriptorPool(Device* device)
 	{
-		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3);
-		mDescriptorPool->Create();
+
 	}
 
 	void SSAOEffect::CreateVertexDescription(Device* device)
@@ -42,26 +40,18 @@ namespace Utopian::Vk
 		ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		ubo_settings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipeline, SET_0, mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer("UBO", ubo.GetDescriptor());
-		mDescriptorSet0->UpdateDescriptorSets();
-
-		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipeline, SET_1, mDescriptorPool);
-
-		mDescriptorSet2 = new Utopian::Vk::DescriptorSet(device, mPipeline, SET_2, mDescriptorPool);
-		mDescriptorSet2->BindUniformBuffer("UBO_settings", ubo_settings.GetDescriptor());
-		mDescriptorSet2->UpdateDescriptorSets();
+		mPipeline->BindUniformBuffer("UBO", ubo.GetDescriptor());
+		mPipeline->BindUniformBuffer("UBO_settings", ubo_settings.GetDescriptor());
 	}
 
 	void SSAOEffect::CreatePipeline(Renderer* renderer)
 	{
 		SharedPtr<Shader> shader = gShaderManager().CreateShaderOnline("data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag");
 
-		Pipeline3* pipeline = new Pipeline3(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
-		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		pipeline->mDepthStencilState.depthTestEnable = VK_TRUE;
-		pipeline->Create();
-		mPipeline = pipeline;
+		mPipeline = std::make_unique<Pipeline3>(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		mPipeline->mDepthStencilState.depthTestEnable = VK_TRUE;
+		mPipeline->Create();
 	}
 
 	void SSAOEffect::UpdateMemory()
@@ -83,17 +73,14 @@ namespace Utopian::Vk
 
 	void SSAOEffect::BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler)
 	{
-		mDescriptorSet1->BindCombinedImage("positionSampler", positionImage, sampler);
-		mDescriptorSet1->BindCombinedImage("normalSampler", normalViewImage, sampler);
-		mDescriptorSet1->BindCombinedImage("albedoSampler", albedoImage, sampler);
-		mDescriptorSet1->UpdateDescriptorSets();
+		mPipeline->BindCombinedImage("positionSampler", positionImage, sampler);
+		mPipeline->BindCombinedImage("normalSampler", normalViewImage, sampler);
+		mPipeline->BindCombinedImage("albedoSampler", albedoImage, sampler);
 	}
 
 	void SSAOEffect::BindDescriptorSets(CommandBuffer* commandBuffer)
 	{
-		VkDescriptorSet descriptorSets[3] = { mDescriptorSet0->descriptorSet, mDescriptorSet1->descriptorSet, mDescriptorSet2->descriptorSet };
-		// Todo: Make correct
-		commandBuffer->CmdBindDescriptorSet(mPipeline->GetPipelineInterface()->GetPipelineLayout(), 3, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+		mPipeline->BindDescriptorSets(commandBuffer);
 	}
 
 	void SSAOEffect::SetRenderPass(RenderPass* renderPass)

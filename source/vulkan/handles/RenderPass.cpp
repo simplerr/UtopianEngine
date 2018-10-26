@@ -69,7 +69,7 @@ namespace Utopian::Vk
 		renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());	
 		renderPassInfo.pDependencies = dependencies.data();							
 		
-		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetDevice(), &renderPassInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetVkDevice(), &renderPassInfo, nullptr, &mHandle));
 	}
 
 	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout)

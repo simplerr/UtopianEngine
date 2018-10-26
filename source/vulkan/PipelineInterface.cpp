@@ -83,4 +83,9 @@ namespace Utopian::Vk
 
 		mDescriptorSetLayouts[descriptorSet].AddBinding(binding, descriptorType, descriptorCount, stageFlags);
 	}
+
+	uint32_t PipelineInterface::GetNumDescriptorSets() const
+	{
+		return mDescriptorSetLayouts.size();
+	}
 }

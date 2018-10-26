@@ -1,11 +1,12 @@
 #pragma once
-#pragma once
 
 #include <glm/glm.hpp>
 #include "vulkan/Effect.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
+#include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/Pipeline3.h"
 #include "core/CommonBuffers.h"
 
 namespace Utopian
@@ -100,15 +101,12 @@ namespace Utopian::Vk
 
 		VkPipeline GetVkPipeline();
 
-		DescriptorSet* mDescriptorSet0;
-		DescriptorSet* mDescriptorSet1;
-		DescriptorSet* mDescriptorSet2;
 		Utopian::Vk::Texture* noiseTexture;
 		RenderPass* mRenderPass;
 
 		UniformBufferPS ubo;
 		SettingsUniformBufferPS ubo_settings;
 	private:
-		Pipeline3* mPipeline;
+		UniquePtr<Pipeline3> mPipeline;
 	};
 }

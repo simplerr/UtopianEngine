@@ -33,7 +33,7 @@ namespace Utopian::Vk
 			assert(mDestroyFunc);
 			assert(mHandle);
 
-			mDestroyFunc(mDevice, mHandle, nullptr);
+			mDestroyFunc(mDevice->GetVkDevice(), mHandle, nullptr);
 
 			mHandle = VK_NULL_HANDLE;
 
@@ -41,7 +41,7 @@ namespace Utopian::Vk
 
 		Handle(Device* device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
 		{
-			mDevice = device->GetVkDevice();
+			mDevice = device;
 			mDestroyFunc = destroyFunction;
 		}
 
@@ -65,7 +65,12 @@ namespace Utopian::Vk
 			return mHandle;
 		}
 
-		VkDevice GetDevice()
+		VkDevice GetVkDevice()
+		{
+			return mDevice->GetVkDevice();
+		}
+
+		Device* GetDevice()
 		{
 			return mDevice;
 		}
@@ -73,6 +78,6 @@ namespace Utopian::Vk
 		T mHandle = VK_NULL_HANDLE;
 	private:
 		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;
-		VkDevice mDevice = VK_NULL_HANDLE;
+		Device* mDevice = nullptr;
 	};
 }

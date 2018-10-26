@@ -25,7 +25,7 @@ namespace Utopian::Vk
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mHandle));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetVkDevice(), &allocateInfo, &mHandle));
 
 		// If requested, also start the new command buffer
 		if (begin)
@@ -37,7 +37,7 @@ namespace Utopian::Vk
 	CommandBuffer::~CommandBuffer()
 	{
 		// [NOTE] Maybe not needed, if the command pool frees all it's command buffers
-		vkFreeCommandBuffers(GetDevice(), mCommandPool->GetVkHandle(), 1, &mHandle);
+		vkFreeCommandBuffers(GetVkDevice(), mCommandPool->GetVkHandle(), 1, &mHandle);
 	}
 
 	void CommandBuffer::Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
@@ -48,7 +48,7 @@ namespace Utopian::Vk
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetDevice(), &allocateInfo, &mHandle));
+		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetVkDevice(), &allocateInfo, &mHandle));
 
 		// If requested, also start the new command buffer
 		if (begin)
@@ -112,7 +112,7 @@ namespace Utopian::Vk
 
 	void CommandBuffer::Cleanup(CommandPool* commandPool)
 	{
-		vkFreeCommandBuffers(GetDevice(), commandPool->GetVkHandle(), 1, &mHandle);
+		vkFreeCommandBuffers(GetVkDevice(), commandPool->GetVkHandle(), 1, &mHandle);
 	}
 
 	void CommandBuffer::CmdBeginRenderPass(VkRenderPassBeginInfo* renderPassBeginInfo, VkSubpassContents subpassContents)

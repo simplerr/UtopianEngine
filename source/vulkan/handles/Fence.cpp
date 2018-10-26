@@ -11,7 +11,7 @@ namespace Utopian::Vk
 		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceCreateInfo.flags = flags;
 
-		vkCreateFence(GetDevice(), &fenceCreateInfo, NULL, &mHandle);
+		vkCreateFence(GetVkDevice(), &fenceCreateInfo, NULL, &mHandle);
 	}
 
 	void Fence::Create(VkFenceCreateFlags flags)
@@ -20,7 +20,7 @@ namespace Utopian::Vk
 		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fenceCreateInfo.flags = flags;
 
-		vkCreateFence(GetDevice(), &fenceCreateInfo, NULL, &mHandle);
+		vkCreateFence(GetVkDevice(), &fenceCreateInfo, NULL, &mHandle);
 	}
 
 	void Fence::Wait()
@@ -29,7 +29,7 @@ namespace Utopian::Vk
 		VkResult fenceRes;
 		do
 		{
-			fenceRes = vkWaitForFences(GetDevice(), 1, &mHandle, VK_TRUE, 100000000);
+			fenceRes = vkWaitForFences(GetVkDevice(), 1, &mHandle, VK_TRUE, 100000000);
 		} while (fenceRes == VK_TIMEOUT);
 
 		VulkanDebug::ErrorCheck(fenceRes);
@@ -39,6 +39,6 @@ namespace Utopian::Vk
 
 	void Fence::Reset()
 	{
-		vkResetFences(GetDevice(), 1, &mHandle);
+		vkResetFences(GetVkDevice(), 1, &mHandle);
 	}
 }

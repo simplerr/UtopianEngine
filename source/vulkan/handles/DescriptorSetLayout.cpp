@@ -47,7 +47,7 @@ namespace Utopian::Vk
 		createInfo.bindingCount = mLayoutBindings.size();
 		createInfo.pBindings = mLayoutBindings.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(GetDevice(), &createInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 
 	void DescriptorSetLayout::Create(Device* device)

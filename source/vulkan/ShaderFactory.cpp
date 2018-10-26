@@ -147,10 +147,24 @@ namespace Utopian::Vk
 	{
 		for (auto& compiledShader : compiledShaders)
 		{
-			auto nameMapping = compiledShader.reflection.bindingMapping;
+			auto nameMapping = compiledShader.reflection.nameMappings;
 			if (nameMapping.find(name) != nameMapping.end())
 			{
-				return nameMapping[name];
+				return nameMapping[name].binding;
+			}
+		}
+
+		assert(0);
+	}
+
+	int Shader::NameToSet(std::string name)
+	{
+		for (auto& compiledShader : compiledShaders)
+		{
+			auto nameMapping = compiledShader.reflection.nameMappings;
+			if (nameMapping.find(name) != nameMapping.end())
+			{
+				return nameMapping[name].set;
 			}
 		}
 
@@ -376,7 +390,7 @@ namespace Utopian::Vk
 				desc.binding = qualifier.layoutBinding;
 				desc.name = name;
 				reflection.uniformBlocks[desc.name] = desc;
-				reflection.bindingMapping[desc.name] = desc.binding;
+				reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
 			}
 		}
 
@@ -414,7 +428,7 @@ namespace Utopian::Vk
 					}
 
 					reflection.combinedSamplers[desc.name] = desc;
-					reflection.bindingMapping[desc.name] = desc.binding;
+					reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
 				}
 				else
 				{

@@ -40,6 +40,6 @@ namespace Utopian::Vk
 			createInfo.pPushConstantRanges = &mPushConstantRange;
 		}
 
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetDevice(), &createInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

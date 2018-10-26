@@ -14,13 +14,12 @@ namespace Utopian::Vk
 	{
 		mDevice = device;
 		mSetLayout = setLayout;
-		mDescriptorPool = descriptorPool;
 
 		VkDescriptorSetLayout setLayoutVk = mSetLayout->GetVkHandle();
 
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = mDescriptorPool->GetVkHandle();
+		allocInfo.descriptorPool = descriptorPool->GetVkHandle();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &setLayoutVk;
 
@@ -29,25 +28,35 @@ namespace Utopian::Vk
 
 	DescriptorSet::DescriptorSet(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool)
 	{
+		Create(device, pipeline, set, descriptorPool);
+	}
+
+	DescriptorSet::DescriptorSet()
+	{
+		mDevice = nullptr;
+		mSetLayout = nullptr;
+	}
+
+	DescriptorSet::~DescriptorSet()
+	{
+		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
+	}
+
+	void DescriptorSet::Create(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool)
+	{
 		mDevice = device;
 		mSetLayout = pipeline->GetPipelineInterface()->GetDescriptorSetLayout(set);
-		mDescriptorPool = descriptorPool;
 		mShader = pipeline->GetShader();
 
 		VkDescriptorSetLayout setLayoutVk = mSetLayout->GetVkHandle();
 
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = mDescriptorPool->GetVkHandle();
+		allocInfo.descriptorPool = descriptorPool->GetVkHandle();
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &setLayoutVk;
 
 		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &descriptorSet));
-	}
-
-	DescriptorSet::~DescriptorSet()
-	{
-		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
 	}
 
 	void DescriptorSet::BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
@@ -184,6 +193,12 @@ namespace Utopian::Vk
 
 	}
 
+	DescriptorPool::DescriptorPool()
+		: Handle(nullptr, vkDestroyDescriptorPool)
+	{
+
+	}
+
 	void DescriptorPool::AddDescriptor(VkDescriptorType type, uint32_t count)
 	{
 		VkDescriptorPoolSize descriptorSize = {};
@@ -193,6 +208,11 @@ namespace Utopian::Vk
 	}
 
 	void DescriptorPool::Create()
+	{
+		Create(GetDevice());
+	}
+
+	void DescriptorPool::Create(Device* device)
 	{
 		uint32_t maxSets = 0;
 		for (auto descriptorSize : mDescriptorSizes) 
@@ -206,6 +226,6 @@ namespace Utopian::Vk
 		createInfo.poolSizeCount = mDescriptorSizes.size();
 		createInfo.pPoolSizes = mDescriptorSizes.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(GetDevice(), &createInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(device->GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

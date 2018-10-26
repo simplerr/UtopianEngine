@@ -10,6 +10,6 @@ namespace Utopian::Vk
 		VkSemaphoreCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetDevice(), &createInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

@@ -18,6 +18,6 @@ namespace Utopian::Vk
 		createInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
 		createInfo.layout = mPipelineInterface->GetPipelineLayout();
 		createInfo.stage = mShader->shaderStages[0];
-		vkCreateComputePipelines(GetDevice(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &mHandle);
+		vkCreateComputePipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &mHandle);
 	}
 }

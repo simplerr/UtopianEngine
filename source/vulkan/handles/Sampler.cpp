@@ -29,6 +29,6 @@ namespace Utopian::Vk
 
 	void Sampler::Create()
 	{
-		VulkanDebug::ErrorCheck(vkCreateSampler(GetDevice(), &samplerInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateSampler(GetVkDevice(), &samplerInfo, nullptr, &mHandle));
 	}
 }

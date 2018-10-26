@@ -25,6 +25,8 @@ namespace Utopian::Vk
 		VkDescriptorSetLayout GetVkDescriptorSetLayout(uint32_t descriptorSet);
 		VkPipelineLayout GetPipelineLayout();
 
+		uint32_t GetNumDescriptorSets() const;
+
 	private:
 		void AddDescriptor(VkDescriptorType descriptorType, uint32_t descriptorSet, uint32_t binding, uint32_t descriptorCount, VkShaderStageFlags stageFlags);
 

@@ -15,6 +15,7 @@ namespace Utopian::Vk
 		void AddDescriptorSetLayout(DescriptorSetLayout* descriptorSetLayout);
 		void AddPushConstantRange(VkShaderStageFlags shaderStage, uint32_t size, uint32_t offset = 0);
 		void Create();
+
 	private:
 		std::vector<VkDescriptorSetLayout> mDescriptorSetLayouts;
 		VkPushConstantRange mPushConstantRange = {};
