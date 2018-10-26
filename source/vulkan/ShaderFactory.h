@@ -43,6 +43,9 @@ namespace Utopian::Vk
 	{
 		std::map<std::string, UniformBlockDesc> uniformBlocks;
 		std::map<std::string, UniformVariableDesc> combinedSamplers;
+
+		// Maps text identifier to binding in a specific descriptor set
+		std::map<std::string, uint32_t> bindingMapping;
 	};
 
 	struct CompiledShader
@@ -60,6 +63,8 @@ namespace Utopian::Vk
 
 		void AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo);
 		void AddCompiledShader(CompiledShader compiledShader);
+
+		int NameToBinding(std::string name);
 
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 		std::vector<CompiledShader> compiledShaders;

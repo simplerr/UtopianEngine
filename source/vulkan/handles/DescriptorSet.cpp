@@ -1,5 +1,8 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/Device.h"
+#include "vulkan/ShaderFactory.h"
+#include "vulkan/PipelineInterface.h"
+#include "vulkan/handles/Pipeline3.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"
 #include "DescriptorSet.h"
@@ -12,6 +15,24 @@ namespace Utopian::Vk
 		mDevice = device;
 		mSetLayout = setLayout;
 		mDescriptorPool = descriptorPool;
+
+		VkDescriptorSetLayout setLayoutVk = mSetLayout->GetVkHandle();
+
+		VkDescriptorSetAllocateInfo allocInfo = {};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = mDescriptorPool->GetVkHandle();
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &setLayoutVk;
+
+		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &descriptorSet));
+	}
+
+	DescriptorSet::DescriptorSet(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool)
+	{
+		mDevice = device;
+		mSetLayout = pipeline->GetPipelineInterface()->GetDescriptorSetLayout(set);
+		mDescriptorPool = descriptorPool;
+		mShader = pipeline->GetShader();
 
 		VkDescriptorSetLayout setLayoutVk = mSetLayout->GetVkHandle();
 
@@ -125,6 +146,26 @@ namespace Utopian::Vk
 		writeDescriptorSet.dstBinding = binding;				
 
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
+	}
+
+	void DescriptorSet::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
+	{
+		BindUniformBuffer(mShader->NameToBinding(name), bufferInfo);
+	}
+
+	void DescriptorSet::BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
+	{
+		BindStorageBuffer(mShader->NameToBinding(name), bufferInfo);
+	}
+
+	void DescriptorSet::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo)
+	{
+		BindCombinedImage(mShader->NameToBinding(name), imageInfo);
+	}
+
+	void DescriptorSet::BindCombinedImage(std::string name, Image* image, Sampler* sampler)
+	{
+		BindCombinedImage(mShader->NameToBinding(name), image, sampler);
 	}
 
 	void DescriptorSet::UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)

@@ -4,6 +4,7 @@
 #include <map>
 #include "vulkan/handles/Handle.h"
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
@@ -14,6 +15,7 @@ namespace Utopian::Vk
 	{
 	public:
 		DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
+		DescriptorSet(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool);
 		~DescriptorSet();
 
 		void UpdateDescriptorSets();
@@ -22,6 +24,12 @@ namespace Utopian::Vk
 		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
 		void BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler);
+
+		// Bind a uniform buffer by name, note that name must match the GLSL representation
+		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
+		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
+		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo);
+		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
 
 		// NOTE: TODO: Legacy
 		void UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);	// Will be used for changing the texture
@@ -34,6 +42,12 @@ namespace Utopian::Vk
 		DescriptorPool* mDescriptorPool;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 		std::map<int, VkDescriptorImageInfo> mImageInfoMap;
+
+		// The shader that this descriptor set was created from.
+		// This is used in order to get access to the shader reflection
+		// to perform the string -> binding lookup.
+		// Note: Maybe don't belong here.
+		SharedPtr<Shader> mShader;
 	};
 
 	/*

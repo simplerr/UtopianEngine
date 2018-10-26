@@ -42,15 +42,14 @@ namespace Utopian::Vk
 		ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		ubo_settings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipeline->GetPipelineInterface()->GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, ubo.GetDescriptor());
-		//mDescriptorSet0->BindUniformBuffer("UBO", ubo.GetDescriptor());
+		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipeline, SET_0, mDescriptorPool);
+		mDescriptorSet0->BindUniformBuffer("UBO", ubo.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
-		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipeline->GetPipelineInterface()->GetDescriptorSetLayout(SET_1), mDescriptorPool);
+		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipeline, SET_1, mDescriptorPool);
 
-		mDescriptorSet2 = new Utopian::Vk::DescriptorSet(device, mPipeline->GetPipelineInterface()->GetDescriptorSetLayout(SET_2), mDescriptorPool);
-		mDescriptorSet2->BindUniformBuffer(BINDING_0, ubo_settings.GetDescriptor());
+		mDescriptorSet2 = new Utopian::Vk::DescriptorSet(device, mPipeline, SET_2, mDescriptorPool);
+		mDescriptorSet2->BindUniformBuffer("UBO_settings", ubo_settings.GetDescriptor());
 		mDescriptorSet2->UpdateDescriptorSets();
 	}
 
@@ -84,9 +83,9 @@ namespace Utopian::Vk
 
 	void SSAOEffect::BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler)
 	{
-		mDescriptorSet1->BindCombinedImage(0, positionImage, sampler);
-		mDescriptorSet1->BindCombinedImage(1, normalViewImage, sampler);
-		mDescriptorSet1->BindCombinedImage(2, albedoImage, sampler);
+		mDescriptorSet1->BindCombinedImage("positionSampler", positionImage, sampler);
+		mDescriptorSet1->BindCombinedImage("normalSampler", normalViewImage, sampler);
+		mDescriptorSet1->BindCombinedImage("albedoSampler", albedoImage, sampler);
 		mDescriptorSet1->UpdateDescriptorSets();
 	}
 

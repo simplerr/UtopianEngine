@@ -23,6 +23,8 @@ namespace Utopian::Vk
 		void CreatePipelineInterface(const SharedPtr<Shader> shader, Device* device);
 		PipelineInterface* GetPipelineInterface();
 
+		SharedPtr<Shader> GetShader();
+
 		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo mInputAssemblyState = {};
 		VkPipelineDepthStencilStateCreateInfo mDepthStencilState = {};

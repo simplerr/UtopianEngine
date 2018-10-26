@@ -30,6 +30,7 @@ namespace Utopian::Vk
 	class Image;
 	class Instance;
 	class Pipeline2; // Todo: rename
+	class Pipeline3; // Todo: rename
 	class Pipeline;
 	class PipelineLayout;
 	class Queue;

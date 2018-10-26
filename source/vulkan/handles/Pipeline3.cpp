@@ -138,4 +138,9 @@ namespace Utopian::Vk
 	{
 		return &mPipelineInterface;
 	}
+
+	SharedPtr<Shader> Pipeline3::GetShader()
+	{
+		return mShader;
+	}
 }
