@@ -25,6 +25,7 @@
 #include "core/components/CPlayerControl.h"
 #include "core/ObjectManager.h"
 #include "core/World.h"
+#include "vulkan/ShaderFactory.h"
 #include "core/renderer/RenderingManager.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
@@ -71,6 +72,7 @@ namespace Utopian
 		ObjectManager::Start();
 		World::Start();
 		Input::Start();
+		Vk::ShaderFactory::Start(mRenderer->GetDevice());
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 

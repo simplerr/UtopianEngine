@@ -47,7 +47,7 @@ namespace Utopian::Vk
 	class RenderTarget;
 	class ScreenGui;
 	class ShaderBuffer;
-	class ShaderManager;
+	class ShaderFactory;
 	class StaticModel;
 	class TextOverlay;
 	class TextureLoader;

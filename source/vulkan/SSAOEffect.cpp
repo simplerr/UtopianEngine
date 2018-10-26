@@ -4,7 +4,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/Texture.h"
-#include "vulkan/ShaderManager.h"
+#include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Pipeline3.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/ComputePipeline.h"
@@ -44,6 +44,7 @@ namespace Utopian::Vk
 
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipeline->GetPipelineInterface()->GetDescriptorSetLayout(SET_0), mDescriptorPool);
 		mDescriptorSet0->BindUniformBuffer(BINDING_0, ubo.GetDescriptor());
+		//mDescriptorSet0->BindUniformBuffer("UBO", ubo.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
 		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, mPipeline->GetPipelineInterface()->GetDescriptorSetLayout(SET_1), mDescriptorPool);
@@ -55,9 +56,9 @@ namespace Utopian::Vk
 
 	void SSAOEffect::CreatePipeline(Renderer* renderer)
 	{
-		Shader* shader = renderer->mShaderManager->CreateShaderOnline("data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag");
+		SharedPtr<Shader> shader = gShaderManager().CreateShaderOnline("data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag");
 
-		Pipeline3*  pipeline = new Pipeline3(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline3* pipeline = new Pipeline3(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->mDepthStencilState.depthTestEnable = VK_TRUE;
 		pipeline->Create();

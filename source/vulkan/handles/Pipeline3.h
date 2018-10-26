@@ -7,19 +7,20 @@
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
 	class Pipeline3 : public Handle<VkPipeline>
 	{
 	public:
-		Pipeline3(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, Shader* shader);
+		Pipeline3(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, SharedPtr<Shader> shader);
 
 		// This must explictly be called
 		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
 		void Create();
 
-		void CreatePipelineInterface(Shader* shader, Device* device);
+		void CreatePipelineInterface(const SharedPtr<Shader> shader, Device* device);
 		PipelineInterface* GetPipelineInterface();
 
 		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
@@ -28,7 +29,7 @@ namespace Utopian::Vk
 		std::vector<VkPipelineColorBlendAttachmentState> mBlendAttachmentState;
 	private:
 		RenderPass* mRenderPass = nullptr;
-		Shader* mShader = nullptr;
+		SharedPtr<Shader> mShader;
 		VertexDescription mVertexDescription;
 		PipelineInterface mPipelineInterface;
 	};

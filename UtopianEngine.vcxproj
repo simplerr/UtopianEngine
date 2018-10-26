@@ -157,7 +157,7 @@
     <ClCompile Include="source\vulkan\handles\Semaphore.cpp" />
     <ClCompile Include="source\vulkan\ModelLoader.cpp" />
     <ClCompile Include="source\vulkan\PipelineInterface.cpp" />
-    <ClCompile Include="source\vulkan\ShaderManager.cpp" />
+    <ClCompile Include="source\vulkan\ShaderFactory.cpp" />
     <ClCompile Include="source\vulkan\StaticModel.cpp" />
     <ClCompile Include="source\vulkan\TextOverlay.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
@@ -252,7 +252,7 @@
     <ClInclude Include="source\vulkan\handles\Semaphore.h" />
     <ClInclude Include="source\vulkan\ModelLoader.h" />
     <ClInclude Include="source\vulkan\PipelineInterface.h" />
-    <ClInclude Include="source\vulkan\ShaderManager.h" />
+    <ClInclude Include="source\vulkan\ShaderFactory.h" />
     <ClInclude Include="source\vulkan\StaticModel.h" />
     <ClInclude Include="source\vulkan\TextOverlay.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />

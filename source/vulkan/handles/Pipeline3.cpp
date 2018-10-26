@@ -1,4 +1,4 @@
-#include "vulkan/ShaderManager.h"
+#include "vulkan/ShaderFactory.h"
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/VertexDescription.h"
@@ -9,7 +9,7 @@
 
 namespace Utopian::Vk
 {
-	Pipeline3::Pipeline3(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, Shader* shader)
+	Pipeline3::Pipeline3(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, SharedPtr<Shader> shader)
 		: Handle(device, vkDestroyPipeline)
 	{
 		mRenderPass = renderPass;
@@ -114,7 +114,7 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 	}
 
-	void Pipeline3::CreatePipelineInterface(Shader* shader, Device* device)
+	void Pipeline3::CreatePipelineInterface(const SharedPtr<Shader> shader, Device* device)
 	{
 		for (int i = 0; i < shader->compiledShaders.size(); i++)
 		{

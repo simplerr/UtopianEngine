@@ -1,7 +1,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include "ShaderManager.h"
+#include "ShaderFactory.h"
 #include "Device.h"
 #include "VulkanDebug.h"
 #include <glslang/SPIRV/GlslangToSpv.h>
@@ -116,6 +116,11 @@ namespace Utopian::Vk
 		}
 	};
 
+	ShaderFactory& gShaderManager()
+	{
+		return ShaderFactory::Instance();
+	}
+
 	Shader::Shader()
 	{
 
@@ -138,12 +143,12 @@ namespace Utopian::Vk
 		AddShaderStage(shaderCreateInfo);
 	}
 	
-	ShaderManager::ShaderManager(Device* device)
+	ShaderFactory::ShaderFactory(Device* device)
 		: mDevice(device)
 	{
 	}
 
-	ShaderManager::~ShaderManager()
+	ShaderFactory::~ShaderFactory()
 	{
 		// TODO: Fix this
 		for (int i = 0; i < mLoadedShaders.size(); i++)
@@ -157,7 +162,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	Shader* ShaderManager::CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
+	Shader* ShaderFactory::CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
 	{
 		// Vertex shader
 		VkPipelineShaderStageCreateInfo vertexShaderCreateInfo = {};
@@ -243,7 +248,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	CompiledShader ShaderManager::CompileShader(std::string filename)
+	CompiledShader ShaderFactory::CompileShader(std::string filename)
 	{
 		glslang::InitializeProcess();
 
@@ -325,7 +330,7 @@ namespace Utopian::Vk
 	/*
 		Currently only supports reflection of UBOs and combines image samplers
 	*/
-	ShaderReflection ShaderManager::ExtractShaderLayout(glslang::TProgram& program)
+	ShaderReflection ShaderFactory::ExtractShaderLayout(glslang::TProgram& program)
 	{
 		ShaderReflection reflection;
 
@@ -405,7 +410,7 @@ namespace Utopian::Vk
 		return reflection;
 	}
 
-	Shader* ShaderManager::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
+	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
 	{
 		/* Vertex shader */
 		CompiledShader compiledVertexShader = CompileShader(vertexShaderFilename);
@@ -426,19 +431,19 @@ namespace Utopian::Vk
 
 		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader.shaderModule));
 
-		Shader* shader = new Shader();
+		SharedPtr<Shader> shader = std::make_shared<Shader>();
 
 		shader->AddCompiledShader(compiledVertexShader);
 		shader->AddCompiledShader(compiledPixelShader);
 
 		// Todo: geometry shader
 
-		mLoadedShaders.push_back(shader);
+		//mLoadedShaders.push_back(shader);
 
 		return shader;
 	}
 
-	Shader* ShaderManager::CreateComputeShader(std::string computeShaderFilename)
+	Shader* ShaderFactory::CreateComputeShader(std::string computeShaderFilename)
 	{
 		// Compute shader
 		VkPipelineShaderStageCreateInfo computeShaderCreateInfo = {};
@@ -456,7 +461,7 @@ namespace Utopian::Vk
 		return shader;
 	}
 
-	VkShaderModule ShaderManager::LoadShader(std::string filename, VkShaderStageFlagBits stage)
+	VkShaderModule ShaderFactory::LoadShader(std::string filename, VkShaderStageFlagBits stage)
 	{
 		std::ifstream is(filename.c_str(), std::ios::binary | std::ios::in | std::ios::ate);
 

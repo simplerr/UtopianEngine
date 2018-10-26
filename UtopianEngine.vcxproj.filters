@@ -192,9 +192,6 @@
     <ClCompile Include="source\vulkan\ModelLoader.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\ShaderManager.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\StaticModel.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -396,6 +393,9 @@
     <ClCompile Include="source\vulkan\handles\Pipeline3.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\ShaderFactory.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -447,9 +447,6 @@
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\ModelLoader.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\ShaderManager.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\StaticModel.h">
@@ -688,6 +685,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Pipeline3.h">
       <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\ShaderFactory.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

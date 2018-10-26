@@ -8,7 +8,7 @@
 #include "Device.h"
 #include "VulkanDebug.h"
 #include "Window.h"
-#include "ShaderManager.h"
+#include "ShaderFactory.h"
 #include "handles/CommandPool.h"
 #include "handles/Semaphore.h"
 #include "handles/Image.h"

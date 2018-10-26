@@ -4,7 +4,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/Texture.h"
-#include "vulkan/ShaderManager.h"
+#include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/ComputePipeline.h"

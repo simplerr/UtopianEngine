@@ -4,7 +4,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/Vertex.h"
-#include "vulkan/ShaderManager.h"
+#include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/PipelineInterface.h"
 

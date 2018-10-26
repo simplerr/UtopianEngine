@@ -1,6 +1,6 @@
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"
-#include "vulkan/ShaderManager.h"
+#include "vulkan/ShaderFactory.h"
 
 namespace Utopian::Vk
 {

@@ -10,7 +10,7 @@
 #include "LightData.h"
 #include "TextureLoader.h"
 #include "Device.h"
-#include "ShaderManager.h"
+#include "ShaderFactory.h"
 #include "TextOverlay.h"
 #include "ModelLoader.h"
 #include "handles/DescriptorSet.h"
@@ -60,7 +60,7 @@ namespace Utopian::Vk
 	{
 		VulkanBase::Prepare();
 
-		mShaderManager = new ShaderManager(mDevice);
+		mShaderManager = new ShaderFactory(mDevice);
 
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
 

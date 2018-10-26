@@ -143,7 +143,7 @@ namespace Utopian::Vk
 
 		// TODO: NOTE: HACK
 	public:
-		ShaderManager*					mShaderManager = nullptr;
+		ShaderFactory*					mShaderManager = nullptr;
 		TextureLoader*					mTextureLoader = nullptr;
 		ModelLoader*					mModelLoader = nullptr;
 		UIOverlay*						mUiOverlay = nullptr;
