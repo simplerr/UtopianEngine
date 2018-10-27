@@ -98,7 +98,7 @@ namespace Utopian::Vk
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineCreateInfo.layout = mPipelineInterface.GetPipelineLayout();
 		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
-		pipelineCreateInfo.pVertexInputState = &mVertexDescription.GetInputState();		// From base - &vertices.inputState;
+		pipelineCreateInfo.pVertexInputState = &mShader->GetVertexDescription()->GetInputState();
 		pipelineCreateInfo.pInputAssemblyState = &mInputAssemblyState;
 		pipelineCreateInfo.pRasterizationState = &mRasterizationState;
 		pipelineCreateInfo.pColorBlendState = &colorBlendState;
@@ -119,16 +119,16 @@ namespace Utopian::Vk
 		for (int i = 0; i < shader->compiledShaders.size(); i++)
 		{
 			// Uniform blocks
-			for (auto& iter : shader->compiledShaders[i].reflection.uniformBlocks)
+			for (auto& iter : shader->compiledShaders[i]->reflection.uniformBlocks)
 			{
-				mPipelineInterface.AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i].shaderStage);			// Eye ubo
+				mPipelineInterface.AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);			// Eye ubo
 				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 			}
 
 			// Combined image samplers
-			for (auto& iter : shader->compiledShaders[i].reflection.combinedSamplers)
+			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
 			{
-				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i].shaderStage);	// Eye ubo
+				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);	// Eye ubo
 				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1);
 			}
 		}

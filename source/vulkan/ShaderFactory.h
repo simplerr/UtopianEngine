@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include "vulkan/VulkanInclude.h"
+#include "vulkan/VertexDescription.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
 #include <glslang/Public/ShaderLang.h>
@@ -54,6 +55,7 @@ namespace Utopian::Vk
 	{
 		std::map<std::string, UniformBlockDesc> uniformBlocks;
 		std::map<std::string, UniformVariableDesc> combinedSamplers;
+		SharedPtr<VertexDescription> vertexDescription;
 
 		// Maps text identifier to binding in a specific descriptor set
 		std::map<std::string, NameMapping> nameMappings;
@@ -73,13 +75,15 @@ namespace Utopian::Vk
 		Shader();
 
 		void AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo);
-		void AddCompiledShader(CompiledShader compiledShader);
+		void AddCompiledShader(SharedPtr<CompiledShader> compiledShader);
 
 		int NameToBinding(std::string name);
 		int NameToSet(std::string name);
 
+		const VertexDescription* GetVertexDescription() const;
+
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-		std::vector<CompiledShader> compiledShaders;
+		std::vector<SharedPtr<CompiledShader>> compiledShaders;
 	};
 
 	class ShaderFactory : public Module<ShaderFactory>
@@ -90,9 +94,10 @@ namespace Utopian::Vk
 		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
 		Shader* CreateComputeShader(std::string computeShaderFilename);
 		SharedPtr<Shader> CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
-		CompiledShader CompileShader(std::string filename);
+		SharedPtr<CompiledShader> CompileShader(std::string filename);
 	private:
-		ShaderReflection ExtractShaderLayout(glslang::TProgram& program);
+		ShaderReflection ExtractShaderLayout(glslang::TProgram& program, EShLanguage shaderType);
+		void ReflectVertexInput(glslang::TProgram& program, ShaderReflection* reflection);
 		VkShaderModule LoadShader(std::string filename, VkShaderStageFlagBits stage);
 	private:
 		std::vector<Shader*> mLoadedShaders;
