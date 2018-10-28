@@ -35,49 +35,17 @@ namespace Utopian::Vk
 			NORMAL = 0
 		};
 
-		class UniformBufferPS : public Utopian::Vk::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory() {
-				// Map uniform buffer and update it
-				uint8_t *mapped;
-				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-				memcpy(mapped, &data, sizeof(data));
-				mBuffer->UnmapMemory();
-			}
+UNIFORM_BLOCK_BEGIN(SSAOCameraBlock)
+	UNIFORM_PARAM(glm::mat4, projection)
+	UNIFORM_PARAM(glm::mat4, view)
+	UNIFORM_PARAM(glm::vec4, eyePos)
+	UNIFORM_PARAM(glm::vec4, samples[64]) // Todo: Move to it's own block so the rest can be reused
+UNIFORM_BLOCK_END()
 
-			virtual int GetSize() {
-				return sizeof(data);
-			}
-
-			struct {
-				glm::mat4 projection;
-				glm::mat4 view;
-				glm::vec4 eyePos;
-				glm::vec4 samples[64];
-			} data;
-		};
-
-		class SettingsUniformBufferPS : public Utopian::Vk::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory() {
-				// Map uniform buffer and update it
-				uint8_t *mapped;
-				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-				memcpy(mapped, &data, sizeof(data));
-				mBuffer->UnmapMemory();
-			}
-
-			virtual int GetSize() {
-				return sizeof(data);
-			}
-
-			struct {
-				float radius;
-				float bias;
-			} data;
-		};
+UNIFORM_BLOCK_BEGIN(SSAOSettingsBlock)
+	UNIFORM_PARAM(float, radius)
+	UNIFORM_PARAM(float, bias)
+UNIFORM_BLOCK_END()
 
 		SSAOEffect();
 
@@ -104,8 +72,8 @@ namespace Utopian::Vk
 		Utopian::Vk::Texture* noiseTexture;
 		RenderPass* mRenderPass;
 
-		UniformBufferPS ubo;
-		SettingsUniformBufferPS ubo_settings;
+		SSAOCameraBlock cameraBlock;
+		SSAOSettingsBlock settingsBlock;
 	private:
 		UniquePtr<Pipeline3> mPipeline;
 	};

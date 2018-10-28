@@ -37,11 +37,7 @@ namespace Utopian::Vk
 
 	void SSAOEffect::CreateDescriptorSets(Device* device)
 	{
-		ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		ubo_settings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mPipeline->BindUniformBuffer("UBO", ubo.GetDescriptor());
-		mPipeline->BindUniformBuffer("UBO_settings", ubo_settings.GetDescriptor());
 	}
 
 	void SSAOEffect::CreatePipeline(Renderer* renderer)
@@ -52,12 +48,18 @@ namespace Utopian::Vk
 		mPipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		mPipeline->mDepthStencilState.depthTestEnable = VK_TRUE;
 		mPipeline->Create();
+
+		cameraBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		settingsBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+		mPipeline->BindUniformBuffer("UBO", cameraBlock.GetDescriptor());
+		mPipeline->BindUniformBuffer("UBO_settings", settingsBlock.GetDescriptor());
 	}
 
 	void SSAOEffect::UpdateMemory()
 	{
-		ubo.UpdateMemory();
-		ubo_settings.UpdateMemory();
+		cameraBlock.UpdateMemory();
+		settingsBlock.UpdateMemory();
 	}
 
 	VkPipeline SSAOEffect::GetVkPipeline()
@@ -67,8 +69,8 @@ namespace Utopian::Vk
 
 	void SSAOEffect::SetEyePos(glm::vec3 eyePos)
 	{
-		ubo.data.eyePos = glm::vec4(eyePos, 1.0f);
-		ubo.UpdateMemory();
+		cameraBlock.data.eyePos = glm::vec4(eyePos, 1.0f);
+		cameraBlock.UpdateMemory();
 	}
 
 	void SSAOEffect::BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler)
@@ -90,15 +92,15 @@ namespace Utopian::Vk
 	
 	void SSAOEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)
 	{
-		ubo.data.view = view;
-		ubo.data.projection = projection;
+		cameraBlock.data.view = view;
+		cameraBlock.data.projection = projection;
 		UpdateMemory();
 	}
 
 	void SSAOEffect::SetSettings(float radius, float bias)
 	{
-		ubo_settings.data.radius = radius;
-		ubo_settings.data.bias = bias;
+		settingsBlock.data.radius = radius;
+		settingsBlock.data.bias = bias;
 		UpdateMemory();
 	}
 }

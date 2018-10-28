@@ -185,7 +185,7 @@ namespace Utopian
 			sample = glm::normalize(sample);
 			sample *= randomFloats(generator);
 
-			effect.ubo.data.samples[i] = vec4(sample, 0);
+			effect.cameraBlock.data.samples[i] = vec4(sample, 0);
 		}
 
 		effect.UpdateMemory();
