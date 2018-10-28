@@ -1,27 +1,26 @@
 #pragma once
 
-#include <array>
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
+#include <vector>
 
 namespace Utopian::Vk
 {
 	class Pipeline : public Handle<VkPipeline>
 	{
 	public:
-		Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader);
+		Pipeline(Device* device, RenderPass* renderPass);
 
-		// This must explicitly be called
-		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
-		void Create();
+		void Create(const VertexDescription& vertexDescription, Shader* shader, PipelineInterface* pipelineInterface);
 
-		VkPipelineRasterizationStateCreateInfo mRasterizationState = {};
-		VkPipelineInputAssemblyStateCreateInfo mInputAssemblyState = {};
-		VkPipelineColorBlendAttachmentState mBlendAttachmentState = {};
+		void InitDefaultValues(RenderPass* renderPass);
+
+		VkPipelineRasterizationStateCreateInfo rasterizationState = {};
+		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
+		VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
+		std::vector<VkPipelineColorBlendAttachmentState> blendAttachmentState;
 	private:
-		PipelineLayout* mPipelineLayout = nullptr;
-		RenderPass* mRenderPass = nullptr;
-		VertexDescription* mVertexDescription = nullptr;
-		Shader* mShader = nullptr;
+		RenderPass* mRenderPass;	
 	};
 }

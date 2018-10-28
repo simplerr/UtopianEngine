@@ -161,7 +161,7 @@ namespace Utopian
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect.GetVkPipeline());
+		commandBuffer->CmdBindPipeline(effect.GetPipeline());
 		effect.BindDescriptorSets(commandBuffer);
 
 		renderer->DrawScreenQuad(commandBuffer);

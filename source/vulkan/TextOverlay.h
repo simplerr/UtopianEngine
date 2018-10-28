@@ -59,7 +59,7 @@ namespace Utopian::Vk
 		Renderer* mRenderer;
 		CommandBuffer* mCommandBuffer;
 		RenderPass* mRenderPass;
-		Pipeline* mPipeline;
+		PipelineLegacy* mPipeline;
 		Texture* mTexture;
 		PipelineLayout* mPipelineLayout;
 		VertexDescription* mVertexDescription;

@@ -1,11 +1,12 @@
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/Device.h"
-#include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/PipelineLegacy.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/handles/Pipeline.h"
 #include "vulkan/Effect.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
@@ -152,7 +153,7 @@ namespace Utopian::Vk
 		vkCmdSetScissor(mHandle, 0, 1, &rect);
 	}
 
-	void CommandBuffer::CmdBindPipeline(Pipeline* pipeline)
+	void CommandBuffer::CmdBindPipeline(PipelineLegacy* pipeline)
 	{
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
 	}
@@ -170,6 +171,11 @@ namespace Utopian::Vk
 	void CommandBuffer::CmdBindPipeline(VkPipeline pipeline)
 	{
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	}
+
+	void CommandBuffer::CmdBindPipeline(Pipeline* pipeline)
+	{
+		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
 	}
 
 	void CommandBuffer::CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet)

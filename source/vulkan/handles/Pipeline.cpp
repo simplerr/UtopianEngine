@@ -1,49 +1,27 @@
-#include "vulkan/ShaderFactory.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/RenderPass.h"
 #include "vulkan/VulkanDebug.h"
-#include "vulkan/VertexDescription.h"
-#include "Pipeline.h"
-#include "RenderPass.h"
-#include "PipelineLayout.h"
+#include "vulkan/PipelineInterface.h"
+#include "vulkan/ShaderFactory.h"
 
 namespace Utopian::Vk
 {
-	Pipeline::Pipeline(Device* device, PipelineLayout* pipelineLayout, RenderPass* renderPass, VertexDescription* vertexDescription, Shader* shader)
+	Pipeline::Pipeline(Device* device, RenderPass* renderPass)
 		: Handle(device, vkDestroyPipeline)
 	{
-		mPipelineLayout = pipelineLayout;
 		mRenderPass = renderPass;
-		mVertexDescription = vertexDescription;
-		mShader = shader;
-
-		// Rasterization state default values
-		mRasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-		mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		mRasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
-		mRasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mRasterizationState.depthClampEnable = VK_FALSE;
-		mRasterizationState.rasterizerDiscardEnable = VK_FALSE;
-		mRasterizationState.depthBiasEnable = VK_FALSE;
-		mRasterizationState.lineWidth = 1.0f;
-		
-		// Input assembly state
-		mInputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-		mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-		
-		// Color blend state
-		mBlendAttachmentState.colorWriteMask = 0xf;
-		mBlendAttachmentState.blendEnable = VK_FALSE;			// Blending disabled
+		InitDefaultValues(mRenderPass);
 	}
 
-	void Pipeline::Create()
+	void Pipeline::Create(const VertexDescription& vertexDescription, Shader* shader, PipelineInterface* pipelineInterface)
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
 		// ...
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 		colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		colorBlendState.attachmentCount = 1;
-		colorBlendState.pAttachments = &mBlendAttachmentState;
+		colorBlendState.attachmentCount = blendAttachmentState.size();
+		colorBlendState.pAttachments = blendAttachmentState.data();
 
 		// Viewport state
 		VkPipelineViewportStateCreateInfo viewportState = {};
@@ -60,8 +38,48 @@ namespace Utopian::Vk
 		dynamicState.pDynamicStates = dynamicStateEnables.data();
 		dynamicState.dynamicStateCount = dynamicStateEnables.size();
 
+		// Multi sampling state
+		VkPipelineMultisampleStateCreateInfo multisampleState = {};
+		multisampleState.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		multisampleState.pSampleMask = NULL;
+		multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;		// Multi sampling not used
+
+		VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
+		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineCreateInfo.layout = pipelineInterface->GetPipelineLayout();
+		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
+		pipelineCreateInfo.pVertexInputState = &shader->GetVertexDescription()->GetInputState();
+		pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
+		pipelineCreateInfo.pRasterizationState = &rasterizationState;
+		pipelineCreateInfo.pColorBlendState = &colorBlendState;
+		pipelineCreateInfo.pViewportState = &viewportState;
+		pipelineCreateInfo.pDynamicState = &dynamicState;
+		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
+		pipelineCreateInfo.pMultisampleState = &multisampleState;
+		pipelineCreateInfo.stageCount = shader->shaderStages.size();
+		pipelineCreateInfo.pStages = shader->shaderStages.data();
+
+		// Create the colored pipeline	
+		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+	}
+
+	void Pipeline::InitDefaultValues(RenderPass* renderPass)
+	{
+		// Rasterization state default values
+		rasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+		rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterizationState.depthClampEnable = VK_FALSE;
+		rasterizationState.rasterizerDiscardEnable = VK_FALSE;
+		rasterizationState.depthBiasEnable = VK_FALSE;
+		rasterizationState.lineWidth = 1.0f;
+
+		// Input assembly state
+		inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
 		// Depth and stencil state
-		VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
 		depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		depthStencilState.depthTestEnable = VK_TRUE;
 		depthStencilState.depthWriteEnable = VK_TRUE;
@@ -70,39 +88,15 @@ namespace Utopian::Vk
 		depthStencilState.back.failOp = VK_STENCIL_OP_KEEP;
 		depthStencilState.back.passOp = VK_STENCIL_OP_KEEP;
 		depthStencilState.back.compareOp = VK_COMPARE_OP_ALWAYS;
-		depthStencilState.stencilTestEnable = VK_FALSE;			// Stencil disabled
+		depthStencilState.stencilTestEnable = VK_FALSE;
 		depthStencilState.front = depthStencilState.back;
 
-		// Multi sampling state
-		VkPipelineMultisampleStateCreateInfo multisampleState = {};
-		multisampleState.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-		multisampleState.pSampleMask = NULL;
-		multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;		// Multi sampling not used
-
-		// Load shader
-		//std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
-		//shaderStages[0] = LoadShader("data/shaders/phong/phong.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-		//shaderStages[1] = LoadShader("data/shaders/phong/phong.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
-
-		// Assign all the states to the pipeline
-		// The states will be static and can't be changed after the pipeline is created
-		VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
-		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		pipelineCreateInfo.layout = mPipelineLayout->GetVkHandle();
-		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
-		pipelineCreateInfo.pVertexInputState = &mVertexDescription->GetInputState();		// From base - &vertices.inputState;
-		pipelineCreateInfo.pInputAssemblyState = &mInputAssemblyState;
-		pipelineCreateInfo.pRasterizationState = &mRasterizationState;
-		pipelineCreateInfo.pColorBlendState = &colorBlendState;
-		pipelineCreateInfo.pViewportState = &viewportState;
-		pipelineCreateInfo.pDynamicState = &dynamicState;
-		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
-		pipelineCreateInfo.pMultisampleState = &multisampleState;
-		pipelineCreateInfo.stageCount = mShader->shaderStages.size();
-		pipelineCreateInfo.pStages = mShader->shaderStages.data();
-
-		// Create the colored pipeline	
-		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+		// Color blend state
+		for (uint32_t i = 0; i < renderPass->colorReferences.size(); i++) {
+			VkPipelineColorBlendAttachmentState colorBlend = {};
+			colorBlend.colorWriteMask = 0xf;
+			colorBlend.blendEnable = VK_FALSE;
+			blendAttachmentState.push_back(colorBlend);
+		}
 	}
 }

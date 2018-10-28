@@ -38,7 +38,6 @@ namespace Utopian::Vk
 	private:
 		Utopian::Vk::FrameBuffers* mFrameBuffer;
 		Utopian::Vk::RenderPass* mRenderPass;
-		Utopian::Vk::Pipeline* mPipeline;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 		Utopian::Vk::DescriptorSet* mTextureDescriptorSet;
 		Utopian::Vk::Sampler* mSampler;

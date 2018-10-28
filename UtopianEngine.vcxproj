@@ -124,6 +124,7 @@
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline3.cpp" />
+    <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
@@ -150,7 +151,7 @@
     <ClCompile Include="source\vulkan\handles\Handle.cpp" />
     <ClCompile Include="source\vulkan\handles\Image.cpp" />
     <ClCompile Include="source\vulkan\handles\Instance.cpp" />
-    <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
+    <ClCompile Include="source\vulkan\handles\PipelineLegacy.cpp" />
     <ClCompile Include="source\vulkan\handles\PipelineLayout.cpp" />
     <ClCompile Include="source\vulkan\handles\Queue.cpp" />
     <ClCompile Include="source\vulkan\handles\RenderPass.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline3.h" />
+    <ClInclude Include="source\vulkan\handles\Pipeline.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
@@ -245,7 +247,7 @@
     <ClInclude Include="source\vulkan\handles\Handle.h" />
     <ClInclude Include="source\vulkan\handles\Image.h" />
     <ClInclude Include="source\vulkan\handles\Instance.h" />
-    <ClInclude Include="source\vulkan\handles\Pipeline.h" />
+    <ClInclude Include="source\vulkan\handles\PipelineLegacy.h" />
     <ClInclude Include="source\vulkan\handles\PipelineLayout.h" />
     <ClInclude Include="source\vulkan\handles\Queue.h" />
     <ClInclude Include="source\vulkan\handles\RenderPass.h" />

@@ -6,7 +6,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/CommandBuffer.h"
-#include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/PipelineLegacy.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"

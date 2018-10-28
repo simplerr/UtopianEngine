@@ -66,7 +66,7 @@ UNIFORM_BLOCK_END()
 		virtual void CreatePipeline(Renderer* renderer);
 		virtual void UpdateMemory();
 
-		VkPipeline GetVkPipeline();
+		Pipeline* GetPipeline();
 
 		Utopian::Vk::Texture* noiseTexture;
 		RenderPass* mRenderPass;
@@ -74,6 +74,6 @@ UNIFORM_BLOCK_END()
 		SSAOCameraBlock cameraBlock;
 		SSAOSettingsBlock settingsBlock;
 	private:
-		Pipeline3 mPipeline;
+		SharedPtr<Pipeline3> mPipeline;
 	};
 }

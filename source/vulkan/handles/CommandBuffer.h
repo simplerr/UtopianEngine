@@ -23,10 +23,11 @@ namespace Utopian::Vk
 		void CmdSetViewPort(float width, float height);
 		void CmdSetScissor(uint32_t width, uint32_t height);
 		void CmdSetScissor(const VkRect2D& rect);
-		void CmdBindPipeline(Pipeline* pipeline);
+		void CmdBindPipeline(PipelineLegacy* pipeline);
 		void CmdBindPipeline(Pipeline2* pipeline);
 		void CmdBindPipeline(ComputePipeline* pipeline);
 		void CmdBindPipeline(VkPipeline pipeline);
+		void CmdBindPipeline(Pipeline* pipeline);
 		void CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);
 		void CmdBindDescriptorSet(Effect* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdBindDescriptorSet(VkPipelineLayout pipelineLayout, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);

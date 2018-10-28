@@ -44,16 +44,16 @@ namespace Utopian::Vk
 	{
 		SharedPtr<Shader> shader = gShaderManager().CreateShaderOnline("data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag");
 
-		mPipeline.Init(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
-		mPipeline.mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		mPipeline.mDepthStencilState.depthTestEnable = VK_TRUE;
-		mPipeline.Create();
+		mPipeline = std::make_shared<Pipeline3>(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		mPipeline->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		mPipeline->GetPipeline()->depthStencilState.depthTestEnable = VK_TRUE;
+		mPipeline->Create();
 
 		cameraBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		settingsBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		mPipeline.BindUniformBuffer("UBO", cameraBlock.GetDescriptor());
-		mPipeline.BindUniformBuffer("UBO_settings", settingsBlock.GetDescriptor());
+		mPipeline->BindUniformBuffer("UBO", cameraBlock.GetDescriptor());
+		mPipeline->BindUniformBuffer("UBO_settings", settingsBlock.GetDescriptor());
 	}
 
 	void SSAOEffect::UpdateMemory()
@@ -62,21 +62,21 @@ namespace Utopian::Vk
 		settingsBlock.UpdateMemory();
 	}
 
-	VkPipeline SSAOEffect::GetVkPipeline()
+	Pipeline* SSAOEffect::GetPipeline()
 	{
-		return mPipeline.GetVkHandle();
+		return mPipeline->GetPipeline();
 	}
 
 	void SSAOEffect::BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler)
 	{
-		mPipeline.BindCombinedImage("positionSampler", positionImage, sampler);
-		mPipeline.BindCombinedImage("normalSampler", normalViewImage, sampler);
-		mPipeline.BindCombinedImage("albedoSampler", albedoImage, sampler);
+		mPipeline->BindCombinedImage("positionSampler", positionImage, sampler);
+		mPipeline->BindCombinedImage("normalSampler", normalViewImage, sampler);
+		mPipeline->BindCombinedImage("albedoSampler", albedoImage, sampler);
 	}
 
 	void SSAOEffect::BindDescriptorSets(CommandBuffer* commandBuffer)
 	{
-		mPipeline.BindDescriptorSets(commandBuffer);
+		mPipeline->BindDescriptorSets(commandBuffer);
 	}
 
 	void SSAOEffect::SetRenderPass(RenderPass* renderPass)

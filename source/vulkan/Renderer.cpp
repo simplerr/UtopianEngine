@@ -16,7 +16,7 @@
 #include "handles/DescriptorSet.h"
 #include "handles/CommandBuffer.h"
 #include "handles/CommandPool.h"
-#include "handles/Pipeline.h"
+#include "handles/PipelineLegacy.h"
 #include "handles/Fence.h"
 #include "handles/PipelineLayout.h"
 #include "handles/RenderPass.h"

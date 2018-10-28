@@ -37,7 +37,7 @@ namespace Utopian::Vk
 	class Buffer;
 	class Renderer;
 	class Camera;
-	class Pipeline;
+	class PipelineLegacy;
 	class ComputePipeline;
 	class PipelineLayout;
 	class DescriptorSet;

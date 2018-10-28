@@ -174,9 +174,6 @@
     <ClCompile Include="source\vulkan\handles\Instance.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\Pipeline.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\PipelineLayout.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
@@ -390,11 +387,17 @@
     <ClCompile Include="source\vulkan\BlurEffect.cpp">
       <Filter>Source Files\vulkan\effects\blur</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\Pipeline3.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\ShaderFactory.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\handles\PipelineLegacy.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Pipeline.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Pipeline3.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -429,9 +432,6 @@
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Instance.h">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\handles\Pipeline.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\PipelineLayout.h">
@@ -683,11 +683,17 @@
     <ClInclude Include="source\vulkan\BlurEffect.h">
       <Filter>Source Files\vulkan\effects\blur</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\handles\Pipeline3.h">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\ShaderFactory.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\PipelineLegacy.h">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\Pipeline.h">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\Pipeline3.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

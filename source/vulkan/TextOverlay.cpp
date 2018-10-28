@@ -11,7 +11,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/RenderPass.h"
-#include "vulkan/handles/Pipeline.h"
+#include "vulkan/handles/PipelineLegacy.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/VertexDescription.h"
@@ -57,7 +57,7 @@ namespace Utopian::Vk
 
 		// Create the pipeline
 		Utopian::Vk::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
-		mPipeline = new Utopian::Vk::Pipeline(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
+		mPipeline = new Utopian::Vk::PipelineLegacy(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 		
         // Why triangle strip?
 		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;

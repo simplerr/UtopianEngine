@@ -30,14 +30,15 @@ namespace Utopian::Vk
 	class Image;
 	class Instance;
 	class Pipeline2; // Todo: rename
-	class Pipeline3; // Todo: rename
-	class Pipeline;
+	class Pipeline3;
+	class PipelineLegacy;
 	class PipelineLayout;
 	class Queue;
 	class RenderPass;
 	class Sampler;
 	class Semaphore;
 	class Texture;
+	class Pipeline;
 
 	// Other
 	class Device;
