@@ -36,10 +36,10 @@ namespace Utopian::Vk
 	 * \note The naming of the descriptors in C++ and GLSL should be the same for readability.
 	 *
 	*/
-	class Effect
+	class EffectLegacy
 	{
 	public:
-		Effect();
+		EffectLegacy();
 
 		void Init(Renderer* renderer);
 

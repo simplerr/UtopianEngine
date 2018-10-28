@@ -2,7 +2,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/PipelineInterface.h"
-#include "vulkan/handles/Pipeline3.h"
+#include "vulkan/handles/Effect.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"
 #include "DescriptorSet.h"
@@ -26,7 +26,7 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &descriptorSet));
 	}
 
-	DescriptorSet::DescriptorSet(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool)
+	DescriptorSet::DescriptorSet(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool)
 	{
 		Create(device, pipeline, set, descriptorPool);
 	}
@@ -42,7 +42,7 @@ namespace Utopian::Vk
 		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
 	}
 
-	void DescriptorSet::Create(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool)
+	void DescriptorSet::Create(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool)
 	{
 		mDevice = device;
 		mSetLayout = pipeline->GetPipelineInterface()->GetDescriptorSetLayout(set);

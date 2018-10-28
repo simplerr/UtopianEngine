@@ -1,12 +1,12 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/handles/Pipeline3.h"
+#include "vulkan/handles/Effect.h"
 #include "core/CommonBuffers.h"
 
 namespace Utopian
@@ -21,19 +21,12 @@ namespace Utopian::Vk
 	class DescriptorSetLayout;
 	class DescriptorPool;
 	class DescriptorSet;
-	class Pipeline3;
+	class Effect;
 	class ComputePipeline;
 	class PipelineLayout;
 	class VertexDescription;
 	class Shader;
 	class Texture;
-
-	class SSAOEffect : public Effect
-	{
-	public:
-		enum Variation {
-			NORMAL = 0
-		};
 
 UNIFORM_BLOCK_BEGIN(SSAOCameraBlock)
 	UNIFORM_PARAM(glm::mat4, projection)
@@ -47,26 +40,22 @@ UNIFORM_BLOCK_BEGIN(SSAOSettingsBlock)
 	UNIFORM_PARAM(float, bias)
 UNIFORM_BLOCK_END()
 
-		SSAOEffect();
+	class SSAOEffect : public Effect
+	{
+	public:
+		enum Variation {
+			NORMAL = 0
+		};
+
+		SSAOEffect(Device* device, RenderPass* renderPass);
 
 		void SetCameraData(glm::mat4 view, glm::mat4 projection, glm::vec4 eyePos);
 		void SetSettings(float radius, float bias);
 
 		// Note: the normal image contains normals in view space
 		void BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler);
-		void BindDescriptorSets(CommandBuffer* commandBuffer);
 
-		void SetRenderPass(RenderPass* renderPass);
-
-		// Override the base class interfaces
-		virtual void CreateDescriptorPool(Device* device);
-		virtual void CreateVertexDescription(Device* device);
-		virtual void CreatePipelineInterface(Device* device);
-		virtual void CreateDescriptorSets(Device* device);
-		virtual void CreatePipeline(Renderer* renderer);
 		virtual void UpdateMemory();
-
-		Pipeline* GetPipeline();
 
 		Utopian::Vk::Texture* noiseTexture;
 		RenderPass* mRenderPass;
@@ -74,6 +63,5 @@ UNIFORM_BLOCK_END()
 		SSAOCameraBlock cameraBlock;
 		SSAOSettingsBlock settingsBlock;
 	private:
-		SharedPtr<Pipeline3> mPipeline;
 	};
 }

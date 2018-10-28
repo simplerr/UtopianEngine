@@ -1,50 +1,108 @@
-#include "vulkan/Effect.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/ShaderFactory.h"
 #include "vulkan/Device.h"
+#include "vulkan/VulkanDebug.h"
+#include "vulkan/VertexDescription.h"
+#include "vulkan/PipelineInterface.h"
+#include "vulkan/handles/CommandBuffer.h"
+#include "Effect.h"
+#include "RenderPass.h"
+#include "PipelineLayout.h"
 
 namespace Utopian::Vk
 {
-	Effect::Effect()
+	Effect::Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader)
 	{
-		mActivePipeline = 0;
+		Init(device, renderPass, vertexShader, fragmentShader);
 	}
 
-	void Effect::Init(Renderer* renderer)
+	void Effect::Init(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader)
 	{
-		CreateDescriptorPool(renderer->GetDevice());
-		CreateVertexDescription(renderer->GetDevice());
-		CreatePipelineInterface(renderer->GetDevice());
-		CreatePipeline(renderer); // To access the shader manager.
-		CreateDescriptorSets(renderer->GetDevice());
+		mPipeline = std::make_shared<Pipeline>(device, renderPass);
+		mRenderPass = renderPass;
+		mShader = gShaderManager().CreateShaderOnline(vertexShader, fragmentShader);
+
+		CreatePipelineInterface(mShader, device);
 	}
 
-	void Effect::SetPipeline(uint32_t pipelineType)
+	void Effect::CreatePipeline()
 	{
-		mActivePipeline = pipelineType;
+		mPipeline->Create(mShader.get(), &mPipelineInterface);
 	}
 
-	VkPipelineLayout Effect::GetPipelineLayout()
+	void Effect::CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device)
 	{
-		return mPipelineInterface.GetPipelineLayout();
+		for (int i = 0; i < shader->compiledShaders.size(); i++)
+		{
+			// Uniform blocks
+			for (auto& iter : shader->compiledShaders[i]->reflection.uniformBlocks)
+			{
+				mPipelineInterface.AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);			// Eye ubo
+				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
+			}
+
+			// Combined image samplers
+			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
+			{
+				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);	// Eye ubo
+				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1);
+			}
+		}
+
+		mPipelineInterface.CreateLayouts(device);
+		mDescriptorPool.Create(device);
+
+		for (uint32_t set = 0; set < mPipelineInterface.GetNumDescriptorSets(); set++)
+		{
+			mDescriptorSets.push_back(DescriptorSet(device, this, set, &mDescriptorPool));
+			mVkDescriptorSets.push_back(mDescriptorSets[set].descriptorSet);	// Todo
+		}
 	}
 
-	DescriptorSetLayout* Effect::GetDescriptorSetLayout(uint32_t descriptorSet)
+	void Effect::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
 	{
-		return mPipelineInterface.GetDescriptorSetLayout(descriptorSet);
+		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+		descriptorSet.BindUniformBuffer(name, bufferInfo);
+		descriptorSet.UpdateDescriptorSets();
 	}
 
-	Pipeline2* Effect::GetPipeline(uint32_t variation)
+	void Effect::BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
 	{
-		return mPipelines[variation];
+		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+		descriptorSet.BindStorageBuffer(name, bufferInfo);
+		descriptorSet.UpdateDescriptorSets();
 	}
 
-	DescriptorPool* Effect::GetDescriptorPool()
+	void Effect::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo)
 	{
-		return mDescriptorPool;
+		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+		descriptorSet.BindCombinedImage(name, imageInfo);
+		descriptorSet.UpdateDescriptorSets();
 	}
 
-	VertexDescription Effect::GetVertexDescription()
+	void Effect::BindCombinedImage(std::string name, Image* image, Sampler* sampler)
 	{
-		return mVertexDescription;
+		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+		descriptorSet.BindCombinedImage(name, image, sampler);
+		descriptorSet.UpdateDescriptorSets();
+	}
+
+	void Effect::BindDescriptorSets(CommandBuffer* commandBuffer)
+	{
+		commandBuffer->CmdBindDescriptorSet(GetPipelineInterface()->GetPipelineLayout(), mVkDescriptorSets.size(), mVkDescriptorSets.data(), VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+	}
+
+	PipelineInterface* Effect::GetPipelineInterface()
+	{
+		return &mPipelineInterface;
+	}
+
+	SharedPtr<Shader> Effect::GetShader()
+	{
+		return mShader;
+	}
+	
+	Pipeline* Effect::GetPipeline()
+	{
+		return mPipeline.get();
 	}
 }

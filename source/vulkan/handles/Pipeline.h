@@ -12,7 +12,7 @@ namespace Utopian::Vk
 	public:
 		Pipeline(Device* device, RenderPass* renderPass);
 
-		void Create(const VertexDescription& vertexDescription, Shader* shader, PipelineInterface* pipelineInterface);
+		void Create(Shader* shader, PipelineInterface* pipelineInterface);
 
 		void InitDefaultValues(RenderPass* renderPass);
 

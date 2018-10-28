@@ -15,11 +15,11 @@ namespace Utopian::Vk
 	{
 	public:
 		DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
-		DescriptorSet(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool);
+		DescriptorSet(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool);
 		DescriptorSet();
 		~DescriptorSet();
 
-		void Create(Device* device, Pipeline3* pipeline, uint32_t set, DescriptorPool* descriptorPool);
+		void Create(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool);
 		void UpdateDescriptorSets();
 
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);

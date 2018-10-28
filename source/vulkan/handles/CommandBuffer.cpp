@@ -7,7 +7,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Pipeline.h"
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "RenderPass.h"
@@ -183,7 +183,7 @@ namespace Utopian::Vk
 		vkCmdBindDescriptorSets(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSet->descriptorSet, 0, NULL);
 	}
 
-	void CommandBuffer::CmdBindDescriptorSet(Effect* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
+	void CommandBuffer::CmdBindDescriptorSet(EffectLegacy* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
 	{
 		vkCmdBindDescriptorSets(mHandle, bindPoint, effect->GetPipelineLayout(), firstSet, descriptorSetCount, descriptorSets, 0, NULL);
 	}
@@ -198,7 +198,7 @@ namespace Utopian::Vk
 		vkCmdPushConstants(mHandle, pipelineLayout->GetVkHandle(), shaderStageFlags, 0, size, data);
 	}
 
-	void CommandBuffer::CmdPushConstants(Effect* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
+	void CommandBuffer::CmdPushConstants(EffectLegacy* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
 	{
 		vkCmdPushConstants(mHandle, effect->GetPipelineLayout(), shaderStageFlags, 0, size, data);
 	}

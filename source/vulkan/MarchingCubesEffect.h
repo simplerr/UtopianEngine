@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
@@ -24,7 +24,7 @@ namespace Utopian::Vk
 	*
 	* Simply transforms each vertex and sets a pixel color
 	**/
-	class MarchingCubesEffect : public Effect
+	class MarchingCubesEffect : public EffectLegacy
 	{
 	public:
 		class UniformBuffer : public Utopian::Vk::ShaderBuffer

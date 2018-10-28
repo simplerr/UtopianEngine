@@ -131,8 +131,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect.SetRenderPass(renderTarget->GetRenderPass());
-		effect.Init(renderer);
+		effect = make_unique<Vk::SSAOEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		//renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, ssaoImage.get(), renderTarget->GetSampler());
 	}
@@ -144,7 +143,7 @@ namespace Utopian
 	void SSAOJob::Init(const std::vector<BaseJob*>& renderers)
 	{
 		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[0]);
-		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
+		effect->BindGBuffer(gbufferRenderer->positionImage.get(),
 						   gbufferRenderer->normalViewImage.get(),
 						   gbufferRenderer->albedoImage.get(),
 						   gbufferRenderer->renderTarget->GetSampler());
@@ -154,15 +153,15 @@ namespace Utopian
 
 	void SSAOJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		effect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		effect.SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
+		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
+		effect->SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect.GetPipeline());
-		effect.BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
 
 		renderer->DrawScreenQuad(commandBuffer);
 
@@ -184,10 +183,10 @@ namespace Utopian
 			sample = glm::normalize(sample);
 			sample *= randomFloats(generator);
 
-			effect.cameraBlock.data.samples[i] = vec4(sample, 0);
+			effect->cameraBlock.data.samples[i] = vec4(sample, 0);
 		}
 
-		effect.UpdateMemory();
+		effect->UpdateMemory();
 	}
 
 	BlurJob::BlurJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)

@@ -5,7 +5,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderFactory.h"
-#include "vulkan/handles/Pipeline3.h"
+#include "vulkan/handles/Effect.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"
@@ -16,44 +16,19 @@
 
 namespace Utopian::Vk
 {
-	SSAOEffect::SSAOEffect()
+	SSAOEffect::SSAOEffect(Device* device, RenderPass* renderPass)
+		: Effect(device, renderPass, "data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag")
 	{
-	}
+		mPipeline->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		mPipeline->depthStencilState.depthTestEnable = VK_TRUE;
+		CreatePipeline();
 
-	void SSAOEffect::CreateDescriptorPool(Device* device)
-	{
+		cameraBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-	}
-
-	void SSAOEffect::CreateVertexDescription(Device* device)
-	{
-
-	}
-
-	void SSAOEffect::CreatePipelineInterface(Device* device)
-	{
-		
-	}
-
-	void SSAOEffect::CreateDescriptorSets(Device* device)
-	{
-
-	}
-
-	void SSAOEffect::CreatePipeline(Renderer* renderer)
-	{
-		SharedPtr<Shader> shader = gShaderManager().CreateShaderOnline("data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag");
-
-		mPipeline = std::make_shared<Pipeline3>(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
-		mPipeline->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		mPipeline->GetPipeline()->depthStencilState.depthTestEnable = VK_TRUE;
-		mPipeline->Create();
-
-		cameraBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		settingsBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
-		mPipeline->BindUniformBuffer("UBO", cameraBlock.GetDescriptor());
-		mPipeline->BindUniformBuffer("UBO_settings", settingsBlock.GetDescriptor());
+		// Note: Perhaps this should be moved to separate class instead
+		BindUniformBuffer("UBO", cameraBlock.GetDescriptor());
+		BindUniformBuffer("UBO_settings", settingsBlock.GetDescriptor());
 	}
 
 	void SSAOEffect::UpdateMemory()
@@ -62,26 +37,11 @@ namespace Utopian::Vk
 		settingsBlock.UpdateMemory();
 	}
 
-	Pipeline* SSAOEffect::GetPipeline()
-	{
-		return mPipeline->GetPipeline();
-	}
-
 	void SSAOEffect::BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler)
 	{
-		mPipeline->BindCombinedImage("positionSampler", positionImage, sampler);
-		mPipeline->BindCombinedImage("normalSampler", normalViewImage, sampler);
-		mPipeline->BindCombinedImage("albedoSampler", albedoImage, sampler);
-	}
-
-	void SSAOEffect::BindDescriptorSets(CommandBuffer* commandBuffer)
-	{
-		mPipeline->BindDescriptorSets(commandBuffer);
-	}
-
-	void SSAOEffect::SetRenderPass(RenderPass* renderPass)
-	{
-		mRenderPass = renderPass;
+		BindCombinedImage("positionSampler", positionImage, sampler);
+		BindCombinedImage("normalSampler", normalViewImage, sampler);
+		BindCombinedImage("albedoSampler", albedoImage, sampler);
 	}
 	
 	void SSAOEffect::SetCameraData(glm::mat4 view, glm::mat4 projection, glm::vec4 eyePos)

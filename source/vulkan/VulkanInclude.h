@@ -30,7 +30,7 @@ namespace Utopian::Vk
 	class Image;
 	class Instance;
 	class Pipeline2; // Todo: rename
-	class Pipeline3;
+	class Effect;
 	class PipelineLegacy;
 	class PipelineLayout;
 	class Queue;
@@ -57,7 +57,7 @@ namespace Utopian::Vk
 	class VertexAttribute;
 	class VertexDescription;
 	class VulkanBase;
-	class Effect;
+	class EffectLegacy;
 	class Shader;
 	class UIOverlay;
 }

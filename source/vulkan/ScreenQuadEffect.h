@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
@@ -24,7 +24,7 @@ namespace Utopian::Vk
 	* This effect expects the vertices to be in NDC space and simply applies a texture to them.
 	* Should be used for rendering texture quads to the screen.
 	**/
-	class ScreenQuadEffect : public Effect
+	class ScreenQuadEffect : public EffectLegacy
 	{
 	public:
 		struct PushConstantBlock

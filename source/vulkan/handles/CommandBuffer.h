@@ -29,10 +29,10 @@ namespace Utopian::Vk
 		void CmdBindPipeline(VkPipeline pipeline);
 		void CmdBindPipeline(Pipeline* pipeline);
 		void CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);
-		void CmdBindDescriptorSet(Effect* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
+		void CmdBindDescriptorSet(EffectLegacy* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdBindDescriptorSet(VkPipelineLayout pipelineLayout, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdPushConstants(PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
-		void CmdPushConstants(Effect* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
+		void CmdPushConstants(EffectLegacy* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* buffers);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, Buffer* buffer);
 		void CmdBindIndexBuffer(VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType);

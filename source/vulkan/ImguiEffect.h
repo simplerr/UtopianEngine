@@ -2,11 +2,11 @@
 
 #include <glm/glm.hpp>
 #include "vulkan/VulkanInclude.h"
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 
 namespace Utopian::Vk
 {
-	class ImguiEffect : public Effect
+	class ImguiEffect : public EffectLegacy
 	{
 	public:
 		struct PushConstantBlock {

@@ -3,6 +3,7 @@
 #include <array>
 #include <vector>
 #include <map>
+#include <string>
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -12,14 +13,14 @@
 
 namespace Utopian::Vk
 {
-	class Pipeline3
+	class Effect
 	{
 	public:
-		Pipeline3(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, SharedPtr<Shader> shader);
+		Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader);
 
 		// This must explictly be called
 		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
-		void Create();
+		void CreatePipeline();
 
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
@@ -32,14 +33,14 @@ namespace Utopian::Vk
 		Pipeline* GetPipeline();
 
 		SharedPtr<Shader> GetShader();
+	protected:
+		SharedPtr<Pipeline> mPipeline;
 	private:
-		void Init(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, SharedPtr<Shader> shader);
+		void Init(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader);
 		void CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device);
 
-		SharedPtr<Pipeline> mPipeline;
 		RenderPass* mRenderPass = nullptr;
 		SharedPtr<Shader> mShader;
-		VertexDescription mVertexDescription;
 		PipelineInterface mPipelineInterface;
 		std::vector<DescriptorSet> mDescriptorSets;
 		std::vector<VkDescriptorSet> mVkDescriptorSets;

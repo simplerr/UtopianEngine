@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
@@ -27,7 +27,7 @@ namespace Utopian::Vk
 	*
 	* Simply transforms each vertex and sets a pixel color
 	**/
-	class TerrainEffect : public Effect
+	class TerrainEffect : public EffectLegacy
 	{
 	public:
 		enum PipelineType2

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/Effect.h"
+#include "vulkan/EffectLegacy.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
@@ -19,7 +19,7 @@ namespace Utopian::Vk
 	class Shader;
 	class Texture;
 
-	class GBufferEffect : public Effect
+	class GBufferEffect : public EffectLegacy
 	{
 	public:
 		enum Variation {

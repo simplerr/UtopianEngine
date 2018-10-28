@@ -123,7 +123,7 @@
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
-    <ClCompile Include="source\vulkan\handles\Pipeline3.cpp" />
+    <ClCompile Include="source\vulkan\handles\Effect.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
@@ -138,7 +138,7 @@
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
-    <ClCompile Include="source\vulkan\handles\Effect.cpp" />
+    <ClCompile Include="source\vulkan\handles\EffectLegacy.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline2.cpp" />
     <ClCompile Include="source\vulkan\handles\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
@@ -219,7 +219,7 @@
     <ClInclude Include="source\vulkan\ColorEffect.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
-    <ClInclude Include="source\vulkan\handles\Pipeline3.h" />
+    <ClInclude Include="source\vulkan\handles\Effect.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
@@ -231,7 +231,7 @@
     <ClInclude Include="source\vulkan\PhongEffect.h" />
     <ClInclude Include="source\vulkan\SSAOEffect.h" />
     <ClInclude Include="source\vulkan\TerrainEffect.h" />
-    <ClInclude Include="source\vulkan\Effect.h" />
+    <ClInclude Include="source\vulkan\EffectLegacy.h" />
     <ClInclude Include="source\vulkan\handles\Buffer.h" />
     <ClInclude Include="source\vulkan\handles\ComputePipeline.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h" />

@@ -13,7 +13,7 @@ namespace Utopian::Vk
 		InitDefaultValues(mRenderPass);
 	}
 
-	void Pipeline::Create(const VertexDescription& vertexDescription, Shader* shader, PipelineInterface* pipelineInterface)
+	void Pipeline::Create(Shader* shader, PipelineInterface* pipelineInterface)
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)

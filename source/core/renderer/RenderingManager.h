@@ -73,7 +73,7 @@ namespace Utopian
 		Vk::DescriptorPool* mCommonDescriptorPool;
 		glm::vec4 mClippingPlane;
 
-		std::map<uint32_t, Vk::Effect*> mEffects;
+		std::map<uint32_t, Vk::EffectLegacy*> mEffects;
 
 		/*  Deferred rendering experimentation */
 		std::vector<BaseJob*> mJobs;
