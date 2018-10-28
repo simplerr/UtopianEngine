@@ -16,10 +16,13 @@ namespace Utopian::Vk
 	{
 	public:
 		Pipeline3(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, SharedPtr<Shader> shader);
+		Pipeline3();
 
 		// This must explictly be called
 		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
 		void Create();
+
+		void Init(Device* device, RenderPass* renderPass, const VertexDescription& vertexDescription, SharedPtr<Shader> shader);
 
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
@@ -38,6 +41,7 @@ namespace Utopian::Vk
 		std::vector<VkPipelineColorBlendAttachmentState> mBlendAttachmentState;
 	private:
 		void CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device);
+		void InitDefaultValues();
 
 		RenderPass* mRenderPass = nullptr;
 		SharedPtr<Shader> mShader;
@@ -46,5 +50,6 @@ namespace Utopian::Vk
 		std::vector<DescriptorSet> mDescriptorSets;
 		std::vector<VkDescriptorSet> mVkDescriptorSets;
 		DescriptorPool mDescriptorPool;
+		bool mInitialized;
 	};
 }

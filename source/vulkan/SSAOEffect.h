@@ -49,8 +49,7 @@ UNIFORM_BLOCK_END()
 
 		SSAOEffect();
 
-		void SetEyePos(glm::vec3 eyePos);
-		void SetCameraData(glm::mat4 view, glm::mat4 projection);
+		void SetCameraData(glm::mat4 view, glm::mat4 projection, glm::vec4 eyePos);
 		void SetSettings(float radius, float bias);
 
 		// Note: the normal image contains normals in view space
@@ -75,6 +74,6 @@ UNIFORM_BLOCK_END()
 		SSAOCameraBlock cameraBlock;
 		SSAOSettingsBlock settingsBlock;
 	private:
-		UniquePtr<Pipeline3> mPipeline;
+		Pipeline3 mPipeline;
 	};
 }

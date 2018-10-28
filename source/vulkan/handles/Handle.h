@@ -75,6 +75,11 @@ namespace Utopian::Vk
 			return mDevice;
 		}
 
+		void SetDevice(Device* device)
+		{
+			mDevice = device;
+		}
+
 		T mHandle = VK_NULL_HANDLE;
 	private:
 		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;

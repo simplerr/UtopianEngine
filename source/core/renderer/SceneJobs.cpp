@@ -145,17 +145,16 @@ namespace Utopian
 	{
 		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[0]);
 		effect.BindGBuffer(gbufferRenderer->positionImage.get(),
-			gbufferRenderer->normalViewImage.get(),
-			gbufferRenderer->albedoImage.get(),
-			gbufferRenderer->renderTarget->GetSampler());
+						   gbufferRenderer->normalViewImage.get(),
+						   gbufferRenderer->albedoImage.get(),
+						   gbufferRenderer->renderTarget->GetSampler());
 
 		CreateKernelSamples();
 	}
 
 	void SSAOJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		effect.SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		effect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		effect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect.SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
 
 		renderTarget->Begin();
