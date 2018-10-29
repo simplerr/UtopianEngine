@@ -12,66 +12,25 @@
 
 namespace Utopian::Vk
 {
-	GBufferEffect::GBufferEffect()
+	GBufferEffect::GBufferEffect(Device* device, RenderPass* renderPass)
+		: Effect(device, renderPass, "data/shaders/gbuffer/gbuffer.vert", "data/shaders/gbuffer/gbuffer.frag")
 	{
-	}
+		CreatePipeline();
 
-	void GBufferEffect::CreateDescriptorPool(Device* device)
-	{
-		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->Create();
-	}
+		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-	void GBufferEffect::CreateVertexDescription(Device* device)
-	{
-		mVertexDescription = Vertex::GetDescription();
-	}
-
-	void GBufferEffect::CreatePipelineInterface(Device* device)
-	{
-		// Descriptor set 0
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.CreateLayouts(device);
-	}
-
-	void GBufferEffect::CreateDescriptorSets(Device* device)
-	{
-		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, per_frame_vs.GetDescriptor());
-		mDescriptorSet0->UpdateDescriptorSets();
-	}
-
-	void GBufferEffect::CreatePipeline(Renderer* renderer)
-	{
-		SharedPtr<Shader> shader = gShaderManager().CreateShaderOnline("data/shaders/gbuffer/gbuffer.vert", "data/shaders/gbuffer/gbuffer.frag");
-
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), mRenderPass, mVertexDescription, shader.get());
-		pipeline->SetPipelineInterface(&mPipelineInterface);
-		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		pipeline->mDepthStencilState.depthTestEnable = VK_TRUE;
-		pipeline->Create();
-		mPipelines[Variation::NORMAL] = pipeline;
+		BindUniformBuffer("UBO_viewProjection", viewProjectionBlock.GetDescriptor());
 	}
 
 	void GBufferEffect::UpdateMemory()
 	{
-		per_frame_vs.UpdateMemory();
-	}
-
-	void GBufferEffect::SetRenderPass(RenderPass* renderPass)
-	{
-		mRenderPass = renderPass;
+		viewProjectionBlock.UpdateMemory();
 	}
 
 	void GBufferEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)
 	{
-		per_frame_vs.data.view = view;
-		per_frame_vs.data.projection = projection;
+		viewProjectionBlock.data.view = view;
+		viewProjectionBlock.data.projection = projection;
 		UpdateMemory();
 	}
 }

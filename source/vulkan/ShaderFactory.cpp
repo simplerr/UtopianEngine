@@ -396,20 +396,22 @@ namespace Utopian::Vk
 				else
 					assert(0);
 			}
-
-			if (qualifier.storage == glslang::EvqBuffer)	// SSBO
+			else
 			{
-				// Todo
-			}
-			else if (qualifier.storage == glslang::EvqUniform)
-			{
-				UniformBlockDesc desc;
-				desc.size = program.getUniformBlockSize(i); // todo: / 4
-				desc.set = qualifier.layoutSet;
-				desc.binding = qualifier.layoutBinding;
-				desc.name = name;
-				reflection.uniformBlocks[desc.name] = desc;
-				reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
+				if (qualifier.storage == glslang::EvqBuffer)	// SSBO
+				{
+					// Todo
+				}
+				else if (qualifier.storage == glslang::EvqUniform)
+				{
+					UniformBlockDesc desc;
+					desc.size = program.getUniformBlockSize(i); // todo: / 4
+					desc.set = qualifier.layoutSet;
+					desc.binding = qualifier.layoutBinding;
+					desc.name = name;
+					reflection.uniformBlocks[desc.name] = desc;
+					reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
+				}
 			}
 		}
 

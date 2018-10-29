@@ -83,7 +83,7 @@ namespace Utopian
 		SharedPtr<Vk::Image> depthImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
-		Vk::GBufferEffect mGBufferEffect;
+		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
 	private:
 	};
 

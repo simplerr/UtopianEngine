@@ -30,6 +30,9 @@ namespace Utopian::Vk
 
 		void BindDescriptorSets(CommandBuffer* commandBuffer);
 
+		// Note: This should only be used in rare cases
+		DescriptorSet& GetDescriptorSet(uint32_t set);
+
 		PipelineInterface* GetPipelineInterface();
 		Pipeline* GetPipeline();
 

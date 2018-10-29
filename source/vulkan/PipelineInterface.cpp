@@ -61,11 +61,17 @@ namespace Utopian::Vk
 
 	DescriptorSetLayout* PipelineInterface::GetDescriptorSetLayout(uint32_t descriptorSet)
 	{
+		if (mDescriptorSetLayouts.find(descriptorSet) == mDescriptorSetLayouts.end())
+			assert(0);
+
 		return &mDescriptorSetLayouts[descriptorSet];
 	}
 
 	VkDescriptorSetLayout PipelineInterface::GetVkDescriptorSetLayout(uint32_t descriptorSet)
 	{
+		if (mDescriptorSetLayouts.find(descriptorSet) == mDescriptorSetLayouts.end())
+			assert(0);
+
 		return mDescriptorSetLayouts[descriptorSet].GetVkHandle();
 	}
 

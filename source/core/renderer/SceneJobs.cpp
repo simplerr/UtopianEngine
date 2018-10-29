@@ -30,8 +30,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		mGBufferEffect.SetRenderPass(renderTarget->GetRenderPass());
-		mGBufferEffect.Init(renderer);
+		mGBufferEffect = make_unique<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		renderer->AddScreenQuad(width - 350 - 50, height - 350, 300, 300, positionImage.get(), renderTarget->GetSampler());
 		renderer->AddScreenQuad(width - 2*350 - 50, height - 350, 300, 300, normalImage.get(), renderTarget->GetSampler());
@@ -48,7 +47,7 @@ namespace Utopian
 
 	void GBufferJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		mGBufferEffect.SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		mGBufferEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -63,12 +62,13 @@ namespace Utopian
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
+				// Todo: Note: This is a temporary workaround
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				VkDescriptorSet descriptorSets[2] = { mGBufferEffect.mDescriptorSet0->descriptorSet, textureDescriptorSet };
+				VkDescriptorSet descriptorSets[2] = { mGBufferEffect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-				commandBuffer->CmdBindPipeline(mGBufferEffect.GetPipeline(0));
-				commandBuffer->CmdBindDescriptorSet(&mGBufferEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				commandBuffer->CmdPushConstants(&mGBufferEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindPipeline(mGBufferEffect->GetPipeline());
+				commandBuffer->CmdBindDescriptorSet(mGBufferEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				commandBuffer->CmdPushConstants(mGBufferEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);

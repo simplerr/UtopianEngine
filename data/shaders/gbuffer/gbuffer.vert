@@ -6,7 +6,7 @@ layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec4 InTangentL;
 
-layout (std140, set = 0, binding = 0) uniform UBO 
+layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
 {
 	// Camera 
 	mat4 projection;
@@ -14,8 +14,8 @@ layout (std140, set = 0, binding = 0) uniform UBO
 } per_frame_vs;
 
 layout (push_constant) uniform PushConstants {
-	 mat4 world;		
-	 mat4 worldInvTranspose;		
+	 mat4 world;
+	 mat4 worldInvTranspose;
 	 vec4 color;
 } pushConstants;
 
@@ -32,6 +32,10 @@ out gl_PerVertex
 
 void main() 
 {
+	// Todo: Workaround since glslang reflection removes unused vertex input
+	vec4 temp = InTangentL;
+	vec3 color = InColor;
+
 	OutColor = pushConstants.color.rgb;
 	OutPosW = (pushConstants.world * vec4(InPosL.xyz, 1.0)).xyz;
 	OutNormalW  = mat3(pushConstants.worldInvTranspose) * InNormalL;

@@ -97,6 +97,14 @@ namespace Utopian::Vk
 		commandBuffer->CmdBindDescriptorSet(GetPipelineInterface()->GetPipelineLayout(), mVkDescriptorSets.size(), mVkDescriptorSets.data(), VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 	}
 
+	DescriptorSet& Effect::GetDescriptorSet(uint32_t set)
+	{
+		if (set < 0 || set >= mDescriptorSets.size())
+			assert(0);
+
+		return mDescriptorSets[set];
+	}
+
 	PipelineInterface* Effect::GetPipelineInterface()
 	{
 		return &mPipelineInterface;

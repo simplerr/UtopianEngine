@@ -23,10 +23,6 @@ namespace Utopian::Vk
 	class DeferredEffect : public Effect
 	{
 	public:
-		enum Variation {
-			NORMAL = 0
-		};
-
 		DeferredEffect(Device* device, RenderPass* renderPass);
 
 		void SetEyePos(glm::vec3 eyePos);
