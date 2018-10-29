@@ -19,7 +19,7 @@ namespace Utopian::Vk
 
 		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		BindUniformBuffer("UBO_viewProjection", viewProjectionBlock.GetDescriptor());
+		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 	}
 
 	void GBufferEffect::UpdateMemory()

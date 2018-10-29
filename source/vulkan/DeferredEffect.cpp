@@ -26,9 +26,9 @@ namespace Utopian::Vk
 		light_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		fog_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		BindUniformBuffer("UBO_eyePos", eyeBlock.GetDescriptor());
-		BindUniformBuffer("UBO_lights", light_ubo.GetDescriptor());
-		BindUniformBuffer("UBO_fog", fog_ubo.GetDescriptor());
+		BindUniformBuffer("UBO_eyePos", &eyeBlock);
+		BindUniformBuffer("UBO_lights", &light_ubo);
+		BindUniformBuffer("UBO_fog", &fog_ubo);
 	}
 
 	void DeferredEffect::UpdateMemory()

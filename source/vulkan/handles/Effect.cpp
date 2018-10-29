@@ -1,6 +1,7 @@
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
+#include "vulkan/ShaderBuffer.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -90,6 +91,11 @@ namespace Utopian::Vk
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
 		descriptorSet.BindCombinedImage(name, image, sampler);
 		descriptorSet.UpdateDescriptorSets();
+	}
+
+	void Effect::BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock)
+	{
+		BindUniformBuffer(name, shaderBlock->GetDescriptor());
 	}
 
 	void Effect::BindDescriptorSets(CommandBuffer* commandBuffer)

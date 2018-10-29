@@ -28,6 +28,8 @@ namespace Utopian::Vk
 		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo);
 		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
 
+		void BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock);
+
 		void BindDescriptorSets(CommandBuffer* commandBuffer);
 
 		// Note: This should only be used in rare cases

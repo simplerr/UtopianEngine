@@ -27,8 +27,8 @@ namespace Utopian::Vk
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		// Note: Perhaps this should be moved to separate class instead
-		BindUniformBuffer("UBO", cameraBlock.GetDescriptor());
-		BindUniformBuffer("UBO_settings", settingsBlock.GetDescriptor());
+		BindUniformBuffer("UBO", &cameraBlock);
+		BindUniformBuffer("UBO_settings", &settingsBlock);
 	}
 
 	void SSAOEffect::UpdateMemory()
