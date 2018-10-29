@@ -48,9 +48,9 @@ namespace Utopian::Vk
 
 	void GBufferEffect::CreatePipeline(Renderer* renderer)
 	{
-		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/gbuffer/gbuffer.vert.spv", "data/shaders/gbuffer/gbuffer.frag.spv");
+		SharedPtr<Shader> shader = gShaderManager().CreateShaderOnline("data/shaders/gbuffer/gbuffer.vert", "data/shaders/gbuffer/gbuffer.frag");
 
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), mRenderPass, mVertexDescription, shader);
+		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), mRenderPass, mVertexDescription, shader.get());
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->mDepthStencilState.depthTestEnable = VK_TRUE;

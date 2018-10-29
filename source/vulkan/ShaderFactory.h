@@ -22,6 +22,12 @@ namespace Utopian::Vk
 		UVT_SAMPLER3D
 	};
 
+	struct PushConstantDesc
+	{
+		std::string name;
+		uint32_t size;
+	};
+
 	/* Can be SSBOs and samplers */
 	struct UniformVariableDesc
 	{
@@ -55,6 +61,7 @@ namespace Utopian::Vk
 	{
 		std::map<std::string, UniformBlockDesc> uniformBlocks;
 		std::map<std::string, UniformVariableDesc> combinedSamplers;
+		std::map<std::string, PushConstantDesc> pushConstants;
 		SharedPtr<VertexDescription> vertexDescription;
 
 		// Maps text identifier to binding in a specific descriptor set

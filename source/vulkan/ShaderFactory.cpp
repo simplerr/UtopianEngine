@@ -386,7 +386,15 @@ namespace Utopian::Vk
 
 			if (!qualifier.hasBinding())
 			{
-				assert(0);
+				if (qualifier.layoutPushConstant)
+				{
+					PushConstantDesc desc;
+					desc.name = name;
+					desc.size = program.getUniformBlockSize(i); 
+					reflection.pushConstants[desc.name] = desc;
+				}
+				else
+					assert(0);
 			}
 
 			if (qualifier.storage == glslang::EvqBuffer)	// SSBO
