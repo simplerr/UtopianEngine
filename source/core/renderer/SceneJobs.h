@@ -98,7 +98,7 @@ namespace Utopian
 
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;
 
-		Vk::DeferredEffect effect;
+		SharedPtr<Vk::DeferredEffect> effect;
 	private:
 		SharedPtr<Vk::ScreenQuad> mScreenQuad;
 	};

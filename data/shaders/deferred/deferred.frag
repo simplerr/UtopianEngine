@@ -9,7 +9,7 @@ layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
 
-layout (std140, set = 0, binding = 0) uniform UBO 
+layout (std140, set = 0, binding = 0) uniform UBO_eyePos
 {
 	vec4 EyePosW;
 } eye_ubo;
@@ -44,7 +44,7 @@ struct Light
 	vec4 pad;
 };
 
-layout (std140, set = 0, binding = 1) uniform UBO1 
+layout (std140, set = 0, binding = 1) uniform UBO_lights 
 {
 	// Constants
 	float numLights;
@@ -53,7 +53,7 @@ layout (std140, set = 0, binding = 1) uniform UBO1
 	Light lights[10];
 } light_ubo;
 
-layout (std140, set = 0, binding = 2) uniform UBO2
+layout (std140, set = 0, binding = 2) uniform UBO_fog
 {
 	vec3 fogColor;
 	float padding;

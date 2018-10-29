@@ -81,8 +81,7 @@ namespace Utopian
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
 		renderTarget = make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-
-		effect.Init(renderer);
+		effect = make_unique<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 	}
@@ -95,7 +94,7 @@ namespace Utopian
 	{
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[0]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[2]);
-		effect.BindImages(gbufferJob->positionImage.get(),
+		effect->BindImages(gbufferJob->positionImage.get(),
 						   gbufferJob->normalImage.get(),
 						   gbufferJob->albedoImage.get(),
 						   blurJob->blurImage.get(),
@@ -106,16 +105,16 @@ namespace Utopian
 	{
 		mScreenQuad->SetVisible(jobInput.renderingSettings.deferredPipeline);
 
-		effect.SetFogData(jobInput.renderingSettings);
-		effect.SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		effect.SetLightArray(jobInput.sceneInfo.lights);
+		effect->SetFogData(jobInput.renderingSettings);
+		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
+		effect->SetLightArray(jobInput.sceneInfo.lights);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect.GetPipeline(0));
-		effect.BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
 
 		renderer->DrawScreenQuad(commandBuffer);
 

@@ -9,6 +9,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Pipeline.h"
+#include "vulkan/PipelineInterface.h"
 #include "utility/Common.h"
 
 namespace Utopian::Vk
