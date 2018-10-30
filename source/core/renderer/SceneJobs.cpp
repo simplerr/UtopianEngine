@@ -197,8 +197,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect.SetRenderPass(renderTarget->GetRenderPass());
-		effect.Init(renderer);
+		effect = make_unique<Vk::BlurEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, blurImage.get(), renderTarget->GetSampler());
 	}
@@ -210,19 +209,19 @@ namespace Utopian
 	void BlurJob::Init(const std::vector<BaseJob*>& renderers)
 	{
 		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[1]);
-		effect.BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
+		effect->BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
 	}
 
 	void BlurJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		effect.SetSettings(jobInput.renderingSettings.blurRadius);
+		effect->SetSettings(jobInput.renderingSettings.blurRadius);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect.GetPipeline(0));
-		effect.BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
 
 		renderer->DrawScreenQuad(commandBuffer);
 

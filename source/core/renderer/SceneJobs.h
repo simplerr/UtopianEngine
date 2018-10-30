@@ -132,7 +132,7 @@ namespace Utopian
 		SharedPtr<Vk::Image> blurImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
-		Vk::BlurEffect effect;
+		UniquePtr<Vk::BlurEffect> effect;
 	private:
 	};
 }
