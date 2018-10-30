@@ -116,7 +116,7 @@ namespace Utopian::Vk
 		}
 	};
 
-	ShaderFactory& gShaderManager()
+	ShaderFactory& gShaderFactory()
 	{
 		return ShaderFactory::Instance();
 	}
@@ -315,8 +315,10 @@ namespace Utopian::Vk
 
 		/* Preprocess */
 		DirStackFileIncluder includer;
-
 		includer.pushExternalLocalDirectory(GetFilePath(filename));
+
+		for (auto& directory : mIncludeDirectories)
+			includer.pushExternalLocalDirectory(directory);
 
 		std::string preprocessedGLSL;
 
@@ -364,6 +366,11 @@ namespace Utopian::Vk
 		compiledShader->shaderStage = GetVulkanShaderStage(GetSuffix(filename));
 
 		return compiledShader;
+	}
+
+	void ShaderFactory::AddIncludeDirectory(std::string directory)
+	{
+		mIncludeDirectories.push_back(directory);
 	}
 
 	/*

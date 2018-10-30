@@ -102,6 +102,9 @@ namespace Utopian::Vk
 		Shader* CreateComputeShader(std::string computeShaderFilename);
 		SharedPtr<Shader> CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
 		SharedPtr<CompiledShader> CompileShader(std::string filename);
+
+		void AddIncludeDirectory(std::string directory);
+
 	private:
 		ShaderReflection ExtractShaderLayout(glslang::TProgram& program, EShLanguage shaderType);
 		void ReflectVertexInput(glslang::TProgram& program, ShaderReflection* reflection);
@@ -109,7 +112,8 @@ namespace Utopian::Vk
 	private:
 		std::vector<Shader*> mLoadedShaders;
 		Device* mDevice;
+		std::vector<std::string> mIncludeDirectories;
 	};
 
-	ShaderFactory& gShaderManager();
+	ShaderFactory& gShaderFactory();
 }

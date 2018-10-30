@@ -73,8 +73,11 @@ namespace Utopian
 		World::Start();
 		Input::Start();
 		Vk::ShaderFactory::Start(mRenderer->GetDevice());
+		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
+
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
+
 
 		//// Add house
 		//auto house = Actor::Create("House_1");

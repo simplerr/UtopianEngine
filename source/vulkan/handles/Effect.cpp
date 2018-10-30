@@ -20,7 +20,7 @@ namespace Utopian::Vk
 	{
 		mPipeline = std::make_shared<Pipeline>(device, renderPass);
 		mRenderPass = renderPass;
-		mShader = gShaderManager().CreateShaderOnline(vertexShader, fragmentShader);
+		mShader = gShaderFactory().CreateShaderOnline(vertexShader, fragmentShader);
 
 		CreatePipelineInterface(mShader, device);
 	}
