@@ -36,7 +36,7 @@ namespace Utopian
 		UpdateUi();
 
 		// Was an Entity selected?
-		if (gInput().KeyPressed(VK_LBUTTON))
+		if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
 		{
 			Ray ray = mRenderer->GetCamera()->GetPickingRay();
 

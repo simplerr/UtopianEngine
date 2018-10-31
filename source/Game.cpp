@@ -112,40 +112,51 @@ namespace Utopian
 		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/arrow.obj"));
 
 		// Add actor w/ directional light component
-		auto teapot = Actor::Create("Teapot");
-
-		auto transform = teapot->AddComponent<CTransform>(vec3(74400.0f, 6200.0f, 78000.0f));
-		transform->SetScale(vec3(50.0f));
-		transform->SetRotation(vec3(0, 0, 0));
-
-		auto mesh = teapot->AddComponent<CRenderable>();
-		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/StonePlatform.obj"));
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
-		mesh->SetColor(glm::vec4(0.3, 1, 0.2, 1.0));
-
 
 		/************************************************************************/
 		/* Castle
 		/************************************************************************/
-		auto castle = Actor::Create("Castle");
+		SharedPtr<Actor> castle = Actor::Create("Castle");
 
-		transform = castle->AddComponent<CTransform>(vec3(94400.0f, 6200.0f, 78000.0f));
-		transform->SetScale(vec3(50.0f));
-		transform->SetRotation(vec3(180, 0, 0));
+		CTransform* transform2 = castle->AddComponent<CTransform>(vec3(94400.0f, 6200.0f, 78000.0f));
+		transform2->SetScale(vec3(50.0f));
+		transform2->SetRotation(vec3(180, 0, 0));
 
-		mesh = castle->AddComponent<CRenderable>();
+		CRenderable* mesh2 = castle->AddComponent<CRenderable>();
+		mesh2->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
 		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
-		mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
 		//mesh->SetMaterial(Vk::Mat(Vk::EffectType::COLOR, Vk::ColorEffect::NORMAL));
 
-		CLight* lightComponent = castle->AddComponent<CLight>();
-		lightComponent->SetMaterial(vec4(1, 1, 1, 1));
-		lightComponent->SetDirection(vec3(1, 0, 0));
-		lightComponent->SetAtt(0, 0.00, 0.00000002);
-		lightComponent->SetIntensity(0.3f, 1.0f, 0.0f);
-		lightComponent->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
-		lightComponent->SetRange(100000);
-		lightComponent->SetSpot(4.0f);
+		CLight* lightComponent2 = castle->AddComponent<CLight>();
+		lightComponent2->SetMaterial(vec4(1, 1, 1, 1));
+		lightComponent2->SetDirection(vec3(1, 0, 0));
+		lightComponent2->SetAtt(0, 0.00, 0.00000002);
+		lightComponent2->SetIntensity(0.3f, 0.5f, 0.0f);
+		lightComponent2->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
+		lightComponent2->SetRange(100000);
+		lightComponent2->SetSpot(4.0f);
+
+		/************************************************************************/
+		/* Teapot
+		/************************************************************************/
+		SharedPtr<Actor> teapot = Actor::Create("Teapot");
+
+		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(74400.0f, 8200.0f, 78000.0f));
+		transform1->SetScale(vec3(50.0f));
+		transform1->SetRotation(vec3(0, 0, 0));
+
+		CRenderable* mesh1 = teapot->AddComponent<CRenderable>();
+		mesh1->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
+		mesh1->SetColor(glm::vec4(0.3, 1, 0.2, 1.0));
+
+		CLight* lightComponent1 = teapot->AddComponent<CLight>();
+		lightComponent1->SetMaterial(vec4(1, 1, 1, 1));
+		lightComponent1->SetDirection(vec3(1, 0, 0));
+		lightComponent1->SetAtt(0, 0.00, 0.00000002);
+		lightComponent1->SetIntensity(0.3f, 1.0f, 0.0f);
+		lightComponent1->SetType(Utopian::Vk::LightType::POINT_LIGHT);
+		lightComponent1->SetRange(100000);
+		lightComponent1->SetSpot(4.0f);
 
 		// Add orbiting entity
 		//auto teapot = Actor::Create("Window");

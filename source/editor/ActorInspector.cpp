@@ -29,7 +29,8 @@ namespace Utopian
 			ImGui::PushItemWidth(300.0f);
 
 			// General actor information
-			if (ImGui::CollapsingHeader("Actor"), ImGuiTreeNodeFlags_DefaultOpen)
+			std::string name = mActor->GetName();
+			if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				static int component = 1;
 				ImGui::Combo("Component", &component, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
