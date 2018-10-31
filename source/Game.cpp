@@ -131,7 +131,7 @@ namespace Utopian
 		lightComponent2->SetMaterial(vec4(1, 1, 1, 1));
 		lightComponent2->SetDirection(vec3(1, 0, 0));
 		lightComponent2->SetAtt(0, 0.00, 0.00000002);
-		lightComponent2->SetIntensity(0.3f, 0.5f, 0.0f);
+		lightComponent2->SetIntensity(0.2f, 0.0f, 0.0f);
 		lightComponent2->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
 		lightComponent2->SetRange(100000);
 		lightComponent2->SetSpot(4.0f);
@@ -141,7 +141,7 @@ namespace Utopian
 		/************************************************************************/
 		SharedPtr<Actor> teapot = Actor::Create("Teapot");
 
-		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(74400.0f, 8200.0f, 78000.0f));
+		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(74400.0f, 7200.0f, 78000.0f));
 		transform1->SetScale(vec3(50.0f));
 		transform1->SetRotation(vec3(0, 0, 0));
 
@@ -153,7 +153,7 @@ namespace Utopian
 		lightComponent1->SetMaterial(vec4(1, 1, 1, 1));
 		lightComponent1->SetDirection(vec3(1, 0, 0));
 		lightComponent1->SetAtt(0, 0.00, 0.00000002);
-		lightComponent1->SetIntensity(0.3f, 1.0f, 0.0f);
+		lightComponent1->SetIntensity(0.0f, 1.0f, 0.0f);
 		lightComponent1->SetType(Utopian::Vk::LightType::POINT_LIGHT);
 		lightComponent1->SetRange(100000);
 		lightComponent1->SetSpot(4.0f);

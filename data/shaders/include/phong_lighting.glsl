@@ -51,6 +51,10 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// The vector from the surface to the light.
+	// Todo: Note: the + sign is due to the fragment world position is negated for some reason
+	// this is a left over from an old problem
+	pos.xyz *= -1.0f;
+	normal.xz *= -1.0f;
 	vec3 lightVec = light.pos - pos;
 		
 	// The distance from surface to light.
@@ -58,10 +62,11 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	
 	// Range test.
 	if( d > light.range )
-		return;
+ 		return;
 		
 	// Normalize the light vector.
-	lightVec /= d; 
+	//lightVec /= d; 
+	lightVec = normalize(lightVec);
 	
 	// Ambient term.
 	ambient = material.ambient * light.material.ambient * light.intensity.x;	
@@ -84,8 +89,8 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	// Attenuate
 	float att = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
 
-	//diffuse *= att;
-	//spec    *= att;
+	diffuse *= att;
+	spec    *= att;
 }
 
 //! Computes the colors for a spot light.

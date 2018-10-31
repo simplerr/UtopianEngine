@@ -56,7 +56,7 @@ void Utopian::LightInspector::UpdateUi()
 
 		ImGui::SliderFloat3("Intensity", &mLightData.intensity.x, 0.0f, 1.0f);
 		ImGui::SliderFloat3("Direction", &mLightData.direction.x, -1.0f, 1.0f);
-		ImGui::SliderFloat3("Attenuation", &mLightData.att.x, 0.0f, 1.0f);
+		ImGui::SliderFloat3("Attenuation", &mLightData.att.x, 0.0f, 3.0f);
 		ImGui::SliderFloat("Range", &mLightData.range, 0.0f, 100000.0f);
 		ImGui::SliderFloat("Spot", &mLightData.spot, 0.0f, 100000.0f);
 
@@ -69,6 +69,7 @@ void Utopian::LightInspector::UpdateUi()
 		mLight->SetMaterial(mLightData.material);
 		mLight->SetRange(mLightData.range);
 		mLight->SetSpot(mLightData.spot);
+		mLight->SetAttenuation(mLightData.att);
 		mLight->SetType((Utopian::Vk::LightType)mType);
 	}
 }

@@ -67,6 +67,11 @@ namespace Utopian
 		mInternal->SetAtt(a0, a1, a2);
 	}
 
+	void CLight::SetAttenuation(vec3 attenuation)
+	{
+		mInternal->SetAtt(attenuation.x, attenuation.y, attenuation.z);
+	}
+
 	void CLight::SetType(Utopian::Vk::LightType type)
 	{
 		mInternal->SetType(type);

@@ -32,6 +32,7 @@ void main()
 
 	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
 	outNormal = vec4(normalize(InNormalW), 1.0f);
+	outNormal.y *= -1.0f;
 	outAlbedo = vec4(texColor);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
 }

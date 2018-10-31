@@ -31,11 +31,13 @@ void main()
 	vec2 uv = InTex;
 	uv.x *= -1;
 
-	vec3 position = texture(positionSampler, uv).rgb;
+	vec3 position = texture(positionSampler, uv).xyz;
 	vec3 normal = texture(normalSampler, uv).rgb;
 	vec3 albedo = texture(albedoSampler, uv).rgb;
 
-	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz - position);
+	// Todo: Note: the + sign is due to the fragment world position is negated for some reason
+	// this is a left over from an old problem
+	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
 	float shadow = 1.0f;
 
@@ -57,6 +59,7 @@ void main()
 
 	float ssao = texture(ssaoSampler, uv).r;
 	OutFragColor = litColor * ssao;
+
 	// float depth = texture(positionSampler, uv).w;// / 100000.0f;
 	// OutFragColor = vec4(depth, depth, depth, 1.0f);
 }

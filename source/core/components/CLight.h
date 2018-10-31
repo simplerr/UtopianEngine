@@ -27,6 +27,7 @@ namespace Utopian
 		void SetRange(float range);
 		void SetSpot(float spot);
 		void SetAtt(float a0, float a1, float a2);
+		void SetAttenuation(vec3 attenuation);
 		void SetType(Utopian::Vk::LightType type);
 		void SetIntensity(float ambient, float diffuse, float specular);
 		void SetIntensity(vec3 intensity);
