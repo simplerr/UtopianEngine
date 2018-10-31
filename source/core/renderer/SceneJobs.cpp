@@ -199,7 +199,7 @@ namespace Utopian
 
 		effect = make_unique<Vk::BlurEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
-		renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, blurImage.get(), renderTarget->GetSampler());
+		renderer->AddScreenQuad(width - 4*350 - 50, height - 350, 300, 300, blurImage.get(), renderTarget->GetSampler());
 	}
 
 	BlurJob::~BlurJob()

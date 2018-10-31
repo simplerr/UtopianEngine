@@ -22,6 +22,12 @@ namespace Utopian
 	{
 		if (mActor != nullptr)
 		{
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+			ImGui::SetNextWindowPos(ImVec2(1050, 10));
+			ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+			ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing);
+			ImGui::PushItemWidth(300.0f);
+
 			// General actor information
 			if (ImGui::CollapsingHeader("Actor"), ImGuiTreeNodeFlags_DefaultOpen)
 			{
@@ -38,6 +44,12 @@ namespace Utopian
 			{
 				inspector->UpdateUi();
 			}
+
+			ImGui::PopItemWidth();
+
+			// ImGui functions end here
+			ImGui::End();
+			ImGui::PopStyleVar();
 		}
 	}
 
