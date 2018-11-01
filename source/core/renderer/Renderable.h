@@ -23,15 +23,18 @@ namespace Utopian
 		void SetModel(Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
+		void SetVisible(bool visible);
 
 		Utopian::Vk::StaticModel* GetModel();
 		const BoundingBox GetBoundingBox() const;
 		const glm::vec4 GetColor() const;
 		const Utopian::Vk::Mat GetMaterial() const;
+		const bool IsVisible() const;
 
 	private:
 		Utopian::Vk::StaticModel* mModel;
 		Utopian::Vk::Mat mMaterial;
 		glm::vec4 mColor;
+		bool mVisible;
 	};
 }

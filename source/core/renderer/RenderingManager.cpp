@@ -124,8 +124,8 @@ namespace Utopian
 		ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
 		ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
 		ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
-		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 1000.0f);
-		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 700.0f);
+		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
+		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
 		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
 
 		ImGui::PopItemWidth();

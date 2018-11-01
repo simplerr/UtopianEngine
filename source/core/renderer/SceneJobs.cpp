@@ -55,6 +55,9 @@ namespace Utopian
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)
 		{
+			if (!renderable->IsVisible())
+				continue;
+
 			Vk::StaticModel* model = renderable->GetModel();
 
 			for (Vk::Mesh* mesh : model->mMeshes)

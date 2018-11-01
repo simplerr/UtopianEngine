@@ -36,18 +36,21 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisX->SetColor(Utopian::Vk::Colors::Red);
 	mAxisX->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisX->SetModel(model);
+	mAxisX->SetVisible(false);
 
 	mAxisY = Utopian::Renderable::Create();
 	mAxisY->SetScale(vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
 	mAxisY->SetColor(Utopian::Vk::Colors::Green);
 	mAxisY->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisY->SetModel(model);
+	mAxisY->SetVisible(false);
 
 	mAxisZ = Utopian::Renderable::Create();
 	mAxisZ->SetScale(vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
 	mAxisZ->SetColor(Utopian::Vk::Colors::Blue);
 	mAxisZ->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisZ->SetModel(model);
+	mAxisZ->SetVisible(false);
 
 	/*Scene::SceneRenderer::Instance().AddRenderable(mAxisX.get());
 	Scene::SceneRenderer::Instance().AddRenderable(mAxisY.get());
@@ -363,4 +366,9 @@ void TransformTool::SetActor(Utopian::Actor* actor)
 	mSelectedActor = actor;
 
 	SetPosition(mSelectedActor->GetTransform().GetPosition());
+	ScaleAxisArrows();
+
+	mAxisX->SetVisible(true);
+	mAxisY->SetVisible(true);
+	mAxisZ->SetVisible(true);
 }

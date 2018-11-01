@@ -91,11 +91,11 @@ namespace Utopian
 		//
 		//// Add camera
 		auto cameraEntity = Actor::Create("Camera");
-		cameraEntity->AddComponent<CTransform>(vec3(67001.0f, 10300.0f, 68000.0f));
+		cameraEntity->AddComponent<CTransform>(vec3(0.0f, 0.0f, 0.0f));
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
 		camera->SetMainCamera();
 
-		cameraEntity->AddComponent<CNoClip>(300.0f);
+		cameraEntity->AddComponent<CNoClip>(6.0f);
 		COrbit* orbit = cameraEntity->AddComponent<COrbit>(0.01f);
 		orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
 
@@ -118,8 +118,8 @@ namespace Utopian
 		/************************************************************************/
 		SharedPtr<Actor> castle = Actor::Create("Castle");
 
-		CTransform* transform2 = castle->AddComponent<CTransform>(vec3(94400.0f, 6200.0f, 78000.0f));
-		transform2->SetScale(vec3(50.0f));
+		CTransform* transform2 = castle->AddComponent<CTransform>(vec3(0.0f, 0.0f, 0.0f));
+		transform2->SetScale(vec3(1.0f));
 		transform2->SetRotation(vec3(180, 0, 0));
 
 		CRenderable* mesh2 = castle->AddComponent<CRenderable>();
@@ -141,8 +141,8 @@ namespace Utopian
 		/************************************************************************/
 		SharedPtr<Actor> teapot = Actor::Create("Teapot");
 
-		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(74400.0f, 7200.0f, 78000.0f));
-		transform1->SetScale(vec3(50.0f));
+		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(0.0f, 100.0f, 0.0f));
+		transform1->SetScale(vec3(1.0f));
 		transform1->SetRotation(vec3(0, 0, 0));
 
 		CRenderable* mesh1 = teapot->AddComponent<CRenderable>();
@@ -152,7 +152,7 @@ namespace Utopian
 		CLight* lightComponent1 = teapot->AddComponent<CLight>();
 		lightComponent1->SetMaterial(vec4(1, 1, 1, 1));
 		lightComponent1->SetDirection(vec3(1, 0, 0));
-		lightComponent1->SetAtt(0, 0.00, 0.00000002);
+		lightComponent1->SetAtt(1, 0.00, 0.00000002);
 		lightComponent1->SetIntensity(0.0f, 1.0f, 0.0f);
 		lightComponent1->SetType(Utopian::Vk::LightType::POINT_LIGHT);
 		lightComponent1->SetRange(100000);

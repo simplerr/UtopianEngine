@@ -57,5 +57,5 @@ private:
 
 	const float AXIS_SCALE = 90.0f;
 	const float AXIS_SCALE_MAIN = 10.0f;
-	const float PLANE_SIZE = 100000.0;
+	const float PLANE_SIZE = 1000.0;
 };

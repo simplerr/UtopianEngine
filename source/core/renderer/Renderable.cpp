@@ -10,6 +10,7 @@ namespace Utopian
 	{
 		SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		SetMaterial(Vk::Mat(Vk::EffectType::PHONG, Vk::PhongEffect::NORMAL));
+		SetVisible(true);
 	}
 
 	Renderable::~Renderable()
@@ -51,6 +52,11 @@ namespace Utopian
 		mMaterial = material;
 	}
 
+	void Renderable::SetVisible(bool visible)
+	{
+		mVisible = visible;
+	}
+
 	const BoundingBox Renderable::GetBoundingBox() const
 	{
 		BoundingBox boundingBox = mModel->GetBoundingBox();
@@ -74,5 +80,10 @@ namespace Utopian
 	const Utopian::Vk::Mat Renderable::GetMaterial() const
 	{
 		return mMaterial;
+	}
+
+	const bool Renderable::IsVisible() const
+	{
+		return mVisible;
 	}
 }
