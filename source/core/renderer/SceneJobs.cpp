@@ -32,7 +32,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		mGBufferEffect = make_unique<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		renderer->AddScreenQuad(width - 350 - 50, height - 350, 300, 300, positionImage.get(), renderTarget->GetSampler());
 		renderer->AddScreenQuad(width - 2*350 - 50, height - 350, 300, 300, normalImage.get(), renderTarget->GetSampler());
@@ -86,7 +86,6 @@ namespace Utopian
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
 		renderTarget = make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		//effect = make_unique<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
@@ -136,7 +135,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = make_unique<Vk::SSAOEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		effect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		//renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, ssaoImage.get(), renderTarget->GetSampler());
 	}
@@ -203,7 +202,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = make_unique<Vk::BlurEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		effect = Vk::gEffectManager().AddEffect<Vk::BlurEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		renderer->AddScreenQuad(width - 4*350 - 50, height - 350, 300, 300, blurImage.get(), renderTarget->GetSampler());
 	}

@@ -106,7 +106,7 @@ namespace Utopian
 		SharedPtr<Vk::Image> ssaoImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
-		UniquePtr<Vk::SSAOEffect> effect;
+		SharedPtr<Vk::SSAOEffect> effect;
 	private:
 		void CreateKernelSamples();
 	};
@@ -123,7 +123,7 @@ namespace Utopian
 		SharedPtr<Vk::Image> blurImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
-		UniquePtr<Vk::BlurEffect> effect;
+		SharedPtr<Vk::BlurEffect> effect;
 	private:
 	};
 }
