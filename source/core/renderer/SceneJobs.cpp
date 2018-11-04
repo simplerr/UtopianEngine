@@ -1,5 +1,6 @@
 #include "core/renderer/SceneJobs.h"
 #include "core/renderer/Renderable.h"
+#include "core/renderer/RenderingManager.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/RenderTarget.h"
@@ -9,6 +10,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ScreenGui.h"
+#include "vulkan/EffectManager.h"
 #include <random>
 
 namespace Utopian
@@ -84,7 +86,8 @@ namespace Utopian
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 	{
 		renderTarget = make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		effect = make_unique<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		//effect = make_unique<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 	}

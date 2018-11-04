@@ -13,21 +13,32 @@ namespace Utopian::Vk
 {
 	Effect::Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader)
 	{
-		Init(device, renderPass, vertexShader, fragmentShader);
+		mVertexShaderPath = vertexShader;
+		mFragmentShaderPath = fragmentShader;
+		mRenderPass = renderPass;
+		mDevice = device;
+
+		Init();
 	}
 
-	void Effect::Init(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader)
+	void Effect::Init()
 	{
-		mPipeline = std::make_shared<Pipeline>(device, renderPass);
-		mRenderPass = renderPass;
-		mShader = gShaderFactory().CreateShaderOnline(vertexShader, fragmentShader);
+		mPipeline = std::make_shared<Pipeline>(mDevice, mRenderPass);
+		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
 
-		CreatePipelineInterface(mShader, device);
+		CreatePipelineInterface(mShader, mDevice);
 	}
 
 	void Effect::CreatePipeline()
 	{
 		mPipeline->Create(mShader.get(), &mPipelineInterface);
+	}
+
+	void Effect::RecompileShader()
+	{
+		// If no errors, else do nothing
+		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
+		CreatePipeline();
 	}
 
 	void Effect::CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device)
@@ -119,6 +130,11 @@ namespace Utopian::Vk
 	SharedPtr<Shader> Effect::GetShader()
 	{
 		return mShader;
+	}
+
+	std::string Effect::GetVertexShaderPath()
+	{
+		return mVertexShaderPath;
 	}
 	
 	Pipeline* Effect::GetPipeline()

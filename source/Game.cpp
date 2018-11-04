@@ -26,6 +26,7 @@
 #include "core/ObjectManager.h"
 #include "core/World.h"
 #include "vulkan/ShaderFactory.h"
+#include "vulkan/EffectManager.h"
 #include "core/renderer/RenderingManager.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
@@ -74,6 +75,7 @@ namespace Utopian
 		Input::Start();
 		Vk::ShaderFactory::Start(mRenderer->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
+		Vk::EffectManager::Start();
 
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
@@ -222,6 +224,7 @@ namespace Utopian
 
 		World::Instance().Update();
 		RenderingManager::Instance().Update();
+		Vk::EffectManager::Instance().Update();
 		mEditor->Update();
 		mRenderer->Update();
 

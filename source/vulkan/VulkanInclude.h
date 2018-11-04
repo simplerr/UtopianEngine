@@ -60,6 +60,8 @@ namespace Utopian::Vk
 	class EffectLegacy;
 	class Shader;
 	class UIOverlay;
+	class ScreenQuad;
+	class BasicRenderTarget;
 }
 
 namespace Utopian

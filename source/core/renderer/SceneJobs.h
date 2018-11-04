@@ -5,6 +5,7 @@
 #include "vulkan/DeferredEffect.h"
 #include "vulkan/SSAOEffect.h"
 #include "vulkan/BlurEffect.h"
+#include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
 namespace Utopian
@@ -13,15 +14,6 @@ namespace Utopian
 	class Light;
 	class Camera;
 	class BaseJob;
-
-	namespace Vk
-	{
-		class Image;
-		class Renderer;
-		class RenderTarget;
-		class BasicRenderTarget;
-		class ScreenQuad;
-	}
 
 	struct SceneInfo
 	{
@@ -63,7 +55,6 @@ namespace Utopian
 		virtual void Init(const std::vector<BaseJob*>& jobs) = 0;
 
 		virtual void Render(Vk::Renderer* renderer, const JobInput& jobInput) = 0;
-
 	private:
 	};
 

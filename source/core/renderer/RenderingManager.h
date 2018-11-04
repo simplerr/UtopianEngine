@@ -50,7 +50,6 @@ namespace Utopian
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
 		void AddJob(BaseJob* job);
-
 	private:
 		SceneInfo mSceneInfo;
 		Camera* mMainCamera;

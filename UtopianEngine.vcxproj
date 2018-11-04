@@ -122,6 +122,7 @@
     <ClCompile Include="source\vulkan\BlurEffect.cpp" />
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
+    <ClCompile Include="source\vulkan\EffectManager.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Effect.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="source\vulkan\BlurEffect.h" />
     <ClInclude Include="source\vulkan\ColorEffect.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
+    <ClInclude Include="source\vulkan\EffectManager.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
     <ClInclude Include="source\vulkan\handles\Effect.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline.h" />

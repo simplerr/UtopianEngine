@@ -338,6 +338,8 @@ namespace Utopian::Vk
 			std::cout << "GLSL Parsing Failed for: " << filename << std::endl;
 			std::cout << shader.getInfoLog() << std::endl;
 			std::cout << shader.getInfoDebugLog() << std::endl;
+
+			// Todo: Add error handling here
 		}
 
 		/* Link */

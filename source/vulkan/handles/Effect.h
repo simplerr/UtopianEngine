@@ -19,6 +19,7 @@ namespace Utopian::Vk
 	public:
 		Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader);
 
+		void RecompileShader();
 		// This must explictly be called
 		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
 		void CreatePipeline();
@@ -39,17 +40,21 @@ namespace Utopian::Vk
 		Pipeline* GetPipeline();
 
 		SharedPtr<Shader> GetShader();
+		std::string GetVertexShaderPath();
 	protected:
 		SharedPtr<Pipeline> mPipeline;
 	private:
-		void Init(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader);
+		void Init();
 		void CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device);
 
 		RenderPass* mRenderPass = nullptr;
+		Device* mDevice = nullptr;
 		SharedPtr<Shader> mShader;
 		PipelineInterface mPipelineInterface;
 		std::vector<DescriptorSet> mDescriptorSets;
 		std::vector<VkDescriptorSet> mVkDescriptorSets;
+		std::string mVertexShaderPath;
+		std::string mFragmentShaderPath;
 		DescriptorPool mDescriptorPool;
 	};
 }
