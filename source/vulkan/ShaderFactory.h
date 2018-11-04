@@ -100,7 +100,7 @@ namespace Utopian::Vk
 		~ShaderFactory();
 		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
 		Shader* CreateComputeShader(std::string computeShaderFilename);
-		SharedPtr<Shader> CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
+		SharedPtr<Shader> CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename);
 		SharedPtr<CompiledShader> CompileShader(std::string filename);
 
 		void AddIncludeDirectory(std::string directory);

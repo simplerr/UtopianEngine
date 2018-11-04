@@ -26,6 +26,8 @@ namespace Utopian::Vk
 		mPipeline = std::make_shared<Pipeline>(mDevice, mRenderPass);
 		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
 
+		assert(mShader != nullptr);
+
 		CreatePipelineInterface(mShader, mDevice);
 	}
 
@@ -36,9 +38,13 @@ namespace Utopian::Vk
 
 	void Effect::RecompileShader()
 	{
-		// If no errors, else do nothing
-		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
-		CreatePipeline();
+		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
+
+		if (shader != nullptr)
+		{
+			mShader = shader;
+			CreatePipeline();
+		}
 	}
 
 	void Effect::CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device)

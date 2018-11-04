@@ -289,6 +289,9 @@ namespace Utopian::Vk
 
 	SharedPtr<CompiledShader> ShaderFactory::CompileShader(std::string filename)
 	{
+		SharedPtr<CompiledShader> compiledShader = nullptr;
+		bool error = false;
+
 		glslang::InitializeProcess();
 
 		std::ifstream file(filename);
@@ -327,45 +330,49 @@ namespace Utopian::Vk
 			std::cout << "GLSL Preprocessing Failed for: " << filename << std::endl;
 			std::cout << shader.getInfoLog() << std::endl;
 			std::cout << shader.getInfoDebugLog() << std::endl;
+			error = true;
 		}
 
 		const char* proprecessedStr = preprocessedGLSL.c_str();
 		shader.setStrings(&proprecessedStr, 1);
 
 		/* Compile */
-		if (!shader.parse(&resources, 100, false, messages))
+		if (!error && !shader.parse(&resources, 100, false, messages))
 		{
 			std::cout << "GLSL Parsing Failed for: " << filename << std::endl;
 			std::cout << shader.getInfoLog() << std::endl;
 			std::cout << shader.getInfoDebugLog() << std::endl;
-
-			// Todo: Add error handling here
+			error = true;
 		}
 
 		/* Link */
 		glslang::TProgram program;
 		program.addShader(&shader);
 
-		if (!program.link(messages))
+		if (!error && !program.link(messages))
 		{
 			std::cout << "GLSL Linking Failed for: " << filename << std::endl;
 			std::cout << shader.getInfoLog() << std::endl;
 			std::cout << shader.getInfoDebugLog() << std::endl;
+			error = true;
 		}
 
-		/* Convert to SPIRV */
-		std::vector<unsigned int> spirV;
-		spv::SpvBuildLogger logger;
-		glslang::SpvOptions spvOptions;
-		glslang::GlslangToSpv(*program.getIntermediate(shaderType), spirV, &logger, &spvOptions);
+		if (!error)
+		{
+			/* Convert to SPIRV */
+			std::vector<unsigned int> spirV;
+			spv::SpvBuildLogger logger;
+			glslang::SpvOptions spvOptions;
+			glslang::GlslangToSpv(*program.getIntermediate(shaderType), spirV, &logger, &spvOptions);
 
-		/* Shader reflection */
-		ShaderReflection reflection = ExtractShaderLayout(program, shaderType);
+			/* Shader reflection */
+			ShaderReflection reflection = ExtractShaderLayout(program, shaderType);
 
-		SharedPtr<CompiledShader> compiledShader = std::make_shared<CompiledShader>();
-		compiledShader->spirvBytecode = spirV;
-		compiledShader->reflection = reflection;
-		compiledShader->shaderStage = GetVulkanShaderStage(GetSuffix(filename));
+			compiledShader = std::make_shared<CompiledShader>();
+			compiledShader->spirvBytecode = spirV;
+			compiledShader->reflection = reflection;
+			compiledShader->shaderStage = GetVulkanShaderStage(GetSuffix(filename));
+		}
 
 		return compiledShader;
 	}
@@ -536,35 +543,45 @@ namespace Utopian::Vk
 		reflection->vertexDescription->AddBinding(BINDING_0, totalSize, VK_VERTEX_INPUT_RATE_VERTEX);
 	}
 
-	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
+	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename)
 	{
+		SharedPtr<Shader> shader = nullptr;
+
 		/* Vertex shader */
 		SharedPtr<CompiledShader> compiledVertexShader = CompileShader(vertexShaderFilename);
 
-		VkShaderModuleCreateInfo moduleCreateInfo{};
-		moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
-		moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
+		if (compiledVertexShader != nullptr)
+		{
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
+			moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
 
-		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
+			VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
+		}
 
 		/* Pixel shader */
 		SharedPtr<CompiledShader> compiledPixelShader = CompileShader(pixelShaderFilename);
 
-		moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
-		moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
+		if (compiledPixelShader != nullptr)
+		{
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
+			moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
 
-		VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
+			VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
+		}
 
-		SharedPtr<Shader> shader = std::make_shared<Shader>();
+		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
+		{
+			shader = std::make_shared<Shader>();
 
-		shader->AddCompiledShader(compiledVertexShader);
-		shader->AddCompiledShader(compiledPixelShader);
+			shader->AddCompiledShader(compiledVertexShader);
+			shader->AddCompiledShader(compiledPixelShader);
+		}
 
 		// Todo: geometry shader
-
-		//mLoadedShaders.push_back(shader);
 
 		return shader;
 	}
