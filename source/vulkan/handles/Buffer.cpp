@@ -42,6 +42,7 @@ namespace Utopian::Vk
 		vkGetBufferMemoryRequirements(vkDevice, mBuffer, &memReqs);
 		memAllocInfo.allocationSize = memReqs.size;
 		mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &memAllocInfo.memoryTypeIndex);
+		memAllocInfo.memoryTypeIndex = 1; // Note: Todo: Workaround
 		VulkanDebug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
 
 		if (data != nullptr)
