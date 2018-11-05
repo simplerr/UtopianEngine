@@ -150,7 +150,7 @@ namespace Utopian
 
 		CRenderable* mesh1 = teapot->AddComponent<CRenderable>();
 		mesh1->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
-		mesh1->SetColor(glm::vec4(0.3, 1, 0.2, 1.0));
+		mesh1->SetColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
 
 		CLight* lightComponent1 = teapot->AddComponent<CLight>();
 		lightComponent1->SetMaterial(vec4(1, 1, 1, 1));

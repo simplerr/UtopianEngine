@@ -28,11 +28,14 @@ float linearDepth(float depth)
 
 void main() 
 {
-	vec4 texColor = texture(texSampler, InTex);
+	vec4 color = texture(texSampler, InTex);
+
+	if (InColor != vec3(1.0f))
+		color = vec4(InColor, 1.0f);
 
 	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
 	outNormal = vec4(normalize(InNormalW), 1.0f);
 	outNormal.y *= -1.0f;
-	outAlbedo = vec4(texColor);
+	outAlbedo = vec4(color);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
 }
