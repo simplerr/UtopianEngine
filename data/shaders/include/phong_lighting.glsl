@@ -51,8 +51,7 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// The vector from the surface to the light.
-	// Todo: Note: the + sign is due to the fragment world position is negated for some reason
-	// this is a left over from an old problem
+	// Todo: Note: Unclear
 	pos.xyz *= -1.0f;
 	normal.xz *= -1.0f;
 	vec3 lightVec = light.pos - pos;
@@ -65,7 +64,6 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
  		return;
 		
 	// Normalize the light vector.
-	//lightVec /= d; 
 	lightVec = normalize(lightVec);
 	
 	// Ambient term.
@@ -104,6 +102,9 @@ void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, 
 	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// The vector from the surface to the light.
+	// Todo: Note: Unclear
+	pos.xyz *= -1.0f;
+	normal.xz *= -1.0f;
 	vec3 lightVec = light.pos - pos;
 		
 	// The distance from surface to light.
@@ -114,7 +115,7 @@ void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, 
 		return;
 		
 	// Normalize the light vector.
-	lightVec /= d; 
+	lightVec = normalize(lightVec);
 	
 	// Ambient term.
 	ambient = material.ambient * light.material.ambient * light.intensity.x;	
@@ -135,7 +136,7 @@ void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, 
 	}
 	
 	// Scale by spotlight factor and attenuate.
-	float spot = pow(max(dot(lightVec, light.dir), 0.0f), light.spot);
+	float spot = pow(max(dot(lightVec, normalize(light.dir)), 0.0f), light.spot);
 
 	// Scale by spotlight factor and attenuate.
 	float att = spot / dot(light.att, vec3(1.0f, d, d*d));

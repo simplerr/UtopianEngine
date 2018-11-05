@@ -65,7 +65,7 @@ namespace Utopian
 
 	void Light::SetDirection(const vec3& direction)
 	{
-		mLightData.direction = normalize(direction);
+		mLightData.direction = direction;
 	}
 
 	void Light::SetRange(float range)

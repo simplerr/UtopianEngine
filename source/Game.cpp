@@ -93,8 +93,9 @@ namespace Utopian
 		//
 		//// Add camera
 		auto cameraEntity = Actor::Create("Camera");
-		cameraEntity->AddComponent<CTransform>(vec3(0.0f, 0.0f, 0.0f));
+		cameraEntity->AddComponent<CTransform>(vec3(400.0f, 400.0f, 0.0f));
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
+		camera->LookAt(vec3(-400.0f, 50.0f, 0.0f));
 		camera->SetMainCamera();
 
 		cameraEntity->AddComponent<CNoClip>(6.0f);
@@ -143,7 +144,7 @@ namespace Utopian
 		/************************************************************************/
 		SharedPtr<Actor> teapot = Actor::Create("Teapot");
 
-		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(0.0f, 100.0f, 0.0f));
+		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(-400.0f, 50.0f, 0.0f));
 		transform1->SetScale(vec3(1.0f));
 		transform1->SetRotation(vec3(0, 0, 0));
 
@@ -156,7 +157,7 @@ namespace Utopian
 		lightComponent1->SetDirection(vec3(1, 0, 0));
 		lightComponent1->SetAtt(1, 0.00, 0.00000002);
 		lightComponent1->SetIntensity(0.0f, 1.0f, 0.0f);
-		lightComponent1->SetType(Utopian::Vk::LightType::POINT_LIGHT);
+		lightComponent1->SetType(Utopian::Vk::LightType::SPOT_LIGHT);
 		lightComponent1->SetRange(100000);
 		lightComponent1->SetSpot(4.0f);
 
