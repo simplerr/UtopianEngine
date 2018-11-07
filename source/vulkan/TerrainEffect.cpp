@@ -46,7 +46,7 @@ namespace Utopian::Vk
 
 	void TerrainEffect::CreatePipeline(Renderer* renderer)
 	{
-		Utopian::Vk::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
+		Utopian::Vk::Shader* shader = gShaderFactory().CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
 
 		Pipeline2* pipeline = new Utopian::Vk::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);

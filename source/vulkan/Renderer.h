@@ -143,11 +143,9 @@ namespace Utopian::Vk
 
 		// TODO: NOTE: HACK
 	public:
-		ShaderFactory*					mShaderManager = nullptr;
 		TextureLoader*					mTextureLoader = nullptr;
 		ModelLoader*					mModelLoader = nullptr;
 		UIOverlay*						mUiOverlay = nullptr;
 		ScreenGui*						mScreenGui = nullptr;
-
 	};
 }	// VulkanLib namespace

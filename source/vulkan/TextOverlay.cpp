@@ -56,7 +56,7 @@ namespace Utopian::Vk
 		mVertexDescription->AddAttribute(0, Vec2Attribute());
 
 		// Create the pipeline
-		Utopian::Vk::Shader* shader = mRenderer->mShaderManager->CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
+		Utopian::Vk::Shader* shader = gShaderFactory().CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
 		mPipeline = new Utopian::Vk::PipelineLegacy(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
 		
         // Why triangle strip?

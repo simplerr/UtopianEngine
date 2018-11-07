@@ -14,13 +14,13 @@ namespace Utopian::Vk
 
 		void Create(Shader* shader, PipelineInterface* pipelineInterface);
 
-		void InitDefaultValues(RenderPass* renderPass);
-
 		VkPipelineRasterizationStateCreateInfo rasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
 		VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
 		std::vector<VkPipelineColorBlendAttachmentState> blendAttachmentState;
 	private:
+		void InitDefaultValues(RenderPass* renderPass);
+
 		RenderPass* mRenderPass;	
 	};
 }

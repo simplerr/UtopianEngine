@@ -47,7 +47,7 @@ namespace Utopian::Vk
 	{
 		// Load shader
 		// [TODO] Move this into Pipeline?
-		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/phong/phong.vert.spv", "data/shaders/phong/phong.frag.spv");
+		Shader* shader = gShaderFactory().CreateShader("data/shaders/phong/phong.vert.spv", "data/shaders/phong/phong.frag.spv");
 
 		// Solid pipeline
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
@@ -64,7 +64,7 @@ namespace Utopian::Vk
 		mPipelines[Variation::WIREFRAME] = pipeline;
 
 		// Test pipeline
-		Shader* testShader = renderer->mShaderManager->CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
+		Shader* testShader = gShaderFactory().CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
 		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;

@@ -49,16 +49,10 @@ namespace Utopian
 		mRenderer->Prepare();
 		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
 
-		mTerrain = make_shared<Terrain>(mRenderer.get());
-		mTerrain->SetEnabled(false);
-
 		InitScene();
-
-		mRenderer->PostInitPrepare();
 
 		// Note: Needs to be called after a camera have been added to the scene
 		mEditor = make_shared<Editor>(mRenderer.get(), &World::Instance(), mTerrain.get());
-
 
 		ObjectManager::Instance().PrintObjects();
 	}
@@ -77,21 +71,20 @@ namespace Utopian
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
 
+		// Note: There are dependencies on the initialization order here
+		mTerrain = make_shared<Terrain>(mRenderer.get());
+		mTerrain->SetEnabled(false);
+
+		mRenderer->PostInitPrepare();
+
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 
+		/************************************************************************/
+		/* Add actors to the scene
+		/************************************************************************/
 
-		//// Add house
-		//auto house = Actor::Create("House_1");
-
-		//CTransform* transform = house->AddComponent<CTransform>(vec3(61000.0f, 300.0f, 78000.0f));
-		//transform->SetScale(vec3(550.0f));
-		//transform->SetRotation(vec3(180, 0, 0));
-
-		//CRenderable* mesh = house->AddComponent<CRenderable>();
-		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseBricksLarge.obj"));
-		//
-		//// Add camera
+		// Add camera
 		auto cameraEntity = Actor::Create("Camera");
 		cameraEntity->AddComponent<CTransform>(vec3(400.0f, 400.0f, 0.0f));
 		CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
@@ -104,21 +97,7 @@ namespace Utopian
 
 		cameraEntity->AddComponent<CPlayerControl>();
 
-		//// Add house
-		//house = Actor::Create("Well_1");
-
-		//transform = house->AddComponent<CTransform>(vec3(91000.0f, 6300.0f, 78000.0f));
-		//transform->SetScale(vec3(1550.0f));
-		//transform->SetRotation(vec3(0, 0, 0));
-
-		//mesh = house->AddComponent<CRenderable>();
-		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/arrow.obj"));
-
-		// Add actor w/ directional light component
-
-		/************************************************************************/
-		/* Castle
-		/************************************************************************/
+		// Castle
 		SharedPtr<Actor> castle = Actor::Create("Castle");
 
 		CTransform* transform2 = castle->AddComponent<CTransform>(vec3(0.0f, 0.0f, 0.0f));
@@ -139,9 +118,7 @@ namespace Utopian
 		lightComponent2->SetRange(100000);
 		lightComponent2->SetSpot(4.0f);
 
-		/************************************************************************/
-		/* Teapot
-		/************************************************************************/
+		// Teapot
 		SharedPtr<Actor> teapot = Actor::Create("Teapot");
 
 		CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(-400.0f, 50.0f, 0.0f));
@@ -161,62 +138,11 @@ namespace Utopian
 		lightComponent1->SetRange(100000);
 		lightComponent1->SetSpot(4.0f);
 
-		// Add orbiting entity
-		//auto teapot = Actor::Create("Window");
-
-		//transform = teapot->AddComponent<CTransform>(vec3(81000.0f, 5300.0f, 78000.0f));
-		//transform->SetScale(vec3(1050.0f));
-		//transform->SetRotation(vec3(0, 180, 180));
-
-		///*orbit = teapot->AddComponent<COrbit>(-0.01f);
-		//orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));*/
-
-		//mesh = teapot->AddComponent<CRenderable>();
-		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/adventure_village/HouseTower.obj"));
-
-		//// Add light
-		//auto light2 = Actor::Create("PointLight");
-
-		//light2->AddComponent<CTransform>(vec3(-74400.0f, -6200.0f, -78000.0f));
-
-		//lightComponent = light2->AddComponent<CLight>();
-		//lightComponent->SetMaterial(vec4(1, 0, 0, 1));
-		//lightComponent->SetDirection(vec3(0, -1, 0));
-		//lightComponent->SetAtt(0, 0.00, 0.00000002);
-		//lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
-		//lightComponent->SetType(Utopian::Vk::LightType::POINT_LIGHT);
-		//lightComponent->SetRange(400000);
-		//lightComponent->SetSpot(4.0f);
-
-		//// Add spot light
-		//auto spotLight = Actor::Create("SpotLight");
-
-		//spotLight->AddComponent<CTransform>(vec3(-104400.0f, -6200.0f, -78000.0f));
-
-		//lightComponent = spotLight->AddComponent<CLight>();
-		//lightComponent->SetMaterial(vec4(0, 0, 1, 1));
-		//lightComponent->SetDirection(vec3(1, 1, 1));
-		//lightComponent->SetAtt(0, 0.00, 0.000000002);
-		//lightComponent->SetIntensity(0.0, 1.0f, 0.0f);
-		//lightComponent->SetType(Utopian::Vk::LightType::SPOT_LIGHT);
-		//lightComponent->SetRange(400000);
-		//lightComponent->SetSpot(8.0f);
-
 		World::Instance().Update();
 
 		RenderingManager::Instance().InitShaderResources();
 		RenderingManager::Instance().InitShader();
 		ObjectManager::Instance().PrintObjects();
-
-		/*CMesh* mesh = entity->AddComponent<CMesh>("data/models/teapot.obj");
-		mesh->SetPipeline(PipelineType::PIPELINE_BASIC);
-
-		CLight* light = entity->AddComponent<CLight>();
-		CParticleSystem* particleSystem = entity->AddComponent<CParticleSystem>();
-
-		Entity* cameraEntity = Entity::Create("Camera");
-		CCamera* camera = cameraEntity->AddComponent<CCamera>();
-		camera->SetPosition(vec3(0, 0, 0));*/
 	}
 
 	void Game::Update()

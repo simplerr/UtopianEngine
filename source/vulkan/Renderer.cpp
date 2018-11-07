@@ -50,7 +50,6 @@ namespace Utopian::Vk
 			delete commandBuffer;
 		}
 
-		delete mShaderManager;
 		delete mTextOverlay;
 		delete mTextureLoader;
 		delete mScreenGui;
@@ -60,8 +59,6 @@ namespace Utopian::Vk
 	{
 		VulkanBase::Prepare();
 
-		mShaderManager = new ShaderFactory(mDevice);
-
 		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
 
 		SetupDescriptorPool();
@@ -69,8 +66,6 @@ namespace Utopian::Vk
 
 		mTextureLoader = new Utopian::Vk::TextureLoader(this, GetQueue()->GetVkHandle());
 		mModelLoader = new Utopian::Vk::ModelLoader(mTextureLoader);
-		mTextOverlay = new TextOverlay(this);
-		mScreenGui = new ScreenGui(this);
 
 		mPrepared = true;
 
@@ -91,6 +86,8 @@ namespace Utopian::Vk
 
 	void Renderer::PostInitPrepare()
 	{
+		mTextOverlay = new TextOverlay(this);
+		mScreenGui = new ScreenGui(this);
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
 

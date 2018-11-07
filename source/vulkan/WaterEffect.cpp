@@ -53,7 +53,7 @@ namespace Utopian::Vk
 
 	void WaterEffect::CreatePipeline(Renderer* renderer)
 	{
-		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/water/water.vert.spv", "data/shaders/water/water.frag.spv");
+		Shader* shader = gShaderFactory().CreateShader("data/shaders/water/water.vert.spv", "data/shaders/water/water.frag.spv");
 
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);

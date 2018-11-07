@@ -55,7 +55,7 @@ namespace Utopian::Vk
 		//mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		mRenderPass->Create();
 
-		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/imgui/uioverlay.vert.spv", "data/shaders/imgui/uioverlay.frag.spv");
+		Shader* shader = gShaderFactory().CreateShader("data/shaders/imgui/uioverlay.vert.spv", "data/shaders/imgui/uioverlay.frag.spv");
 
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), mRenderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);

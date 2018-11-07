@@ -69,7 +69,7 @@ namespace Utopian::Vk
 
 	void MarchingCubesEffect::CreatePipeline(Renderer* renderer)
 	{
-		Utopian::Vk::Shader* computeShader = renderer->mShaderManager->CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
+		Utopian::Vk::Shader* computeShader = gShaderFactory().CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
 		mComputePipeline = new Utopian::Vk::ComputePipeline(renderer->GetDevice(), &mPipelineInterface, computeShader);
 		mComputePipeline->Create();
 	}

@@ -43,7 +43,7 @@ namespace Utopian::Vk
 
 	void ScreenQuadEffect::CreatePipeline(Renderer* renderer)
 	{
-		Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/screenquad/screenquad.vert.spv", "data/shaders/screenquad/screenquad.frag.spv");
+		Shader* shader = gShaderFactory().CreateShader("data/shaders/screenquad/screenquad.vert.spv", "data/shaders/screenquad/screenquad.frag.spv");
 
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);

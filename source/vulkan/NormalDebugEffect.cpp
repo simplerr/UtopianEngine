@@ -47,7 +47,7 @@ namespace Utopian::Vk
 
 	void NormalDebugEffect::CreatePipeline(Renderer* renderer)
 	{
-		Utopian::Vk::Shader* shader = renderer->mShaderManager->CreateShader("data/shaders/normal_debug/base.vert.spv", "data/shaders/normal_debug/base.frag.spv", "data/shaders/normal_debug/normaldebug.geom.spv");
+		Utopian::Vk::Shader* shader = gShaderFactory().CreateShader("data/shaders/normal_debug/base.vert.spv", "data/shaders/normal_debug/base.frag.spv", "data/shaders/normal_debug/normaldebug.geom.spv");
 
 		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
