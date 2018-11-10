@@ -30,6 +30,7 @@
 #include "core/renderer/RenderingManager.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
+#include "luaplus/LuaPlus.h"
 
 using namespace Utopian;
 
@@ -48,6 +49,15 @@ namespace Utopian
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
+
+		// Lua testing
+		LuaPlus::LuaState* luaState = LuaPlus::LuaState::Create(true);
+		luaState->DoFile("data/scripts/world.lua");
+		LuaPlus::LuaObject luaActor = luaState->GetGlobal("actor_list");
+		//LuaPlus::LuaObject luaActor = luaState->GetGlobal("TransformComponent");
+
+		if (luaActor.IsNil())
+			return;
 
 		InitScene();
 
