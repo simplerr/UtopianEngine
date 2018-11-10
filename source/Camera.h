@@ -43,8 +43,13 @@ namespace Utopian
 		vec3 GetRight();
 		vec3 GetTarget();
 		vec3 GetUp();
+		vec3 GetLookAt();
 		float GetPitch();
 		float GetYaw();
+		float GetFov() const;
+		float GetNearPlane() const;
+		float GetFarPlane() const;
+
 		void AddOrientation(float yaw, float pitch);
 		void SetOrientation(float yaw, float pitch);
 		void LookAt(vec3 target);
@@ -57,6 +62,7 @@ namespace Utopian
 	private:
 		Utopian::Window* mWindow;
 		vec3 mUp;
+		vec3 mLookAt; // Note: This is only the initial target position
 
 		float mPitch;	// Vertical angle
 		float mYaw;		// Horizontal angle

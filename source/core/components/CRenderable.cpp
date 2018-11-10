@@ -29,8 +29,19 @@ namespace Utopian
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
-	void CRenderable::SetModel(Utopian::Vk::StaticModel* model)
+	LuaPlus::LuaObject CRenderable::GetLuaObject()
 	{
+		LuaPlus::LuaObject luaObject;
+		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+
+		luaObject.SetString("path", GetPath().c_str());
+
+		return luaObject;
+	}
+
+	void CRenderable::SetModel(std::string path, Utopian::Vk::StaticModel* model)
+	{
+		mPath = path;
 		mInternal->SetModel(model);
 	}
 
@@ -57,5 +68,10 @@ namespace Utopian
 	const BoundingBox CRenderable::GetBoundingBox() const
 	{
 		return mInternal->GetBoundingBox();
+	}
+
+	const std::string CRenderable::GetPath() const
+	{
+		return mPath;
 	}
 }

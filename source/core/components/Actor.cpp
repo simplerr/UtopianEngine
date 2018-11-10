@@ -50,4 +50,9 @@ namespace Utopian
 
 		return transform->GetTransform();
 	}
+
+	vector<Component*>& Actor::GetComponents()
+	{
+		return mComponents;
+	}
 }

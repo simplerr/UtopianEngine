@@ -3,6 +3,7 @@
 #include "core/components/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
+#include "core/LuaManager.h"
 
 using namespace glm;
 
@@ -18,6 +19,8 @@ namespace Utopian
 
 		void Update() override;
 		void OnCreated() override;
+
+		LuaPlus::LuaObject GetLuaObject() override;
 
 		// Setters
 		void LookAt(const vec3& target);
@@ -35,8 +38,12 @@ namespace Utopian
 		const vec3& GetTarget() const;
 		const vec3& GetRight() const;
 		const vec3& GetUp() const;
+		const vec3& GetLookAt() const;
 		float GetPitch() const;
 		float GetYaw() const;
+		float GetFov() const;
+		float GetNearPlane() const;
+		float GetFarPlane() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {

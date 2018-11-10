@@ -3,6 +3,7 @@
 #include "core/renderer/Light.h"
 #include "LightData.h"
 #include "utility/Common.h"
+#include "core/LuaManager.h"
 
 namespace Utopian
 {
@@ -16,6 +17,8 @@ namespace Utopian
 
 		void Update() override;
 		void OnCreated() override;
+
+		LuaPlus::LuaObject GetLuaObject() override;
 
 		// Setters
 		void SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular);

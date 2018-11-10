@@ -9,6 +9,7 @@ namespace Utopian
 	CNoClip::CNoClip(Actor* parent, float speed)
 		: Component(parent)
 	{
+		SetName("CNoClip");
 		SetSpeed(speed);
 		SetSensitivity(0.2f);
 
@@ -52,6 +53,16 @@ namespace Utopian
 
 	void CNoClip::OnCreated()
 	{
+	}
+
+	LuaPlus::LuaObject CNoClip::GetLuaObject()
+	{
+		LuaPlus::LuaObject luaObject;
+		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+
+		luaObject.SetNumber("speed", GetSpeed());
+
+		return luaObject;
 	}
 
 	void CNoClip::SetSpeed(float speed)

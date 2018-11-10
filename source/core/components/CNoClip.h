@@ -3,6 +3,7 @@
 #include "core/components/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
+#include "core/LuaManager.h"
 
 using namespace glm;
 
@@ -20,6 +21,8 @@ namespace Utopian
 
 		void Update() override;
 		void OnCreated() override;
+
+		LuaPlus::LuaObject GetLuaObject() override;
 
 		// Setters
 		void SetSpeed(float speed);

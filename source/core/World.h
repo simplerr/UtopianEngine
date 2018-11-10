@@ -34,6 +34,7 @@ namespace Utopian
 		void NotifyComponentCreated(Component* component);
 
 		Actor* RayIntersection(const Ray& ray);
+		vector<Actor*>& GetActors();
 
 		/* The bound SceneNodes transform will be synchronized with the SceneEntity in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* entity);

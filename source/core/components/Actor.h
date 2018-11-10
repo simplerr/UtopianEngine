@@ -78,6 +78,8 @@ namespace Utopian
 			return nullptr;
 		}
 
+		vector<Component*>& GetComponents();
+
 	private:
 		vector<Component*> mComponents;
 		bool mHasTransform;

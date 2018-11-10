@@ -2,6 +2,7 @@
 #include "core/components/Component.h"
 #include "core/renderer/Renderable.h"
 #include "utility/Common.h"
+#include "core/LuaManager.h"
 
 namespace Utopian
 {
@@ -16,7 +17,9 @@ namespace Utopian
 		void Update() override;
 		void OnCreated() override;
 
-		void SetModel(Utopian::Vk::StaticModel* model);
+		LuaPlus::LuaObject GetLuaObject() override;
+
+		void SetModel(std::string path, Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
 
@@ -33,8 +36,10 @@ namespace Utopian
 		}
 
 		const BoundingBox GetBoundingBox() const;
+		const std::string GetPath() const;
 
 	private:
 		SharedPtr<Renderable> mInternal;
+		std::string mPath;
 	};
 }

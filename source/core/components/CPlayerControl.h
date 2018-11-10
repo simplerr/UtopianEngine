@@ -3,6 +3,7 @@
 #include "core/components/Component.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
+#include "core/LuaManager.h"
 
 using namespace glm;
 
@@ -21,6 +22,8 @@ namespace Utopian
 		~CPlayerControl();
 
 		void Update() override;
+
+		LuaPlus::LuaObject GetLuaObject() override;
 
 		// Type identification
 		static uint32_t GetStaticType() {

@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "Component.h"
 #include "core/Transform.h"
+#include "core/LuaManager.h"
 
 using namespace glm;
 
@@ -14,6 +15,8 @@ namespace Utopian
 	public:
 		CTransform(Actor* parent, const vec3& position);
 		~CTransform();
+
+		LuaPlus::LuaObject GetLuaObject() override;
 
 		void SetTransform(const Transform& transform);
 		void SetPosition(const vec3& position);

@@ -21,6 +21,25 @@ namespace Utopian
 	{
 	}
 
+	LuaPlus::LuaObject CTransform::GetLuaObject()
+	{
+		LuaPlus::LuaObject luaObject;
+		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+
+		luaObject.SetNumber("pos_x", GetPosition().x);
+		luaObject.SetNumber("pos_y", GetPosition().y);
+		luaObject.SetNumber("pos_z", GetPosition().z);
+
+		luaObject.SetNumber("rotation_x", GetRotation().x);
+		luaObject.SetNumber("rotation_y", GetRotation().y);
+		luaObject.SetNumber("rotation_z", GetRotation().z);
+
+		luaObject.SetNumber("scale_x", GetScale().x);
+		luaObject.SetNumber("scale_y", GetScale().y);
+		luaObject.SetNumber("scale_z", GetScale().z);
+
+		return luaObject;
+	}
 
 	void CTransform::SetTransform(const Transform& transform)
 	{
@@ -66,7 +85,6 @@ namespace Utopian
 	{
 		mTransform.AddScale(scale);
 	}
-
 
 	const Utopian::Transform& CTransform::GetTransform() const
 	{

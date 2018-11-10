@@ -44,6 +44,11 @@ namespace Utopian
 		return selectedEntity;
 	}
 
+	vector<Actor*>& World::GetActors()
+	{
+		return mEntities;
+	}
+
 	void World::BindNode(const SharedPtr<SceneNode>& node, Actor* entity)
 	{
 		BoundNode binding;

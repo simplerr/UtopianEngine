@@ -1,6 +1,7 @@
 #pragma once
 #include "core/Object.h"
 #include "utility/math/BoundingBox.h"
+#include "LuaPlus.h"
 
 namespace Utopian
 {
@@ -26,6 +27,7 @@ namespace Utopian
 
 		virtual void OnCreated() { };
 		virtual void Update() { };
+		virtual LuaPlus::LuaObject GetLuaObject() { return LuaPlus::LuaObject(); };
 
 		const virtual Utopian::BoundingBox GetBoundingBox() const;
 

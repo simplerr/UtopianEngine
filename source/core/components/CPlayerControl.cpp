@@ -11,6 +11,8 @@ namespace Utopian
 	CPlayerControl::CPlayerControl(Actor* parent)
 		: Component(parent)
 	{
+		SetName("CPlayerControl");
+
 		mTransform = GetParent()->GetComponent<CTransform>();
 		mCamera = GetParent()->GetComponent<CCamera>();
 		mOrbit = GetParent()->GetComponent<COrbit>();
@@ -37,5 +39,15 @@ namespace Utopian
 			mOrbit->SetActive(false);
 			mNoClip->SetActive(true);
 		}
+	}
+
+	LuaPlus::LuaObject CPlayerControl::GetLuaObject()
+	{
+		LuaPlus::LuaObject luaObject;
+		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+
+		luaObject.SetNumber("empty", 0.0f);
+
+		return luaObject;
 	}
 }

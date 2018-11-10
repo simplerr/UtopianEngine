@@ -30,7 +30,9 @@
 #include "core/renderer/RenderingManager.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
-#include "luaplus/LuaPlus.h"
+#include "core/LuaManager.h"
+#include "core/ActorFactory.h"
+#include "LuaPlus.h"
 
 using namespace Utopian;
 
@@ -50,15 +52,6 @@ namespace Utopian
 		mRenderer->Prepare();
 		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
 
-		// Lua testing
-		LuaPlus::LuaState* luaState = LuaPlus::LuaState::Create(true);
-		luaState->DoFile("data/scripts/world.lua");
-		LuaPlus::LuaObject luaActor = luaState->GetGlobal("actor_list");
-		//LuaPlus::LuaObject luaActor = luaState->GetGlobal("TransformComponent");
-
-		if (luaActor.IsNil())
-			return;
-
 		InitScene();
 
 		// Note: Needs to be called after a camera have been added to the scene
@@ -69,7 +62,7 @@ namespace Utopian
 
 	Game::~Game()
 	{
-
+		ActorFactory::SaveToFile(World::Instance().GetActors());
 	}
 
 	void Game::InitScene()
@@ -77,6 +70,7 @@ namespace Utopian
 		ObjectManager::Start();
 		World::Start();
 		Input::Start();
+		LuaManager::Start();
 		Vk::ShaderFactory::Start(mRenderer->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
@@ -115,8 +109,8 @@ namespace Utopian
 		transform2->SetRotation(vec3(180, 0, 0));
 
 		CRenderable* mesh2 = castle->AddComponent<CRenderable>();
-		mesh2->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
-		//mesh->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
+		//mesh2->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
+		mesh2->SetModel("data/models/sponza_lowres/sponza.obj", mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
 		//mesh->SetMaterial(Vk::Mat(Vk::EffectType::COLOR, Vk::ColorEffect::NORMAL));
 
 		CLight* lightComponent2 = castle->AddComponent<CLight>();
@@ -136,7 +130,7 @@ namespace Utopian
 		transform1->SetRotation(vec3(0, 0, 0));
 
 		CRenderable* mesh1 = teapot->AddComponent<CRenderable>();
-		mesh1->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
+		mesh1->SetModel("data/models/teapot.obj", mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
 		mesh1->SetColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
 
 		CLight* lightComponent1 = teapot->AddComponent<CLight>();

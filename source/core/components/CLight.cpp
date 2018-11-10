@@ -27,6 +27,38 @@ namespace Utopian
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
+	LuaPlus::LuaObject CLight::GetLuaObject()
+	{
+		LuaPlus::LuaObject luaObject;
+		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+
+		Vk::Material material = GetMaterial();
+		luaObject.SetNumber("color_r", material.ambient.r);
+		luaObject.SetNumber("color_g", material.ambient.g);
+		luaObject.SetNumber("color_b", material.ambient.b);
+
+		glm::vec3 dir = GetDirection();
+		luaObject.SetNumber("dir_x", dir.x);
+		luaObject.SetNumber("dir_y", dir.y);
+		luaObject.SetNumber("dir_z", dir.z);
+
+		glm::vec3 att = GetAtt();
+		luaObject.SetNumber("att_x", att.x);
+		luaObject.SetNumber("att_y", att.y);
+		luaObject.SetNumber("att_z", att.z);
+
+		glm::vec3 intensity = GetIntensity();
+		luaObject.SetNumber("intensity_x", intensity.x);
+		luaObject.SetNumber("intensity_y", intensity.y);
+		luaObject.SetNumber("intensity_z", intensity.z);
+
+		luaObject.SetInteger("type", GetType());
+		luaObject.SetNumber("range", GetRange());
+		luaObject.SetNumber("spot", GetSpot());
+
+		return luaObject;
+	}
+
 	void CLight::SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular)
 	{
 		mInternal->SetMaterials(ambient, diffuse, specular);

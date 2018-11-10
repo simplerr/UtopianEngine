@@ -8,6 +8,8 @@ namespace Utopian
 	CCamera::CCamera(Actor* parent, Utopian::Window* window, float fieldOfView, float nearPlane, float farPlane)
 		: Component(parent)
 	{
+		SetName("CCamera");
+
 		mInternal = Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
 		auto transform = GetParent()->GetTransform();
 		mInternal->SetPosition(transform.GetPosition());
@@ -28,6 +30,21 @@ namespace Utopian
 	void CCamera::OnCreated()
 	{
 
+	}
+
+	LuaPlus::LuaObject CCamera::GetLuaObject()
+	{
+		LuaPlus::LuaObject luaObject;
+		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+
+		luaObject.SetNumber("fov", GetFov());
+		luaObject.SetNumber("near_Plane", GetNearPlane());
+		luaObject.SetNumber("far_Plane", GetFarPlane());
+		luaObject.SetNumber("look_at_x", GetLookAt().x);
+		luaObject.SetNumber("look_at_y", GetLookAt().y);
+		luaObject.SetNumber("look_at_z", GetLookAt().z);
+
+		return luaObject;
 	}
 
 	void CCamera::LookAt(const vec3& target)
@@ -95,6 +112,11 @@ namespace Utopian
 		return mInternal->GetUp();
 	}
 
+	const vec3& CCamera::GetLookAt() const
+	{
+		return mInternal->GetLookAt();
+	}
+
 	float CCamera::GetPitch() const
 	{
 		return mInternal->GetPitch();
@@ -103,5 +125,20 @@ namespace Utopian
 	float CCamera::GetYaw() const
 	{
 		return mInternal->GetYaw();
+	}
+
+	float CCamera::GetFov() const
+	{
+		return mInternal->GetFov();
+	}
+
+	float CCamera::GetNearPlane() const
+	{
+		return mInternal->GetNearPlane();
+	}
+
+	float CCamera::GetFarPlane() const
+	{
+		return mInternal->GetFarPlane();
 	}
 }

@@ -113,6 +113,11 @@ namespace Utopian
 		return mUp;
 	}
 
+	vec3 Camera::GetLookAt()
+	{
+		return mLookAt;
+	}
+
 	mat4 Camera::GetOrientation()
 	{
 		mat4 orientation = mat4();
@@ -158,6 +163,7 @@ namespace Utopian
 		vec3 dir = glm::normalize(target - GetPosition());
 		mPitch = glm::degrees(asinf(dir.y));
 		mYaw = -glm::degrees(atan2f(dir.x, dir.z));		// Note the - signs
+		mLookAt = target;
 	}
 
 	void Camera::CapAngles()
@@ -181,5 +187,17 @@ namespace Utopian
 	float Camera::GetYaw()
 	{
 		return mYaw;
+	}
+	float Camera::GetFov() const
+	{
+		return mFov;
+	}
+	float Camera::GetNearPlane() const
+	{
+		return mNearPlane;
+	}
+	float Camera::GetFarPlane() const
+	{
+		return mFarPlane;
 	}
 }	// VulkanLib namespace
