@@ -22,6 +22,7 @@ namespace Utopian
 		~CPlayerControl();
 
 		void Update() override;
+		void PostInit() override;
 
 		LuaPlus::LuaObject GetLuaObject() override;
 

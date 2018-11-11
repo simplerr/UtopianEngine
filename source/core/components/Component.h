@@ -27,6 +27,8 @@ namespace Utopian
 
 		virtual void OnCreated() { };
 		virtual void Update() { };
+		virtual void PostInit() = 0;
+
 		virtual LuaPlus::LuaObject GetLuaObject() { return LuaPlus::LuaObject(); };
 
 		const virtual Utopian::BoundingBox GetBoundingBox() const;

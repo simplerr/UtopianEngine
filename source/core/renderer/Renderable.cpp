@@ -3,6 +3,7 @@
 #include "vulkan/StaticModel.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "utility/math/BoundingBox.h"
+#include "vulkan/ModelLoader.h"
 
 namespace Utopian
 {
@@ -35,6 +36,11 @@ namespace Utopian
 	Utopian::Vk::StaticModel* Renderable::GetModel()
 	{
 		return mModel;
+	}
+
+	void Renderable::LoadModel(std::string path)
+	{
+		mModel = Vk::gModelLoader().LoadModel(path);
 	}
 
 	void Renderable::SetModel(Utopian::Vk::StaticModel* model)

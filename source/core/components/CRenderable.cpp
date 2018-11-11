@@ -3,13 +3,14 @@
 #include "core/renderer/Renderable.h"
 #include "core/components/CTransform.h"
 #include "core/World.h"
+#include "vulkan/ModelLoader.h"
 
 namespace Utopian
 {
 	CRenderable::CRenderable(Actor* parent)
 		: Component(parent)
 	{
-		SetName("CStaticMesh");
+		SetName("CRenderable");
 	}
 
 	CRenderable::~CRenderable()
@@ -29,6 +30,10 @@ namespace Utopian
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
+	void CRenderable::PostInit()
+	{
+	}
+
 	LuaPlus::LuaObject CRenderable::GetLuaObject()
 	{
 		LuaPlus::LuaObject luaObject;
@@ -37,6 +42,12 @@ namespace Utopian
 		luaObject.SetString("path", GetPath().c_str());
 
 		return luaObject;
+	}
+
+	void CRenderable::LoadModel(std::string path)
+	{
+		mPath = path;
+		mInternal->LoadModel(path);
 	}
 
 	void CRenderable::SetModel(std::string path, Utopian::Vk::StaticModel* model)

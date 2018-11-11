@@ -6,6 +6,7 @@
 namespace Utopian
 {
 	class Actor;
+	class Window;
 
 	class ActorFactory
 	{
@@ -13,8 +14,8 @@ namespace Utopian
 		//ActorFactory();
 		//~ActorFactory();
 
-		static void LoadFromFile(std::string luaFilename);
-		static void SaveToFile(const std::vector<Actor*>& actors);
+		static void LoadFromFile(Window* window, std::string filename); // Note: Window should not be here
+		static void SaveToFile(std::string filename, const std::vector<Actor*>& actors);
 	private:
 		void LoadActor(const LuaPlus::LuaObject& luaObject);
 	};

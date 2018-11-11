@@ -11,9 +11,6 @@ namespace Utopian
 		SetName("CCamera");
 
 		mInternal = Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
-		auto transform = GetParent()->GetTransform();
-		mInternal->SetPosition(transform.GetPosition());
-
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
@@ -32,14 +29,20 @@ namespace Utopian
 
 	}
 
+	void CCamera::PostInit()
+	{
+		auto transform = GetParent()->GetTransform();
+		mInternal->SetPosition(transform.GetPosition());
+	}
+
 	LuaPlus::LuaObject CCamera::GetLuaObject()
 	{
 		LuaPlus::LuaObject luaObject;
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
 		luaObject.SetNumber("fov", GetFov());
-		luaObject.SetNumber("near_Plane", GetNearPlane());
-		luaObject.SetNumber("far_Plane", GetFarPlane());
+		luaObject.SetNumber("near_plane", GetNearPlane());
+		luaObject.SetNumber("far_plane", GetFarPlane());
 		luaObject.SetNumber("look_at_x", GetLookAt().x);
 		luaObject.SetNumber("look_at_y", GetLookAt().y);
 		luaObject.SetNumber("look_at_z", GetLookAt().z);

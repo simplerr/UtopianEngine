@@ -103,9 +103,6 @@
     <Filter Include="Source Files\utility">
       <UniqueIdentifier>{0ce3b1c7-52a2-4ecd-bde8-34ffa1353e31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\external">
-      <UniqueIdentifier>{bbe3eb5b-1ef1-4192-a376-c2dfed6f22a3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\vulkan\effects\imgui">
       <UniqueIdentifier>{ef086332-9e61-4844-acc5-338e98475e68}</UniqueIdentifier>
     </Filter>
@@ -135,6 +132,9 @@
     </Filter>
     <Filter Include="Source Files\vulkan\effects\blur\shader">
       <UniqueIdentifier>{2d820ba9-008b-4274-8cc3-46eafa8a7c76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{bbe3eb5b-1ef1-4192-a376-c2dfed6f22a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -271,10 +271,10 @@
       <Filter>Source Files\utility</Filter>
     </ClCompile>
     <ClCompile Include="external\imgui\imgui.cpp">
-      <Filter>Source Files\external</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="external\imgui\imgui_draw.cpp">
-      <Filter>Source Files\external</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\ImguiEffect.cpp">
       <Filter>Source Files\vulkan\effects\imgui</Filter>
@@ -401,6 +401,12 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\EffectManager.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\LuaManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\ActorFactory.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -555,10 +561,10 @@
       <Filter>Source Files\utility</Filter>
     </ClInclude>
     <ClInclude Include="external\imgui\imgui.h">
-      <Filter>Source Files\external</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="external\imgui\imgui_internal.h">
-      <Filter>Source Files\external</Filter>
+      <Filter>Source Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\ImguiEffect.h">
       <Filter>Source Files\vulkan\effects\imgui</Filter>
@@ -700,6 +706,12 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\EffectManager.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\LuaManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\ActorFactory.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

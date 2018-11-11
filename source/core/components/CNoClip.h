@@ -21,6 +21,7 @@ namespace Utopian
 
 		void Update() override;
 		void OnCreated() override;
+		void PostInit() override;
 
 		LuaPlus::LuaObject GetLuaObject() override;
 

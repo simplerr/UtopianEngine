@@ -16,6 +16,8 @@ namespace Utopian
 		CTransform(Actor* parent, const vec3& position);
 		~CTransform();
 
+		void PostInit() override;
+
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		void SetTransform(const Transform& transform);

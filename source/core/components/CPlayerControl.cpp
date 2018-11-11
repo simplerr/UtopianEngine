@@ -12,13 +12,6 @@ namespace Utopian
 		: Component(parent)
 	{
 		SetName("CPlayerControl");
-
-		mTransform = GetParent()->GetComponent<CTransform>();
-		mCamera = GetParent()->GetComponent<CCamera>();
-		mOrbit = GetParent()->GetComponent<COrbit>();
-		mNoClip = GetParent()->GetComponent<CNoClip>();
-
-		mOrbit->SetActive(false);
 	}
 
 	CPlayerControl::~CPlayerControl()
@@ -39,6 +32,17 @@ namespace Utopian
 			mOrbit->SetActive(false);
 			mNoClip->SetActive(true);
 		}
+	}
+
+	void CPlayerControl::PostInit()
+	{
+		mTransform = GetParent()->GetComponent<CTransform>();
+		mCamera = GetParent()->GetComponent<CCamera>();
+		mOrbit = GetParent()->GetComponent<COrbit>();
+		mNoClip = GetParent()->GetComponent<CNoClip>();
+
+		if (mOrbit != nullptr)
+			mOrbit->SetActive(false);
 	}
 
 	LuaPlus::LuaObject CPlayerControl::GetLuaObject()

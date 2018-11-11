@@ -16,9 +16,11 @@ namespace Utopian
 
 		void Update() override;
 		void OnCreated() override;
+		void PostInit() override;
 
 		LuaPlus::LuaObject GetLuaObject() override;
 
+		void LoadModel(std::string path);
 		void SetModel(std::string path, Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);

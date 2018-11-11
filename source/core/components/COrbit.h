@@ -20,6 +20,7 @@ namespace Utopian
 
 		void Update() override;
 		void OnCreated() override;
+		void PostInit() override;
 
 		// Setters
 		void SetSpeed(float speed);

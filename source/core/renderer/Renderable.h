@@ -20,6 +20,8 @@ namespace Utopian
 
 		static SharedPtr<Renderable> Create();
 
+		void LoadModel(std::string path);
+
 		void SetModel(Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);

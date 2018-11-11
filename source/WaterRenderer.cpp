@@ -13,10 +13,9 @@
 
 namespace Utopian
 {
-	WaterRenderer::WaterRenderer(Vk::Renderer* renderer, Vk::ModelLoader* modelLoader, Vk::TextureLoader* textureLoader)
+	WaterRenderer::WaterRenderer(Vk::Renderer* renderer, Vk::TextureLoader* textureLoader)
 	{
 		mRenderer = renderer;
-		mModelLoader = modelLoader;
 
 		//mGridModel = modelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
 
@@ -83,7 +82,7 @@ namespace Utopian
 	void WaterRenderer::AddWater(glm::vec3 position, uint32_t numCells)
 	{
 		Water water;
-		water.gridModel = mModelLoader->LoadGrid(mRenderer->GetDevice(), CELL_SIZE, numCells);
+		water.gridModel = Vk::gModelLoader().LoadGrid(CELL_SIZE, numCells);
 		water.position = glm::vec3(position.x, 0.0f, position.z); // NOTE: Water can only be placed at y=0
 		mWaterList.push_back(water);
 	}

@@ -27,6 +27,10 @@ namespace Utopian
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
+	void CLight::PostInit()
+	{
+	}
+
 	LuaPlus::LuaObject CLight::GetLuaObject()
 	{
 		LuaPlus::LuaObject luaObject;
@@ -52,7 +56,7 @@ namespace Utopian
 		luaObject.SetNumber("intensity_y", intensity.y);
 		luaObject.SetNumber("intensity_z", intensity.z);
 
-		luaObject.SetInteger("type", GetType());
+		luaObject.SetInteger("type", GetLightType());
 		luaObject.SetNumber("range", GetRange());
 		luaObject.SetNumber("spot", GetSpot());
 

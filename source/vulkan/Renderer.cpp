@@ -65,7 +65,6 @@ namespace Utopian::Vk
 		PrepareCommandBuffers();
 
 		mTextureLoader = new Utopian::Vk::TextureLoader(this, GetQueue()->GetVkHandle());
-		mModelLoader = new Utopian::Vk::ModelLoader(mTextureLoader);
 
 		mPrepared = true;
 

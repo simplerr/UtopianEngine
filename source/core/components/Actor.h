@@ -22,6 +22,11 @@ namespace Utopian
 
 		static SharedPtr<Actor> Create(string name);
 
+		// Calls PostInit() on all added components.
+		// The reason is that some components depend on others and fetch
+		// them during initialization.
+		void PostInit();
+
 		BoundingBox GetBoundingBox() const;
 		const Transform& GetTransform() const;
 

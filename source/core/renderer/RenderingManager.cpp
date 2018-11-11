@@ -31,7 +31,7 @@ namespace Utopian
 		// The real solution is to cleanup and remove this.
 		mCommandBuffer->ToggleActive();
 
-		mWaterRenderer = new WaterRenderer(mRenderer, renderer->mModelLoader, renderer->mTextureLoader);
+		mWaterRenderer = new WaterRenderer(mRenderer, renderer->mTextureLoader);
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
@@ -49,7 +49,7 @@ namespace Utopian
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 
-		mCubeModel = mRenderer->mModelLoader->LoadDebugBox(mRenderer->GetDevice());
+		mCubeModel = Vk::gModelLoader().LoadDebugBox();
 	}
 
 	RenderingManager::~RenderingManager()

@@ -85,6 +85,8 @@
   <ItemGroup>
     <ClCompile Include="external\imgui\imgui.cpp" />
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
+    <ClCompile Include="source\core\ActorFactory.cpp" />
+    <ClCompile Include="source\core\LuaManager.cpp" />
     <ClCompile Include="source\core\renderer\SceneJobs.cpp" />
     <ClCompile Include="source\core\terrain\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -175,6 +177,8 @@
   <ItemGroup>
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
+    <ClInclude Include="source\core\ActorFactory.h" />
+    <ClInclude Include="source\core\LuaManager.h" />
     <ClInclude Include="source\core\renderer\SceneJobs.h" />
     <ClInclude Include="source\core\terrain\Block.h" />
     <ClInclude Include="source\Camera.h" />

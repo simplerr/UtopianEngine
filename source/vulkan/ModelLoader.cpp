@@ -18,8 +18,9 @@ using namespace glm;
 
 namespace Utopian::Vk
 {
-	ModelLoader::ModelLoader(TextureLoader* textureLoader)
+	ModelLoader::ModelLoader(Device* device, TextureLoader* textureLoader)
 	{
+		mDevice = device;
 		mTextureLoader = textureLoader;
 	}
 
@@ -40,7 +41,12 @@ namespace Utopian::Vk
 		}
 	}
 
-	StaticModel* ModelLoader::LoadModel(Device* device, std::string filename)
+	ModelLoader& gModelLoader()
+	{
+		return ModelLoader::Instance();
+	}
+
+	StaticModel* ModelLoader::LoadModel(std::string filename)
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find(filename) != mModelMap.end())
@@ -60,7 +66,7 @@ namespace Utopian::Vk
 			// Loop over all meshes
 			for (int meshId = 0; meshId < scene->mNumMeshes; meshId++)
 			{
-				Mesh* mesh = new Mesh(device);
+				Mesh* mesh = new Mesh(mDevice);
 				aiMesh* assimpMesh = scene->mMeshes[meshId];
 
 				// Get the diffuse color
@@ -112,12 +118,12 @@ namespace Utopian::Vk
 					mesh->SetTexture(texture);
 				}
 
-				mesh->BuildBuffers(device);		// Build the models buffers here
+				mesh->BuildBuffers(mDevice);		// Build the models buffers here
 				model->AddMesh(mesh);
 			}
 
 			// Add the model to the model map
-			model->Init(device);
+			model->Init(mDevice);
 			mModelMap[filename] = model;
 		}
 		else {
@@ -128,7 +134,7 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::GenerateTerrain(Device* device, std::string filename)
+	StaticModel* ModelLoader::GenerateTerrain(std::string filename)
 	{
 		return nullptr;
 		//// Check if the model already is loaded
@@ -252,14 +258,14 @@ namespace Utopian::Vk
 		//return terrain;
 	}
 
-	StaticModel* ModelLoader::LoadQuad(Device* device)
+	StaticModel* ModelLoader::LoadQuad()
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find("quad") != mModelMap.end())
 			return mModelMap["quad"];
 
 		StaticModel* model = new StaticModel();
-		Mesh* mesh = new Mesh(device);
+		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
 		float ANY = 0;
@@ -272,22 +278,22 @@ namespace Utopian::Vk
 		mesh->AddTriangle(1, 2, 0);
 		mesh->AddTriangle(3, 0, 2);
 
-		mesh->BuildBuffers(device);
+		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
-		model->Init(device);
+		model->Init(mDevice);
 		mModelMap["quad"] = model;
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadGrid(Device* device, float cellSize, int numCells)
+	StaticModel* ModelLoader::LoadGrid(float cellSize, int numCells)
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find("quad") != mModelMap.end())
 			return mModelMap["quad"];
 
 		StaticModel* model = new StaticModel();
-		Mesh* mesh = new Mesh(device);
+		Mesh* mesh = new Mesh(mDevice);
 
 		float ANY = 0;
 		for (int x = 0; x < numCells; x++)
@@ -309,22 +315,22 @@ namespace Utopian::Vk
 			}
 		}
 
-		mesh->BuildBuffers(device);
+		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
-		model->Init(device);
+		model->Init(mDevice);
 		mModelMap["quad"] = model;
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadDebugBox(Device* device)
+	StaticModel* ModelLoader::LoadDebugBox()
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find("debug_box") != mModelMap.end())
 			return mModelMap["debug_box"];
 
 		StaticModel* model = new StaticModel();
-		Mesh* mesh = new Mesh(device);
+		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
 		mesh->AddVertex(-0.5f, -0.5f, 0.5f);
@@ -362,10 +368,10 @@ namespace Utopian::Vk
 		mesh->AddTriangle(3, 6, 2);
 		mesh->AddTriangle(6, 3, 7);
 
-		mesh->BuildBuffers(device);		
+		mesh->BuildBuffers(mDevice);		
 		model->AddMesh(mesh);
 
-		model->Init(device);
+		model->Init(mDevice);
 		mModelMap["debug_box"] = model;
 		return model;
 	}

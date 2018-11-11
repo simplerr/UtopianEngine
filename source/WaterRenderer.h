@@ -14,7 +14,7 @@ namespace Utopian
 	class WaterRenderer
 	{
 	public:
-		WaterRenderer(Vk::Renderer* renderer, Vk::ModelLoader* modelLoader, Vk::TextureLoader* textureLoader);
+		WaterRenderer(Vk::Renderer* renderer, Vk::TextureLoader* textureLoader);
 		~WaterRenderer();
 
 		void Render(Vk::Renderer* renderer, Vk::CommandBuffer* commandBuffer);
@@ -36,7 +36,6 @@ namespace Utopian
 		};
 
 		Vk::Renderer* mRenderer;
-		Vk::ModelLoader* mModelLoader;
 
 		Vk::WaterEffect mWaterEffect;
 		Vk::BasicRenderTarget* mReflectionRenderTarget;

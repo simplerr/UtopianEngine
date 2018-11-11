@@ -28,28 +28,25 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mCamera = renderer->GetCamera();
 	mTerrain = terrain;
 
-	//auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/adventure_village/StonePlatform_centered.obj");
-	auto model = renderer->mModelLoader->LoadModel(renderer->GetDevice(), "data/models/cube.obj");
-
 	mAxisX = Utopian::Renderable::Create();
 	mAxisX->SetScale(vec3(AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE, AXIS_SCALE));
 	mAxisX->SetColor(Utopian::Vk::Colors::Red);
 	mAxisX->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
-	mAxisX->SetModel(model);
+	mAxisX->LoadModel("data/models/cube.obj");
 	mAxisX->SetVisible(false);
 
 	mAxisY = Utopian::Renderable::Create();
 	mAxisY->SetScale(vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
 	mAxisY->SetColor(Utopian::Vk::Colors::Green);
 	mAxisY->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
-	mAxisY->SetModel(model);
+	mAxisY->LoadModel("data/models/cube.obj");
 	mAxisY->SetVisible(false);
 
 	mAxisZ = Utopian::Renderable::Create();
 	mAxisZ->SetScale(vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
 	mAxisZ->SetColor(Utopian::Vk::Colors::Blue);
 	mAxisZ->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
-	mAxisZ->SetModel(model);
+	mAxisZ->LoadModel("data/models/cube.obj");
 	mAxisZ->SetVisible(false);
 
 	/*Scene::SceneRenderer::Instance().AddRenderable(mAxisX.get());

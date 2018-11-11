@@ -9,11 +9,8 @@ namespace Utopian
 	COrbit::COrbit(Actor* parent, float speed)
 		: Component(parent)
 	{
-		mTransform = GetParent()->GetComponent<CTransform>();
-		mCamera = GetParent()->GetComponent<CCamera>();
 		SetSpeed(speed);
 		SetRadius(15000);
-		SetTarget(mTransform->GetPosition());
 
 		// Random orbit position
 		mCounter = rand() % 100;
@@ -38,6 +35,13 @@ namespace Utopian
 
 	void COrbit::OnCreated()
 	{
+	}
+
+	void COrbit::PostInit()
+	{
+		mTransform = GetParent()->GetComponent<CTransform>();
+		mCamera = GetParent()->GetComponent<CCamera>();
+		SetTarget(mTransform->GetPosition());
 	}
 
 	void COrbit::SetSpeed(float speed)

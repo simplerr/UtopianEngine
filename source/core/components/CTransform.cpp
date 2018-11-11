@@ -21,6 +21,10 @@ namespace Utopian
 	{
 	}
 
+	void CTransform::PostInit()
+	{
+	}
+
 	LuaPlus::LuaObject CTransform::GetLuaObject()
 	{
 		LuaPlus::LuaObject luaObject;

@@ -12,9 +12,6 @@ namespace Utopian
 		SetName("CNoClip");
 		SetSpeed(speed);
 		SetSensitivity(0.2f);
-
-		mCamera = GetParent()->GetComponent<CCamera>();
-		mTransform = GetParent()->GetComponent<CTransform>();
 	}
 
 	CNoClip::~CNoClip()
@@ -53,6 +50,12 @@ namespace Utopian
 
 	void CNoClip::OnCreated()
 	{
+	}
+
+	void CNoClip::PostInit()
+	{
+		mCamera = GetParent()->GetComponent<CCamera>();
+		mTransform = GetParent()->GetComponent<CTransform>();
 	}
 
 	LuaPlus::LuaObject CNoClip::GetLuaObject()

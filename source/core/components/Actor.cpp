@@ -23,6 +23,14 @@ namespace Utopian
 		return entity;
 	}
 
+	void Actor::PostInit()
+	{
+		for (auto& component : mComponents)
+		{
+			component->PostInit();
+		}
+	}
+
 	BoundingBox Actor::GetBoundingBox() const
 	{
 		BoundingBox boundingBox;
