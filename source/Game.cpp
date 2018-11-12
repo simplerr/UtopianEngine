@@ -91,60 +91,6 @@ namespace Utopian
 
 		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
 
-		// Add camera
-		//auto cameraEntity = Actor::Create("Camera");
-		//cameraEntity->AddComponent<CTransform>(vec3(400.0f, 400.0f, 0.0f));
-		//CCamera* camera = cameraEntity->AddComponent<CCamera>(mWindow, 60.0f, 10.0f, 256000.0f);
-		//camera->LookAt(vec3(-400.0f, 50.0f, 0.0f));
-		//camera->SetMainCamera();
-
-		//cameraEntity->AddComponent<CNoClip>(6.0f);
-		//COrbit* orbit = cameraEntity->AddComponent<COrbit>(0.01f);
-		//orbit->SetTarget(vec3(81000.0f, 5300.0f, 78000.0f));
-
-		//cameraEntity->AddComponent<CPlayerControl>();
-
-		//// Castle
-		//SharedPtr<Actor> castle = Actor::Create("Castle");
-
-		//CTransform* transform2 = castle->AddComponent<CTransform>(vec3(0.0f, 0.0f, 0.0f));
-		//transform2->SetScale(vec3(1.0f));
-		//transform2->SetRotation(vec3(180, 0, 0));
-
-		//CRenderable* mesh2 = castle->AddComponent<CRenderable>();
-		////mesh2->SetModel(mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza/sponza.obj"));
-		//mesh2->SetModel("data/models/sponza_lowres/sponza.obj", mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/sponza_lowres/sponza.obj"));
-		////mesh->SetMaterial(Vk::Mat(Vk::EffectType::COLOR, Vk::ColorEffect::NORMAL));
-
-		//CLight* lightComponent2 = castle->AddComponent<CLight>();
-		//lightComponent2->SetMaterial(vec4(1, 1, 1, 1));
-		//lightComponent2->SetDirection(vec3(1, 0, 0));
-		//lightComponent2->SetAtt(0, 0.00, 0.00000002);
-		//lightComponent2->SetIntensity(0.2f, 0.0f, 0.0f);
-		//lightComponent2->SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
-		//lightComponent2->SetRange(100000);
-		//lightComponent2->SetSpot(4.0f);
-
-		//// Teapot
-		//SharedPtr<Actor> teapot = Actor::Create("Teapot");
-
-		//CTransform* transform1 = teapot->AddComponent<CTransform>(vec3(-400.0f, 50.0f, 0.0f));
-		//transform1->SetScale(vec3(1.0f));
-		//transform1->SetRotation(vec3(0, 0, 0));
-
-		//CRenderable* mesh1 = teapot->AddComponent<CRenderable>();
-		//mesh1->SetModel("data/models/teapot.obj", mRenderer->mModelLoader->LoadModel(mRenderer->GetDevice(), "data/models/teapot.obj"));
-		//mesh1->SetColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
-
-		//CLight* lightComponent1 = teapot->AddComponent<CLight>();
-		//lightComponent1->SetMaterial(vec4(1, 1, 1, 1));
-		//lightComponent1->SetDirection(vec3(1, 0, 0));
-		//lightComponent1->SetAtt(1, 0.00, 0.00000002);
-		//lightComponent1->SetIntensity(0.0f, 1.0f, 0.0f);
-		//lightComponent1->SetType(Utopian::Vk::LightType::SPOT_LIGHT);
-		//lightComponent1->SetRange(100000);
-		//lightComponent1->SetSpot(4.0f);
-
 		World::Instance().Update();
 
 		RenderingManager::Instance().InitShaderResources();
