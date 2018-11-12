@@ -7,52 +7,6 @@ actor_list =
 		{
 			CRenderable = 
 			{
-				path = "data/models/adventure_village/Chimney2.obj",
-			},
-			CTransform = 
-			{
-				pos_x = -580.44927978516,
-				pos_y = 0,
-				pos_z = 59.578369140625,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				path = "data/models/adventure_village/CrateLong.obj",
-			},
-			CTransform = 
-			{
-				pos_x = -200.64459228516,
-				pos_y = 0,
-				pos_z = 157.41354370117,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
 				path = "data/models/adventure_village/CrateLongB.obj",
 			},
 			CTransform = 
@@ -428,9 +382,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 578.31896972656,
-				pos_y = 235.55197143555,
-				pos_z = -126.81268310547,
+				pos_x = 550.74560546875,
+				pos_y = 205.30294799805,
+				pos_z = -36.726047515869,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -451,9 +405,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -356.18463134766,
+				pos_x = 89.769958496094,
 				pos_y = 0,
-				pos_z = 120.6086807251,
+				pos_z = -28.85018157959,
 				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -492,9 +446,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 187.69940185547,
+				pos_x = 230.91799926758,
 				pos_y = 0,
-				pos_z = -129.30801391602,
+				pos_z = -171.70306396484,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -503,8 +457,8 @@ actor_list =
 				scale_z = 1,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "EditorActor",
 		components = 
@@ -518,6 +472,52 @@ actor_list =
 				pos_x = -480.94970703125,
 				pos_y = 0,
 				pos_z = -107.79209899902,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/Chimney2.obj",
+			},
+			CTransform = 
+			{
+				pos_x = -580.44927978516,
+				pos_y = 0,
+				pos_z = 59.578369140625,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/CrateLong.obj",
+			},
+			CTransform = 
+			{
+				pos_x = -200.64459228516,
+				pos_y = 0,
+				pos_z = 157.41354370117,
 				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,

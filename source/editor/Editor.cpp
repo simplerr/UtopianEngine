@@ -11,6 +11,7 @@
 #include "editor/ActorInspector.h"
 #include "core/terrain/Terrain.h"
 #include "editor/TransformTool.h"
+#include "core/ActorFactory.h"
 
 namespace Utopian
 {
@@ -101,6 +102,11 @@ namespace Utopian
 		ImGui::Text("Models:");
 
 		ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
+
+		if (ImGui::Button("Save scene"))
+		{
+			ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
+		}
 
 		// ImGui functions end here
 		ImGui::End();

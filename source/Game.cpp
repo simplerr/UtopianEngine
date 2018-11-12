@@ -62,7 +62,6 @@ namespace Utopian
 
 	Game::~Game()
 	{
-		ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
 	}
 
 	void Game::InitScene()
