@@ -25,6 +25,15 @@ namespace Utopian
 		mInternal = Light::Create();
 
 		World::Instance().BindNode(mInternal, GetParent());
+
+		// The default is a spot light
+		SetMaterial(glm::vec4(1.0f));
+		SetDirection(glm::vec3(0.614f, -0.1f, 0.0f));
+		SetAtt(0.145, 0, 0);
+		SetIntensity(0, 0.193, 0);
+		SetType(Vk::LightType::SPOT_LIGHT);
+		SetRange(100000);
+		SetSpot(4.0f);
 	}
 
 	void CLight::PostInit()

@@ -12,6 +12,12 @@ namespace Utopian
 	class Actor;
 	class ActorInspector;
 
+	enum ActorTemplate
+	{
+		STATIC_MODEL,
+		LIGHT
+	};
+
 	class Editor
 	{
 	public:
@@ -22,7 +28,7 @@ namespace Utopian
 		void UpdateUi();
 		void Draw();
 
-		void AddModelPath(std::string path);
+		void AddActorCreation(std::string path, ActorTemplate actorTemplate = STATIC_MODEL);
 	private:
 		bool IsActorSelected();
 		void OnActorSelected(Actor* actor);
@@ -37,6 +43,13 @@ namespace Utopian
 		Actor* mSelectedActor;
 
 		std::vector<const char*> mModelPaths;
+
+		/*
+		 * The editor supports creating Actors from different templates consisting
+		 * of different default components. For example STATIC_MODEL is an actor with
+		 * a CTransfrom + CRenderable. Todo: Note: This should be improved.
+		*/
+		std::vector<ActorTemplate> mTemplateTypes;
 		int mSelectedModel = 0;
 	};
 }

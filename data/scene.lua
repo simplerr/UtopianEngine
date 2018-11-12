@@ -2,88 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "Camera",
-		components = 
-		{
-			CCamera = 
-			{
-				far_plane = 256000,
-				fov = 60,
-				look_at_x = -400,
-				look_at_y = 50,
-				look_at_z = 0,
-				near_plane = 10,
-			},
-			CNoClip = 
-			{
-				speed = 6,
-			},
-			CPlayerControl = 
-			{
-				empty = 0,
-			},
-			CTransform = 
-			{
-				pos_x = 593.875,
-				pos_y = 293.38220214844,
-				pos_z = -33.456657409668,
-				rotation_x = 0,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				path = "data/models/adventure_village/Chimney1.obj",
-			},
-			CTransform = 
-			{
-				pos_x = -356.18463134766,
-				pos_y = 0,
-				pos_z = 120.6086807251,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				path = "data/models/adventure_village/Chimney1_1.obj",
-			},
-			CTransform = 
-			{
-				pos_x = -480.94970703125,
-				pos_y = 0,
-				pos_z = -107.79209899902,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
 		actor_name = "EditorActor",
 		components = 
 		{
@@ -420,8 +338,8 @@ actor_list =
 				dir_x = -1,
 				dir_y = 0.85500001907349,
 				dir_z = 0.19000001251698,
-				intensity_x = 0.1330000013113,
-				intensity_y = 0.42200002074242,
+				intensity_x = 0,
+				intensity_y = 0.10800000280142,
 				intensity_z = 0,
 				range = 100000,
 				spot = 4,
@@ -444,26 +362,26 @@ actor_list =
 				scale_z = 1,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "Teapot",
 		components = 
 		{
 			CLight = 
 			{
-				att_x = 0.25300002098083,
+				att_x = 0.14500001072884,
 				att_y = 0,
 				att_z = 1.9999999878451e-08,
-				color_b = 0.54164737462997,
-				color_g = 0.048058465123177,
-				color_r = 0.98039215803146,
-				dir_x = 1,
+				color_b = 0.99509346485138,
+				color_g = 0.99508810043335,
+				color_r = 0.99509805440903,
+				dir_x = 0.61400002241135,
 				dir_y = -0.10800000280142,
 				dir_z = 0,
-				intensity_x = 0.10800000280142,
-				intensity_y = 0.38600000739098,
-				intensity_z = 0.15500000119209,
+				intensity_x = 0,
+				intensity_y = 0.19300000369549,
+				intensity_z = 0,
 				range = 100000,
 				spot = 4,
 				type = 2,
@@ -474,15 +392,138 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -800.50939941406,
+				pos_x = 285.72784423828,
 				pos_y = 50,
-				pos_z = -5.088249206543,
+				pos_z = 41.020355224609,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Camera",
+		components = 
+		{
+			CCamera = 
+			{
+				far_plane = 256000,
+				fov = 60,
+				look_at_x = -400,
+				look_at_y = 50,
+				look_at_z = 0,
+				near_plane = 10,
+			},
+			CNoClip = 
+			{
+				speed = 6,
+			},
+			CPlayerControl = 
+			{
+				empty = 0,
+			},
+			CTransform = 
+			{
+				pos_x = 578.31896972656,
+				pos_y = 235.55197143555,
+				pos_z = -126.81268310547,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/Chimney1.obj",
+			},
+			CTransform = 
+			{
+				pos_x = -356.18463134766,
+				pos_y = 0,
+				pos_z = 120.6086807251,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CLight = 
+			{
+				att_x = 0.72300004959106,
+				att_y = 0,
+				att_z = 0,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				dir_x = 0.61400002241135,
+				dir_y = 0.22900001704693,
+				dir_z = 0,
+				intensity_x = 0.26500001549721,
+				intensity_y = 0.68700003623962,
+				intensity_z = 0,
+				range = 100000,
+				spot = 4,
+				type = 2,
+			},
+			CRenderable = 
+			{
+				path = "data/models/teapot.obj",
+			},
+			CTransform = 
+			{
+				pos_x = 187.69940185547,
+				pos_y = 0,
+				pos_z = -129.30801391602,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/Chimney1_1.obj",
+			},
+			CTransform = 
+			{
+				pos_x = -480.94970703125,
+				pos_y = 0,
+				pos_z = -107.79209899902,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
 			},
 		},
 	},

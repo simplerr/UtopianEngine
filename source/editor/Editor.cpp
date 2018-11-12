@@ -6,6 +6,7 @@
 #include "core/components/Actor.h"
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
+#include "core/components/CLight.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
 #include "core/terrain/Terrain.h"
@@ -21,6 +22,8 @@ namespace Utopian
 		mActorInspector = new ActorInspector();
 
 		mTransformTool = new TransformTool(renderer, mTerrain);
+
+		AddActorCreation("Spot light", ActorTemplate::LIGHT);
 
 		AddPaths();
 	}
@@ -59,10 +62,22 @@ namespace Utopian
 
 			glm::vec3 pos = glm::vec3(0, 0, 0);
 			CTransform* transform = actor->AddComponent<CTransform>(pos);
-			transform->SetScale(glm::vec3(50));
-			transform->SetRotation(glm::vec3(180, 0, 0));
 			CRenderable* renderable = actor->AddComponent<CRenderable>();
-			renderable->LoadModel(mModelPaths[mSelectedModel]);
+
+			if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
+			{
+				// Models from adventure_village needs to be scaled and rotated
+				transform->SetScale(glm::vec3(50));
+				transform->SetRotation(glm::vec3(180, 0, 0));
+
+				renderable->LoadModel(mModelPaths[mSelectedModel]);
+			}
+			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::LIGHT)
+			{
+				renderable->LoadModel("data/models/teapot.obj");
+
+				CLight* light = actor->AddComponent<CLight>();
+			}
 
 			actor->PostInit();
 		}
@@ -96,9 +111,10 @@ namespace Utopian
 	{
 	}
 
-	void Editor::AddModelPath(std::string path)
+	void Editor::AddActorCreation(std::string path, ActorTemplate actorTemplate)
 	{
 		mModelPaths.push_back(strdup(path.c_str()));
+		mTemplateTypes.push_back(actorTemplate);
 	}
 
 	bool Editor::IsActorSelected()
@@ -128,116 +144,116 @@ namespace Utopian
 	void Editor::AddPaths()
 	{
 		// Add paths to models that can be loaded
-		AddModelPath("data/models/adventure_village/Barrel.obj");
-		AddModelPath("data/models/adventure_village/Barrel_1.obj");
-		AddModelPath("data/models/adventure_village/CellarEntrance.obj");
-		AddModelPath("data/models/adventure_village/CellarEntrance_1.obj");
-		AddModelPath("data/models/adventure_village/Chimney1.obj");
-		AddModelPath("data/models/adventure_village/Chimney1_1.obj");
-		AddModelPath("data/models/adventure_village/Chimney2.obj");
-		AddModelPath("data/models/adventure_village/Chimney2_1.obj");
-		AddModelPath("data/models/adventure_village/Chimney3.obj");
-		AddModelPath("data/models/adventure_village/Chimney3_1.obj");
-		AddModelPath("data/models/adventure_village/Chimney4.obj");
-		AddModelPath("data/models/adventure_village/Chimney4_1.obj");
-		AddModelPath("data/models/adventure_village/ChimneyBase.obj");
-		AddModelPath("data/models/adventure_village/ChimneyBase_1.obj");
-		AddModelPath("data/models/adventure_village/CrateLong.obj");
-		AddModelPath("data/models/adventure_village/CrateLong_1.obj");
-		AddModelPath("data/models/adventure_village/CrateLongB.obj");
-		AddModelPath("data/models/adventure_village/CrateLongB_1.obj");
-		AddModelPath("data/models/adventure_village/CrateSquare.obj");
-		AddModelPath("data/models/adventure_village/CrateSquare_1.obj");
-		AddModelPath("data/models/adventure_village/CrateSquareB.obj");
-		AddModelPath("data/models/adventure_village/CrateSquareB_1.obj");
-		AddModelPath("data/models/adventure_village/DoorStone.obj");
-		AddModelPath("data/models/adventure_village/DoorStone_1.obj");
-		AddModelPath("data/models/adventure_village/DoorStoneLarge.obj");
-		AddModelPath("data/models/adventure_village/DoorStoneLarge_1.obj");
-		AddModelPath("data/models/adventure_village/DoorWood.obj");
-		AddModelPath("data/models/adventure_village/DoorWood_1.obj");
-		AddModelPath("data/models/adventure_village/ElevatorBeam.obj");
-		AddModelPath("data/models/adventure_village/ElevatorBeam_1.obj");
-		AddModelPath("data/models/adventure_village/HouseAttic.obj");
-		AddModelPath("data/models/adventure_village/HouseAttic_1.obj");
-		AddModelPath("data/models/adventure_village/HouseAtticSmall.obj");
-		AddModelPath("data/models/adventure_village/HouseAtticSmall_1.obj");
-		AddModelPath("data/models/adventure_village/HouseBricksLarge.obj");
-		AddModelPath("data/models/adventure_village/HouseBricksLarge_1.obj");
-		AddModelPath("data/models/adventure_village/HouseBricksNormal.obj");
-		AddModelPath("data/models/adventure_village/HouseBricksNormal_1.obj");
-		AddModelPath("data/models/adventure_village/HouseBricksThin.obj");
-		AddModelPath("data/models/adventure_village/HouseBricksThin_1.obj");
-		AddModelPath("data/models/adventure_village/HouseExtensionRoof.obj");
-		AddModelPath("data/models/adventure_village/HouseExtensionRoof_1.obj");
-		AddModelPath("data/models/adventure_village/HouseStuccoNormal.obj");
-		AddModelPath("data/models/adventure_village/HouseStuccoNormal_1.obj");
-		AddModelPath("data/models/adventure_village/HouseTower.obj");
-		AddModelPath("data/models/adventure_village/HouseTower_1.obj");
-		AddModelPath("data/models/adventure_village/Note.obj");
-		AddModelPath("data/models/adventure_village/PlantA.obj");
-		AddModelPath("data/models/adventure_village/PlantA_1.obj");
-		AddModelPath("data/models/adventure_village/PlantB.obj");
-		AddModelPath("data/models/adventure_village/PlantC.obj");
-		AddModelPath("data/models/adventure_village/PlantC_1.obj");
-		AddModelPath("data/models/adventure_village/PlantC_2.obj");
-		AddModelPath("data/models/adventure_village/PlantD.obj");
-		AddModelPath("data/models/adventure_village/PosterBoard.obj");
-		AddModelPath("data/models/adventure_village/PosterBoard_1.obj");
-		AddModelPath("data/models/adventure_village/SewerDrain.obj");
-		AddModelPath("data/models/adventure_village/SewerDrain_1.obj");
-		AddModelPath("data/models/adventure_village/ShopSign.obj");
-		AddModelPath("data/models/adventure_village/ShopSign_1.obj");
-		AddModelPath("data/models/adventure_village/SignPost.obj");
-		AddModelPath("data/models/adventure_village/SignPost_1.obj");
-		AddModelPath("data/models/adventure_village/StaircaseLarge.obj");
-		AddModelPath("data/models/adventure_village/StaircaseLarge_1.obj");
-		AddModelPath("data/models/adventure_village/StaircaseMedium.obj");
-		AddModelPath("data/models/adventure_village/StaircaseMedium_1.obj");
-		AddModelPath("data/models/adventure_village/StaircaseSmall.obj");
-		AddModelPath("data/models/adventure_village/StaircaseSmall_1.obj");
-		AddModelPath("data/models/adventure_village/StoneBench.obj");
-		AddModelPath("data/models/adventure_village/StoneFence.obj");
-		AddModelPath("data/models/adventure_village/StoneFence_1.obj");
-		AddModelPath("data/models/adventure_village/StonePillar.obj");
-		AddModelPath("data/models/adventure_village/StonePillar_1.obj");
-		AddModelPath("data/models/adventure_village/StonePlatform.obj");
-		AddModelPath("data/models/adventure_village/StonePlatform_1.obj");
-		AddModelPath("data/models/adventure_village/StonePlatform_centered.obj");
-		AddModelPath("data/models/adventure_village/StonePlatformArches.obj");
-		AddModelPath("data/models/adventure_village/StonePlatformArches_1.obj");
-		AddModelPath("data/models/adventure_village/StoneWall.obj");
-		AddModelPath("data/models/adventure_village/StoneWall_1.obj");
-		AddModelPath("data/models/adventure_village/StreetLightSmall.obj");
-		AddModelPath("data/models/adventure_village/StreetLightSmall_1.obj");
-		AddModelPath("data/models/adventure_village/StreetLightTall.obj");
-		AddModelPath("data/models/adventure_village/StreetLightTall_1.obj");
-		AddModelPath("data/models/adventure_village/Tree.obj");
-		AddModelPath("data/models/adventure_village/TreeLog.obj");
-		AddModelPath("data/models/adventure_village/TreeLog_1.obj");
-		AddModelPath("data/models/adventure_village/TreeLogPile.obj");
-		AddModelPath("data/models/adventure_village/TreeLogPile_1.obj");
-		AddModelPath("data/models/adventure_village/TreeLogPile_2.obj");
-		AddModelPath("data/models/adventure_village/TreeLogPile_3.obj");
-		AddModelPath("data/models/adventure_village/Well.obj");
-		AddModelPath("data/models/adventure_village/Well_1.obj");
-		AddModelPath("data/models/adventure_village/Wheel.obj");
-		AddModelPath("data/models/adventure_village/Wheel_1.obj");
-		AddModelPath("data/models/adventure_village/WindowA.obj");
-		AddModelPath("data/models/adventure_village/WindowA_1.obj");
-		AddModelPath("data/models/adventure_village/WindowB.obj");
-		AddModelPath("data/models/adventure_village/WindowB_1.obj");
-		AddModelPath("data/models/adventure_village/WindowC.obj");
-		AddModelPath("data/models/adventure_village/WindowC_1.obj");
-		AddModelPath("data/models/adventure_village/WindowD.obj");
-		AddModelPath("data/models/adventure_village/WindowD_1.obj");
-		AddModelPath("data/models/adventure_village/WindowE.obj");
-		AddModelPath("data/models/adventure_village/WindowE_1.obj");
-		AddModelPath("data/models/adventure_village/WindowF.obj");
-		AddModelPath("data/models/adventure_village/WindowF_1.obj");
-		AddModelPath("data/models/adventure_village/WindowG.obj");
-		AddModelPath("data/models/adventure_village/WindowG_1.obj");
-		AddModelPath("data/models/adventure_village/WoodBench.obj");
-		AddModelPath("data/models/adventure_village/WoodBench_1.obj");
+		AddActorCreation("data/models/adventure_village/Barrel.obj");
+		AddActorCreation("data/models/adventure_village/Barrel_1.obj");
+		AddActorCreation("data/models/adventure_village/CellarEntrance.obj");
+		AddActorCreation("data/models/adventure_village/CellarEntrance_1.obj");
+		AddActorCreation("data/models/adventure_village/Chimney1.obj");
+		AddActorCreation("data/models/adventure_village/Chimney1_1.obj");
+		AddActorCreation("data/models/adventure_village/Chimney2.obj");
+		AddActorCreation("data/models/adventure_village/Chimney2_1.obj");
+		AddActorCreation("data/models/adventure_village/Chimney3.obj");
+		AddActorCreation("data/models/adventure_village/Chimney3_1.obj");
+		AddActorCreation("data/models/adventure_village/Chimney4.obj");
+		AddActorCreation("data/models/adventure_village/Chimney4_1.obj");
+		AddActorCreation("data/models/adventure_village/ChimneyBase.obj");
+		AddActorCreation("data/models/adventure_village/ChimneyBase_1.obj");
+		AddActorCreation("data/models/adventure_village/CrateLong.obj");
+		AddActorCreation("data/models/adventure_village/CrateLong_1.obj");
+		AddActorCreation("data/models/adventure_village/CrateLongB.obj");
+		AddActorCreation("data/models/adventure_village/CrateLongB_1.obj");
+		AddActorCreation("data/models/adventure_village/CrateSquare.obj");
+		AddActorCreation("data/models/adventure_village/CrateSquare_1.obj");
+		AddActorCreation("data/models/adventure_village/CrateSquareB.obj");
+		AddActorCreation("data/models/adventure_village/CrateSquareB_1.obj");
+		AddActorCreation("data/models/adventure_village/DoorStone.obj");
+		AddActorCreation("data/models/adventure_village/DoorStone_1.obj");
+		AddActorCreation("data/models/adventure_village/DoorStoneLarge.obj");
+		AddActorCreation("data/models/adventure_village/DoorStoneLarge_1.obj");
+		AddActorCreation("data/models/adventure_village/DoorWood.obj");
+		AddActorCreation("data/models/adventure_village/DoorWood_1.obj");
+		AddActorCreation("data/models/adventure_village/ElevatorBeam.obj");
+		AddActorCreation("data/models/adventure_village/ElevatorBeam_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseAttic.obj");
+		AddActorCreation("data/models/adventure_village/HouseAttic_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseAtticSmall.obj");
+		AddActorCreation("data/models/adventure_village/HouseAtticSmall_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseBricksLarge.obj");
+		AddActorCreation("data/models/adventure_village/HouseBricksLarge_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseBricksNormal.obj");
+		AddActorCreation("data/models/adventure_village/HouseBricksNormal_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseBricksThin.obj");
+		AddActorCreation("data/models/adventure_village/HouseBricksThin_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseExtensionRoof.obj");
+		AddActorCreation("data/models/adventure_village/HouseExtensionRoof_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseStuccoNormal.obj");
+		AddActorCreation("data/models/adventure_village/HouseStuccoNormal_1.obj");
+		AddActorCreation("data/models/adventure_village/HouseTower.obj");
+		AddActorCreation("data/models/adventure_village/HouseTower_1.obj");
+		AddActorCreation("data/models/adventure_village/Note.obj");
+		AddActorCreation("data/models/adventure_village/PlantA.obj");
+		AddActorCreation("data/models/adventure_village/PlantA_1.obj");
+		AddActorCreation("data/models/adventure_village/PlantB.obj");
+		AddActorCreation("data/models/adventure_village/PlantC.obj");
+		AddActorCreation("data/models/adventure_village/PlantC_1.obj");
+		AddActorCreation("data/models/adventure_village/PlantC_2.obj");
+		AddActorCreation("data/models/adventure_village/PlantD.obj");
+		AddActorCreation("data/models/adventure_village/PosterBoard.obj");
+		AddActorCreation("data/models/adventure_village/PosterBoard_1.obj");
+		AddActorCreation("data/models/adventure_village/SewerDrain.obj");
+		AddActorCreation("data/models/adventure_village/SewerDrain_1.obj");
+		AddActorCreation("data/models/adventure_village/ShopSign.obj");
+		AddActorCreation("data/models/adventure_village/ShopSign_1.obj");
+		AddActorCreation("data/models/adventure_village/SignPost.obj");
+		AddActorCreation("data/models/adventure_village/SignPost_1.obj");
+		AddActorCreation("data/models/adventure_village/StaircaseLarge.obj");
+		AddActorCreation("data/models/adventure_village/StaircaseLarge_1.obj");
+		AddActorCreation("data/models/adventure_village/StaircaseMedium.obj");
+		AddActorCreation("data/models/adventure_village/StaircaseMedium_1.obj");
+		AddActorCreation("data/models/adventure_village/StaircaseSmall.obj");
+		AddActorCreation("data/models/adventure_village/StaircaseSmall_1.obj");
+		AddActorCreation("data/models/adventure_village/StoneBench.obj");
+		AddActorCreation("data/models/adventure_village/StoneFence.obj");
+		AddActorCreation("data/models/adventure_village/StoneFence_1.obj");
+		AddActorCreation("data/models/adventure_village/StonePillar.obj");
+		AddActorCreation("data/models/adventure_village/StonePillar_1.obj");
+		AddActorCreation("data/models/adventure_village/StonePlatform.obj");
+		AddActorCreation("data/models/adventure_village/StonePlatform_1.obj");
+		AddActorCreation("data/models/adventure_village/StonePlatform_centered.obj");
+		AddActorCreation("data/models/adventure_village/StonePlatformArches.obj");
+		AddActorCreation("data/models/adventure_village/StonePlatformArches_1.obj");
+		AddActorCreation("data/models/adventure_village/StoneWall.obj");
+		AddActorCreation("data/models/adventure_village/StoneWall_1.obj");
+		AddActorCreation("data/models/adventure_village/StreetLightSmall.obj");
+		AddActorCreation("data/models/adventure_village/StreetLightSmall_1.obj");
+		AddActorCreation("data/models/adventure_village/StreetLightTall.obj");
+		AddActorCreation("data/models/adventure_village/StreetLightTall_1.obj");
+		AddActorCreation("data/models/adventure_village/Tree.obj");
+		AddActorCreation("data/models/adventure_village/TreeLog.obj");
+		AddActorCreation("data/models/adventure_village/TreeLog_1.obj");
+		AddActorCreation("data/models/adventure_village/TreeLogPile.obj");
+		AddActorCreation("data/models/adventure_village/TreeLogPile_1.obj");
+		AddActorCreation("data/models/adventure_village/TreeLogPile_2.obj");
+		AddActorCreation("data/models/adventure_village/TreeLogPile_3.obj");
+		AddActorCreation("data/models/adventure_village/Well.obj");
+		AddActorCreation("data/models/adventure_village/Well_1.obj");
+		AddActorCreation("data/models/adventure_village/Wheel.obj");
+		AddActorCreation("data/models/adventure_village/Wheel_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowA.obj");
+		AddActorCreation("data/models/adventure_village/WindowA_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowB.obj");
+		AddActorCreation("data/models/adventure_village/WindowB_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowC.obj");
+		AddActorCreation("data/models/adventure_village/WindowC_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowD.obj");
+		AddActorCreation("data/models/adventure_village/WindowD_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowE.obj");
+		AddActorCreation("data/models/adventure_village/WindowE_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowF.obj");
+		AddActorCreation("data/models/adventure_village/WindowF_1.obj");
+		AddActorCreation("data/models/adventure_village/WindowG.obj");
+		AddActorCreation("data/models/adventure_village/WindowG_1.obj");
+		AddActorCreation("data/models/adventure_village/WoodBench.obj");
+		AddActorCreation("data/models/adventure_village/WoodBench_1.obj");
 	}
 }
