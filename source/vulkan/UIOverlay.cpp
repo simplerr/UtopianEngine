@@ -195,4 +195,20 @@ namespace Utopian::Vk
 		ImGui::TextV(format, args);
 		va_end(args);
 	}
+	
+	void UIOverlay::BeginWindow(std::string label, glm::vec2 position, float itemWidth)
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::SetNextWindowPos(ImVec2(position.x, position.y));
+		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+		ImGui::Begin(label.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing);
+		ImGui::PushItemWidth(itemWidth);
+	}
+
+	void UIOverlay::EndWindow()
+	{
+		ImGui::PopItemWidth();
+		ImGui::End();
+		ImGui::PopStyleVar();
+	}
 }

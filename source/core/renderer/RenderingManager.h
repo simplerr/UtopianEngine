@@ -35,6 +35,7 @@ namespace Utopian
 		void InitShader();
 
 		void Update();
+		void UpdateUi();
 		void RenderNodes(Vk::CommandBuffer* commandBuffer);
 		void RenderScene(Vk::CommandBuffer* commandBuffer);
 		void Render();

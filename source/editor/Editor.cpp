@@ -100,24 +100,15 @@ namespace Utopian
 		}
 
 		// Display Actor creation list
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::SetNextWindowPos(ImVec2(1050, 500));
-		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
-		ImGui::Begin("Actor list", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing);
-		ImGui::PushItemWidth(400.0f);
+		Vk::UIOverlay::BeginWindow("Actor list", glm::vec2(1050, 500), 400.0f);
 
 		ImGui::Text("Models:");
-
 		ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
 
 		if (ImGui::Button("Save scene"))
-		{
 			ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
-		}
 
-		// ImGui functions end here
-		ImGui::End();
-		ImGui::PopStyleVar();
+		Vk::UIOverlay::EndWindow();
 	}
 
 	void Editor::Draw()

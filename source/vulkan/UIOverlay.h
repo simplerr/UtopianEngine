@@ -34,7 +34,10 @@ namespace Utopian::Vk
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
 
+		// Utility helper functions
 		static void TextV(const char* format, ...);
+		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth);
+		static void EndWindow();
 
 	private:
 		Utopian::Vk::Renderer* mRenderer;

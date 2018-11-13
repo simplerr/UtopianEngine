@@ -1,6 +1,7 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/handles/Effect.h"
 #include "imgui/imgui.h"
+#include "vulkan/UIOverlay.h"
 
 namespace Utopian::Vk
 {
@@ -19,11 +20,7 @@ namespace Utopian::Vk
 
 	void EffectManager::Update()
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::SetNextWindowPos(ImVec2(10, 360));
-		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
-		ImGui::Begin("EffectManager", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing);
-		ImGui::PushItemWidth(300.0f);
+		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 360), 300.0f);
 
 		for (auto& effect : mEffects)
 		{
@@ -34,10 +31,6 @@ namespace Utopian::Vk
 			}
 		}
 
-		ImGui::PopItemWidth();
-
-		// ImGui functions end here
-		ImGui::End();
-		ImGui::PopStyleVar();
+		Vk::UIOverlay::EndWindow();
 	}
 }

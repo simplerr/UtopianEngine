@@ -112,14 +112,15 @@ namespace Utopian
 		mCommonDescriptorSet->UpdateDescriptorSets();
 		mTerrain->Update();
 		mWaterRenderer->Update(mRenderer, mMainCamera);
-
+	
+		UpdateUi();
+	}
+		
+	void RenderingManager::UpdateUi()
+	{
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::SetNextWindowPos(ImVec2(10, 150));
-		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
-		ImGui::Begin("Rendering settings", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing);
-		ImGui::PushItemWidth(300.0f);
+		Vk::UIOverlay::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
 
 		ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
 		ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
@@ -129,11 +130,17 @@ namespace Utopian
 		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
 		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
 
-		ImGui::PopItemWidth();
+		Vk::UIOverlay::EndWindow();
 
-		// ImGui functions end here
-		ImGui::End();
-		ImGui::PopStyleVar();
+		Vk::UIOverlay::BeginWindow("Utopian v0.1", glm::vec2(10, 10), 350.0f);
+
+		glm::vec3 pos = mMainCamera->GetPosition();
+		glm::vec3 dir = mMainCamera->GetDirection();
+
+		Vk::UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+		Vk::UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
+
+		Vk::UIOverlay::EndWindow();
 	}
 
 	void RenderingManager::RenderNodes(Vk::CommandBuffer* commandBuffer)
