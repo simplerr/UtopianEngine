@@ -20,8 +20,6 @@ namespace Utopian
 		if (luaGlobals.IsNil())
 			assert(0);
 
-		gLuaManager().PrintTable(luaGlobals);
-
 		// Iterate over all actors
 		for (LuaPlus::LuaTableIterator luaActor(luaGlobals); luaActor; luaActor.Next())
 		{
