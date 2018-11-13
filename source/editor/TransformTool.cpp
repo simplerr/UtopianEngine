@@ -362,10 +362,19 @@ void TransformTool::SetActor(Utopian::Actor* actor)
 {
 	mSelectedActor = actor;
 
-	SetPosition(mSelectedActor->GetTransform().GetPosition());
-	ScaleAxisArrows();
+	if (actor != nullptr)
+	{
+		SetPosition(mSelectedActor->GetTransform().GetPosition());
+		ScaleAxisArrows();
 
-	mAxisX->SetVisible(true);
-	mAxisY->SetVisible(true);
-	mAxisZ->SetVisible(true);
+		mAxisX->SetVisible(true);
+		mAxisY->SetVisible(true);
+		mAxisZ->SetVisible(true);
+	}
+	else
+	{
+		mAxisX->SetVisible(false);
+		mAxisY->SetVisible(false);
+		mAxisZ->SetVisible(false);
+	}
 }

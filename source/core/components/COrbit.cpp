@@ -37,6 +37,10 @@ namespace Utopian
 	{
 	}
 
+	void COrbit::OnDestroyed()
+	{
+	}
+
 	void COrbit::PostInit()
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();

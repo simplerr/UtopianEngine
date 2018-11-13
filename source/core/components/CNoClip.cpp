@@ -52,6 +52,10 @@ namespace Utopian
 	{
 	}
 
+	void CNoClip::OnDestroyed()
+	{
+	}
+
 	void CNoClip::PostInit()
 	{
 		mCamera = GetParent()->GetComponent<CCamera>();

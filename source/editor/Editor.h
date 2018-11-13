@@ -31,6 +31,7 @@ namespace Utopian
 		void AddActorCreation(std::string path, ActorTemplate actorTemplate = STATIC_MODEL);
 	private:
 		bool IsActorSelected();
+		void UnselectActor();
 		void OnActorSelected(Actor* actor);
 
 		void AddPaths();

@@ -56,7 +56,7 @@ namespace Utopian
 			}
 		}
 
-		// Add new model to scene
+		// Add new actor to scene
 		if (gInput().KeyPressed('C'))
 		{
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
@@ -81,6 +81,13 @@ namespace Utopian
 			}
 
 			actor->PostInit();
+		}
+
+		// Remove actor from scene
+		if (gInput().KeyPressed(VK_DELETE) && mSelectedActor != nullptr)
+		{
+			mSelectedActor->SetAlive(false);
+			UnselectActor();
 		}
 	}
 
@@ -126,6 +133,13 @@ namespace Utopian
 	bool Editor::IsActorSelected()
 	{
 		return mSelectedActor != nullptr;
+	}
+	
+	void Editor::UnselectActor()
+	{
+		mSelectedActor = nullptr;
+		mTransformTool->SetActor(nullptr);
+		mActorInspector->SetActor(nullptr);
 	}
 
 	void Editor::OnActorSelected(Actor* actor)

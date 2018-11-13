@@ -36,6 +36,12 @@ namespace Utopian
 		SetSpot(4.0f);
 	}
 
+	void CLight::OnDestroyed()
+	{
+		mInternal->OnDestroyed();
+		World::Instance().RemoveNode(mInternal);
+	}
+
 	void CLight::PostInit()
 	{
 	}

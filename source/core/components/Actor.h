@@ -19,6 +19,7 @@ namespace Utopian
 	{
 	public:
 		Actor(string name);
+		~Actor();
 
 		static SharedPtr<Actor> Create(string name);
 
@@ -26,6 +27,9 @@ namespace Utopian
 		// The reason is that some components depend on others and fetch
 		// them during initialization.
 		void PostInit();
+
+		void SetAlive(bool alive);
+		bool IsAlive() const;
 
 		BoundingBox GetBoundingBox() const;
 		const Transform& GetTransform() const;
@@ -40,8 +44,9 @@ namespace Utopian
 
 			SharedPtr<T> newComponent(new T(this, std::forward<Args>(args)...));
 
-			ObjectManager::Instance().RegisterObject(newComponent);
-			World::Instance().NotifyComponentCreated(newComponent.get());
+			//ObjectManager::Instance().RegisterObject(newComponent);
+			World::Instance().AddComponent(newComponent);
+			//World::Instance().NotifyComponentCreated(newComponent.get());
 
 			mComponents.push_back(newComponent.get());
 
@@ -87,6 +92,7 @@ namespace Utopian
 
 	private:
 		vector<Component*> mComponents;
+		bool mAlive;
 		bool mHasTransform;
 	};
 }

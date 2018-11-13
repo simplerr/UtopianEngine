@@ -22,6 +22,7 @@ namespace Utopian
 {
 	RenderingManager::RenderingManager(Vk::Renderer* renderer)
 	{
+		mNextNodeId = 0;
 		mMainCamera = nullptr;
 		mMainCamera = renderer->GetCamera();
 		mRenderer = renderer;
@@ -276,17 +277,55 @@ namespace Utopian
 
 	void RenderingManager::AddRenderable(Renderable* renderable)
 	{
+		renderable->SetId(mNextNodeId++);
 		mSceneInfo.renderables.push_back(renderable);
 	}
 
 	void RenderingManager::AddLight(Light* light)
 	{
+		light->SetId(mNextNodeId++);
 		mSceneInfo.lights.push_back(light);
 	}
 
 	void RenderingManager::AddCamera(Camera* camera)
 	{
+		camera->SetId(mNextNodeId++);
 		mSceneInfo.cameras.push_back(camera);
+	}
+
+	void RenderingManager::RemoveRenderable(Renderable* renderable)
+	{
+		for (auto iter = mSceneInfo.renderables.begin(); iter != mSceneInfo.renderables.end(); iter++)
+		{
+			// Note: No need to free memory here since that will happen when the SharedPtr is removed from the CRenderable
+			if ((*iter)->GetId() == renderable->GetId()) 
+			{
+				mSceneInfo.renderables.erase(iter);
+				break;
+			}
+		}
+	}
+	void RenderingManager::RemoveLight(Light* light)
+	{
+		for (auto iter = mSceneInfo.lights.begin(); iter != mSceneInfo.lights.end(); iter++)
+		{
+			if ((*iter)->GetId() == light->GetId())
+			{
+				mSceneInfo.lights.erase(iter);
+				break;
+			}
+		}
+	}
+	void RenderingManager::RemoveCamera(Camera* camera)
+	{
+		for (auto iter = mSceneInfo.cameras.begin(); iter != mSceneInfo.cameras.end(); iter++)
+		{
+			if ((*iter)->GetId() == camera->GetId())
+			{
+				mSceneInfo.cameras.erase(iter);
+				break;
+			}
+		}
 	}
 
 	void RenderingManager::SetMainCamera(Camera* camera)

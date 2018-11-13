@@ -27,7 +27,14 @@ namespace Utopian
 	{
 		mInternal = Renderable::Create();
 
+		//mInternal = RenderingManager::Instance().CreateRenderable();
 		World::Instance().BindNode(mInternal, GetParent());
+	}
+
+	void CRenderable::OnDestroyed()
+	{
+		mInternal->OnDestroyed();
+		World::Instance().RemoveNode(mInternal);
 	}
 
 	void CRenderable::PostInit()

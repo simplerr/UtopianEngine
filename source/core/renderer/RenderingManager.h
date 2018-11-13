@@ -44,6 +44,11 @@ namespace Utopian
 		void AddRenderable(Renderable* renderable);
 		void AddLight(Light* light);
 		void AddCamera(Camera* camera);
+
+		void RemoveRenderable(Renderable* renderable);
+		void RemoveLight(Light* light);
+		void RemoveCamera(Camera* camera);
+
 		void SetMainCamera(Camera* camera);
 
 		void SetTerrain(Terrain* terrain);
@@ -53,6 +58,7 @@ namespace Utopian
 	private:
 		SceneInfo mSceneInfo;
 		Camera* mMainCamera;
+		uint32_t mNextNodeId;
 
 		Vk::Renderer* mRenderer;
 		Vk::CommandBuffer* mCommandBuffer;

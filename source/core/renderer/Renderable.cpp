@@ -27,6 +27,11 @@ namespace Utopian
 		return instance;
 	}
 
+	void Renderable::OnDestroyed()
+	{
+		RenderingManager::Instance().RemoveRenderable(this);
+	}
+
 	void Renderable::Initialize()
 	{
 		// Add new instance to the Renderer (scene)

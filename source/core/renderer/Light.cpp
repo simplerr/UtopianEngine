@@ -34,6 +34,11 @@ namespace Utopian
 		RenderingManager::Instance().AddLight(this);
 	}
 
+	void Light::OnDestroyed()
+	{
+		RenderingManager::Instance().RemoveLight(this);
+	}
+
 	void Light::SetLightData(const Utopian::Vk::LightData& lightData)
 	{
 		mLightData = lightData;

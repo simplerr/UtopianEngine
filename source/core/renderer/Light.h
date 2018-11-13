@@ -16,6 +16,7 @@ namespace Utopian
 		~Light();
 
 		void Initialize();
+		void OnDestroyed();
 
 		static SharedPtr<Light> Create();
 

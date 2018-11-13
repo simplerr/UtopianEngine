@@ -59,7 +59,9 @@ namespace Utopian
 		mActor = actor;
 
 		ClearInspectors();
-		AddInspectors();
+
+		if (mActor != nullptr)
+			AddInspectors();
 	}
 
 	void ActorInspector::AddInspectors()

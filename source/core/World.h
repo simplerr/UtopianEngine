@@ -15,7 +15,7 @@ namespace Utopian
 	struct BoundNode
 	{
 		SharedPtr<SceneNode> node;
-		Actor* entity;
+		Actor* actor;
 	};
 
 	/*
@@ -29,18 +29,20 @@ namespace Utopian
 		~World();
 	
 		void Update();
-		void NotifyEntityCreated(Actor* entity);
+		void AddActor(const SharedPtr<Actor>& actor);
+		void AddComponent(const SharedPtr<Component>& component);
 
-		void NotifyComponentCreated(Component* component);
+		void RemoveActor(Actor* actor);
 
 		Actor* RayIntersection(const Ray& ray);
-		vector<Actor*>& GetActors();
+		vector<SharedPtr<Actor>>& GetActors();
 
-		/* The bound SceneNodes transform will be synchronized with the SceneEntity in Update() */
-		void BindNode(const SharedPtr<SceneNode>& node, Actor* entity);
+		/* The bound SceneNodes transform will be synchronized with the Sceneactor in Update() */
+		void BindNode(const SharedPtr<SceneNode>& node, Actor* actor);
+		void RemoveNode(const SharedPtr<SceneNode>& node);
 	private:
-		vector<Actor*> mEntities;
-		vector<Component*> mActiveComponents;
+		vector<SharedPtr<Actor>> mActors;
+		vector<SharedPtr<Component>> mComponents;
 		map<SceneNode*, BoundNode> mBoundNodes;
 	};
 }

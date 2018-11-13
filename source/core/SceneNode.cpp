@@ -33,6 +33,11 @@ namespace Utopian
 		mTransform.SetScale(scale);
 	}
 
+	void SceneNode::SetId(uint32_t id)
+	{
+		mId = id;
+	}
+
 	void SceneNode::AddTranslation(const vec3& translation)
 	{
 		mTransform.AddTranslation(translation);
@@ -81,5 +86,10 @@ namespace Utopian
 	bool SceneNode::IsBoundingBoxVisible() const
 	{
 		return mDrawBoundingBox;
+	}
+
+	uint32_t SceneNode::GetId() const
+	{
+		return mId;
 	}
 }

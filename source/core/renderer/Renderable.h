@@ -17,6 +17,7 @@ namespace Utopian
 		~Renderable();
 
 		void Initialize();
+		void OnDestroyed();
 
 		static SharedPtr<Renderable> Create();
 

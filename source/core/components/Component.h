@@ -26,6 +26,7 @@ namespace Utopian
 		virtual ~Component();
 
 		virtual void OnCreated() { };
+		virtual void OnDestroyed() { };
 		virtual void Update() { };
 		virtual void PostInit() = 0;
 

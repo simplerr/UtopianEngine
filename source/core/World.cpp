@@ -15,58 +15,82 @@ namespace Utopian
 
 	}
 
-	void World::NotifyComponentCreated(Component* component)
+	void World::RemoveActor(Actor* actor)
 	{
-		component->OnCreated();
-
-		mActiveComponents.push_back(component);
+		// Removes the Actor and all of it's components
 	}
 
 	Actor* World::RayIntersection(const Ray& ray)
 	{
-		Actor* selectedEntity = nullptr;
+		Actor* selectedActor = nullptr;
 
 		float minDistance = FLT_MAX;
-		for (auto& entity : mEntities)
+		for (auto& actor : mActors)
 		{
-			if (entity->HasComponent<CRenderable>())
+			if (actor->HasComponent<CRenderable>())
 			{
-				BoundingBox boundingBox = entity->GetBoundingBox();
+				BoundingBox boundingBox = actor->GetBoundingBox();
 
 				float distance = FLT_MAX;
 				if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)
 				{
-					selectedEntity = entity;
+					selectedActor = actor.get();
 				}
 			}
 		}
 
-		return selectedEntity;
+		return selectedActor;
 	}
 
-	vector<Actor*>& World::GetActors()
+	vector<SharedPtr<Actor>>& World::GetActors()
 	{
-		return mEntities;
+		return mActors;
 	}
 
-	void World::BindNode(const SharedPtr<SceneNode>& node, Actor* entity)
+	void World::BindNode(const SharedPtr<SceneNode>& node, Actor* actor)
 	{
 		BoundNode binding;
 		binding.node = node;
-		binding.entity = entity;
+		binding.actor = actor;
 		mBoundNodes[node.get()] = binding;
+	}
+
+	void World::RemoveNode(const SharedPtr<SceneNode>& node)
+	{
+		if (mBoundNodes.find(node.get()) != mBoundNodes.end())
+		{
+			mBoundNodes.erase(node.get());
+		}
 	}
 
 	void World::Update()
 	{
+		// Loop through actors and check if any should be removed
+		for (auto iter = mActors.begin(); iter != mActors.end();)
+		{
+			SharedPtr<Actor> actor = (*iter);
+			if (!actor->IsAlive())
+			{
+				vector<Component*> components = actor->GetComponents();
+				for (auto& component : components)
+					component->OnDestroyed();
+
+				iter = mActors.erase(iter);
+			}
+			else
+			{
+				iter++;
+			}
+		}
+
 		// Synchronize transform between nodes and entities
 		for (auto& entry : mBoundNodes)
 		{
-			entry.second.node->SetTransform(entry.second.entity->GetTransform());
+			entry.second.node->SetTransform(entry.second.actor->GetTransform());
 		}
 		
 		// Update every active component
-		for (auto& entry : mActiveComponents)
+		for (auto& entry : mComponents)
 		{
 			if (entry->IsActive())
 			{
@@ -75,8 +99,14 @@ namespace Utopian
 		}
 	}
 
-	void World::NotifyEntityCreated(Actor * entity)
+	void World::AddActor(const SharedPtr<Actor>& actor)
 	{
-		mEntities.push_back(entity);
+		mActors.push_back(actor);
+	}
+
+	void World::AddComponent(const SharedPtr<Component>& component)
+	{
+		component->OnCreated();
+		mComponents.push_back(component);
 	}
 }

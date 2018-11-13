@@ -18,6 +18,7 @@ namespace Utopian
 		void SetPosition(const vec3& position);
 		void SetRotation(const vec3& rotation);
 		void SetScale(const vec3& scale);
+		void SetId(uint32_t id);
 
 		void AddTranslation(const vec3& translation);
 		void AddRotation(const vec3& rotation);
@@ -31,9 +32,11 @@ namespace Utopian
 		const vec3& GetRotation() const;
 		const vec3& GetScale() const;
 		const mat4& GetWorldMatrix() const;
+		uint32_t GetId() const;
 
 		bool IsBoundingBoxVisible() const;
 	private:
+		uint32_t mId;
 		Transform mTransform;
 		bool mDrawBoundingBox;
 	};

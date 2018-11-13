@@ -8,19 +8,23 @@ namespace Utopian
 	Actor::Actor(string name)
 		: Object(name)
 	{
+		SetAlive(true);
+	}
 
+	Actor::~Actor()
+	{
+		volatile int test = 0;
 	}
 
 	SharedPtr<Actor> Actor::Create(string name)
 	{
-		SharedPtr<Actor> entity(new Actor(name));
+		SharedPtr<Actor> actor(new Actor(name));
 
-		ObjectManager::Instance().RegisterObject(entity);
-		World::Instance().NotifyEntityCreated(entity.get());
+		World::Instance().AddActor(actor);
 
 		// Let SceneManager assign root node
 
-		return entity;
+		return actor;
 	}
 
 	void Actor::PostInit()
@@ -29,6 +33,16 @@ namespace Utopian
 		{
 			component->PostInit();
 		}
+	}
+
+	void Actor::SetAlive(bool alive)
+	{
+		mAlive = alive;
+	}
+
+	bool Actor::IsAlive() const
+	{
+		return mAlive;
 	}
 
 	BoundingBox Actor::GetBoundingBox() const

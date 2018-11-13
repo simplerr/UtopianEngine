@@ -29,6 +29,13 @@ namespace Utopian
 
 	}
 
+	void CCamera::OnDestroyed()
+	{
+		// Todo:
+		assert(0);
+		World::Instance().RemoveNode(mInternal);
+	}
+
 	void CCamera::PostInit()
 	{
 		auto transform = GetParent()->GetTransform();

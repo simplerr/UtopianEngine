@@ -94,7 +94,7 @@ namespace Utopian
 		}
 	}
 
-	void ActorFactory::SaveToFile(std::string filename, const std::vector<Actor*>& actors)
+	void ActorFactory::SaveToFile(std::string filename, const std::vector<SharedPtr<Actor>>& actors)
 	{
 		LuaPlus::LuaObject luaScene;
 		luaScene.AssignNewTable(gLuaManager().GetLuaState());
