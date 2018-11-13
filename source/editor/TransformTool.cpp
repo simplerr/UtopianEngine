@@ -49,27 +49,6 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisZ->LoadModel("data/models/cube.obj");
 	mAxisZ->SetVisible(false);
 
-	/*Scene::SceneRenderer::Instance().AddRenderable(mAxisX.get());
-	Scene::SceneRenderer::Instance().AddRenderable(mAxisY.get());
-	Scene::SceneRenderer::Instance().AddRenderable(mAxisZ.get());*/
-
-	//mAxisX->SetPosition(vec3(0, 30, 30));
-	//mAxisX->SetMaterials(Material(Colors::Green));
-	//mAxisX->SetRotation(vec3(3.14f / 2.0f, 3.14f / 2.0f, 0));
-	//mAxisX->SetScale(vec3(1.50f, 1.50f, 1.50f));
-
-	//// Create the Y axis.
-	//mAxisY->SetPosition(vec3(0, 30, 30));
-	//mAxisY->SetMaterials(Material(Colors::Red));
-	//mAxisY->SetRotation(vec3(0, 1, 0));
-	//mAxisY->SetScale(vec3(1.50f, 1.50f, 1.50f));
-
-	//// Create the Z axis.
-	//mAxisZ->SetPosition(vec3(0, 30, 30));
-	//mAxisZ->SetMaterials(Material(Colors::Blue));
-	//mAxisZ->SetRotation(vec3(0, 3.14f / 2.0f, 3.14f / 2.0f));
-	//mAxisZ->SetScale(vec3(1.50f, 1.50f, 1.50f));
-
 	mMovingAxis = NONE;
 
 	mColorEffect.Init(renderer);
@@ -78,9 +57,6 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 //! Cleanup.
 TransformTool::~TransformTool()
 {
-	//delete mAxisX;
-	//delete mAxisY;
-	//delete mAxisZ;
 }
 
 void TransformTool::InitStartingPosition(Utopian::Input* pInput, vec3& dir, vec3& cameraPos, float& dist)
@@ -130,14 +106,6 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 		{
 			mMovingAxis = Z_AXIS;
 		}
-
-		// Find out which axis arrow was pressed.
-		/*if (mAxisX->RayIntersect(XMLoadFloat3(&pos), XMLoadFloat3(&dir), dist))
-			mMovingAxis = X_AXIS;
-		else if (mAxisY->RayIntersect(XMLoadFloat3(&pos), XMLoadFloat3(&dir), dist))
-			mMovingAxis = Y_AXIS;
-		else if (mAxisZ->RayIntersect(XMLoadFloat3(&pos), XMLoadFloat3(&dir), dist))
-			mMovingAxis = Z_AXIS;*/
 	}
 	else if (pInput->KeyPressed(VK_RBUTTON)) {
 		InitStartingPosition(pInput, dir, pos, dist);
@@ -187,34 +155,7 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		vec3 position = transform->GetPosition();
 		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));
-		//float height = mMovingObject->GetWorld()->GetTerrain()->GetHeight(mMovingObject->GetPosition().x, mMovingObject->GetPosition().z);
-		//if (height != -std::numeric_limits<float>::infinity())
-		//	UpdatePosition(vec3(mMovingObject->GetPosition().x, height, mMovingObject->GetPosition().z) - mMovingObject->GetPosition());
 	}
-}
-
-//! Draws the arrow axis.
-void TransformTool::Draw(Utopian::Vk::CommandBuffer* commandBuffer)
-{
-	// Disable the depth test.
-	//ID3D11DepthStencilState* oldState = nullptr;
-	//pGraphics->GetContext()->OMGetDepthStencilState(&oldState, 0);
-	//pGraphics->GetContext()->OMSetDepthStencilState(RenderStates::EnableAllDSS, 0);
-
-	//Effects::BasicFX->SetUseLighting(false);
-
-	//// The axes will be rendered through the object.
-	//mAxisX->Draw(pGraphics);
-	//mAxisY->Draw(pGraphics);
-	//mAxisZ->Draw(pGraphics);
-
-	//Effects::BasicFX->SetUseLighting(true);
-
-	//// Restore to standard depth stencil state (enable depth testing).
-	//pGraphics->GetContext()->OMSetDepthStencilState(oldState, 0);
-
-	//XMMATRIX view = XMLoadFloat4x4(&pGraphics->GetCamera()->GetViewMatrix());
-	//XMMATRIX proj = XMLoadFloat4x4(&pGraphics->GetCamera()->GetProjectionMatrix());
 }
 
 //! Updates the moving objects position.
@@ -223,7 +164,6 @@ void TransformTool::UpdatePosition(vec3 delta)
 	if (mSelectedActor != nullptr) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		transform->AddTranslation(delta);
-		//onPositionChange(mMovingObject->GetPosition());
 	}
 
 	mAxisX->SetPosition(mAxisX->GetPosition() + delta);
@@ -251,7 +191,7 @@ vec3 TransformTool::MoveAxisX(vec3 pos, vec3 dir)
 	float y = mSelectedActor->GetTransform().GetPosition().y;
 	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, y, 0.0f), pos, dir, dist);
 
-	float dx;
+	float dx = 0;
 	if (intersection)
 	{
 		if (mLastPlanePos.x != std::numeric_limits<float>::infinity()) {
@@ -271,41 +211,26 @@ vec3 TransformTool::MoveAxisX(vec3 pos, vec3 dir)
 //! Move the object on the Y axis.
 vec3 TransformTool::MoveAxisY(vec3 pos, vec3 dir)
 {
-	//// Top right triangle.
-	//vec3 right = GetCamera()->GetRight();
-	//vec3 up = vec3(0, 1, 0);
-	//vec3 objectPos = mAxisY->GetPosition();
-	//float halfWidth = 60.0f;
+	float dist = std::numeric_limits<float>::infinity();
+	float x = mSelectedActor->GetTransform().GetPosition().x;
+	float z = mSelectedActor->GetTransform().GetPosition().z;
+	bool intersection = intersectPlane(glm::vec3(dir.x, 0.0f, dir.z), vec3(x, 0.0f, z), pos, dir, dist);
 
-	////mLastPlanePos - 1000*XMLoadFloat3(&right);
-	//vec3 v0 = vec3(objectPos + right*halfWidth + up*halfWidth);
-	//vec3 v1 = vec3(objectPos - right*halfWidth + up*halfWidth);
-	//vec3 v2 = vec3(objectPos - right*halfWidth - up*halfWidth);
-	//float dist = std::numeric_limits<float>::infinity();
-	//if (!XNA::IntersectRayTriangle(XMLoadFloat3(&pos), XMLoadFloat3(&dir), v0, v1, v2, &dist))
-	//{
-	//	// Bottom left triangle.
-	//	v0 = vec3(objectPos + right*halfWidth + up*halfWidth);
-	//	v1 = vec3(objectPos - right*halfWidth - up*halfWidth);
-	//	v2 = vec3(objectPos + right*halfWidth - up*halfWidth);
-	//	dist = std::numeric_limits<float>::infinity();
-	//	XNA::IntersectRayTriangle(XMLoadFloat3(&pos), XMLoadFloat3(&dir), v0, v1, v2, &dist);
-	//}
-
-	//float dy;
-	//if (mLastPlanePos.x != std::numeric_limits<float>::infinity()) {
-	//	vec3 planePos = pos + dir * dist;
-	//	dy = planePos.y - mLastPlanePos.y;
-	//	mLastPlanePos = planePos;
-	//}
-	//else {
-	//	mLastPlanePos = pos + dir * dist;
-	//	dy = 0.0f;
-	//}
-
-	//return vec3(0, dy, 0);
-
-	return vec3(0, 0, 0);
+	float dy = 0;
+	if (intersection)
+	{
+		if (mLastPlanePos.y != std::numeric_limits<float>::infinity()) {
+			vec3 planePos = pos + dir * dist;
+			dy = planePos.y - mLastPlanePos.y;
+			mLastPlanePos.y = planePos.y;
+		}
+		else {
+			mLastPlanePos = pos + dir * dist;
+			dy = 0.0f;
+		}
+	}
+	
+	return vec3(0, dy, 0);
 }
 
 //! Move the object on the Z axis.
@@ -315,7 +240,7 @@ vec3 TransformTool::MoveAxisZ(vec3 pos, vec3 dir)
 	float y = mSelectedActor->GetTransform().GetPosition().y;
 	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, y, 0.0f), pos, dir, dist);
 
-	float dz;
+	float dz = 0;
 	if (intersection)
 	{
 		if (mLastPlanePos.z != std::numeric_limits<float>::infinity()) {

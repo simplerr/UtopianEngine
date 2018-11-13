@@ -29,7 +29,6 @@ public:
 	~TransformTool();
 
 	void Update(Utopian::Input* pInput, float dt);
-	void Draw(Utopian::Vk::CommandBuffer* commandBuffer);
 	bool IsMovingObject();
 	void SetActor(Utopian::Actor* actor);
 

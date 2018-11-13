@@ -7,29 +7,6 @@ actor_list =
 		{
 			CRenderable = 
 			{
-				path = "data/models/adventure_village/CrateLongB.obj",
-			},
-			CTransform = 
-			{
-				pos_x = -213.27838134766,
-				pos_y = 0,
-				pos_z = -145.14622497559,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
 				path = "data/models/adventure_village/DoorStone.obj",
 			},
 			CTransform = 
@@ -319,47 +296,6 @@ actor_list =
 	},
 	
 	{
-		actor_name = "Teapot",
-		components = 
-		{
-			CLight = 
-			{
-				att_x = 0.14500001072884,
-				att_y = 0,
-				att_z = 1.9999999878451e-08,
-				color_b = 0.99509346485138,
-				color_g = 0.99508810043335,
-				color_r = 0.99509805440903,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10800000280142,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 0.19300000369549,
-				intensity_z = 0,
-				range = 100000,
-				spot = 4,
-				type = 2,
-			},
-			CRenderable = 
-			{
-				path = "data/models/teapot.obj",
-			},
-			CTransform = 
-			{
-				pos_x = 285.72784423828,
-				pos_y = 50,
-				pos_z = 41.020355224609,
-				rotation_x = 0,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
 		actor_name = "Camera",
 		components = 
 		{
@@ -382,9 +318,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 550.74560546875,
-				pos_y = 205.30294799805,
-				pos_z = -36.726047515869,
+				pos_x = 640.69909667969,
+				pos_y = 253.30688476563,
+				pos_z = -33.89917755127,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -511,13 +447,13 @@ actor_list =
 		{
 			CRenderable = 
 			{
-				path = "data/models/adventure_village/CrateLong.obj",
+				path = "data/models/adventure_village/CrateLongB.obj",
 			},
 			CTransform = 
 			{
-				pos_x = -200.64459228516,
+				pos_x = -213.27838134766,
 				pos_y = 0,
-				pos_z = 157.41354370117,
+				pos_z = -145.14622497559,
 				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,
