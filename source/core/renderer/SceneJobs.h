@@ -5,6 +5,7 @@
 #include "vulkan/DeferredEffect.h"
 #include "vulkan/SSAOEffect.h"
 #include "vulkan/BlurEffect.h"
+#include "vulkan/ColorEffect.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
@@ -125,5 +126,24 @@ namespace Utopian
 
 		SharedPtr<Vk::BlurEffect> effect;
 	private:
+	};
+
+	class DebugJob : public BaseJob
+	{
+	public:
+		DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~DebugJob();
+
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+
+		SharedPtr<Vk::RenderTarget> renderTarget;
+
+		SharedPtr<Vk::ColorEffect> effect;
+	private:
+		SharedPtr<Vk::ScreenQuad> mScreenQuad;
+		// Note: Todo:
+		Vk::Renderer* mRenderer;
+		uint32_t mWidth, mHeight;
 	};
 }

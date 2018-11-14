@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/EffectLegacy.h"
+#include "vulkan/handles/Effect.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
@@ -19,46 +19,20 @@ namespace Utopian::Vk
 	class Shader;
 	class Texture;
 
-	class ColorEffect : public EffectLegacy
+UNIFORM_BLOCK_BEGIN(ViewProjection)
+	UNIFORM_PARAM(glm::mat4, projection)
+	UNIFORM_PARAM(glm::mat4, view)
+UNIFORM_BLOCK_END()
+
+	class ColorEffect : public Effect
 	{
 	public:
-		enum Variation {
-			NORMAL = 0
-		};
+		ColorEffect(Device* device, RenderPass* renderPass);
 
-		class UniformBufferVS : public Utopian::Vk::ShaderBuffer
-		{
-		public:
-			virtual void UpdateMemory() {
-				// Map uniform buffer and update it
-				uint8_t *mapped;
-				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
-				memcpy(mapped, &data, sizeof(data));
-				mBuffer->UnmapMemory();
-			}
-
-			virtual int GetSize() {
-				return sizeof(data);
-			}
-
-			struct {
-				glm::mat4 projection;
-				glm::mat4 view;
-			} data;
-		};
-
-		ColorEffect();
-
-		// Override the base class interfaces
-		virtual void CreateDescriptorPool(Device* device);
-		virtual void CreateVertexDescription(Device* device);
-		virtual void CreatePipelineInterface(Device* device);
-		virtual void CreateDescriptorSets(Device* device);
-		virtual void CreatePipeline(Renderer* renderer);
-		virtual void UpdateMemory();
-
-		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
-		UniformBufferVS per_frame_vs;
+		void SetCameraData(glm::mat4 view, glm::mat4 projection);
+		void UpdateMemory();
+		void BindDeferredOutput(Image* deferredImage, Sampler* sampler);
 	private:
+		ViewProjection viewProjectionBlock;
 	};
 }

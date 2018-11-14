@@ -34,6 +34,7 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisX->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisX->LoadModel("data/models/cube.obj");
 	mAxisX->SetVisible(false);
+	mAxisX->SetRenderFlags(RENDER_FLAG_DEBUG);
 
 	mAxisY = Utopian::Renderable::Create();
 	mAxisY->SetScale(vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
@@ -41,6 +42,7 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisY->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisY->LoadModel("data/models/cube.obj");
 	mAxisY->SetVisible(false);
+	mAxisY->SetRenderFlags(RENDER_FLAG_DEBUG);
 
 	mAxisZ = Utopian::Renderable::Create();
 	mAxisZ->SetScale(vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
@@ -48,10 +50,9 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisZ->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisZ->LoadModel("data/models/cube.obj");
 	mAxisZ->SetVisible(false);
+	mAxisZ->SetRenderFlags(RENDER_FLAG_DEBUG);
 
 	mMovingAxis = NONE;
-
-	mColorEffect.Init(renderer);
 }
 
 //! Cleanup.
@@ -146,8 +147,6 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 
 		UpdatePosition(MoveAxisZ(pos, dir));
 		UpdatePosition(MoveAxisX(pos, dir));
-
-		Utopian::Vk::VulkanDebug::ConsolePrint(dir, "picking dir:");
 	}
 
 	// Stick to the terain?

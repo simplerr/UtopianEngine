@@ -12,53 +12,30 @@
 
 namespace Utopian::Vk
 {
-	ColorEffect::ColorEffect()
+	ColorEffect::ColorEffect(Device* device, RenderPass* renderPass)
+		: Effect(device, renderPass, "data/shaders/color/color.vert", "data/shaders/color/color.frag")
 	{
-	}
+		CreatePipeline();
 
-	void ColorEffect::CreateDescriptorPool(Device* device)
-	{
-		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
-		mDescriptorPool->Create();
-	}
+		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-	void ColorEffect::CreateVertexDescription(Device* device)
-	{
-		mVertexDescription = Vertex::GetDescription();
-	}
-
-	void ColorEffect::CreatePipelineInterface(Device* device)
-	{
-		// Descriptor set 0
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.CreateLayouts(device);
-	}
-
-	void ColorEffect::CreateDescriptorSets(Device* device)
-	{
-		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
-		mDescriptorSet0->BindUniformBuffer(BINDING_0, per_frame_vs.GetDescriptor());
-		mDescriptorSet0->UpdateDescriptorSets();
-	}
-
-	void ColorEffect::CreatePipeline(Renderer* renderer)
-	{
-		Shader* shader = gShaderFactory().CreateShader("data/shaders/color/color.vert.spv", "data/shaders/color/color.frag.spv");
-
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
-		pipeline->SetPipelineInterface(&mPipelineInterface);
-		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;
-		pipeline->Create();
-		mPipelines[Variation::NORMAL] = pipeline;
+		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 	}
 
 	void ColorEffect::UpdateMemory()
 	{
-		per_frame_vs.UpdateMemory();
+		viewProjectionBlock.UpdateMemory();
+	}
+
+	void ColorEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)
+	{
+		viewProjectionBlock.data.view = view;
+		viewProjectionBlock.data.projection = projection;
+		UpdateMemory();
+	}
+
+	void ColorEffect::BindDeferredOutput(Image* deferredImage, Sampler* sampler)
+	{
+		//BindCombinedImage("samplerDeferred", deferredImage, sampler);
 	}
 }

@@ -7,6 +7,7 @@
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ScreenGui.h"
@@ -58,7 +59,7 @@ namespace Utopian
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)
 		{
-			if (!renderable->IsVisible())
+			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
 				continue;
 
 			Vk::StaticModel* model = renderable->GetModel();
@@ -231,6 +232,70 @@ namespace Utopian
 		effect->BindDescriptorSets(commandBuffer);
 
 		renderer->DrawScreenQuad(commandBuffer);
+
+		renderTarget->End(renderer->GetQueue());
+	}
+
+	DebugJob::DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	{
+		mRenderer = renderer;
+		mWidth = width;
+		mHeight = height;
+	}
+
+	DebugJob::~DebugJob()
+	{
+	}
+
+	void DebugJob::Init(const std::vector<BaseJob*>& renderers)
+	{
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[3]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[0]);
+
+		renderTarget = make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage());
+		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
+		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		// Todo: Investigate why this does not work
+		//renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		effect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+
+		//mScreenQuad = mRenderer->AddScreenQuad(0u, 0u, mWidth, mHeight, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
+		effect->BindDeferredOutput(deferredJob->renderTarget->GetColorImage(), deferredJob->renderTarget->GetSampler());
+	}
+
+	void DebugJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		/* Render all renderables */
+		for (auto& renderable : jobInput.sceneInfo.renderables)
+		{
+			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEBUG) != RENDER_FLAG_DEBUG))
+				continue;
+
+			Vk::StaticModel* model = renderable->GetModel();
+
+			for (Vk::Mesh* mesh : model->mMeshes)
+			{
+				// Push the world matrix constant
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+
+				commandBuffer->CmdBindPipeline(effect->GetPipeline());
+				//commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				effect->BindDescriptorSets(commandBuffer);
+				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
+				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+			}
+		}
 
 		renderTarget->End(renderer->GetQueue());
 	}

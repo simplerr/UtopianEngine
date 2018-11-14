@@ -40,6 +40,7 @@ namespace Utopian
 		AddJob(new SSAOJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new BlurJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new DebugJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -87,15 +88,11 @@ namespace Utopian
 
 		mEffects[Vk::EffectType::PHONG] = new Vk::PhongEffect();
 		mEffects[Vk::EffectType::PHONG]->Init(mRenderer);
-
-		mEffects[Vk::EffectType::COLOR] = new Vk::ColorEffect();
-		mEffects[Vk::EffectType::COLOR]->Init(mRenderer);
 	}
 
 	void RenderingManager::InitShader()
 	{
 		mPhongEffect.Init(mRenderer);
-		mColorEffect.Init(mRenderer);
 	}
 
 	void RenderingManager::Update()
@@ -171,24 +168,24 @@ namespace Utopian
 			}
 
 			// Draw the AABB
-			if (renderable->IsBoundingBoxVisible())
-			{
-				BoundingBox boundingBox = renderable->GetBoundingBox();
-				vec3 pos = renderable->GetTransform().GetPosition();
-				vec3 rotation = renderable->GetTransform().GetRotation();
-				glm::vec3 translation = vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
-				mat4 world = glm::translate(glm::mat4(), translation);
-				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
+			// if (renderable->IsBoundingBoxVisible())
+			// {
+			// 	BoundingBox boundingBox = renderable->GetBoundingBox();
+			// 	vec3 pos = renderable->GetTransform().GetPosition();
+			// 	vec3 rotation = renderable->GetTransform().GetRotation();
+			// 	glm::vec3 translation = vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
+			// 	mat4 world = glm::translate(glm::mat4(), translation);
+			// 	world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-				Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
+			// 	Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
 
-				commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline(0));
-				commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				commandBuffer->CmdPushConstants(&mColorEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
-			}
+			// 	commandBuffer->CmdBindPipeline(mColorEffect.GetPipeline(0));
+			// 	commandBuffer->CmdBindDescriptorSet(&mColorEffect, 1, &mColorEffect.mDescriptorSet0->descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS);
+			// 	commandBuffer->CmdPushConstants(&mColorEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+			// 	commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+			// 	commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			// 	commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+			// }
 		}
 	}
 
@@ -268,9 +265,6 @@ namespace Utopian
 			per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
 			per_frame_vs.camera.clippingPlane = mClippingPlane;
 			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
-
-			mColorEffect.per_frame_vs.data.projection = mMainCamera->GetProjection();
-			mColorEffect.per_frame_vs.data.view = mMainCamera->GetView();
 		}
 
 		fog_ubo.data.fogColor = mRenderer->GetClearColor();
@@ -280,7 +274,6 @@ namespace Utopian
 		per_frame_vs.UpdateMemory();
 		per_frame_ps.UpdateMemory();
 		fog_ubo.UpdateMemory();
-		mColorEffect.UpdateMemory();
 	}
 
 	void RenderingManager::AddRenderable(Renderable* renderable)

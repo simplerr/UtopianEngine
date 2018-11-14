@@ -10,6 +10,12 @@ namespace Utopian
 {
 	class Actor;
 
+	enum RenderFlags
+	{
+		RENDER_FLAG_DEFERRED = 1 << 0,
+		RENDER_FLAG_DEBUG = 1 << 1
+	};
+
 	class Renderable : public SceneNode
 	{
 	public:
@@ -27,17 +33,20 @@ namespace Utopian
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
 		void SetVisible(bool visible);
+		void SetRenderFlags(uint32_t renderFlags);
 
 		Utopian::Vk::StaticModel* GetModel();
 		const BoundingBox GetBoundingBox() const;
 		const glm::vec4 GetColor() const;
 		const Utopian::Vk::Mat GetMaterial() const;
 		const bool IsVisible() const;
+		const uint32_t GetRenderFlags() const;
 
 	private:
 		Utopian::Vk::StaticModel* mModel;
 		Utopian::Vk::Mat mMaterial;
 		glm::vec4 mColor;
+		uint32_t mRenderFlags;
 		bool mVisible;
 	};
 }

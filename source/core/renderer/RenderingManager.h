@@ -64,7 +64,6 @@ namespace Utopian
 		Vk::Renderer* mRenderer;
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;
-		Vk::ColorEffect mColorEffect;
 		Terrain* mTerrain;
 		Vk::StaticModel* mCubeModel;
 		WaterRenderer* mWaterRenderer;

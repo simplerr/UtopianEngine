@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "vulkan/ColorEffect.h"
+#include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
 enum MovingAxis
@@ -47,7 +47,6 @@ private:
 	SharedPtr<Utopian::Renderable> mAxisX;
 	SharedPtr<Utopian::Renderable> mAxisY;
 	SharedPtr<Utopian::Renderable> mAxisZ;
-	Utopian::Vk::ColorEffect mColorEffect;
 	Utopian::Actor* mSelectedActor;
 	Utopian::Camera* mCamera;
 	Terrain* mTerrain;
