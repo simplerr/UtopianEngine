@@ -18,6 +18,7 @@ out gl_PerVertex
 
 void main(void)
 {
+	// Note: workaround to avoid glslang to optimize unused inputs
 	vec3 temp = InColor;
 	vec2 temp1 = InTex;
 	vec4 temp2 = InTangentL;

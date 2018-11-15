@@ -141,9 +141,11 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 		SharedPtr<Vk::ColorEffect> colorEffect;
+		SharedPtr<Vk::ColorEffect> colorEffectWireframe;
 		SharedPtr<Vk::NormalDebugEffect> normalEffect;
 	private:
-		SharedPtr<Vk::ScreenQuad> mScreenQuad;
+		Vk::StaticModel* mCubeModel;
+
 		// Note: Todo:
 		Vk::Renderer* mRenderer;
 		uint32_t mWidth, mHeight;

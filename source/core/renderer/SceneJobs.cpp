@@ -7,11 +7,13 @@
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ScreenGui.h"
 #include "vulkan/EffectManager.h"
+#include "vulkan/ModelLoader.h"
 #include <random>
 
 namespace Utopian
@@ -262,16 +264,23 @@ namespace Utopian
 		renderTarget->Create();
 
 		colorEffect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		colorEffect->CreatePipeline();
 		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
 
+		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		colorEffectWireframe->CreatePipeline();
+
 		//mScreenQuad = mRenderer->AddScreenQuad(0u, 0u, mWidth, mHeight, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
-		colorEffect->BindDeferredOutput(deferredJob->renderTarget->GetColorImage(), deferredJob->renderTarget->GetSampler());
+
+		mCubeModel = Vk::gModelLoader().LoadDebugBox();
 	}
 
 	void DebugJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
 		colorEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		normalEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		colorEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -284,7 +293,7 @@ namespace Utopian
 
 			Vk::StaticModel* model = renderable->GetModel();
 
-			if (renderable->HasRenderFlags(RENDER_FLAG_DEBUG))
+			if (renderable->HasRenderFlags(RENDER_FLAG_COLOR))
 			{
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
@@ -316,6 +325,24 @@ namespace Utopian
 				}
 			}
 
+			if (renderable->HasRenderFlags(RENDER_FLAG_BOUNDING_BOX))
+			{
+				BoundingBox boundingBox = renderable->GetBoundingBox();
+				vec3 pos = renderable->GetTransform().GetPosition();
+				vec3 rotation = renderable->GetTransform().GetRotation();
+				glm::vec3 translation = vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
+				mat4 world = glm::translate(glm::mat4(), translation);
+				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
+
+				Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
+
+				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
+				colorEffectWireframe->BindDescriptorSets(commandBuffer);
+				commandBuffer->CmdPushConstants(colorEffectWireframe->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+			}
 		}
 
 		renderTarget->End(renderer->GetQueue());

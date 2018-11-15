@@ -15,7 +15,8 @@ namespace Utopian::Vk
 	ColorEffect::ColorEffect(Device* device, RenderPass* renderPass)
 		: Effect(device, renderPass, "data/shaders/color/color.vert", "data/shaders/color/color.frag")
 	{
-		CreatePipeline();
+		// Note: Uncommented since the DebugJob is calling this instead right now
+		//CreatePipeline();
 
 		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 

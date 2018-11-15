@@ -25,6 +25,7 @@ namespace Utopian
 		void SetModel(std::string path, Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
+		void SetRenderFlags(RenderFlags renderFlags);
 		void AppendRenderFlags(RenderFlags renderFlags);
 
 		void EnableBoundingBox();

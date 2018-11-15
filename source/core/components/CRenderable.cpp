@@ -73,6 +73,16 @@ namespace Utopian
 		mInternal->SetMaterial(material);
 	}
 
+	void CRenderable::SetRenderFlags(RenderFlags renderFlags)
+	{
+		mInternal->SetRenderFlags(renderFlags);
+	}
+
+	void CRenderable::AppendRenderFlags(RenderFlags renderFlags)
+	{
+		mInternal->SetRenderFlags(mInternal->GetRenderFlags() | renderFlags);
+	}
+
 	void CRenderable::EnableBoundingBox()
 	{
 		mInternal->SetDrawBoundingBox(true);
@@ -91,10 +101,5 @@ namespace Utopian
 	const std::string CRenderable::GetPath() const
 	{
 		return mPath;
-	}
-
-	void CRenderable::AppendRenderFlags(RenderFlags renderFlags)
-	{
-		mInternal->SetRenderFlags(mInternal->GetRenderFlags() | renderFlags);
 	}
 }

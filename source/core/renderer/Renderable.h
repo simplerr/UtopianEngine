@@ -12,9 +12,10 @@ namespace Utopian
 
 	enum RenderFlags
 	{
-		RENDER_FLAG_DEFERRED = 1 << 0,
-		RENDER_FLAG_DEBUG = 1 << 1,
-		RENDER_FLAG_NORMAL_DEBUG = 1 << 2
+		RENDER_FLAG_DEFERRED = 1,
+		RENDER_FLAG_COLOR = 2,
+		RENDER_FLAG_NORMAL_DEBUG = 4,
+		RENDER_FLAG_BOUNDING_BOX = 8
 	};
 
 	class Renderable : public SceneNode
