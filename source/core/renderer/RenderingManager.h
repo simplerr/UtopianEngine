@@ -65,7 +65,6 @@ namespace Utopian
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;
 		Terrain* mTerrain;
-		Vk::StaticModel* mCubeModel;
 		WaterRenderer* mWaterRenderer;
 
 		// TODO: Move these

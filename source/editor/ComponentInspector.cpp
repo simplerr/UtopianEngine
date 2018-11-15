@@ -20,7 +20,7 @@ void Utopian::TransformInspector::UpdateUi()
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::InputFloat3("Position", &mTransform.mPosition.x, 2);
-		ImGui::SliderFloat3("Scale", &mTransform.mScale.x, 0.0f, 2000.0f, "%.1f");
+		ImGui::SliderFloat3("Scale", &mTransform.mScale.x, 0.0f, 100.0f, "%.1f");
 		ImGui::SliderFloat3("Rotation", &mTransform.mRotation.x, 0.0f, 360.0f, "%.1f");
 
 		mComponent->SetRotation(mTransform.GetRotation());

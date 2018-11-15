@@ -334,7 +334,7 @@ namespace Utopian
 				mat4 world = glm::translate(glm::mat4(), translation);
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-				Vk::PushConstantBlock pushConsts(world, vec4(1, 0, 0, 1));
+				Vk::PushConstantBlock pushConsts(world, vec4(0, 1, 0, 1));
 
 				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
 				colorEffectWireframe->BindDescriptorSets(commandBuffer);
