@@ -28,13 +28,13 @@ namespace Utopian
 			std::string name = mActor->GetName();
 			if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				static int component = 1;
-				ImGui::Combo("Component", &component, "aaaa\0bbbb\0cccc\0dddd\0eeee\0\0");
+				// static int component = 1;
+				// ImGui::Combo("Component", &component, "Light\0Renderable\0\0");
 
-				if (ImGui::Button("Add"))
-				{ 
-					uint32_t a = component;
-				}
+				// if (ImGui::Button("Add"))
+				// { 
+				// 	uint32_t a = component;
+				// }
 			}
 
 			for (auto& inspector : mComponentInspectors)

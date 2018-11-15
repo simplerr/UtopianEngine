@@ -36,6 +36,8 @@ namespace Utopian
 		virtual void UpdateUi() override;
 	private:
 		CRenderable* mRenderable;
+		bool mBoundingBox;
+		bool mDebugNormals;
 	};
 
 	class LightInspector : public ComponentInspector

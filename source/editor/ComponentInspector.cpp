@@ -2,6 +2,7 @@
 #include "vulkan/UIOverlay.h"
 #include "core/components/CTransform.h"
 #include "core/components/CLight.h"
+#include "core/components/CRenderable.h"
 
 Utopian::ComponentInspector::ComponentInspector()
 {
@@ -31,13 +32,37 @@ void Utopian::TransformInspector::UpdateUi()
 Utopian::RenderableInspector::RenderableInspector(CRenderable* renderable)
 {
 	mRenderable = renderable;
+	mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
+	mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 }
 
 void Utopian::RenderableInspector::UpdateUi()
 {
 	if (ImGui::CollapsingHeader("Renderable", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Text("Mesh data [todo]");
+		if (ImGui::Checkbox("Bounding box", &mBoundingBox))
+		{
+			uint32_t flag = mRenderable->GetRenderFlags();
+
+			if (mBoundingBox)
+				flag |= RenderFlags::RENDER_FLAG_BOUNDING_BOX;
+			else
+				flag &= ~RenderFlags::RENDER_FLAG_BOUNDING_BOX;
+
+			mRenderable->SetRenderFlags(flag);
+		}
+
+		if (ImGui::Checkbox("Debug normals", &mDebugNormals))
+		{
+			uint32_t flag = mRenderable->GetRenderFlags();
+
+			if (mDebugNormals)
+				flag |= RenderFlags::RENDER_FLAG_NORMAL_DEBUG;
+			else
+				flag &= ~RenderFlags::RENDER_FLAG_NORMAL_DEBUG;
+
+			mRenderable->SetRenderFlags(flag);
+		}
 	}
 }
 
