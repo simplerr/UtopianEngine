@@ -108,4 +108,9 @@ namespace Utopian
 	{
 		return mRenderFlags;
 	}
+
+	const bool Renderable::HasRenderFlags(uint32_t renderFlags) const
+	{
+		return (mRenderFlags & renderFlags) == renderFlags;
+	}
 }

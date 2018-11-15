@@ -145,6 +145,7 @@ namespace Utopian
 
 		// Enable bounding box rendering
 		auto renderable = mSelectedActor->GetComponent<CRenderable>();
+		renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 		//renderable->EnableBoundingBox();
 
 		// Create inspector UI

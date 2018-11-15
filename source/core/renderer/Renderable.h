@@ -13,7 +13,8 @@ namespace Utopian
 	enum RenderFlags
 	{
 		RENDER_FLAG_DEFERRED = 1 << 0,
-		RENDER_FLAG_DEBUG = 1 << 1
+		RENDER_FLAG_DEBUG = 1 << 1,
+		RENDER_FLAG_NORMAL_DEBUG = 1 << 2
 	};
 
 	class Renderable : public SceneNode
@@ -41,6 +42,8 @@ namespace Utopian
 		const Utopian::Vk::Mat GetMaterial() const;
 		const bool IsVisible() const;
 		const uint32_t GetRenderFlags() const;
+
+		const bool HasRenderFlags(uint32_t renderFlags) const;
 
 	private:
 		Utopian::Vk::StaticModel* mModel;

@@ -92,4 +92,9 @@ namespace Utopian
 	{
 		return mPath;
 	}
+
+	void CRenderable::AppendRenderFlags(RenderFlags renderFlags)
+	{
+		mInternal->SetRenderFlags(mInternal->GetRenderFlags() | renderFlags);
+	}
 }

@@ -29,6 +29,8 @@ out gl_PerVertex
 void main() 
 {
 	OutColor = pushConstants.color.rgb;
+
+	// Note: workaround to avoid glslang to optimize unused inputs
 	vec3 temp = InColor;
 	temp = InNormalL;
 	vec2 temp1 = InTex;

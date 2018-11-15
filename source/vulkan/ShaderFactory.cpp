@@ -282,6 +282,8 @@ namespace Utopian::Vk
 			return VK_SHADER_STAGE_VERTEX_BIT;
 		else if (suffix == "frag")
 			return VK_SHADER_STAGE_FRAGMENT_BIT;
+		else if (suffix == "geom")
+			return VK_SHADER_STAGE_GEOMETRY_BIT;
 		else {
 			assert(0 && "Unknown shader stage");
 		}
@@ -543,13 +545,12 @@ namespace Utopian::Vk
 		reflection->vertexDescription->AddBinding(BINDING_0, totalSize, VK_VERTEX_INPUT_RATE_VERTEX);
 	}
 
-	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename)
+	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
 	{
 		SharedPtr<Shader> shader = nullptr;
 
 		/* Vertex shader */
 		SharedPtr<CompiledShader> compiledVertexShader = CompileShader(vertexShaderFilename);
-
 		if (compiledVertexShader != nullptr)
 		{
 			VkShaderModuleCreateInfo moduleCreateInfo{};
@@ -562,7 +563,6 @@ namespace Utopian::Vk
 
 		/* Pixel shader */
 		SharedPtr<CompiledShader> compiledPixelShader = CompileShader(pixelShaderFilename);
-
 		if (compiledPixelShader != nullptr)
 		{
 			VkShaderModuleCreateInfo moduleCreateInfo{};
@@ -573,15 +573,38 @@ namespace Utopian::Vk
 			VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
 		}
 
-		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
+		/* Geometry shader */
+		SharedPtr<CompiledShader> compiledGeometryShader;
+		if (geometryShaderFilename != "NONE")
 		{
-			shader = std::make_shared<Shader>();
+			compiledGeometryShader = CompileShader(geometryShaderFilename);
+			if (compiledGeometryShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledGeometryShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledGeometryShader->spirvBytecode.data();
 
-			shader->AddCompiledShader(compiledVertexShader);
-			shader->AddCompiledShader(compiledPixelShader);
+				VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledGeometryShader->shaderModule));
+			}
 		}
 
-		// Todo: geometry shader
+		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
+		{
+			if (geometryShaderFilename != "NONE" && compiledGeometryShader != nullptr)
+			{
+				shader = std::make_shared<Shader>();
+				shader->AddCompiledShader(compiledVertexShader);
+				shader->AddCompiledShader(compiledPixelShader);
+				shader->AddCompiledShader(compiledGeometryShader);
+			}
+			else if (geometryShaderFilename == "NONE")
+			{
+				shader = std::make_shared<Shader>();
+				shader->AddCompiledShader(compiledVertexShader);
+				shader->AddCompiledShader(compiledPixelShader);
+			}
+		}
 
 		return shader;
 	}

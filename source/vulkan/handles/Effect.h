@@ -17,7 +17,7 @@ namespace Utopian::Vk
 	class Effect
 	{
 	public:
-		Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader);
+		Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader = "NONE");
 
 		void RecompileShader();
 		// This must explictly be called
@@ -55,6 +55,7 @@ namespace Utopian::Vk
 		std::vector<VkDescriptorSet> mVkDescriptorSets;
 		std::string mVertexShaderPath;
 		std::string mFragmentShaderPath;
+		std::string mGeometryShaderPath;
 		DescriptorPool mDescriptorPool;
 	};
 }

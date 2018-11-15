@@ -11,10 +11,11 @@
 
 namespace Utopian::Vk
 {
-	Effect::Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader)
+	Effect::Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader)
 	{
 		mVertexShaderPath = vertexShader;
 		mFragmentShaderPath = fragmentShader;
+		mGeometryShaderPath = geometryShader;
 		mRenderPass = renderPass;
 		mDevice = device;
 
@@ -24,7 +25,7 @@ namespace Utopian::Vk
 	void Effect::Init()
 	{
 		mPipeline = std::make_shared<Pipeline>(mDevice, mRenderPass);
-		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
+		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath, mGeometryShaderPath);
 
 		assert(mShader != nullptr);
 
@@ -38,7 +39,7 @@ namespace Utopian::Vk
 
 	void Effect::RecompileShader()
 	{
-		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath);
+		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath, mGeometryShaderPath);
 
 		if (shader != nullptr)
 		{

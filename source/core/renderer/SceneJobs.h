@@ -6,6 +6,7 @@
 #include "vulkan/SSAOEffect.h"
 #include "vulkan/BlurEffect.h"
 #include "vulkan/ColorEffect.h"
+#include "vulkan/NormalDebugEffect.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
@@ -139,7 +140,8 @@ namespace Utopian
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
-		SharedPtr<Vk::ColorEffect> effect;
+		SharedPtr<Vk::ColorEffect> colorEffect;
+		SharedPtr<Vk::NormalDebugEffect> normalEffect;
 	private:
 		SharedPtr<Vk::ScreenQuad> mScreenQuad;
 		// Note: Todo:

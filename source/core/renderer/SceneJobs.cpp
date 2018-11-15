@@ -261,15 +261,17 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		colorEffect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
 
 		//mScreenQuad = mRenderer->AddScreenQuad(0u, 0u, mWidth, mHeight, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
-		effect->BindDeferredOutput(deferredJob->renderTarget->GetColorImage(), deferredJob->renderTarget->GetSampler());
+		colorEffect->BindDeferredOutput(deferredJob->renderTarget->GetColorImage(), deferredJob->renderTarget->GetSampler());
 	}
 
 	void DebugJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		colorEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		normalEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -277,24 +279,43 @@ namespace Utopian
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)
 		{
-			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEBUG) != RENDER_FLAG_DEBUG))
+			if (!renderable->IsVisible())
 				continue;
 
 			Vk::StaticModel* model = renderable->GetModel();
 
-			for (Vk::Mesh* mesh : model->mMeshes)
+			if (renderable->HasRenderFlags(RENDER_FLAG_DEBUG))
 			{
-				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+				for (Vk::Mesh* mesh : model->mMeshes)
+				{
+					// Push the world matrix constant
+					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
-				commandBuffer->CmdBindPipeline(effect->GetPipeline());
-				//commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				effect->BindDescriptorSets(commandBuffer);
-				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
-				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+					commandBuffer->CmdBindPipeline(colorEffect->GetPipeline());
+					colorEffect->BindDescriptorSets(commandBuffer);
+					commandBuffer->CmdPushConstants(colorEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
+					commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				}
 			}
+			
+			if (renderable->HasRenderFlags(RENDER_FLAG_NORMAL_DEBUG))
+			{
+				for (Vk::Mesh* mesh : model->mMeshes)
+				{
+					// Push the world matrix constant
+					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+
+					commandBuffer->CmdBindPipeline(normalEffect->GetPipeline());
+					normalEffect->BindDescriptorSets(commandBuffer);
+					commandBuffer->CmdPushConstants(normalEffect->GetPipelineInterface(), VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
+					commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				}
+			}
+
 		}
 
 		renderTarget->End(renderer->GetQueue());

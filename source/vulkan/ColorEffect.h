@@ -8,17 +8,6 @@
 
 namespace Utopian::Vk
 {
-	class Renderer;
-	class DescriptorSetLayout;
-	class DescriptorPool;
-	class DescriptorSet;
-	class Pipeline2;
-	class ComputePipeline;
-	class PipelineLayout;
-	class VertexDescription;
-	class Shader;
-	class Texture;
-
 UNIFORM_BLOCK_BEGIN(ViewProjection)
 	UNIFORM_PARAM(glm::mat4, projection)
 	UNIFORM_PARAM(glm::mat4, view)

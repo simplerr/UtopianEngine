@@ -102,7 +102,7 @@ namespace Utopian::Vk
 		// [TODO] Move to ShaderManager
 		system("cd data/shaders/phong/ && generate-spirv.bat");
 		system("cd data/shaders/test/ && generate-spirv.bat");
-		system("cd data/shaders/normal_debug/ && generate-spirv.bat");
+		//system("cd data/shaders/normal_debug/ && generate-spirv.bat");
 		system("cd data/shaders/textoverlay/ && generate-spirv.bat");
 		system("cd data/shaders/terrain/ && generate-spirv.bat");
 		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
