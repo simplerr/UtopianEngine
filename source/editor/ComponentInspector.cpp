@@ -34,6 +34,7 @@ Utopian::RenderableInspector::RenderableInspector(CRenderable* renderable)
 	mRenderable = renderable;
 	mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
 	mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
+	mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
 }
 
 void Utopian::RenderableInspector::UpdateUi()
@@ -60,6 +61,18 @@ void Utopian::RenderableInspector::UpdateUi()
 				flag |= RenderFlags::RENDER_FLAG_NORMAL_DEBUG;
 			else
 				flag &= ~RenderFlags::RENDER_FLAG_NORMAL_DEBUG;
+
+			mRenderable->SetRenderFlags(flag);
+		}
+
+		if (ImGui::Checkbox("Wireframe", &mWireframe))
+		{
+			uint32_t flag = mRenderable->GetRenderFlags();
+
+			if (mWireframe)
+				flag |= RenderFlags::RENDER_FLAG_WIREFRAME;
+			else
+				flag &= ~RenderFlags::RENDER_FLAG_WIREFRAME;
 
 			mRenderable->SetRenderFlags(flag);
 		}

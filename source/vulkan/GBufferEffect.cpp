@@ -15,7 +15,7 @@ namespace Utopian::Vk
 	GBufferEffect::GBufferEffect(Device* device, RenderPass* renderPass)
 		: Effect(device, renderPass, "data/shaders/gbuffer/gbuffer.vert", "data/shaders/gbuffer/gbuffer.frag")
 	{
-		CreatePipeline();
+		//CreatePipeline();
 
 		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 

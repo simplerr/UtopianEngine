@@ -77,6 +77,7 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
+		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
 	private:
 	};
 

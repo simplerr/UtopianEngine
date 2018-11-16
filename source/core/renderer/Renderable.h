@@ -15,7 +15,8 @@ namespace Utopian
 		RENDER_FLAG_DEFERRED = 1,
 		RENDER_FLAG_COLOR = 2,
 		RENDER_FLAG_NORMAL_DEBUG = 4,
-		RENDER_FLAG_BOUNDING_BOX = 8
+		RENDER_FLAG_BOUNDING_BOX = 8,
+		RENDER_FLAG_WIREFRAME = 16
 	};
 
 	class Renderable : public SceneNode

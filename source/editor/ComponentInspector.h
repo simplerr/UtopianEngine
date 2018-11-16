@@ -38,6 +38,7 @@ namespace Utopian
 		CRenderable* mRenderable;
 		bool mBoundingBox;
 		bool mDebugNormals;
+		bool mWireframe;
 	};
 
 	class LightInspector : public ComponentInspector

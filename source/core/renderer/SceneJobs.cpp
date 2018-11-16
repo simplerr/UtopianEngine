@@ -35,7 +35,13 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
+		// Todo: Implement a better way for multiple pipelines in the same Effect
 		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+
+		mGBufferEffect->CreatePipeline();
+		mGBufferEffectWireframe->CreatePipeline();
 
 		const uint32_t size = 240;
 		renderer->AddScreenQuad(size + 20, height - (size + 10), size, size, positionImage.get(), renderTarget->GetSampler());
@@ -54,6 +60,7 @@ namespace Utopian
 	void GBufferJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
 		mGBufferEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		mGBufferEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -64,6 +71,10 @@ namespace Utopian
 			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
 				continue;
 
+			Vk::Effect* effect = mGBufferEffect.get();
+			if (renderable->HasRenderFlags(RENDER_FLAG_WIREFRAME))
+				effect = mGBufferEffectWireframe.get();
+
 			Vk::StaticModel* model = renderable->GetModel();
 
 			for (Vk::Mesh* mesh : model->mMeshes)
@@ -73,11 +84,11 @@ namespace Utopian
 
 				// Todo: Note: This is a temporary workaround
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				VkDescriptorSet descriptorSets[2] = { mGBufferEffect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+				VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-				commandBuffer->CmdBindPipeline(mGBufferEffect->GetPipeline());
-				commandBuffer->CmdBindDescriptorSet(mGBufferEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				commandBuffer->CmdPushConstants(mGBufferEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindPipeline(effect->GetPipeline());
+				commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
 				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
