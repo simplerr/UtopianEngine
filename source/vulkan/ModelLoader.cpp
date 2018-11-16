@@ -288,8 +288,8 @@ namespace Utopian::Vk
 	StaticModel* ModelLoader::LoadGrid(float cellSize, int numCells)
 	{
 		// Check if the model already is loaded
-		if (mModelMap.find("grid") != mModelMap.end())
-			return mModelMap["grid"];
+		//if (mModelMap.find("grid") != mModelMap.end())
+		//	return mModelMap["grid"];
 
 		StaticModel* model = new StaticModel();
 		Mesh* mesh = new Mesh(mDevice);
@@ -326,7 +326,7 @@ namespace Utopian::Vk
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-		mModelMap["grid"] = model;
+		//mModelMap["grid"] = model;
 		return model;
 	}
 
