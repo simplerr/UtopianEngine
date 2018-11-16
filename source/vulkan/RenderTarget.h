@@ -20,11 +20,23 @@ namespace Utopian::Vk
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
 		/* Note: The order in which these are called is important */
-		void AddColorAttachment(Image* image, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		void AddDepthAttachment(Image* image);
+		void AddColorAttachment(Image* image,
+								VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
-		void AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		void AddDepthAttachment(const SharedPtr<Image>& image);
+		void AddDepthAttachment(Image* image,
+								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+
+		void AddColorAttachment(const SharedPtr<Image>& image,
+		 						VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+
+		void AddDepthAttachment(const SharedPtr<Image>& image,
+								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
 		void Create();
 

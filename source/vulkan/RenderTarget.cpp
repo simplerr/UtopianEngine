@@ -28,27 +28,27 @@ namespace Utopian::Vk
 
 	}
 
-	void RenderTarget::AddColorAttachment(Image* image, VkImageLayout imageLayout)
+	void RenderTarget::AddColorAttachment(Image* image, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout);
+		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout, loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(image);
 	}
 
-	void RenderTarget::AddDepthAttachment(Image* image)
+	void RenderTarget::AddDepthAttachment(Image* image, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddDepthAttachment(image->GetFormat());
+		mRenderPass->AddDepthAttachment(image->GetFormat(), loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(image);
 	}
 
-	void RenderTarget::AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout imageLayout)
+	void RenderTarget::AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout);
+		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout, loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 
-	void RenderTarget::AddDepthAttachment(const SharedPtr<Image>& image)
+	void RenderTarget::AddDepthAttachment(const SharedPtr<Image>& image, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddDepthAttachment(image->GetFormat());
+		mRenderPass->AddDepthAttachment(image->GetFormat(), loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 

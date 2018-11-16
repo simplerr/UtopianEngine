@@ -255,9 +255,8 @@ namespace Utopian
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[0]);
 
 		renderTarget = make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
-		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage());
+		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
-		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		// Todo: Investigate why this does not work
 		//renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		renderTarget->SetClearColor(1, 1, 1, 1);

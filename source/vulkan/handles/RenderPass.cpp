@@ -72,19 +72,19 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetVkDevice(), &renderPassInfo, nullptr, &mHandle));
 	}
 
-	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout)
+	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
 		VkAttachmentReference colorReference = {};
 		colorReference.attachment = attachments.size();
-		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;	
+		colorReference.layout = imageLayout;	
 
 		colorReferences.push_back(colorReference);
 
 		VkAttachmentDescription attachment = {};
 		attachment.format = format;
 		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		attachment.loadOp = loadOp;
+		attachment.storeOp = storeOp;
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -93,7 +93,7 @@ namespace Utopian::Vk
 		attachments.push_back(attachment);
 	}
 
-	void RenderPass::AddDepthAttachment(VkFormat format, VkImageLayout imageLayout)
+	void RenderPass::AddDepthAttachment(VkFormat format, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
 		VkAttachmentReference depthReference = {};
 		depthReference.attachment = attachments.size();
@@ -104,8 +104,8 @@ namespace Utopian::Vk
 
 		attachment.format = format;
 		attachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		attachment.loadOp = loadOp;
+		attachment.storeOp = storeOp;
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
