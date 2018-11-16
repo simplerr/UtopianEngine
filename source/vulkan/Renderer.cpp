@@ -51,7 +51,6 @@ namespace Utopian::Vk
 		}
 
 		delete mTextOverlay;
-		delete mTextureLoader;
 		delete mScreenGui;
 	}
 
@@ -63,8 +62,6 @@ namespace Utopian::Vk
 
 		SetupDescriptorPool();
 		PrepareCommandBuffers();
-
-		mTextureLoader = new Utopian::Vk::TextureLoader(this, GetQueue()->GetVkHandle());
 
 		mPrepared = true;
 

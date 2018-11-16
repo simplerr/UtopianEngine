@@ -20,7 +20,7 @@ namespace Utopian::Vk
 	class ModelLoader : public Module<ModelLoader>
 	{
 	public:
-		ModelLoader(Device* device, TextureLoader* textureLoader);
+		ModelLoader(Device* device);
 		void CleanupModels(VkDevice device);
 
 		StaticModel* LoadModel(std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
@@ -33,7 +33,6 @@ namespace Utopian::Vk
 		bool TryLongerPath(char* szTemp, aiString* p_szString);
 		std::map<std::string, StaticModel*> mModelMap;
 
-		TextureLoader* mTextureLoader;
 		Device* mDevice;
 	};
 

@@ -16,6 +16,7 @@
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/ModelLoader.h"
+#include "vulkan/TextureLoader.h"
 #include "vulkan/UIOverlay.h"
 
 namespace Utopian
@@ -32,7 +33,7 @@ namespace Utopian
 		// The real solution is to cleanup and remove this.
 		mCommandBuffer->ToggleActive();
 
-		mWaterRenderer = new WaterRenderer(mRenderer, renderer->mTextureLoader);
+		mWaterRenderer = new WaterRenderer(mRenderer, &Vk::gTextureLoader());
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 

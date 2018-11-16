@@ -130,8 +130,8 @@ Terrain::Terrain(Utopian::Vk::Renderer* renderer)
 
 	// NOTE: This must be done before Init()
 	// Move to effect?
-	mMarchingCubesEffect.edgeTableTex = mRenderer->mTextureLoader->CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, 1, sizeof(int));
-	mMarchingCubesEffect.triangleTableTex = mRenderer->mTextureLoader->CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, 1, sizeof(int));
+	mMarchingCubesEffect.edgeTableTex = Utopian::Vk::gTextureLoader().CreateTexture(edgeTable, VK_FORMAT_R32_UINT, 256, 1, 1, sizeof(int));
+	mMarchingCubesEffect.triangleTableTex = Utopian::Vk::gTextureLoader().CreateTexture(triTable, VK_FORMAT_R32_UINT, 16, 256, 1, sizeof(int));
 
 	/* Experimentation */
 	const uint32_t w = 32;
@@ -141,7 +141,7 @@ Terrain::Terrain(Utopian::Vk::Renderer* renderer)
 	float texture3d[w * h * d];
 	GenerateNoiseTexture(texture3d, w, h, d);
 
-	mMarchingCubesEffect.texture3d = mRenderer->mTextureLoader->CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
+	mMarchingCubesEffect.texture3d = Utopian::Vk::gTextureLoader().CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
 
 	mTerrainEffect.Init(renderer);
 	mMarchingCubesEffect.Init(renderer);

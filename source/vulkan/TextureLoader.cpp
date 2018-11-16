@@ -1,6 +1,7 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Texture.h"
+#include "vulkan/handles/Queue.h"
 #include "TextureLoader.h"
 #include "VulkanDebug.h"
 #include "Device.h"
@@ -9,10 +10,10 @@
 
 namespace Utopian::Vk
 {
-	TextureLoader::TextureLoader(Renderer* renderer, VkQueue queue)
+	TextureLoader::TextureLoader(Renderer* renderer)
 	{
 		mRenderer = renderer;
-		mQueue = queue;
+		mQueue = renderer->GetQueue()->GetVkHandle();
 		mDevice = mRenderer->GetDevice();
 	}
 
@@ -22,6 +23,11 @@ namespace Utopian::Vk
 		{
 			delete texture.second;
 		}
+	}
+
+	TextureLoader& gTextureLoader()
+	{
+		return TextureLoader::Instance();
 	}
 
 	Texture* TextureLoader::LoadTexture(std::string filename)

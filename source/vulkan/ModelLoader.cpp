@@ -18,10 +18,9 @@ using namespace glm;
 
 namespace Utopian::Vk
 {
-	ModelLoader::ModelLoader(Device* device, TextureLoader* textureLoader)
+	ModelLoader::ModelLoader(Device* device)
 	{
 		mDevice = device;
-		mTextureLoader = textureLoader;
 	}
 
 	void ModelLoader::CleanupModels(VkDevice device)
@@ -107,14 +106,14 @@ namespace Utopian::Vk
 					FindValidPath(&texturePath, filename);
 					mesh->SetTexturePath(texturePath.C_Str());
 
-					Texture* texture = mTextureLoader->LoadTexture(texturePath.C_Str());
+					Texture* texture = gTextureLoader().LoadTexture(texturePath.C_Str());
 					mesh->SetTexture(texture);
 				}
 				else
 				{
 					mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
 
-					Texture* texture = mTextureLoader->LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+					Texture* texture = gTextureLoader().LoadTexture(PLACEHOLDER_TEXTURE_PATH);
 					mesh->SetTexture(texture);
 				}
 
@@ -289,8 +288,8 @@ namespace Utopian::Vk
 	StaticModel* ModelLoader::LoadGrid(float cellSize, int numCells)
 	{
 		// Check if the model already is loaded
-		if (mModelMap.find("quad") != mModelMap.end())
-			return mModelMap["quad"];
+		if (mModelMap.find("grid") != mModelMap.end())
+			return mModelMap["grid"];
 
 		StaticModel* model = new StaticModel();
 		Mesh* mesh = new Mesh(mDevice);
@@ -320,15 +319,14 @@ namespace Utopian::Vk
 		}
 					
 		mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
-
-		Texture* texture = mTextureLoader->LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+		Texture* texture = gTextureLoader().LoadTexture(PLACEHOLDER_TEXTURE_PATH);
 		mesh->SetTexture(texture);
 
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-		mModelMap["quad"] = model;
+		mModelMap["grid"] = model;
 		return model;
 	}
 

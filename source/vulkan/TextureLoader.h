@@ -3,15 +3,16 @@
 #include <map>
 #include <string>
 #include "vulkan/VulkanInclude.h"
+#include "utility/Module.h"
 
 #define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
 
 namespace Utopian::Vk
 {
-	class TextureLoader
+	class TextureLoader : public Module<TextureLoader>
 	{
 	public:
-		TextureLoader(Renderer* renderer, VkQueue queue);
+		TextureLoader(Renderer* renderer);
 		~TextureLoader();
 
 		/** \brief Loads a texture from a file
@@ -42,4 +43,6 @@ namespace Utopian::Vk
 		Device*  mDevice;
 		VkQueue mQueue;
 	};
+
+	TextureLoader& gTextureLoader();
 }

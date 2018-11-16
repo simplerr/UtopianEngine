@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "vulkan/ModelLoader.h"
+#include "vulkan/TextureLoader.h"
 #include "Input.h"
 #include "imgui/imgui.h"
 
@@ -73,7 +74,8 @@ namespace Utopian
 		Vk::ShaderFactory::Start(mRenderer->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
-		Vk::ModelLoader::Start(mRenderer->GetDevice(), mRenderer->mTextureLoader);
+		Vk::ModelLoader::Start(mRenderer->GetDevice());
+		Vk::TextureLoader::Start(mRenderer.get());
 
 		// Note: There are dependencies on the initialization order here
 		mTerrain = make_shared<Terrain>(mRenderer.get());

@@ -143,7 +143,6 @@ namespace Utopian::Vk
 
 		// TODO: NOTE: HACK
 	public:
-		TextureLoader*					mTextureLoader = nullptr;
 		UIOverlay*						mUiOverlay = nullptr;
 		ScreenGui*						mScreenGui = nullptr;
 	};
