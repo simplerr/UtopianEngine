@@ -300,9 +300,11 @@ namespace Utopian::Vk
 		{
 			for (int z = 0; z < numCells; z++)
 			{
+				const float originOffset = (cellSize * numCells) / 2.0f;
+				glm::vec3 originInCenterPos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
 				glm::vec3 position = glm::vec3(x * cellSize, 0.0f, z * cellSize);
 				glm::vec2 texcord = glm::vec2(position.x / (cellSize * (numCells - 1)), position.z / (cellSize * (numCells - 1))); // NOTE: Are the uv coordinates correct?
-				mesh->AddVertex(Vertex(position.x, position.y, position.z, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+				mesh->AddVertex(Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
 			}
 		}
 
@@ -314,6 +316,11 @@ namespace Utopian::Vk
 				mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
 			}
 		}
+					
+		mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
+
+		Texture* texture = mTextureLoader->LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+		mesh->SetTexture(texture);
 
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);

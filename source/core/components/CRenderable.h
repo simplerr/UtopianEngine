@@ -22,7 +22,7 @@ namespace Utopian
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		void LoadModel(std::string path);
-		void SetModel(std::string path, Utopian::Vk::StaticModel* model);
+		void SetModel(Utopian::Vk::StaticModel* model);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
 		void SetRenderFlags(uint32_t renderFlags);

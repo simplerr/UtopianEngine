@@ -27,7 +27,7 @@ namespace Utopian::Vk
 		StaticModel* GenerateTerrain(std::string filename);
 		StaticModel* LoadDebugBox();
 		StaticModel* LoadQuad();
-		StaticModel* ModelLoader::LoadGrid(float cellSize, int numCells);
+		StaticModel* LoadGrid(float cellSize, int numCells);
 	private:
 		int FindValidPath(aiString* texturePath, std::string modelPath);
 		bool TryLongerPath(char* szTemp, aiString* p_szString);

@@ -84,11 +84,21 @@ namespace Utopian
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 
+		/* Manually add a grid */
+		SharedPtr<Actor> actor = Actor::Create("Grid");
+
+		actor->AddComponent<CTransform>(glm::vec3(0, 0, 0));
+
+		CRenderable* renderable = actor->AddComponent<CRenderable>();
+		renderable->SetModel(Vk::gModelLoader().LoadGrid(10, 100));
+		//renderable->SetTexture();
+
 		/************************************************************************/
 		/* Add actors to the scene
 		/************************************************************************/
 
 		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
+
 
 		World::Instance().Update();
 
