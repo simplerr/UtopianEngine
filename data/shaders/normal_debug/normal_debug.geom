@@ -20,11 +20,13 @@ layout(push_constant) uniform PushConsts {
 	 mat4 world;
 	 mat4 worldInvTranspose;
 	 vec4 color;
+	 vec2 textureTiling;
+	 vec2 pad;
 } pushConsts;
 
 void main(void)
 {	
-	float normalLength = 0.5;
+	float normalLength = 5;
 	for(int i=0; i<gl_in.length(); i++)
 	{
 		vec3 pos = gl_in[i].gl_Position.xyz;

@@ -44,11 +44,13 @@ namespace Utopian::Vk
 			world = mat4();
 			color = vec4(1.0f);
 			worldInvTranspose = mat4();
+			textureTiling = vec2(1.0f, 1.0f);
 		}
 
-		PushConstantBlock(mat4 w, vec4 c = vec4(1.0f)) {
+		PushConstantBlock(mat4 w, vec4 c = vec4(1.0f), vec2 tiling = vec2(1.0f, 1.0f)) {
 			world = w;
 			color = c;
+			textureTiling = tiling;
 
 			// Note: This needs to be done to have the physical world match the rendered world.
 			// See https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/ for more information.
@@ -62,6 +64,8 @@ namespace Utopian::Vk
 		mat4 world;
 		mat4 worldInvTranspose;
 		vec4 color;
+		vec2 textureTiling;
+		vec2 pad;
 	};
 
 	class Renderer : public VulkanBase

@@ -5,7 +5,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "utility/Module.h"
 
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/WoodDetail1A_D.png"
 
 namespace Utopian::Vk
 {

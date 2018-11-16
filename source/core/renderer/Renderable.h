@@ -33,6 +33,8 @@ namespace Utopian
 		void LoadModel(std::string path);
 
 		void SetModel(Utopian::Vk::StaticModel* model);
+		void SetTexture(Vk::Texture* texture);
+		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
 		void SetVisible(bool visible);
@@ -44,6 +46,7 @@ namespace Utopian
 		const Utopian::Vk::Mat GetMaterial() const;
 		const bool IsVisible() const;
 		const uint32_t GetRenderFlags() const;
+		glm::vec2 GetTextureTiling() const;
 
 		const bool HasRenderFlags(uint32_t renderFlags) const;
 
@@ -51,6 +54,7 @@ namespace Utopian
 		Utopian::Vk::StaticModel* mModel;
 		Utopian::Vk::Mat mMaterial;
 		glm::vec4 mColor;
+		glm::vec2 mTextureTileFactor;
 		uint32_t mRenderFlags;
 		bool mVisible;
 	};

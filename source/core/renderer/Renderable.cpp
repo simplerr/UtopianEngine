@@ -10,6 +10,7 @@ namespace Utopian
 	Renderable::Renderable()
 	{
 		SetRenderFlags(RENDER_FLAG_DEFERRED);
+		SetTileFactor(glm::vec2(1.0f, 1.0f));
 		SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		SetMaterial(Vk::Mat(Vk::EffectType::PHONG, Vk::PhongEffect::NORMAL));
 		SetVisible(true);
@@ -52,6 +53,16 @@ namespace Utopian
 	void Renderable::SetModel(Utopian::Vk::StaticModel* model)
 	{
 		mModel = model;
+	}
+
+	void Renderable::SetTexture(Vk::Texture* texture)
+	{
+		mModel->mMeshes[0]->SetTexture(texture);
+	}
+
+	void Renderable::SetTileFactor(glm::vec2 tileFactor)
+	{
+		mTextureTileFactor = tileFactor;
 	}
 
 	void Renderable::SetColor(glm::vec4 color)
@@ -97,6 +108,11 @@ namespace Utopian
 	const Utopian::Vk::Mat Renderable::GetMaterial() const
 	{
 		return mMaterial;
+	}
+
+	glm::vec2 Renderable::GetTextureTiling() const
+	{
+		return mTextureTileFactor;
 	}
 
 	const bool Renderable::IsVisible() const

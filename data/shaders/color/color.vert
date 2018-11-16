@@ -17,6 +17,8 @@ layout (push_constant) uniform PushConstants {
 	 mat4 world;
 	 mat4 worldInv;
 	 vec4 color;
+	 vec2 textureTiling;
+	 vec2 pad;
 } pushConstants;
 
 layout (location = 0) out vec3 OutColor;

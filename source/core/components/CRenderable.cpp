@@ -64,6 +64,16 @@ namespace Utopian
 		mInternal->SetModel(model);
 	}
 
+	void CRenderable::SetTexture(Vk::Texture* texture)
+	{
+		mInternal->SetTexture(texture);
+	}
+
+	void CRenderable::SetTileFactor(glm::vec2 tileFactor)
+	{
+		mInternal->SetTileFactor(tileFactor);
+	}
+
 	void CRenderable::SetColor(glm::vec4 color)
 	{
 		mInternal->SetColor(color);
@@ -107,6 +117,11 @@ namespace Utopian
 	uint32_t CRenderable::GetRenderFlags() const
 	{
 		return mInternal->GetRenderFlags();
+	}
+
+	glm::vec2 CRenderable::GetTextureTiling() const
+	{
+		return mInternal->GetTextureTiling();
 	}
 
 	const bool CRenderable::HasRenderFlags(uint32_t renderFlags) const

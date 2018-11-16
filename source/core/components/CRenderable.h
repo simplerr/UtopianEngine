@@ -22,14 +22,25 @@ namespace Utopian
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		void LoadModel(std::string path);
-		void SetModel(Utopian::Vk::StaticModel* model);
+		void SetModel(Vk::StaticModel* model);
+
+		/**
+		 * @brief Set the texture to use when drawing
+		 * 
+		 * @note Assmues the Model only consists of one Mesh
+		 */
+		void SetTexture(Vk::Texture* texture);
+		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
+
+		// Render flag settings
 		void SetRenderFlags(uint32_t renderFlags);
 		void AppendRenderFlags(uint32_t renderFlags);
 		uint32_t GetRenderFlags() const;
 		const bool HasRenderFlags(uint32_t renderFlags) const;
 
+		// Todo: Remove
 		void EnableBoundingBox();
 		void DisableBoundingBox();
 
@@ -44,6 +55,7 @@ namespace Utopian
 
 		const BoundingBox GetBoundingBox() const;
 		const std::string GetPath() const;
+		glm::vec2 GetTextureTiling() const;
 
 	private:
 		SharedPtr<Renderable> mInternal;

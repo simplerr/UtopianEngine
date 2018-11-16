@@ -80,7 +80,7 @@ namespace Utopian
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
 
 				// Todo: Note: This is a temporary workaround
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();

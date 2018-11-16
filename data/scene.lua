@@ -57,9 +57,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -1292.1437988281,
-				pos_y = 0,
-				pos_z = 26.164037704468,
+				pos_x = -432.51916503906,
+				pos_y = -375.22122192383,
+				pos_z = -174.08871459961,
 				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -126,9 +126,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -203.94464111328,
+				pos_x = -948.45697021484,
 				pos_y = 0,
-				pos_z = -18.445686340332,
+				pos_z = 364.78518676758,
 				rotation_x = 180,
 				rotation_y = 281.89999389648,
 				rotation_z = 0,
@@ -241,9 +241,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -5616.302734375,
+				pos_x = -961.97521972656,
 				pos_y = 0,
-				pos_z = 841.90411376953,
+				pos_z = 1158.64453125,
 				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -278,7 +278,7 @@ actor_list =
 			},
 			CRenderable = 
 			{
-				path = "data/models/sponza/sponza.obj",
+				path = "data/models/adventure_village/Tree.obj",
 			},
 			CTransform = 
 			{
@@ -318,9 +318,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 640.69909667969,
-				pos_y = 253.30688476563,
-				pos_z = -33.89917755127,
+				pos_x = 890.16265869141,
+				pos_y = 321.65704345703,
+				pos_z = 2.108814239502,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -341,10 +341,10 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 89.769958496094,
-				pos_y = 0,
-				pos_z = -28.85018157959,
-				rotation_x = 180,
+				pos_x = 104.12994384766,
+				pos_y = 177.60472106934,
+				pos_z = -338.36148071289,
+				rotation_x = 143.10000610352,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 50,
@@ -360,21 +360,21 @@ actor_list =
 		{
 			CLight = 
 			{
-				att_x = 0.72300004959106,
+				att_x = 0.57800000905991,
 				att_y = 0,
 				att_z = 0,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = 0.22900001704693,
-				dir_z = 0,
-				intensity_x = 0.26500001549721,
-				intensity_y = 0.68700003623962,
+				color_b = 0.52044886350632,
+				color_g = 0.84557557106018,
+				color_r = 0.87745100259781,
+				dir_x = -0.68700003623962,
+				dir_y = 1,
+				dir_z = 0.78600001335144,
+				intensity_x = 0.21700000762939,
+				intensity_y = 0.807000041008,
 				intensity_z = 0,
 				range = 100000,
 				spot = 4,
-				type = 2,
+				type = 0,
 			},
 			CRenderable = 
 			{
@@ -382,10 +382,10 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 230.91799926758,
-				pos_y = 0,
-				pos_z = -171.70306396484,
-				rotation_x = 0,
+				pos_x = -66.956314086914,
+				pos_y = 138.00454711914,
+				pos_z = 309.81820678711,
+				rotation_x = 182.19999694824,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 1,
@@ -439,8 +439,8 @@ actor_list =
 				scale_z = 50,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "EditorActor",
 		components = 
@@ -463,6 +463,98 @@ actor_list =
 			},
 		},
 	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/ShopSign_1.obj",
+			},
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/TreeLogPile_3.obj",
+			},
+			CTransform = 
+			{
+				pos_x = 161.5185546875,
+				pos_y = 0,
+				pos_z = -358.87704467773,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/Wheel.obj",
+			},
+			CTransform = 
+			{
+				pos_x = 310.54028320313,
+				pos_y = 46.765625,
+				pos_z = 206.23345947266,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/WoodBench.obj",
+			},
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	}, 
 }
 
 

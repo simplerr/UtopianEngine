@@ -32,6 +32,7 @@ void Utopian::TransformInspector::UpdateUi()
 Utopian::RenderableInspector::RenderableInspector(CRenderable* renderable)
 {
 	mRenderable = renderable;
+	mTextureTiling = renderable->GetTextureTiling();
 	mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
 	mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 	mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
@@ -76,6 +77,11 @@ void Utopian::RenderableInspector::UpdateUi()
 
 			mRenderable->SetRenderFlags(flag);
 		}
+
+		int tiling = mRenderable->GetTextureTiling().x;
+		ImGui::SliderInt("Tiling", &tiling, 0.0f, 100.0f);
+
+		mRenderable->SetTileFactor(glm::vec2(tiling, tiling));
 	}
 }
 

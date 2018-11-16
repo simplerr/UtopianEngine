@@ -89,11 +89,13 @@ namespace Utopian
 		/* Manually add a grid */
 		SharedPtr<Actor> actor = Actor::Create("Grid");
 
-		actor->AddComponent<CTransform>(glm::vec3(0, 0, 0));
+		auto transform = actor->AddComponent<CTransform>(glm::vec3(0, 0, 0));
+		transform->SetScale(glm::vec3(25, 1, 25));
 
 		CRenderable* renderable = actor->AddComponent<CRenderable>();
 		renderable->SetModel(Vk::gModelLoader().LoadGrid(10, 100));
-		//renderable->SetTexture();
+		renderable->SetTexture(Vk::gTextureLoader().LoadTexture("data/models/adventure_village/GrassPlants_D.png"));
+		renderable->SetTileFactor(glm::vec2(40, 40));
 
 		/************************************************************************/
 		/* Add actors to the scene

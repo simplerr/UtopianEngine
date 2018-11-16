@@ -5,6 +5,7 @@ layout (location = 1) in vec3 InPosW;
 layout (location = 2) in vec3 InNormalW;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec3 InNormalV;
+layout (location = 5) in vec2 InTextureTiling;
 
 layout (location = 0) out vec4 outPosition;
 layout (location = 1) out vec4 outNormal;
@@ -28,7 +29,7 @@ float linearDepth(float depth)
 
 void main() 
 {
-	vec4 color = texture(texSampler, InTex);
+	vec4 color = texture(texSampler, InTex * InTextureTiling);
 
 	if (InColor != vec3(1.0f))
 		color = vec4(InColor, 1.0f);
