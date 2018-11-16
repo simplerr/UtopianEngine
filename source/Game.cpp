@@ -94,8 +94,8 @@ namespace Utopian
 
 		CRenderable* renderable = actor->AddComponent<CRenderable>();
 		renderable->SetModel(Vk::gModelLoader().LoadGrid(10, 100));
-		renderable->SetTexture(Vk::gTextureLoader().LoadTexture("data/models/adventure_village/GrassPlants_D.png"));
-		renderable->SetTileFactor(glm::vec2(40, 40));
+		renderable->SetTexture(Vk::gTextureLoader().LoadTexture("data/textures/grass2.png"));
+		renderable->SetTileFactor(glm::vec2(70.0f));
 
 		/************************************************************************/
 		/* Add actors to the scene
