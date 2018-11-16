@@ -303,8 +303,10 @@ namespace Utopian::Vk
 				const float originOffset = (cellSize * numCells) / 2.0f;
 				glm::vec3 originInCenterPos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
 				glm::vec3 position = glm::vec3(x * cellSize, 0.0f, z * cellSize);
-				glm::vec2 texcord = glm::vec2(position.x / (cellSize * (numCells - 1)), position.z / (cellSize * (numCells - 1))); // NOTE: Are the uv coordinates correct?
-				mesh->AddVertex(Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+				glm::vec2 texcord = glm::vec2(position.x / (cellSize * (numCells - 1)), position.z / (cellSize * (numCells - 1)));
+
+				// Note: normal.y is -1 when it's expected to be 1
+				mesh->AddVertex(Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
 			}
 		}
 
