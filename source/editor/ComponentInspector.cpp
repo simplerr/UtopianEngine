@@ -78,10 +78,9 @@ void Utopian::RenderableInspector::UpdateUi()
 			mRenderable->SetRenderFlags(flag);
 		}
 
-		int tiling = mRenderable->GetTextureTiling().x;
-		ImGui::SliderInt("Tiling", &tiling, 0.0f, 100.0f);
+		ImGui::SliderInt("Tiling", &mTextureTiling.x, 1, 200);
 
-		mRenderable->SetTileFactor(glm::vec2(tiling, tiling));
+		mRenderable->SetTileFactor(glm::vec2(mTextureTiling.x, mTextureTiling.y));
 	}
 }
 
