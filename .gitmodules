@@ -4,3 +4,6 @@
 [submodule "external/glslang"]
 	path = external/glslang
 	url = git@github.com:KhronosGroup/glslang.git
+[submodule "external/gli"]
+	path = external/gli
+	url = git@github.com:g-truc/gli.git
