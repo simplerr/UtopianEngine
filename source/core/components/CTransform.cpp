@@ -8,13 +8,13 @@
 
 namespace Utopian
 {
-	CTransform::CTransform(Actor* parent, const vec3& position)
+	CTransform::CTransform(Actor* parent, const glm::vec3& position)
 		: Component(parent)
 	{
 		SetName("CTransform");
 		SetPosition(position);
-		SetRotation(vec3(0, 0, 0));
-		SetScale(vec3(1.0f, 1.0f, 1.0f));
+		SetRotation(glm::vec3(0, 0, 0));
+		SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 
 	CTransform::~CTransform()
@@ -50,22 +50,22 @@ namespace Utopian
 		mTransform = transform;
 	}
 
-	void CTransform::SetPosition(const vec3& position)
+	void CTransform::SetPosition(const glm::vec3& position)
 	{
 		mTransform.SetPosition(position);
 	}
 
-	void CTransform::SetRotation(const vec3& rotation)
+	void CTransform::SetRotation(const glm::vec3& rotation)
 	{
 		mTransform.SetRotation(rotation);
 	}
 
-	void CTransform::SetScale(const vec3& scale)
+	void CTransform::SetScale(const glm::vec3& scale)
 	{
 		mTransform.SetScale(scale);
 	}
 
-	void CTransform::AddTranslation(const vec3& translation)
+	void CTransform::AddTranslation(const glm::vec3& translation)
 	{
 		mTransform.AddTranslation(translation);
 	}
@@ -75,7 +75,7 @@ namespace Utopian
 		mTransform.AddRotation(x, y, z);
 	}
 	
-	void CTransform::AddRotation(const vec3& rotation)
+	void CTransform::AddRotation(const glm::vec3& rotation)
 	{
 		mTransform.AddRotation(rotation);
 	}
@@ -85,7 +85,7 @@ namespace Utopian
 		mTransform.AddScale(x, y, z);
 	}
 
-	void CTransform::AddScale(const vec3& scale)
+	void CTransform::AddScale(const glm::vec3& scale)
 	{
 		mTransform.AddScale(scale);
 	}
@@ -95,27 +95,27 @@ namespace Utopian
 		return mTransform;
 	}
 
-	const vec3& CTransform::GetPosition() const
+	const glm::vec3& CTransform::GetPosition() const
 	{
 		return mTransform.GetPosition();
 	}
 
-	const vec3& CTransform::GetRotation() const
+	const glm::vec3& CTransform::GetRotation() const
 	{
 		return mTransform.GetRotation();
 	}
 
-	const vec3& CTransform::GetScale() const
+	const glm::vec3& CTransform::GetScale() const
 	{
 		return mTransform.GetScale();
 	}
 
-	const mat4& CTransform::GetWorldMatrix() const
+	const glm::mat4& CTransform::GetWorldMatrix() const
 	{
 		return mTransform.GetWorldMatrix();
 	}
 
-	const mat4& CTransform::GetWorldInverseTransposeMatrix() const
+	const glm::mat4& CTransform::GetWorldInverseTransposeMatrix() const
 	{
 		return mTransform.GetWorldInverseTransposeMatrix();
 	}

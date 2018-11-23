@@ -11,8 +11,6 @@
 #include "Vertex.h"
 #include "vulkan/VulkanInclude.h"
 
-using namespace glm;
-
 namespace Utopian::Vk
 {
 	class StaticModel

@@ -5,8 +5,6 @@
 #include "utility/Common.h"
 #include "core/LuaManager.h"
 
-using namespace glm;
-
 namespace Utopian
 {
 	class Actor;

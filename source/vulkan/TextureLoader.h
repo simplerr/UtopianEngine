@@ -23,6 +23,7 @@ namespace Utopian::Vk
 		 * \note TextureLoader handles the memory deallocation of the texture.
 		 */
 		Texture* LoadTexture(std::string filename);
+		Texture* LoadCubeMap(std::string filename);
 
 		/** \brief Creates a texture from arbitrary data
 		 *

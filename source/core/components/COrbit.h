@@ -4,8 +4,6 @@
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 
-using namespace glm;
-
 namespace Utopian
 {
 	class Actor;
@@ -26,11 +24,11 @@ namespace Utopian
 		// Setters
 		void SetSpeed(float speed);
 		void SetRadius(float radius);
-		void SetTarget(const vec3& target);
+		void SetTarget(const glm::vec3& target);
 
 		// Getters
 		float GetSpeed() const;
-		const vec3& GetTarget() const;
+		const glm::vec3& GetTarget() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {
@@ -44,7 +42,7 @@ namespace Utopian
 	private:
 		CCamera* mCamera; // For convenience
 		CTransform* mTransform;
-		vec3 mTarget;
+		glm::vec3 mTarget;
 		float mSpeed;
 		float mRadius;
 		float mCounter;

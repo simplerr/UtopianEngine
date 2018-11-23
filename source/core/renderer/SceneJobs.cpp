@@ -202,7 +202,7 @@ namespace Utopian
 			sample = glm::normalize(sample);
 			sample *= randomFloats(generator);
 
-			effect->cameraBlock.data.samples[i] = vec4(sample, 0);
+			effect->cameraBlock.data.samples[i] = glm::vec4(sample, 0);
 		}
 
 		effect->UpdateMemory();
@@ -338,13 +338,13 @@ namespace Utopian
 			if (renderable->HasRenderFlags(RENDER_FLAG_BOUNDING_BOX))
 			{
 				BoundingBox boundingBox = renderable->GetBoundingBox();
-				vec3 pos = renderable->GetTransform().GetPosition();
-				vec3 rotation = renderable->GetTransform().GetRotation();
-				glm::vec3 translation = vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
-				mat4 world = glm::translate(glm::mat4(), translation);
+				glm::vec3 pos = renderable->GetTransform().GetPosition();
+				glm::vec3 rotation = renderable->GetTransform().GetRotation();
+				glm::vec3 translation = glm::vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight()/2, pos.z);
+				glm::mat4 world = glm::translate(glm::mat4(), translation);
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-				Vk::PushConstantBlock pushConsts(world, vec4(0, 1, 0, 1));
+				Vk::PushConstantBlock pushConsts(world, glm::vec4(0, 1, 0, 1));
 
 				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
 				colorEffectWireframe->BindDescriptorSets(commandBuffer);

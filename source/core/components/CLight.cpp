@@ -78,12 +78,12 @@ namespace Utopian
 		return luaObject;
 	}
 
-	void CLight::SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular)
+	void CLight::SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
 	{
 		mInternal->SetMaterials(ambient, diffuse, specular);
 	}
 
-	void CLight::SetMaterial(const vec4& color)
+	void CLight::SetMaterial(const glm::vec4& color)
 	{
 		mInternal->SetMaterial(color);
 	}
@@ -93,14 +93,14 @@ namespace Utopian
 		mInternal->SetMaterial(material);
 	}
 
-	void CLight::SetDirection(const vec3& direction)
+	void CLight::SetDirection(const glm::vec3& direction)
 	{
 		mInternal->SetDirection(direction);
 	}
 
 	void CLight::SetDirection(float x, float y, float z)
 	{
-		mInternal->SetDirection(vec3(x, y, z));
+		mInternal->SetDirection(glm::vec3(x, y, z));
 	}
 
 	void CLight::SetRange(float range)
@@ -118,7 +118,7 @@ namespace Utopian
 		mInternal->SetAtt(a0, a1, a2);
 	}
 
-	void CLight::SetAttenuation(vec3 attenuation)
+	void CLight::SetAttenuation(glm::vec3 attenuation)
 	{
 		mInternal->SetAtt(attenuation.x, attenuation.y, attenuation.z);
 	}
@@ -133,7 +133,7 @@ namespace Utopian
 		mInternal->SetIntensity(ambient, diffuse, specular);
 	}
 
-	void CLight::SetIntensity(vec3 intensity)
+	void CLight::SetIntensity(glm::vec3 intensity)
 	{
 		SetIntensity(intensity.x, intensity.y, intensity.z);
 	}
@@ -143,17 +143,17 @@ namespace Utopian
 		return mInternal->GetLightData();
 	}
 
-	const vec3& CLight::GetDirection() const
+	const glm::vec3& CLight::GetDirection() const
 	{
 		return mInternal->GetDirection();
 	}
 
-	const vec3& CLight::GetAtt() const
+	const glm::vec3& CLight::GetAtt() const
 	{
 		return mInternal->GetAtt();
 	}
 
-	const vec3& CLight::GetIntensity() const
+	const glm::vec3& CLight::GetIntensity() const
 	{
 		return mInternal->GetIntensity();
 	}

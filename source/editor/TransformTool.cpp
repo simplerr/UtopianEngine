@@ -5,6 +5,7 @@
 #include "core/terrain/Terrain.h"
 #include "Input.h"
 #include "vulkan/VulkanDebug.h"
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/intersect.hpp>
 #include "core/components/Actor.h"
 #include "core/components/CTransform.h"
@@ -29,7 +30,7 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mTerrain = terrain;
 
 	mAxisX = Utopian::Renderable::Create();
-	mAxisX->SetScale(vec3(AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE, AXIS_SCALE));
+	mAxisX->SetScale(glm::vec3(AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE, AXIS_SCALE));
 	mAxisX->SetColor(Utopian::Vk::Colors::Red);
 	mAxisX->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisX->LoadModel("data/models/cube.obj");
@@ -37,7 +38,7 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisX->SetRenderFlags(RENDER_FLAG_COLOR);
 
 	mAxisY = Utopian::Renderable::Create();
-	mAxisY->SetScale(vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
+	mAxisY->SetScale(glm::vec3(AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN, AXIS_SCALE));
 	mAxisY->SetColor(Utopian::Vk::Colors::Green);
 	mAxisY->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisY->LoadModel("data/models/cube.obj");
@@ -45,7 +46,7 @@ TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
 	mAxisY->SetRenderFlags(RENDER_FLAG_COLOR);
 
 	mAxisZ = Utopian::Renderable::Create();
-	mAxisZ->SetScale(vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
+	mAxisZ->SetScale(glm::vec3(AXIS_SCALE, AXIS_SCALE, AXIS_SCALE * AXIS_SCALE_MAIN));
 	mAxisZ->SetColor(Utopian::Vk::Colors::Blue);
 	mAxisZ->SetMaterial(Mat(EffectType::COLOR, PhongEffect::NORMAL));
 	mAxisZ->LoadModel("data/models/cube.obj");
@@ -60,7 +61,7 @@ TransformTool::~TransformTool()
 {
 }
 
-void TransformTool::InitStartingPosition(Utopian::Input* pInput, vec3& dir, vec3& cameraPos, float& dist)
+void TransformTool::InitStartingPosition(Utopian::Input* pInput, glm::vec3& dir, glm::vec3& cameraPos, float& dist)
 {
 	dist = std::numeric_limits<float>::infinity();
 	cameraPos = mCamera->GetPosition();
@@ -68,7 +69,7 @@ void TransformTool::InitStartingPosition(Utopian::Input* pInput, vec3& dir, vec3
 
 	// Store as the last plane pos.
 	mLastPlanePos = cameraPos + dir * dist;
-	mLastPlanePos = vec3(std::numeric_limits<float>::infinity());
+	mLastPlanePos = glm::vec3(std::numeric_limits<float>::infinity());
 }
 
 //! Poll for input and perform actions.
@@ -78,7 +79,7 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 		return;
 
 	float dist;
-	vec3 pos, dir;
+	glm::vec3 pos, dir;
 
 	// Scale the axis arrows.
 	ScaleAxisArrows();
@@ -122,8 +123,8 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 	// Update the position.
 	if (mMovingAxis != NONE)
 	{
-		vec3 pos = mCamera->GetPosition();
-		vec3 dir = mCamera->GetPickingRay().direction;
+		glm::vec3 pos = mCamera->GetPosition();
+		glm::vec3 dir = mCamera->GetPickingRay().direction;
 
 		if (mMovingAxis == X_AXIS)
 			UpdatePosition(MoveAxisX(pos, dir));
@@ -142,8 +143,8 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 	// Move on terrain with RBUTTON.
 	if (pInput->KeyDown(VK_RBUTTON) && mMovingAxis == XZ_AXIS)
 	{
-		vec3 pos = mCamera->GetPosition();
-		vec3 dir = mCamera->GetPickingRay().direction;
+		glm::vec3 pos = mCamera->GetPosition();
+		glm::vec3 dir = mCamera->GetPickingRay().direction;
 
 		UpdatePosition(MoveAxisZ(pos, dir));
 		UpdatePosition(MoveAxisX(pos, dir));
@@ -152,13 +153,13 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 	// Stick to the terain?
 	if (pInput->KeyPressed('T')) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
-		vec3 position = transform->GetPosition();
+		glm::vec3 position = transform->GetPosition();
 		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));
 	}
 }
 
 //! Updates the moving objects position.
-void TransformTool::UpdatePosition(vec3 delta)
+void TransformTool::UpdatePosition(glm::vec3 delta)
 {
 	if (mSelectedActor != nullptr) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
@@ -170,12 +171,12 @@ void TransformTool::UpdatePosition(vec3 delta)
 	mAxisZ->SetPosition(mAxisZ->GetPosition() + delta);
 }
 
-bool intersectPlane(vec3 n, vec3 p0, vec3 origin, vec3 dir, float &t)
+bool intersectPlane(glm::vec3 n, glm::vec3 p0, glm::vec3 origin, glm::vec3 dir, float &t)
 {
 	// assuming vectors are all normalized
 	float denom = glm::dot(n, dir);
 	if (denom > 1e-6) {
-		vec3 p0l0 = p0 - origin;
+		glm::vec3 p0l0 = p0 - origin;
 		t = glm::dot(p0l0, n) / denom;
 		return (t >= 0);
 	}
@@ -184,17 +185,17 @@ bool intersectPlane(vec3 n, vec3 p0, vec3 origin, vec3 dir, float &t)
 }
 
 //! Move the object on the X axis.
-vec3 TransformTool::MoveAxisX(vec3 pos, vec3 dir)
+glm::vec3 TransformTool::MoveAxisX(glm::vec3 pos, glm::vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
 	float y = mSelectedActor->GetTransform().GetPosition().y;
-	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, y, 0.0f), pos, dir, dist);
+	bool intersection = intersectPlane(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, y, 0.0f), pos, dir, dist);
 
 	float dx = 0;
 	if (intersection)
 	{
 		if (mLastPlanePos.x != std::numeric_limits<float>::infinity()) {
-			vec3 planePos = pos + dir * dist;
+			glm::vec3 planePos = pos + dir * dist;
 			dx = planePos.x - mLastPlanePos.x;
 			mLastPlanePos.x = planePos.x;
 		}
@@ -204,22 +205,22 @@ vec3 TransformTool::MoveAxisX(vec3 pos, vec3 dir)
 		}
 	}
 	
-	return vec3(dx, 0, 0);
+	return glm::vec3(dx, 0, 0);
 }
 
 //! Move the object on the Y axis.
-vec3 TransformTool::MoveAxisY(vec3 pos, vec3 dir)
+glm::vec3 TransformTool::MoveAxisY(glm::vec3 pos, glm::vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
 	float x = mSelectedActor->GetTransform().GetPosition().x;
 	float z = mSelectedActor->GetTransform().GetPosition().z;
-	bool intersection = intersectPlane(glm::vec3(dir.x, 0.0f, dir.z), vec3(x, 0.0f, z), pos, dir, dist);
+	bool intersection = intersectPlane(glm::vec3(dir.x, 0.0f, dir.z), glm::vec3(x, 0.0f, z), pos, dir, dist);
 
 	float dy = 0;
 	if (intersection)
 	{
 		if (mLastPlanePos.y != std::numeric_limits<float>::infinity()) {
-			vec3 planePos = pos + dir * dist;
+			glm::vec3 planePos = pos + dir * dist;
 			dy = planePos.y - mLastPlanePos.y;
 			mLastPlanePos.y = planePos.y;
 		}
@@ -229,21 +230,21 @@ vec3 TransformTool::MoveAxisY(vec3 pos, vec3 dir)
 		}
 	}
 	
-	return vec3(0, dy, 0);
+	return glm::vec3(0, dy, 0);
 }
 
 //! Move the object on the Z axis.
-vec3 TransformTool::MoveAxisZ(vec3 pos, vec3 dir)
+glm::vec3 TransformTool::MoveAxisZ(glm::vec3 pos, glm::vec3 dir)
 {
 	float dist = std::numeric_limits<float>::infinity();
 	float y = mSelectedActor->GetTransform().GetPosition().y;
-	bool intersection = intersectPlane(vec3(0.0f, -1.0f, 0.0f), vec3(0.0f, y, 0.0f), pos, dir, dist);
+	bool intersection = intersectPlane(glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, y, 0.0f), pos, dir, dist);
 
 	float dz = 0;
 	if (intersection)
 	{
 		if (mLastPlanePos.z != std::numeric_limits<float>::infinity()) {
-			vec3 planePos = pos + dir * dist;
+			glm::vec3 planePos = pos + dir * dist;
 			dz = planePos.z - mLastPlanePos.z;
 			mLastPlanePos.z = planePos.z;
 		}
@@ -253,28 +254,28 @@ vec3 TransformTool::MoveAxisZ(vec3 pos, vec3 dir)
 		}
 	}
 	
-	return vec3(0, 0, dz);
+	return glm::vec3(0, 0, dz);
 }
 
 //! Scales the axis arrows so they allways have the same size on the screen.
 void TransformTool::ScaleAxisArrows()
 {
-	vec3 diff = mCamera->GetPosition() - mSelectedActor->GetTransform().GetPosition();
+	glm::vec3 diff = mCamera->GetPosition() - mSelectedActor->GetTransform().GetPosition();
 	float dist = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
 	float scale = dist / AXIS_SCALE;
-	mAxisX->SetScale(vec3(scale * AXIS_SCALE_MAIN, scale, scale));
-	mAxisY->SetScale(vec3(scale, scale * AXIS_SCALE_MAIN, scale));
-	mAxisZ->SetScale(vec3(scale, scale, scale  * AXIS_SCALE_MAIN));
+	mAxisX->SetScale(glm::vec3(scale * AXIS_SCALE_MAIN, scale, scale));
+	mAxisY->SetScale(glm::vec3(scale, scale * AXIS_SCALE_MAIN, scale));
+	mAxisZ->SetScale(glm::vec3(scale, scale, scale  * AXIS_SCALE_MAIN));
 	SetPosition(mSelectedActor->GetTransform().GetPosition());
 }
 
 //! Sets the axis positions.
-void TransformTool::SetPosition(vec3 position)
+void TransformTool::SetPosition(glm::vec3 position)
 {
 	float offset = 1.00f;
-	mAxisX->SetPosition(position + vec3(mAxisX->GetBoundingBox().GetWidth() / 2.0f * offset, 0, 0));
-	mAxisY->SetPosition(position + vec3(0, mAxisY->GetBoundingBox().GetHeight() / 2.0f * offset, 0));
-	mAxisZ->SetPosition(position + vec3(0, 0, -mAxisZ->GetBoundingBox().GetDepth() / 2.0f * offset));
+	mAxisX->SetPosition(position + glm::vec3(mAxisX->GetBoundingBox().GetWidth() / 2.0f * offset, 0, 0));
+	mAxisY->SetPosition(position + glm::vec3(0, mAxisY->GetBoundingBox().GetHeight() / 2.0f * offset, 0));
+	mAxisZ->SetPosition(position + glm::vec3(0, 0, -mAxisZ->GetBoundingBox().GetDepth() / 2.0f * offset));
 }
 
 bool TransformTool::IsMovingObject()

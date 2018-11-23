@@ -5,8 +5,6 @@
 #include "utility/Common.h"
 #include "core/LuaManager.h"
 
-using namespace glm;
-
 namespace Utopian
 {
 	class Actor;
@@ -25,7 +23,7 @@ namespace Utopian
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		// Setters
-		void LookAt(const vec3& target);
+		void LookAt(const glm::vec3& target);
 		void AddOrientation(float yaw, float pitch);
 		void SetOrientation(float yaw, float pitch);
 		void SetFov(float fov);
@@ -36,11 +34,11 @@ namespace Utopian
 		void SetMainCamera();
 
 		// Getters
-		const vec3& GetDirection() const;
-		const vec3& GetTarget() const;
-		const vec3& GetRight() const;
-		const vec3& GetUp() const;
-		const vec3& GetLookAt() const;
+		const glm::vec3& GetDirection() const;
+		const glm::vec3& GetTarget() const;
+		const glm::vec3& GetRight() const;
+		const glm::vec3& GetUp() const;
+		const glm::vec3& GetLookAt() const;
 		float GetPitch() const;
 		float GetYaw() const;
 		float GetFov() const;

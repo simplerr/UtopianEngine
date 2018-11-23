@@ -25,7 +25,7 @@ namespace Utopian
 		float x = cosf(mCounter) * mRadius;
 		float z = sinf(mCounter) * mRadius;
 
-		mTransform->SetPosition(vec3(mTarget.x + x, mTransform->GetPosition().y, mTarget.z + z));
+		mTransform->SetPosition(glm::vec3(mTarget.x + x, mTransform->GetPosition().y, mTarget.z + z));
 
 		if (mCamera != nullptr)
 			mCamera->LookAt(mTarget);
@@ -58,7 +58,7 @@ namespace Utopian
 		mRadius = radius;
 	}
 
-	void COrbit::SetTarget(const vec3& target)
+	void COrbit::SetTarget(const glm::vec3& target)
 	{
 		mTarget = target;
 	}
@@ -68,7 +68,7 @@ namespace Utopian
 		return mSpeed;
 	}
 
-	const vec3& COrbit::GetTarget() const
+	const glm::vec3& COrbit::GetTarget() const
 	{
 		return mTarget;
 	}

@@ -7,8 +7,8 @@ namespace Utopian
 	Light::Light()
 	{
 		// Default values
-		SetMaterial(vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		SetDirection(vec3(1.0f, 1.0f, 1.0f));
+		SetMaterial(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		SetDirection(glm::vec3(1.0f, 1.0f, 1.0f));
 		SetRange(1000000.0f);
 		SetSpot(100.0f);
 		SetAtt(1.0f, 1.0f, 1.0f);
@@ -51,16 +51,16 @@ namespace Utopian
 		return mLightData;
 	}
 
-	void Light::SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular)
+	void Light::SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
 	{
 		mLightData.material = Utopian::Vk::Material(ambient, diffuse, specular);
-		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
+		mLightData.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
 	}
 
-	void Light::SetMaterial(const vec4& color)
+	void Light::SetMaterial(const glm::vec4& color)
 	{
 		mLightData.material = Utopian::Vk::Material(color);
-		mLightData.intensity = vec3(1.0f, 1.0f, 1.0f);
+		mLightData.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
 	}
 
 	void Light::SetMaterial(const Utopian::Vk::Material & material)
@@ -68,7 +68,7 @@ namespace Utopian
 		mLightData.material = material;
 	}
 
-	void Light::SetDirection(const vec3& direction)
+	void Light::SetDirection(const glm::vec3& direction)
 	{
 		mLightData.direction = direction;
 	}
@@ -85,7 +85,7 @@ namespace Utopian
 
 	void Light::SetAtt(float a0, float a1, float a2)
 	{
-		mLightData.att = vec3(a0, a1, a2);
+		mLightData.att = glm::vec3(a0, a1, a2);
 	}
 
 	void Light::SetType(Utopian::Vk::LightType type)
@@ -95,20 +95,20 @@ namespace Utopian
 
 	void Light::SetIntensity(float ambient, float diffuse, float specular)
 	{
-		mLightData.intensity = vec3(ambient, diffuse, specular);
+		mLightData.intensity = glm::vec3(ambient, diffuse, specular);
 	}
 
-	const vec3& Light::GetDirection() const
+	const glm::vec3& Light::GetDirection() const
 	{
 		return mLightData.direction;
 	}
 
-	const vec3& Light::GetAtt() const
+	const glm::vec3& Light::GetAtt() const
 	{
 		return mLightData.att;
 	}
 
-	const vec3& Light::GetIntensity() const
+	const glm::vec3& Light::GetIntensity() const
 	{
 		return mLightData.intensity;
 	}

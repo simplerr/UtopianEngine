@@ -146,15 +146,15 @@ Terrain::Terrain(Utopian::Vk::Renderer* renderer)
 	mTerrainEffect.Init(renderer);
 	mMarchingCubesEffect.Init(renderer);
 
-	mMarchingCubesEffect.ubo.data.offsets[0] = vec4(0, 0, 0, 0);
-	mMarchingCubesEffect.ubo.data.offsets[1] = vec4(mVoxelSize, 0, 0, 0);
-	mMarchingCubesEffect.ubo.data.offsets[2] = vec4(mVoxelSize, mVoxelSize, 0, 0);
-	mMarchingCubesEffect.ubo.data.offsets[3] = vec4(0, mVoxelSize, 0, 0);
-	mMarchingCubesEffect.ubo.data.offsets[4] = vec4(0, 0, mVoxelSize, 0);
-	mMarchingCubesEffect.ubo.data.offsets[5] = vec4(mVoxelSize, 0, mVoxelSize, 0);
-	mMarchingCubesEffect.ubo.data.offsets[6] = vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
-	mMarchingCubesEffect.ubo.data.offsets[7] = vec4(0, mVoxelSize, mVoxelSize, 0);
-	mMarchingCubesEffect.ubo.data.color = vec4(0, 1, 0, 1);
+	mMarchingCubesEffect.ubo.data.offsets[0] = glm::vec4(0, 0, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[1] = glm::vec4(mVoxelSize, 0, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[2] = glm::vec4(mVoxelSize, mVoxelSize, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[3] = glm::vec4(0, mVoxelSize, 0, 0);
+	mMarchingCubesEffect.ubo.data.offsets[4] = glm::vec4(0, 0, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.offsets[5] = glm::vec4(mVoxelSize, 0, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.offsets[6] = glm::vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.offsets[7] = glm::vec4(0, mVoxelSize, mVoxelSize, 0);
+	mMarchingCubesEffect.ubo.data.color = glm::vec4(0, 1, 0, 1);
 	mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
 	mMarchingCubesEffect.UpdateMemory();
 
@@ -370,13 +370,13 @@ void Terrain::SetClippingPlane(glm::vec4 clippingPlane)
 	mClippingPlane = clippingPlane;
 }
 
-float cosNoise(vec2 pos)
+float cosNoise(glm::vec2 pos)
 {
 	float amplitude = 1.0f;
 	float freq = 5500.0f;
 	return amplitude * (sin(pos.x/freq) + sin(pos.y / freq));
 }
-const mat2 m2 = mat2(1.6,-1.2,
+const glm::mat2 m2 = glm::mat2(1.6,-1.2,
                      1.2, 1.6);
 
 float Terrain::Density(glm::vec3 position)
@@ -385,7 +385,7 @@ float Terrain::Density(glm::vec3 position)
 
 	// Magic from Shadertoy: https://www.shadertoy.com/view/MtsSRf
 	float h = 0.0;
-	vec2 q = glm::vec2(position.x * 0.5, position.z*0.5);
+	glm::vec2 q = glm::vec2(position.x * 0.5, position.z*0.5);
 
     float s = 0.5;
     for(int i=0; i<1; i++)
@@ -393,7 +393,7 @@ float Terrain::Density(glm::vec3 position)
         h -= s*cosNoise(q); 
 		q = m2*q;// *0.85;
 		q *= 0.85;
-        q += vec2(2.41,8.13);
+        q += glm::vec2(2.41,8.13);
         s *= 0.48 + 0.2*h;
     }
     h *= 10500.0;

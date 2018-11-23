@@ -7,6 +7,8 @@
 #include "Device.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
+//#include <gli/gli.hpp>
+#include <gli/type.hpp>
 
 namespace Utopian::Vk
 {
@@ -90,6 +92,11 @@ namespace Utopian::Vk
 		delete[] data;
 
 		return texture;
+	}
+
+	Texture* TextureLoader::LoadCubeMap(std::string filename)
+	{
+		return nullptr;
 	}
 
 	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask)

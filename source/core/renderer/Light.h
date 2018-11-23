@@ -21,11 +21,11 @@ namespace Utopian
 		static SharedPtr<Light> Create();
 
 		void SetLightData(const Utopian::Vk::LightData& lightData);
-		void SetMaterials(const const vec4& ambient, const vec4& diffuse, const vec4& specular);
-		void SetMaterial(const vec4& color);
+		void SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular);
+		void SetMaterial(const glm::vec4& color);
 		void SetMaterial(const Utopian::Vk::Material & material);
 
-		void SetDirection(const vec3& direction);
+		void SetDirection(const glm::vec3& direction);
 		void SetRange(float range);
 		void SetSpot(float spot);
 		void SetAtt(float a0, float a1, float a2);
@@ -34,9 +34,9 @@ namespace Utopian
 
 		// Getters
 		const Utopian::Vk::LightData& GetLightData();
-		const vec3& GetDirection() const;
-		const vec3& GetAtt() const;
-		const vec3& GetIntensity() const;
+		const glm::vec3& GetDirection() const;
+		const glm::vec3& GetAtt() const;
+		const glm::vec3& GetIntensity() const;
 		Utopian::Vk::LightData* GetLightDataPtr();
 		const Utopian::Vk::LightData& GetLightData() const;
 		Utopian::Vk::Material GetMaterial() const;

@@ -4,8 +4,6 @@
 #include "core/Transform.h"
 #include "core/LuaManager.h"
 
-using namespace glm;
-
 namespace Utopian
 {
 	class Actor;
@@ -13,7 +11,7 @@ namespace Utopian
 	class CTransform : public Component
 	{
 	public:
-		CTransform(Actor* parent, const vec3& position);
+		CTransform(Actor* parent, const glm::vec3& position);
 		~CTransform();
 
 		void PostInit() override;
@@ -21,23 +19,23 @@ namespace Utopian
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		void SetTransform(const Transform& transform);
-		void SetPosition(const vec3& position);
-		void SetRotation(const vec3& rotation);
-		void SetScale(const vec3& scale);
+		void SetPosition(const glm::vec3& position);
+		void SetRotation(const glm::vec3& rotation);
+		void SetScale(const glm::vec3& scale);
 
-		void AddTranslation(const vec3& translation);
+		void AddTranslation(const glm::vec3& translation);
 
 		void AddRotation(float x, float y, float z);
-		void AddRotation(const vec3& rotation);
+		void AddRotation(const glm::vec3& rotation);
 		void AddScale(float x, float y, float z);
-		void AddScale(const vec3& scale);
+		void AddScale(const glm::vec3& scale);
 
 		const Transform& GetTransform() const;
-		const vec3& GetPosition() const;
-		const vec3& GetRotation() const;
-		const vec3& GetScale() const;
-		const mat4& GetWorldMatrix() const;
-		const mat4& GetWorldInverseTransposeMatrix() const;
+		const glm::vec3& GetPosition() const;
+		const glm::vec3& GetRotation() const;
+		const glm::vec3& GetScale() const;
+		const glm::mat4& GetWorldMatrix() const;
+		const glm::mat4& GetWorldInverseTransposeMatrix() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {

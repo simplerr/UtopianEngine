@@ -21,22 +21,22 @@ namespace Utopian
 	void CNoClip::Update()
 	{
 		if (gInput().KeyDown('W')) {
-			vec3 dir = mCamera->GetDirection();
+			glm::vec3 dir = mCamera->GetDirection();
 			mTransform->AddTranslation(mSpeed * dir);
 
 		}
 		if (gInput().KeyDown('S')) {
-			vec3 dir = mCamera->GetDirection();
+			glm::vec3 dir = mCamera->GetDirection();
 			mTransform->AddTranslation(mSpeed * -dir);
 
 		}
 		if (gInput().KeyDown('A')) {
-			vec3 right = mCamera->GetRight();
+			glm::vec3 right = mCamera->GetRight();
 			mTransform->AddTranslation(mSpeed * right);
 
 		}
 		if (gInput().KeyDown('D')) {
-			vec3 right = mCamera->GetRight();
+			glm::vec3 right = mCamera->GetRight();
 			mTransform->AddTranslation(mSpeed * -right);
 		}
 

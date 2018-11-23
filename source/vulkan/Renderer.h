@@ -14,8 +14,6 @@
 #include "VertexDescription.h"
 #include "ShaderBuffer.h"
 
-using namespace glm;
-
 namespace ECS
 {
 	class RenderSystem;
@@ -34,20 +32,20 @@ namespace Utopian::Vk
 	};
 
 	struct InstanceData {
-		vec3 position;
-		vec3 scale;
-		vec3 color;
+		glm::vec3 position;
+		glm::vec3 scale;
+		glm::vec3 color;
 	};
 
 	struct PushConstantBlock {
 		PushConstantBlock() {
-			world = mat4();
-			color = vec4(1.0f);
-			worldInvTranspose = mat4();
-			textureTiling = vec2(1.0f, 1.0f);
+			world = glm::mat4();
+			color = glm::vec4(1.0f);
+			worldInvTranspose = glm::mat4();
+			textureTiling = glm::vec2(1.0f, 1.0f);
 		}
 
-		PushConstantBlock(mat4 w, vec4 c = vec4(1.0f), vec2 tiling = vec2(1.0f, 1.0f)) {
+		PushConstantBlock(glm::mat4 w, glm::vec4 c = glm::vec4(1.0f), glm::vec2 tiling = glm::vec2(1.0f, 1.0f)) {
 			world = w;
 			color = c;
 			textureTiling = tiling;
@@ -61,11 +59,11 @@ namespace Utopian::Vk
 			worldInvTranspose = glm::inverseTranspose(world);
 		}
 		
-		mat4 world;
-		mat4 worldInvTranspose;
-		vec4 color;
-		vec2 textureTiling;
-		vec2 pad;
+		glm::mat4 world;
+		glm::mat4 worldInvTranspose;
+		glm::vec4 color;
+		glm::vec2 textureTiling;
+		glm::vec2 pad;
 	};
 
 	class Renderer : public VulkanBase

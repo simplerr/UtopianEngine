@@ -5,8 +5,6 @@
 #include "utility/Common.h"
 #include "core/LuaManager.h"
 
-using namespace glm;
-
 namespace Utopian
 {
 	class Actor;
@@ -40,7 +38,7 @@ namespace Utopian
 		CNoClip* mNoClip;
 		COrbit* mOrbit;
 		CTransform* mTransform;
-		vec3 mTarget;
+		glm::vec3 mTarget;
 		float mSpeed;
 		float mRadius;
 		float mCounter;

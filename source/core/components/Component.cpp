@@ -18,7 +18,7 @@ namespace Utopian
 	{
 		BoundingBox boundingBox;
 
-		boundingBox.Init(vec3(0.0f), vec3(0.0f));
+		boundingBox.Init(glm::vec3(0.0f), glm::vec3(0.0f));
 
 		return boundingBox;
 	}

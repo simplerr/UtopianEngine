@@ -10,7 +10,7 @@ namespace Utopian
 	{
 		SetName("CCamera");
 
-		mInternal = Camera::Create(window, vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
+		mInternal = Camera::Create(window, glm::vec3(0, 0, 0), fieldOfView, nearPlane, farPlane);
 		World::Instance().BindNode(mInternal, GetParent());
 	}
 
@@ -57,7 +57,7 @@ namespace Utopian
 		return luaObject;
 	}
 
-	void CCamera::LookAt(const vec3& target)
+	void CCamera::LookAt(const glm::vec3& target)
 	{
 		mInternal->LookAt(target);
 	}
@@ -102,27 +102,27 @@ namespace Utopian
 		mInternal->SetMainCamera();
 	}
 
-	const vec3& CCamera::GetDirection() const
+	const glm::vec3& CCamera::GetDirection() const
 	{
 		return mInternal->GetDirection();
 	}
 
-	const vec3& CCamera::GetTarget() const
+	const glm::vec3& CCamera::GetTarget() const
 	{
 		return mInternal->GetTarget();
 	}
 
-	const vec3& CCamera::GetRight() const
+	const glm::vec3& CCamera::GetRight() const
 	{
 		return mInternal->GetRight();
 	}
 
-	const vec3& CCamera::GetUp() const
+	const glm::vec3& CCamera::GetUp() const
 	{
 		return mInternal->GetUp();
 	}
 
-	const vec3& CCamera::GetLookAt() const
+	const glm::vec3& CCamera::GetLookAt() const
 	{
 		return mInternal->GetLookAt();
 	}

@@ -15,23 +15,23 @@ namespace Utopian
 		
 		// Setters
 		void SetTransform(const Transform& transform);
-		void SetPosition(const vec3& position);
-		void SetRotation(const vec3& rotation);
-		void SetScale(const vec3& scale);
+		void SetPosition(const glm::vec3& position);
+		void SetRotation(const glm::vec3& rotation);
+		void SetScale(const glm::vec3& scale);
 		void SetId(uint32_t id);
 
-		void AddTranslation(const vec3& translation);
-		void AddRotation(const vec3& rotation);
-		void AddScale(const vec3& scale);
+		void AddTranslation(const glm::vec3& translation);
+		void AddRotation(const glm::vec3& rotation);
+		void AddScale(const glm::vec3& scale);
 
 		void SetDrawBoundingBox(bool draw);
 
 		// Getters
 		const Transform& GetTransform() const;
-		const vec3& GetPosition() const;
-		const vec3& GetRotation() const;
-		const vec3& GetScale() const;
-		const mat4& GetWorldMatrix() const;
+		const glm::vec3& GetPosition() const;
+		const glm::vec3& GetRotation() const;
+		const glm::vec3& GetScale() const;
+		const glm::mat4& GetWorldMatrix() const;
 		uint32_t GetId() const;
 
 		bool IsBoundingBoxVisible() const;

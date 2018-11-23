@@ -7,7 +7,7 @@
 
 namespace Utopian
 {
-	Camera::Camera(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
+	Camera::Camera(Utopian::Window* window, glm::vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
 		SetPosition(position);
 		this->mFov = fieldOfView;
@@ -19,7 +19,7 @@ namespace Utopian
 		mWindow = window;
 	}
 
-	SharedPtr<Camera> Camera::Create(Utopian::Window* window, vec3 position, float fieldOfView, float nearPlane, float farPlane)
+	SharedPtr<Camera> Camera::Create(Utopian::Window* window, glm::vec3 position, float fieldOfView, float nearPlane, float farPlane)
 	{
 		SharedPtr<Camera> instance(new Camera(window, position, fieldOfView, nearPlane, farPlane));
 		instance->Initialize();
@@ -65,65 +65,65 @@ namespace Utopian
 	Ray Camera::GetPickingRay()
 	{
 		// Camera/view matrix
-		mat4 viewMatrix = GetView();
-		mat4 projectionMatrix = GetProjection();
+		glm::mat4 viewMatrix = GetView();
+		glm::mat4 projectionMatrix = GetProjection();
 
-		mat4 inverseView = glm::inverse(viewMatrix);
-		mat4 inverseProjection = glm::inverse(projectionMatrix);
+		glm::mat4 inverseView = glm::inverse(viewMatrix);
+		glm::mat4 inverseProjection = glm::inverse(projectionMatrix);
 
-		vec2 cursorPos = gInput().GetMousePosition();
+		glm::vec2 cursorPos = gInput().GetMousePosition();
 
 		float vx = (+2.0f * cursorPos.x / mWindow->GetWidth() - 1.0f);
 		float vy = (-2.0f * cursorPos.y / mWindow->GetHeight() + 1.0f);
 
-		vec4 rayDir = inverseProjection * vec4(-vx, vy, 1.0, 1.0);
+		glm::vec4 rayDir = inverseProjection * glm::vec4(-vx, vy, 1.0, 1.0);
 		rayDir.z = 1.0;
 		rayDir.w = 0;
 		rayDir = inverseView * rayDir;
-		vec3 rayFinalDir = glm::normalize(vec3(rayDir.x, rayDir.y, rayDir.z));
+		glm::vec3 rayFinalDir = glm::normalize(glm::vec3(rayDir.x, rayDir.y, rayDir.z));
 
 		return Utopian::Ray(GetPosition(), rayFinalDir);
 	}
 
-	vec3 Camera::GetDirection()
+	glm::vec3 Camera::GetDirection()
 	{
-		vec4 forward = glm::inverse(GetOrientation()) * vec4(0, 0, 1, 1);
-		vec3 f = forward;
+		glm::vec4 forward = glm::inverse(GetOrientation()) * glm::vec4(0, 0, 1, 1);
+		glm::vec3 f = forward;
 		if (f.y != -1.0f)
 			int a = 1;
 		f = glm::normalize(f);
 		return f;
 	}
 
-	vec3 Camera::GetRight()
+	glm::vec3 Camera::GetRight()
 	{
-		vec4 right = glm::inverse(GetOrientation()) * vec4(1, 0, 0, 1);
-		vec3 r = right;
+		glm::vec4 right = glm::inverse(GetOrientation()) * glm::vec4(1, 0, 0, 1);
+		glm::vec3 r = right;
 		r = glm::normalize(r);
 		return r;
 	}
 
-	vec3 Camera::GetTarget()
+	glm::vec3 Camera::GetTarget()
 	{
 		return GetPosition() + GetDirection();
 	}
 
-	vec3 Camera::GetUp()
+	glm::vec3 Camera::GetUp()
 	{
 		return mUp;
 	}
 
-	vec3 Camera::GetLookAt()
+	glm::vec3 Camera::GetLookAt()
 	{
 		return mLookAt;
 	}
 
-	mat4 Camera::GetOrientation()
+	glm::mat4 Camera::GetOrientation()
 	{
-		mat4 orientation = mat4();
-		orientation = glm::rotate(orientation, glm::radians(mPitch), vec3(1, 0, 0));		// Pitch (vertical angle)
-		orientation = glm::rotate(orientation, glm::radians(mYaw), vec3(0, 1, 0));			// Yaw (horizontal angle)
-		orientation = glm::rotate(orientation, glm::radians(0.0f), vec3(0, 0, 1));			// Yaw (horizontal angle)
+		glm::mat4 orientation = glm::mat4();
+		orientation = glm::rotate(orientation, glm::radians(mPitch), glm::vec3(1, 0, 0));		// Pitch (vertical angle)
+		orientation = glm::rotate(orientation, glm::radians(mYaw), glm::vec3(0, 1, 0));			// Yaw (horizontal angle)
+		orientation = glm::rotate(orientation, glm::radians(0.0f), glm::vec3(0, 0, 1));			// Yaw (horizontal angle)
 		return orientation;
 	}
 
@@ -141,26 +141,26 @@ namespace Utopian
 		CapAngles();
 	}
 
-	mat4 Camera::GetView()
+	glm::mat4 Camera::GetView()
 	{
 		//mat4 viewMatrix = glm::lookAt(GetPosition(), GetTarget(), GetUp());
 		//return viewMatrix;
-		return GetOrientation() * glm::translate(mat4(), GetPosition());
+		return GetOrientation() * glm::translate(glm::mat4(), GetPosition());
 	}
 
-	mat4 Camera::GetProjection()
+	glm::mat4 Camera::GetProjection()
 	{
 		return glm::perspective(glm::radians(mFov), mAspectRatio, mNearPlane, mFarPlane);
 	}
 
-	mat4 Camera::GetMatrix()
+	glm::mat4 Camera::GetMatrix()
 	{
 		return GetProjection() * GetView();
 	}
 
-	void Camera::LookAt(vec3 target)
+	void Camera::LookAt(glm::vec3 target)
 	{
-		vec3 dir = glm::normalize(target - GetPosition());
+		glm::vec3 dir = glm::normalize(target - GetPosition());
 		mPitch = glm::degrees(asinf(dir.y));
 		mYaw = -glm::degrees(atan2f(dir.x, dir.z));		// Note the - signs
 		mLookAt = target;

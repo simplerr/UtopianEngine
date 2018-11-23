@@ -2,8 +2,6 @@
 
 #include <glm/glm.hpp>
 
-using namespace glm;
-
 namespace Utopian::Vk
 {
 	enum LightType
@@ -19,21 +17,21 @@ namespace Utopian::Vk
 			//ZeroMemory(this, sizeof(this));
 		}
 
-		Material(vec4 color) {
+		Material(glm::vec4 color) {
 			ambient = diffuse = specular = color;
 		}
 
-		Material(vec4 ambient, vec4 diffuse, vec4 specular) {
+		Material(glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular) {
 			this->ambient = ambient;
 			this->diffuse = diffuse;
 			this->specular = specular;
 		}
 
 		// https://www.khronos.org/registry/OpenGL/specs/gl/glspec45.core.pdf#page=159
-		vec4 padding; // Note: This padding corresponds to the padding in glsl Light struct
-		vec4 ambient;
-		vec4 diffuse;
-		vec4 specular;	// w = SpecPower
+		glm::vec4 padding; // Note: This padding corresponds to the padding in glsl Light struct
+		glm::vec4 ambient;
+		glm::vec4 diffuse;
+		glm::vec4 specular;	// w = SpecPower
 	};
 
 
@@ -42,22 +40,22 @@ namespace Utopian::Vk
 	{
 	public:
 		// Light color
-		Material material;
+		Material 	material;
 
 		// Packed into 4D vector: (position, range)
-		vec3	position;
-		float	range;
+		glm::vec3	position;
+		float		range;
 
 		// Packed into 4D vector: (direction, spot)
-		vec3	direction;
-		float	spot;
+		glm::vec3	direction;
+		float		spot;
 
 		// Packed into 4D vector: (att, type)
-		vec3	att;
-		float	type;	// 0 = directional, 1 = point light, 2 = spot light
+		glm::vec3	att;
+		float		type;	// 0 = directional, 1 = point light, 2 = spot light
 
 		// Light intensity
-		vec3	intensity;
-		float	padding;
+		glm::vec3	intensity;
+		float		padding;
 	};
 }

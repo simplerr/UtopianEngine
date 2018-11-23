@@ -22,8 +22,8 @@ namespace Utopian
 		mMousePosition.y = mousePosition.y;
 
 		// No delta movement to start with
-		mMouseDelta = vec2(0.0f);
-		mMousePosition = vec2(-1.0f);
+		mMouseDelta = glm::vec2(0.0f);
+		mMousePosition = glm::vec2(-1.0f);
 	}
 
 	//! Cleanup.
@@ -38,7 +38,7 @@ namespace Utopian
 	*/
 	void Input::Update(float dt)
 	{
-		mMouseDelta = vec2(0.0f);
+		mMouseDelta = glm::vec2(0.0f);
 
 		// Set the old states.
 		memcpy(mLastKeyState, mKeyState, sizeof(mKeyState));
@@ -133,7 +133,7 @@ namespace Utopian
 	/**
 	@return The mouse position.
 	*/
-	vec2 Input::GetMousePosition()
+	glm::vec2 Input::GetMousePosition()
 	{
 		return mMousePosition;
 	}
@@ -143,7 +143,7 @@ namespace Utopian
 	@param pos The new position.
 	@note Doesn't acctually change the mouse position on the screen, just the data.
 	*/
-	void Input::SetMousePosition(vec3 pos)
+	void Input::SetMousePosition(glm::vec3 pos)
 	{
 		//mDx = pos.x - GetMousePosition().x;
 		//mDy = pos.y - GetMousePosition().y;
