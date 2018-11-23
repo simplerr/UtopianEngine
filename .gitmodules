@@ -7,3 +7,6 @@
 [submodule "external/gli"]
 	path = external/gli
 	url = git@github.com:g-truc/gli.git
+[submodule "external/glm"]
+	path = external/glm
+	url = git@github.com:g-truc/glm.git
