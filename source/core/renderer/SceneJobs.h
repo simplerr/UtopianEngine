@@ -6,6 +6,7 @@
 #include "vulkan/SSAOEffect.h"
 #include "vulkan/BlurEffect.h"
 #include "vulkan/ColorEffect.h"
+#include "vulkan/SkyboxEffect.h"
 #include "vulkan/NormalDebugEffect.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
@@ -53,11 +54,25 @@ namespace Utopian
 	class BaseJob
 	{
 	public:
+		BaseJob(Vk::Renderer* renderer, uint32_t width, uint32_t height) {
+			mRenderer = renderer;
+			mWidth = width;
+			mHeight = height;
+		}
+
 		virtual ~BaseJob() {};
+
+		/*
+		 * If a job needs to query information from another job that's already added
+		   it should be done inside of this function.
+		*/
 		virtual void Init(const std::vector<BaseJob*>& jobs) = 0;
 
 		virtual void Render(Vk::Renderer* renderer, const JobInput& jobInput) = 0;
-	private:
+	protected:
+		Vk::Renderer* mRenderer;
+		uint32_t mWidth;
+		uint32_t mHeight;
 	};
 
 	class GBufferJob : public BaseJob
@@ -130,6 +145,23 @@ namespace Utopian
 	private:
 	};
 
+	class SkyboxJob : public BaseJob
+	{
+	public:
+		SkyboxJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~SkyboxJob();
+
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+
+		SharedPtr<Vk::CubeMapTexture> skybox;
+		SharedPtr<Vk::RenderTarget> renderTarget;
+
+		SharedPtr<Vk::SkyboxEffect> effect;
+	private:
+		Vk::StaticModel* mCubeModel;
+	};
+
 	class DebugJob : public BaseJob
 	{
 	public:
@@ -146,9 +178,5 @@ namespace Utopian
 		SharedPtr<Vk::NormalDebugEffect> normalEffect;
 	private:
 		Vk::StaticModel* mCubeModel;
-
-		// Note: Todo:
-		Vk::Renderer* mRenderer;
-		uint32_t mWidth, mHeight;
 	};
 }

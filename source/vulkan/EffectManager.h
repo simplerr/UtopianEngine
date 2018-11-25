@@ -26,7 +26,7 @@ namespace Utopian::Vk
 	template<typename T>
 	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass)
 	{
-		SharedPtr<T> effect = make_shared<T>(device, renderPass);
+		SharedPtr<T> effect = std::make_shared<T>(device, renderPass);
 
 		mEffects.push_back(effect);
 		return effect;

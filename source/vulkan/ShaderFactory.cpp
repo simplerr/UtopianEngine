@@ -464,6 +464,7 @@ namespace Utopian::Vk
 						case glslang::Esd1D:	desc.type = UVT_SAMPLER1D; break;
 						case glslang::Esd2D:	desc.type = UVT_SAMPLER2D; break;
 						case glslang::Esd3D:	desc.type = UVT_SAMPLER3D; break;
+						case glslang::EsdCube:	desc.type = UVT_SAMPLERCUBE; break;
 					}
 
 					reflection.combinedSamplers[desc.name] = desc;

@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-using namespace std;
 
 namespace Utopian
 {
@@ -8,18 +7,18 @@ namespace Utopian
 	{
 	public:
 		Object();
-		Object(string name);
+		Object(std::string name);
 
 		void Initialize(uint32_t id);
 
-		void SetName(string name);
+		void SetName(std::string name);
 		void SetId(uint32_t id);
 
-		string GetName();
+		std::string GetName();
 		uint32_t GetId();
 
 	private:
-		string mName;
+		std::string mName;
 		uint32_t mId;
 	};
 }

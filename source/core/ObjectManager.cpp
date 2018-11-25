@@ -36,7 +36,7 @@ namespace Utopian
 	{
 		for (auto& entry : mObjects)
 		{
-			Utopian::Vk::VulkanDebug::ConsolePrint("Name: " + entry.second->GetName() + ", Id: " + to_string(entry.second->GetId()) + ", Use count: " + to_string(entry.second.use_count()));
+			Utopian::Vk::VulkanDebug::ConsolePrint("Name: " + entry.second->GetName() + ", Id: " + std::to_string(entry.second->GetId()) + ", Use count: " + std::to_string(entry.second.use_count()));
 		}
 	}
 }

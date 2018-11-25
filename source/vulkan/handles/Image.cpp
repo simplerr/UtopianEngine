@@ -4,7 +4,14 @@
 
 namespace Utopian::Vk
 {
-	Image::Image(Device* device, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImageAspectFlags aspectFlags)
+	Image::Image(Device* device,
+				 uint32_t width,
+				 uint32_t height,
+				 VkFormat format,
+				 VkImageTiling tiling,
+				 VkImageUsageFlags usage,
+				 VkMemoryPropertyFlags properties,
+				 VkImageAspectFlags aspectFlags)
 		: Handle(device, nullptr)
 	{
 		mFormat = format;
@@ -22,19 +29,7 @@ namespace Utopian::Vk
 		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		//imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 
-		VulkanDebug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mImage));
-
-		// Get memory requirements
-		VkMemoryRequirements memRequirments;
-		vkGetImageMemoryRequirements(GetVkDevice(), mImage, &memRequirments);
-
-		VkMemoryAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocateInfo.allocationSize = memRequirments.size;
-		device->GetMemoryType(memRequirments.memoryTypeBits, properties, &allocateInfo.memoryTypeIndex);
-
-		VulkanDebug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &allocateInfo, nullptr, &mDeviceMemory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(GetVkDevice(), mImage, mDeviceMemory, 0));
+		CreateImage(imageCreateInfo, properties);
 
 		// Connect the view with the image
 		VkImageViewCreateInfo viewCreateInfo = {};
@@ -47,17 +42,46 @@ namespace Utopian::Vk
 		viewCreateInfo.subresourceRange.levelCount = 1;
 		viewCreateInfo.subresourceRange.baseArrayLayer = 0;
 		viewCreateInfo.subresourceRange.layerCount = 1;
-		viewCreateInfo.image = mImage;	
 
-		VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
+		CreateView(viewCreateInfo);
+	}
+
+	Image::Image(Device* device)
+		: Handle(device, nullptr)
+	{
+
 	}
 
 	Image::~Image()
 	{
 		// Image handles all the cleanup itself
 		vkDestroyImageView(GetVkDevice(), mImageView, nullptr);
-		vkDestroyImage(GetVkDevice(), mImage, nullptr);
+		vkDestroyImage(GetVkDevice(), mHandle, nullptr);
 		vkFreeMemory(GetVkDevice(), mDeviceMemory, nullptr);
+	}
+
+	void Image::CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties)
+	{
+		VulkanDebug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mHandle));
+
+		// Get memory requirements
+		VkMemoryRequirements memRequirments;
+		vkGetImageMemoryRequirements(GetVkDevice(), mHandle, &memRequirments);
+
+		VkMemoryAllocateInfo allocateInfo = {};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		allocateInfo.allocationSize = memRequirments.size;
+
+		GetDevice()->GetMemoryType(memRequirments.memoryTypeBits, properties, &allocateInfo.memoryTypeIndex);
+
+		VulkanDebug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &allocateInfo, nullptr, &mDeviceMemory));
+		VulkanDebug::ErrorCheck(vkBindImageMemory(GetVkDevice(), mHandle, mDeviceMemory, 0));
+	}
+
+	void Image::CreateView(VkImageViewCreateInfo viewCreateInfo)
+	{
+		viewCreateInfo.image = mHandle;
+		VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
 	}
 
 	VkImageView Image::GetView()

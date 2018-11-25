@@ -7,7 +7,7 @@ namespace Utopian
 
 	}
 
-	Object::Object(string name)
+	Object::Object(std::string name)
 	{
 		SetName(name);
 	}
@@ -17,7 +17,7 @@ namespace Utopian
 		SetId(id);
 	}
 
-	void Object::SetName(string name)
+	void Object::SetName(std::string name)
 	{
 		mName = name;
 	}
@@ -27,7 +27,7 @@ namespace Utopian
 		mId = id;
 	}
 
-	string Object::GetName()
+	std::string Object::GetName()
 	{
 		return mName;
 	}

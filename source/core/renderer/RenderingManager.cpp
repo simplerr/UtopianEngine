@@ -41,6 +41,7 @@ namespace Utopian
 		AddJob(new SSAOJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new BlurJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new SkyboxJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DebugJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings

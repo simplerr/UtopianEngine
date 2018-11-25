@@ -42,7 +42,7 @@ namespace Utopian
 		return selectedActor;
 	}
 
-	vector<SharedPtr<Actor>>& World::GetActors()
+	std::vector<SharedPtr<Actor>>& World::GetActors()
 	{
 		return mActors;
 	}
@@ -71,7 +71,7 @@ namespace Utopian
 			SharedPtr<Actor> actor = (*iter);
 			if (!actor->IsAlive())
 			{
-				vector<Component*> components = actor->GetComponents();
+				std::vector<Component*> components = actor->GetComponents();
 				for (auto& component : components)
 					component->OnDestroyed();
 

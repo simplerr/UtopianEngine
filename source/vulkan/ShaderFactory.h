@@ -19,7 +19,8 @@ namespace Utopian::Vk
 		UVT_SSBO,
 		UVT_SAMPLER1D,
 		UVT_SAMPLER2D,
-		UVT_SAMPLER3D
+		UVT_SAMPLER3D,
+		UVT_SAMPLERCUBE
 	};
 
 	struct PushConstantDesc

@@ -18,7 +18,7 @@ namespace Utopian::Vk
 		Destroy();
 	}
 
-	void Buffer::Create(Device * device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data)
+	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data)
 	{
 		mDevice = device;
 
@@ -52,6 +52,7 @@ namespace Utopian::Vk
 			memcpy(mapped, data, size);
 			vkUnmapMemory(vkDevice, mMemory);
 		}
+
 		VulkanDebug::ErrorCheck(vkBindBufferMemory(vkDevice, mBuffer, mMemory, 0));
 	}
 

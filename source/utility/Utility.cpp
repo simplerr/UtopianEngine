@@ -5,9 +5,9 @@ glm::vec4 ColorRGB(uint32_t r, uint32_t g, uint32_t b)
 	return glm::vec4(r / 255.0f, g / 255.0f, b / 255.0f, 1.0f);
 }
 
-string ReadFile(string filename)
+std::string ReadFile(std::string filename)
 {
-	string text;
+	std::string text;
 	std::ifstream is(filename.c_str(), std::ios::binary | std::ios::in | std::ios::ate);
 
 	if (is.is_open())

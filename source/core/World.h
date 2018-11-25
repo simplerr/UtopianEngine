@@ -35,14 +35,14 @@ namespace Utopian
 		void RemoveActor(Actor* actor);
 
 		Actor* RayIntersection(const Ray& ray);
-		vector<SharedPtr<Actor>>& GetActors();
+		std::vector<SharedPtr<Actor>>& GetActors();
 
 		/* The bound SceneNodes transform will be synchronized with the Sceneactor in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* actor);
 		void RemoveNode(const SharedPtr<SceneNode>& node);
 	private:
-		vector<SharedPtr<Actor>> mActors;
-		vector<SharedPtr<Component>> mComponents;
-		map<SceneNode*, BoundNode> mBoundNodes;
+		std::vector<SharedPtr<Actor>> mActors;
+		std::vector<SharedPtr<Component>> mComponents;
+		std::map<SceneNode*, BoundNode> mBoundNodes;
 	};
 }

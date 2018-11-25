@@ -15,7 +15,7 @@ namespace Utopian::Vk
 
 		// [TODO] Add creation of the logical device
 		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);
-		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free);
+		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free = true);
 		VkCommandPool CreateCommandPool(uint32_t queueFamilyIndex);
 
 		VkPhysicalDevice GetPhysicalDevice();

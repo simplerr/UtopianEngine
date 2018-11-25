@@ -9,8 +9,6 @@
 #include "core/World.h"
 #include "utility/math/Ray.h"
 
-using namespace std;
-
 namespace Utopian
 {
 	class CTransform;
@@ -18,10 +16,10 @@ namespace Utopian
 	class Actor : public Object
 	{
 	public:
-		Actor(string name);
+		Actor(std::string name);
 		~Actor();
 
-		static SharedPtr<Actor> Create(string name);
+		static SharedPtr<Actor> Create(std::string name);
 
 		// Calls PostInit() on all added components.
 		// The reason is that some components depend on others and fetch
@@ -88,10 +86,10 @@ namespace Utopian
 			return nullptr;
 		}
 
-		vector<Component*>& GetComponents();
+		std::vector<Component*>& GetComponents();
 
 	private:
-		vector<Component*> mComponents;
+		std::vector<Component*> mComponents;
 		bool mAlive;
 		bool mHasTransform;
 	};

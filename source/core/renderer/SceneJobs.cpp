@@ -14,19 +14,21 @@
 #include "vulkan/ScreenGui.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/ModelLoader.h"
+#include "vulkan/CubeMapTexture.h"
 #include <random>
 
 namespace Utopian
 {
 	GBufferJob::GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
 	{
-		positionImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
-		normalImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		normalViewImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		albedoImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		depthImage = make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		positionImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
+		normalImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		normalViewImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		albedoImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		renderTarget = make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		renderTarget->AddColorAttachment(positionImage);
 		renderTarget->AddColorAttachment(normalImage);
 		renderTarget->AddColorAttachment(albedoImage);
@@ -99,8 +101,9 @@ namespace Utopian
 	}
 
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
 	{
-		renderTarget = make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		renderTarget = std::make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
@@ -142,10 +145,11 @@ namespace Utopian
 	}
 
 	SSAOJob::SSAOJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
 	{
-		ssaoImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		ssaoImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		renderTarget = make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		renderTarget->AddColorAttachment(ssaoImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
@@ -209,10 +213,11 @@ namespace Utopian
 	}
 
 	BlurJob::BlurJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
 	{
-		blurImage = make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		blurImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		renderTarget = make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		renderTarget->AddColorAttachment(blurImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
@@ -249,11 +254,58 @@ namespace Utopian
 		renderTarget->End(renderer->GetQueue());
 	}
 
-	DebugJob::DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	SkyboxJob::SkyboxJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
 	{
-		mRenderer = renderer;
-		mWidth = width;
-		mHeight = height;
+	}
+
+	SkyboxJob::~SkyboxJob()
+	{
+	}
+
+	void SkyboxJob::Init(const std::vector<BaseJob*>& renderers)
+	{
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[3]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[0]);
+
+		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
+		// Todo: Investigate why this does not work
+		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		skybox = std::make_shared<Vk::CubeMapTexture>();
+		skybox->LoadFromFile("data/textures/cubemap_space.ktx", VK_FORMAT_R8G8B8A8_UNORM, mRenderer->GetDevice(), mRenderer->GetQueue());
+
+		effect = Vk::gEffectManager().AddEffect<Vk::SkyboxEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		effect->BindCombinedImage("samplerCubeMap", skybox->image, renderTarget->GetSampler()); // skybox->sampler);
+
+		mCubeModel = Vk::gModelLoader().LoadDebugBox();
+	}
+
+	void SkyboxJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
+
+		commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
+		commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+
+		renderTarget->End(renderer->GetQueue());
+	}
+
+	DebugJob::DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
+	{
 	}
 
 	DebugJob::~DebugJob()
@@ -265,7 +317,7 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[3]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[0]);
 
-		renderTarget = make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
 		// Todo: Investigate why this does not work

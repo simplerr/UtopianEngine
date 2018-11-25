@@ -408,6 +408,9 @@
     <ClCompile Include="source\core\ActorFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\SkyboxEffect.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -712,6 +715,15 @@
     </ClInclude>
     <ClInclude Include="source\core\ActorFactory.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\CubeMapTexture.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanUtilities.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\SkyboxEffect.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

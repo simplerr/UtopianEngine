@@ -48,7 +48,7 @@ namespace Utopian
 
 		Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
 
-		mRenderer = make_shared<Vk::Renderer>();
+		mRenderer = std::make_shared<Vk::Renderer>();
 		mRenderer->InitSwapchain(window);
 		mRenderer->Prepare();
 		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
@@ -56,7 +56,7 @@ namespace Utopian
 		InitScene();
 
 		// Note: Needs to be called after a camera have been added to the scene
-		mEditor = make_shared<Editor>(mRenderer.get(), &World::Instance(), mTerrain.get());
+		mEditor = std::make_shared<Editor>(mRenderer.get(), &World::Instance(), mTerrain.get());
 
 		ObjectManager::Instance().PrintObjects();
 	}
@@ -78,7 +78,7 @@ namespace Utopian
 		Vk::TextureLoader::Start(mRenderer.get());
 
 		// Note: There are dependencies on the initialization order here
-		mTerrain = make_shared<Terrain>(mRenderer.get());
+		mTerrain = std::make_shared<Terrain>(mRenderer.get());
 		mTerrain->SetEnabled(false);
 
 		mRenderer->PostInitPrepare();
@@ -102,7 +102,6 @@ namespace Utopian
 		/************************************************************************/
 
 		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
-
 
 		World::Instance().Update();
 

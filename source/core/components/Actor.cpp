@@ -5,7 +5,7 @@
 
 namespace Utopian
 {
-	Actor::Actor(string name)
+	Actor::Actor(std::string name)
 		: Object(name)
 	{
 		SetAlive(true);
@@ -16,7 +16,7 @@ namespace Utopian
 		volatile int test = 0;
 	}
 
-	SharedPtr<Actor> Actor::Create(string name)
+	SharedPtr<Actor> Actor::Create(std::string name)
 	{
 		SharedPtr<Actor> actor(new Actor(name));
 
@@ -73,7 +73,7 @@ namespace Utopian
 		return transform->GetTransform();
 	}
 
-	vector<Component*>& Actor::GetComponents()
+	std::vector<Component*>& Actor::GetComponents()
 	{
 		return mComponents;
 	}

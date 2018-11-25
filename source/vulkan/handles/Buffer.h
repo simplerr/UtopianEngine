@@ -8,10 +8,18 @@ namespace Utopian::Vk
 	{
 	public:
 		Buffer();
-		Buffer(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data);
+		Buffer(Device* device,
+		 	   VkBufferUsageFlags usageFlags,
+			   VkMemoryPropertyFlags memoryPropertyFlags,
+			   VkDeviceSize size,
+			   void* data);
 		~Buffer();
 
-		void Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data = nullptr);
+		void Create(Device* device,
+					VkBufferUsageFlags usageFlags,
+					VkMemoryPropertyFlags memoryPropertyFlags,
+					VkDeviceSize size,
+					void* data = nullptr);
 
 		void Destroy();
 
