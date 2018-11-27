@@ -10,6 +10,7 @@ namespace Utopian::Vk
 		: Handle(device, vkDestroyPipeline)
 	{
 		mRenderPass = renderPass;
+		mCreated = false;
 		InitDefaultValues(mRenderPass);
 	}
 
@@ -61,6 +62,13 @@ namespace Utopian::Vk
 
 		// Create the colored pipeline	
 		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+
+		mCreated = true;
+	}
+
+	bool Pipeline::IsCreated() const
+	{
+		return mCreated;
 	}
 
 	void Pipeline::InitDefaultValues(RenderPass* renderPass)

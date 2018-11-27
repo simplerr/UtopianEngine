@@ -175,6 +175,9 @@ namespace Utopian::Vk
 
 	void CommandBuffer::CmdBindPipeline(Pipeline* pipeline)
 	{
+		if (!pipeline->IsCreated())
+			assert(0);
+
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
 	}
 

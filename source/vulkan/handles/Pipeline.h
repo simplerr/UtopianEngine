@@ -13,6 +13,7 @@ namespace Utopian::Vk
 		Pipeline(Device* device, RenderPass* renderPass);
 
 		void Create(Shader* shader, PipelineInterface* pipelineInterface);
+		bool IsCreated() const;
 
 		VkPipelineRasterizationStateCreateInfo rasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
@@ -22,5 +23,6 @@ namespace Utopian::Vk
 		void InitDefaultValues(RenderPass* renderPass);
 
 		RenderPass* mRenderPass;	
+		bool mCreated;
 	};
 }
