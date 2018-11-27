@@ -142,8 +142,9 @@ namespace Utopian
 
 		// Update camera uniform buffer block
 		//viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		//viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		viewProjectionBlock.data.view = glm::lookAt(-directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
-		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.data.projection = glm::perspective<float>(glm::radians(45.0f), (float)mWidth / (float)mHeight, 1.0f, 10000.0f);
 		viewProjectionBlock.UpdateMemory();
 
 		renderTarget->Begin();
