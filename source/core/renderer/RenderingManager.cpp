@@ -40,6 +40,7 @@ namespace Utopian
 		AddJob(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new SSAOJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new BlurJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new ShadowJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new SkyboxJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DebugJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
@@ -49,6 +50,8 @@ namespace Utopian
 		mRenderingSettings.fogColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 		mRenderingSettings.fogStart = 40000.0f;
 		mRenderingSettings.fogDistance = 16000.0f;
+
+		mSceneInfo.directionalLight = nullptr;
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
@@ -264,6 +267,13 @@ namespace Utopian
 
 	void RenderingManager::AddLight(Light* light)
 	{
+		if (light->GetType() == 0) { // Directional
+			if (mSceneInfo.directionalLight == nullptr)
+				mSceneInfo.directionalLight = light;
+			else
+				assert(0); // Only one directional light in the scene
+		}
+
 		light->SetId(mNextNodeId++);
 		mSceneInfo.lights.push_back(light);
 	}

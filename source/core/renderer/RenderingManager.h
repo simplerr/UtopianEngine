@@ -28,6 +28,17 @@ namespace Utopian
 	class RenderingManager : public Module<RenderingManager>
 	{
 	public:
+		enum JobIndex
+		{
+			GBUFFER_INDEX = 0,
+			SSAO_INDEX,
+			BLUR_INDEX,
+			SHADOW_INDEX,
+			DEFERRED_INDEX,
+			SKYBOX_INDEX,
+			DEBUG_INDEX,
+		};
+
 		RenderingManager(Vk::Renderer* renderer);
 		~RenderingManager();
 

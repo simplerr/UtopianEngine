@@ -209,47 +209,6 @@ actor_list =
 	},
 	
 	{
-		actor_name = "Castle",
-		components = 
-		{
-			CLight = 
-			{
-				att_x = 0,
-				att_y = 0,
-				att_z = 1.9999999878451e-08,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = -1,
-				dir_y = 0.85500001907349,
-				dir_z = 0.19000001251698,
-				intensity_x = 0,
-				intensity_y = 0.10800000280142,
-				intensity_z = 0,
-				range = 100000,
-				spot = 4,
-				type = 0,
-			},
-			CRenderable = 
-			{
-				path = "data/models/adventure_village/Tree.obj",
-			},
-			CTransform = 
-			{
-				pos_x = -313.48992919922,
-				pos_y = 0,
-				pos_z = 35.490531921387,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
 		actor_name = "Camera",
 		components = 
 		{
@@ -272,9 +231,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 1037.3275146484,
-				pos_y = 687.04656982422,
-				pos_z = 346.08038330078,
+				pos_x = 1534.9425048828,
+				pos_y = 649.34289550781,
+				pos_z = -263.36926269531,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -320,11 +279,11 @@ actor_list =
 				color_b = 0.7593954205513,
 				color_g = 0.90262448787689,
 				color_r = 0.91666668653488,
-				dir_x = -0.51800000667572,
+				dir_x = -1,
 				dir_y = 1,
-				dir_z = 0.64300000667572,
-				intensity_x = 0.21700000762939,
-				intensity_y = 0.807000041008,
+				dir_z = 1,
+				intensity_x = 0,
+				intensity_y = 0.78300005197525,
 				intensity_z = 0,
 				range = 100000,
 				spot = 4,
@@ -336,9 +295,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -238.35571289063,
-				pos_y = 138.00454711914,
-				pos_z = 108.39352416992,
+				pos_x = 743.25341796875,
+				pos_y = 322.35333251953,
+				pos_z = -408.09097290039,
 				rotation_x = 182.19999694824,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -899,6 +858,63 @@ actor_list =
 				scale_z = 50,
 			},
 		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = -192.78784179688,
+				pos_y = 0,
+				pos_z = 283.57290649414,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 2.4000000953674,
+				scale_z = 25,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
 	}, 
 	[0] = 
 	{
@@ -911,14 +927,14 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -192.78784179688,
+				pos_x = 0,
 				pos_y = 0,
-				pos_z = 283.57290649414,
+				pos_z = 0,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 25,
-				scale_y = 2.4000000953674,
+				scale_y = 1,
 				scale_z = 25,
 			},
 		},

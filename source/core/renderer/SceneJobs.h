@@ -10,6 +10,7 @@
 #include "vulkan/NormalDebugEffect.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
+#include "vulkan/ShaderBuffer.h"
 
 namespace Utopian
 {
@@ -23,6 +24,9 @@ namespace Utopian
 		std::vector<Renderable*> renderables;
 		std::vector<Light*> lights;
 		std::vector<Camera*> cameras;
+		// The light that will cast shadows
+		// Currently assumes that there only is one directional light in the scene
+		Light* directionalLight;
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
 		glm::vec3 eyePos;
@@ -93,6 +97,29 @@ namespace Utopian
 
 		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
 		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
+	private:
+	};
+
+	class ShadowJob : public BaseJob
+	{
+	public:
+
+UNIFORM_BLOCK_BEGIN(ViewProjection)
+	UNIFORM_PARAM(glm::mat4, projection)
+	UNIFORM_PARAM(glm::mat4, view)
+UNIFORM_BLOCK_END()
+
+		ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~ShadowJob();
+
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+
+		SharedPtr<Vk::RenderTarget> renderTarget;
+		SharedPtr<Vk::Image> depthImage;
+
+		SharedPtr<Vk::Effect> effect;
+		ViewProjection viewProjectionBlock;
 	private:
 	};
 

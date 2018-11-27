@@ -15,6 +15,7 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/CubeMapTexture.h"
+#include "core/renderer/Light.h"
 #include <random>
 
 namespace Utopian
@@ -100,6 +101,81 @@ namespace Utopian
 		renderTarget->End(renderer->GetQueue());
 	}
 
+	ShadowJob::ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
+	{
+		depthImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
+
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget->AddColorAttachment(depthImage);
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
+															renderTarget->GetRenderPass(),
+															"data/shaders/shadowmap/shadowmap.vert",
+															"data/shaders/shadowmap/shadowmap.frag");
+		effect->CreatePipeline();
+
+		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+
+		const uint32_t size = 240;
+		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthImage.get(), renderTarget->GetSampler());
+	}
+
+	ShadowJob::~ShadowJob()
+	{
+	}
+
+	void ShadowJob::Init(const std::vector<BaseJob*>& jobs)
+	{
+		
+	}
+
+	void ShadowJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		Light* directionalLight = jobInput.sceneInfo.directionalLight;
+
+		if (directionalLight == nullptr)
+			return;
+
+		// Update camera uniform buffer block
+		//viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		viewProjectionBlock.data.view = glm::lookAt(-directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
+		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.UpdateMemory();
+
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
+
+		/* Render all renderables */
+		for (auto& renderable : jobInput.sceneInfo.renderables)
+		{
+			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+				continue;
+
+			Vk::StaticModel* model = renderable->GetModel();
+
+			for (Vk::Mesh* mesh : model->mMeshes)
+			{
+				// Push the world matrix constant
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
+
+				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
+				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+			}
+		}
+
+		renderTarget->End(renderer->GetQueue());
+	}
+
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
@@ -115,8 +191,8 @@ namespace Utopian
 
 	void DeferredJob::Init(const std::vector<BaseJob*>& jobs)
 	{
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[0]);
-		BlurJob* blurJob = static_cast<BlurJob*>(jobs[2]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
+		BlurJob* blurJob = static_cast<BlurJob*>(jobs[RenderingManager::BLUR_INDEX]);
 		effect->BindImages(gbufferJob->positionImage.get(),
 						   gbufferJob->normalImage.get(),
 						   gbufferJob->albedoImage.get(),
@@ -165,7 +241,7 @@ namespace Utopian
 
 	void SSAOJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[0]);
+		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
 		effect->BindGBuffer(gbufferRenderer->positionImage.get(),
 						   gbufferRenderer->normalViewImage.get(),
 						   gbufferRenderer->albedoImage.get(),
@@ -234,7 +310,7 @@ namespace Utopian
 
 	void BlurJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[1]);
+		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[RenderingManager::SSAO_INDEX]);
 		effect->BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
 	}
 
@@ -265,8 +341,8 @@ namespace Utopian
 
 	void SkyboxJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[3]);
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[0]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[RenderingManager::DEFERRED_INDEX]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
@@ -314,8 +390,8 @@ namespace Utopian
 
 	void DebugJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[3]);
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[0]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[RenderingManager::DEFERRED_INDEX]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
