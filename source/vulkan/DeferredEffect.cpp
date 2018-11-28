@@ -25,10 +25,12 @@ namespace Utopian::Vk
 		eyeBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		light_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		fog_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		lightTransform.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		BindUniformBuffer("UBO_eyePos", &eyeBlock);
 		BindUniformBuffer("UBO_lights", &light_ubo);
 		BindUniformBuffer("UBO_fog", &fog_ubo);
+		BindUniformBuffer("UBO_lightTransform", &lightTransform);
 	}
 
 	void DeferredEffect::UpdateMemory()
@@ -42,12 +44,13 @@ namespace Utopian::Vk
 		eyeBlock.UpdateMemory();
 	}
 
-	void DeferredEffect::BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler)
+	void DeferredEffect::BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Image* shadowmapImage, Sampler* sampler)
 	{
 		BindCombinedImage("positionSampler", positionImage, sampler);
 		BindCombinedImage("normalSampler", normalImage, sampler);
 		BindCombinedImage("albedoSampler", albedoImage, sampler);
 		BindCombinedImage("ssaoSampler", ssaoImage, sampler);
+		BindCombinedImage("shadowSampler", shadowmapImage, sampler);
 	}
 
 	void DeferredEffect::SetLightArray(const std::vector<Light*>& lights)
@@ -61,6 +64,12 @@ namespace Utopian::Vk
 		light_ubo.constants.numLights = light_ubo.lights.size();
 
 		light_ubo.UpdateMemory();
+	}
+
+	void DeferredEffect::SetLightTransform(glm::mat4 viewProjection)
+	{
+		lightTransform.data.viewProjection = viewProjection;
+		lightTransform.UpdateMemory();
 	}
 
 	void DeferredEffect::SetFogData(const RenderingSettings& renderingSettings)

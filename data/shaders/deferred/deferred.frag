@@ -12,6 +12,7 @@ layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
+layout (set = 1, binding = 4) uniform sampler2D shadowSampler;
 
 layout (std140, set = 0, binding = 0) uniform UBO_eyePos
 {
@@ -26,6 +27,11 @@ layout (std140, set = 0, binding = 2) uniform UBO_fog
 	float fogDistance;
 } fog_ubo;
 
+layout (std140, set = 0, binding = 3) uniform UBO_lightTransform
+{
+	mat4 viewProjection;
+} light_transform;
+
 void main() 
 {
 	vec2 uv = InTex;
@@ -39,7 +45,13 @@ void main()
 	// this is a left over from an old problem
 	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
-	float shadow = 1.0f;
+	// Calculate shadow factor
+	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
+	vec3 projCoordinate = lightSpacePosition.xyz / lightSpacePosition.w; // Perspective divide 
+	projCoordinate = projCoordinate * 0.5f + 0.5f;
+	float sampledDepth = texture(shadowSampler, projCoordinate.xy).r;
+	float shadow = sampledDepth < projCoordinate.z ? 0.0f : 1.0f;
+	//shadow = 1;
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 

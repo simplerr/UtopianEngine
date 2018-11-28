@@ -16,5 +16,6 @@ float linearDepth(float depth)
 void main() 
 {
 	//OutColor = vec4(vec3(linearDepth(gl_FragCoord.z) / 25600), 1.0f);
-	OutColor = linearDepth(gl_FragCoord.z) / 10000.0f;// / 2560;
+	//OutColor = linearDepth(gl_FragCoord.z) / 10000.0f;// / 2560;
+	OutColor = gl_FragCoord.z;// / 2560;
 }

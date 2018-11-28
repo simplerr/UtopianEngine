@@ -143,7 +143,7 @@ namespace Utopian
 		// Update camera uniform buffer block
 		//viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		//viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.data.view = glm::lookAt(-directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
+		viewProjectionBlock.data.view = glm::lookAt(directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
 		viewProjectionBlock.data.projection = glm::perspective<float>(glm::radians(45.0f), (float)mWidth / (float)mHeight, 1.0f, 10000.0f);
 		viewProjectionBlock.UpdateMemory();
 
@@ -194,10 +194,12 @@ namespace Utopian
 	{
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[RenderingManager::BLUR_INDEX]);
+		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[RenderingManager::SHADOW_INDEX]);
 		effect->BindImages(gbufferJob->positionImage.get(),
 						   gbufferJob->normalImage.get(),
 						   gbufferJob->albedoImage.get(),
 						   blurJob->blurImage.get(),
+						   shadowJob->depthImage.get(),
 						   gbufferJob->renderTarget->GetSampler());
 	}
 
@@ -208,6 +210,12 @@ namespace Utopian
 		effect->SetFogData(jobInput.renderingSettings);
 		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect->SetLightArray(jobInput.sceneInfo.lights);
+
+		Light* directionalLight = jobInput.sceneInfo.directionalLight;
+
+		glm::mat4 lightView =  glm::lookAt(directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
+		glm::mat4 lightProjection = glm::perspective<float>(glm::radians(45.0f), (float)mWidth / (float)mHeight, 1.0f, 10000.0f);
+		effect->SetLightTransform(lightProjection * lightView);
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
