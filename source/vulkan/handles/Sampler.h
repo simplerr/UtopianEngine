@@ -16,7 +16,7 @@ namespace Utopian::Vk
 
 		void Create();
 
-		VkSamplerCreateInfo samplerInfo = {};
+		VkSamplerCreateInfo createInfo = {};
 	private:
 	};
 }

@@ -133,7 +133,7 @@ UNIFORM_BLOCK_END()
 		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
 
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;
-
+		SharedPtr<Vk::Sampler> depthSampler;
 		SharedPtr<Vk::DeferredEffect> effect;
 	private:
 		SharedPtr<Vk::ScreenQuad> mScreenQuad;

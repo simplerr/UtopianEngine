@@ -30,7 +30,7 @@ namespace Utopian::Vk
 		DeferredEffect(Device* device, RenderPass* renderPass);
 
 		void SetEyePos(glm::vec3 eyePos);
-		void BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Image* shadowmapImage, Sampler* sampler);
+		void BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler);
 		void SetLightArray(const std::vector<Light*>& lights);
 		void SetFogData(const RenderingSettings& renderingSettings);
 		void SetLightTransform(glm::mat4 viewProjection);

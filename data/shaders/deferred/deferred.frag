@@ -49,8 +49,14 @@ void main()
 	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
 	vec3 projCoordinate = lightSpacePosition.xyz / lightSpacePosition.w; // Perspective divide 
 	projCoordinate = projCoordinate * 0.5f + 0.5f;
-	float sampledDepth = texture(shadowSampler, projCoordinate.xy).r;
-	float shadow = sampledDepth < projCoordinate.z ? 0.0f : 1.0f;
+
+	float shadow = 1.0f;
+	// If fragment depth is outside frustum do no shadowing
+	if (projCoordinate.z <= 1.0f)
+	{
+		float sampledDepth = texture(shadowSampler, projCoordinate.xy).r;
+		shadow = sampledDepth < projCoordinate.z ? 0.0f : 1.0f;
+	}
 	//shadow = 1;
 
 	Material material;

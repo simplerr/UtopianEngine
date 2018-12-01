@@ -15,10 +15,10 @@ namespace Utopian::Vk
 		mWidth = width;
 		mHeight = height;
 
-		mCommandBuffer = new Utopian::Vk::CommandBuffer(device, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-		mRenderPass = new Utopian::Vk::RenderPass(device);
-		mFrameBuffer = new Utopian::Vk::FrameBuffers(device);
-		mSampler = new Utopian::Vk::Sampler(device);
+		mCommandBuffer = new CommandBuffer(device, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
+		mRenderPass = new RenderPass(device);
+		mFrameBuffer = new FrameBuffers(device);
+		mSampler = std::make_shared<Sampler>(device);
 		
 		SetClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	}
@@ -107,7 +107,7 @@ namespace Utopian::Vk
 
 	Utopian::Vk::Sampler* RenderTarget::GetSampler()
 	{
-		return mSampler;
+		return mSampler.get();
 	}
 
 	Utopian::Vk::CommandBuffer* RenderTarget::GetCommandBuffer()

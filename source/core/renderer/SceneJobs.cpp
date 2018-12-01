@@ -7,6 +7,7 @@
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -184,6 +185,13 @@ namespace Utopian
 		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
+
+		// Create sampler that returns 1.0 when sampling outside the depth image
+		depthSampler = std::make_shared<Vk::Sampler>(renderer->GetDevice(), false);
+		depthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		depthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		depthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+		depthSampler->Create();
 	}
 
 	DeferredJob::~DeferredJob()
@@ -199,8 +207,9 @@ namespace Utopian
 						   gbufferJob->normalImage.get(),
 						   gbufferJob->albedoImage.get(),
 						   blurJob->blurImage.get(),
-						   shadowJob->depthImage.get(),
 						   gbufferJob->renderTarget->GetSampler());
+
+		effect->BindCombinedImage("shadowSampler", shadowJob->depthImage.get(), depthSampler.get());
 	}
 
 	void DeferredJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)

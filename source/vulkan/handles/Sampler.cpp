@@ -7,19 +7,19 @@ namespace Utopian::Vk
 	Sampler::Sampler(Device* device, bool create)
 		: Handle(device, vkDestroySampler)
 	{
-		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = VK_FILTER_LINEAR;
-		samplerInfo.minFilter = VK_FILTER_LINEAR;
-		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.anisotropyEnable = VK_TRUE;
-		samplerInfo.maxAnisotropy = 16;
-		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-		samplerInfo.unnormalizedCoordinates = VK_FALSE;
-		samplerInfo.compareEnable = VK_FALSE;
-		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
-		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		createInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		createInfo.magFilter = VK_FILTER_LINEAR;
+		createInfo.minFilter = VK_FILTER_LINEAR;
+		createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		createInfo.anisotropyEnable = VK_TRUE;
+		createInfo.maxAnisotropy = 16;
+		createInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+		createInfo.unnormalizedCoordinates = VK_FALSE;
+		createInfo.compareEnable = VK_FALSE;
+		createInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
+		createInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 
 		if (create)
 		{
@@ -29,6 +29,6 @@ namespace Utopian::Vk
 
 	void Sampler::Create()
 	{
-		VulkanDebug::ErrorCheck(vkCreateSampler(GetVkDevice(), &samplerInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateSampler(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

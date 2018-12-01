@@ -44,13 +44,12 @@ namespace Utopian::Vk
 		eyeBlock.UpdateMemory();
 	}
 
-	void DeferredEffect::BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Image* shadowmapImage, Sampler* sampler)
+	void DeferredEffect::BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler)
 	{
 		BindCombinedImage("positionSampler", positionImage, sampler);
 		BindCombinedImage("normalSampler", normalImage, sampler);
 		BindCombinedImage("albedoSampler", albedoImage, sampler);
 		BindCombinedImage("ssaoSampler", ssaoImage, sampler);
-		BindCombinedImage("shadowSampler", shadowmapImage, sampler);
 	}
 
 	void DeferredEffect::SetLightArray(const std::vector<Light*>& lights)

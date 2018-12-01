@@ -48,11 +48,11 @@ namespace Utopian::Vk
 		uint32_t GetHeight();
 
 	private:
-		Utopian::Vk::FrameBuffers* mFrameBuffer;
-		Utopian::Vk::RenderPass* mRenderPass;
-		Utopian::Vk::CommandBuffer* mCommandBuffer;
-		Utopian::Vk::DescriptorSet* mTextureDescriptorSet;
-		Utopian::Vk::Sampler* mSampler;
+		FrameBuffers* mFrameBuffer;
+		RenderPass* mRenderPass;
+		CommandBuffer* mCommandBuffer;
+		DescriptorSet* mTextureDescriptorSet;
+		SharedPtr<Sampler> mSampler;
 		uint32_t mWidth, mHeight;
 		glm::vec4 mClearColor;
 		std::vector<VkClearValue> mClearValues;
