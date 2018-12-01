@@ -21,6 +21,15 @@
 
 namespace Utopian
 {
+	static void calculateLightViewProj(Light* light, glm::mat4& view, glm::mat4& projection, uint32_t width, uint32_t height)
+	{
+		const float farPlane = 10000.0f;
+		view = glm::lookAt(-light->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
+		projection = glm::perspective<float>(glm::radians(45.0f), (float)width / (float)height, 1.0f, farPlane);
+		//const float size = 10.0f;
+		//projection = glm::ortho<float>(-size, size, -size, size, 1.0f, farPlane);
+	}
+
 	GBufferJob::GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
@@ -106,9 +115,11 @@ namespace Utopian
 		: BaseJob(renderer, width, height)
 	{
 		depthImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
+		depthImageDebug = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
 		renderTarget->AddColorAttachment(depthImage);
+		renderTarget->AddColorAttachment(depthImageDebug);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
@@ -116,13 +127,14 @@ namespace Utopian
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
 															"data/shaders/shadowmap/shadowmap.frag");
+		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
 		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		const uint32_t size = 240;
-		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthImage.get(), renderTarget->GetSampler());
+		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthImageDebug.get(), renderTarget->GetSampler());
 	}
 
 	ShadowJob::~ShadowJob()
@@ -142,10 +154,7 @@ namespace Utopian
 			return;
 
 		// Update camera uniform buffer block
-		//viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		//viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.data.view = glm::lookAt(directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
-		viewProjectionBlock.data.projection = glm::perspective<float>(glm::radians(45.0f), (float)mWidth / (float)mHeight, 1.0f, 10000.0f);
+		calculateLightViewProj(directionalLight, viewProjectionBlock.data.view, viewProjectionBlock.data.projection, mWidth, mHeight);
 		viewProjectionBlock.UpdateMemory();
 
 		renderTarget->Begin();
@@ -222,8 +231,9 @@ namespace Utopian
 
 		Light* directionalLight = jobInput.sceneInfo.directionalLight;
 
-		glm::mat4 lightView =  glm::lookAt(directionalLight->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
-		glm::mat4 lightProjection = glm::perspective<float>(glm::radians(45.0f), (float)mWidth / (float)mHeight, 1.0f, 10000.0f);
+		glm::mat4 lightView = glm::mat4();
+		glm::mat4 lightProjection = glm::mat4();
+		calculateLightViewProj(directionalLight, lightView, lightProjection, mWidth, mHeight);
 		effect->SetLightTransform(lightProjection * lightView);
 
 		renderTarget->Begin();

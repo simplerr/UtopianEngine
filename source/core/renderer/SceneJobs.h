@@ -117,6 +117,7 @@ UNIFORM_BLOCK_END()
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 		SharedPtr<Vk::Image> depthImage;
+		SharedPtr<Vk::Image> depthImageDebug;
 
 		SharedPtr<Vk::Effect> effect;
 		ViewProjection viewProjectionBlock;

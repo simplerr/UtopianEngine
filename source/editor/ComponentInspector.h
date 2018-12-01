@@ -37,6 +37,8 @@ namespace Utopian
 	private:
 		CRenderable* mRenderable;
 		glm::ivec2 mTextureTiling;
+		bool mDeferred;
+		bool mColor;
 		bool mBoundingBox;
 		bool mDebugNormals;
 		bool mWireframe;

@@ -33,6 +33,8 @@ Utopian::RenderableInspector::RenderableInspector(CRenderable* renderable)
 {
 	mRenderable = renderable;
 	mTextureTiling = renderable->GetTextureTiling();
+	mDeferred = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_DEFERRED);
+	mColor = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
 	mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
 	mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 	mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
@@ -42,6 +44,30 @@ void Utopian::RenderableInspector::UpdateUi()
 {
 	if (ImGui::CollapsingHeader("Renderable", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		if (ImGui::Checkbox("Deferred", &mDeferred))
+		{
+			uint32_t flag = mRenderable->GetRenderFlags();
+
+			if (mDeferred)
+				flag |= RenderFlags::RENDER_FLAG_DEFERRED;
+			else
+				flag &= ~RenderFlags::RENDER_FLAG_DEFERRED;
+
+			mRenderable->SetRenderFlags(flag);
+		}
+
+		if (ImGui::Checkbox("Color", &mColor))
+		{
+			uint32_t flag = mRenderable->GetRenderFlags();
+
+			if (mColor)
+				flag |= RenderFlags::RENDER_FLAG_COLOR;
+			else
+				flag &= ~RenderFlags::RENDER_FLAG_COLOR;
+
+			mRenderable->SetRenderFlags(flag);
+		}
+
 		if (ImGui::Checkbox("Bounding box", &mBoundingBox))
 		{
 			uint32_t flag = mRenderable->GetRenderFlags();

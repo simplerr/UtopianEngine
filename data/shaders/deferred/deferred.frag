@@ -52,10 +52,11 @@ void main()
 
 	float shadow = 1.0f;
 	// If fragment depth is outside frustum do no shadowing
-	if (projCoordinate.z <= 1.0f)
+	if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
 	{
-		float sampledDepth = texture(shadowSampler, projCoordinate.xy).r;
-		shadow = sampledDepth < projCoordinate.z ? 0.0f : 1.0f;
+		float closestDepth = texture(shadowSampler, projCoordinate.xy).r;
+		float bias = 0.00035;//0.005;
+		shadow = (projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f;
 	}
 	//shadow = 1;
 
