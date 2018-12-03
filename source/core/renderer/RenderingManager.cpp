@@ -18,6 +18,7 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/UIOverlay.h"
+#include "core/terrain/PerlinTerrain.h"
 
 namespace Utopian
 {
@@ -52,6 +53,8 @@ namespace Utopian
 		mRenderingSettings.fogDistance = 16000.0f;
 
 		mSceneInfo.directionalLight = nullptr;
+
+		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(renderer);
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
@@ -100,6 +103,8 @@ namespace Utopian
 
 	void RenderingManager::Update()
 	{
+		mSceneInfo.terrain->Update();
+
 		per_frame_ps.lights.clear();
 		for (auto& light : mSceneInfo.lights)
 		{

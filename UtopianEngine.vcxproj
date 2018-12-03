@@ -88,8 +88,10 @@
     <ClCompile Include="source\core\ActorFactory.cpp" />
     <ClCompile Include="source\core\LuaManager.cpp" />
     <ClCompile Include="source\core\renderer\SceneJobs.cpp" />
+    <ClCompile Include="source\core\terrain\BaseTerrain.cpp" />
     <ClCompile Include="source\core\terrain\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\core\terrain\PerlinTerrain.cpp" />
     <ClCompile Include="source\editor\ActorInspector.cpp" />
     <ClCompile Include="source\editor\ComponentInspector.cpp" />
     <ClCompile Include="source\Game.cpp" />
@@ -181,9 +183,11 @@
     <ClInclude Include="source\core\ActorFactory.h" />
     <ClInclude Include="source\core\LuaManager.h" />
     <ClInclude Include="source\core\renderer\SceneJobs.h" />
+    <ClInclude Include="source\core\terrain\BaseTerrain.h" />
     <ClInclude Include="source\core\terrain\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
+    <ClInclude Include="source\core\terrain\PerlinTerrain.h" />
     <ClInclude Include="source\editor\ActorInspector.h" />
     <ClInclude Include="source\editor\ComponentInspector.h" />
     <ClInclude Include="source\Game.h" />

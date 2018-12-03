@@ -92,10 +92,10 @@ namespace Utopian
 		auto transform = actor->AddComponent<CTransform>(glm::vec3(0, 0, 0));
 		transform->SetScale(glm::vec3(25, 1, 25));
 
-		CRenderable* renderable = actor->AddComponent<CRenderable>();
-		renderable->SetModel(Vk::gModelLoader().LoadGrid(10, 100));
-		renderable->SetTexture(Vk::gTextureLoader().LoadTexture("data/textures/grass2.png"));
-		renderable->SetTileFactor(glm::vec2(70.0f));
+		//CRenderable* renderable = actor->AddComponent<CRenderable>();
+		//renderable->SetModel(Vk::gModelLoader().LoadGrid(10, 100));
+		//renderable->SetTexture(Vk::gTextureLoader().LoadTexture("data/textures/grass2.png"));
+		//renderable->SetTileFactor(glm::vec2(70.0f));
 
 		/************************************************************************/
 		/* Add actors to the scene

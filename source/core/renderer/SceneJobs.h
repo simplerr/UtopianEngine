@@ -18,12 +18,14 @@ namespace Utopian
 	class Light;
 	class Camera;
 	class BaseJob;
+	class PerlinTerrain;
 
 	struct SceneInfo
 	{
 		std::vector<Renderable*> renderables;
 		std::vector<Light*> lights;
 		std::vector<Camera*> cameras;
+		SharedPtr<PerlinTerrain> terrain;
 		// The light that will cast shadows
 		// Currently assumes that there only is one directional light in the scene
 		Light* directionalLight;

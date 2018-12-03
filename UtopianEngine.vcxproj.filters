@@ -136,6 +136,12 @@
     <Filter Include="Source Files\imgui">
       <UniqueIdentifier>{bbe3eb5b-1ef1-4192-a376-c2dfed6f22a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\terrain\heightmap">
+      <UniqueIdentifier>{086ce1f3-36ed-4ba2-a25b-c53fd611d7ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\terrain\marching_cubes">
+      <UniqueIdentifier>{7d04a0ed-d7fe-4e8f-85d6-6b284527227e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -333,15 +339,6 @@
     <ClCompile Include="source\core\components\CTransform.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\terrain\Block.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\terrain\MarchingCubes.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\terrain\Terrain.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\Object.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -410,6 +407,21 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\SkyboxEffect.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\terrain\Block.cpp">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\terrain\MarchingCubes.cpp">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\terrain\Terrain.cpp">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\terrain\BaseTerrain.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\terrain\PerlinTerrain.cpp">
+      <Filter>Source Files\terrain\heightmap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,15 +647,6 @@
     <ClInclude Include="source\core\components\CTransform.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\terrain\Block.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\terrain\MarchingCubes.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\terrain\Terrain.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\CommonBuffers.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -724,6 +727,21 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\SkyboxEffect.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\terrain\Block.h">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\terrain\MarchingCubes.h">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\terrain\Terrain.h">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\terrain\BaseTerrain.h">
+      <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\terrain\PerlinTerrain.h">
+      <Filter>Source Files\terrain\heightmap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
