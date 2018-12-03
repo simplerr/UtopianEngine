@@ -56,8 +56,8 @@ namespace Utopian
 		for (uint32_t i = 0; i < mWaterList.size(); i++)
 		{
 			Utopian::Vk::StaticModel* model = mWaterList[i].gridModel;
-			commandBuffer->CmdBindVertexBuffer(0, 1, &model->mMeshes[0]->vertices.buffer);
-			commandBuffer->CmdBindIndexBuffer(model->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+			commandBuffer->CmdBindVertexBuffer(0, 1, model->mMeshes[0]->GetVertxBuffer());
+			commandBuffer->CmdBindIndexBuffer(model->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
 			pushConstantBlock.world = glm::translate(glm::mat4(), mWaterList[i].position);
 			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];

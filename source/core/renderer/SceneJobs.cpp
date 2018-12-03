@@ -102,8 +102,8 @@ namespace Utopian
 				commandBuffer->CmdBindPipeline(effect->GetPipeline());
 				commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
-				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
@@ -178,8 +178,8 @@ namespace Utopian
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
 
 				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
-				commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
@@ -400,8 +400,8 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
 
-		commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-		commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->CmdBindVertexBuffer(0, 1, mCubeModel->mMeshes[0]->GetVertxBuffer());
+		commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 
 		renderTarget->End(renderer->GetQueue());
@@ -469,8 +469,8 @@ namespace Utopian
 					commandBuffer->CmdBindPipeline(colorEffect->GetPipeline());
 					colorEffect->BindDescriptorSets(commandBuffer);
 					commandBuffer->CmdPushConstants(colorEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-					commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
-					commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 				}
 			}
@@ -485,8 +485,8 @@ namespace Utopian
 					commandBuffer->CmdBindPipeline(normalEffect->GetPipeline());
 					normalEffect->BindDescriptorSets(commandBuffer);
 					commandBuffer->CmdPushConstants(normalEffect->GetPipelineInterface(), VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConsts), &pushConsts);
-					commandBuffer->CmdBindVertexBuffer(0, 1, &mesh->vertices.buffer);
-					commandBuffer->CmdBindIndexBuffer(mesh->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 				}
 			}
@@ -505,8 +505,8 @@ namespace Utopian
 				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
 				colorEffectWireframe->BindDescriptorSets(commandBuffer);
 				commandBuffer->CmdPushConstants(colorEffectWireframe->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, &mCubeModel->mMeshes[0]->vertices.buffer);
-				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->indices.buffer, 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdBindVertexBuffer(0, 1, mCubeModel->mMeshes[0]->GetVertxBuffer());
+				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}

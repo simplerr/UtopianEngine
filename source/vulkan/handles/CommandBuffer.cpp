@@ -234,6 +234,11 @@ namespace Utopian::Vk
 		vkCmdBindIndexBuffer(mHandle, buffer, offset, indexType);
 	}
 
+	void CommandBuffer::CmdBindIndexBuffer(Buffer* buffer, VkDeviceSize offset, VkIndexType indexType)
+	{
+		vkCmdBindIndexBuffer(mHandle, buffer->GetVkBuffer(), offset, indexType);
+	}
+
 	void CommandBuffer::CmdDrawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance)
 	{
 		vkCmdDrawIndexed(mHandle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);

@@ -19,11 +19,7 @@ namespace Utopian::Vk
 	
 	Mesh::~Mesh()
 	{
-		// Free vertex and index buffers
-		vkDestroyBuffer(mDevice->GetVkDevice(), vertices.buffer, nullptr);
-		vkFreeMemory(mDevice->GetVkDevice(), vertices.memory, nullptr);
-		vkDestroyBuffer(mDevice->GetVkDevice(), indices.buffer, nullptr);
-		vkFreeMemory(mDevice->GetVkDevice(), indices.memory, nullptr);
+		
 	}
 
 	void Mesh::AddVertex(Vertex vertex)
@@ -51,48 +47,17 @@ namespace Utopian::Vk
 		uint32_t vertexBufferSize = mVerticesCount * sizeof(Vertex);
 		uint32_t indexBufferSize = mIndicesCount * sizeof(uint32_t);
 
-		VkMemoryRequirements memoryRequirments;
-		VkMemoryAllocateInfo memoryAllocation = {};
-		memoryAllocation.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		mVertexBuffer = std::make_shared<Buffer>(device,
+												 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+												 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+												 vertexBufferSize,
+												 vertexVector.data());
 
-		void* data;				
-
-		//
-		// Create the vertex buffer
-		//
-		VkBufferCreateInfo vertexBufferInfo = {};
-		vertexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		vertexBufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-		vertexBufferInfo.size = vertexBufferSize;
-
-		VulkanDebug::ErrorCheck(vkCreateBuffer(device->GetVkDevice(), &vertexBufferInfo, nullptr, &vertices.buffer));							// Create buffer
-		vkGetBufferMemoryRequirements(device->GetVkDevice(), vertices.buffer, &memoryRequirments);												// Get buffer size
-		memoryAllocation.allocationSize = memoryRequirments.size;
-		device->GetMemoryType(memoryRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocation.memoryTypeIndex);		// Get memory type
-		VulkanDebug::ErrorCheck(vkAllocateMemory(device->GetVkDevice(), &memoryAllocation, nullptr, &vertices.memory));							// Allocate device memory
-		VulkanDebug::ErrorCheck(vkMapMemory(device->GetVkDevice(), vertices.memory, 0, memoryAllocation.allocationSize, 0, &data));				// Map device memory so the host can access it through data
-		memcpy(data, vertexVector.data(), vertexBufferSize);																						// Copy buffer data to the mapped data pointer
-		vkUnmapMemory(device->GetVkDevice(), vertices.memory);																					// Unmap memory
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), vertices.buffer, vertices.memory, 0));								// Bind the buffer to the allocated device memory
-
-		//
-		// Create the index buffer
-		//
-		VkBufferCreateInfo indexBufferInfo = {};
-		indexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		indexBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-		indexBufferInfo.size = indexBufferSize;
-
-		memset(&indices, 0, sizeof(indices));
-		VulkanDebug::ErrorCheck(vkCreateBuffer(device->GetVkDevice(), &indexBufferInfo, nullptr, &indices.buffer));								// Create buffer
-		vkGetBufferMemoryRequirements(device->GetVkDevice(), indices.buffer, &memoryRequirments);												// Get buffer size
-		memoryAllocation.allocationSize = memoryRequirments.size;
-		device->GetMemoryType(memoryRequirments.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &memoryAllocation.memoryTypeIndex);		// Get memory type
-		VulkanDebug::ErrorCheck(vkAllocateMemory(device->GetVkDevice(), &memoryAllocation, nullptr, &indices.memory));							// Allocate device memory
-		VulkanDebug::ErrorCheck(vkMapMemory(device->GetVkDevice(), indices.memory, 0, memoryAllocation.allocationSize, 0, &data));				// Map device memory so the host can access it through data
-		memcpy(data, indexVector.data(), indexBufferSize);																							// Copy buffer data to the mapped data pointer
-		vkUnmapMemory(device->GetVkDevice(), indices.memory);																					// Unmap memory
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(device->GetVkDevice(), indices.buffer, indices.memory, 0));									// Bind the buffer to the allocated device memory
+		mIndexBuffer = std::make_shared<Buffer>(device,
+												VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+												VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+												indexBufferSize,
+												indexVector.data());
 	}
 
 	void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)
@@ -123,5 +88,15 @@ namespace Utopian::Vk
 	void Mesh::SetTexturePath(std::string texturePath)
 	{
 		mTexturePath = texturePath;
+	}
+
+	Buffer* Mesh::GetVertxBuffer()
+	{
+		return mVertexBuffer.get();
+	}
+
+	Buffer* Mesh::GetIndexBuffer()
+	{
+		return mIndexBuffer.get();
 	}
 }

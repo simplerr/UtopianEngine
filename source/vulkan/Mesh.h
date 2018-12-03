@@ -8,24 +8,15 @@
 #include <vector>
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/Vertex.h"
+#include "vulkan/handles/Buffer.h"
 #include "utility/math/BoundingBox.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
 	class Mesh
 	{
 	public:
-		// TODO: Replace with Vulkan::Buffer
-		struct {
-			VkBuffer buffer;
-			VkDeviceMemory memory;
-		} vertices;
-
-		struct {
-			VkBuffer buffer;
-			VkDeviceMemory memory;
-		} indices;
-
 		Mesh(Device* device);
 		~Mesh();
 
@@ -43,9 +34,14 @@ namespace Utopian::Vk
 		uint32_t GetNumIndices();
 		void SetTexturePath(std::string texturePath);
 
+		Buffer* GetVertxBuffer();
+		Buffer* GetIndexBuffer();
+
 		std::vector<Vertex> vertexVector;
 		std::vector<unsigned int> indexVector;
 	private:
+		SharedPtr<Buffer> mVertexBuffer;
+		SharedPtr<Buffer> mIndexBuffer;
 		Device* mDevice;
 		Texture* mTexture;
 		std::string mTexturePath;

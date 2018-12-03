@@ -25,15 +25,6 @@ namespace Utopian::Vk
 	{
 		for (auto& model : mModelMap)
 		{
-			// Free vertex and index buffers
-			for (int i = 0; i < model.second->mMeshes.size(); i++)
-			{
-				vkDestroyBuffer(device, model.second->mMeshes[i]->vertices.buffer, nullptr);
-				vkFreeMemory(device, model.second->mMeshes[i]->vertices.memory, nullptr);
-				vkDestroyBuffer(device, model.second->mMeshes[i]->indices.buffer, nullptr);
-				vkFreeMemory(device, model.second->mMeshes[i]->indices.memory, nullptr);
-			}
-
 			delete model.second;
 		}
 	}
