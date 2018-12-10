@@ -1,6 +1,7 @@
 #include "PerlinTerrain.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/Mesh.h"
+#include "vulkan/StaticModel.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/TextureLoader.h"
@@ -22,8 +23,8 @@ namespace Utopian
 		color = glm::vec3(1.0f, 1.0f, 1.0f);
 		SharedPtr<Block2> block = std::make_shared<Block2>(blockPosition, color);
 
-		// Generate block mesh
-		block->mesh = std::make_shared<Vk::Mesh>(mRenderer->GetDevice());
+		Vk::StaticModel* model = new Vk::StaticModel();
+		Vk::Mesh* mesh = new Vk::Mesh(mRenderer->GetDevice());
 
 		float ANY = 0;
 		for (int x = 0; x < mVoxelsInBlock; x++)
@@ -40,7 +41,7 @@ namespace Utopian
 				glm::vec2 texcord = glm::vec2(voxelPos.x / (mVoxelSize * (mVoxelsInBlock - 1)), voxelPos.z / (mVoxelSize * (mVoxelsInBlock - 1)));
 
 				// Note: normal.y is -1 when it's expected to be 1
-				block->mesh->AddVertex(Vk::Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+				mesh->AddVertex(Vk::Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
 			}
 		}
 
@@ -48,15 +49,23 @@ namespace Utopian
 		{
 			for (int z = 0; z < mVoxelsInBlock - 1; z++)
 			{
-				block->mesh->AddTriangle(x * mVoxelsInBlock + z, x * mVoxelsInBlock + z + 1, (x + 1) * mVoxelsInBlock + z);
-				block->mesh->AddTriangle((x + 1) * mVoxelsInBlock + z, x * mVoxelsInBlock + z + 1, (x + 1) * mVoxelsInBlock + (z + 1));
+				mesh->AddTriangle(x * mVoxelsInBlock + z, x * mVoxelsInBlock + z + 1, (x + 1) * mVoxelsInBlock + z);
+				mesh->AddTriangle((x + 1) * mVoxelsInBlock + z, x * mVoxelsInBlock + z + 1, (x + 1) * mVoxelsInBlock + (z + 1));
 			}
 		}
 
-		block->mesh->SetTexturePath("data/textures/grass2.png");
+		mesh->SetTexturePath("data/textures/grass2.png");
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/grass2.png");
-		block->mesh->SetTexture(texture);
-		block->mesh->BuildBuffers(mRenderer->GetDevice());
+		mesh->SetTexture(texture);
+		mesh->BuildBuffers(mRenderer->GetDevice());
+		model->AddMesh(mesh);
+
+		// Generate block renderable
+		block->renderable = std::make_shared<Renderable>();
+		block->renderable->SetModel(model);
+		block->renderable->Initialize();
+		block->renderable->SetPosition(blockPosition);
+		block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 
 		mBlockList[blockKey] = block;
 	}

@@ -82,32 +82,32 @@ namespace Utopian
 		/* Render the terrain */
 		std::map<BlockKey, SharedPtr<Block2>> blockList = jobInput.sceneInfo.terrain->GetBlocks();
 
-		for (auto& iter : blockList)
-		{
-			Vk::Effect* effect = mGBufferEffect.get();
-			bool wireframeTerrain = false;
-			if (wireframeTerrain)
-				effect = mGBufferEffectWireframe.get();
+		//for (auto& iter : blockList)
+		//{
+		//	Vk::Effect* effect = mGBufferEffect.get();
+		//	bool wireframeTerrain = false;
+		//	if (wireframeTerrain)
+		//		effect = mGBufferEffectWireframe.get();
 
-			SharedPtr<Vk::Mesh> blockMesh = iter.second->mesh;
-			glm::vec3 position = iter.second->position;
-			glm::vec3 color = iter.second->color;
-			glm::mat4 world = glm::translate(glm::mat4(), position);
+		//	SharedPtr<Vk::Mesh> blockMesh = iter.second->renderable;
+		//	glm::vec3 position = iter.second->position;
+		//	glm::vec3 color = iter.second->color;
+		//	glm::mat4 world = glm::translate(glm::mat4(), position);
 
-			// Push the world matrix constant
-			Vk::PushConstantBlock pushConsts(world, glm::vec4(color, 1.0f));
+		//	// Push the world matrix constant
+		//	Vk::PushConstantBlock pushConsts(world, glm::vec4(color, 1.0f));
 
-			// Todo: Note: This is a temporary workaround
-			VkDescriptorSet textureDescriptorSet = blockMesh->GetTextureDescriptor();
-			VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+		//	// Todo: Note: This is a temporary workaround
+		//	VkDescriptorSet textureDescriptorSet = blockMesh->GetTextureDescriptor();
+		//	VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-			commandBuffer->CmdBindPipeline(effect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-			commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-			commandBuffer->CmdBindVertexBuffer(0, 1, blockMesh->GetVertxBuffer());
-			commandBuffer->CmdBindIndexBuffer(blockMesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-			commandBuffer->CmdDrawIndexed(blockMesh->GetNumIndices(), 1, 0, 0, 0);
-		}
+		//	commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		//	commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+		//	commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+		//	commandBuffer->CmdBindVertexBuffer(0, 1, blockMesh->GetVertxBuffer());
+		//	commandBuffer->CmdBindIndexBuffer(blockMesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		//	commandBuffer->CmdDrawIndexed(blockMesh->GetNumIndices(), 1, 0, 0, 0);
+		//}
 
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)

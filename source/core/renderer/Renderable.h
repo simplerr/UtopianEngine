@@ -39,6 +39,7 @@ namespace Utopian
 		void SetMaterial(Utopian::Vk::Mat material);
 		void SetVisible(bool visible);
 		void SetRenderFlags(uint32_t renderFlags);
+		void AppendRenderFlags(uint32_t renderFlags);
 
 		Utopian::Vk::StaticModel* GetModel();
 		const BoundingBox GetBoundingBox() const;

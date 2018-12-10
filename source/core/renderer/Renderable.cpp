@@ -85,6 +85,11 @@ namespace Utopian
 		mRenderFlags = renderFlags;
 	}
 
+	void Renderable::AppendRenderFlags(uint32_t renderFlags)
+	{
+		mRenderFlags |= renderFlags;
+	}
+
 	const BoundingBox Renderable::GetBoundingBox() const
 	{
 		BoundingBox boundingBox = mModel->GetBoundingBox();

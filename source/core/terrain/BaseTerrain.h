@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
+#include "core/renderer/Renderable.h"
 
 namespace Utopian
 {
@@ -28,7 +29,7 @@ namespace Utopian
 
 		}
 
-		SharedPtr<Vk::Mesh> mesh;
+		SharedPtr<Renderable> renderable;
 		glm::vec3 position;
 		glm::vec3 color;
 		bool generated;
