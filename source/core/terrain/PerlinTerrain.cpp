@@ -19,7 +19,7 @@ namespace Utopian
 		blockPosition.y = blockKey.y * mVoxelsInBlock * mVoxelSize;
 		blockPosition.z = blockKey.z * (mVoxelsInBlock - 1) * mVoxelSize;
 		glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-		//color = glm::vec3(1.0f, 1.0f, 1.0f);
+		color = glm::vec3(1.0f, 1.0f, 1.0f);
 		SharedPtr<Block2> block = std::make_shared<Block2>(blockPosition, color);
 
 		// Generate block mesh
@@ -30,12 +30,13 @@ namespace Utopian
 		{
 			for (int z = 0; z < mVoxelsInBlock; z++)
 			{
-				glm::vec3 voxelPos = glm::vec3(x * mVoxelSize, 0.0f, z * mVoxelSize);
+				const float frequency = 500.0f;
+				const float amplitude = 250.0f;
+				float height = glm::sin((-x * mVoxelSize + blockPosition.x) / frequency) * amplitude;
+				height += glm::sin((-z * mVoxelSize + blockPosition.z) / frequency) * amplitude;
 				const float originOffset = (mVoxelSize * mVoxelsInBlock) / 2.0f;
-				glm::vec3 originInCenterPos = glm::vec3(x * mVoxelSize - originOffset, 0.0f, z * mVoxelSize - originOffset);
-				float height = glm::sin((originInCenterPos.x) / 1000.0f) * 1000.0f;
-				height = 0; // Todo:
-				originInCenterPos.y = height;
+				glm::vec3 originInCenterPos = glm::vec3(x * mVoxelSize - originOffset, height, z * mVoxelSize - originOffset);
+				glm::vec3 voxelPos = glm::vec3(x * mVoxelSize, 0.0f, z * mVoxelSize);
 				glm::vec2 texcord = glm::vec2(voxelPos.x / (mVoxelSize * (mVoxelsInBlock - 1)), voxelPos.z / (mVoxelSize * (mVoxelsInBlock - 1)));
 
 				// Note: normal.y is -1 when it's expected to be 1
