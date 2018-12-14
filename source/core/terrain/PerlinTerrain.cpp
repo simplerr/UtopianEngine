@@ -31,17 +31,27 @@ namespace Utopian
 		{
 			for (int z = 0; z < mVoxelsInBlock; z++)
 			{
-				const float frequency = 500.0f;
-				const float amplitude = 250.0f;
-				float height = glm::sin((-x * mVoxelSize + blockPosition.x) / frequency) * amplitude;
-				height += glm::sin((-z * mVoxelSize + blockPosition.z) / frequency) * amplitude;
-				const float originOffset = (mVoxelSize * mVoxelsInBlock) / 2.0f;
-				glm::vec3 originInCenterPos = glm::vec3(x * mVoxelSize - originOffset, height, z * mVoxelSize - originOffset);
-				glm::vec3 voxelPos = glm::vec3(x * mVoxelSize, 0.0f, z * mVoxelSize);
-				glm::vec2 texcord = glm::vec2(voxelPos.x / (mVoxelSize * (mVoxelsInBlock - 1)), voxelPos.z / (mVoxelSize * (mVoxelsInBlock - 1)));
+				glm::vec3 worldPos = glm::vec3(blockPosition.x - x * mVoxelSize, 0.0f, blockPosition.z - z * mVoxelSize);
+				worldPos.y = GetHeight(worldPos.x, worldPos.z);
+				glm::vec3 localPos = glm::vec3(x * mVoxelSize, 0.0f, z * mVoxelSize);
+				glm::vec2 texcord = glm::vec2(localPos.x / (mVoxelSize * (mVoxelsInBlock - 1)), localPos.z / (mVoxelSize * (mVoxelsInBlock - 1)));
 
-				// Note: normal.y is -1 when it's expected to be 1
-				mesh->AddVertex(Vk::Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+				// Calculate normal, based on https://www.gamedev.net/forums/topic/692347-finite-difference-normal-calculation-for-sphere/
+				//glm::vec3 pos = glm::vec3(posX, height, posZ);
+				float offset = 1.0f;
+				float hL = GetHeight(worldPos.x - offset, worldPos.z);
+				float hR = GetHeight(worldPos.x + offset, worldPos.z);
+				float hD = GetHeight(worldPos.x, worldPos.z - offset);
+				float hU = GetHeight(worldPos.x, worldPos.z + offset);
+
+				glm::vec3 normal = glm::vec3(hL - hR, -2.0f, hD - hU); // Note: -2.0f
+				normal = glm::normalize(normal);
+
+				mesh->AddVertex(Vk::Vertex(localPos.x, worldPos.y, localPos.z,
+										   normal.x, normal.y, normal.z,
+										   ANY, ANY, ANY,
+										   texcord.x, texcord.y,
+										   ANY, ANY, ANY));
 			}
 		}
 
@@ -68,6 +78,16 @@ namespace Utopian
 		block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 
 		mBlockList[blockKey] = block;
+	}
+
+	float PerlinTerrain::GetHeight(float x, float z)
+	{
+		const float frequency = 500.0f;
+		const float amplitude = 550.0f;
+		float height = glm::sin(x / frequency) * amplitude;
+		height += glm::sin(z / frequency) * amplitude;
+
+		return height;
 	}
 
 	void PerlinTerrain::GenerateBlocks()

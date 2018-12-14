@@ -15,6 +15,8 @@ namespace Utopian
 		//void Update();
 		virtual void AddBlock(BlockKey blockKey) override;
 		virtual void GenerateBlocks() override;
+
+		float GetHeight(float x, float z);
 	private:
 	};
 }
