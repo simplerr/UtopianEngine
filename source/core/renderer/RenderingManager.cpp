@@ -344,4 +344,9 @@ namespace Utopian
 		mJobs.push_back(job);
 		job->Init(mJobs);
 	}
+
+	BaseTerrain* RenderingManager::GetTerrain()
+	{
+		return mSceneInfo.terrain.get();
+	}
 }

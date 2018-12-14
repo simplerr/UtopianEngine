@@ -13,6 +13,7 @@ namespace Utopian
 	{
 
 	}
+
 	float PerlinTerrain::GetHeight(float x, float z)
 	{
 		const float frequency = 2200.0f;

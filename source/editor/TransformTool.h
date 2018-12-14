@@ -17,6 +17,7 @@ namespace Utopian
 	class Actor;
 	class Renderable;
 	class Input;
+	class BaseTerrain;
 }
 
 class Terrain;
@@ -25,7 +26,7 @@ class Terrain;
 class TransformTool
 {
 public:
-	TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain);
+	TransformTool(Utopian::Vk::Renderer* renderer, Utopian::BaseTerrain* terrain);
 	~TransformTool();
 
 	void Update(Utopian::Input* pInput, float dt);
@@ -49,7 +50,7 @@ private:
 	SharedPtr<Utopian::Renderable> mAxisZ;
 	Utopian::Actor* mSelectedActor;
 	Utopian::Camera* mCamera;
-	Terrain* mTerrain;
+	Utopian::BaseTerrain* mTerrain;
 	MovingAxis	  mMovingAxis;
 	glm::vec3	  mLastPlanePos;
 

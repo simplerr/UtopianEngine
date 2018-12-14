@@ -55,8 +55,6 @@ namespace Utopian
 
 		InitScene();
 
-		// Note: Needs to be called after a camera have been added to the scene
-		mEditor = std::make_shared<Editor>(mRenderer.get(), &World::Instance(), mTerrain.get());
 
 		ObjectManager::Instance().PrintObjects();
 	}
@@ -108,6 +106,9 @@ namespace Utopian
 		RenderingManager::Instance().InitShaderResources();
 		RenderingManager::Instance().InitShader();
 		ObjectManager::Instance().PrintObjects();
+
+		// Note: Needs to be called after a camera have been added to the scene
+		mEditor = std::make_shared<Editor>(mRenderer.get(), &World::Instance(), RenderingManager::Instance().GetTerrain());
 	}
 
 	void Game::Update()

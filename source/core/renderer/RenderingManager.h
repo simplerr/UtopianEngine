@@ -19,6 +19,7 @@ namespace Utopian
 	class Renderable;
 	class Light;
 	class WaterRenderer;
+	class BaseTerrain;
 
 	namespace Vk
 	{
@@ -67,6 +68,8 @@ namespace Utopian
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
 		void AddJob(BaseJob* job);
+
+		BaseTerrain* GetTerrain();
 	private:
 		SceneInfo mSceneInfo;
 		Camera* mMainCamera;

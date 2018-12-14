@@ -16,8 +16,7 @@ namespace Utopian
 		//void Update();
 		virtual void AddBlock(BlockKey blockKey) override;
 		virtual void GenerateBlocks() override;
-
-		float GetHeight(float x, float z);
+		virtual float GetHeight(float x, float z) override;
 	private:
 		PerlinNoise<float> mPerlinNoise;
 	};

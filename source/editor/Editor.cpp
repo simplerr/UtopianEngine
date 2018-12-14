@@ -15,7 +15,7 @@
 
 namespace Utopian
 {
-	Editor::Editor(Utopian::Vk::Renderer* renderer, World* world, Terrain* terrain)
+	Editor::Editor(Utopian::Vk::Renderer* renderer, World* world, BaseTerrain* terrain)
 		: mRenderer(renderer), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;

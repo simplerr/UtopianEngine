@@ -3,6 +3,7 @@
 #include <limits>
 #include "Effects.h"
 #include "core/terrain/Terrain.h"
+#include "core/terrain/BaseTerrain.h"
 #include "Input.h"
 #include "vulkan/VulkanDebug.h"
 #define GLM_ENABLE_EXPERIMENTAL
@@ -22,7 +23,7 @@ using namespace Utopian::Vk;
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Terrain* terrain)
+TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Utopian::BaseTerrain* terrain)
 {
 	// nullptr as default.
 	mSelectedActor = nullptr;
@@ -151,10 +152,10 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 	}
 
 	// Stick to the terain?
-	if (pInput->KeyPressed('T')) {
+	if (pInput->KeyPressed('O')) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		glm::vec3 position = transform->GetPosition();
-		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));
+		transform->SetPosition(glm::vec3(position.x, -1 * mTerrain->GetHeight(position.x, position.z), position.z)); // Note: The -1 sign
 	}
 }
 

@@ -11,6 +11,7 @@ namespace Utopian
 	class World;
 	class Actor;
 	class ActorInspector;
+	class BaseTerrain;
 
 	enum ActorTemplate
 	{
@@ -21,7 +22,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(Utopian::Vk::Renderer* renderer, World* world, Terrain* terrain);
+		Editor(Utopian::Vk::Renderer* renderer, World* world, BaseTerrain* terrain);
 		~Editor();
 
 		void Update();
@@ -38,7 +39,7 @@ namespace Utopian
 
 		Utopian::Vk::Renderer* mRenderer;
 		World* mWorld;
-		Terrain* mTerrain;
+		BaseTerrain* mTerrain;
 		ActorInspector* mActorInspector;
 		TransformTool* mTransformTool;
 		Actor* mSelectedActor;

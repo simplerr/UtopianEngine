@@ -45,6 +45,7 @@ namespace Utopian
 		virtual void Update();
 		virtual void GenerateBlocks() = 0;
 		virtual void AddBlock(BlockKey blockKey) = 0;
+		virtual float GetHeight(float x, float z) = 0;
 
 		std::map<BlockKey, SharedPtr<Block2>>& GetBlocks();
 
