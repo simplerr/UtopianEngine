@@ -743,6 +743,9 @@
     <ClInclude Include="source\core\terrain\PerlinTerrain.h">
       <Filter>Source Files\terrain\heightmap</Filter>
     </ClInclude>
+    <ClInclude Include="source\utility\PerlinNoise.h">
+      <Filter>Source Files\utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">

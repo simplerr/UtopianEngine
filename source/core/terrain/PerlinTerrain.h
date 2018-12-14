@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "utility/Common.h"
+#include "utility/PerlinNoise.h"
 #include "vulkan/VulkanInclude.h"
 #include "core/terrain/BaseTerrain.h"
 
@@ -18,5 +19,6 @@ namespace Utopian
 
 		float GetHeight(float x, float z);
 	private:
+		PerlinNoise<float> mPerlinNoise;
 	};
 }

@@ -11,6 +11,20 @@ namespace Utopian
 	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer)
 		: BaseTerrain(renderer)
 	{
+
+	}
+	float PerlinTerrain::GetHeight(float x, float z)
+	{
+		const float frequency = 2200.0f;
+		const float amplitude = 550.0f;
+
+		// float height = glm::sin(x / frequency) * amplitude;
+		// height += glm::sin(z / frequency) * amplitude;
+
+		float height = mPerlinNoise.noise(x / frequency, 0, z / frequency) * amplitude;
+		height += mPerlinNoise.noise(x / frequency / 10.0f, 0, z / frequency / 10.0f) * amplitude * 3;
+
+		return height;
 	}
 
 	void PerlinTerrain::AddBlock(BlockKey blockKey)
@@ -75,19 +89,9 @@ namespace Utopian
 		block->renderable->SetModel(model);
 		block->renderable->Initialize();
 		block->renderable->SetPosition(blockPosition);
-		block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
+		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 
 		mBlockList[blockKey] = block;
-	}
-
-	float PerlinTerrain::GetHeight(float x, float z)
-	{
-		const float frequency = 500.0f;
-		const float amplitude = 550.0f;
-		float height = glm::sin(x / frequency) * amplitude;
-		height += glm::sin(z / frequency) * amplitude;
-
-		return height;
 	}
 
 	void PerlinTerrain::GenerateBlocks()

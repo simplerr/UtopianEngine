@@ -197,6 +197,7 @@
     <ClInclude Include="source\LightData.h" />
     <ClInclude Include="source\core\terrain\MarchingCubes.h" />
     <ClInclude Include="source\editor\TransformTool.h" />
+    <ClInclude Include="source\utility\PerlinNoise.h" />
     <ClInclude Include="source\utility\Platform.h" />
     <ClInclude Include="source\core\components\CCamera.h" />
     <ClInclude Include="source\core\components\CNoClip.h" />
