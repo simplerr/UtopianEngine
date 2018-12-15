@@ -83,11 +83,13 @@ namespace Utopian
 				}
 				else if (name == "CRenderable") {
 					std::string path = componentData["path"].ToString();
+					uint32_t renderFlags = componentData["render_flags"].ToNumber();
 
 					// Todo: Note: This is a special case a model has been loaded by for example ModelLoader::LoadGrid()
 					if (path != "Unknown") {
 						CRenderable* renderable = actor->AddComponent<CRenderable>();
 						renderable->LoadModel(path);
+						renderable->SetRenderFlags(renderFlags);
 					}
 				}
 			}

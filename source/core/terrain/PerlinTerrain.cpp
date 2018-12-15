@@ -35,7 +35,7 @@ namespace Utopian
 		blockPosition.y = blockKey.y * mCellsInBlock * mCellSize;
 		blockPosition.z = blockKey.z * (mCellsInBlock - 1) * mCellSize;
 		glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-		//color = glm::vec3(1.0f, 1.0f, 1.0f);
+		color = glm::vec3(1.0f, 1.0f, 1.0f);
 		SharedPtr<Block2> block = std::make_shared<Block2>(blockPosition, color);
 
 		Vk::StaticModel* model = new Vk::StaticModel();

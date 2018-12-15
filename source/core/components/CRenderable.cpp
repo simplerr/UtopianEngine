@@ -47,6 +47,7 @@ namespace Utopian
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
 		luaObject.SetString("path", GetPath().c_str());
+		luaObject.SetNumber("render_flags", GetRenderFlags());
 
 		return luaObject;
 	}

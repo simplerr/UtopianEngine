@@ -8,6 +8,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/DoorStone.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -31,6 +32,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/ElevatorBeam.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -54,6 +56,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseBricksLarge.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -77,6 +80,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Note.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -100,6 +104,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/SewerDrain.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -123,6 +128,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/ShopSign.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -146,6 +152,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StaircaseSmall.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -169,6 +176,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StoneBench.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -192,6 +200,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StoneWall.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -223,7 +232,7 @@ actor_list =
 			},
 			CNoClip = 
 			{
-				speed = 6,
+				speed = 16,
 			},
 			CPlayerControl = 
 			{
@@ -231,9 +240,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 1534.9425048828,
-				pos_y = 649.34289550781,
-				pos_z = -263.36926269531,
+				pos_x = 1914.1436767578,
+				pos_y = 926.68853759766,
+				pos_z = -801.5400390625,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -251,6 +260,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Chimney1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -292,12 +302,13 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/teapot.obj",
+				render_flags = 2,
 			},
 			CTransform = 
 			{
-				pos_x = 743.25341796875,
+				pos_x = 940.18060302734,
 				pos_y = 322.35333251953,
-				pos_z = -408.09097290039,
+				pos_z = -466.31195068359,
 				rotation_x = 182.19999694824,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -315,6 +326,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Chimney1_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -338,6 +350,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Chimney2.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -361,6 +374,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/CrateLongB.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -384,6 +398,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/ShopSign_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -407,6 +422,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/TreeLogPile_3.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -430,6 +446,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Wheel.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -453,6 +470,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/WoodBench.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -476,6 +494,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Barrel.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -499,6 +518,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/Barrel_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -522,6 +542,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -545,6 +566,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/CrateLongB_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -568,6 +590,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/DoorStone.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -591,6 +614,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseBricksThin_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -614,6 +638,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseExtensionRoof_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -637,6 +662,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseStuccoNormal.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -660,6 +686,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseStuccoNormal_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -683,6 +710,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StaircaseLarge.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -706,6 +734,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StoneBench.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -729,6 +758,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StoneFence_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -752,6 +782,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StreetLightTall_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -775,6 +806,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/TreeLog.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -798,6 +830,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/StreetLightSmall.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -821,6 +854,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseTower_1.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -844,6 +878,7 @@ actor_list =
 			CRenderable = 
 			{
 				path = "data/models/adventure_village/HouseTower.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
@@ -915,16 +950,31 @@ actor_list =
 				scale_z = 25,
 			},
 		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
 	}, 
 	[0] = 
 	{
 		actor_name = "Grid",
 		components = 
 		{
-			CRenderable = 
-			{
-				path = "Unknown",
-			},
 			CTransform = 
 			{
 				pos_x = 0,
