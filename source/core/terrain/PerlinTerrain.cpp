@@ -31,25 +31,25 @@ namespace Utopian
 	void PerlinTerrain::AddBlock(BlockKey blockKey)
 	{
 		glm::vec3 blockPosition;
-		blockPosition.x = blockKey.x * (mVoxelsInBlock - 1) * mVoxelSize;
-		blockPosition.y = blockKey.y * mVoxelsInBlock * mVoxelSize;
-		blockPosition.z = blockKey.z * (mVoxelsInBlock - 1) * mVoxelSize;
+		blockPosition.x = blockKey.x * (mCellsInBlock - 1) * mCellSize;
+		blockPosition.y = blockKey.y * mCellsInBlock * mCellSize;
+		blockPosition.z = blockKey.z * (mCellsInBlock - 1) * mCellSize;
 		glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
+		//color = glm::vec3(1.0f, 1.0f, 1.0f);
 		SharedPtr<Block2> block = std::make_shared<Block2>(blockPosition, color);
 
 		Vk::StaticModel* model = new Vk::StaticModel();
 		Vk::Mesh* mesh = new Vk::Mesh(mRenderer->GetDevice());
 
 		float ANY = 0;
-		for (int x = 0; x < mVoxelsInBlock; x++)
+		for (int x = 0; x < mCellsInBlock; x++)
 		{
-			for (int z = 0; z < mVoxelsInBlock; z++)
+			for (int z = 0; z < mCellsInBlock; z++)
 			{
-				glm::vec3 worldPos = glm::vec3(blockPosition.x - x * mVoxelSize, 0.0f, blockPosition.z - z * mVoxelSize);
+				glm::vec3 worldPos = glm::vec3(blockPosition.x - x * mCellSize, 0.0f, blockPosition.z - z * mCellSize);
 				worldPos.y = GetHeight(worldPos.x, worldPos.z);
-				glm::vec3 localPos = glm::vec3(x * mVoxelSize, 0.0f, z * mVoxelSize);
-				glm::vec2 texcord = glm::vec2(localPos.x / (mVoxelSize * (mVoxelsInBlock - 1)), localPos.z / (mVoxelSize * (mVoxelsInBlock - 1)));
+				glm::vec3 localPos = glm::vec3(x * mCellSize, 0.0f, z * mCellSize);
+				glm::vec2 texcord = glm::vec2(localPos.x / (mCellSize * (mCellsInBlock - 1)), localPos.z / (mCellSize * (mCellsInBlock - 1)));
 
 				// Calculate normal, based on https://www.gamedev.net/forums/topic/692347-finite-difference-normal-calculation-for-sphere/
 				//glm::vec3 pos = glm::vec3(posX, height, posZ);
@@ -70,12 +70,12 @@ namespace Utopian
 			}
 		}
 
-		for (int x = 0; x < mVoxelsInBlock - 1; x++)
+		for (int x = 0; x < mCellsInBlock - 1; x++)
 		{
-			for (int z = 0; z < mVoxelsInBlock - 1; z++)
+			for (int z = 0; z < mCellsInBlock - 1; z++)
 			{
-				mesh->AddTriangle(x * mVoxelsInBlock + z, x * mVoxelsInBlock + z + 1, (x + 1) * mVoxelsInBlock + z);
-				mesh->AddTriangle((x + 1) * mVoxelsInBlock + z, x * mVoxelsInBlock + z + 1, (x + 1) * mVoxelsInBlock + (z + 1));
+				mesh->AddTriangle(x * mCellsInBlock + z, x * mCellsInBlock + z + 1, (x + 1) * mCellsInBlock + z);
+				mesh->AddTriangle((x + 1) * mCellsInBlock + z, x * mCellsInBlock + z + 1, (x + 1) * mCellsInBlock + (z + 1));
 			}
 		}
 
@@ -90,6 +90,7 @@ namespace Utopian
 		block->renderable->SetModel(model);
 		block->renderable->Initialize();
 		block->renderable->SetPosition(blockPosition);
+		block->renderable->SetColor(glm::vec4(color, 1.0f));
 		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 
 		mBlockList[blockKey] = block;

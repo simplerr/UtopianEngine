@@ -48,12 +48,22 @@ namespace Utopian
 		virtual float GetHeight(float x, float z) = 0;
 
 		std::map<BlockKey, SharedPtr<Block2>>& GetBlocks();
+		void ClearBlocks();
+
+		void SetNumCells(uint32_t numCells);
+		void SetCellSize(uint32_t cellSize);
+		void SetViewDistance(uint32_t viewDistance);
+
+		uint32_t GetNumCells();
+		uint32_t GetCellSize();
+		uint32_t GetViewDistance();
+		uint32_t GetNumBlocks();
 
 	protected:
 		std::map<BlockKey, SharedPtr<Block2>> mBlockList;
 		Vk::Renderer* mRenderer;
-		const int32_t mVoxelsInBlock = 32;
-		const int32_t mVoxelSize = 40;
-		const int32_t mViewDistance = 2;
+		int32_t mCellsInBlock = 32;
+		int32_t mCellSize = 40;
+		int32_t mViewDistance = 4;
 	};
 }

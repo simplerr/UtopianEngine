@@ -28,9 +28,9 @@ namespace Utopian
 		// 3) Add them
 
 		glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
-		int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock) + 1;
-		int32_t blockY = cameraPos.y / (float)(mVoxelSize * mVoxelsInBlock) + 1;
-		int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
+		int32_t blockX = cameraPos.x / (float)(mCellSize * mCellsInBlock) + 1;
+		int32_t blockY = cameraPos.y / (float)(mCellSize * mCellsInBlock) + 1;
+		int32_t blockZ = cameraPos.z / (float)(mCellSize * mCellsInBlock) + 1;
 
 		// Make all blocks invisible
 		for (auto blockIter : mBlockList)
@@ -66,5 +66,44 @@ namespace Utopian
 	std::map<BlockKey, SharedPtr<Block2>>& BaseTerrain::GetBlocks()
 	{
 		return mBlockList;
+	}
+	
+	void BaseTerrain::ClearBlocks()
+	{
+	}
+
+	void BaseTerrain::SetNumCells(uint32_t numCells)
+	{
+		mCellsInBlock = numCells;
+	}
+
+	void BaseTerrain::SetCellSize(uint32_t cellSize)
+	{
+		mCellSize = cellSize;
+	}
+
+	void BaseTerrain::SetViewDistance(uint32_t viewDistance)
+	{
+		mViewDistance = viewDistance;
+	}
+
+	uint32_t BaseTerrain::GetNumCells()
+	{
+		return mCellsInBlock;
+	}
+
+	uint32_t BaseTerrain::GetCellSize()
+	{
+		return mCellSize;
+	}
+
+	uint32_t BaseTerrain::GetViewDistance()
+	{
+		return mViewDistance;
+	}
+
+	uint32_t BaseTerrain::GetNumBlocks()
+	{
+		return mBlockList.size();
 	}
 }

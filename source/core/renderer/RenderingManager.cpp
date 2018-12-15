@@ -55,6 +55,7 @@ namespace Utopian
 		mSceneInfo.directionalLight = nullptr;
 
 		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(renderer);
+		mSceneInfo.terrain->SetViewDistance(6);
 
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
@@ -145,6 +146,7 @@ namespace Utopian
 		Vk::UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 		Vk::UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
 		Vk::UIOverlay::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
+		Vk::UIOverlay::TextV("Blocks %u", mSceneInfo.terrain->GetNumBlocks());
 
 		Vk::UIOverlay::EndWindow();
 	}
