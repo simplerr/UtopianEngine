@@ -1,4 +1,25 @@
-### TODO
+# Todo
+
+### Technical debt
+* Unify namespace usage
+* Unify Vulkan handle classes
+* Port remaining legacy effects
+* Refactor Renderer/VulkanBase classses
+* Correct folder structure
+* Investigate performance issues
+* Vulkan synchronization
+
+### New features
+* Instancing
+* Vegetation rendering
+* Finish shadow mapping
+* Glow effect
+* Separate effect for terrain (multitexturing)
+* Particle effects
+* Marching cubes terrain
+* Integrate physics
+
+# Old todo
 
 18/2
 * Do not use the same DescriptorSet for every Pipeline
@@ -36,3 +57,5 @@
 
 29/12
 * Create debug normal effect
+
+
