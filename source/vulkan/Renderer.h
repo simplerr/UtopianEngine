@@ -96,6 +96,7 @@ namespace Utopian::Vk
 
 		void BeginUiUpdate();
 		void EndUiUpdate();
+		void ToggleUi();
 
 		// 
 		//	High level code

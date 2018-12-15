@@ -89,6 +89,12 @@ namespace Utopian
 			mSelectedActor->SetAlive(false);
 			UnselectActor();
 		}
+
+		// Hide/show UI
+		if (gInput().KeyPressed('H'))
+		{
+			mRenderer->ToggleUi();
+		}
 	}
 
 	void Editor::UpdateUi()

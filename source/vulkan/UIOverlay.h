@@ -38,6 +38,7 @@ namespace Utopian::Vk
 		static void TextV(const char* format, ...);
 		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth);
 		static void EndWindow();
+		void ToggleVisible();
 
 	private:
 		Utopian::Vk::Renderer* mRenderer;
@@ -52,7 +53,6 @@ namespace Utopian::Vk
 		int32_t mVertexCount = 0;
 		int32_t mIndexCount = 0;
 		
-		bool mVisible = true;
 		float mScale = 1.0f;
 	};
 }

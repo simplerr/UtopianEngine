@@ -211,4 +211,9 @@ namespace Utopian::Vk
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
+	
+	void UIOverlay::ToggleVisible()
+	{
+		mCommandBuffer->ToggleActive();
+	}
 }

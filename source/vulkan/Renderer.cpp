@@ -303,6 +303,11 @@ namespace Utopian::Vk
 		mUiOverlay->Update();
 	}
 
+	void Renderer::ToggleUi()
+	{
+		mUiOverlay->ToggleVisible();
+	}
+
 	void Renderer::UpdateOverlay()
 	{
 	}
