@@ -11,6 +11,7 @@ namespace Utopian::Vk
 	{
 		mRenderPass = renderPass;
 		mCreated = false;
+		mOverridenVertexDescription = nullptr;
 		InitDefaultValues(mRenderPass);
 	}
 
@@ -49,7 +50,12 @@ namespace Utopian::Vk
 		pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		pipelineCreateInfo.layout = pipelineInterface->GetPipelineLayout();
 		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
-		pipelineCreateInfo.pVertexInputState = &shader->GetVertexDescription()->GetInputState();
+
+		if (mOverridenVertexDescription != nullptr)
+			pipelineCreateInfo.pVertexInputState = &mOverridenVertexDescription->GetInputState();
+		else
+			pipelineCreateInfo.pVertexInputState = &shader->GetVertexDescription()->GetInputState();
+
 		pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
 		pipelineCreateInfo.pRasterizationState = &rasterizationState;
 		pipelineCreateInfo.pColorBlendState = &colorBlendState;
@@ -69,6 +75,11 @@ namespace Utopian::Vk
 	bool Pipeline::IsCreated() const
 	{
 		return mCreated;
+	}
+
+	void Pipeline::OverrideVertexInput(SharedPtr<VertexDescription> vertexDescription)
+	{
+		mOverridenVertexDescription = vertexDescription;
 	}
 
 	void Pipeline::InitDefaultValues(RenderPass* renderPass)

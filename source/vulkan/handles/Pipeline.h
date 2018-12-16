@@ -14,6 +14,7 @@ namespace Utopian::Vk
 
 		void Create(Shader* shader, PipelineInterface* pipelineInterface);
 		bool IsCreated() const;
+		void OverrideVertexInput(SharedPtr<VertexDescription> vertexDescription);
 
 		VkPipelineRasterizationStateCreateInfo rasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
@@ -23,6 +24,7 @@ namespace Utopian::Vk
 		void InitDefaultValues(RenderPass* renderPass);
 
 		RenderPass* mRenderPass;	
+		SharedPtr<VertexDescription> mOverridenVertexDescription;
 		bool mCreated;
 	};
 }

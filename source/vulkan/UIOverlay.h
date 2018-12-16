@@ -45,7 +45,8 @@ namespace Utopian::Vk
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 		Utopian::Vk::Buffer mVertexBuffer;
 		Utopian::Vk::Buffer mIndexBuffer;
-		Utopian::Vk::ImguiEffect mImguiEffect;
+		SharedPtr<Vk::ImguiEffect> mImguiEffect;
+		Utopian::Vk::Texture* mTexture;
 
 		ImDrawVert* mMappedVertices;
 		ImDrawIdx* mMappedIndices;

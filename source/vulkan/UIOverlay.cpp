@@ -18,6 +18,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/EffectManager.h"
 #include "Input.h"
 
 namespace Utopian::Vk 
@@ -61,8 +62,10 @@ namespace Utopian::Vk
 		io.Fonts->GetTexDataAsRGBA32(&fontData, &texWidth, &texHeight, &pixelSize);
 
 		// Note: Must be performed before Init()
-		mImguiEffect.mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
-		mImguiEffect.Init(mRenderer);
+		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mRenderer->GetDevice(), mRenderer->GetRenderPass());
+
+		mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
+		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
@@ -72,16 +75,15 @@ namespace Utopian::Vk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
-		//mCommandBuffer->Begin();
 		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
-		//mCommandBuffer->CmdBeginRenderPass(mRenderer->GetRenderPass());
 
 		mCommandBuffer->CmdSetViewPort(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 		mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 
-		mCommandBuffer->CmdBindPipeline(mImguiEffect.GetPipeline(0));
-		VkDescriptorSet descriptorSets[1] = { mImguiEffect.mDescriptorSet0->descriptorSet };
-		vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mImguiEffect.GetPipelineLayout(), 0, 1, descriptorSets, 0, NULL);
+		mCommandBuffer->CmdBindPipeline(mImguiEffect->GetPipeline());
+		//VkDescriptorSet descriptorSets[1] = { mImguiEffect.mDescriptorSet0->descriptorSet };
+		//vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mImguiEffect.GetPipelineLayout(), 0, 1, descriptorSets, 0, NULL);
+		mImguiEffect->BindDescriptorSets(mCommandBuffer);
 
 		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mVertexBuffer);
 		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer.GetVkBuffer(), 0, VK_INDEX_TYPE_UINT16);
@@ -90,7 +92,7 @@ namespace Utopian::Vk
 		ImguiEffect::PushConstantBlock pushConstBlock;
 		pushConstBlock.scale = glm::vec2(2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y);
 		pushConstBlock.translate = glm::vec2(-1.0f);
-		mCommandBuffer->CmdPushConstants(&mImguiEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstBlock), &pushConstBlock);
+		mCommandBuffer->CmdPushConstants(mImguiEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstBlock), &pushConstBlock);
 
 		// Render commands
 		ImDrawData* imDrawData = ImGui::GetDrawData();
