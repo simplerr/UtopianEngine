@@ -72,7 +72,9 @@ namespace Utopian::Vk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
-		mCommandBuffer->Begin();
+		//mCommandBuffer->Begin();
+		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+		//mCommandBuffer->CmdBeginRenderPass(mRenderer->GetRenderPass());
 
 		mCommandBuffer->CmdSetViewPort(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 		mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
