@@ -209,4 +209,25 @@ UNIFORM_BLOCK_END()
 	private:
 		Vk::StaticModel* mCubeModel;
 	};
+
+	class InstancingJob : public BaseJob
+	{
+	public:
+
+UNIFORM_BLOCK_BEGIN(ViewProjection)
+	UNIFORM_PARAM(glm::mat4, projection)
+	UNIFORM_PARAM(glm::mat4, view)
+UNIFORM_BLOCK_END()
+
+		InstancingJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~InstancingJob();
+
+		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+
+		SharedPtr<Vk::RenderTarget> renderTarget;
+		SharedPtr<Vk::Effect> effect;
+		ViewProjection viewProjectionBlock;
+	private:
+	};
 }

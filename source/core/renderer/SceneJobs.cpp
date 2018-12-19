@@ -544,4 +544,71 @@ namespace Utopian
 
 		renderTarget->End(renderer->GetQueue());
 	}
+
+	InstancingJob::InstancingJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
+	{
+		//effect->BindCombinedImage("textureSampler", todo)
+	}
+
+	InstancingJob::~InstancingJob()
+	{
+	}
+
+	void InstancingJob::Init(const std::vector<BaseJob*>& jobs)
+	{
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[RenderingManager::DEFERRED_INDEX]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
+
+		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
+		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+		
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+															renderTarget->GetRenderPass(),
+			                                                "data/shaders/instancing/instancing.vert",
+															"data/shaders/instancing/instancing.frag");
+
+		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
+		vertexDescription->AddBinding(BINDING_0, sizeof(Vk::Vertex), VK_VERTEX_INPUT_RATE_VERTEX);
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 0 : Position
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 1 : Color
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 2 : Normal
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());	// Location 3 : UV
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());	// Location 4 : Tangent
+
+		vertexDescription->AddBinding(BINDING_1, sizeof(glm::vec4), VK_VERTEX_INPUT_RATE_INSTANCE);
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 5 : InstancePos
+
+		effect->GetPipeline()->OverrideVertexInput(vertexDescription);
+
+		effect->CreatePipeline();
+
+		viewProjectionBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+	}
+
+	void InstancingJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.UpdateMemory();
+
+		/* Render instances */
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		Vk::Mesh* planeMesh = jobInput.sceneInfo.terrain->GetPlaneModel()->mMeshes[0];
+
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindVertexBuffer(0, 1, planeMesh->GetVertxBuffer());
+		commandBuffer->CmdBindVertexBuffer(1, 1, jobInput.sceneInfo.terrain->GetInstanceBuffer());
+		commandBuffer->CmdBindIndexBuffer(planeMesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->CmdDrawIndexed(planeMesh->GetNumIndices(), jobInput.sceneInfo.terrain->GetNumInstances(), 0, 0, 0);
+
+		renderTarget->End(renderer->GetQueue());
+	}
 }

@@ -2,16 +2,21 @@
 #include "vulkan/Renderer.h"
 #include "vulkan/Mesh.h"
 #include "vulkan/StaticModel.h"
+#include "vulkan/ModelLoader.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/TextureLoader.h"
+#include <random>
 
 namespace Utopian
 {
 	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer)
 		: BaseTerrain(renderer)
 	{
+		//mPlaneModel = Vk::gModelLoader().LoadQuad();
+		mPlaneModel = Vk::gModelLoader().LoadDebugBox();
 
+		GenerateGrassInstances();
 	}
 
 	float PerlinTerrain::GetHeight(float x, float z)
@@ -100,4 +105,42 @@ namespace Utopian
 	{
 
 	}
+
+	void PerlinTerrain::GenerateGrassInstances()
+	{
+		std::default_random_engine rndGenerator((unsigned)time(nullptr));
+		std::uniform_real_distribution<float> uniformDist(0.0, 10 * mCellsInBlock * mCellSize);
+
+		const uint32_t numGrassInstances = 500;
+		for (uint32_t i = 0; i < numGrassInstances; i++)
+		{
+			GrassInstance grassInstance;
+			grassInstance.position = glm::vec4(uniformDist(rndGenerator), 0.0f, uniformDist(rndGenerator), 1.0f);
+			grassInstance.position.y = GetHeight(grassInstance.position.x, grassInstance.position.z);
+			mGrassInstances.push_back(grassInstance);
+		}
+
+		// Todo: use device local buffer for better performance
+		mInstanceBuffer = std::make_shared<Vk::Buffer>(mRenderer->GetDevice(),
+													   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+												       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+												       mGrassInstances.size() * sizeof(GrassInstance),
+												       mGrassInstances.data());
+	}
+
+	Vk::Buffer* PerlinTerrain::GetInstanceBuffer()
+	{
+		return mInstanceBuffer.get();
+	}
+
+	Vk::StaticModel* PerlinTerrain::GetPlaneModel()
+	{
+		return mPlaneModel;
+	}
+
+	uint32_t PerlinTerrain::GetNumInstances()
+	{
+		return mGrassInstances.size();
+	}
+
 }

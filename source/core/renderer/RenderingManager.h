@@ -36,6 +36,7 @@ namespace Utopian
 			BLUR_INDEX,
 			SHADOW_INDEX,
 			DEFERRED_INDEX,
+			GRASS_INDEX,
 			SKYBOX_INDEX,
 			DEBUG_INDEX,
 		};
