@@ -13,9 +13,6 @@ namespace Utopian
 	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer)
 		: BaseTerrain(renderer)
 	{
-		//mPlaneModel = Vk::gModelLoader().LoadQuad();
-		mPlaneModel = Vk::gModelLoader().LoadDebugBox();
-
 		GenerateGrassInstances();
 	}
 
@@ -131,11 +128,6 @@ namespace Utopian
 	Vk::Buffer* PerlinTerrain::GetInstanceBuffer()
 	{
 		return mInstanceBuffer.get();
-	}
-
-	Vk::StaticModel* PerlinTerrain::GetPlaneModel()
-	{
-		return mPlaneModel;
 	}
 
 	uint32_t PerlinTerrain::GetNumInstances()

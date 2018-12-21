@@ -22,7 +22,7 @@ namespace Utopian
 	{
 		if (mActor != nullptr)
 		{
-			Vk::UIOverlay::BeginWindow("Inspector", glm::vec2(1050, 10), 300.0f);
+			Vk::UIOverlay::BeginWindow("Inspector", glm::vec2(1350, 10), 300.0f);
 
 			// General actor information
 			std::string name = mActor->GetName();

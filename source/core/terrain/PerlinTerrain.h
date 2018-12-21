@@ -22,7 +22,6 @@ namespace Utopian
 
 		void GenerateGrassInstances();
 		Vk::Buffer* GetInstanceBuffer();
-		Vk::StaticModel* GetPlaneModel();
 		uint32_t GetNumInstances();
 
 		//void Update();
@@ -33,6 +32,5 @@ namespace Utopian
 		std::vector<GrassInstance> mGrassInstances;
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
 		PerlinNoise<float> mPerlinNoise;
-		Vk::StaticModel* mPlaneModel;
 	};
 }

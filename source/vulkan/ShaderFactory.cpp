@@ -539,8 +539,9 @@ namespace Utopian::Vk
 				else
 					assert(0);
 			}
-			else
-				assert(0);
+			// Note: Todo: For some reason when using gl_VertexIndex this assert gets triggered.
+			//else
+			//	assert(0);
 		}
 
 		reflection->vertexDescription->AddBinding(BINDING_0, totalSize, VK_VERTEX_INPUT_RATE_VERTEX);

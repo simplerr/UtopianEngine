@@ -217,6 +217,7 @@ UNIFORM_BLOCK_END()
 UNIFORM_BLOCK_BEGIN(ViewProjection)
 	UNIFORM_PARAM(glm::mat4, projection)
 	UNIFORM_PARAM(glm::mat4, view)
+	UNIFORM_PARAM(glm::vec4, eyePos)
 UNIFORM_BLOCK_END()
 
 		InstancingJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);

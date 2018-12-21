@@ -45,7 +45,7 @@ int main(const int argc, const char *argv[])
 	/*
 	Create the window
 	*/
-	Utopian::Window window = Utopian::Window(1500, 950);
+	Utopian::Window window = Utopian::Window(2000, 1260);
 
 #if defined(_WIN32)			// Win32
 	window.SetupWindow(hInstance, WndProc);
