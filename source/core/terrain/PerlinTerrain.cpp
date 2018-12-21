@@ -93,6 +93,7 @@ namespace Utopian
 		block->renderable->Initialize();
 		block->renderable->SetPosition(blockPosition);
 		block->renderable->SetColor(glm::vec4(color, 1.0f));
+		block->renderable->SetTileFactor(glm::vec2(10.0f));
 		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 
 		mBlockList[blockKey] = block;
@@ -106,9 +107,9 @@ namespace Utopian
 	void PerlinTerrain::GenerateGrassInstances()
 	{
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
-		std::uniform_real_distribution<float> uniformDist(0.0, 1 * mCellsInBlock * mCellSize);
+		std::uniform_real_distribution<float> uniformDist(-2 * mCellsInBlock * mCellSize, 2 * mCellsInBlock * mCellSize);
 
-		const uint32_t numGrassInstances = 500;
+		const uint32_t numGrassInstances = 32000;
 		for (uint32_t i = 0; i < numGrassInstances; i++)
 		{
 			GrassInstance grassInstance;

@@ -58,7 +58,7 @@ void main()
 		float bias = 0.00035;//0.005;
 		shadow = (projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f;
 	}
-	//shadow = 1;
+	shadow = 1;
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 

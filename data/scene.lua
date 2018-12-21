@@ -24,9 +24,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 1376.6258544922,
-				pos_y = 140.31463623047,
-				pos_z = -44.312461853027,
+				pos_x = 501.84747314453,
+				pos_y = 48.346824645996,
+				pos_z = 237.39147949219,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -49,11 +49,11 @@ actor_list =
 				color_b = 0.7593954205513,
 				color_g = 0.90262448787689,
 				color_r = 0.91666668653488,
-				dir_x = -1,
+				dir_x = 0.32500001788139,
 				dir_y = 1,
-				dir_z = 1,
-				intensity_x = 0,
-				intensity_y = 0.78300005197525,
+				dir_z = -1,
+				intensity_x = 0.2410000115633,
+				intensity_y = 0.66300004720688,
 				intensity_z = 0,
 				range = 100000,
 				spot = 4,
@@ -66,15 +66,264 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 1459.3508300781,
-				pos_y = 1130.4156494141,
-				pos_z = 319.82543945313,
+				pos_x = 12.467437744141,
+				pos_y = 121.65689086914,
+				pos_z = 505.66461181641,
 				rotation_x = 182.19999694824,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/Barrel.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 33.15315246582,
+				pos_z = 0,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/HouseAtticSmall.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -546.20349121094,
+				pos_y = -57.538330078125,
+				pos_z = 344.29235839844,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/HouseAtticSmall.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -404.06689453125,
+				pos_y = 21.980243682861,
+				pos_z = -133.37219238281,
+				rotation_x = 180,
+				rotation_y = 203.90000915527,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/HouseBricksLarge.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -652.67309570313,
+				pos_y = 134.04750061035,
+				pos_z = -570.93786621094,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/HouseTower_1.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -837.404296875,
+				pos_y = 94.575836181641,
+				pos_z = 822.90777587891,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/StoneFence.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -46.980590820313,
+				pos_y = 129.02981567383,
+				pos_z = -258.2021484375,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/StonePillar.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -162.58908081055,
+				pos_y = -112.17932128906,
+				pos_z = 400.92684936523,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/StreetLightTall.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -112.29406738281,
+				pos_y = -62.125381469727,
+				pos_z = 182.65312194824,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
 			},
 		},
 	}, 

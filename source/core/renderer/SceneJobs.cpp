@@ -603,7 +603,7 @@ namespace Utopian
 		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		sampler->Create();
 
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/grass/grass_2.png");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
 		VkDescriptorImageInfo imageInfo = {};
 		imageInfo.sampler = sampler->GetVkHandle();
 		imageInfo.imageView = texture->imageView;
