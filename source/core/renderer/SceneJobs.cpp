@@ -13,6 +13,8 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ScreenGui.h"
+#include "vulkan/TextureLoader.h"
+#include "vulkan/handles/Texture.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/CubeMapTexture.h"
@@ -581,10 +583,32 @@ namespace Utopian
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		effect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 
+		// Enable blending using alpha channel
+		effect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
+		effect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		effect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		effect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		effect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		effect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		effect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		effect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
 		effect->CreatePipeline();
 
 		viewProjectionBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+
+		// Need clamp to edge when using transparent textures to not get artifacts at the top
+		sampler = std::make_shared<Vk::Sampler>(mRenderer->GetDevice(), false);
+		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		sampler->Create();
+
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/grass/grass_2.png");
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.sampler = sampler->GetVkHandle();
+		imageInfo.imageView = texture->imageView;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		effect->BindCombinedImage("textureSampler", &imageInfo);
 	}
 
 	void InstancingJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)

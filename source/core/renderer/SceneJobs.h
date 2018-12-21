@@ -228,6 +228,7 @@ UNIFORM_BLOCK_END()
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 		SharedPtr<Vk::Effect> effect;
+		SharedPtr<Vk::Sampler> sampler;
 		ViewProjection viewProjectionBlock;
 	private:
 	};

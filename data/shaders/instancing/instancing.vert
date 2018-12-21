@@ -38,6 +38,7 @@ layout (push_constant) uniform PushConstants {
 } pushConstants;
 
 layout (location = 0) out vec3 OutColor;
+layout (location = 1) out vec2 OutTex;
 
 out gl_PerVertex 
 {
@@ -48,10 +49,10 @@ out gl_PerVertex
 // xy is UV and zw is position
 const vec4 vertexUVPos[4] =
 {
-    { 0.0, 1.0, -1.0, -1.0 },
-    { 0.0, 0.0, -1.0, +1.0 },
-    { 1.0, 1.0, +1.0, -1.0 },
-    { 1.0, 0.0, +1.0, +1.0 },
+    { 0.0, 0.0, -1.0, -1.0 },
+    { 0.0, 1.0, -1.0, +1.0 },
+    { 1.0, 0.0, +1.0, -1.0 },
+    { 1.0, 1.0, +1.0, +1.0 },
 };
 
 vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
@@ -64,7 +65,7 @@ vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
     //up = cross(toEye, right);
     instancePos += (right * size * vertexPos.x) + (up * size * vertexPos.y);
 
-    return per_frame_vs.projection * per_frame_vs.view * vec4(instancePos - size, 1.0f);
+    return per_frame_vs.projection * per_frame_vs.view * vec4(instancePos - size / 1.0f, 1.0f);
 }
 
 void main() 
@@ -76,4 +77,5 @@ void main()
 	instancePos.xz *= -1;
 
 	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
+	OutTex = vertexUVPos[gl_VertexIndex].xy;
 }

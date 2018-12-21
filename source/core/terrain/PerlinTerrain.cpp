@@ -106,7 +106,7 @@ namespace Utopian
 	void PerlinTerrain::GenerateGrassInstances()
 	{
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
-		std::uniform_real_distribution<float> uniformDist(0.0, 10 * mCellsInBlock * mCellSize);
+		std::uniform_real_distribution<float> uniformDist(0.0, 1 * mCellsInBlock * mCellSize);
 
 		const uint32_t numGrassInstances = 500;
 		for (uint32_t i = 0; i < numGrassInstances; i++)
