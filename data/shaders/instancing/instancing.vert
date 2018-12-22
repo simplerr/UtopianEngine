@@ -15,7 +15,6 @@
      1  |   1
      2  |   1
 	 ...
-
 */
 
 // Instance data
@@ -29,15 +28,7 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 	vec4 eyePos;
 } per_frame_vs;
 
-layout (push_constant) uniform PushConstants {
-	 mat4 world;
-	 mat4 worldInv;
-	 vec4 color;
-	 vec2 textureTiling;
-	 vec2 pad;
-} pushConstants;
-
-layout (location = 0) out vec3 OutColor;
+layout (location = 0) out vec4 OutColor;
 layout (location = 1) out vec2 OutTex;
 
 out gl_PerVertex 
@@ -70,11 +61,18 @@ vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
 
 void main() 
 {
-	OutColor = vec3(1, 1, 1);
+	OutColor = vec4(1, 1, 1, 1);
 
 	// Todo: correct this
 	vec3 instancePos = InInstancePosW.xyz;
 	instancePos.xz *= -1;
+
+	float eyeDistance = length(per_frame_vs.eyePos.xyz + instancePos);
+	//float grassLerp = clamp((-eyeDistance + 2000.0f) / 200.0f, 0.0, 1.0); 
+	// OutColor.a = grassLerp;//0.0f;
+
+	if (eyeDistance > 2000.0f)
+		OutColor.a = 0.0f;
 
 	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
 	OutTex = vertexUVPos[gl_VertexIndex].xy;
