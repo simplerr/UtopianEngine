@@ -55,15 +55,21 @@ namespace Utopian
 
 		mSceneInfo.directionalLight = nullptr;
 
-		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(renderer);
-		mSceneInfo.terrain->SetViewDistance(6);
-
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
 		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 	}
 
 	RenderingManager::~RenderingManager()
 	{
+	}
+
+	void RenderingManager::PostWorldInit()
+	{
+		InitShaderResources();
+		InitShader();
+
+		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mRenderer);
+		mSceneInfo.terrain->SetViewDistance(6);
 	}
 
 	void RenderingManager::InitShaderResources()

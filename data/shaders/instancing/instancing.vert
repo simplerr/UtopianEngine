@@ -65,7 +65,7 @@ vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
     //up = cross(toEye, right);
     instancePos += (right * size * vertexPos.x) + (up * size * vertexPos.y);
 
-    return per_frame_vs.projection * per_frame_vs.view * vec4(instancePos - size / 2.0f, 1.0f);
+    return per_frame_vs.projection * per_frame_vs.view * vec4(instancePos - size / 0.95f, 1.0f);
 }
 
 void main() 

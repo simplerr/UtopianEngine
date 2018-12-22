@@ -6,6 +6,8 @@
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/TextureLoader.h"
+#include "Camera.h"
+#include "Input.h"
 #include <random>
 
 namespace Utopian
@@ -13,7 +15,7 @@ namespace Utopian
 	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer)
 		: BaseTerrain(renderer)
 	{
-		GenerateGrassInstances();
+		GenerateGrassInstances(renderer->GetCamera()->GetPosition());
 	}
 
 	float PerlinTerrain::GetHeight(float x, float z)
@@ -25,9 +27,21 @@ namespace Utopian
 		// height += glm::sin(z / frequency) * amplitude;
 
 		float height = mPerlinNoise.noise(x / frequency, 0, z / frequency) * amplitude;
-		height += mPerlinNoise.noise(x / frequency / 10.0f, 0, z / frequency / 10.0f) * amplitude * 3;
+		height += mPerlinNoise.noise(x / frequency / 10.0f, 0, z / frequency / 10.0f) * amplitude * 20;
+		height += mPerlinNoise.noise(x / frequency * 5.0f, 0, z / frequency * 5.0f) * amplitude / 10;
 
 		return height;
+	}
+
+	void PerlinTerrain::Update()
+	{
+		BaseTerrain::Update();
+
+		float distanceDelta = glm::length(mRenderer->GetCamera()->GetPosition() - mLastGrassGenPosition);
+		if (distanceDelta > 500.0f || gInput().KeyPressed('G'))
+		{
+			GenerateGrassInstances(mRenderer->GetCamera()->GetPosition());
+		}
 	}
 
 	void PerlinTerrain::AddBlock(BlockKey blockKey)
@@ -104,26 +118,39 @@ namespace Utopian
 
 	}
 
-	void PerlinTerrain::GenerateGrassInstances()
+	void PerlinTerrain::GenerateGrassInstances(glm::vec3 origin)
 	{
+		mLastGrassGenPosition = origin;
+
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
 		std::uniform_real_distribution<float> uniformDist(-2 * mCellsInBlock * mCellSize, 2 * mCellsInBlock * mCellSize);
+
+		if (mInstanceBuffer != nullptr)
+			mGrassInstances.clear();
 
 		const uint32_t numGrassInstances = 32000;
 		for (uint32_t i = 0; i < numGrassInstances; i++)
 		{
 			GrassInstance grassInstance;
-			grassInstance.position = glm::vec4(uniformDist(rndGenerator), 0.0f, uniformDist(rndGenerator), 1.0f);
+			grassInstance.position = glm::vec4(origin.x + uniformDist(rndGenerator), 0.0f, origin.z + uniformDist(rndGenerator), 1.0f);
 			grassInstance.position.y = GetHeight(grassInstance.position.x, grassInstance.position.z);
 			mGrassInstances.push_back(grassInstance);
 		}
 
-		// Todo: use device local buffer for better performance
-		mInstanceBuffer = std::make_shared<Vk::Buffer>(mRenderer->GetDevice(),
-													   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-												       VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-												       mGrassInstances.size() * sizeof(GrassInstance),
-												       mGrassInstances.data());
+		if (mInstanceBuffer == nullptr)
+		{
+			// Todo: use device local buffer for better performance
+			mInstanceBuffer = std::make_shared<Vk::Buffer>(mRenderer->GetDevice(),
+														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+														   mGrassInstances.size() * sizeof(GrassInstance),
+														   mGrassInstances.data());
+		}
+		else
+		{
+			mInstanceBuffer->UpdateMemory(mGrassInstances.data(),
+										  mGrassInstances.size() * sizeof(GrassInstance));
+		}
 	}
 
 	Vk::Buffer* PerlinTerrain::GetInstanceBuffer()

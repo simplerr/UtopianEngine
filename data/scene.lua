@@ -24,9 +24,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 501.84747314453,
-				pos_y = 48.346824645996,
-				pos_z = 237.39147949219,
+				pos_x = 2840.853515625,
+				pos_y = -1259.7844238281,
+				pos_z = 4294.8369140625,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -110,7 +110,7 @@ actor_list =
 			CTransform = 
 			{
 				pos_x = 0,
-				pos_y = 33.15315246582,
+				pos_y = 19.999931335449,
 				pos_z = 0,
 				rotation_x = 180,
 				rotation_y = 0,
@@ -133,9 +133,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -546.20349121094,
+				pos_x = -897.11999511719,
 				pos_y = -57.538330078125,
-				pos_z = 344.29235839844,
+				pos_z = 239.91351318359,
 				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -157,9 +157,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -404.06689453125,
-				pos_y = 21.980243682861,
-				pos_z = -133.37219238281,
+				pos_x = 401.60632324219,
+				pos_y = 116.87213897705,
+				pos_z = -223.12387084961,
 				rotation_x = 180,
 				rotation_y = 203.90000915527,
 				rotation_z = 0,
@@ -182,7 +182,7 @@ actor_list =
 			CTransform = 
 			{
 				pos_x = -652.67309570313,
-				pos_y = 134.04750061035,
+				pos_y = 234.8447265625,
 				pos_z = -570.93786621094,
 				rotation_x = 180,
 				rotation_y = 0,
@@ -206,7 +206,7 @@ actor_list =
 			CTransform = 
 			{
 				pos_x = -837.404296875,
-				pos_y = 94.575836181641,
+				pos_y = -269.12643432617,
 				pos_z = 822.90777587891,
 				rotation_x = 180,
 				rotation_y = 0,
@@ -254,7 +254,7 @@ actor_list =
 			CTransform = 
 			{
 				pos_x = -162.58908081055,
-				pos_y = -112.17932128906,
+				pos_y = -311.38623046875,
 				pos_z = 400.92684936523,
 				rotation_x = 180,
 				rotation_y = 0,
@@ -278,7 +278,7 @@ actor_list =
 			CTransform = 
 			{
 				pos_x = -112.29406738281,
-				pos_y = -62.125381469727,
+				pos_y = -139.40077209473,
 				pos_z = 182.65312194824,
 				rotation_x = 180,
 				rotation_y = 0,
@@ -286,6 +286,44 @@ actor_list =
 				scale_x = 50,
 				scale_y = 50,
 				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
 			},
 		},
 	},

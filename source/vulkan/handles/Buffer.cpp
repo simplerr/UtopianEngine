@@ -18,7 +18,7 @@ namespace Utopian::Vk
 		Destroy();
 	}
 
-	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void * data)
+	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
 	{
 		mDevice = device;
 
@@ -62,7 +62,15 @@ namespace Utopian::Vk
 			vkDestroyBuffer(mDevice->GetVkDevice(), mBuffer, nullptr);
 
 		if (mMemory != VK_NULL_HANDLE)
-		vkFreeMemory(mDevice->GetVkDevice(), mMemory, nullptr);
+			vkFreeMemory(mDevice->GetVkDevice(), mMemory, nullptr);
+	}
+
+	void Buffer::UpdateMemory(void* data, VkDeviceSize size)
+	{
+		void *mapped;
+		MapMemory(0, size, 0, &mapped);
+		memcpy(mapped, data, size);
+		UnmapMemory();
 	}
 
 	void Buffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)

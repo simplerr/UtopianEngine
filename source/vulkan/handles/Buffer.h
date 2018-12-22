@@ -25,6 +25,7 @@ namespace Utopian::Vk
 
 		void MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data);
 		void UnmapMemory();
+		void UpdateMemory(void* data, VkDeviceSize size);
 
 		VkResult Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 

@@ -44,6 +44,7 @@ namespace Utopian
 		RenderingManager(Vk::Renderer* renderer);
 		~RenderingManager();
 
+		void PostWorldInit();
 		void InitShaderResources();
 		void InitShader();
 

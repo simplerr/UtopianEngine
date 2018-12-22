@@ -20,11 +20,11 @@ namespace Utopian
 	public:
 		PerlinTerrain(Vk::Renderer* renderer);
 
-		void GenerateGrassInstances();
+		void GenerateGrassInstances(glm::vec3 origin);
 		Vk::Buffer* GetInstanceBuffer();
 		uint32_t GetNumInstances();
 
-		//void Update();
+		virtual void Update() override;
 		virtual void AddBlock(BlockKey blockKey) override;
 		virtual void GenerateBlocks() override;
 		virtual float GetHeight(float x, float z) override;
@@ -32,5 +32,6 @@ namespace Utopian
 		std::vector<GrassInstance> mGrassInstances;
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
 		PerlinNoise<float> mPerlinNoise;
+		glm::vec3 mLastGrassGenPosition;
 	};
 }

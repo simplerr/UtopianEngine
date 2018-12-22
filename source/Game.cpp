@@ -103,8 +103,7 @@ namespace Utopian
 
 		World::Instance().Update();
 
-		RenderingManager::Instance().InitShaderResources();
-		RenderingManager::Instance().InitShader();
+		RenderingManager::Instance().PostWorldInit();
 		ObjectManager::Instance().PrintObjects();
 
 		// Note: Needs to be called after a camera have been added to the scene
