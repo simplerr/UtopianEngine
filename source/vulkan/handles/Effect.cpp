@@ -62,8 +62,8 @@ namespace Utopian::Vk
 			// Combined image samplers
 			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
 			{
-				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);
-				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1);
+				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage, iter.second.arraySize);
+				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, iter.second.arraySize);
 			}
 
 			// Push constants

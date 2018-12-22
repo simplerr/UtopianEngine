@@ -440,6 +440,7 @@ namespace Utopian::Vk
 			const glslang::TType* ttype = program.getUniformTType(i);
 			const glslang::TQualifier& qualifier = ttype->getQualifier();
 			const char* name = program.getUniformName(i);
+			const int32_t arraySize = program.getUniformArraySize(i);
 
 			glslang::TBasicType basicType = ttype->getBasicType();
 			if (ttype->getBasicType() == glslang::EbtSampler)
@@ -453,6 +454,7 @@ namespace Utopian::Vk
 				desc.name = name;
 				desc.set = qualifier.layoutSet;
 				desc.binding = qualifier.layoutBinding;
+				desc.arraySize = arraySize;
 
 				const glslang::TSampler& sampler = ttype->getSampler();
 

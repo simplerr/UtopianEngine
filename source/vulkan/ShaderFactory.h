@@ -36,6 +36,7 @@ namespace Utopian::Vk
 		std::string name;
 		uint32_t set;
 		uint32_t binding;
+		uint32_t arraySize;
 	};
 
 	/* UBOs */
