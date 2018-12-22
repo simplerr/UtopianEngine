@@ -76,6 +76,7 @@ void main()
 
 	if (eyeDistance > 2000.0f)
 	 	OutColor.a = 0.0f;
+		//OutColor.xyz = vec3(1, 0, 0);
 
 	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
 	OutTex = vertexUVPos[gl_VertexIndex].xy;

@@ -34,7 +34,8 @@ namespace Utopian
 		Block2(glm::vec3 pos, glm::vec3 col) {
 			position = pos;
 			color = col;
-			generated = false;
+			grassGenerated = false;
+			grassGenerated = false;
 			modified = false;
 			visible = false;
 		}
@@ -46,7 +47,8 @@ namespace Utopian
 		SharedPtr<Vk::Buffer> instanceBuffer;
 		glm::vec3 position;
 		glm::vec3 color;
-		bool generated;
+		bool grassGenerated;
+		bool grassVisible;
 		bool modified;
 		bool visible;
 	private:
@@ -79,6 +81,7 @@ namespace Utopian
 		Vk::Renderer* mRenderer;
 		int32_t mCellsInBlock = 32;
 		int32_t mCellSize = 40;
-		int32_t mViewDistance = 4;
+		int32_t mBlockViewDistance = 4;
+		float mGrassViewDistance = 2000.0f;
 	};
 }

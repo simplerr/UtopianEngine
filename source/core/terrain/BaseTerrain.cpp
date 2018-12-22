@@ -49,6 +49,8 @@ namespace Utopian
 			instanceBuffer->UpdateMemory(grassInstances.data(),
 										  grassInstances.size() * sizeof(GrassInstance));
 		}
+
+		grassGenerated = true;
 	}
 
 	BaseTerrain::BaseTerrain(Vk::Renderer* renderer)
@@ -68,15 +70,17 @@ namespace Utopian
 		int32_t blockY = cameraPos.y / (float)(mCellSize * mCellsInBlock) + 1;
 		int32_t blockZ = cameraPos.z / (float)(mCellSize * mCellsInBlock) + 1;
 
-		// Make all blocks invisible
+		// Make all blocks and their grass invisible
 		for (auto blockIter : mBlockList)
 		{
 			blockIter.second->visible = false;
+			blockIter.second->grassVisible = false;
 		}
 
-		for (int32_t x = blockX - mViewDistance; x <= (blockX + mViewDistance); x++)
+		// Add blocks within block view distance
+		for (int32_t x = blockX - mBlockViewDistance; x <= (blockX + mBlockViewDistance); x++)
 		{
-			for (int32_t z = blockZ - mViewDistance; z <= (blockZ + mViewDistance); z++)
+			for (int32_t z = blockZ - mBlockViewDistance; z <= (blockZ + mBlockViewDistance); z++)
 			{
 				//for (int32_t y = blockY - mViewDistance; y <= (blockY + mViewDistance); y++)
 				{
@@ -91,6 +95,28 @@ namespace Utopian
 					{
 						mBlockList[blockKey]->visible = true;
 					}
+				}
+			}
+		}
+
+		// Generate grass instance buffers for blocks within grass view distance
+		// Todo: Note: There is something off in this calculation when moving in negative coordinates and large ones
+		int32_t grassViewDistance = (mGrassViewDistance + (mCellSize * mCellsInBlock)) / (mCellSize * mCellsInBlock);
+		for (int32_t x = blockX - grassViewDistance; x <= (blockX + grassViewDistance); x++)
+		{
+			for (int32_t z = blockZ - grassViewDistance; z <= (blockZ + grassViewDistance); z++)
+			{
+				BlockKey blockKey(x, 0, z);
+				if (mBlockList.find(blockKey) != mBlockList.end())
+				{
+					if (!mBlockList[blockKey]->grassGenerated)
+						mBlockList[blockKey]->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
+
+					mBlockList[blockKey]->grassVisible = true;
+				}
+				else
+				{
+					assert(0); // Should always be a block generated before generating grass
 				}
 			}
 		}
@@ -120,7 +146,7 @@ namespace Utopian
 
 	void BaseTerrain::SetViewDistance(uint32_t viewDistance)
 	{
-		mViewDistance = viewDistance;
+		mBlockViewDistance = viewDistance;
 	}
 
 	uint32_t BaseTerrain::GetNumCells()
@@ -135,7 +161,7 @@ namespace Utopian
 
 	uint32_t BaseTerrain::GetViewDistance()
 	{
-		return mViewDistance;
+		return mBlockViewDistance;
 	}
 
 	uint32_t BaseTerrain::GetNumBlocks()

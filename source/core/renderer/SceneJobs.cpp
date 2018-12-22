@@ -638,8 +638,11 @@ namespace Utopian
 
 		for(auto& iter : blocks)
 		{
-			commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
-			commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
+			if (iter.second->grassGenerated && iter.second->grassVisible)
+			{
+				commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
+				commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
+			}
 		}
 
 		renderTarget->End(renderer->GetQueue());

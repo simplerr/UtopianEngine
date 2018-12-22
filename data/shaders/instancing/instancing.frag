@@ -16,6 +16,6 @@ void main()
 	if (color.a < 0.1f)
 		discard;
 
-	color.xyz = InColor.xyz;
+	color.xyz *= InColor.xyz;
 	OutColor = color * InColor.a;
 }
