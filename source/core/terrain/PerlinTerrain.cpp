@@ -51,7 +51,7 @@ namespace Utopian
 		blockPosition.y = blockKey.y * mCellsInBlock * mCellSize;
 		blockPosition.z = blockKey.z * (mCellsInBlock - 1) * mCellSize;
 		glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-		color = glm::vec3(1.0f, 1.0f, 1.0f);
+		//color = glm::vec3(1.0f, 1.0f, 1.0f);
 		SharedPtr<Block2> block = std::make_shared<Block2>(blockPosition, color);
 
 		Vk::StaticModel* model = new Vk::StaticModel();
@@ -110,6 +110,8 @@ namespace Utopian
 		block->renderable->SetTileFactor(glm::vec2(10.0f));
 		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 
+		block->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
+
 		mBlockList[blockKey] = block;
 	}
 
@@ -120,6 +122,8 @@ namespace Utopian
 
 	void PerlinTerrain::GenerateGrassInstances(glm::vec3 origin)
 	{
+		// Todo: Remove
+		return;
 		mLastGrassGenPosition = origin;
 
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));

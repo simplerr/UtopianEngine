@@ -8,13 +8,6 @@
 
 namespace Utopian
 {
-	struct GrassInstance 
-	{
-		glm::vec4 position;
-		//glm::vec3 scale;
-		//float textureIndex;
-	};
-
 	class PerlinTerrain : public BaseTerrain
 	{
 	public:

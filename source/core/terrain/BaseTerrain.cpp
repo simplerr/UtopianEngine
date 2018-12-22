@@ -1,6 +1,7 @@
 #include "core/terrain/BaseTerrain.h"
 #include "vulkan/Renderer.h"
 #include "Camera.h"
+#include <random>
 
 namespace Utopian
 {
@@ -13,6 +14,41 @@ namespace Utopian
 			return (a.y < b.y);
 
 		return (a.z < b.z);
+	}
+
+	void Block2::GenerateGrassInstances(Vk::Renderer* renderer, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize)
+	{
+		std::default_random_engine rndGenerator((unsigned)time(nullptr));
+		std::uniform_real_distribution<float> uniformDist(-cellsInBlock * cellSize, 0);
+
+		if (instanceBuffer != nullptr)
+			grassInstances.clear();
+
+		const uint32_t numGrassInstances = 1000;
+		for (uint32_t i = 0; i < numGrassInstances; i++)
+		{
+			GrassInstance grassInstance;
+			grassInstance.position = glm::vec4(position.x + uniformDist(rndGenerator), 0.0f, position.z + uniformDist(rndGenerator), 1.0f);
+			grassInstance.position.y = terrain->GetHeight(grassInstance.position.x, grassInstance.position.z);
+			grassInstance.color = color;
+
+			grassInstances.push_back(grassInstance);
+		}
+
+		if (instanceBuffer == nullptr)
+		{
+			// Todo: use device local buffer for better performance
+			instanceBuffer = std::make_shared<Vk::Buffer>(renderer->GetDevice(),
+														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+														   grassInstances.size() * sizeof(GrassInstance),
+														   grassInstances.data());
+		}
+		else
+		{
+			instanceBuffer->UpdateMemory(grassInstances.data(),
+										  grassInstances.size() * sizeof(GrassInstance));
+		}
 	}
 
 	BaseTerrain::BaseTerrain(Vk::Renderer* renderer)

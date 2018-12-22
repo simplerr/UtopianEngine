@@ -576,8 +576,9 @@ namespace Utopian
 
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
 
-		vertexDescription->AddBinding(BINDING_0, sizeof(glm::vec4), VK_VERTEX_INPUT_RATE_INSTANCE);
-		vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());	// Location 5 : InstancePos
+		vertexDescription->AddBinding(BINDING_0, sizeof(GrassInstance), VK_VERTEX_INPUT_RATE_INSTANCE);
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());	// Location 0 : InstancePos
+		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 1 : Color
 
 		effect->GetPipeline()->OverrideVertexInput(vertexDescription);
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
@@ -631,10 +632,15 @@ namespace Utopian
 
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
-		// Note: no need to bind mesh vertex buffer since we are generating vertices in vertex shader
-		//commandBuffer->CmdBindVertexBuffer(0, 1, planeMesh->GetVertxBuffer());
-		commandBuffer->CmdBindVertexBuffer(0, 1, jobInput.sceneInfo.terrain->GetInstanceBuffer());
-		commandBuffer->CmdDraw(4, jobInput.sceneInfo.terrain->GetNumInstances(), 0, 0);
+
+		// Loop over all blocks and render their grass instance buffers
+		auto blocks = jobInput.sceneInfo.terrain->GetBlocks();
+
+		for(auto& iter : blocks)
+		{
+			commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
+			commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
+		}
 
 		renderTarget->End(renderer->GetQueue());
 	}

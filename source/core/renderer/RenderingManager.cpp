@@ -69,7 +69,7 @@ namespace Utopian
 		InitShader();
 
 		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mRenderer);
-		mSceneInfo.terrain->SetViewDistance(6);
+		mSceneInfo.terrain->SetViewDistance(2);
 	}
 
 	void RenderingManager::InitShaderResources()
