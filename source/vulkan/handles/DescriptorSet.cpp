@@ -111,12 +111,12 @@ namespace Utopian::Vk
 		}
 	}
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
+	void DescriptorSet::BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
 	{
 		VkWriteDescriptorSet writeDescriptorSet = {};
 		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		writeDescriptorSet.dstSet = descriptorSet;
-		writeDescriptorSet.descriptorCount = 1;
+		writeDescriptorSet.descriptorCount = descriptorCount;
 		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		writeDescriptorSet.pImageInfo = imageInfo;
 		writeDescriptorSet.dstBinding = binding;				
@@ -167,9 +167,9 @@ namespace Utopian::Vk
 		BindStorageBuffer(mShader->NameToBinding(name), bufferInfo);
 	}
 
-	void DescriptorSet::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo)
+	void DescriptorSet::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
 	{
-		BindCombinedImage(mShader->NameToBinding(name), imageInfo);
+		BindCombinedImage(mShader->NameToBinding(name), imageInfo, descriptorCount);
 	}
 
 	void DescriptorSet::BindCombinedImage(std::string name, Image* image, Sampler* sampler)

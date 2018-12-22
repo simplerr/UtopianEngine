@@ -26,7 +26,7 @@ namespace Utopian::Vk
 
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
-		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo);
+		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
 
 		void BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock);

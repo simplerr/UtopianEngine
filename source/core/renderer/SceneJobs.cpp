@@ -605,18 +605,15 @@ namespace Utopian
 		sampler->Create();
 
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
-		VkDescriptorImageInfo imageInfo = {};
-		imageInfo.sampler = sampler->GetVkHandle();
-		imageInfo.imageView = texture->imageView;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		effect->BindCombinedImage("textureSampler", &imageInfo);
-
-		//Vk::Texture* texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
-		//VkDescriptorImageInfo imageInfo2 = {};
-		//imageInfo2.sampler = sampler->GetVkHandle();
-		//imageInfo2.imageView = texture2->imageView;
-		//imageInfo2.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		//effect->BindCombinedImage("textureSampler2", &imageInfo2);
+		Vk::Texture* texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
+		VkDescriptorImageInfo imageInfo[2];
+		imageInfo[0].sampler = sampler->GetVkHandle();
+		imageInfo[0].imageView = texture->imageView;
+		imageInfo[0].imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imageInfo[1].sampler = sampler->GetVkHandle();
+		imageInfo[1].imageView = texture2->imageView;
+		imageInfo[1].imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		effect->BindCombinedImage("textureSampler", imageInfo, 1);
 	}
 
 	void InstancingJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)

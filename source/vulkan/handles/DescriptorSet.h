@@ -24,13 +24,13 @@ namespace Utopian::Vk
 
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
-		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
+		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler);
 
 		// Bind a uniform buffer by name, note that name must match the GLSL representation
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
-		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo);
+		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
 
 		// NOTE: TODO: Legacy

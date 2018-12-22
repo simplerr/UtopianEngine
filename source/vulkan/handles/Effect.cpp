@@ -97,10 +97,10 @@ namespace Utopian::Vk
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo)
+	void Effect::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
-		descriptorSet.BindCombinedImage(name, imageInfo);
+		descriptorSet.BindCombinedImage(name, imageInfo, descriptorCount);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
