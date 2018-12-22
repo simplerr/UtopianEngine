@@ -31,6 +31,7 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 
 layout (location = 0) out vec4 OutColor;
 layout (location = 1) out vec2 OutTex;
+layout (location = 2) out float OutEyeDist;
 
 out gl_PerVertex 
 {
@@ -69,14 +70,8 @@ void main()
 	instancePos.xz *= -1;
 
 	float eyeDistance = length(per_frame_vs.eyePos.xyz + instancePos);
-	//float grassLerp = clamp((-eyeDistance + 2000.0f) / 200.0f, 0.0, 1.0); 
-	// OutColor.a = grassLerp;//0.0f;
-
 	OutColor.xyz = InColor.xyz;
-
-	if (eyeDistance > 2000.0f)
-	 	OutColor.a = 0.0f;
-		//OutColor.xyz = vec3(1, 0, 0);
+	OutEyeDist = eyeDistance;
 
 	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
 	OutTex = vertexUVPos[gl_VertexIndex].xy;
