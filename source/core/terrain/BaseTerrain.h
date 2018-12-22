@@ -69,11 +69,9 @@ namespace Utopian
 
 		void SetNumCells(uint32_t numCells);
 		void SetCellSize(uint32_t cellSize);
-		void SetViewDistance(uint32_t viewDistance);
 
 		uint32_t GetNumCells();
 		uint32_t GetCellSize();
-		uint32_t GetViewDistance();
 		uint32_t GetNumBlocks();
 
 	protected:
@@ -81,7 +79,7 @@ namespace Utopian
 		Vk::Renderer* mRenderer;
 		int32_t mCellsInBlock = 32;
 		int32_t mCellSize = 40;
-		int32_t mBlockViewDistance = 4;
-		float mGrassViewDistance = 2000.0f;
+		// int32_t mBlockViewDistance = 4;
+		// float mGrassViewDistance = 2000.0f;
 	};
 }

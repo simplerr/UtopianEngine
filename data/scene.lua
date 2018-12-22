@@ -24,9 +24,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 2840.853515625,
-				pos_y = -1259.7844238281,
-				pos_z = 4294.8369140625,
+				pos_x = 914.33892822266,
+				pos_y = 338.59332275391,
+				pos_z = 258.95071411133,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -286,6 +286,25 @@ actor_list =
 				scale_x = 50,
 				scale_y = 50,
 				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
 			},
 		},
 	},

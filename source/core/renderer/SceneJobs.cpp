@@ -624,6 +624,7 @@ namespace Utopian
 		viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.data.grassViewDistance = jobInput.renderingSettings.grassViewDistance;
 		viewProjectionBlock.UpdateMemory();
 
 		/* Render instances */

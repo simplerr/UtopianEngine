@@ -27,11 +27,13 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 	mat4 projection;
 	mat4 view;
 	vec4 eyePos;
+	float viewDistance;
 } per_frame_vs;
 
 layout (location = 0) out vec4 OutColor;
 layout (location = 1) out vec2 OutTex;
 layout (location = 2) out float OutEyeDist;
+layout (location = 3) out float OutViewDistance; // Todo: Move to separate uniform buffer
 
 out gl_PerVertex 
 {
@@ -72,6 +74,7 @@ void main()
 	float eyeDistance = length(per_frame_vs.eyePos.xyz + instancePos);
 	OutColor.xyz = InColor.xyz;
 	OutEyeDist = eyeDistance;
+	OutViewDistance = per_frame_vs.viewDistance;
 
 	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
 	OutTex = vertexUVPos[gl_VertexIndex].xy;

@@ -22,6 +22,11 @@
 
 namespace Utopian
 {
+	RenderingManager& gRenderingManager()
+	{
+		return RenderingManager::Instance();
+	}
+
 	RenderingManager::RenderingManager(Vk::Renderer* renderer)
 	{
 		mNextNodeId = 0;
@@ -69,7 +74,7 @@ namespace Utopian
 		InitShader();
 
 		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mRenderer);
-		mSceneInfo.terrain->SetViewDistance(4);
+		//mSceneInfo.terrain->SetViewDistance(4);
 	}
 
 	void RenderingManager::InitShaderResources()
@@ -142,6 +147,8 @@ namespace Utopian
 		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
 		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
 		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
+		ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
+		ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
 
 		Vk::UIOverlay::EndWindow();
 
@@ -357,5 +364,10 @@ namespace Utopian
 	BaseTerrain* RenderingManager::GetTerrain()
 	{
 		return mSceneInfo.terrain.get();
+	}
+
+	RenderingSettings& RenderingManager::GetRenderingSettings()
+	{
+		return mRenderingSettings;
 	}
 }

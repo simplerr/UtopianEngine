@@ -72,6 +72,7 @@ namespace Utopian
 		void AddJob(BaseJob* job);
 
 		BaseTerrain* GetTerrain();
+		RenderingSettings& GetRenderingSettings();
 	private:
 		SceneInfo mSceneInfo;
 		Camera* mMainCamera;
@@ -99,4 +100,6 @@ namespace Utopian
 		std::vector<BaseJob*> mJobs;
 		RenderingSettings mRenderingSettings;
 	};
+
+	RenderingManager& gRenderingManager();
 }

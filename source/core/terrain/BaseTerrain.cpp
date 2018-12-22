@@ -1,4 +1,5 @@
 #include "core/terrain/BaseTerrain.h"
+#include "core/renderer/RenderingManager.h"
 #include "vulkan/Renderer.h"
 #include "Camera.h"
 #include <random>
@@ -78,9 +79,10 @@ namespace Utopian
 		}
 
 		// Add blocks within block view distance
-		for (int32_t x = blockX - mBlockViewDistance; x <= (blockX + mBlockViewDistance); x++)
+		int32_t blockViewDistance = gRenderingManager().GetRenderingSettings().blockViewDistance;
+		for (int32_t x = blockX - blockViewDistance; x <= (blockX + blockViewDistance); x++)
 		{
-			for (int32_t z = blockZ - mBlockViewDistance; z <= (blockZ + mBlockViewDistance); z++)
+			for (int32_t z = blockZ - blockViewDistance; z <= (blockZ + blockViewDistance); z++)
 			{
 				//for (int32_t y = blockY - mViewDistance; y <= (blockY + mViewDistance); y++)
 				{
@@ -101,7 +103,8 @@ namespace Utopian
 
 		// Generate grass instance buffers for blocks within grass view distance
 		// Todo: Note: There is something off in this calculation when moving in negative coordinates and large ones
-		int32_t grassViewDistance = (mGrassViewDistance + (mCellSize * mCellsInBlock)) / (mCellSize * mCellsInBlock);
+		float grassViewDistanceSetting = gRenderingManager().GetRenderingSettings().grassViewDistance;
+		int32_t grassViewDistance = (grassViewDistanceSetting + (mCellSize * mCellsInBlock)) / (mCellSize * mCellsInBlock);
 		for (int32_t x = blockX - grassViewDistance; x <= (blockX + grassViewDistance); x++)
 		{
 			for (int32_t z = blockZ - grassViewDistance; z <= (blockZ + grassViewDistance); z++)
@@ -144,11 +147,6 @@ namespace Utopian
 		mCellSize = cellSize;
 	}
 
-	void BaseTerrain::SetViewDistance(uint32_t viewDistance)
-	{
-		mBlockViewDistance = viewDistance;
-	}
-
 	uint32_t BaseTerrain::GetNumCells()
 	{
 		return mCellsInBlock;
@@ -157,11 +155,6 @@ namespace Utopian
 	uint32_t BaseTerrain::GetCellSize()
 	{
 		return mCellSize;
-	}
-
-	uint32_t BaseTerrain::GetViewDistance()
-	{
-		return mBlockViewDistance;
 	}
 
 	uint32_t BaseTerrain::GetNumBlocks()
