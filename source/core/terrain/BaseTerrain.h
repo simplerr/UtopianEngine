@@ -20,8 +20,8 @@ namespace Utopian
 	{
 		glm::vec4 position;
 		glm::vec3 color;
+		int textureIndex;
 		//glm::vec3 scale;
-		//float textureIndex;
 	};
 
 	class BaseTerrain;

@@ -31,6 +31,7 @@ namespace Utopian
 			GrassInstance grassInstance;
 			grassInstance.position = glm::vec4(position.x + uniformDist(rndGenerator), 0.0f, position.z + uniformDist(rndGenerator), 1.0f);
 			grassInstance.position.y = terrain->GetHeight(grassInstance.position.x, grassInstance.position.z);
+			grassInstance.textureIndex = (rand() % 100) < 97 ? 0 : 1;
 			grassInstance.color = color;
 
 			grassInstances.push_back(grassInstance);

@@ -20,6 +20,7 @@
 // Instance data
 layout (location = 0) in vec4 InInstancePosW;
 layout (location = 1) in vec3 InColor;
+layout (location = 2) in int InTexId;
 
 layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
 {
@@ -34,6 +35,7 @@ layout (location = 0) out vec4 OutColor;
 layout (location = 1) out vec2 OutTex;
 layout (location = 2) out float OutEyeDist;
 layout (location = 3) out float OutViewDistance; // Todo: Move to separate uniform buffer
+layout (location = 4) flat out int OutTexId;
 
 out gl_PerVertex 
 {
@@ -75,6 +77,7 @@ void main()
 	OutColor.xyz = InColor.xyz;
 	OutEyeDist = eyeDistance;
 	OutViewDistance = per_frame_vs.viewDistance;
+	OutTexId = InTexId;
 
 	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
 	OutTex = vertexUVPos[gl_VertexIndex].xy;

@@ -4,6 +4,7 @@ layout (location = 0) in vec4 InColor;
 layout (location = 1) in vec2 InTex;
 layout (location = 2) in float InEyeDist;
 layout (location = 3) in float InViewDistance;
+layout (location = 4) flat in int InTexId;
 
 layout (set = 1, binding = 0) uniform sampler2D textureSampler[2];
 
@@ -11,7 +12,8 @@ layout (location = 0) out vec4 OutColor;
 
 void main() 
 {
-	vec4 color = texture(textureSampler[0], InTex);
+	// Note: Unclear why clamp is needed
+	vec4 color = texture(textureSampler[clamp(InTexId, 0, 1)], InTex);
 
 	// Discard fragment if it's outside grass view distance
 	if (InEyeDist > InViewDistance)
