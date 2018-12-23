@@ -15,20 +15,23 @@ namespace Utopian
 	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer)
 		: BaseTerrain(renderer)
 	{
+		mPerlinNoise = std::make_shared<PerlinNoise<float>>(std::random_device{}());
 		GenerateGrassInstances(renderer->GetCamera()->GetPosition());
 	}
 
 	float PerlinTerrain::GetHeight(float x, float z)
 	{
-		const float frequency = 2200.0f;
-		const float amplitude = 550.0f;
+		float frequency = (1.0f / 33000.0f);
+		float amplitude = 11000.0f;
+		float height = 0.0f;
 
-		// float height = glm::sin(x / frequency) * amplitude;
-		// height += glm::sin(z / frequency) * amplitude;
-
-		float height = mPerlinNoise.noise(x / frequency, 0, z / frequency) * amplitude;
-		height += mPerlinNoise.noise(x / frequency / 10.0f, 0, z / frequency / 10.0f) * amplitude * 20;
-		height += mPerlinNoise.noise(x / frequency * 5.0f, 0, z / frequency * 5.0f) * amplitude / 10;
+		const uint32_t octaves = 8;
+		for (uint32_t i = 0; i < octaves; i++)
+		{
+			height += mPerlinNoise->noise(x * frequency, 0, z * frequency) * amplitude;
+			amplitude *= 0.5f;
+			frequency *= 2;
+		}
 
 		return height;
 	}
@@ -95,8 +98,8 @@ namespace Utopian
 			}
 		}
 
-		mesh->SetTexturePath("data/textures/grass2.png");
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/grass2.png");
+		mesh->SetTexturePath("data/textures/ground/grass2.png");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.png");
 		mesh->SetTexture(texture);
 		mesh->BuildBuffers(mRenderer->GetDevice());
 		model->AddMesh(mesh);
@@ -108,7 +111,7 @@ namespace Utopian
 		block->renderable->SetPosition(blockPosition);
 		block->renderable->SetColor(glm::vec4(color, 1.0f));
 		block->renderable->SetTileFactor(glm::vec2(10.0f));
-		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
+		block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_TERRAIN);
 
 		//block->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
 

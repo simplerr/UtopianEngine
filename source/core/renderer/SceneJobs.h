@@ -44,7 +44,7 @@ namespace Utopian
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
 		float grassViewDistance = 4000.0f;
-		int blockViewDistance = 4;
+		int blockViewDistance = 6;
 	};
 
 	struct JobInput
@@ -86,6 +86,11 @@ namespace Utopian
 	class GBufferJob : public BaseJob
 	{
 	public:
+		UNIFORM_BLOCK_BEGIN(GBufferViewProjection)
+			UNIFORM_PARAM(glm::mat4, projection)
+			UNIFORM_PARAM(glm::mat4, view)
+			UNIFORM_BLOCK_END()
+
 		GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~GBufferJob();
 
@@ -101,7 +106,10 @@ namespace Utopian
 
 		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
 		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
+		SharedPtr<Vk::Effect> mGBufferEffectTerrain;
 	private:
+		GBufferViewProjection viewProjectionBlock;
+		SharedPtr<Vk::Sampler> sampler;
 	};
 
 	class ShadowJob : public BaseJob

@@ -54,10 +54,32 @@ namespace Utopian
 		// Todo: Implement a better way for multiple pipelines in the same Effect
 		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
-		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		//mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 
+		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+																		   renderTarget->GetRenderPass(),
+																		   "data/shaders/gbuffer/gbuffer.vert",
+																		   "data/shaders/gbuffer/gbuffer_terrain.frag");
+		mGBufferEffectTerrain->CreatePipeline();
 		mGBufferEffect->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
+
+		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mGBufferEffectTerrain->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+
+		// Bind the different terrain textures
+		sampler = std::make_shared<Vk::Sampler>(mRenderer->GetDevice(), false);
+		sampler->Create();
+
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.png");
+		Vk::Texture* texture2 = Vk::gTextureLoader().LoadTexture("data/textures/ground/rock.png");
+		Vk::Texture* texture3 = Vk::gTextureLoader().LoadTexture("data/textures/ground/snow.png");
+		Vk::TextureArray textureArray;
+		textureArray.AddTexture(texture->imageView, sampler.get());
+		textureArray.AddTexture(texture2->imageView, sampler.get());
+		textureArray.AddTexture(texture3->imageView, sampler.get());
+
+		mGBufferEffectTerrain->BindCombinedImage("textureSampler", &textureArray);
 
 		const uint32_t size = 240;
 		renderer->AddScreenQuad(size + 20, height - (size + 10), size, size, positionImage.get(), renderTarget->GetSampler());
@@ -77,6 +99,9 @@ namespace Utopian
 	{
 		mGBufferEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		mGBufferEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.UpdateMemory();
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -114,7 +139,8 @@ namespace Utopian
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)
 		{
-			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+			//if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+			if (!renderable->IsVisible() || !(renderable->HasRenderFlags(RENDER_FLAG_DEFERRED) || renderable->HasRenderFlags(RENDER_FLAG_WIREFRAME)))
 				continue;
 
 			Vk::Effect* effect = mGBufferEffect.get();
@@ -129,15 +155,32 @@ namespace Utopian
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
 
 				// Todo: Note: This is a temporary workaround
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+				if (!renderable->HasRenderFlags(RENDER_FLAG_TERRAIN))
+				{
+					//VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					//VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-				commandBuffer->CmdBindPipeline(effect->GetPipeline());
-				commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+					//commandBuffer->CmdBindPipeline(effect->GetPipeline());
+					//commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+					//commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+
+					//// Note: Move out from if
+					//commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					//commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					//commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				}
+				else
+				{
+					commandBuffer->CmdBindPipeline(mGBufferEffectTerrain->GetPipeline());
+					mGBufferEffectTerrain->BindDescriptorSets(commandBuffer);
+					commandBuffer->CmdPushConstants(mGBufferEffectTerrain->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+
+					// Note: Move out from else
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				}
+
 			}
 		}
 

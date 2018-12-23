@@ -24,7 +24,7 @@ namespace Utopian
 	private:
 		std::vector<GrassInstance> mGrassInstances;
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
-		PerlinNoise<float> mPerlinNoise;
+		SharedPtr<PerlinNoise<float>> mPerlinNoise;
 		glm::vec3 mLastGrassGenPosition;
 	};
 }

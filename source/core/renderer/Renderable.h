@@ -16,7 +16,8 @@ namespace Utopian
 		RENDER_FLAG_COLOR = 2,
 		RENDER_FLAG_NORMAL_DEBUG = 4,
 		RENDER_FLAG_BOUNDING_BOX = 8,
-		RENDER_FLAG_WIREFRAME = 16
+		RENDER_FLAG_WIREFRAME = 16,
+		RENDER_FLAG_TERRAIN = 32 // Note: Temporary since terrain blocks are Renderables as of now
 	};
 
 	class Renderable : public SceneNode
