@@ -607,14 +607,11 @@ namespace Utopian
 
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
 		Vk::Texture* texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
-		VkDescriptorImageInfo imageInfo[2];
-		imageInfo[0].sampler = sampler->GetVkHandle();
-		imageInfo[0].imageView = texture->imageView;
-		imageInfo[0].imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		imageInfo[1].sampler = sampler->GetVkHandle();
-		imageInfo[1].imageView = texture2->imageView;
-		imageInfo[1].imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		effect->BindCombinedImage("textureSampler", imageInfo, 2);
+		Vk::TextureArray textureArray;
+		textureArray.AddTexture(texture->imageView, sampler.get());
+		textureArray.AddTexture(texture2->imageView, sampler.get());
+
+		effect->BindCombinedImage("textureSampler", &textureArray);
 	}
 
 	void InstancingJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)

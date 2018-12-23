@@ -63,6 +63,7 @@ namespace Utopian::Vk
 	class ScreenQuad;
 	class BasicRenderTarget;
 	class CubeMapTexture;
+	class TextureArray;
 }
 
 namespace Utopian

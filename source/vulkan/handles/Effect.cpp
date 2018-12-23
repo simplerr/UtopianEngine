@@ -5,6 +5,7 @@
 #include "vulkan/VertexDescription.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/handles/Texture.h"
 #include "Effect.h"
 #include "RenderPass.h"
 #include "PipelineLayout.h"
@@ -109,6 +110,11 @@ namespace Utopian::Vk
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
 		descriptorSet.BindCombinedImage(name, image, sampler);
 		descriptorSet.UpdateDescriptorSets();
+	}
+
+	void Effect::BindCombinedImage(std::string name, TextureArray* textureArray)
+	{
+		BindCombinedImage(name, textureArray->GetImageInfo(), textureArray->GetNumImages());
 	}
 
 	void Effect::BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock)
