@@ -38,6 +38,7 @@ namespace Utopian
 			grassGenerated = false;
 			modified = false;
 			visible = false;
+			hasGrass = true; // Assume every block will have grass
 		}
 
 		void GenerateGrassInstances(Vk::Renderer* renderer, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize);
@@ -49,6 +50,7 @@ namespace Utopian
 		glm::vec3 color;
 		bool grassGenerated;
 		bool grassVisible;
+		bool hasGrass;
 		bool modified;
 		bool visible;
 	private:
@@ -63,6 +65,7 @@ namespace Utopian
 		virtual void GenerateBlocks() = 0;
 		virtual void AddBlock(BlockKey blockKey) = 0;
 		virtual float GetHeight(float x, float z) = 0;
+		virtual glm::vec3 GetNormal(float x, float z) = 0;
 
 		std::map<BlockKey, SharedPtr<Block2>>& GetBlocks();
 		void ClearBlocks();

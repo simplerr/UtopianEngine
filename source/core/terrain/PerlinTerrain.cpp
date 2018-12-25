@@ -36,6 +36,22 @@ namespace Utopian
 		return height;
 	}
 
+	glm::vec3 PerlinTerrain::GetNormal(float x, float z)
+	{
+		// Calculate normal, based on https://www.gamedev.net/forums/topic/692347-finite-difference-normal-calculation-for-sphere/
+		//glm::vec3 pos = glm::vec3(posX, height, posZ);
+		float offset = 1.0f;
+		float hL = GetHeight(x - offset, z);
+		float hR = GetHeight(x + offset, z);
+		float hD = GetHeight(x, z - offset);
+		float hU = GetHeight(x, z + offset);
+
+		glm::vec3 normal = glm::vec3(hL - hR, -2.0f, hD - hU); // Note: -2.0f
+		normal = normalize(normal);
+		
+		return normal;
+	}
+
 	void PerlinTerrain::Update()
 	{
 		BaseTerrain::Update();
@@ -67,19 +83,9 @@ namespace Utopian
 			{
 				glm::vec3 worldPos = glm::vec3(blockPosition.x - x * mCellSize, 0.0f, blockPosition.z - z * mCellSize);
 				worldPos.y = GetHeight(worldPos.x, worldPos.z);
+				glm::vec3 normal = GetNormal(worldPos.x, worldPos.z);
 				glm::vec3 localPos = glm::vec3(x * mCellSize, 0.0f, z * mCellSize);
 				glm::vec2 texcord = glm::vec2(localPos.x / (mCellSize * (mCellsInBlock - 1)), localPos.z / (mCellSize * (mCellsInBlock - 1)));
-
-				// Calculate normal, based on https://www.gamedev.net/forums/topic/692347-finite-difference-normal-calculation-for-sphere/
-				//glm::vec3 pos = glm::vec3(posX, height, posZ);
-				float offset = 1.0f;
-				float hL = GetHeight(worldPos.x - offset, worldPos.z);
-				float hR = GetHeight(worldPos.x + offset, worldPos.z);
-				float hD = GetHeight(worldPos.x, worldPos.z - offset);
-				float hU = GetHeight(worldPos.x, worldPos.z + offset);
-
-				glm::vec3 normal = glm::vec3(hL - hR, -2.0f, hD - hU); // Note: -2.0f
-				normal = glm::normalize(normal);
 
 				mesh->AddVertex(Vk::Vertex(localPos.x, worldPos.y, localPos.z,
 										   normal.x, normal.y, normal.z,

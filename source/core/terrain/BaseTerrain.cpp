@@ -34,10 +34,19 @@ namespace Utopian
 			grassInstance.textureIndex = (rand() % 100) < 97 ? 0 : 1;
 			grassInstance.color = color;
 
-			grassInstances.push_back(grassInstance);
+			// Note: Negative sign
+			if (terrain->GetNormal(grassInstance.position.x, grassInstance.position.z).y < -0.8f)
+			{
+				grassInstances.push_back(grassInstance);
+				grassGenerated = true;
+			}
+			else
+			{
+				volatile int a = 1;
+			}
 		}
 
-		if (instanceBuffer == nullptr)
+		if (grassGenerated && instanceBuffer == nullptr)
 		{
 			// Todo: use device local buffer for better performance
 			instanceBuffer = std::make_shared<Vk::Buffer>(renderer->GetDevice(),
@@ -46,13 +55,16 @@ namespace Utopian
 														   grassInstances.size() * sizeof(GrassInstance),
 														   grassInstances.data());
 		}
-		else
+		else if(grassGenerated)
 		{
 			instanceBuffer->UpdateMemory(grassInstances.data(),
 										  grassInstances.size() * sizeof(GrassInstance));
 		}
+		else
+		{
+			hasGrass = false;
+		}
 
-		grassGenerated = true;
 	}
 
 	BaseTerrain::BaseTerrain(Vk::Renderer* renderer)
@@ -113,7 +125,7 @@ namespace Utopian
 				BlockKey blockKey(x, 0, z);
 				if (mBlockList.find(blockKey) != mBlockList.end())
 				{
-					if (!mBlockList[blockKey]->grassGenerated)
+					if (!mBlockList[blockKey]->grassGenerated && mBlockList[blockKey]->hasGrass)
 						mBlockList[blockKey]->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
 
 					mBlockList[blockKey]->grassVisible = true;
