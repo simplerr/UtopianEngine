@@ -45,7 +45,7 @@ namespace Utopian::Vk
 		Assimp::Importer importer;
 
 		// Load scene from the file.
-		const aiScene* scene = importer.ReadFile(filename, aiProcess_FlipWindingOrder | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+		const aiScene* scene = importer.ReadFile(filename, aiProcess_FlipUVs | aiProcess_FlipWindingOrder | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
 		if (scene != nullptr)
 		{
@@ -94,8 +94,39 @@ namespace Utopian::Vk
 					material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
 					FindValidPath(&texturePath, filename);
 					mesh->SetTexturePath(texturePath.C_Str());
-
 					Texture* texture = gTextureLoader().LoadTexture(texturePath.C_Str());
+
+					// Workaround for Unity assets
+					if (texture == nullptr)
+					{
+						std::string texPath = texturePath.C_Str();
+						uint32_t idx = texPath.rfind("\\");
+						std::string textureName = texPath.substr(idx+1);
+						idx = filename.rfind("/");
+						texPath = filename.substr(0, idx) + "/Textures/" + textureName;
+
+						mesh->SetTexturePath(texPath);
+						texture = gTextureLoader().LoadTexture(texPath);
+
+						// Try removing _H from the filename
+						if (texture == nullptr)
+						{
+							idx = texPath.rfind("_H.tga");
+							if (idx != std::string::npos)
+							{
+								texPath = texPath.substr(0, idx) + ".tga";
+								mesh->SetTexturePath(texPath);
+								texture = gTextureLoader().LoadTexture(texPath);
+							}
+						}
+					}
+
+					if (texture == nullptr)
+					{
+						mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
+						texture = gTextureLoader().LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+					}
+
 					mesh->SetTexture(texture);
 				}
 				else
