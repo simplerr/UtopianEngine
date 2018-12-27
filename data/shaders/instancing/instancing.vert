@@ -73,7 +73,7 @@ void main()
 	vec3 instancePos = InInstancePosW.xyz;
 	instancePos.xz *= -1;
 
-	float eyeDistance = length(per_frame_vs.eyePos.xyz + instancePos);
+	float eyeDistance = length(per_frame_vs.eyePos.xz + instancePos.xz);
 	OutColor.xyz = InColor.xyz;
 	OutEyeDist = eyeDistance;
 	OutViewDistance = per_frame_vs.viewDistance;
