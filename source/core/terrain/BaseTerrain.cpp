@@ -34,8 +34,9 @@ namespace Utopian
 			grassInstance.textureIndex = (rand() % 100) < 97 ? 0 : 1;
 			grassInstance.color = color;
 
+			// Only add grass on flat surface and low altitudes
 			// Note: Negative sign
-			if (terrain->GetNormal(grassInstance.position.x, grassInstance.position.z).y < -0.8f)
+			if (terrain->GetNormal(grassInstance.position.x, grassInstance.position.z).y < -0.8f && grassInstance.position.y > -800.0f)
 			{
 				grassInstances.push_back(grassInstance);
 				grassGenerated = true;
