@@ -33,6 +33,7 @@ namespace Utopian
 			frequency *= 2;
 		}
 
+		return 0.0f;
 		return height;
 	}
 
@@ -104,8 +105,8 @@ namespace Utopian
 			}
 		}
 
-		mesh->SetTexturePath("data/textures/ground/grass2.png");
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.png");
+		mesh->SetTexturePath("data/textures/ground/grass2.tga");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.tga");
 		mesh->SetTexture(texture);
 		mesh->BuildBuffers(mRenderer->GetDevice());
 		model->AddMesh(mesh);
@@ -117,7 +118,7 @@ namespace Utopian
 		block->renderable->SetPosition(blockPosition);
 		block->renderable->SetColor(glm::vec4(color, 1.0f));
 		block->renderable->SetTileFactor(glm::vec2(10.0f));
-		block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_TERRAIN);
+		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_TERRAIN);
 
 		//block->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
 

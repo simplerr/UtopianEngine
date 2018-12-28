@@ -3,6 +3,7 @@
 #include "ModelLoader.h"
 #include "TextureLoader.h"
 #include "vulkan/Mesh.h"
+#include "vulkan/VulkanDebug.h"
 #include "StaticModel.h"
 #include "Device.h"
 
@@ -108,6 +109,7 @@ namespace Utopian::Vk
 						mesh->SetTexturePath(texPath);
 						texture = gTextureLoader().LoadTexture(texPath);
 
+
 						// Try removing _H from the filename
 						if (texture == nullptr)
 						{
@@ -117,6 +119,17 @@ namespace Utopian::Vk
 								texPath = texPath.substr(0, idx) + ".tga";
 								mesh->SetTexturePath(texPath);
 								texture = gTextureLoader().LoadTexture(texPath);
+							}
+
+							if (texture == nullptr)
+							{
+								idx = texPath.rfind("_H.png");
+								if (idx != std::string::npos)
+								{
+									texPath = texPath.substr(0, idx) + ".png";
+									mesh->SetTexturePath(texPath);
+									texture = gTextureLoader().LoadTexture(texPath);
+								}
 							}
 						}
 					}

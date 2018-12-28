@@ -55,6 +55,7 @@ namespace Utopian
 		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 		//mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		mGBufferEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 
 		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
 																		   renderTarget->GetRenderPass(),
@@ -157,17 +158,17 @@ namespace Utopian
 				// Todo: Note: This is a temporary workaround
 				if (!renderable->HasRenderFlags(RENDER_FLAG_TERRAIN))
 				{
-					//VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-					//VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-					//commandBuffer->CmdBindPipeline(effect->GetPipeline());
-					//commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-					//commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdBindPipeline(effect->GetPipeline());
+					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 
-					//// Note: Move out from if
-					//commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-					//commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					//commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+					// Note: Move out from if
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 				}
 				else
 				{
@@ -659,6 +660,7 @@ namespace Utopian
 
 	void InstancingJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
+		return;
 		viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;

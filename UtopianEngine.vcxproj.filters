@@ -423,6 +423,9 @@
     <ClCompile Include="source\core\terrain\PerlinTerrain.cpp">
       <Filter>Source Files\terrain\heightmap</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\AssetLoader.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -745,6 +748,9 @@
     </ClInclude>
     <ClInclude Include="source\utility\PerlinNoise.h">
       <Filter>Source Files\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\AssetLoader.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
