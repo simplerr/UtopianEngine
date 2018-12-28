@@ -33,6 +33,8 @@ namespace Utopian
 		void AddComponent(const SharedPtr<Component>& component);
 
 		void RemoveActor(Actor* actor);
+		void RemoveActors();
+		void LoadFoliage();
 
 		Actor* RayIntersection(const Ray& ray);
 		std::vector<SharedPtr<Actor>>& GetActors();

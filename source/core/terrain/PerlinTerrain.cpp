@@ -105,6 +105,9 @@ namespace Utopian
 			}
 		}
 
+		/*mesh->SetTexturePath("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");*/
 		mesh->SetTexturePath("data/textures/ground/grass2.tga");
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.tga");
 		mesh->SetTexture(texture);

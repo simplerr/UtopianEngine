@@ -114,6 +114,12 @@ namespace Utopian
 		if (ImGui::Button("Save scene"))
 			ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
 
+		if (ImGui::Button("Clear scene"))
+			World::Instance().RemoveActors();
+
+		if (ImGui::Button("Load foliage"))
+			World::Instance().LoadFoliage();
+
 		Vk::UIOverlay::EndWindow();
 	}
 
