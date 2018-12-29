@@ -34,6 +34,7 @@
 #include "core/LuaManager.h"
 #include "core/ActorFactory.h"
 #include "core/AssetLoader.h"
+#include "core/ScriptExports.h"
 #include "LuaPlus.h"
 
 using namespace Utopian;
@@ -71,6 +72,7 @@ namespace Utopian
 		Input::Start();
 		LuaManager::Start();
 		AssetLoader::Start();
+		ScriptExports::Register();
 		Vk::ShaderFactory::Start(mRenderer->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
@@ -86,14 +88,9 @@ namespace Utopian
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 
-		World::Instance().LoadFoliage();
-		
-		/************************************************************************/
-		/* Add actors to the scene
-		/************************************************************************/
-
 		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
-
+		World::Instance().LoadScene();
+		
 		World::Instance().Update();
 
 		RenderingManager::Instance().PostWorldInit();

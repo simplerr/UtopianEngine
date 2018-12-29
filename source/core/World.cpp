@@ -5,6 +5,8 @@
 #include "core/components/CCamera.h"
 #include "core/components/CTransform.h"
 #include "core/AssetLoader.h"
+#include "core/ActorFactory.h"
+#include "core/LuaManager.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian
@@ -124,8 +126,20 @@ namespace Utopian
 		mComponents.push_back(component);
 	}
 
-	void World::LoadFoliage()
+	void World::LoadScene()
 	{
+		// Execute Lua script
+		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
+
+		LuaPlus::LuaObject object = gLuaManager().GetGlobalVars()["load_foliage"];
+		if (object.IsFunction())
+		{
+			LuaPlus::LuaFunction<int> load_foliage = object;
+			load_foliage();
+		}
+
+		return;
+
 		SharedPtr<Actor> actor = Actor::Create("Log");
 
 		auto transform = actor->AddComponent<CTransform>(glm::vec3(0, 0, 0));

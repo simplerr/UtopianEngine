@@ -95,6 +95,13 @@ namespace Utopian
 		{
 			mRenderer->ToggleUi();
 		}
+
+		// Reload scene
+		if (gInput().KeyPressed('R'))
+		{
+			World::Instance().RemoveActors();
+			World::Instance().LoadScene();
+		}
 	}
 
 	void Editor::UpdateUi()
@@ -117,8 +124,11 @@ namespace Utopian
 		if (ImGui::Button("Clear scene"))
 			World::Instance().RemoveActors();
 
-		if (ImGui::Button("Load foliage"))
-			World::Instance().LoadFoliage();
+		if (ImGui::Button("Reload scene"))
+		{
+			World::Instance().RemoveActors();
+			World::Instance().LoadScene();
+		}
 
 		Vk::UIOverlay::EndWindow();
 	}

@@ -426,6 +426,9 @@
     <ClCompile Include="source\core\AssetLoader.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\ScriptExports.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -751,6 +754,9 @@
     </ClInclude>
     <ClInclude Include="source\core\AssetLoader.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\ScriptExports.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

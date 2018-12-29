@@ -20,7 +20,7 @@ namespace Utopian
 
 	void CPlayerControl::Update()
 	{
-		if (gInput().KeyPressed('R'))
+		/*if (gInput().KeyPressed('R'))
 		{
 			mOrbit->SetActive(true);
 			mNoClip->SetActive(false);
@@ -31,7 +31,7 @@ namespace Utopian
 		{
 			mOrbit->SetActive(false);
 			mNoClip->SetActive(true);
-		}
+		}*/
 	}
 
 	void CPlayerControl::PostInit()

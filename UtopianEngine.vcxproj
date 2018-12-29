@@ -90,6 +90,7 @@
     <ClCompile Include="source\core\AssetLoader.cpp" />
     <ClCompile Include="source\core\LuaManager.cpp" />
     <ClCompile Include="source\core\renderer\SceneJobs.cpp" />
+    <ClCompile Include="source\core\ScriptExports.cpp" />
     <ClCompile Include="source\core\terrain\BaseTerrain.cpp" />
     <ClCompile Include="source\core\terrain\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="source\core\AssetLoader.h" />
     <ClInclude Include="source\core\LuaManager.h" />
     <ClInclude Include="source\core\renderer\SceneJobs.h" />
+    <ClInclude Include="source\core\ScriptExports.h" />
     <ClInclude Include="source\core\terrain\BaseTerrain.h" />
     <ClInclude Include="source\core\terrain\Block.h" />
     <ClInclude Include="source\Camera.h" />
