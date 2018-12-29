@@ -6,6 +6,7 @@
 #include "core/components/CTransform.h"
 #include "core/AssetLoader.h"
 #include "core/ActorFactory.h"
+#include "core/ScriptExports.h"
 #include "core/LuaManager.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -130,6 +131,9 @@ namespace Utopian
 	{
 		// Execute Lua script
 		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
+
+		// Note: Todo: This should not be here!!
+		ScriptImports::Register();
 
 		LuaPlus::LuaObject object = gLuaManager().GetGlobalVars()["load_foliage"];
 		if (object.IsFunction())

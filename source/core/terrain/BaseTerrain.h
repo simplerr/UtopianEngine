@@ -41,6 +41,8 @@ namespace Utopian
 			hasGrass = true; // Assume every block will have grass
 		}
 
+		~Block2();
+
 		void GenerateGrassInstances(Vk::Renderer* renderer, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize);
 
 		SharedPtr<Renderable> renderable;

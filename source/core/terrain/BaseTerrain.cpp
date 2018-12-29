@@ -17,6 +17,11 @@ namespace Utopian
 		return (a.z < b.z);
 	}
 
+	Block2::~Block2()
+	{
+		renderable->OnDestroyed();
+	}
+
 	void Block2::GenerateGrassInstances(Vk::Renderer* renderer, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize)
 	{
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
@@ -149,6 +154,7 @@ namespace Utopian
 	
 	void BaseTerrain::ClearBlocks()
 	{
+		mBlockList.clear();
 	}
 
 	void BaseTerrain::SetNumCells(uint32_t numCells)

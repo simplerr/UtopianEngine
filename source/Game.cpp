@@ -72,7 +72,11 @@ namespace Utopian
 		Input::Start();
 		LuaManager::Start();
 		AssetLoader::Start();
+
+		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
+
 		ScriptExports::Register();
+		ScriptImports::Register();
 		Vk::ShaderFactory::Start(mRenderer->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();

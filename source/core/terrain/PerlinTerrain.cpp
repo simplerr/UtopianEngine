@@ -6,6 +6,7 @@
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/TextureLoader.h"
+#include "core/ScriptExports.h"
 #include "Camera.h"
 #include "Input.h"
 #include <random>
@@ -21,19 +22,21 @@ namespace Utopian
 
 	float PerlinTerrain::GetHeight(float x, float z)
 	{
-		float frequency = (1.0f / 33000.0f);
-		float amplitude = 11000.0f;
-		float height = 0.0f;
+		// Done in Lua for now
 
-		const uint32_t octaves = 8;
-		for (uint32_t i = 0; i < octaves; i++)
-		{
-			height += mPerlinNoise->noise(x * frequency, 0, z * frequency) * amplitude;
-			amplitude *= 0.5f;
-			frequency *= 2;
-		}
+		//float frequency = (1.0f / 33000.0f);
+		//float amplitude = 11000.0f;
+		//float height = 0.0f;
 
-		return 0.0f;
+		//const uint32_t octaves = 8;
+		//for (uint32_t i = 0; i < octaves; i++)
+		//{
+		//	height += mPerlinNoise->Noise(x * frequency, 0, z * frequency) * amplitude;
+		//	amplitude *= 0.5f;
+		//	frequency *= 2;
+		//}
+
+		float height = ScriptImports::GetTerrainHeight(x, z);
 		return height;
 	}
 

@@ -31,6 +31,11 @@ namespace Utopian
 	public:
 		PerlinNoise(uint32_t seed = 0)
 		{
+			Seed(seed);
+		}
+
+		void Seed(uint32_t seed)
+		{
 			// Generate random lookup for permutations containing all numbers from 0..255
 			std::vector<uint8_t> plookup;
 			plookup.resize(256);
@@ -43,7 +48,8 @@ namespace Utopian
 				permutations[i] = permutations[256 + i] = plookup[i];
 			}
 		}
-		T noise(T x, T y, T z)
+
+		T Noise(T x, T y, T z)
 		{
 			// Find unit cube that contains point
 			int32_t X = (int32_t)floor(x) & 255;

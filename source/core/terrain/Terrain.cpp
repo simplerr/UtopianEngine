@@ -45,7 +45,7 @@ void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
 		{
 			for (int z = 0; z < depth; z++)
 			{
-				float n = perlinNoise.noise((float)x / width, (float)y / height, (float)z / depth);
+				float n = perlinNoise.Noise((float)x / width, (float)y / height, (float)z / depth);
 				texture3d[x + y * width + z * width * height] = n;
 			}
 		}

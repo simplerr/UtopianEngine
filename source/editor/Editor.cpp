@@ -9,7 +9,7 @@
 #include "core/components/CLight.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
-#include "core/terrain/Terrain.h"
+#include "core/terrain/BaseTerrain.h"
 #include "editor/TransformTool.h"
 #include "core/ActorFactory.h"
 
@@ -124,10 +124,17 @@ namespace Utopian
 		if (ImGui::Button("Clear scene"))
 			World::Instance().RemoveActors();
 
+		if (ImGui::Button("Reload foliage"))
+		{
+			World::Instance().RemoveActors();
+			World::Instance().LoadScene();
+		}
+
 		if (ImGui::Button("Reload scene"))
 		{
 			World::Instance().RemoveActors();
 			World::Instance().LoadScene();
+			mTerrain->ClearBlocks();
 		}
 
 		Vk::UIOverlay::EndWindow();

@@ -1,5 +1,4 @@
 #include "core/ScriptExports.h"
-#include "core/LuaManager.h"
 #include "core/AssetLoader.h"
 #include "core/components/Actor.h"
 #include "core/components/CRenderable.h"
@@ -10,6 +9,9 @@
 
 namespace Utopian
 {
+	PerlinNoise<float> ScriptExports::mPerlinNoise;
+	SharedPtr<LuaPlus::LuaFunction<float>> ScriptImports::get_terrain_height;
+
 	void ScriptExports::Register()
 	{
 		LuaPlus::LuaObject globals = gLuaManager().GetGlobalVars();
@@ -19,6 +21,8 @@ namespace Utopian
 		globals.RegisterDirect("add_instanced_asset", &ScriptExports::AddInstancedAsset);
 		globals.RegisterDirect("build_instance_buffers", &ScriptExports::BuildInstanceBuffers);
 		globals.RegisterDirect("clear_instance_groups", &ScriptExports::ClearInstanceGroups);
+		globals.RegisterDirect("seed_noise", &ScriptExports::SeedNoise);
+		globals.RegisterDirect("get_noise", &ScriptExports::GetNoise);
 	}
 
 	void ScriptExports::DebugPrint(const char* text)
@@ -59,4 +63,34 @@ namespace Utopian
 	{
 		gRenderingManager().ClearInstanceGroups();
 	}
+
+	void ScriptExports::SeedNoise(uint32_t seed)
+	{
+		mPerlinNoise.Seed(seed);
+	}
+
+	float ScriptExports::GetNoise(float x, float y, float z)
+	{
+		return mPerlinNoise.Noise(x, y, z);
+	}
+
+	void ScriptImports::Register()
+	{
+		LuaPlus::LuaObject object = gLuaManager().GetGlobalVars()["get_terrain_height"];
+		if (object.IsFunction())
+		{
+			get_terrain_height = std::make_shared<LuaPlus::LuaFunction<float>>(object);
+		}
+		else
+		{
+			Vk::VulkanDebug::ConsolePrint("get_terrain_height() functin not found in Lua");
+		}
+	}
+
+	float ScriptImports::GetTerrainHeight(float x, float z)
+	{
+		// Note: Function from Lua is retrieved in Register() to speed it up 
+		float height = get_terrain_height.get()->operator()(x, z);
+		return height;
+	}	
 }

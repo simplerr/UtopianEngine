@@ -19,7 +19,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Grass and flowers
-    for i=0, 200 do
+    for i=0, 3000 do
         local asset_id = math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
@@ -45,10 +45,26 @@ generate_random_foliage = function(instancing)
     end
 end
 
+get_terrain_height = function(x, z)
+    local frequency = (1.0 / 33000.0)
+    local amplitude = 2000.0
+    local octaves = 8;
+    local height = 0.0
+
+    for i=0, octaves do
+        height = height + get_noise(x * frequency, 0, z * frequency) * amplitude
+		amplitude = amplitude * 0.5
+		frequency = frequency * 2
+    end
+
+    return height;
+end
+
 load_foliage = function()
     debug_print("Loading assets from Lua...")
     clear_instance_groups()
     generate_random_foliage(true)
+    get_terrain_height(15000, 1000)
     --instancing_testing()
     build_instance_buffers()
 end
