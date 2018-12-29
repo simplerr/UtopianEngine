@@ -76,7 +76,7 @@ namespace Utopian
 		float ssaoRadius = 6.0f;
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
-		float grassViewDistance = 1000.0f;
+		float grassViewDistance = 1800.0f;
 		int blockViewDistance = 2;
 	};
 
