@@ -1,14 +1,9 @@
-add_test_assets = function()
-    debug_print("Loading test scene from Lua...")
-
-    -- Grass and flowers
-    for i=0, 70 do
-        add_asset(i, (i / 10) * 100, 0, (i % 10) * 100, 1)
+generate_random_foliage = function(instancing)
+    if instancing then
+        debug_print("Generating random instanced foliage from Lua...")
+    else
+        debug_print("Generating random foliage from Lua...")
     end
-end
-
-generate_random_foliage = function()
-    debug_print("Generating random foliage from Lua...")
 
     math.randomseed(os.time())
     local range = 1000
@@ -19,7 +14,7 @@ generate_random_foliage = function()
         local x = math.random(-range, range)
         local z = math.random(-range, range)
         local scale = math.random(10, 80) / 100
-        add_asset(71, x, 0, z, scale)
+        add_asset(71, x, 0, z, 180, 0, 0, scale, instancing)
         -- add_asset(i, (i / 10) * 100, 0, (i % 10) * 100, 1)
     end
 
@@ -28,7 +23,7 @@ generate_random_foliage = function()
         local asset_id = math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
-        add_asset(asset_id, x, 0, z, 1)
+        add_asset(asset_id, x, 0, z, 180, 0, 0, 1, instancing)
     end
 
     -- Rocks
@@ -37,7 +32,7 @@ generate_random_foliage = function()
         local x = math.random(-range, range)
         local z = math.random(-range, range)
         local scale = math.random(1, 20) / 100
-        add_asset(asset_id, x, 0, z, scale)
+        add_asset(asset_id, x, 0, z, 180, 0, 0, scale, instancing)
     end
 
     -- Bushes
@@ -46,13 +41,14 @@ generate_random_foliage = function()
         local x = math.random(-range, range)
         local z = math.random(-range, range)
         local scale = 1--math.random(1, 20) / 100
-        add_asset(asset_id, x, 0, z, scale)
+        add_asset(asset_id, x, 0, z, 180, 0, 0, scale, instancing)
     end
 end
 
 load_foliage = function()
     debug_print("Loading assets from Lua...")
-    --add_test_assets()
-    generate_random_foliage()
-    add_asset(0, 0, 0, 0, 1)
+    clear_instance_groups()
+    generate_random_foliage(true)
+    --instancing_testing()
+    build_instance_buffers()
 end

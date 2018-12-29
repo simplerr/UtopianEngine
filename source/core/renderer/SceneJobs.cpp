@@ -61,12 +61,29 @@ namespace Utopian
 																		   renderTarget->GetRenderPass(),
 																		   "data/shaders/gbuffer/gbuffer.vert",
 																		   "data/shaders/gbuffer/gbuffer_terrain.frag");
+
+		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+																		     renderTarget->GetRenderPass(),
+																		   	 "data/shaders/gbuffer/gbuffer_instancing.vert",
+																		     "data/shaders/gbuffer/gbuffer.frag");
+
+		//SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
+		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
+		vertexDescription->AddBinding(BINDING_1, sizeof(InstanceData), VK_VERTEX_INPUT_RATE_INSTANCE);
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 0 : InInstanceWorld
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 1 : InInstanceWorld
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 2 : InInstanceWorld
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 3 : InInstanceWorld
+		mGBufferEffectInstanced->GetPipeline()->OverrideVertexInput(vertexDescription);
+
+		mGBufferEffectInstanced->CreatePipeline();
 		mGBufferEffectTerrain->CreatePipeline();
 		mGBufferEffect->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
 
 		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		// Bind the different terrain textures
 		sampler = std::make_shared<Vk::Sampler>(mRenderer->GetDevice(), false);
@@ -136,6 +153,32 @@ namespace Utopian
 		//	commandBuffer->CmdBindIndexBuffer(blockMesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		//	commandBuffer->CmdDrawIndexed(blockMesh->GetNumIndices(), 1, 0, 0, 0);
 		//}
+
+		/* Render instanced assets */
+		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
+		{
+			SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
+			Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
+			Vk::StaticModel* model = instanceGroup->GetModel();
+
+			if (instanceBuffer != nullptr && model != nullptr)
+			{
+				for (Vk::Mesh* mesh : model->mMeshes)
+				{
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					VkDescriptorSet descriptorSets[2] = { mGBufferEffectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+
+					commandBuffer->CmdBindPipeline(mGBufferEffectInstanced->GetPipeline());
+					commandBuffer->CmdBindDescriptorSet(mGBufferEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+					// Note: Move out from if
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+				}
+			}
+		}
 
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)

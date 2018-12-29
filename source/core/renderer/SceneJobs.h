@@ -18,7 +18,37 @@ namespace Utopian
 	class Light;
 	class Camera;
 	class BaseJob;
-	class PerlinTerrain;
+	class PerlinTerrain;	
+	
+	/*
+		Instancing data
+		Todo: Move
+	*/
+	struct InstanceData
+	{
+		glm::mat4 world;   
+	};
+
+	class InstanceGroup
+	{
+	public:
+		InstanceGroup(uint32_t assetId);
+		
+		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
+		void ClearInstances();
+		void BuildBuffer(Vk::Renderer* renderer);
+
+		uint32_t GetAssetId();
+		uint32_t GetNumInstances();
+		Vk::Buffer* GetBuffer();
+		Vk::StaticModel* GetModel();
+
+	private:
+		SharedPtr<Vk::Buffer> mInstanceBuffer;
+		Vk::StaticModel* mModel;
+		std::vector<InstanceData> mInstances;
+		uint32_t mAssetId;
+	};
 
 	struct SceneInfo
 	{
@@ -26,9 +56,12 @@ namespace Utopian
 		std::vector<Light*> lights;
 		std::vector<Camera*> cameras;
 		SharedPtr<PerlinTerrain> terrain;
+		std::vector<SharedPtr<InstanceGroup>> instanceGroups;
+
 		// The light that will cast shadows
 		// Currently assumes that there only is one directional light in the scene
 		Light* directionalLight;
+
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
 		glm::vec3 eyePos;
@@ -107,6 +140,7 @@ namespace Utopian
 		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
 		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
 		SharedPtr<Vk::Effect> mGBufferEffectTerrain;
+		SharedPtr<Vk::Effect> mGBufferEffectInstanced;
 	private:
 		GBufferViewProjection viewProjectionBlock;
 		SharedPtr<Vk::Sampler> sampler;

@@ -19,6 +19,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/UIOverlay.h"
 #include "core/terrain/PerlinTerrain.h"
+#include "core/AssetLoader.h"
 
 namespace Utopian
 {
@@ -302,6 +303,110 @@ namespace Utopian
 	{
 		camera->SetId(mNextNodeId++);
 		mSceneInfo.cameras.push_back(camera);
+	}
+
+	InstanceGroup::InstanceGroup(uint32_t assetId)
+	{
+		mAssetId = assetId;
+		mInstanceBuffer = nullptr;
+
+		mModel = gAssetLoader().LoadAsset(assetId);
+
+		assert(mModel);
+	}
+		
+	void InstanceGroup::AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+	{
+		glm::mat4 world = glm::translate(glm::mat4(), position);
+		world = glm::rotate(world, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		world = glm::rotate(world, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		world = glm::rotate(world, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		world = glm::scale(world, scale);
+
+		InstanceData instanceData;
+		instanceData.world = world;
+
+		mInstances.push_back(instanceData);
+	}
+
+	void InstanceGroup::ClearInstances()
+	{
+		mInstances.clear();
+		mInstanceBuffer = nullptr;
+	}
+
+	void InstanceGroup::BuildBuffer(Vk::Renderer* renderer)
+	{
+		// Todo: use device local buffer for better performance
+		// Note: Recreating the buffer every time since if the size has increased just
+		// mapping and updating the memory is not enough.
+		if (GetNumInstances() != 0)
+		{
+			mInstanceBuffer = std::make_shared<Vk::Buffer>(renderer->GetDevice(),
+														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+														   mInstances.size() * sizeof(InstanceData),
+														   mInstances.data());
+		}
+	}
+
+	uint32_t InstanceGroup::GetAssetId()
+	{
+		return mAssetId;
+	}
+
+	uint32_t InstanceGroup::GetNumInstances()
+	{
+		return mInstances.size();
+	}
+
+	Vk::Buffer* InstanceGroup::GetBuffer()
+	{
+		return mInstanceBuffer.get();
+	}
+
+	Vk::StaticModel* InstanceGroup::GetModel()
+	{
+		return mModel;
+	}
+
+	void RenderingManager::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+	{
+		// Instance group already exists?
+		SharedPtr<InstanceGroup> instanceGroup = nullptr;
+		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		{
+			if (mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
+			{
+				instanceGroup = mSceneInfo.instanceGroups[i];
+				break;
+			}
+		}
+
+		if (instanceGroup == nullptr)
+		{
+			// Todo: Check if assetId is valid
+			instanceGroup = std::make_shared<InstanceGroup>(assetId);
+			mSceneInfo.instanceGroups.push_back(instanceGroup);
+		}
+
+		instanceGroup->AddInstance(position, rotation, scale);
+	}
+	
+	void RenderingManager::ClearInstanceGroups()
+	{
+		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		{
+			mSceneInfo.instanceGroups[i]->ClearInstances();
+		}
+	}
+
+	void RenderingManager::BuildAllInstances()
+	{
+		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		{
+			mSceneInfo.instanceGroups[i]->BuildBuffer(mRenderer);
+		}
 	}
 
 	void RenderingManager::RemoveRenderable(Renderable* renderable)

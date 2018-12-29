@@ -60,6 +60,11 @@ namespace Utopian
 		void AddLight(Light* light);
 		void AddCamera(Camera* camera);
 
+		// Instancing experimentation
+		void AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
+		void BuildAllInstances();
+		void ClearInstanceGroups();
+
 		void RemoveRenderable(Renderable* renderable);
 		void RemoveLight(Light* light);
 		void RemoveCamera(Camera* camera);
