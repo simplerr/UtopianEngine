@@ -46,10 +46,10 @@ out gl_PerVertex
 // xy is UV and zw is position
 const vec4 vertexUVPos[4] =
 {
-    { 0.0, 0.0, -1.0, -1.0 },
-    { 0.0, 1.0, -1.0, +1.0 },
-    { 1.0, 0.0, +1.0, -1.0 },
-    { 1.0, 1.0, +1.0, +1.0 },
+    { 0.0, 0.0, -0.5, -0.5 },
+    { 0.0, 1.0, -0.5, +0.5 },
+    { 1.0, 0.0, +0.5, -0.5 },
+    { 1.0, 1.0, +0.5, +0.5 },
 };
 
 vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
@@ -62,7 +62,7 @@ vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
     //up = cross(toEye, right);
     instancePos += (right * size * vertexPos.x) + (up * size * vertexPos.y);
 
-    return per_frame_vs.projection * per_frame_vs.view * vec4(instancePos - size, 1.0f);
+    return per_frame_vs.projection * per_frame_vs.view * vec4(instancePos - size/2.0f, 1.0f);
 }
 
 void main() 

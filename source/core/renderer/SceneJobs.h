@@ -220,7 +220,7 @@ UNIFORM_BLOCK_END()
 		Vk::StaticModel* mCubeModel;
 	};
 
-	class InstancingJob : public BaseJob
+	class GrassJob : public BaseJob
 	{
 	public:
 
@@ -231,8 +231,8 @@ UNIFORM_BLOCK_BEGIN(ViewProjection)
 	UNIFORM_PARAM(float, grassViewDistance)
 UNIFORM_BLOCK_END()
 
-		InstancingJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
-		~InstancingJob();
+		GrassJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		~GrassJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
 		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;

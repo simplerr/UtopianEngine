@@ -591,17 +591,17 @@ namespace Utopian
 		renderTarget->End(renderer->GetQueue());
 	}
 
-	InstancingJob::InstancingJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+	GrassJob::GrassJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
 		//effect->BindCombinedImage("textureSampler", todo)
 	}
 
-	InstancingJob::~InstancingJob()
+	GrassJob::~GrassJob()
 	{
 	}
 
-	void InstancingJob::Init(const std::vector<BaseJob*>& jobs)
+	void GrassJob::Init(const std::vector<BaseJob*>& jobs)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[RenderingManager::DEFERRED_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
@@ -615,8 +615,8 @@ namespace Utopian
 		
 		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
 															renderTarget->GetRenderPass(),
-			                                                "data/shaders/instancing/instancing.vert",
-															"data/shaders/instancing/instancing.frag");
+			                                                "data/shaders/grass/grass.vert",
+															"data/shaders/grass/grass.frag");
 
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
 
@@ -658,9 +658,9 @@ namespace Utopian
 		effect->BindCombinedImage("textureSampler", &textureArray);
 	}
 
-	void InstancingJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void GrassJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		return;
+		//return;
 		viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
