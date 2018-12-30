@@ -76,7 +76,7 @@ namespace Utopian
 		float ssaoRadius = 6.0f;
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
-		float grassViewDistance = 1800.0f;
+		float grassViewDistance = 0*1800.0f;
 		int blockViewDistance = 2;
 	};
 
@@ -162,8 +162,9 @@ UNIFORM_BLOCK_END()
 		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
-		SharedPtr<Vk::Image> depthImage;
+		SharedPtr<Vk::Image> depthColorImage;
 		SharedPtr<Vk::Image> depthImageDebug;
+		SharedPtr<Vk::Image> depthImage;
 
 		SharedPtr<Vk::Effect> effect;
 		ViewProjection viewProjectionBlock;

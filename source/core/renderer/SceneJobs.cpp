@@ -236,12 +236,14 @@ namespace Utopian
 	ShadowJob::ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
-		depthImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
+		depthColorImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
 		depthImageDebug = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
+		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
-		renderTarget->AddColorAttachment(depthImage);
+		renderTarget->AddColorAttachment(depthColorImage);
 		renderTarget->AddColorAttachment(depthImageDebug);
+		renderTarget->AddDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
@@ -249,7 +251,7 @@ namespace Utopian
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
 															"data/shaders/shadowmap/shadowmap.frag");
-		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		//effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
 		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -340,7 +342,7 @@ namespace Utopian
 						   blurJob->blurImage.get(),
 						   gbufferJob->renderTarget->GetSampler());
 
-		effect->BindCombinedImage("shadowSampler", shadowJob->depthImage.get(), depthSampler.get());
+		effect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), depthSampler.get());
 	}
 
 	void DeferredJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
