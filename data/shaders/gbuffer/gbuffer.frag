@@ -30,6 +30,8 @@ float linearDepth(float depth)
 void main() 
 {
 	vec4 color = texture(texSampler, InTex * InTextureTiling);
+	if (color.a < 0.01f)
+		discard;
 
 	if (InColor != vec3(1.0f))
 		color = vec4(InColor, 1.0f);

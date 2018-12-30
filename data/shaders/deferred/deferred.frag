@@ -47,18 +47,18 @@ void main()
 
 	// Calculate shadow factor
 	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
-	vec3 projCoordinate = lightSpacePosition.xyz / lightSpacePosition.w; // Perspective divide 
-	projCoordinate = projCoordinate * 0.5f + 0.5f;
+	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
+	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
 
 	float shadow = 1.0f;
 	// If fragment depth is outside frustum do no shadowing
 	if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
 	{
 		float closestDepth = texture(shadowSampler, projCoordinate.xy).r;
-		float bias = 0.00035;//0.005;
+		float bias = 0.00000065;//0.005;
 		shadow = (projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f;
 	}
-	shadow = 1;
+	//shadow = 1;
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
@@ -77,6 +77,7 @@ void main()
 	//litColor = vec4(mix(litColor.rgb, fog_ubo.fogColor, fogLerp), 1.0f);
 
 	float ssao = texture(ssaoSampler, uv).r;
+	ssao = 1.0;
 	OutFragColor = litColor * ssao;
 
 	// float depth = texture(positionSampler, uv).w;// / 100000.0f;

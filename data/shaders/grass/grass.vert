@@ -79,6 +79,6 @@ void main()
 	OutViewDistance = per_frame_vs.viewDistance;
 	OutTexId = InTexId;
 
-	gl_Position = ComputePosition(instancePos, 50.0f, vertexUVPos[gl_VertexIndex].zw);
+	gl_Position = ComputePosition(instancePos, 40.0f, vertexUVPos[gl_VertexIndex].zw);
 	OutTex = vertexUVPos[gl_VertexIndex].xy;
 }

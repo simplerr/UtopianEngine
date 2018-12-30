@@ -61,7 +61,7 @@ end
 get_terrain_height = function(x, z)
     local frequency = (1.0 / 33000.0)
     local amplitude = 2000.0
-    local octaves = 8;
+    local octaves = 8
     local height = 0.0
 
     for i=0, octaves do
@@ -70,13 +70,13 @@ get_terrain_height = function(x, z)
 		frequency = frequency * 2
     end
 
-    return height;
+    return 0*height
 end
 
 load_foliage = function()
     debug_print("Loading assets from Lua...")
     clear_instance_groups()
-    generate_random_foliage(true)
+    --generate_random_foliage(true)
     get_terrain_height(15000, 1000)
     --instancing_testing()
     build_instance_buffers()
