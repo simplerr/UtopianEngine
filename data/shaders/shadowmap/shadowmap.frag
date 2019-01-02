@@ -1,12 +1,15 @@
 #version 450
 
 layout (location = 0) in vec3 InColor;
+layout (location = 1) in vec2 InTex;
 
 layout (location = 0) out float OutColor;
 layout (location = 1) out float OutColorDebug;
 
 const float NEAR_PLANE = 1.0f; //todo: specialization const
 const float FAR_PLANE = 10000.0f; //todo: specialization const 
+
+layout (set = 1, binding = 0) uniform sampler2D texSampler;
 
 float linearDepth(float depth)
 {
@@ -16,7 +19,13 @@ float linearDepth(float depth)
 
 void main() 
 {
+	vec4 color = texture(texSampler, InTex);
+
+	if (color.a < 0.01f)
+		discard;
+
 	//OutColor = vec4(vec3(linearDepth(gl_FragCoord.z) / 25600), 1.0f);
 	OutColor = gl_FragCoord.z;// / 2560;
 	OutColorDebug = linearDepth(gl_FragCoord.z) / FAR_PLANE;
+	//OutColor = OutColorDebug;//linearDepth(gl_FragCoord.z) / FAR_PLANE;
 }

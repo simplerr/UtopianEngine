@@ -157,6 +157,7 @@ namespace Utopian
 		//}
 
 		/* Render instanced assets */
+		commandBuffer->CmdBindPipeline(mGBufferEffectInstanced->GetPipeline());
 		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
 		{
 			SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
@@ -170,7 +171,6 @@ namespace Utopian
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 					VkDescriptorSet descriptorSets[2] = { mGBufferEffectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-					commandBuffer->CmdBindPipeline(mGBufferEffectInstanced->GetPipeline());
 					commandBuffer->CmdBindDescriptorSet(mGBufferEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 					// Note: Move out from if
@@ -254,8 +254,25 @@ namespace Utopian
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
+		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
+															renderTarget->GetRenderPass(),
+															"data/shaders/shadowmap/shadowmap_instancing.vert",
+															"data/shaders/shadowmap/shadowmap.frag");
+		effectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+
+		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
+		vertexDescription->AddBinding(BINDING_1, sizeof(InstanceData), VK_VERTEX_INPUT_RATE_INSTANCE);
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 0 : InInstanceWorld
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 1 : InInstanceWorld
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 2 : InInstanceWorld
+		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 3 : InInstanceWorld
+		effectInstanced->GetPipeline()->OverrideVertexInput(vertexDescription);
+
+		effectInstanced->CreatePipeline();
+
 		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		effectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		const uint32_t size = 240;
 		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthImageDebug.get(), renderTarget->GetSampler());
@@ -284,6 +301,32 @@ namespace Utopian
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
+		/* Render instanced assets */
+		commandBuffer->CmdBindPipeline(effectInstanced->GetPipeline());
+
+		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
+		{
+			SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
+			Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
+			Vk::StaticModel* model = instanceGroup->GetModel();
+
+			if (instanceBuffer != nullptr && model != nullptr)
+			{
+				for (Vk::Mesh* mesh : model->mMeshes)
+				{
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+
+					commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+				}
+			}
+		}
+
 		// Todo: Should this be moved to the effect instead?
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
@@ -298,6 +341,11 @@ namespace Utopian
 
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
+				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+				VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+
+				commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
 
