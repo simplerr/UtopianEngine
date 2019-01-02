@@ -342,9 +342,9 @@ namespace Utopian
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+				VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-				commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 				
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
