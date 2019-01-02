@@ -32,14 +32,14 @@ namespace Utopian::Vk
 		void SetEyePos(glm::vec3 eyePos);
 		void BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler);
 		void SetLightArray(const std::vector<Light*>& lights);
-		void SetFogData(const RenderingSettings& renderingSettings);
+		void SetSettingsData(const RenderingSettings& renderingSettings);
 		void SetLightTransform(glm::mat4 viewProjection);
 
 		virtual void UpdateMemory();
 
 		DeferredEyePos eyeBlock;
 		LightUniformBuffer light_ubo;
-		FogUniformBuffer fog_ubo;
+		SettingsUniformBuffer settings_ubo;
 		LightTransform lightTransform;
 	private:
 	};

@@ -75,7 +75,7 @@ namespace Utopian
 		std::vector<Utopian::Vk::LightData> lights;
 	};
 
-	class FogUniformBuffer : public Utopian::Vk::ShaderBuffer
+	class SettingsUniformBuffer : public Utopian::Vk::ShaderBuffer
 	{
 	public:
 		virtual void UpdateMemory()
@@ -97,6 +97,7 @@ namespace Utopian
 			float padding;
 			float fogStart;
 			float fogDistance;
+			int shadowSampleSize;
 		} data;
 	};
 }

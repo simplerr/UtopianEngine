@@ -19,19 +19,54 @@ layout (std140, set = 0, binding = 0) uniform UBO_eyePos
 	vec4 EyePosW;
 } eye_ubo;
 
-layout (std140, set = 0, binding = 2) uniform UBO_fog
+layout (std140, set = 0, binding = 2) uniform UBO_settings
 {
 	vec3 fogColor;
 	float padding;
 	float fogStart;
 	float fogDistance;
-} fog_ubo;
+	int shadowSampleSize;
+} settings_ubo;
 
 layout (std140, set = 0, binding = 3) uniform UBO_lightTransform
 {
 	mat4 viewProjection;
 } light_transform;
 
+float calculateShadow(vec3 position)
+{
+	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
+	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
+	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
+
+	float shadow = 0.0f;
+	vec2 texelSize = 1.0 / textureSize(shadowSampler, 0);
+	int count = 0;
+	int range = settings_ubo.shadowSampleSize;
+	for (int x = -range; x <= range; x++)
+	{
+		for (int y = -range; y <= range; y++)
+		{
+			// If fragment depth is outside frustum do no shadowing
+			if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
+			{
+				float closestDepth = texture(shadowSampler, projCoordinate.xy + vec2(x, y) * texelSize).r;
+				float bias = 0.00000065;
+				shadow += ((projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f);
+			}
+			else
+			{
+				shadow += 1.0f;
+			}
+
+			count++;
+		}
+	}
+
+	shadow /= (count);
+
+	return shadow;
+}
 void main() 
 {
 	vec2 uv = InTex;
@@ -46,19 +81,7 @@ void main()
 	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
 	// Calculate shadow factor
-	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
-	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
-	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
-
-	float shadow = 1.0f;
-	// If fragment depth is outside frustum do no shadowing
-	if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
-	{
-		float closestDepth = texture(shadowSampler, projCoordinate.xy).r;
-		float bias = 0.00000065;//0.005;
-		shadow = (projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f;
-	}
-	//shadow = 1;
+	float shadow = calculateShadow(position);
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
@@ -70,14 +93,13 @@ void main()
 
 	// Apply fogging.
 	float distToEye = length(eye_ubo.EyePosW.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
-	float fogLerp = clamp((distToEye - fog_ubo.fogStart) / fog_ubo.fogDistance, 0.0, 1.0); 
+	float fogLerp = clamp((distToEye - settings_ubo.fogStart) / settings_ubo.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
 	// Note: Disabled for now
-	//litColor = vec4(mix(litColor.rgb, fog_ubo.fogColor, fogLerp), 1.0f);
+	//litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
 
 	float ssao = texture(ssaoSampler, uv).r;
-	ssao = 1.0;
 	OutFragColor = litColor * ssao;
 
 	// float depth = texture(positionSampler, uv).w;// / 100000.0f;

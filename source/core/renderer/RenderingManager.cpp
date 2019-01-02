@@ -150,6 +150,7 @@ namespace Utopian
 		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
 		ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
 		ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
+		ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
 
 		Vk::UIOverlay::EndWindow();
 

@@ -251,7 +251,7 @@ namespace Utopian
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
 															"data/shaders/shadowmap/shadowmap.frag");
-		//effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
 		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -349,7 +349,7 @@ namespace Utopian
 	{
 		mScreenQuad->SetVisible(jobInput.renderingSettings.deferredPipeline);
 
-		effect->SetFogData(jobInput.renderingSettings);
+		effect->SetSettingsData(jobInput.renderingSettings);
 		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect->SetLightArray(jobInput.sceneInfo.lights);
 

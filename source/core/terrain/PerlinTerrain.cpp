@@ -125,6 +125,7 @@ namespace Utopian
 		block->renderable->SetColor(glm::vec4(color, 1.0f));
 		block->renderable->SetTileFactor(glm::vec2(10.0f));
 		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_TERRAIN);
+		https://forum.unity.com/threads/foliage-similar-to-the-witness.399585/
 
 		//block->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
 

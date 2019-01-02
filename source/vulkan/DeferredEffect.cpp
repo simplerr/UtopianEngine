@@ -24,12 +24,12 @@ namespace Utopian::Vk
 
 		eyeBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		light_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		fog_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settings_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		lightTransform.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		BindUniformBuffer("UBO_eyePos", &eyeBlock);
 		BindUniformBuffer("UBO_lights", &light_ubo);
-		BindUniformBuffer("UBO_fog", &fog_ubo);
+		BindUniformBuffer("UBO_settings", &settings_ubo);
 		BindUniformBuffer("UBO_lightTransform", &lightTransform);
 	}
 
@@ -71,12 +71,13 @@ namespace Utopian::Vk
 		lightTransform.UpdateMemory();
 	}
 
-	void DeferredEffect::SetFogData(const RenderingSettings& renderingSettings)
+	void DeferredEffect::SetSettingsData(const RenderingSettings& renderingSettings)
 	{
 		// Todo:
-		fog_ubo.data.fogColor = renderingSettings.fogColor;
-		fog_ubo.data.fogStart = renderingSettings.fogStart;
-		fog_ubo.data.fogDistance = renderingSettings.fogDistance;
-		fog_ubo.UpdateMemory();
+		settings_ubo.data.fogColor = renderingSettings.fogColor;
+		settings_ubo.data.fogStart = renderingSettings.fogStart;
+		settings_ubo.data.fogDistance = renderingSettings.fogDistance;
+		settings_ubo.data.shadowSampleSize = renderingSettings.shadowSampleSize;
+		settings_ubo.UpdateMemory();
 	}
 }

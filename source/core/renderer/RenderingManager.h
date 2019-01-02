@@ -92,7 +92,7 @@ namespace Utopian
 		// TODO: Move these
 		CameraUniformBuffer per_frame_vs;
 		LightUniformBuffer per_frame_ps;
-		FogUniformBuffer fog_ubo;
+		SettingsUniformBuffer fog_ubo;
 
 		Vk::DescriptorSetLayout mCommonDescriptorSetLayout;
 		Vk::DescriptorSet* mCommonDescriptorSet;
