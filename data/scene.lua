@@ -2,25 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "Grid",
-		components = 
-		{
-			CTransform = 
-			{
-				pos_x = 0,
-				pos_y = 0,
-				pos_z = 0,
-				rotation_x = 0,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 25,
-				scale_y = 1,
-				scale_z = 25,
-			},
-		},
-	},
-	
-	{
 		actor_name = "EditorActor",
 		components = 
 		{
@@ -31,33 +12,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -897.11999511719,
-				pos_y = 0,
-				pos_z = 239.91351318359,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				path = "data/models/adventure_village/HouseAtticSmall.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				pos_x = 397.35189819336,
-				pos_y = 0,
-				pos_z = -2.5122680664063,
+				pos_x = 1688.1127929688,
+				pos_y = -77.806793212891,
+				pos_z = 433.67080688477,
 				rotation_x = 180,
 				rotation_y = 203.90000915527,
 				rotation_z = 0,
@@ -80,7 +37,7 @@ actor_list =
 			CTransform = 
 			{
 				pos_x = -652.67309570313,
-				pos_y = 0,
+				pos_y = 173.11082458496,
 				pos_z = -570.93786621094,
 				rotation_x = 180,
 				rotation_y = 0,
@@ -351,9 +308,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -185.09301757813,
-				pos_y = 44.688766479492,
-				pos_z = -119.95816040039,
+				pos_x = 1371.3413085938,
+				pos_y = 60.087890625,
+				pos_z = 327.88204956055,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -387,9 +344,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = 587.2861328125,
-				pos_y = 1487.6638183594,
-				pos_z = 2459.5927734375,
+				pos_x = 1437.6877441406,
+				pos_y = 67.94165802002,
+				pos_z = 849.51751708984,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -398,8 +355,8 @@ actor_list =
 				scale_z = 1,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "EditorActor",
 		components = 
@@ -438,6 +395,49 @@ actor_list =
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Grid",
+		components = 
+		{
+			CTransform = 
+			{
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 25,
+				scale_y = 1,
+				scale_z = 25,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/adventure_village/HouseAtticSmall.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -897.11999511719,
+				pos_y = -33.510452270508,
+				pos_z = 239.91351318359,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
 			},
 		},
 	},

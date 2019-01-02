@@ -26,11 +26,11 @@ namespace Utopian
 {
 	static void calculateLightViewProj(Light* light, glm::mat4& view, glm::mat4& projection, uint32_t width, uint32_t height)
 	{
-		const float farPlane = 10000.0f;
+		const float farPlane = 20000.0f;
+		const float size = 2000.0f;
 		view = glm::lookAt(-light->GetPosition(), glm::vec3(0.0f), glm::vec3(0, 1, 0));
-		projection = glm::perspective<float>(glm::radians(45.0f), (float)width / (float)height, 1.0f, farPlane);
-		//const float size = 10.0f;
-		//projection = glm::ortho<float>(-size, size, -size, size, 1.0f, farPlane);
+		//projection = glm::perspective<float>(glm::radians(45.0f), (float)width / (float)height, 1.0f, farPlane);
+		projection = glm::ortho(size, 0.0f, 0.0f, size, -farPlane, farPlane);
 	}
 
 	GBufferJob::GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
@@ -251,7 +251,7 @@ namespace Utopian
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
 															"data/shaders/shadowmap/shadowmap.frag");
-		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
 		effect->CreatePipeline();
 
 		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),

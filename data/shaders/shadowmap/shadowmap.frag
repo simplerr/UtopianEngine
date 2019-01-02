@@ -24,8 +24,7 @@ void main()
 	if (color.a < 0.01f)
 		discard;
 
-	//OutColor = vec4(vec3(linearDepth(gl_FragCoord.z) / 25600), 1.0f);
 	OutColor = gl_FragCoord.z;// / 2560;
-	OutColorDebug = linearDepth(gl_FragCoord.z) / FAR_PLANE;
-	//OutColor = OutColorDebug;//linearDepth(gl_FragCoord.z) / FAR_PLANE;
+	OutColorDebug = gl_FragCoord.z;// / 2560;
+	//OutColorDebug = linearDepth(gl_FragCoord.z) / FAR_PLANE; // Use this if perspective projection matrix
 }

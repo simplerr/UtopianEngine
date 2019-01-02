@@ -9,7 +9,7 @@ generate_random_foliage = function(instancing)
     local range = 3000
 
     -- Trees
-    for i=0, 100 do
+    for i=0, 3 do
         local range = 3000
         local asset_id = math.random(0, 24)
         local x = math.random(-range, range)
@@ -70,13 +70,13 @@ get_terrain_height = function(x, z)
 		frequency = frequency * 2
     end
 
-    return 0*height
+    return height
 end
 
 load_foliage = function()
     debug_print("Loading assets from Lua...")
     clear_instance_groups()
-    --generate_random_foliage(true)
+    generate_random_foliage(true)
     get_terrain_height(15000, 1000)
     --instancing_testing()
     build_instance_buffers()
