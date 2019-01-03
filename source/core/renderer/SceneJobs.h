@@ -90,7 +90,7 @@ namespace Utopian
 		int blockViewDistance = 2;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
-		float cascadeSplitLambda = 0.95f;
+		float cascadeSplitLambda = 1.0f;// 0.95f;
 	};
 
 	struct JobInput
@@ -168,6 +168,10 @@ UNIFORM_BLOCK_BEGIN(ViewProjection)
 	UNIFORM_PARAM(glm::mat4, view)
 UNIFORM_BLOCK_END()
 
+UNIFORM_BLOCK_BEGIN(CascadeTransforms)
+	UNIFORM_PARAM(glm::mat4, viewProjection[SHADOW_MAP_CASCADE_COUNT])
+UNIFORM_BLOCK_END()
+
 		ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~ShadowJob();
 
@@ -182,6 +186,7 @@ UNIFORM_BLOCK_END()
 		SharedPtr<Vk::Effect> effect;
 		SharedPtr<Vk::Effect> effectInstanced;
 		ViewProjection viewProjectionBlock;
+		CascadeTransforms cascadeTransforms;
 	private:
 	};
 

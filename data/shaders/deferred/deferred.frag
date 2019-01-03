@@ -21,6 +21,8 @@ layout (std140, set = 0, binding = 0) uniform UBO_eyePos
 	vec4 EyePosW;
 } eye_ubo;
 
+// UBO_lights from phong_lighting.glsl is at slot = 0, binding = 1
+
 layout (std140, set = 0, binding = 2) uniform UBO_settings
 {
 	vec3 fogColor;
@@ -43,11 +45,15 @@ layout (std140, set = 0, binding = 4) uniform UBO_cascades
 	mat4 cameraViewMat;
 } cascades_ubo;
 
-float calculateShadow(vec3 position)
+float calculateShadow(vec3 position, vec3 normal)
 {
 	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
+	lightSpacePosition = cascades_ubo.cascadeViewProjMat[1] * vec4(position, 1.0f);
 	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
 	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
+
+	// Note: Todo: Assumes that the directional light is at index 0 
+	vec3 lightDir = normalize(light_ubo.lights[0].dir);
 
 	float shadow = 0.0f;
 	vec2 texelSize = 1.0 / textureSize(shadowSampler, 0);
@@ -61,7 +67,7 @@ float calculateShadow(vec3 position)
 			if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
 			{
 				float closestDepth = texture(shadowSampler, projCoordinate.xy + vec2(x, y) * texelSize).r;
-				float bias = 0.00000065;
+				float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.00000065); 
 				shadow += ((projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f);
 			}
 			else
@@ -91,7 +97,7 @@ void main()
 	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
 	// Calculate shadow factor
-	float shadow = calculateShadow(position);
+	float shadow = calculateShadow(position, normal);
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 

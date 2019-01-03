@@ -13,6 +13,11 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 	mat4 view;
 } per_frame_vs;
 
+layout (std140, set = 0, binding = 1) uniform UBO_cascadeTransforms 
+{
+	mat4 viewProjection[4];
+} cascade_transforms;
+
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
 	 mat4 worldInv;
@@ -40,4 +45,5 @@ void main()
 	vec4 temp2 = InTangentL;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConstants.world * vec4(InPosL.xyz, 1.0);
+	gl_Position = cascade_transforms.viewProjection[1] * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

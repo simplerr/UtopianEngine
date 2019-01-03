@@ -20,7 +20,7 @@ void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec
 	spec    = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// The light vector aims opposite the direction the light rays travel.
-	vec3 lightVec = light.dir;
+	vec3 lightVec = normalize(light.dir);
 
 	// Add ambient term.
 	ambient = material.ambient * light.material.ambient * light.intensity.x;	

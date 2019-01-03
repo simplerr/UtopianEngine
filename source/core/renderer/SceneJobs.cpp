@@ -271,8 +271,11 @@ namespace Utopian
 		effectInstanced->CreatePipeline();
 
 		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		cascadeTransforms.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		effect->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 		effectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		effectInstanced->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 
 		const uint32_t size = 240;
 		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthImageDebug.get(), renderTarget->GetSampler());
@@ -297,6 +300,14 @@ namespace Utopian
 		// Update camera uniform buffer block
 		calculateLightViewProj(directionalLight, viewProjectionBlock.data.view, viewProjectionBlock.data.projection, mWidth, mHeight);
 		viewProjectionBlock.UpdateMemory();
+
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
+			//cascadeTransforms.data.viewProjection[i] = viewProjectionBlock.data.projection * viewProjectionBlock.data.view;
+			cascadeTransforms.data.viewProjection[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
+		}
+
+		cascadeTransforms.UpdateMemory();
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
