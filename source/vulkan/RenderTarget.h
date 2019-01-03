@@ -38,6 +38,19 @@ namespace Utopian::Vk
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
+		// Some images can have multiple views (array layers > 1) so in those cases
+		// you must provide the exact VkImageView
+		void AddColorAttachment(VkImageView imageView,
+								VkFormat format,
+								VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+
+		void AddDepthAttachment(VkImageView imageView,
+								VkFormat format,
+								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+
 		void Create();
 
 		Utopian::Vk::Sampler* GetSampler();

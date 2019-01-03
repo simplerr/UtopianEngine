@@ -15,6 +15,9 @@ namespace Utopian::Vk
 	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height)
 		: mDevice(device)
 	{
+		// Note: Todo: Seems to be unused!
+		assert(0);
+
 		VkImageView attachments[2];
 		attachments[0] = colorImage->GetView();
 		attachments[1] = depthStencilImage->GetView();
@@ -68,6 +71,11 @@ namespace Utopian::Vk
 	void FrameBuffers::AddAttachmentImage(Image* image)
 	{
 		mAttachments.push_back(image->GetView());
+	}
+
+	void FrameBuffers::AddAttachmentImage(VkImageView imageView)
+	{
+		mAttachments.push_back(imageView);
 	}
 
 	void FrameBuffers::Create(RenderPass* renderPass, uint32_t width, uint32_t height)

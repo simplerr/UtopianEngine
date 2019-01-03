@@ -11,7 +11,8 @@ namespace Utopian::Vk
 				 VkImageTiling tiling,
 				 VkImageUsageFlags usage,
 				 VkMemoryPropertyFlags properties,
-				 VkImageAspectFlags aspectFlags)
+				 VkImageAspectFlags aspectFlags,
+				 uint32_t arrayLayers)
 		: Handle(device, nullptr)
 	{
 		mFormat = format;
@@ -22,7 +23,7 @@ namespace Utopian::Vk
 		imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
 		imageCreateInfo.extent = { width, height, 1 };
 		imageCreateInfo.mipLevels = 1;
-		imageCreateInfo.arrayLayers = 1;
+		imageCreateInfo.arrayLayers = arrayLayers;
 		imageCreateInfo.tiling = tiling;
 		imageCreateInfo.usage = usage;
 		imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -34,16 +35,39 @@ namespace Utopian::Vk
 		// Connect the view with the image
 		VkImageViewCreateInfo viewCreateInfo = {};
 		viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewCreateInfo.viewType = (arrayLayers == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_2D_ARRAY);
 		viewCreateInfo.format = format;
 		viewCreateInfo.subresourceRange = {};
 		viewCreateInfo.subresourceRange.aspectMask = aspectFlags;
 		viewCreateInfo.subresourceRange.baseMipLevel = 0;
 		viewCreateInfo.subresourceRange.levelCount = 1;
 		viewCreateInfo.subresourceRange.baseArrayLayer = 0;
-		viewCreateInfo.subresourceRange.layerCount = 1;
+		viewCreateInfo.subresourceRange.layerCount = arrayLayers;
 
 		CreateView(viewCreateInfo);
+
+		// If multiple array layers create one image view per layer
+		if (arrayLayers > 1)
+		{
+			for (uint32_t layer = 0; layer < arrayLayers; layer++)
+			{
+				viewCreateInfo = {};
+				viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+				viewCreateInfo.format = format;
+				viewCreateInfo.subresourceRange = {};
+				viewCreateInfo.subresourceRange.aspectMask = aspectFlags;
+				viewCreateInfo.subresourceRange.baseMipLevel = 0;
+				viewCreateInfo.subresourceRange.levelCount = 1;
+				viewCreateInfo.subresourceRange.baseArrayLayer = layer;
+				viewCreateInfo.subresourceRange.layerCount = 1;
+				viewCreateInfo.image = mHandle;
+
+				VkImageView layerView = VK_NULL_HANDLE;
+				VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &layerView));
+				mLayerViews.push_back(layerView);
+			}
+		}
 	}
 
 	Image::Image(Device* device)
@@ -89,27 +113,39 @@ namespace Utopian::Vk
 		return mImageView;
 	}
 
+	VkImageView Image::GetLayerView(uint32_t layer)
+	{
+		if (layer < mLayerViews.size())
+		{
+			return mLayerViews[layer];
+		}
+
+		assert(0);
+	}
+
 	VkFormat Image::GetFormat()
 	{
 		return mFormat;
 	}
 
-	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format)
+	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)
 		: Image(device, width, height, format,
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				VK_IMAGE_ASPECT_COLOR_BIT)
+				VK_IMAGE_ASPECT_COLOR_BIT,
+				arrayLayers)
 	{
 
 	}
 
-	ImageDepth::ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format)
+	ImageDepth::ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)
 		: Image(device, width, height, format, 
 				VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT)
+				VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT,
+			    arrayLayers)
 	{
 
 	}

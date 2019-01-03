@@ -14,7 +14,7 @@ layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
-layout (set = 1, binding = 4) uniform sampler2D shadowSampler;
+layout (set = 1, binding = 4) uniform sampler2DArray shadowSampler;
 
 layout (std140, set = 0, binding = 0) uniform UBO_eyePos
 {
@@ -45,10 +45,10 @@ layout (std140, set = 0, binding = 4) uniform UBO_cascades
 	mat4 cameraViewMat;
 } cascades_ubo;
 
-float calculateShadow(vec3 position, vec3 normal)
+float calculateShadow(vec3 position, vec3 normal, uint cascadeIndex)
 {
 	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
-	lightSpacePosition = cascades_ubo.cascadeViewProjMat[0] * vec4(position, 1.0f);
+	lightSpacePosition = cascades_ubo.cascadeViewProjMat[cascadeIndex*0] * vec4(position, 1.0f);
 	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
 	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
 
@@ -56,7 +56,7 @@ float calculateShadow(vec3 position, vec3 normal)
 	vec3 lightDir = normalize(light_ubo.lights[0].dir);
 
 	float shadow = 0.0f;
-	vec2 texelSize = 1.0 / textureSize(shadowSampler, 0);
+	vec2 texelSize = 1.0 / textureSize(shadowSampler, 0).xy;
 	int count = 0;
 	int range = settings_ubo.shadowSampleSize;
 	for (int x = -range; x <= range; x++)
@@ -66,7 +66,8 @@ float calculateShadow(vec3 position, vec3 normal)
 			// If fragment depth is outside frustum do no shadowing
 			if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
 			{
-				float closestDepth = texture(shadowSampler, projCoordinate.xy + vec2(x, y) * texelSize).r;
+				vec2 offset = vec2(x, y) * texelSize;
+				float closestDepth = texture(shadowSampler, vec3(projCoordinate.xy + offset, cascadeIndex)).r;
 				float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.00000065); 
 				shadow += ((projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f);
 			}
@@ -97,7 +98,7 @@ void main()
 	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
 	// Calculate shadow factor
-	float shadow = calculateShadow(position, normal);
+	float shadow = calculateShadow(position, normal, 0);
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 

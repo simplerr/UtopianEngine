@@ -16,6 +16,7 @@ namespace Utopian::Vk
 		~FrameBuffers();
 
 		void AddAttachmentImage(Image* image);
+		void AddAttachmentImage(VkImageView imageView);
 		void Create(RenderPass* renderPass, uint32_t width, uint32_t height);
 
 		VkFramebuffer GetFrameBuffer(uint32_t index);
