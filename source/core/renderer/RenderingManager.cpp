@@ -155,6 +155,12 @@ namespace Utopian
 		ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
 		ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
 		ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
+		ImGui::SliderFloat("Near plane", &mRenderingSettings.nearPlane, 0.0f, 100.0f);
+		ImGui::SliderFloat("Far plane", &mRenderingSettings.farPlane, 1000.0f, 25600.0f);
+
+		// Temp:
+		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
+		mMainCamera->SetFarPlane(mRenderingSettings.farPlane);
 
 		Vk::UIOverlay::EndWindow();
 
@@ -192,7 +198,8 @@ namespace Utopian
 
 		// Calculate split depths based on view camera furstum
 		// Based on method presentd in https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch10.html
-		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++) {
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
 			float p = (i + 1) / static_cast<float>(SHADOW_MAP_CASCADE_COUNT);
 			float log = minZ * std::pow(ratio, p);
 			float uniform = minZ + range * p;
@@ -202,7 +209,8 @@ namespace Utopian
 
 		// Calculate orthographic projection matrix for each cascade
 		float lastSplitDist = 0.0;
-		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++) {
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
 			float splitDist = cascadeSplits[i];
 
 			glm::vec3 frustumCorners[8] = {
@@ -248,7 +256,9 @@ namespace Utopian
 
 			glm::vec3 lightDir = glm::normalize(mSceneInfo.directionalLight->GetPosition());
 			glm::mat4 lightViewMatrix = glm::lookAt(frustumCenter - lightDir * -minExtents.z, frustumCenter, glm::vec3(0.0f, 1.0f, 0.0f));
-			glm::mat4 lightOrthoMatrix = glm::ortho(minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, 0.0f, maxExtents.z - minExtents.z);
+			//glm::mat4 lightOrthoMatrix = glm::ortho(minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, 0.0f, maxExtents.z - minExtents.z);
+			// Note: from Saschas examples the zNear was 0.0f, unclear why I need to set it to -(maxExtents.z - minExtents.z).
+			glm::mat4 lightOrthoMatrix = glm::ortho(minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, -(maxExtents.z - minExtents.z), maxExtents.z - minExtents.z);
 
 			// Store split distance and matrix in cascade
 			mSceneInfo.cascades[i].splitDepth = (mMainCamera->GetNearPlane() + splitDist * clipRange) * -1.0f;

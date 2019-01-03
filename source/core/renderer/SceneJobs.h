@@ -87,10 +87,12 @@ namespace Utopian
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
 		float grassViewDistance = 0*1800.0f;
-		int blockViewDistance = 2;
+		int blockViewDistance = 1;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
-		float cascadeSplitLambda = 1.0f;// 0.95f;
+		float cascadeSplitLambda = 0.927f;
+		float nearPlane = 1.0f;
+		float farPlane = 25600.0f;
 	};
 
 	struct JobInput
@@ -188,6 +190,7 @@ UNIFORM_BLOCK_END()
 		ViewProjection viewProjectionBlock;
 		CascadeTransforms cascadeTransforms;
 	private:
+		const uint32_t SHADOWMAP_DIMENSION = 4096;
 	};
 
 	class DeferredJob : public BaseJob

@@ -40,5 +40,5 @@ void main()
 	vec4 temp2 = InTangentL;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * InInstanceWorld * vec4(InPosL.xyz, 1.0);
-	gl_Position = cascade_transforms.viewProjection[1] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
+	gl_Position = cascade_transforms.viewProjection[0] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
 }

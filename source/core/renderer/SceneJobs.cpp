@@ -236,11 +236,11 @@ namespace Utopian
 	ShadowJob::ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
-		depthColorImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
-		depthImageDebug = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32_SFLOAT);
-		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		depthColorImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT);
+		depthImageDebug = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT);
+		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 		renderTarget->AddColorAttachment(depthColorImage);
 		renderTarget->AddColorAttachment(depthImageDebug);
 		renderTarget->AddDepthAttachment(depthImage);
