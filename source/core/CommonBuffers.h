@@ -98,6 +98,7 @@ namespace Utopian
 			float fogStart;
 			float fogDistance;
 			int shadowSampleSize;
+			int cascadeColorDebug;
 		} data;
 	};
 }

@@ -12,6 +12,8 @@
 #include "utility/Common.h"
 #include "vulkan/ShaderBuffer.h"
 
+#define SHADOW_MAP_CASCADE_COUNT 4
+
 namespace Utopian
 {
 	class Renderable;
@@ -50,6 +52,13 @@ namespace Utopian
 		uint32_t mAssetId;
 	};
 
+	class Cascade
+	{
+	public:
+		float splitDepth;
+		glm::mat4 viewProjMatrix;
+	};
+
 	struct SceneInfo
 	{
 		std::vector<Renderable*> renderables;
@@ -57,6 +66,7 @@ namespace Utopian
 		std::vector<Camera*> cameras;
 		SharedPtr<PerlinTerrain> terrain;
 		std::vector<SharedPtr<InstanceGroup>> instanceGroups;
+		std::array<Cascade, SHADOW_MAP_CASCADE_COUNT> cascades;
 
 		// The light that will cast shadows
 		// Currently assumes that there only is one directional light in the scene
@@ -79,6 +89,8 @@ namespace Utopian
 		float grassViewDistance = 0*1800.0f;
 		int blockViewDistance = 2;
 		int shadowSampleSize = 1;
+		bool cascadeColorDebug = 0;
+		float cascadeSplitLambda = 0.95f;
 	};
 
 	struct JobInput

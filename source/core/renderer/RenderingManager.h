@@ -50,6 +50,7 @@ namespace Utopian
 
 		void Update();
 		void UpdateUi();
+		void UpdateCascades();
 		void RenderNodes(Vk::CommandBuffer* commandBuffer);
 		void RenderScene(Vk::CommandBuffer* commandBuffer);
 		void Render();

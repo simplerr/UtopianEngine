@@ -401,6 +401,20 @@ namespace Utopian
 		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect->SetLightArray(jobInput.sceneInfo.lights);
 
+		// Note: Todo: Temporary
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
+			effect->cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
+			effect->cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
+		}
+
+		// Note: This should probably be moved. We need the fragment position in view space
+		// when comparing it's Z value to find out which shadow map cascade it should sample from.
+		effect->cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+		effect->cascade_ubo.UpdateMemory();
+
+		// End of temporary
+
 		Light* directionalLight = jobInput.sceneInfo.directionalLight;
 
 		glm::mat4 lightView = glm::mat4();

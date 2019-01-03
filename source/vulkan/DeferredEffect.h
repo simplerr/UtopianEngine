@@ -22,6 +22,12 @@ UNIFORM_BLOCK_BEGIN(LightTransform)
 	UNIFORM_PARAM(glm::mat4, viewProjection)
 UNIFORM_BLOCK_END()
 
+UNIFORM_BLOCK_BEGIN(CascadeBlock)
+	UNIFORM_PARAM(float, cascadeSplits[4])
+	UNIFORM_PARAM(glm::mat4, cascadeViewProjMat[4])
+	UNIFORM_PARAM(glm::mat4, cameraViewMat)
+UNIFORM_BLOCK_END()
+
 namespace Utopian::Vk
 {
 	class DeferredEffect : public Effect
@@ -41,6 +47,7 @@ namespace Utopian::Vk
 		LightUniformBuffer light_ubo;
 		SettingsUniformBuffer settings_ubo;
 		LightTransform lightTransform;
+		CascadeBlock cascade_ubo;
 	private:
 	};
 }

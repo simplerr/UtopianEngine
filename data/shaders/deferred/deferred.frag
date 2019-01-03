@@ -4,6 +4,8 @@
 
 #include "phong_lighting.glsl"
 
+#define SHADOW_MAP_CASCADE_COUNT 4
+
 layout (location = 0) in vec2 InTex;
 
 layout (location = 0) out vec4 OutFragColor;
@@ -26,12 +28,20 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	float fogStart;
 	float fogDistance;
 	int shadowSampleSize;
+	int cascadeColorDebug;
 } settings_ubo;
 
 layout (std140, set = 0, binding = 3) uniform UBO_lightTransform
 {
 	mat4 viewProjection;
 } light_transform;
+
+layout (std140, set = 0, binding = 4) uniform UBO_cascades
+{
+	vec4 cascadeSplits;
+	mat4 cascadeViewProjMat[4];
+	mat4 cameraViewMat;
+} cascades_ubo;
 
 float calculateShadow(vec3 position)
 {
@@ -101,6 +111,34 @@ void main()
 
 	float ssao = texture(ssaoSampler, uv).r;
 	OutFragColor = litColor * ssao;
+
+	// Get cascade index for the current fragment's view position
+	vec3 viewPosition = (cascades_ubo.cameraViewMat * vec4(position, 1.0f)).xyz;
+	uint cascadeIndex = 0;
+	for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
+		if(viewPosition.z < cascades_ubo.cascadeSplits[i]) {	
+			cascadeIndex = i + 1;
+		}
+	}
+
+	if (settings_ubo.cascadeColorDebug == 1)
+	{
+		switch(cascadeIndex) {
+			case 0 : 
+				OutFragColor.rgb *= vec3(1.0f, 0.25f, 0.25f);
+				break;
+			case 1 : 
+				OutFragColor.rgb *= vec3(0.25f, 1.0f, 0.25f);
+				break;
+			case 2 : 
+				OutFragColor.rgb *= vec3(0.25f, 0.25f, 1.0f);
+				break;
+			case 3 : 
+				OutFragColor.rgb *= vec3(1.0f, 1.0f, 0.25f);
+				break;
+		}
+		//OutFragColor = vec4(vec3(ssao), 1.0f);
+	}
 
 	// float depth = texture(positionSampler, uv).w;// / 100000.0f;
 	// OutFragColor = vec4(depth, depth, depth, 1.0f);

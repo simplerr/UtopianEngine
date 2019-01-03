@@ -26,11 +26,13 @@ namespace Utopian::Vk
 		light_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		settings_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		lightTransform.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		cascade_ubo.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		BindUniformBuffer("UBO_eyePos", &eyeBlock);
 		BindUniformBuffer("UBO_lights", &light_ubo);
 		BindUniformBuffer("UBO_settings", &settings_ubo);
 		BindUniformBuffer("UBO_lightTransform", &lightTransform);
+		BindUniformBuffer("UBO_cascades", &cascade_ubo);
 	}
 
 	void DeferredEffect::UpdateMemory()
@@ -78,6 +80,7 @@ namespace Utopian::Vk
 		settings_ubo.data.fogStart = renderingSettings.fogStart;
 		settings_ubo.data.fogDistance = renderingSettings.fogDistance;
 		settings_ubo.data.shadowSampleSize = renderingSettings.shadowSampleSize;
+		settings_ubo.data.cascadeColorDebug = renderingSettings.cascadeColorDebug;
 		settings_ubo.UpdateMemory();
 	}
 }
