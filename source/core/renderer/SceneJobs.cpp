@@ -256,7 +256,7 @@ namespace Utopian
 			mFrameBuffers.push_back(frameBuffer);
 		}
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
+ 		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
 															"data/shaders/shadowmap/shadowmap.frag");
@@ -279,11 +279,8 @@ namespace Utopian
 
 		effectInstanced->CreatePipeline();
 
-		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		cascadeTransforms.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		effect->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
-		effectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		effectInstanced->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 
 		const uint32_t size = 240;
@@ -304,15 +301,6 @@ namespace Utopian
 
 	void ShadowJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		Light* directionalLight = jobInput.sceneInfo.directionalLight;
-
-		if (directionalLight == nullptr)
-			return;
-
-		// Update camera uniform buffer block
-		calculateLightViewProj(directionalLight, viewProjectionBlock.data.view, viewProjectionBlock.data.projection, mWidth, mHeight);
-		viewProjectionBlock.UpdateMemory();
-
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
 			cascadeTransforms.data.viewProjection[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
@@ -339,7 +327,7 @@ namespace Utopian
 				{
 					for (Vk::Mesh* mesh : model->mMeshes)
 					{
-						CascadePushConst pushConst(cascadeIndex);
+						CascadePushConst pushConst(glm::mat4(), cascadeIndex);
 						commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
 
 						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
@@ -368,16 +356,13 @@ namespace Utopian
 
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
+					CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
+					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
 					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
-
 					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-					// Push the world matrix constant
-					// TODO: PUSH THE CASCADE INDEX HERE AS WELL!!!
-					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
-
-					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);

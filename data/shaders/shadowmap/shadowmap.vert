@@ -6,28 +6,17 @@ layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec4 InTangentL;
 
-layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
-{
-	// Camera 
-	mat4 projection;
-	mat4 view;
-} per_frame_vs;
-
-layout (std140, set = 0, binding = 1) uniform UBO_cascadeTransforms 
+layout (std140, set = 0, binding = 0) uniform UBO_cascadeTransforms 
 {
 	mat4 viewProjection[4];
 } cascade_transforms;
 
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
-	 mat4 worldInv;
-	 vec4 color;
-	 vec2 textureTiling;
-	 vec2 pad;
+	 uint cascadeIndex;
 } pushConstants;
 
-layout (location = 0) out vec3 OutColor;
-layout (location = 1) out vec2 OutTex;
+layout (location = 0) out vec2 OutTex;
 
 out gl_PerVertex 
 {
@@ -36,7 +25,6 @@ out gl_PerVertex
 
 void main() 
 {
-	OutColor = pushConstants.color.rgb;
 	OutTex = InTex;
 
 	// Note: workaround to avoid glslang to optimize unused inputs
@@ -44,6 +32,5 @@ void main()
 	temp = InNormalL;
 	vec4 temp2 = InTangentL;
 
-	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConstants.world * vec4(InPosL.xyz, 1.0);
-	gl_Position = cascade_transforms.viewProjection[0] * pushConstants.world * vec4(InPosL.xyz, 1.0);
+	gl_Position = cascade_transforms.viewProjection[pushConstants.cascadeIndex] * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }
