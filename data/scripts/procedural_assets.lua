@@ -6,23 +6,22 @@ generate_random_foliage = function(instancing)
     end
 
     math.randomseed(os.time())
-    local range = 3000
+    local range = 1000
 
     -- Trees
-    for i=0, 3 do
-        local range = 3000
+    for i=0, 1 do
         local asset_id = math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
         local y = get_terrain_height(-x, -z) -- Note: Negative signs
         local ry = math.random(0, 360)
-        local scale = math.random(10, 80) / 100
+        local scale = 0.2--math.random(5, 10) / 100
         add_asset(75, x, y, z, 180, ry, 0, scale, instancing)
         -- add_asset(i, (i / 10) * 100, 0, (i % 10) * 100, 1)
     end
 
     -- Grass and flowers
-    for i=0, 500 do
+    for i=0, 100 do
         local asset_id = math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
@@ -31,7 +30,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Rocks
-    for i=0, 50 do
+    for i=0, 20 do
         local asset_id = 91 --math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
@@ -42,7 +41,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Bushes
-    for i=0, 1000 do
+    for i=0, 50 do
         local asset_id = 143 --math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)

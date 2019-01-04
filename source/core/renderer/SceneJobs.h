@@ -87,7 +87,7 @@ namespace Utopian
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
 		float grassViewDistance = 0*1800.0f;
-		int blockViewDistance = 1;
+		int blockViewDistance = 2;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;
