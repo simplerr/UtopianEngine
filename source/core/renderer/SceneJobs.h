@@ -191,7 +191,6 @@ UNIFORM_BLOCK_END()
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 		SharedPtr<Vk::Image> depthColorImage;
-		SharedPtr<Vk::Image> depthImageDebug;
 		SharedPtr<Vk::Image> depthImage;
 
 		SharedPtr<Vk::Effect> effect;

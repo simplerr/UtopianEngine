@@ -4,7 +4,6 @@ layout (location = 0) in vec3 InColor;
 layout (location = 1) in vec2 InTex;
 
 layout (location = 0) out float OutColor;
-layout (location = 1) out float OutColorDebug;
 
 const float NEAR_PLANE = 1.0f; //todo: specialization const
 const float FAR_PLANE = 10000.0f; //todo: specialization const 
@@ -24,7 +23,6 @@ void main()
 	if (color.a < 0.01f)
 		discard;
 
-	OutColor = gl_FragCoord.z;// / 2560;
-	OutColorDebug = gl_FragCoord.z;// / 2560;
+	OutColor = gl_FragCoord.z;
 	//OutColorDebug = linearDepth(gl_FragCoord.z) / FAR_PLANE; // Use this if perspective projection matrix
 }

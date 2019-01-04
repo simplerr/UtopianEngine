@@ -238,12 +238,10 @@ namespace Utopian
 		: BaseJob(renderer, width, height)
 	{
 		depthColorImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT, 4);
-		depthImageDebug = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT);
 		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 		renderTarget->AddColorAttachment(depthColorImage->GetLayerView(0), depthColorImage->GetFormat());
-		renderTarget->AddColorAttachment(depthImageDebug);
 		renderTarget->AddDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
@@ -253,7 +251,6 @@ namespace Utopian
 		{
 			SharedPtr<Vk::FrameBuffers> frameBuffer = std::make_shared<Vk::FrameBuffers>(renderer->GetDevice());
 			frameBuffer->AddAttachmentImage(depthColorImage->GetLayerView(i));
-			frameBuffer->AddAttachmentImage(depthImageDebug.get());
 			frameBuffer->AddAttachmentImage(depthImage.get());
 			frameBuffer->Create(renderTarget->GetRenderPass(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 			mFrameBuffers.push_back(frameBuffer);
