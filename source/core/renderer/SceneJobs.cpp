@@ -609,6 +609,72 @@ namespace Utopian
 		renderTarget->End(renderer->GetQueue());
 	}
 
+	SkydomeJob::SkydomeJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
+	{
+	}
+
+	SkydomeJob::~SkydomeJob()
+	{
+	}
+
+	void SkydomeJob::Init(const std::vector<BaseJob*>& renderers)
+	{
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[RenderingManager::DEFERRED_INDEX]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
+
+		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
+		// Todo: Investigate why this does not work
+		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+															renderTarget->GetRenderPass(),
+															"data/shaders/skydome/skydome.vert",
+															"data/shaders/skydome/skydome.frag");
+
+		effect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		//effect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		effect->CreatePipeline();
+
+		viewProjectionBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		parameterBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		effect->BindUniformBuffer("UBO_parameters", &parameterBlock);
+
+		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+	}
+
+	void SkydomeJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		// Removes the translation components of the matrix to always keep the skydome at the same distance
+		glm::mat4 world  = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		viewProjectionBlock.data.view = glm::mat4(glm::mat3(jobInput.sceneInfo.viewMatrix));
+		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.data.world = glm::scale(world, glm::vec3(1000.0f));
+		viewProjectionBlock.UpdateMemory();
+
+		parameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;
+		parameterBlock.UpdateMemory();
+
+		renderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		effect->BindDescriptorSets(commandBuffer);
+
+		commandBuffer->CmdBindVertexBuffer(0, 1, mSkydomeModel->mMeshes[0]->GetVertxBuffer());
+		commandBuffer->CmdBindIndexBuffer(mSkydomeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->CmdDrawIndexed(mSkydomeModel->GetNumIndices(), 1, 0, 0, 0);
+
+		renderTarget->End(renderer->GetQueue());
+	}
+
 	DebugJob::DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{

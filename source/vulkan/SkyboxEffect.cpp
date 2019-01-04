@@ -21,7 +21,7 @@ namespace Utopian::Vk
 		// Removes the translation components of the matrix to always keep the skybox at the same distance
 		viewProjectionBlock.data.view = glm::mat4(glm::mat3(view));
 		viewProjectionBlock.data.projection = projection;
-		viewProjectionBlock.data.world = glm::scale(glm::mat4(), glm::vec3(100000.0f));
+		viewProjectionBlock.data.world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
 		UpdateMemory();
 	}
 
