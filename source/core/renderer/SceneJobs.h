@@ -174,6 +174,15 @@ UNIFORM_BLOCK_BEGIN(CascadeTransforms)
 	UNIFORM_PARAM(glm::mat4, viewProjection[SHADOW_MAP_CASCADE_COUNT])
 UNIFORM_BLOCK_END()
 
+		struct CascadePushConst
+		{
+			CascadePushConst(uint32_t _cascadeIndex) {
+				cascadeIndex = _cascadeIndex;
+			}
+
+			uint32_t cascadeIndex;
+		};
+
 		ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~ShadowJob();
 
@@ -191,6 +200,7 @@ UNIFORM_BLOCK_END()
 		CascadeTransforms cascadeTransforms;
 	private:
 		const uint32_t SHADOWMAP_DIMENSION = 4096;
+		std::vector<SharedPtr<Vk::FrameBuffers>> mFrameBuffers;
 	};
 
 	class DeferredJob : public BaseJob

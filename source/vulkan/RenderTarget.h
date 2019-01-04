@@ -15,6 +15,11 @@ namespace Utopian::Vk
 		~RenderTarget();
 
 		void Begin();
+		
+		// Special version that instead of using the framebuffer in RenderTarget
+		// will use the supplied one. 
+		// Note: Assumes that the renderpass and framebuffers are compatible.
+		void Begin(VkFramebuffer framebuffer);
 		void End(Utopian::Vk::Queue* queue);
 
 		void SetClearColor(float r, float g, float b, float a = 0.0f);

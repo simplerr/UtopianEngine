@@ -58,6 +58,18 @@ namespace Utopian::Vk
 		return textureQuad;
 	}
 
+	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer)
+	{
+		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
+
+		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mRenderer->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad->descriptorSet->BindCombinedImage(0, imageView, sampler);
+		textureQuad->descriptorSet->UpdateDescriptorSets();
+		mQuadList.push_back(textureQuad);
+
+		return textureQuad;
+	}
+
 	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);

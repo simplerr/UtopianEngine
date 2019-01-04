@@ -86,6 +86,7 @@ namespace Utopian::Vk
 		void Draw();
 
 		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
+		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
 		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer = 0u);
 		void UpdateOverlay();
 

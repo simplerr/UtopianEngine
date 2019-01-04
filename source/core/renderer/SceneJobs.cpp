@@ -7,6 +7,7 @@
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/FrameBuffers.h"
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/RenderPass.h"
@@ -247,6 +248,17 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
+		// Create multiple framebuffers with attachments to the individual array layers in the depth buffer image
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
+			SharedPtr<Vk::FrameBuffers> frameBuffer = std::make_shared<Vk::FrameBuffers>(renderer->GetDevice());
+			frameBuffer->AddAttachmentImage(depthColorImage->GetLayerView(i));
+			frameBuffer->AddAttachmentImage(depthImageDebug.get());
+			frameBuffer->AddAttachmentImage(depthImage.get());
+			frameBuffer->Create(renderTarget->GetRenderPass(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
+			mFrameBuffers.push_back(frameBuffer);
+		}
+
 		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
@@ -278,7 +290,10 @@ namespace Utopian
 		effectInstanced->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 
 		const uint32_t size = 240;
-		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthImageDebug.get(), renderTarget->GetSampler());
+		renderer->AddScreenQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(0), renderTarget->GetSampler());
+		renderer->AddScreenQuad(5 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(1), renderTarget->GetSampler());
+		renderer->AddScreenQuad(6 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(2), renderTarget->GetSampler());
+		renderer->AddScreenQuad(4 * (size + 10) + 10, height - 2 * (size + 10), size, size, depthColorImage->GetLayerView(3), renderTarget->GetSampler());
 	}
 
 	ShadowJob::~ShadowJob()
@@ -303,71 +318,77 @@ namespace Utopian
 
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
-			//cascadeTransforms.data.viewProjection[i] = viewProjectionBlock.data.projection * viewProjectionBlock.data.view;
 			cascadeTransforms.data.viewProjection[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
 		}
 
 		cascadeTransforms.UpdateMemory();
 
-		renderTarget->Begin();
-		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
-
-		/* Render instanced assets */
-		commandBuffer->CmdBindPipeline(effectInstanced->GetPipeline());
-
-		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
+		for (uint32_t cascadeIndex = 0; cascadeIndex < SHADOW_MAP_CASCADE_COUNT; cascadeIndex++)
 		{
-			SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
-			Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
-			Vk::StaticModel* model = instanceGroup->GetModel();
+			// Begin the renderpass with the framebuffer attachments connected to the current cascade layer
+			renderTarget->Begin(mFrameBuffers[cascadeIndex]->GetFrameBuffer(0));
+			Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-			if (instanceBuffer != nullptr && model != nullptr)
+			/* Render instanced assets */
+			commandBuffer->CmdBindPipeline(effectInstanced->GetPipeline());
+
+			for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
 			{
+				SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
+				Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
+				Vk::StaticModel* model = instanceGroup->GetModel();
+
+				if (instanceBuffer != nullptr && model != nullptr)
+				{
+					for (Vk::Mesh* mesh : model->mMeshes)
+					{
+						CascadePushConst pushConst(cascadeIndex);
+						commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+
+						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+						VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+						commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+						commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+						commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+						commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+						commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+					}
+				}
+			}
+
+			// Todo: Should this be moved to the effect instead?
+			commandBuffer->CmdBindPipeline(effect->GetPipeline());
+			effect->BindDescriptorSets(commandBuffer);
+
+			/* Render all renderables */
+			for (auto& renderable : jobInput.sceneInfo.renderables)
+			{
+				if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+					continue;
+
+				Vk::StaticModel* model = renderable->GetModel();
+
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-					VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
-					commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
+					// Push the world matrix constant
+					// TODO: PUSH THE CASCADE INDEX HERE AS WELL!!!
+					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
+
+					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-					commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 				}
 			}
+
+			renderTarget->End(renderer->GetQueue());
 		}
-
-		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		effect->BindDescriptorSets(commandBuffer);
-
-		/* Render all renderables */
-		for (auto& renderable : jobInput.sceneInfo.renderables)
-		{
-			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
-				continue;
-
-			Vk::StaticModel* model = renderable->GetModel();
-
-			for (Vk::Mesh* mesh : model->mMeshes)
-			{
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
-				VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
-
-				commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-				
-				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
-
-				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-			}
-		}
-
-		renderTarget->End(renderer->GetQueue());
 	}
 
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)

@@ -124,23 +124,23 @@ namespace Utopian::Vk
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler)
+	void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler)
 	{
 		/* Check if the VkDescriptorImageInfo already is added to the map.
-		   Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
-		   Image and Sampler from each other. The same Image should be able to use with
-		   different samples and vice versa.
+		Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
+		Image and Sampler from each other. The same Image should be able to use with
+		different samples and vice versa.
 		*/
 		if (mImageInfoMap.find(binding) != mImageInfoMap.end())
 		{
 			mImageInfoMap[binding].sampler = sampler->GetVkHandle();
-			mImageInfoMap[binding].imageView = image->GetView();
+			mImageInfoMap[binding].imageView = imageView;
 		}
 		else
 		{
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.sampler = sampler->GetVkHandle();
-			imageInfo.imageView = image->GetView();
+			imageInfo.imageView = imageView;
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
 			mImageInfoMap[binding] = imageInfo;
@@ -152,9 +152,14 @@ namespace Utopian::Vk
 		writeDescriptorSet.descriptorCount = 1;
 		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
-		writeDescriptorSet.dstBinding = binding;				
+		writeDescriptorSet.dstBinding = binding;
 
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
+	}
+
+	void DescriptorSet::BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler)
+	{
+		BindCombinedImage(binding, image->GetView(), sampler);
 	}
 
 	void DescriptorSet::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
@@ -175,6 +180,11 @@ namespace Utopian::Vk
 	void DescriptorSet::BindCombinedImage(std::string name, Image* image, Sampler* sampler)
 	{
 		BindCombinedImage(mShader->NameToBinding(name), image, sampler);
+	}
+
+	void DescriptorSet::BindCombinedImage(std::string name, VkImageView imageView, Sampler* sampler)
+	{
+		BindCombinedImage(mShader->NameToBinding(name), imageView, sampler);
 	}
 
 	void DescriptorSet::UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)

@@ -48,7 +48,7 @@ layout (std140, set = 0, binding = 4) uniform UBO_cascades
 float calculateShadow(vec3 position, vec3 normal, uint cascadeIndex)
 {
 	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
-	lightSpacePosition = cascades_ubo.cascadeViewProjMat[cascadeIndex*0] * vec4(position, 1.0f);
+	lightSpacePosition = cascades_ubo.cascadeViewProjMat[cascadeIndex] * vec4(position, 1.0f);
 	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
 	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
 
@@ -97,8 +97,17 @@ void main()
 	// this is a left over from an old problem
 	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
+	// Get cascade index for the current fragment's view position
+	vec3 viewPosition = (cascades_ubo.cameraViewMat * vec4(position, 1.0f)).xyz;
+	uint cascadeIndex = 0;
+	for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
+		if(viewPosition.z < cascades_ubo.cascadeSplits[i]) {	
+			cascadeIndex = i + 1;
+		}
+	}
+
 	// Calculate shadow factor
-	float shadow = calculateShadow(position, normal, 0);
+	float shadow = calculateShadow(position, normal, cascadeIndex);
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
@@ -119,15 +128,6 @@ void main()
 	float ssao = texture(ssaoSampler, uv).r;
 	OutFragColor = litColor * ssao;
 
-	// Get cascade index for the current fragment's view position
-	vec3 viewPosition = (cascades_ubo.cameraViewMat * vec4(position, 1.0f)).xyz;
-	uint cascadeIndex = 0;
-	for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
-		if(viewPosition.z < cascades_ubo.cascadeSplits[i]) {	
-			cascadeIndex = i + 1;
-		}
-	}
-
 	if (settings_ubo.cascadeColorDebug == 1)
 	{
 		switch(cascadeIndex) {
@@ -144,9 +144,5 @@ void main()
 				OutFragColor.rgb *= vec3(1.0f, 1.0f, 0.25f);
 				break;
 		}
-		//OutFragColor = vec4(vec3(ssao), 1.0f);
 	}
-
-	// float depth = texture(positionSampler, uv).w;// / 100000.0f;
-	// OutFragColor = vec4(depth, depth, depth, 1.0f);
 }

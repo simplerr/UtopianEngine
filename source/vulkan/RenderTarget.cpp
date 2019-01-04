@@ -101,6 +101,25 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
 	}
 
+	void RenderTarget::Begin(VkFramebuffer framebuffer)
+	{
+		VkRenderPassBeginInfo renderPassBeginInfo = {};
+		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
+		renderPassBeginInfo.renderArea.extent.width = GetWidth();
+		renderPassBeginInfo.renderArea.extent.height = GetHeight();
+		renderPassBeginInfo.clearValueCount = mClearValues.size();
+		renderPassBeginInfo.pClearValues = mClearValues.data();
+		renderPassBeginInfo.framebuffer = framebuffer;
+
+		// Begin command buffer recording & the render pass
+		mCommandBuffer->Begin();
+		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+		mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());
+		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
+	}
+
 	void RenderTarget::End(Utopian::Vk::Queue* queue)
 	{
 		mCommandBuffer->CmdEndRenderPass();

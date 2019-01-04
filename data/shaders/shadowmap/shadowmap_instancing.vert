@@ -21,6 +21,10 @@ layout (std140, set = 0, binding = 1) uniform UBO_cascadeTransforms
 	mat4 viewProjection[4];
 } cascade_transforms;
 
+layout (push_constant) uniform PushConstants {
+	uint cascadeIndex;
+} pushConstants;
+
 layout (location = 0) out vec3 OutColor;
 layout (location = 1) out vec2 OutTex;
 
@@ -40,5 +44,5 @@ void main()
 	vec4 temp2 = InTangentL;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * InInstanceWorld * vec4(InPosL.xyz, 1.0);
-	gl_Position = cascade_transforms.viewProjection[0] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
+	gl_Position = cascade_transforms.viewProjection[pushConstants.cascadeIndex] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
 }
