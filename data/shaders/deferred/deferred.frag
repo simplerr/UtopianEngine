@@ -29,6 +29,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	float padding;
 	float fogStart;
 	float fogDistance;
+	int shadowsEnabled;
 	int shadowSampleSize;
 	int cascadeColorDebug;
 } settings_ubo;
@@ -108,7 +109,9 @@ void main()
 	}
 
 	// Calculate shadow factor
-	float shadow = calculateShadow(position, normal, cascadeIndex);
+	float shadow = 1.0f;
+	if (settings_ubo.shadowsEnabled == 1)
+		shadow = calculateShadow(position, normal, cascadeIndex);
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 

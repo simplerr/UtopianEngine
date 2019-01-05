@@ -153,6 +153,7 @@ namespace Utopian
 		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
 		ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
 		ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
+		ImGui::Checkbox("Shadows enabled", &mRenderingSettings.shadowsEnabled);
 		ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
 		ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
 		ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
@@ -165,7 +166,6 @@ namespace Utopian
 		// Temp:
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
 		mMainCamera->SetFarPlane(mRenderingSettings.farPlane);
-
 
 		Vk::UIOverlay::EndWindow();
 

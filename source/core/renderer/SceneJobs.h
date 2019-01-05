@@ -88,6 +88,7 @@ namespace Utopian
 		int blurRadius = 2;
 		float grassViewDistance = 0*1800.0f;
 		int blockViewDistance = 2;
+		bool shadowsEnabled = true;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;
