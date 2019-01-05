@@ -165,6 +165,17 @@ namespace Utopian
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
 		mMainCamera->SetFarPlane(mRenderingSettings.farPlane);
 
+		// Calculate light direction
+		float inclination = glm::radians(mRenderingSettings.sunInclination);
+		float azimuth = glm::radians(mRenderingSettings.sunAzimuth);
+
+		glm::vec3 sunDir = glm::vec3(sin(inclination) * cos(azimuth),
+									 cos(inclination),
+									 sin(inclination) * sin(azimuth));
+
+		// Note: Negation of Z
+		mSceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * sunDir);
+
 		Vk::UIOverlay::EndWindow();
 
 		Vk::UIOverlay::BeginWindow("Utopian v0.1", glm::vec2(10, 10), 350.0f);
