@@ -4,6 +4,7 @@
 #include "core/Object.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
+#include "utility/Timer.h"
 #include "vulkan/PhongEffect.h"
 #include "vulkan/GBufferEffect.h"
 #include "vulkan/DeferredEffect.h"

@@ -14,6 +14,8 @@ layout (set = 0, binding = 1) uniform UBO_parameters
 	float sphereRadius;
 	float inclination;
 	float azimuth;
+	float time;
+	float sunSpeed;
 } ubo_parameters;
 
 // Dusk
@@ -31,7 +33,7 @@ void main()
 {
 	float radius = 1.0f;
 	float inclination = ubo_parameters.inclination;
-	float azimuth = ubo_parameters.azimuth;
+	float azimuth = ubo_parameters.azimuth;// * 0.00001;
 
 	vec3 unitPos = normalize(InPosL);
 
@@ -43,7 +45,7 @@ void main()
 					   radius * cos(inclination),
 					   radius * sin(inclination) * sin(azimuth));
 
-	float sun = 50 * pow(max(dot(sunPos, unitPos), 0.0), 3000.0);
+	float sun = 50 * pow(max(dot(sunPos, unitPos), 0.0), 500.0);
 	color += sun * sunColor;
 
 	OutFragColor = vec4(color, 1.0);

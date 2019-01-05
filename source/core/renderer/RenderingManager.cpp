@@ -159,22 +159,13 @@ namespace Utopian
 		ImGui::SliderFloat("Near plane", &mRenderingSettings.nearPlane, 0.0f, 100.0f);
 		ImGui::SliderFloat("Far plane", &mRenderingSettings.farPlane, 1000.0f, 25600.0f);
 		ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
-		ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
+		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
+		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
 
 		// Temp:
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
 		mMainCamera->SetFarPlane(mRenderingSettings.farPlane);
 
-		// Calculate light direction
-		float inclination = glm::radians(mRenderingSettings.sunInclination);
-		float azimuth = glm::radians(mRenderingSettings.sunAzimuth);
-
-		glm::vec3 sunDir = glm::vec3(sin(inclination) * cos(azimuth),
-									 cos(inclination),
-									 sin(inclination) * sin(azimuth));
-
-		// Note: Negation of Z
-		mSceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * sunDir);
 
 		Vk::UIOverlay::EndWindow();
 
@@ -183,6 +174,7 @@ namespace Utopian
 		glm::vec3 pos = mMainCamera->GetPosition();
 		glm::vec3 dir = mMainCamera->GetDirection();
 
+		Vk::UIOverlay::TextV("Time: %.2f", Timer::Instance().GetTime());
 		Vk::UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 		Vk::UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
 		Vk::UIOverlay::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
