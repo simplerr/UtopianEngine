@@ -57,7 +57,6 @@ namespace Utopian
 
 		InitScene();
 
-
 		ObjectManager::Instance().PrintObjects();
 	}
 
@@ -68,6 +67,7 @@ namespace Utopian
 	void Game::InitScene()
 	{
 		ObjectManager::Start();
+		Timer::Start();
 		World::Start();
 		Input::Start();
 		LuaManager::Start();
@@ -137,7 +137,7 @@ namespace Utopian
 		while (true)
 		{
 			// Frame begin
-			mTimer.FrameBegin();
+			Timer::Instance().FrameBegin();
 
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
@@ -165,14 +165,14 @@ namespace Utopian
 				mRenderer->SubmitFrame();
 
 				// Frame end
-				auto fps = mTimer.FrameEnd();
+				auto fps = Timer::Instance().FrameEnd();
 
 				// Only display fps when 1.0s have passed
 				if (fps != -1)
 				{
 					std::stringstream ss;
 					ss << "Utopian Engine (alpha) ";
-					ss << "FPS: " << mTimer.GetFPS();
+					ss << "FPS: " << Timer::Instance().GetFPS();
 					std::string windowTitle = ss.str();
 					SetWindowText(mWindow->GetHwnd(), windowTitle.c_str());
 				}

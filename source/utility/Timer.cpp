@@ -46,10 +46,11 @@ namespace Utopian
 		return mFramesPerSecond;
 	}
 
-	float Timer::GetElapsedTime()
+	float Timer::GetTime()
 	{
-		return mFpsTimer;
+		return mLifetimeTimer;
 	}
+
 	void Timer::PrintLog(std::ofstream& fout)
 	{
 		fout << "Capture time: " << mLifetimeTimer / 1000.0f << " seconds" << std::endl;

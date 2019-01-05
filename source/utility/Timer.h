@@ -3,17 +3,18 @@
 #include <chrono>
 #include <cstdint>
 #include <vector>
+#include "utility\Module.h"
 
 namespace Utopian
 {
-	class Timer
+	class Timer : public Module<Timer>
 	{
 	public:
 		void		FrameBegin();
 		uint32_t	FrameEnd();				// Returns the FPS if 1000.0f milliseconds have passed
 
 		uint32_t	GetFPS();
-		float		GetElapsedTime();
+		float		GetTime();
 
 		void		PrintLog(std::ofstream& fout);
 		void		ResetLifetimeCounter();

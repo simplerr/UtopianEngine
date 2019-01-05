@@ -37,7 +37,6 @@ namespace Utopian
 		SharedPtr<Terrain> mTerrain;
 		SharedPtr<Editor> mEditor;
 		Window* mWindow;
-		Timer mTimer;
 		std::string mTestCaseName;
 		bool mIsClosing;
 	};
