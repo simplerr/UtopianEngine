@@ -260,7 +260,7 @@ namespace Utopian
 															renderTarget->GetRenderPass(),
 															"data/shaders/shadowmap/shadowmap.vert",
 															"data/shaders/shadowmap/shadowmap.frag");
-		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
 		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
@@ -660,6 +660,7 @@ namespace Utopian
 		viewProjectionBlock.data.world = glm::scale(world, glm::vec3(1000.0f));
 		viewProjectionBlock.UpdateMemory();
 
+		// For testing
 		parameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;
 		parameterBlock.data.inclination = jobInput.renderingSettings.sunInclination * glm::pi<float>() / 180.0f;
 		parameterBlock.data.azimuth = jobInput.renderingSettings.sunAzimuth * glm::pi<float>() / 180.0f;
