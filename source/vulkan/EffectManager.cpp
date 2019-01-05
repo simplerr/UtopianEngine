@@ -20,7 +20,7 @@ namespace Utopian::Vk
 
 	void EffectManager::Update()
 	{
-		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 500), 300.0f);
+		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 600), 300.0f);
 
 		for (auto& effect : mEffects)
 		{

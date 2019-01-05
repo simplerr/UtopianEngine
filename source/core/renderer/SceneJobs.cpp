@@ -612,6 +612,8 @@ namespace Utopian
 	SkydomeJob::SkydomeJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
+		parameterBlock.data.inclination = 90.0f;
+		parameterBlock.data.azimuth = 0.0f;
 	}
 
 	SkydomeJob::~SkydomeJob()
@@ -659,6 +661,8 @@ namespace Utopian
 		viewProjectionBlock.UpdateMemory();
 
 		parameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;
+		parameterBlock.data.inclination = jobInput.renderingSettings.sunInclination * glm::pi<float>() / 180.0f;
+		parameterBlock.data.azimuth = jobInput.renderingSettings.sunAzimuth * glm::pi<float>() / 180.0f;
 		parameterBlock.UpdateMemory();
 
 		renderTarget->Begin();

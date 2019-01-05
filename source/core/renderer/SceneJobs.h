@@ -93,6 +93,8 @@ namespace Utopian
 		float cascadeSplitLambda = 0.927f;
 		float nearPlane = 1.0f;
 		float farPlane = 25600.0f;
+		float sunInclination = 90.0f;
+		float sunAzimuth = 0.0f;
 	};
 
 	struct JobInput
@@ -283,6 +285,8 @@ UNIFORM_BLOCK_END()
 
 UNIFORM_BLOCK_BEGIN(ParameterBlock)
 	UNIFORM_PARAM(float, sphereRadius)
+	UNIFORM_PARAM(float, inclination)
+	UNIFORM_PARAM(float, azimuth)
 UNIFORM_BLOCK_END()
 
 		SkydomeJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);

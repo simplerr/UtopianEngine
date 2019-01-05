@@ -12,12 +12,39 @@ layout (location = 0) out vec4 OutFragColor;
 layout (set = 0, binding = 1) uniform UBO_parameters 
 {
 	float sphereRadius;
+	float inclination;
+	float azimuth;
 } ubo_parameters;
 
-const vec3 baseColor = vec3(0.18,0.27,0.47);
+// Dusk
+// const vec3 zenithColor = vec3(0.5f, 0.4f, 0.3f);
+// const vec3 horizonColor = vec3(0.9f, 0.4f, 0.1f);
+
+// Noon
+const vec3 zenithColor = vec3(0.1f, 0.4f, 1.f);
+const vec3 horizonColor = vec3(0.34f, 0.54f, 0.88f);
+
+const vec3 sunColor = vec3(.6f, .35f, 0.2f);
+const float sunSize = 0.10;
 
 void main() 
 {
-	vec3 normalizedPos = InPosL / ubo_parameters.sphereRadius;
-	OutFragColor = vec4(normalizedPos.y + baseColor, 1.0f);
+	float radius = 1.0f;
+	float inclination = ubo_parameters.inclination;
+	float azimuth = ubo_parameters.azimuth;
+
+	vec3 unitPos = normalize(InPosL);
+
+	// Sky
+	vec3 color = mix(horizonColor, zenithColor, pow(1*abs(unitPos.y), 0.7));
+
+	// Sun
+	vec3 sunPos = vec3(radius * cos(inclination) * sin(azimuth),
+					   radius * cos(inclination) * cos(azimuth),
+					   radius * sin(inclination));
+
+	float sun = 50 * pow(max(dot(sunPos, unitPos), 0.0), 3000.0);
+	color += sun * sunColor;
+
+	OutFragColor = vec4(color, 1.0);
 }

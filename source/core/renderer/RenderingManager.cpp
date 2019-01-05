@@ -158,6 +158,8 @@ namespace Utopian
 		ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
 		ImGui::SliderFloat("Near plane", &mRenderingSettings.nearPlane, 0.0f, 100.0f);
 		ImGui::SliderFloat("Far plane", &mRenderingSettings.farPlane, 1000.0f, 25600.0f);
+		ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
+		ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
 
 		// Temp:
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
