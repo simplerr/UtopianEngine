@@ -39,9 +39,9 @@ void main()
 	vec3 color = mix(horizonColor, zenithColor, pow(1*abs(unitPos.y), 0.7));
 
 	// Sun
-	vec3 sunPos = vec3(radius * cos(inclination) * sin(azimuth),
-					   radius * cos(inclination) * cos(azimuth),
-					   radius * sin(inclination));
+	vec3 sunPos = vec3(radius * sin(inclination) * cos(azimuth),
+					   radius * cos(inclination),
+					   radius * sin(inclination) * sin(azimuth));
 
 	float sun = 50 * pow(max(dot(sunPos, unitPos), 0.0), 3000.0);
 	color += sun * sunColor;
