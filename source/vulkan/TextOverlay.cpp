@@ -40,13 +40,15 @@ namespace Utopian::Vk
 		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
 		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
 		mTexture = gTextureLoader().CreateTexture((void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, 1, sizeof(unsigned char));
-		mTexture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		// Note: Texture descriptor set layout moved from Renderer, fix when updating TextOverlay to use new Effect
+		//mTexture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
 
 		// NOTE: Uses the descriptor set layout for the texture from the Renderer
 		// If more descriptors where to be needed they should be added as a separate descriptor set
 		// This is cheating a bit since the shader don't use more than a sampler
 		mPipelineLayout = new Utopian::Vk::PipelineLayout(mRenderer->GetDevice());
-		mPipelineLayout->AddDescriptorSetLayout(mRenderer->GetTextureDescriptorSetLayout());
+		// Note: Texture descriptor set layout moved from Renderer, fix when updating TextOverlay to use new Effect
+		//mPipelineLayout->AddDescriptorSetLayout(mRenderer->GetTextureDescriptorSetLayout());
 		mPipelineLayout->Create();
 
 		mVertexDescription = new VertexDescription();
@@ -216,7 +218,8 @@ namespace Utopian::Vk
 		// TODO: This is currently done in the primary command buffer in Renderer
 		mCommandBuffer->CmdBindPipeline(mPipeline);
 
-		vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mTexture->GetDescriptorSet()->descriptorSet, 0, NULL);
+		// Todo: Note: Disabled for now. TextOverlay need to have its own DescriptorSet for the texture since it's removed from Texture
+		//vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetVkHandle(), 0, 1, &mTexture->GetDescriptorSet()->descriptorSet, 0, NULL);
 
 		mCommandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer);
 		mCommandBuffer->CmdBindVertexBuffer(1, 1, mVertexBuffer);

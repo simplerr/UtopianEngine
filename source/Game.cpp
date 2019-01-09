@@ -89,6 +89,8 @@ namespace Utopian
 
 		mRenderer->PostInitPrepare();
 
+		Vk::StaticModel* model = Vk::gModelLoader().LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Rocks/Rocks/Models/m_rock_01.FBX");
+
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 

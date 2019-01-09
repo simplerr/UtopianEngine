@@ -42,18 +42,6 @@ namespace Utopian::Vk
 		vkFreeMemory(mDevice->GetVkDevice(), deviceMemory, nullptr);
 	}
 
-	void Texture::CreateDescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
-	{
-		mDescriptorSet = new DescriptorSet(device, setLayout, descriptorPool);
-		mDescriptorSet->BindCombinedImage(0, GetTextureDescriptorInfo());	// NOTE: It's hard to know that the texture must be bound to binding=0
-		mDescriptorSet->UpdateDescriptorSets();
-	}
-
-	DescriptorSet* Texture::GetDescriptorSet()
-	{
-		return mDescriptorSet;
-	}
-
 	VkDescriptorImageInfo* Texture::GetTextureDescriptorInfo()
 	{
 		texDescriptor = {};

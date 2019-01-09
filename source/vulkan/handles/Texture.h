@@ -30,7 +30,6 @@ namespace Utopian::Vk
 		~Texture();
 
 		void CreateDescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
-		DescriptorSet* GetDescriptorSet();
 		VkDescriptorImageInfo* GetTextureDescriptorInfo();
 
 		VkImage image;
@@ -39,7 +38,6 @@ namespace Utopian::Vk
 		VkSampler sampler;
 	private:
 		Device* mDevice;
-		DescriptorSet* mDescriptorSet;
 		VkDescriptorImageInfo texDescriptor;
 	};
 }

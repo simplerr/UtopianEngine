@@ -50,7 +50,7 @@ namespace Utopian::Vk
 			delete commandBuffer;
 		}
 
-		delete mTextOverlay;
+		//delete mTextOverlay;
 		delete mScreenGui;
 	}
 
@@ -82,7 +82,7 @@ namespace Utopian::Vk
 
 	void Renderer::PostInitPrepare()
 	{
-		mTextOverlay = new TextOverlay(this);
+		//mTextOverlay = new TextOverlay(this);
 		mScreenGui = new ScreenGui(this);
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
@@ -133,44 +133,11 @@ namespace Utopian::Vk
 		return mClearColor;
 	}
 
-	DescriptorSetLayout* Renderer::GetTextureDescriptorSetLayout()
-	{
-		return mTextureDescriptorSetLayout;
-	}
-
-	DescriptorPool* Renderer::GetDescriptorPool()
-	{
-		return mDescriptorPool;
-	}
-
 	CommandBuffer* Renderer::CreateCommandBuffer(VkCommandBufferLevel level)
 	{
 		CommandBuffer* commandBuffer = new CommandBuffer(mDevice, GetCommandPool(), level);
 		mApplicationCommandBuffers.push_back(commandBuffer);
 		return commandBuffer;
-	}
-
-	void Renderer::SetupDescriptorSetLayout()
-	{
-		// Here we want to split the descriptor set into 3 different ones
-		// The PipelineLayout can take a an array of several DescriptorSetLayout
-		// And when rendering vkCmdBindDescriptorSets also takes an array of DescriptorSets
-
-		mTextureDescriptorSetLayout = new DescriptorSetLayout(GetDevice());
-
-		//// TODO: Separate DescriptorSet and DescriptorSetLayout
-		//// DescriptorSets should be able to be created from an existing DescriptorSetLayout
-		mTextureDescriptorSetLayout->AddBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT);			// Combined image sampler binding: 2
-
-		mTextureDescriptorSetLayout->Create();
-	}
-
-	void Renderer::SetupDescriptorPool()
-	{
-		mDescriptorPool = new DescriptorPool(GetDevice());
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
-		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 128);
-		mDescriptorPool->Create();
 	}
 
 	void Renderer::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
@@ -260,17 +227,17 @@ namespace Utopian::Vk
 	{
 		UpdateOverlay();
 
-		if (mTextOverlay->IsVisible())
-		{
-			mTextOverlay->BeginTextUpdate();
+		// if (mTextOverlay->IsVisible())
+		// {
+		// 	mTextOverlay->BeginTextUpdate();
 
-			mTextOverlay->AddText("Camera pos", mCamera->GetPosition(), 5.0f, 5.0f, TextOverlay::ALIGN_LEFT);
-			mTextOverlay->AddText("Camera dir", mCamera->GetDirection(), 5.0f, 50.0f, TextOverlay::ALIGN_LEFT);
+		// 	mTextOverlay->AddText("Camera pos", mCamera->GetPosition(), 5.0f, 5.0f, TextOverlay::ALIGN_LEFT);
+		// 	mTextOverlay->AddText("Camera dir", mCamera->GetDirection(), 5.0f, 50.0f, TextOverlay::ALIGN_LEFT);
 
-			glm::mat4 mat = glm::mat4();
-			mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
-			mTextOverlay->EndTextUpdate();
-		}
+		// 	glm::mat4 mat = glm::mat4();
+		// 	mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
+		// 	mTextOverlay->EndTextUpdate();
+		// }
 	}
 
 	void Renderer::DrawScreenQuad(CommandBuffer* commandBuffer)
@@ -287,7 +254,7 @@ namespace Utopian::Vk
 		case WM_KEYDOWN:
 			if (wParam == VK_SPACE)
 			{
-				mTextOverlay->ToggleVisible();
+				//mTextOverlay->ToggleVisible();
 			}
 			break;
 		}

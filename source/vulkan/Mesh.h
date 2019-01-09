@@ -26,8 +26,9 @@ namespace Utopian::Vk
 		void BuildBuffers(Device* device);
 		void BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>);
 
+		// Todo: Should also set the normal map texture
 		void SetTexture(Texture* texture);
-		VkDescriptorSet GetTextureDescriptor();
+		VkDescriptorSet GetTextureDescriptorSet();
 
 		BoundingBox GetBoundingBox();
 
@@ -40,8 +41,13 @@ namespace Utopian::Vk
 		std::vector<Vertex> vertexVector;
 		std::vector<unsigned int> indexVector;
 	private:
+		// Creates a DescriptorSet from the diffuse and normal textures that was added to the mesh.
+		void CreateDescriptorSets(SharedPtr<DescriptorSetLayout> descriptorSetLayout, SharedPtr<DescriptorPool> descriptorPool);
+		
+	private:
 		SharedPtr<Buffer> mVertexBuffer;
 		SharedPtr<Buffer> mIndexBuffer;
+		SharedPtr<DescriptorSet> mTextureDescriptorSet;
 		Device* mDevice;
 		Texture* mTexture;
 		std::string mTexturePath;

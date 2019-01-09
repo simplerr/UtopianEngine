@@ -3,6 +3,8 @@
 #include "ModelLoader.h"
 #include "TextureLoader.h"
 #include "vulkan/Mesh.h"
+#include "vulkan/handles/DescriptorSetLayout.h"
+#include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/VulkanDebug.h"
 #include "StaticModel.h"
 #include "Device.h"
@@ -20,6 +22,15 @@ namespace Utopian::Vk
 	ModelLoader::ModelLoader(Device* device)
 	{
 		mDevice = device;
+
+		mMeshTexturesDescriptorSetLayout = std::make_shared<DescriptorSetLayout>(device);
+		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // diffuseSampler
+		//mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // normalSampler
+		mMeshTexturesDescriptorSetLayout->Create();
+
+		mMeshTexturesDescriptorPool = std::make_shared<DescriptorPool>(device);
+		mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 128);
+		mMeshTexturesDescriptorPool->Create();
 	}
 
 	void ModelLoader::CleanupModels(VkDevice device)
@@ -33,6 +44,16 @@ namespace Utopian::Vk
 	ModelLoader& gModelLoader()
 	{
 		return ModelLoader::Instance();
+	}
+
+	SharedPtr<DescriptorSetLayout> ModelLoader::GetMeshTextureDescriptorSetLayout()
+	{
+		return mMeshTexturesDescriptorSetLayout;
+	}
+
+	SharedPtr<DescriptorPool> ModelLoader::GetMeshTextureDescriptorPool()
+	{
+		return mMeshTexturesDescriptorPool;
 	}
 
 	StaticModel* ModelLoader::LoadModel(std::string filename)
@@ -89,6 +110,16 @@ namespace Utopian::Vk
 				// Get texture path
 				aiMaterial* material = scene->mMaterials[assimpMesh->mMaterialIndex];
 				int numTextures = material->GetTextureCount(aiTextureType_DIFFUSE);
+				int numNormalMaps = material->GetTextureCount(aiTextureType_NORMALS);
+				std::vector<int> numTexturesList;
+
+				for (uint32_t i = 0; i < 0xC; i++)
+				{
+					int numTextures = material->GetTextureCount((aiTextureType)i);
+					numTexturesList.push_back(numTextures);
+
+				}
+
 				if (numTextures > 0)
 				{
 					aiString texturePath;

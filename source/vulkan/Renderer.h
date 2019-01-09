@@ -104,10 +104,6 @@ namespace Utopian::Vk
 		//
 		void CompileShaders();
 
-		//Pipeline* GetPipeline(PipelineType pipelineType);
-		DescriptorSetLayout* GetTextureDescriptorSetLayout();
-		DescriptorPool* GetDescriptorPool();
-
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
 		void SetCamera(Utopian::Camera* camera);
@@ -126,14 +122,6 @@ namespace Utopian::Vk
 		CommandBuffer*					mPrimaryCommandBuffer;
 		CommandBuffer*					mScreenGuiCommandBuffer;
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
-
-		/* 
-			They descriptor set layout for textures is handled by Renderer
-			NOTE: Right now they have to be bound to binding=0	
-		*/
-		// TODO: Should not be here
-		DescriptorSetLayout*			mTextureDescriptorSetLayout;
-		DescriptorPool*					mDescriptorPool;
 
 		Camera*							mCamera;
 		TextOverlay*					mTextOverlay;

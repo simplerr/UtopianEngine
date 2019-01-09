@@ -6,6 +6,7 @@
 #include "vulkan/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
+#include "vulkan/ModelLoader.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "Mesh.h"
@@ -68,11 +69,20 @@ namespace Utopian::Vk
 	void Mesh::SetTexture(Texture* texture)
 	{
 		mTexture = texture;
+		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
 	}
 
-	VkDescriptorSet Mesh::GetTextureDescriptor()
+	VkDescriptorSet Mesh::GetTextureDescriptorSet()
 	{
-		return mTexture->GetDescriptorSet()->descriptorSet;
+		return mTextureDescriptorSet->descriptorSet;
+	}
+
+	void Mesh::CreateDescriptorSets(SharedPtr<DescriptorSetLayout> descriptorSetLayout, SharedPtr<DescriptorPool> descriptorPool)
+	{
+		mTextureDescriptorSet = std::make_shared<DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
+		mTextureDescriptorSet->BindCombinedImage(0, mTexture->GetTextureDescriptorInfo());
+		//mTextureDescriptorSet->BindCombinedImage(1, mTexture->GetNormalTextureDescriptorInfo());
+		mTextureDescriptorSet->UpdateDescriptorSets();
 	}
 
 	BoundingBox Mesh::GetBoundingBox()
