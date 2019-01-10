@@ -25,11 +25,11 @@ namespace Utopian::Vk
 
 		mMeshTexturesDescriptorSetLayout = std::make_shared<DescriptorSetLayout>(device);
 		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // diffuseSampler
-		//mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // normalSampler
+		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // normalSampler
 		mMeshTexturesDescriptorSetLayout->Create();
 
 		mMeshTexturesDescriptorPool = std::make_shared<DescriptorPool>(device);
-		mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 128);
+		mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 512);
 		mMeshTexturesDescriptorPool->Create();
 	}
 
@@ -120,46 +120,43 @@ namespace Utopian::Vk
 
 				}
 
+				std::string texturePath = PLACEHOLDER_TEXTURE_PATH;
 				if (numTextures > 0)
 				{
-					aiString texturePath;
-					material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath);
-					FindValidPath(&texturePath, filename);
-					mesh->SetTexturePath(texturePath.C_Str());
-					Texture* texture = gTextureLoader().LoadTexture(texturePath.C_Str());
+					aiString texPath;
+					material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath);
+					FindValidPath(&texPath, filename);
+					texturePath = texPath.C_Str();
+					Texture* texture = gTextureLoader().LoadTexture(texturePath);
 
 					// Workaround for Unity assets
+					// Note: Instead of calling LoadTexture() something similar to FindFile(texturePath) could be used
 					if (texture == nullptr)
 					{
-						std::string texPath = texturePath.C_Str();
-						uint32_t idx = texPath.rfind("\\");
-						std::string textureName = texPath.substr(idx+1);
+						uint32_t idx = texturePath.rfind("\\");
+						std::string textureName = texturePath.substr(idx+1);
 						idx = filename.rfind("/");
-						texPath = filename.substr(0, idx) + "/Textures/" + textureName;
+						texturePath = filename.substr(0, idx) + "/Textures/" + textureName;
 
-						mesh->SetTexturePath(texPath);
-						texture = gTextureLoader().LoadTexture(texPath);
-
+						texture = gTextureLoader().LoadTexture(texturePath);
 
 						// Try removing _H from the filename
 						if (texture == nullptr)
 						{
-							idx = texPath.rfind("_H.tga");
+							idx = texturePath.rfind("_H.tga");
 							if (idx != std::string::npos)
 							{
-								texPath = texPath.substr(0, idx) + ".tga";
-								mesh->SetTexturePath(texPath);
-								texture = gTextureLoader().LoadTexture(texPath);
+								texturePath = texturePath.substr(0, idx) + ".tga";
+								texture = gTextureLoader().LoadTexture(texturePath);
 							}
 
 							if (texture == nullptr)
 							{
-								idx = texPath.rfind("_H.png");
+								idx = texturePath.rfind("_H.png");
 								if (idx != std::string::npos)
 								{
-									texPath = texPath.substr(0, idx) + ".png";
-									mesh->SetTexturePath(texPath);
-									texture = gTextureLoader().LoadTexture(texPath);
+									texturePath = texturePath.substr(0, idx) + ".png";
+									texture = gTextureLoader().LoadTexture(texturePath);
 								}
 							}
 						}
@@ -167,20 +164,11 @@ namespace Utopian::Vk
 
 					if (texture == nullptr)
 					{
-						mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
-						texture = gTextureLoader().LoadTexture(PLACEHOLDER_TEXTURE_PATH);
+						texPath = PLACEHOLDER_TEXTURE_PATH;
 					}
-
-					mesh->SetTexture(texture);
-				}
-				else
-				{
-					mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
-
-					Texture* texture = gTextureLoader().LoadTexture(PLACEHOLDER_TEXTURE_PATH);
-					mesh->SetTexture(texture);
 				}
 
+				mesh->LoadTextures(texturePath);
 				mesh->BuildBuffers(mDevice);		// Build the models buffers here
 				model->AddMesh(mesh);
 			}
@@ -382,10 +370,7 @@ namespace Utopian::Vk
 			}
 		}
 					
-		mesh->SetTexturePath(PLACEHOLDER_TEXTURE_PATH);
-		Texture* texture = gTextureLoader().LoadTexture(PLACEHOLDER_TEXTURE_PATH);
-		mesh->SetTexture(texture);
-
+		mesh->LoadTextures(PLACEHOLDER_TEXTURE_PATH);
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 

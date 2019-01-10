@@ -17,6 +17,7 @@ layout (location = 2) out vec4 outAlbedo;
 layout (location = 3) out vec4 outNormalV;
 
 layout (set = 1, binding = 0) uniform sampler2D textureSampler[3];
+layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 
 const float NEAR_PLANE = 10.0f; //todo: specialization const
 const float FAR_PLANE = 256000.0f; //todo: specialization const 

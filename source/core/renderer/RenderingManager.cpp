@@ -291,7 +291,7 @@ namespace Utopian
 
 				commandBuffer->CmdBindPipeline(mEffects[renderable->GetMaterial().effectType]->GetPipeline(renderable->GetMaterial().variation));
 
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
 				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mEffects[Vk::EffectType::PHONG]->GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 

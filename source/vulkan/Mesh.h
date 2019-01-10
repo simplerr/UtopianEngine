@@ -12,6 +12,8 @@
 #include "utility/math/BoundingBox.h"
 #include "utility/Common.h"
 
+#define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
+
 namespace Utopian::Vk
 {
 	class Mesh
@@ -26,14 +28,14 @@ namespace Utopian::Vk
 		void BuildBuffers(Device* device);
 		void BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>);
 
-		// Todo: Should also set the normal map texture
+		void LoadTextures(std::string diffusePath, std::string normalPath = DEFAULT_NORMAL_MAP_TEXTURE);
+
 		void SetTexture(Texture* texture);
 		VkDescriptorSet GetTextureDescriptorSet();
 
 		BoundingBox GetBoundingBox();
 
 		uint32_t GetNumIndices();
-		void SetTexturePath(std::string texturePath);
 
 		Buffer* GetVertxBuffer();
 		Buffer* GetIndexBuffer();
@@ -49,8 +51,8 @@ namespace Utopian::Vk
 		SharedPtr<Buffer> mIndexBuffer;
 		SharedPtr<DescriptorSet> mTextureDescriptorSet;
 		Device* mDevice;
-		Texture* mTexture;
-		std::string mTexturePath;
+		Texture* mDiffuseTexture;
+		Texture* mNormalTexture;
 
 		BoundingBox mBoundingBox;
 

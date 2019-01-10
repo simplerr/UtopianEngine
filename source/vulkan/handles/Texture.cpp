@@ -51,4 +51,14 @@ namespace Utopian::Vk
 
 		return &texDescriptor;
 	}
+
+	void Texture::SetPath(std::string path)
+	{
+		mPath = path;
+	}
+
+	std::string Texture::GetPath()
+	{
+		return mPath;
+	}
 }

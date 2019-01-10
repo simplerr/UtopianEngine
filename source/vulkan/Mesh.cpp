@@ -16,6 +16,8 @@ namespace Utopian::Vk
 	Mesh::Mesh(Device* device)
 	{
 		mDevice = device;
+		mDiffuseTexture = nullptr;
+		mNormalTexture = nullptr;
 	}
 	
 	Mesh::~Mesh()
@@ -68,7 +70,7 @@ namespace Utopian::Vk
 
 	void Mesh::SetTexture(Texture* texture)
 	{
-		mTexture = texture;
+		mDiffuseTexture = texture;
 		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
 	}
 
@@ -80,8 +82,8 @@ namespace Utopian::Vk
 	void Mesh::CreateDescriptorSets(SharedPtr<DescriptorSetLayout> descriptorSetLayout, SharedPtr<DescriptorPool> descriptorPool)
 	{
 		mTextureDescriptorSet = std::make_shared<DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
-		mTextureDescriptorSet->BindCombinedImage(0, mTexture->GetTextureDescriptorInfo());
-		//mTextureDescriptorSet->BindCombinedImage(1, mTexture->GetNormalTextureDescriptorInfo());
+		mTextureDescriptorSet->BindCombinedImage(0, mDiffuseTexture->GetTextureDescriptorInfo());
+		mTextureDescriptorSet->BindCombinedImage(1, mNormalTexture->GetTextureDescriptorInfo());
 		mTextureDescriptorSet->UpdateDescriptorSets();
 	}
 
@@ -95,11 +97,6 @@ namespace Utopian::Vk
 		return mIndicesCount;
 	}
 
-	void Mesh::SetTexturePath(std::string texturePath)
-	{
-		mTexturePath = texturePath;
-	}
-
 	Buffer* Mesh::GetVertxBuffer()
 	{
 		return mVertexBuffer.get();
@@ -108,5 +105,12 @@ namespace Utopian::Vk
 	Buffer* Mesh::GetIndexBuffer()
 	{
 		return mIndexBuffer.get();
+	}
+
+	void Mesh::LoadTextures(std::string diffusePath, std::string normalPath)
+	{
+		mDiffuseTexture = gTextureLoader().LoadTexture(diffusePath);
+		mNormalTexture = gTextureLoader().LoadTexture(normalPath);
+		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
 	}
 }

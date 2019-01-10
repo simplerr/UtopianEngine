@@ -32,6 +32,9 @@ namespace Utopian::Vk
 		void CreateDescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 		VkDescriptorImageInfo* GetTextureDescriptorInfo();
 
+		void SetPath(std::string path);
+		std::string GetPath();
+
 		VkImage image;
 		VkDeviceMemory deviceMemory;
 		VkImageView imageView;
@@ -39,5 +42,6 @@ namespace Utopian::Vk
 	private:
 		Device* mDevice;
 		VkDescriptorImageInfo texDescriptor;
+		std::string mPath;
 	};
 }

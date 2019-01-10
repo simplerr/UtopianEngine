@@ -84,6 +84,7 @@ namespace Utopian::Vk
 		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
 
 		mTextureMap[filename] = texture;
+		texture->SetPath(filename);
 
 		vkDestroyImage(mDevice->GetVkDevice(), stagingImage, nullptr);
 		vkFreeMemory(mDevice->GetVkDevice(), stagingMemory, nullptr);

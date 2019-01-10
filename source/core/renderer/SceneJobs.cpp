@@ -170,7 +170,7 @@ namespace Utopian
 			{
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
-					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 					VkDescriptorSet descriptorSets[2] = { mGBufferEffectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
 					commandBuffer->CmdBindDescriptorSet(mGBufferEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
@@ -205,7 +205,7 @@ namespace Utopian
 				// Todo: Note: This is a temporary workaround
 				if (!renderable->HasRenderFlags(RENDER_FLAG_TERRAIN))
 				{
-					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 
 					commandBuffer->CmdBindPipeline(effect->GetPipeline());
@@ -331,7 +331,7 @@ namespace Utopian
 						CascadePushConst pushConst(glm::mat4(), cascadeIndex);
 						commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
 
-						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 						VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 						commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
@@ -360,7 +360,7 @@ namespace Utopian
 					CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
 					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
 
-					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptor();
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
 					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 

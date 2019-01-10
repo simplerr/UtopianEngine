@@ -208,8 +208,7 @@ namespace Utopian
 
 			if (texture != nullptr)
 			{
-				model->mMeshes[0]->SetTexture(texture);
-				model->mMeshes[0]->SetTexturePath(fullTexturePath);
+				model->mMeshes[0]->LoadTextures(fullTexturePath);
 			}
 		}
 

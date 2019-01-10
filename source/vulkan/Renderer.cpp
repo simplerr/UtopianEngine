@@ -41,8 +41,6 @@ namespace Utopian::Vk
 
 	Renderer::~Renderer()
 	{
-		delete mDescriptorPool;
-		delete mTextureDescriptorSetLayout;
 		delete mPrimaryCommandBuffer;
 
 		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
@@ -58,9 +56,6 @@ namespace Utopian::Vk
 	{
 		VulkanBase::Prepare();
 
-		SetupDescriptorSetLayout();			// Must run before PreparePipelines() (VkPipelineLayout)
-
-		SetupDescriptorPool();
 		PrepareCommandBuffers();
 
 		mPrepared = true;
