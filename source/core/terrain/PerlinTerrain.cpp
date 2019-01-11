@@ -94,6 +94,7 @@ namespace Utopian
 				mesh->AddVertex(Vk::Vertex(localPos.x, worldPos.y, localPos.z,
 										   normal.x, normal.y, normal.z,
 										   ANY, ANY, ANY,
+										   ANY, ANY, ANY,
 										   texcord.x, texcord.y,
 										   ANY, ANY, ANY));
 			}

@@ -4,7 +4,8 @@ layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec4 InTangentL;
+layout (location = 4) in vec3 InTangentL;
+layout (location = 5) in vec3 InBitangentL;
 
 layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
 {
@@ -36,7 +37,8 @@ out gl_PerVertex
 void main() 
 {
 	// Todo: Workaround since glslang reflection removes unused vertex input
-	vec4 temp = InTangentL;
+	vec3 temp = InTangentL;
+	temp = InBitangentL;
 	vec3 color = InColor;
 
 	OutColor = pushConstants.color.rgb;

@@ -7,7 +7,8 @@ layout (location = 0) in vec3 InPosL;			// Vertex in local coordinate system
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec4 InTangentL;
+layout (location = 4) in vec3 InTangentL;
+layout (location = 5) in vec3 InBitangentL;
 
 layout (location = 0) out vec2 OutTexCoord;
 layout (location = 1) out vec4 OutClipSpace;
@@ -37,6 +38,10 @@ const float tiling = 0.00025;
 
 void main(void)
 {
+	// Note: workaround to avoid glslang to optimize unused inputs
+	vec3 temp = InTangentL;
+	temp = InBitangentL;
+
 	vec4 worldPos = pushConsts.world * vec4(InPosL.xyz, 1.0);
 	OutToEye = per_frame_vs.eyePos - worldPos.xyz;
 	//OutToEye =  vec3(67200, 2700, 67200) - worldPos.xyz;

@@ -7,7 +7,8 @@ layout (location = 0) in vec3 InPosL;			// Vertex in local coordinate system
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;		// Normal in local coordinate system
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec4 InTangentL;
+layout (location = 4) in vec3 InTangentL;
+layout (location = 5) in vec3 InBitangentL;
 
 layout (location = 0) out vec3 OutPosW;
 layout (location = 1) out vec3 OutNormalW;
@@ -45,6 +46,10 @@ out gl_PerVertex
 
 void main() 
 {
+	// Note: workaround to avoid glslang to optimize unused inputs
+	vec3 temp = InTangentL;
+	temp = InBitangentL;
+
 	OutColor = pushConsts.color.rgb; 
 	OutEyePosW = per_frame_vs.eyePos;
 

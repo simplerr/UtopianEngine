@@ -86,15 +86,23 @@ namespace Utopian::Vk
 				// Load vertices
 				for (int vertexId = 0; vertexId < assimpMesh->mNumVertices; vertexId++)
 				{
-					aiVector3D v = assimpMesh->mVertices[vertexId];
-					aiVector3D n = assimpMesh->mNormals[vertexId];
-					aiVector3D t = aiVector3D(0, 0, 0);
+					aiVector3D pos = assimpMesh->mVertices[vertexId];
+					aiVector3D normal = assimpMesh->mNormals[vertexId];
+					aiVector3D uv = aiVector3D(0, 0, 0);
+					aiVector3D tangent = aiVector3D(0, 0, 0);
+					aiVector3D bitangent = aiVector3D(0, 0, 0);
 
 					if (assimpMesh->HasTextureCoords(0))
-						t = assimpMesh->mTextureCoords[0][vertexId];
+						uv = assimpMesh->mTextureCoords[0][vertexId];
 
-					n = n.Normalize();
-					Vertex vertex(v.x, v.y, v.z, n.x, n.y, n.z, 0, 0, 0, t.x, t.y, color.r, color.g, color.b);
+					if (assimpMesh->HasTangentsAndBitangents())
+					{
+						tangent = assimpMesh->mTangents[vertexId];
+						bitangent = assimpMesh->mBitangents[vertexId];
+					}
+
+					normal = normal.Normalize();
+					Vertex vertex(pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, bitangent.x, bitangent.y, bitangent.z, uv.x, uv.y, color.r, color.g, color.b);
 					mesh->AddVertex(vertex);
 				}
 
@@ -320,10 +328,10 @@ namespace Utopian::Vk
 
 		// Front
 		float ANY = 0;
-		mesh->AddVertex(Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 0.0f, 0.0f, ANY, ANY, ANY));
-		mesh->AddVertex(Vertex(0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 1.0f, 0.0f, ANY, ANY, ANY));
-		mesh->AddVertex(Vertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 1.0f, 1.0f, ANY, ANY, ANY));
-		mesh->AddVertex(Vertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, 0.0f, 1.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 0.0f, 0.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 1.0f, 0.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 1.0f, 1.0f, ANY, ANY, ANY));
+		mesh->AddVertex(Vertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 0.0f, 1.0f, ANY, ANY, ANY));
 
 		// Front
 		mesh->AddTriangle(1, 2, 0);
@@ -357,7 +365,7 @@ namespace Utopian::Vk
 				glm::vec2 texcord = glm::vec2(position.x / (cellSize * (numCells - 1)), position.z / (cellSize * (numCells - 1)));
 
 				// Note: normal.y is -1 when it's expected to be 1
-				mesh->AddVertex(Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+				mesh->AddVertex(Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
 			}
 		}
 

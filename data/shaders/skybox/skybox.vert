@@ -7,7 +7,8 @@ layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec4 InTangentL;
+layout (location = 4) in vec3 InTangentL;
+layout (location = 5) in vec3 InBitangentL;
 
 layout (set = 0, binding = 0) uniform UBO_viewProjection 
 {
@@ -29,7 +30,8 @@ void main()
 	vec3 temp = InColor;
 	temp = InNormalL;
 	vec2 temp1 = InTex;
-	vec4 temp2 = InTangentL;
+	vec3 temp2 = InTangentL;
+	temp2 = InBitangentL;
 
 	outUVW = InPosL;
 	gl_Position = ubo.projection * ubo.view * ubo.world * vec4(InPosL.xyz, 1.0);
