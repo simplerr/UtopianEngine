@@ -89,6 +89,7 @@ namespace Utopian
 		float grassViewDistance = 0*1800.0f;
 		int blockViewDistance = 2;
 		bool shadowsEnabled = true;
+		bool normalMapping = true;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;
@@ -141,7 +142,11 @@ namespace Utopian
 		UNIFORM_BLOCK_BEGIN(GBufferViewProjection)
 			UNIFORM_PARAM(glm::mat4, projection)
 			UNIFORM_PARAM(glm::mat4, view)
-			UNIFORM_BLOCK_END()
+		UNIFORM_BLOCK_END()
+
+		UNIFORM_BLOCK_BEGIN(SettingsBlock)
+			UNIFORM_PARAM(int, normalMapping)
+		UNIFORM_BLOCK_END()
 
 		GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~GBufferJob();
@@ -162,6 +167,7 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mGBufferEffectInstanced;
 	private:
 		GBufferViewProjection viewProjectionBlock;
+		SettingsBlock settingsBlock;
 		SharedPtr<Vk::Sampler> sampler;
 	};
 

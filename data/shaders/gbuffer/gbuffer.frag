@@ -20,6 +20,11 @@ layout (location = 3) out vec4 outNormalV;
 layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 
+layout (std140, set = 0, binding = 1) uniform UBO_settings 
+{
+	int normalMapping;
+} settings_ubo;
+
 const float NEAR_PLANE = 10.0f; //todo: specialization const
 const float FAR_PLANE = 256000.0f; //todo: specialization const 
 
@@ -32,11 +37,6 @@ float linearDepth(float depth)
 void main() 
 {
 	vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
-	vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
-
-	// Transform normal from tangent to world space
-	normal = normalize(normal * 2.0 - 1.0);
-	normal = normalize(InTBN * normal);
 
 	if (diffuse.a < 0.01f)
 		discard;
@@ -45,8 +45,22 @@ void main()
 		diffuse = vec4(InColor, 1.0f);
 
 	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
-	//outNormal = vec4(normalize(InNormalW), 1.0f);
-	outNormal = vec4(normalize(normal), 1.0f);
+
+	if (settings_ubo.normalMapping == 1)
+	{
+		vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
+
+		// Transform normal from tangent to world space
+		normal = normalize(normal * 2.0 - 1.0);
+		normal = normalize(InTBN * normal);
+
+		outNormal = vec4(normalize(normal), 1.0f);
+	}
+	else
+	{
+		outNormal = vec4(normalize(InNormalW), 1.0f);
+	}
+
 	outNormal.y *= -1.0f;
 	outAlbedo = vec4(diffuse);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);

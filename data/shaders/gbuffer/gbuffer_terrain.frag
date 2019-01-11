@@ -6,6 +6,7 @@ layout (location = 2) in vec3 InNormalW;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec3 InNormalV;
 layout (location = 5) in vec2 InTextureTiling;
+layout (location = 6) in mat3 InTBN;
 
 layout (location = 0) out vec4 outPosition;
 layout (location = 1) out vec4 outNormal;
@@ -19,6 +20,11 @@ layout (location = 3) out vec4 outNormalV;
 layout (set = 1, binding = 0) uniform sampler2D textureSampler[3];
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 
+layout (std140, set = 0, binding = 1) uniform UBO_settings 
+{
+	int normalMapping;
+} settings_ubo;
+
 const float NEAR_PLANE = 10.0f; //todo: specialization const
 const float FAR_PLANE = 256000.0f; //todo: specialization const 
 
@@ -30,10 +36,23 @@ float linearDepth(float depth)
 
 void main() 
 {
-	vec4 normal = vec4(normalize(InNormalW), 1.0f);
-	normal.y *= -1;
+	if (settings_ubo.normalMapping == 1)
+	{
+		vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
+
+		// Transform normal from tangent to world space
+		normal = normalize(normal * 2.0 - 1.0);
+		normal = normalize(InTBN * normal);
+
+		outNormal = vec4(normalize(normal), 1.0f);
+	}
+	else
+	{
+		outNormal = vec4(normalize(InNormalW), 1.0f);
+	}
+
+	outNormal.y *= -1;
 	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
-	outNormal = normal;
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
 
 	vec4 color = vec4(1.0f);
@@ -54,7 +73,7 @@ void main()
 		flatColor = grassColor;
 
 	// Slope texture calculation
-	float slope = 1 - normal.y;
+	float slope = 1 - outNormal.y;
 	if (slope < 0.3f)
 		color = flatColor;
 	else if (slope >= 0.3f && slope < 0.45f)

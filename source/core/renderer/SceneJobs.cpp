@@ -89,6 +89,11 @@ namespace Utopian
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
+		settingsBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mGBufferEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mGBufferEffectTerrain->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
+
 		// Bind the different terrain textures
 		sampler = std::make_shared<Vk::Sampler>(mRenderer->GetDevice(), false);
 		sampler->Create();
@@ -124,6 +129,9 @@ namespace Utopian
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		viewProjectionBlock.UpdateMemory();
+
+		settingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
+		settingsBlock.UpdateMemory();
 
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
