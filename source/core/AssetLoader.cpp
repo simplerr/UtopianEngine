@@ -110,7 +110,7 @@ namespace Utopian
 		//AddAsset(POPLAR_SKAN_08, "Trees/Models/08_Poplar_skan.fbx"); // Broken
 
 		// Rocks
-		AddAsset(M_ROCK_01, "Rocks/Rocks/Models/m_rock_01.fbx");
+		AddAsset(M_ROCK_01, "Rocks/Rocks/Models/m_rock_01.fbx", "Rocks/Rocks/Models/Textures/T_Photoscanned_rocks_01_BC.tga", "Rocks/Rocks/Models/Textures/T_Photoscanned_rocks_01_N.tga");
 		AddAsset(M_ROCK_02, "Rocks/Rocks/Models/m_rock_02.fbx");
 		AddAsset(M_ROCK_03, "Rocks/Rocks/Models/m_rock_03.fbx");
 		AddAsset(ROCK_01, "Rocks/Rocks/Models/Rock_01.fbx");
@@ -176,9 +176,9 @@ namespace Utopian
 		AddAsset(MAPLE_BUSH_04_CROSS, "Bushes/Models/maple_bush_04_cross.fbx", "Bushes/Models/Textures/T_Maple_04_Cross_A_T.png");
 	}
 
-	void AssetLoader::AddAsset(uint32_t id, std::string model, std::string texture)
+	void AssetLoader::AddAsset(uint32_t id, std::string model, std::string texture, std::string normalMap)
 	{
-		mAssets.push_back(Asset(id, model, texture));
+		mAssets.push_back(Asset(id, model, texture, normalMap));
 	}
 
 	Asset AssetLoader::FindAsset(uint32_t id)
@@ -197,19 +197,27 @@ namespace Utopian
 		Asset asset = FindAsset(assetId);
 
 		std::string fullModelPath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.model;
-		std::string fullTexturePath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.texture;
 
 		Vk::StaticModel* model = Vk::gModelLoader().LoadModel(fullModelPath);
 
 		// Some assets are not properly storing texture paths so we need to set them manually
-		if (asset.texture != "-")
+		if (asset.diffuseTexture != "-")
 		{
-			Vk::Texture* texture = Vk::gTextureLoader().LoadTexture(fullTexturePath);
+			std::string fullDiffusePath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.diffuseTexture;
+			std::string fullNormalPath = DEFAULT_NORMAL_MAP_TEXTURE;
+		
+			if (asset.normalMap != "-")
+				fullNormalPath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.normalMap;
 
-			if (texture != nullptr)
+			Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
+			Vk::Texture* normalMap = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
+
+			if (diffuseTexture != nullptr && normalMap != nullptr)
 			{
-				model->mMeshes[0]->LoadTextures(fullTexturePath);
+				model->mMeshes[0]->LoadTextures(fullDiffusePath, fullNormalPath);
 			}
+			else
+				assert(0);
 		}
 
 		return model;

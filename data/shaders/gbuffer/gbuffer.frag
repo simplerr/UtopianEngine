@@ -6,6 +6,7 @@ layout (location = 2) in vec3 InNormalW;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec3 InNormalV;
 layout (location = 5) in vec2 InTextureTiling;
+layout (location = 6) in mat3 InTBN;
 
 layout (location = 0) out vec4 outPosition;
 layout (location = 1) out vec4 outNormal;
@@ -31,9 +32,11 @@ float linearDepth(float depth)
 void main() 
 {
 	vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
-	vec4 normal = texture(normalSampler, InTex * InTextureTiling);
+	vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
 
-	//diffuse = normal;
+	// Transform normal from tangent to world space
+	normal = normalize(normal * 2.0 - 1.0);
+	normal = normalize(InTBN * normal);
 
 	if (diffuse.a < 0.01f)
 		discard;
@@ -42,7 +45,8 @@ void main()
 		diffuse = vec4(InColor, 1.0f);
 
 	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
-	outNormal = vec4(normalize(InNormalW), 1.0f);
+	//outNormal = vec4(normalize(InNormalW), 1.0f);
+	outNormal = vec4(normalize(normal), 1.0f);
 	outNormal.y *= -1.0f;
 	outAlbedo = vec4(diffuse);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);

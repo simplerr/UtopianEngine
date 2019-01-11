@@ -5,6 +5,8 @@
 #include "utility/Module.h"
 #include "vulkan\VulkanInclude.h"
 
+#define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
+
 namespace Utopian
 {
 	enum GrassAsset
@@ -187,15 +189,17 @@ namespace Utopian
 
 	struct Asset
 	{
-		Asset(uint32_t _id, std::string _model, std::string _texture) {
+		Asset(uint32_t _id, std::string _model, std::string _texture, std::string _normalMap) {
 			id = _id;
 			model = _model;
-			texture = _texture;
+			diffuseTexture = _texture;
+			normalMap = _normalMap;
 		}
 
 		uint32_t id;
 		std::string model;
-		std::string texture;
+		std::string diffuseTexture;
+		std::string normalMap;
 	};
 
 	class AssetLoader : public Module<AssetLoader>
@@ -203,7 +207,7 @@ namespace Utopian
 	public:
 		AssetLoader();
 
-		void AddAsset(uint32_t id, std::string model, std::string texture = "-");
+		void AddAsset(uint32_t id, std::string model, std::string texture = "-", std::string normalMap = "-");
 		Vk::StaticModel* LoadAsset(uint32_t assetId);
 		Asset FindAsset(uint32_t id);
 	private:

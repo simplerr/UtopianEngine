@@ -125,7 +125,6 @@ namespace Utopian::Vk
 				{
 					int numTextures = material->GetTextureCount((aiTextureType)i);
 					numTexturesList.push_back(numTextures);
-
 				}
 
 				std::string texturePath = PLACEHOLDER_TEXTURE_PATH;

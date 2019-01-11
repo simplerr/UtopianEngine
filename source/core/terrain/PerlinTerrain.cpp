@@ -91,6 +91,7 @@ namespace Utopian
 				glm::vec3 localPos = glm::vec3(x * mCellSize, 0.0f, z * mCellSize);
 				glm::vec2 texcord = glm::vec2(localPos.x / (mCellSize * (mCellsInBlock - 1)), localPos.z / (mCellSize * (mCellsInBlock - 1)));
 
+				// Todo: Calculate tangent and bitangent
 				mesh->AddVertex(Vk::Vertex(localPos.x, worldPos.y, localPos.z,
 										   normal.x, normal.y, normal.z,
 										   ANY, ANY, ANY,

@@ -28,6 +28,7 @@ layout (location = 2) out vec3 OutNormalW;
 layout (location = 3) out vec2 OutTex;
 layout (location = 4) out vec3 OutNormalV;
 layout (location = 5) out vec2 OutTextureTiling;
+layout (location = 6) out mat3 OutTBN;
 
 out gl_PerVertex 
 {
@@ -37,9 +38,12 @@ out gl_PerVertex
 void main() 
 {
 	// Todo: Workaround since glslang reflection removes unused vertex input
-	vec3 temp = InTangentL;
-	temp = InBitangentL;
 	vec3 color = InColor;
+
+	vec3 T = normalize(mat3(pushConstants.world) * InTangentL);
+	vec3 B = normalize(mat3(pushConstants.world) * InBitangentL);
+	vec3 N = normalize(mat3(pushConstants.world) * InNormalL);
+	OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
 
 	OutColor = pushConstants.color.rgb;
 	OutPosW = (pushConstants.world * vec4(InPosL.xyz, 1.0)).xyz;
