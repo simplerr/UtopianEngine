@@ -110,10 +110,45 @@ namespace Utopian
 			}
 		}
 
+		// Calculate tangents and bitangents
+		// References:
+		// https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+		// https://www.youtube.com/watch?v=0QhR7WSoF78
+		for (int i = 0; i < mesh->indexVector.size(); i += 3)
+		{
+			Vk::Vertex v0 = mesh->vertexVector[mesh->indexVector[i]];
+			Vk::Vertex v1 = mesh->vertexVector[mesh->indexVector[i+1]];
+			Vk::Vertex v2 = mesh->vertexVector[mesh->indexVector[i+2]];
+
+			glm::vec3 e1 = v1.Pos - v0.Pos;
+			glm::vec3 e2 = v2.Pos - v0.Pos;
+
+			glm::vec2 deltaUV1 = v1.Tex - v0.Tex;
+			glm::vec2 deltaUV2 = v2.Tex - v0.Tex;
+
+			float r = (float)(1.0 / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x));
+
+			glm::vec3 tangent = r * (e1 * deltaUV2.y - e2 * deltaUV1.y);
+			glm::vec3 bitangent = r * (e2 * deltaUV1.x - e1 * deltaUV2.x);
+
+			tangent = normalize(tangent);
+			bitangent = normalize(bitangent);
+
+			// Tangents and bitangents are shared between all vertices in a triangle
+			mesh->vertexVector[mesh->indexVector[i]].Tangent = tangent;
+			mesh->vertexVector[mesh->indexVector[i+1]].Tangent = tangent;
+			mesh->vertexVector[mesh->indexVector[i+2]].Tangent = tangent;
+
+			mesh->vertexVector[mesh->indexVector[i]].Bitangent = bitangent;
+			mesh->vertexVector[mesh->indexVector[i+1]].Bitangent = bitangent;
+			mesh->vertexVector[mesh->indexVector[i+2]].Bitangent = bitangent;
+		}
+
 		/*mesh->SetTexturePath("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga");
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");*/
-		mesh->LoadTextures("data/textures/ground/grass2.tga");
+		//mesh->LoadTextures("data/textures/ground/grass2.tga");
+		mesh->LoadTextures("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga", "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_N.png");
 		mesh->BuildBuffers(mRenderer->GetDevice());
 		model->AddMesh(mesh);
 

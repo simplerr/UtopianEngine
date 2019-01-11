@@ -1,9 +1,10 @@
 # Utopian Engine
 
-## Features
+### Features
 + Vulkan backend
 + Deferred shading
 + Casacade shadow mapping
++ Normal mapping
 + SSAO
 + Instancing
 + Runtime shader compilation
@@ -14,9 +15,8 @@
 + ImGui user interface
 + ECS layer
 
-## Planned features
+### Planned features
 + Light shaft from sun
-+ Normal mapping
 + Terrain tesselation
 + Displacement mapping
 + Atmospheric scattering
