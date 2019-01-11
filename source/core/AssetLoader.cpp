@@ -110,26 +110,28 @@ namespace Utopian
 		//AddAsset(POPLAR_SKAN_08, "Trees/Models/08_Poplar_skan.fbx"); // Broken
 
 		// Rocks
-		AddAsset(M_ROCK_01, "Rocks/Rocks/Models/m_rock_01.fbx", "Rocks/Rocks/Models/Textures/T_Photoscanned_rocks_01_BC.tga", "Rocks/Rocks/Models/Textures/T_Photoscanned_rocks_01_N.tga");
-		AddAsset(M_ROCK_02, "Rocks/Rocks/Models/m_rock_02.fbx");
-		AddAsset(M_ROCK_03, "Rocks/Rocks/Models/m_rock_03.fbx");
-		AddAsset(ROCK_01, "Rocks/Rocks/Models/Rock_01.fbx");
-		AddAsset(ROCK_01_CUT, "Rocks/Rocks/Models/Rock_01_cut.fbx");
-		AddAsset(ROCK_02, "Rocks/Rocks/Models/Rock_02.fbx");
-		AddAsset(ROCK_02_CUT, "Rocks/Rocks/Models/Rock_02_cut.fbx");
-		AddAsset(ROCK_03, "Rocks/Rocks/Models/Rock_03.fbx");
-		AddAsset(ROCK_03_CUT, "Rocks/Rocks/Models/Rock_03_cut.fbx");
-		AddAsset(ROCK_04, "Rocks/Rocks/Models/Rock_04.fbx");
-		AddAsset(ROCK_05, "Rocks/Rocks/Models/Rock_05.fbx");
-		AddAsset(ROCK_05_CUT, "Rocks/Rocks/Models/Rock_05_cut.fbx");
-		AddAsset(ROCK_06, "Rocks/Rocks/Models/Rock_06.fbx");
-		AddAsset(ROCK_07, "Rocks/Rocks/Models/Rock_07.fbx");
-		AddAsset(S_ROCK_01, "Rocks/Rocks/Models/s_rock_01.fbx");
-		AddAsset(S_ROCK_02, "Rocks/Rocks/Models/s_rock_02.fbx");
-		AddAsset(S_ROCK_03, "Rocks/Rocks/Models/s_rock_03.fbx");
-		AddAsset(S_ROCK_04, "Rocks/Rocks/Models/s_rock_04.fbx");
-		AddAsset(S_ROCK_05, "Rocks/Rocks/Models/s_rock_05.fbx");
-		AddAsset(S_ROCK_06, "Rocks/Rocks/Models/s_rock_06.fbx");
+		std::string rockDiffuse = "Rocks/Rocks/Models/Textures/T_Photoscanned_rocks_01_BC.tga";
+		std::string rockNormal = "Rocks/Rocks/Models/Textures/T_Photoscanned_rocks_01_N.tga";
+		AddAsset(M_ROCK_01, "Rocks/Rocks/Models/m_rock_01.fbx", rockDiffuse, rockNormal);
+		AddAsset(M_ROCK_02, "Rocks/Rocks/Models/m_rock_02.fbx", rockDiffuse, rockNormal);
+		AddAsset(M_ROCK_03, "Rocks/Rocks/Models/m_rock_03.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_01, "Rocks/Rocks/Models/Rock_01.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_01_CUT, "Rocks/Rocks/Models/Rock_01_cut.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_02, "Rocks/Rocks/Models/Rock_02.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_02_CUT, "Rocks/Rocks/Models/Rock_02_cut.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_03, "Rocks/Rocks/Models/Rock_03.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_03_CUT, "Rocks/Rocks/Models/Rock_03_cut.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_04, "Rocks/Rocks/Models/Rock_04.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_05, "Rocks/Rocks/Models/Rock_05.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_05_CUT, "Rocks/Rocks/Models/Rock_05_cut.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_06, "Rocks/Rocks/Models/Rock_06.fbx", rockDiffuse, rockNormal);
+		AddAsset(ROCK_07, "Rocks/Rocks/Models/Rock_07.fbx", rockDiffuse, rockNormal);
+		AddAsset(S_ROCK_01, "Rocks/Rocks/Models/s_rock_01.fbx", rockDiffuse, rockNormal);
+		AddAsset(S_ROCK_02, "Rocks/Rocks/Models/s_rock_02.fbx", rockDiffuse, rockNormal);
+		AddAsset(S_ROCK_03, "Rocks/Rocks/Models/s_rock_03.fbx", rockDiffuse, rockNormal);
+		AddAsset(S_ROCK_04, "Rocks/Rocks/Models/s_rock_04.fbx", rockDiffuse, rockNormal);
+		AddAsset(S_ROCK_05, "Rocks/Rocks/Models/s_rock_05.fbx", rockDiffuse, rockNormal);
+		AddAsset(S_ROCK_06, "Rocks/Rocks/Models/s_rock_06.fbx", rockDiffuse, rockNormal);
 
 		// Cliffs
 		AddAsset(CLIFF_BASE_01, "Rocks/Cliffs/Models/cliff_base_01.fbx");
@@ -166,13 +168,13 @@ namespace Utopian
 		AddAsset(GREY_WILLOW_04, "Bushes/Models/grey_willow_04.fbx");
 		AddAsset(GREY_WILLOW_04_CROSS, "Bushes/Models/grey_willow_04_cross.fbx", "Bushes/Models/Textures/T_Willow_Bush_04_Cross_A_T.png");
 		AddAsset(GREY_WILLOW_04_N, "Bushes/Models/grey_willow_04_n.fbx");
-		AddAsset(MAPLE_BUSH_01, "Bushes/Models/maple_bush_01.fbx");
+		AddAsset(MAPLE_BUSH_01, "Bushes/Models/maple_bush_01.fbx", "Bushes/Models/Textures/T_maple_bush_BC.tga", "Bushes/Models/Textures/T_maple_bush_N.tga");
 		AddAsset(MAPLE_BUSH_01_CROSS, "Bushes/Models/maple_bush_01_cross.fbx", "Bushes/Models/Textures/T_Maple_01_Cross_A_T.png");
-		AddAsset(MAPLE_BUSH_02, "Bushes/Models/maple_bush_02.fbx");
+		AddAsset(MAPLE_BUSH_02, "Bushes/Models/maple_bush_02.fbx", "Bushes/Models/Textures/T_maple_bush_BC.tga", "Bushes/Models/Textures/T_maple_bush_N.tga");
 		AddAsset(MAPLE_BUSH_02_CROSS, "Bushes/Models/maple_bush_02_cross.fbx", "Bushes/Models/Textures/T_Maple_02_Cross_A_T.png");
-		AddAsset(MAPLE_BUSH_03, "Bushes/Models/maple_bush_03.fbx");
+		AddAsset(MAPLE_BUSH_03, "Bushes/Models/maple_bush_03.fbx", "Bushes/Models/Textures/T_maple_bush_BC.tga", "Bushes/Models/Textures/T_maple_bush_N.tga");
 		AddAsset(MAPLE_BUSH_03_CROSS, "Bushes/Models/maple_bush_03_cross.fbx", "Bushes/Models/Textures/T_Maple_03_Cross_A_T.png");
-		AddAsset(MAPLE_BUSH_04, "Bushes/Models/maple_bush_04.fbx");
+		AddAsset(MAPLE_BUSH_04, "Bushes/Models/maple_bush_04.fbx", "Bushes/Models/Textures/T_maple_bush_BC.tga", "Bushes/Models/Textures/T_maple_bush_N.tga");
 		AddAsset(MAPLE_BUSH_04_CROSS, "Bushes/Models/maple_bush_04_cross.fbx", "Bushes/Models/Textures/T_Maple_04_Cross_A_T.png");
 	}
 

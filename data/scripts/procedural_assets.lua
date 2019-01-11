@@ -31,7 +31,7 @@ generate_random_foliage = function(instancing)
 
     -- Rocks
     for i=0, 20 do
-        local asset_id = 91 --math.random(0, 24)
+        local asset_id = math.random(91, 92)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
         local y = get_terrain_height(-x, -z) -- Note: Negative signs
@@ -52,7 +52,7 @@ generate_random_foliage = function(instancing)
             add_asset(133, x, y, z, 180, 0, 0, scale, instancing)
         else
             scale = 2
-            add_asset(143, x, y, z, 180, 0, 0, scale, instancing)
+            add_asset(147, x, y, z, 180, 0, 0, scale, instancing)
         end
     end
 end
