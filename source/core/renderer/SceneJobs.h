@@ -90,6 +90,7 @@ namespace Utopian
 		int blockViewDistance = 2;
 		bool shadowsEnabled = true;
 		bool normalMapping = true;
+		bool ssaoEnabled = true;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;

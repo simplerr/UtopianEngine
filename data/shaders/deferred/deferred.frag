@@ -30,6 +30,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	float fogStart;
 	float fogDistance;
 	int shadowsEnabled;
+	int ssaoEnabled;
 	int shadowSampleSize;
 	int cascadeColorDebug;
 } settings_ubo;
@@ -129,7 +130,10 @@ void main()
 	// Note: Disabled for now
 	//litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
 
-	float ssao = texture(ssaoSampler, uv).r;
+	float ssao = 1.0;
+	if (settings_ubo.ssaoEnabled == 1)
+		ssao = texture(ssaoSampler, uv).r;
+
 	OutFragColor = litColor * ssao;
 
 	if (settings_ubo.cascadeColorDebug == 1)
