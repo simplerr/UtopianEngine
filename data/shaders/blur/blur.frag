@@ -16,9 +16,6 @@ layout (location = 0) out vec4 OutFragColor;
 
 void main() 
 {
-	vec2 uv = InTex;
-	uv.x *= -1;
-
 	int blurRange = ubo.blurRadius;
 	int n = 0;
 	vec2 texelSize = 1.0 / vec2(textureSize(samplerSSAO, 0));
@@ -28,7 +25,7 @@ void main()
 		for (int y = -blurRange; y < blurRange; y++) 
 		{
 			vec2 offset = vec2(float(x), float(y)) * texelSize;
-			result += texture(samplerSSAO, uv + offset).r;
+			result += texture(samplerSSAO, InTex + offset).r;
 			n++;
 		}
 	}

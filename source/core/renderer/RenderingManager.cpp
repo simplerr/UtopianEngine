@@ -52,6 +52,7 @@ namespace Utopian
 		AddJob(new GrassJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		//AddJob(new SkyboxJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new SkydomeJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new SunShaftJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		AddJob(new DebugJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings

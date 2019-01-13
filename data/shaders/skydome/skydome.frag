@@ -16,6 +16,9 @@ layout (set = 0, binding = 1) uniform UBO_parameters
 	float azimuth;
 	float time;
 	float sunSpeed;
+
+	// Used by the sun shaft job to create the radial blur effect
+	int onlySun;
 } ubo_parameters;
 
 // Dusk
@@ -37,8 +40,11 @@ void main()
 
 	vec3 unitPos = normalize(InPosL);
 
+	vec3 color = vec3(0.0);
+
 	// Sky
-	vec3 color = mix(horizonColor, zenithColor, pow(1*abs(unitPos.y), 0.7));
+	if (ubo_parameters.onlySun == 0)
+		color = mix(horizonColor, zenithColor, pow(1*abs(unitPos.y), 0.7));
 
 	// Sun
 	vec3 sunPos = vec3(radius * sin(inclination) * cos(azimuth),

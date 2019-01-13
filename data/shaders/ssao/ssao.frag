@@ -28,18 +28,15 @@ layout(std140, set = 2, binding = 0) uniform UBO_settings
 
 void main() 
 {
-	vec2 uv = InTex;
-	uv.x *= -1;
-
-	vec3 positionWorld = texture(positionSampler, uv).xyz;
+	vec3 positionWorld = texture(positionSampler, InTex).xyz;
 	//vec3 normalView = texture(normalSampler, uv).xyz;
-	vec3 albedo = texture(albedoSampler, uv).rgb;
+	vec3 albedo = texture(albedoSampler, InTex).rgb;
 	vec3 fragPosView = (ubo.view * vec4(positionWorld, 1.0f)).xyz;
-	float positionDepth = texture(positionSampler, uv).w;
+	float positionDepth = texture(positionSampler, InTex).w;
 
 	
 	// Get G-Buffer values
-	vec3 normalView = normalize((texture(normalSampler, uv).rgb) * 2.0 - 1.0);
+	vec3 normalView = normalize((texture(normalSampler, InTex).rgb) * 2.0 - 1.0);
 
 	// Todo:
 	// Get a random vector using a noise lookup

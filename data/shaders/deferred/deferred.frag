@@ -89,12 +89,9 @@ float calculateShadow(vec3 position, vec3 normal, uint cascadeIndex)
 }
 void main() 
 {
-	vec2 uv = InTex;
-	uv.x *= -1;
-
-	vec3 position = texture(positionSampler, uv).xyz;
-	vec3 normal = texture(normalSampler, uv).rgb;
-	vec3 albedo = texture(albedoSampler, uv).rgb;
+	vec3 position = texture(positionSampler, InTex).xyz;
+	vec3 normal = texture(normalSampler, InTex).rgb;
+	vec3 albedo = texture(albedoSampler, InTex).rgb;
 
 	// Todo: Note: the + sign is due to the fragment world position is negated for some reason
 	// this is a left over from an old problem
@@ -132,7 +129,7 @@ void main()
 
 	float ssao = 1.0;
 	if (settings_ubo.ssaoEnabled == 1)
-		ssao = texture(ssaoSampler, uv).r;
+		ssao = texture(ssaoSampler, InTex).r;
 
 	OutFragColor = litColor * ssao;
 

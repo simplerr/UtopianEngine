@@ -22,6 +22,7 @@
 #include "core/renderer/Light.h"
 #include "core/terrain/PerlinTerrain.h"
 #include "utility/Timer.h"
+#include "Camera.h"
 #include <random>
 
 namespace Utopian
@@ -688,6 +689,7 @@ namespace Utopian
 		parameterBlock.data.azimuth = sunAzimuth;
 		parameterBlock.data.time = Timer::Instance().GetTime();
 		parameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
+		parameterBlock.data.onlySun = false;
 		parameterBlock.UpdateMemory();
 
 		renderTarget->Begin();
@@ -702,6 +704,160 @@ namespace Utopian
 		commandBuffer->CmdDrawIndexed(mSkydomeModel->GetNumIndices(), 1, 0, 0, 0);
 
 		renderTarget->End(renderer->GetQueue());
+	}
+
+	SunShaftJob::SunShaftJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
+		: BaseJob(renderer, width, height)
+	{
+		occludedSunImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		radialBlurImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		parameterBlock.data.inclination = 90.0f;
+		parameterBlock.data.azimuth = 0.0f;
+		sunAzimuth = 0.0f;
+	}
+
+	SunShaftJob::~SunShaftJob()
+	{
+	}
+
+	void SunShaftJob::Init(const std::vector<BaseJob*>& jobs)
+	{
+		InitSkydomeParts(jobs);
+
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[RenderingManager::DEFERRED_INDEX]);
+
+		// Note: Todo: Probably don't need to be the native window size
+		radialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		radialBlurRenderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		//radialBlurRenderTarget->AddColorAttachment(radialBlurImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		radialBlurRenderTarget->Create();
+
+		radialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+			radialBlurRenderTarget->GetRenderPass(),
+			"data/shaders/sun_shafts/sun_shafts.vert",
+			"data/shaders/sun_shafts/sun_shafts.frag");
+
+		// Enable blending using alpha channel
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+		radialBlurEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		radialBlurEffect->CreatePipeline();
+
+		radialBlurParameters.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		radialBlurEffect->BindUniformBuffer("UBO_parameters", &radialBlurParameters);
+		radialBlurEffect->BindCombinedImage("sunSampler", occludedSunImage.get(), radialBlurRenderTarget->GetSampler());
+	}
+
+	void SunShaftJob::InitSkydomeParts(const std::vector<BaseJob*>& jobs)
+	{
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
+
+		// Note: Todo: Probably don't need to be the native window size
+		sunRenderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mRenderer->GetCommandPool(), mWidth, mHeight);
+		sunRenderTarget->AddColorAttachment(occludedSunImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		sunRenderTarget->AddDepthAttachment(gbufferJob->depthImage);
+		sunRenderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		sunRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f);
+		sunRenderTarget->Create();
+
+		skydomeEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+			sunRenderTarget->GetRenderPass(),
+			"data/shaders/skydome/skydome.vert",
+			"data/shaders/skydome/skydome.frag");
+
+		skydomeEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		skydomeEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		//effect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		skydomeEffect->CreatePipeline();
+
+		viewProjectionBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		parameterBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		skydomeEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		skydomeEffect->BindUniformBuffer("UBO_parameters", &parameterBlock);
+
+		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+
+		const uint32_t size = 240;
+		mRenderer->AddScreenQuad(5 * (size + 10) + 10, mHeight - 2 * (size + 10), size, size, occludedSunImage.get(), sunRenderTarget->GetSampler());
+	}
+
+	void SunShaftJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		RenderSun(renderer, jobInput);
+
+		// Calculate sun screen space position
+		float skydomeRadius = mSkydomeModel->GetBoundingBox().GetWidth() / 2.0f;
+		// Note: Todo: Why -X -Z here?
+		// Note: Todo: Why - camera position?
+		glm::vec3 sunWorldPos = glm::vec3(-1, 1, -1) * sunDir * skydomeRadius * skydomeScale - mRenderer->GetCamera()->GetPosition();
+		glm::vec4 clipPos = jobInput.sceneInfo.projectionMatrix * jobInput.sceneInfo.viewMatrix * glm::vec4(sunWorldPos, 1.0f);
+		glm::vec4 ndcPos = clipPos / clipPos.w;
+		glm::vec2 texCoord = glm::vec2(ndcPos) / 2.0f + 0.5f;
+		
+		// Apply post process effect
+		radialBlurParameters.data.radialOrigin = texCoord;
+		radialBlurParameters.data.radialBlurScale = 1.0f;
+		radialBlurParameters.data.radialBlurStrength = 1.0f;
+		radialBlurParameters.UpdateMemory();
+
+		radialBlurRenderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = radialBlurRenderTarget->GetCommandBuffer();
+
+		commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
+		radialBlurEffect->BindDescriptorSets(commandBuffer);
+
+		renderer->DrawScreenQuad(commandBuffer);
+
+		radialBlurRenderTarget->End(renderer->GetQueue());
+	}
+
+	void SunShaftJob::RenderSun(Vk::Renderer* renderer, const JobInput& jobInput)
+	{
+		// Move sun
+		sunAzimuth += Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;
+
+		// Calculate light direction
+		float sunInclination = glm::radians(jobInput.renderingSettings.sunInclination);
+
+		// Note: Todo: Why negative azimuth?
+		sunDir = glm::vec3(sin(sunInclination) * cos(-sunAzimuth),
+						   cos(sunInclination),
+						   sin(sunInclination) * sin(-sunAzimuth));
+
+		// Removes the translation components of the matrix to always keep the skydome at the same distance
+		glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		viewProjectionBlock.data.view = glm::mat4(glm::mat3(jobInput.sceneInfo.viewMatrix));
+		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.data.world = glm::scale(world, glm::vec3(skydomeScale));
+		viewProjectionBlock.UpdateMemory();
+
+		parameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;
+		parameterBlock.data.inclination = sunInclination;
+		parameterBlock.data.azimuth = sunAzimuth;
+		parameterBlock.data.time = Timer::Instance().GetTime();
+		parameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
+		parameterBlock.data.onlySun = true; // Note: different from SkydomeJob
+		parameterBlock.UpdateMemory();
+
+		sunRenderTarget->Begin();
+		Vk::CommandBuffer* commandBuffer = sunRenderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(skydomeEffect->GetPipeline());
+		skydomeEffect->BindDescriptorSets(commandBuffer);
+
+		commandBuffer->CmdBindVertexBuffer(0, 1, mSkydomeModel->mMeshes[0]->GetVertxBuffer());
+		commandBuffer->CmdBindIndexBuffer(mSkydomeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		commandBuffer->CmdDrawIndexed(mSkydomeModel->GetNumIndices(), 1, 0, 0, 0);
+
+		sunRenderTarget->End(renderer->GetQueue());
 	}
 
 	DebugJob::DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)

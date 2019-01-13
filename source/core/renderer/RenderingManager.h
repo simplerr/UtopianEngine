@@ -39,6 +39,7 @@ namespace Utopian
 			DEFERRED_INDEX,
 			GRASS_INDEX,
 			SKYBOX_INDEX,
+			SUN_SHAFT_INDEX,
 			DEBUG_INDEX,
 		};
 
