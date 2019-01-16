@@ -310,6 +310,7 @@ UNIFORM_BLOCK_END()
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 		SharedPtr<Vk::Effect> effect;
+		SharedPtr<Vk::Image> sunImage;
 	private:
 		ViewProjection viewProjectionBlock;
 		ParameterBlock parameterBlock;
@@ -317,29 +318,9 @@ UNIFORM_BLOCK_END()
 		float sunAzimuth;
 	};
 
-	// Note: Copy of the SkydomeJob, some architecture change is needed to fix this
-	// Uses the depth image from the GBuffer job to not render occluded parts of the sun
 	class SunShaftJob : public BaseJob
 	{
 	public:
-
-		// Note: From SkydomeJob
-		UNIFORM_BLOCK_BEGIN(ViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
-			UNIFORM_PARAM(glm::mat4, world)
-		UNIFORM_BLOCK_END()
-
-		// Note: From SkydomeJob
-		UNIFORM_BLOCK_BEGIN(SunParameterBlock)
-			UNIFORM_PARAM(float, sphereRadius)
-			UNIFORM_PARAM(float, inclination)
-			UNIFORM_PARAM(float, azimuth)
-			UNIFORM_PARAM(float, time)
-			UNIFORM_PARAM(float, sunSpeed)
-			UNIFORM_PARAM(int, onlySun)
-		UNIFORM_BLOCK_END()
-
 		UNIFORM_BLOCK_BEGIN(RadialBlurParameters)
 			UNIFORM_PARAM(float, radialBlurScale)
 			UNIFORM_PARAM(float, radialBlurStrength)
@@ -354,25 +335,12 @@ UNIFORM_BLOCK_END()
 
 		SharedPtr<Vk::RenderTarget> radialBlurRenderTarget;
 		SharedPtr<Vk::Effect> radialBlurEffect;
-
-		// Note: below from SkydomeJob
-		SharedPtr<Vk::RenderTarget> sunRenderTarget;
-		SharedPtr<Vk::Effect> skydomeEffect;
 	private:
-		SharedPtr<Vk::Image> occludedSunImage;
 		RadialBlurParameters radialBlurParameters;
 
-		// Just for testing
-		SharedPtr<Vk::Image> radialBlurImage;
-
-		// Note: below from SkydomeJob
-		void InitSkydomeParts(const std::vector<BaseJob*>& jobs);
-		void RenderSun(Vk::Renderer* renderer, const JobInput& jobInput);
-		ViewProjection viewProjectionBlock;
-		SunParameterBlock parameterBlock;
+		// Todo: Note: This should not be here
 		Vk::StaticModel* mSkydomeModel;
 		float sunAzimuth;
-
 		glm::vec3 sunDir;
 		const float skydomeScale = 1000.0f;
 	};

@@ -8,6 +8,7 @@ layout (location = 1) in vec3 InPosL;
 layout (location = 2) in vec2 InTex;
 
 layout (location = 0) out vec4 OutFragColor;
+layout (location = 1) out vec4 OutSun;
 
 layout (set = 0, binding = 1) uniform UBO_parameters 
 {
@@ -55,4 +56,5 @@ void main()
 	color += sun * sunColor;
 
 	OutFragColor = vec4(color, 1.0);
+	OutSun = vec4(sun * sunColor, 1.0);
 }
