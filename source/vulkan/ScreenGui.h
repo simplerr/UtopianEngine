@@ -37,7 +37,9 @@ namespace Utopian::Vk
 	public:
 		ScreenGui(Renderer* renderer);
 
-		void Render(Renderer* renderer, CommandBuffer* commandBuffer);
+		void Render(Renderer* renderer);
+		void ToggleVisible(uint32_t layer);
+		void SetVisible(uint32_t layer, bool visible);
 
 		SharedPtr<ScreenQuad> AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
 		SharedPtr<ScreenQuad> AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
@@ -45,6 +47,7 @@ namespace Utopian::Vk
 	private:
 		Utopian::Vk::Renderer* mRenderer;
 		Utopian::Vk::ScreenQuadEffect mEffect;
+		Utopian::Vk::CommandBuffer* mCommandBuffer;
 
 		std::vector<SharedPtr<ScreenQuad>> mQuadList;
 

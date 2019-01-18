@@ -86,7 +86,6 @@ namespace Utopian::Vk
 	{
 		// Create the primary and secondary command buffers
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-		mScreenGuiCommandBuffer = CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	}
 
 	void Renderer::CompileShaders()
@@ -178,13 +177,7 @@ namespace Utopian::Vk
 	{
 		// Render screen overlay UI
 
-		mScreenGuiCommandBuffer->Begin(GetRenderPass(), GetCurrentFrameBuffer());
-		mScreenGuiCommandBuffer->CmdSetViewPort(GetWindowWidth(), GetWindowHeight());
-		mScreenGuiCommandBuffer->CmdSetScissor(GetWindowWidth(), GetWindowHeight());
-
-		mScreenGui->Render(this, mScreenGuiCommandBuffer);
-
-		mScreenGuiCommandBuffer->End();
+		mScreenGui->Render(this);
 
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
@@ -273,6 +266,11 @@ namespace Utopian::Vk
 	void Renderer::ToggleUi()
 	{
 		mUiOverlay->ToggleVisible();
+	}
+
+	void Renderer::SetDebugQuadsVisibility(bool visible)
+	{
+		mScreenGui->SetVisible(0, visible);
 	}
 
 	void Renderer::UpdateOverlay()

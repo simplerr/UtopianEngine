@@ -144,11 +144,13 @@ namespace Utopian
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured 
 		Vk::UIOverlay::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
+		static bool debugQuads = false;
 
 		ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
-		ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
-		ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
-		ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
+		ImGui::Checkbox("Debug quads", &debugQuads);
+		//ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
+		//ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
+		//ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
 		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
 		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
 		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
@@ -169,6 +171,7 @@ namespace Utopian
 		// Temp:
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
 		mMainCamera->SetFarPlane(mRenderingSettings.farPlane);
+		mRenderer->SetDebugQuadsVisibility(debugQuads);
 
 		Vk::UIOverlay::EndWindow();
 

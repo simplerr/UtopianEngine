@@ -663,9 +663,6 @@ namespace Utopian
 		effect->BindUniformBuffer("UBO_parameters", &parameterBlock);
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
-
-		const uint32_t size = 240;
-		mRenderer->AddScreenQuad(4 * (size + 10) + 10, mHeight - 3 * (size + 10), size, size, sunImage.get(), renderTarget->GetSampler());
 	}
 
 	void SkydomeJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)

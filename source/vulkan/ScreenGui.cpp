@@ -13,12 +13,18 @@ namespace Utopian::Vk
 	{
 		mEffect.Init(renderer);
 
+		mCommandBuffer = renderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+
 		mRenderer = renderer;
 	}
 
-	void ScreenGui::Render(Renderer* renderer, CommandBuffer* commandBuffer)
+	void ScreenGui::Render(Renderer* renderer)
 	{
-		commandBuffer->CmdBindPipeline(mEffect.GetPipeline(0));
+		mCommandBuffer->Begin(renderer->GetRenderPass(), renderer->GetCurrentFrameBuffer());
+		mCommandBuffer->CmdSetViewPort(renderer->GetWindowWidth(), renderer->GetWindowHeight());
+		mCommandBuffer->CmdSetScissor(renderer->GetWindowWidth(), renderer->GetWindowHeight());
+
+		mCommandBuffer->CmdBindPipeline(mEffect.GetPipeline(0));
 
 		for (uint32_t layer = NUM_MAX_LAYERS; layer > 0u; layer--)
 		{
@@ -38,12 +44,15 @@ namespace Utopian::Vk
 				pushConstantBlock.world = glm::translate(pushConstantBlock.world, glm::vec3(offsetX * 2.0f - 1.0f, offsetY * 2.0f - 1.0, 0));
 				pushConstantBlock.world = glm::scale(pushConstantBlock.world, glm::vec3(horizontalRatio, verticalRatio, 0));
 
-				commandBuffer->CmdPushConstants(&mEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(ScreenQuadEffect::PushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdPushConstants(&mEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(ScreenQuadEffect::PushConstantBlock), &pushConstantBlock);
 				VkDescriptorSet descriptorSets[1] = { mQuadList[i]->descriptorSet->descriptorSet };
-				commandBuffer->CmdBindDescriptorSet(&mEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
-				renderer->DrawScreenQuad(commandBuffer);
+				mCommandBuffer->CmdBindDescriptorSet(&mEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+				renderer->DrawScreenQuad(mCommandBuffer);
 			}
 		}
+
+		mCommandBuffer->End();
+
 	}
 
 	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
@@ -80,5 +89,23 @@ namespace Utopian::Vk
 		mQuadList.push_back(textureQuad);
 
 		return textureQuad;
+	}
+
+	void ScreenGui::ToggleVisible(uint32_t layer)
+	{
+		for (int i = 0; i < mQuadList.size(); i++)
+		{
+			if (mQuadList[i]->layer == layer)
+				mQuadList[i]->visible = !mQuadList[i]->visible;
+		}
+	}
+
+	void ScreenGui::SetVisible(uint32_t layer, bool visible)
+	{
+		for (int i = 0; i < mQuadList.size(); i++)
+		{
+			if (mQuadList[i]->layer == layer)
+				mQuadList[i]->visible = visible;
+		}
 	}
 }

@@ -99,6 +99,8 @@ namespace Utopian::Vk
 		void EndUiUpdate();
 		void ToggleUi();
 
+		void SetDebugQuadsVisibility(bool visible);
+
 		// 
 		//	High level code
 		//
@@ -120,7 +122,6 @@ namespace Utopian::Vk
 		// inputState is the pVertexInputState when creating the graphics pipeline
 		
 		CommandBuffer*					mPrimaryCommandBuffer;
-		CommandBuffer*					mScreenGuiCommandBuffer;
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
 
 		Camera*							mCamera;
