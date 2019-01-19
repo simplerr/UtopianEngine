@@ -142,6 +142,9 @@
     <Filter Include="Source Files\terrain\marching_cubes">
       <UniqueIdentifier>{7d04a0ed-d7fe-4e8f-85d6-6b284527227e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\scene\jobs">
+      <UniqueIdentifier>{cb6667fd-63dc-4834-993c-9c9172064500}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Window.cpp">
@@ -372,9 +375,6 @@
     <ClCompile Include="source\core\renderer\RenderingManager.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\renderer\SceneJobs.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\SSAOEffect.cpp">
       <Filter>Source Files\vulkan\effects\ssao</Filter>
     </ClCompile>
@@ -428,6 +428,36 @@
     </ClCompile>
     <ClCompile Include="source\core\ScriptExports.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\GBufferJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\DeferredJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\SSAOJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\BlurJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\ShadowJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\GrassJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\SkydomeJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\SunShaftJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\DebugJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\SkyboxJob.cpp">
+      <Filter>Source Files\scene\jobs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -692,9 +722,6 @@
     <ClInclude Include="source\utility\Common.h">
       <Filter>Source Files\utility</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\renderer\SceneJobs.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\SSAOEffect.h">
       <Filter>Source Files\vulkan\effects\ssao</Filter>
     </ClInclude>
@@ -757,6 +784,48 @@
     </ClInclude>
     <ClInclude Include="source\core\ScriptExports.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\GBufferJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\CommonJobIncludes.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\DeferredJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SSAOJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\BlurJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\ShadowJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\GrassJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SkydomeJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SunShaftJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\DebugJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SkyboxJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\BaseJob.h">
+      <Filter>Source Files\scene\jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\SceneInfo.h">
+      <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\RenderSettings.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

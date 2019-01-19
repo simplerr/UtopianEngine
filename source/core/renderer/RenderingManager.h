@@ -5,12 +5,9 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 #include "utility/Timer.h"
-#include "vulkan/PhongEffect.h"
-#include "vulkan/GBufferEffect.h"
-#include "vulkan/DeferredEffect.h"
-#include "vulkan/ColorEffect.h"
 #include "core/CommonBuffers.h"
-#include "core/renderer/SceneJobs.h"
+#include "core/renderer/BaseJob.h"
+#include "core/renderer/RenderSettings.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
 class Terrain;

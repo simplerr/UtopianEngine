@@ -18,10 +18,6 @@ UNIFORM_BLOCK_BEGIN(DeferredEyePos)
 	UNIFORM_PARAM(glm::vec4, eyePos)
 UNIFORM_BLOCK_END()
 
-UNIFORM_BLOCK_BEGIN(LightTransform)
-	UNIFORM_PARAM(glm::mat4, viewProjection)
-UNIFORM_BLOCK_END()
-
 UNIFORM_BLOCK_BEGIN(CascadeBlock)
 	UNIFORM_PARAM(float, cascadeSplits[4])
 	UNIFORM_PARAM(glm::mat4, cascadeViewProjMat[4])
@@ -46,7 +42,6 @@ namespace Utopian::Vk
 		DeferredEyePos eyeBlock;
 		LightUniformBuffer light_ubo;
 		SettingsUniformBuffer settings_ubo;
-		LightTransform lightTransform;
 		CascadeBlock cascade_ubo;
 	private:
 	};

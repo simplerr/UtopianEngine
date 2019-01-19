@@ -35,11 +35,6 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	int cascadeColorDebug;
 } settings_ubo;
 
-layout (std140, set = 0, binding = 3) uniform UBO_lightTransform
-{
-	mat4 viewProjection;
-} light_transform;
-
 layout (std140, set = 0, binding = 4) uniform UBO_cascades
 {
 	vec4 cascadeSplits;
@@ -49,8 +44,7 @@ layout (std140, set = 0, binding = 4) uniform UBO_cascades
 
 float calculateShadow(vec3 position, vec3 normal, uint cascadeIndex)
 {
-	vec4 lightSpacePosition = light_transform.viewProjection * vec4(position, 1.0f);
-	lightSpacePosition = cascades_ubo.cascadeViewProjMat[cascadeIndex] * vec4(position, 1.0f);
+	vec4 lightSpacePosition = cascades_ubo.cascadeViewProjMat[cascadeIndex] * vec4(position, 1.0f);
 	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
 	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
 

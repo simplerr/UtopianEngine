@@ -20,6 +20,15 @@
 #include "vulkan/UIOverlay.h"
 #include "core/terrain/PerlinTerrain.h"
 #include "core/AssetLoader.h"
+#include "core/renderer/GBufferJob.h"
+#include "core/renderer/SSAOJob.h"
+#include "core/renderer/BlurJob.h"
+#include "core/renderer/ShadowJob.h"
+#include "core/renderer/DeferredJob.h"
+#include "core/renderer/GrassJob.h"
+#include "core/renderer/SkydomeJob.h"
+#include "core/renderer/SunShaftJob.h"
+#include "core/renderer/DebugJob.h"
 
 namespace Utopian
 {
@@ -146,7 +155,7 @@ namespace Utopian
 		Vk::UIOverlay::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
 		static bool debugQuads = false;
 
-		ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
+		//ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
 		ImGui::Checkbox("Debug quads", &debugQuads);
 		//ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
 		//ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
