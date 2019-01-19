@@ -45,9 +45,16 @@ namespace Utopian::Vk
 		SharedPtr<ScreenQuad> AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
 		SharedPtr<ScreenQuad> AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer = 0u);
 	private:
+		void CreateQuadBuffers();
+
 		Utopian::Vk::Renderer* mRenderer;
 		Utopian::Vk::ScreenQuadEffect mEffect;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
+
+		struct {
+			Vk::Buffer* vertexBuffer;
+			Vk::Buffer* indexBuffer;
+		} mScreenQuad;
 
 		std::vector<SharedPtr<ScreenQuad>> mQuadList;
 

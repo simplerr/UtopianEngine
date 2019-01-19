@@ -91,7 +91,7 @@ namespace Utopian::Vk
 		void UpdateOverlay();
 
 		// Note: This should probably be moved to some utility class
-		void DrawScreenQuad(CommandBuffer* commandBuffer);
+		void DrawFullscreenQuad(CommandBuffer* commandBuffer);
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -128,13 +128,6 @@ namespace Utopian::Vk
 		TextOverlay*					mTextOverlay;
 		glm::vec4						mClearColor;
 
-		// Todo: Move
-		struct {
-			Vk::Buffer* vertexBuffer;
-			Vk::Buffer* indexBuffer;
-		} mScreenQuad;
-
-		// TODO: NOTE: HACK
 	public:
 		UIOverlay*						mUiOverlay = nullptr;
 		ScreenGui*						mScreenGui = nullptr;

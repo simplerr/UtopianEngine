@@ -5,6 +5,7 @@
 + Deferred shading
 + Casacade shadow mapping
 + Normal mapping
++ God rays
 + SSAO
 + Instancing
 + Runtime shader compilation
@@ -16,7 +17,6 @@
 + ECS layer
 
 ### Planned features
-+ Light shaft from sun
 + Terrain tesselation
 + Displacement mapping
 + Atmospheric scattering

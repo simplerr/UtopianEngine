@@ -455,7 +455,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
 
-		renderer->DrawScreenQuad(commandBuffer);
+		renderer->DrawFullscreenQuad(commandBuffer);
 
 		renderTarget->End(renderer->GetQueue());
 	}
@@ -502,7 +502,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
 
-		renderer->DrawScreenQuad(commandBuffer);
+		renderer->DrawFullscreenQuad(commandBuffer);
 
 		renderTarget->End(renderer->GetQueue());
 	}
@@ -565,7 +565,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
 
-		renderer->DrawScreenQuad(commandBuffer);
+		renderer->DrawFullscreenQuad(commandBuffer);
 
 		renderTarget->End(renderer->GetQueue());
 	}
@@ -731,8 +731,12 @@ namespace Utopian
 
 		radialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
 			radialBlurRenderTarget->GetRenderPass(),
-			"data/shaders/sun_shafts/sun_shafts.vert",
+			"data/shaders/common/fullscreen.vert",
 			"data/shaders/sun_shafts/sun_shafts.frag");
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		radialBlurEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		radialBlurEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 		// Enable additive blending
 		radialBlurEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
@@ -786,7 +790,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
 		radialBlurEffect->BindDescriptorSets(commandBuffer);
 
-		renderer->DrawScreenQuad(commandBuffer);
+		renderer->DrawFullscreenQuad(commandBuffer);
 
 		radialBlurRenderTarget->End(renderer->GetQueue());
 	}

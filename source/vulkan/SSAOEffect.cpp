@@ -17,10 +17,15 @@
 namespace Utopian::Vk
 {
 	SSAOEffect::SSAOEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/ssao/ssao.vert", "data/shaders/ssao/ssao.frag")
+		: Effect(device, renderPass, "data/shaders/common/fullscreen.vert", "data/shaders/ssao/ssao.frag")
 	{
 		mPipeline->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		mPipeline->depthStencilState.depthTestEnable = VK_TRUE;
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mPipeline->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mPipeline->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
 		CreatePipeline();
 
 		cameraBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

@@ -16,6 +16,25 @@ namespace Utopian::Vk
 		mCommandBuffer = renderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
 		mRenderer = renderer;
+	
+		CreateQuadBuffers();
+	}
+
+	void ScreenGui::CreateQuadBuffers()
+	{
+		std::vector<Vk::ScreenQuadVertex> vertices =
+		{
+			{ glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f) },
+			{ glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f) },
+			{ glm::vec3(1.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f) },
+			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) }
+		};
+
+		mScreenQuad.vertexBuffer = new Utopian::Vk::Buffer(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vk::ScreenQuadVertex), vertices.data());
+
+		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
+
+		mScreenQuad.indexBuffer = new Utopian::Vk::Buffer(mRenderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
 	void ScreenGui::Render(Renderer* renderer)
@@ -47,12 +66,14 @@ namespace Utopian::Vk
 				mCommandBuffer->CmdPushConstants(&mEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(ScreenQuadEffect::PushConstantBlock), &pushConstantBlock);
 				VkDescriptorSet descriptorSets[1] = { mQuadList[i]->descriptorSet->descriptorSet };
 				mCommandBuffer->CmdBindDescriptorSet(&mEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
-				renderer->DrawScreenQuad(mCommandBuffer);
+
+				mCommandBuffer->CmdBindVertexBuffer(0, 1, mScreenQuad.vertexBuffer);
+				mCommandBuffer->CmdBindIndexBuffer(mScreenQuad.indexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
+				mCommandBuffer->CmdDrawIndexed(6, 1, 0, 0, 0);
 			}
 		}
 
 		mCommandBuffer->End();
-
 	}
 
 	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
