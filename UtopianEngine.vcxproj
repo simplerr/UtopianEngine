@@ -59,6 +59,7 @@
       <AdditionalIncludeDirectories>external\luaplus;external\luaplus\lua53-luaplus\src;external\glslang\StandAlone;external\glslang;source\;base;external\glm;external\gli;external\assimp;external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS /std:c++latest %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
