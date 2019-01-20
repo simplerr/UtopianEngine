@@ -11,7 +11,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/Vertex.h"
 #include "core/renderer/Light.h"
-#include "core/renderer/SceneJobs.h"
+#include "core/renderer/RenderSettings.h"
 
 namespace Utopian::Vk
 {

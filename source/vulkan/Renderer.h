@@ -83,12 +83,6 @@ namespace Utopian::Vk
 
 		virtual void Render();
 		virtual void Update();
-		void Draw();
-
-		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
-		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer = 0u);
-		SharedPtr<ScreenQuad> AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer = 0u);
-		void UpdateOverlay();
 
 		// Note: This should probably be moved to some utility class
 		void DrawFullscreenQuad(CommandBuffer* commandBuffer);
@@ -98,8 +92,6 @@ namespace Utopian::Vk
 		void BeginUiUpdate();
 		void EndUiUpdate();
 		void ToggleUi();
-
-		void SetDebugQuadsVisibility(bool visible);
 
 		// 
 		//	High level code
@@ -115,12 +107,6 @@ namespace Utopian::Vk
 		glm::vec4 GetClearColor();
 
 	private:
-		bool							mPrepared = false;
-
-		// We are assuming that the same Vertex structure is used everywhere since there only is 1 pipeline right now
-		// inputState will have pointers to the binding and attribute descriptions after PrepareVertices()
-		// inputState is the pVertexInputState when creating the graphics pipeline
-		
 		CommandBuffer*					mPrimaryCommandBuffer;
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
 
@@ -128,8 +114,6 @@ namespace Utopian::Vk
 		TextOverlay*					mTextOverlay;
 		glm::vec4						mClearColor;
 
-	public:
 		UIOverlay*						mUiOverlay = nullptr;
-		ScreenGui*						mScreenGui = nullptr;
 	};
 }	// VulkanLib namespace

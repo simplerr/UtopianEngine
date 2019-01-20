@@ -130,7 +130,7 @@ namespace Utopian::Vk
 		return mCommandPool;
 	}
 
-	RenderPass * VulkanBase::GetRenderPass()
+	RenderPass* VulkanBase::GetRenderPass()
 	{
 		return mRenderPass;
 	}

@@ -12,7 +12,7 @@ namespace Utopian
 		renderTarget = std::make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
-		mScreenQuad = renderer->AddScreenQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
+		mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
 		depthSampler = std::make_shared<Vk::Sampler>(renderer->GetDevice(), false);
@@ -44,8 +44,6 @@ namespace Utopian
 
 	void DeferredJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
 	{
-		mScreenQuad->SetVisible(jobInput.renderingSettings.deferredPipeline);
-
 		effect->SetSettingsData(jobInput.renderingSettings);
 		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect->SetLightArray(jobInput.sceneInfo.lights);

@@ -12,7 +12,7 @@
 #include "core/renderer/Light.h"
 #include "core/terrain/Terrain.h"
 #include "WaterRenderer.h"
-#include "vulkan/ScreenGui.h"
+#include "vulkan/ScreenQuadUi.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/ModelLoader.h"
@@ -29,6 +29,7 @@
 #include "core/renderer/SkydomeJob.h"
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
+#include "vulkan/ScreenQuadUi.h"
 
 namespace Utopian
 {
@@ -71,9 +72,6 @@ namespace Utopian
 		mRenderingSettings.fogDistance = 16000.0f;
 
 		mSceneInfo.directionalLight = nullptr;
-
-		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 2*350 - 50, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetReflectionImage(), mWaterRenderer->GetReflectionRenderTarget()->GetSampler());
-		//mRenderer->AddScreenQuad(mRenderer->GetWindowWidth() - 350, mRenderer->GetWindowHeight() - 350, 300, 300, mWaterRenderer->GetRefractionImage(), mWaterRenderer->GetRefractionRenderTarget()->GetSampler());
 	}
 
 	RenderingManager::~RenderingManager()
@@ -180,7 +178,7 @@ namespace Utopian
 		// Temp:
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);
 		mMainCamera->SetFarPlane(mRenderingSettings.farPlane);
-		mRenderer->SetDebugQuadsVisibility(debugQuads);
+		gScreenQuadUi().SetVisible(0, debugQuads);
 
 		Vk::UIOverlay::EndWindow();
 

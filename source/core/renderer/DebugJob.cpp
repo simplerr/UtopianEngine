@@ -35,8 +35,6 @@ namespace Utopian
 		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		colorEffectWireframe->CreatePipeline();
 
-		//mScreenQuad = mRenderer->AddScreenQuad(0u, 0u, mWidth, mHeight, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
-
 		mCubeModel = Vk::gModelLoader().LoadDebugBox();
 	}
 

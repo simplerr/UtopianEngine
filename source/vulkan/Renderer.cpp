@@ -24,7 +24,7 @@
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
 #include "vulkan/UIOverlay.h"
-#include "ScreenGui.h"
+#include "ScreenQuadUi.h"
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
@@ -34,7 +34,6 @@ namespace Utopian::Vk
 {
 	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
-		srand(time(NULL));
 		mCamera = nullptr;
 		mApplicationCommandBuffers.resize(0);
 	}
@@ -49,7 +48,6 @@ namespace Utopian::Vk
 		}
 
 		//delete mTextOverlay;
-		delete mScreenGui;
 	}
 
 	void Renderer::Prepare()
@@ -57,14 +55,11 @@ namespace Utopian::Vk
 		VulkanBase::Prepare();
 
 		PrepareCommandBuffers();
-
-		mPrepared = true;
 	}
 
 	void Renderer::PostInitPrepare()
 	{
 		//mTextOverlay = new TextOverlay(this);
-		mScreenGui = new ScreenGui(this);
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
 
@@ -159,12 +154,8 @@ namespace Utopian::Vk
 		mPrimaryCommandBuffer->End();
 	}
 
-	void Renderer::Draw()
+	void Renderer::Render()
 	{
-		// Render screen overlay UI
-
-		mScreenGui->Render(this);
-
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
@@ -174,33 +165,8 @@ namespace Utopian::Vk
 		mQueue->Submit(mPrimaryCommandBuffer, nullptr);
 	}
 
-	SharedPtr<ScreenQuad> Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
-	{
-		return mScreenGui->AddQuad(left, top, width, height, image, sampler, layer);
-	}
-
-	SharedPtr<ScreenQuad> Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer)
-	{
-		return mScreenGui->AddQuad(left, top, width, height, imageView, sampler, layer);
-	}
-
-	SharedPtr<ScreenQuad> Renderer::AddScreenQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
-	{
-		//return mScreenGui->AddQuad(left, top, width, height, texture, layer);
-		return nullptr;
-	}
-
-	void Renderer::Render()
-	{
-		if (mPrepared) {
-			Draw();
-		}
-	}
-
 	void Renderer::Update()
 	{
-		UpdateOverlay();
-
 		// if (mTextOverlay->IsVisible())
 		// {
 		// 	mTextOverlay->BeginTextUpdate();
@@ -250,14 +216,5 @@ namespace Utopian::Vk
 	void Renderer::ToggleUi()
 	{
 		mUiOverlay->ToggleVisible();
-	}
-
-	void Renderer::SetDebugQuadsVisibility(bool visible)
-	{
-		mScreenGui->SetVisible(0, visible);
-	}
-
-	void Renderer::UpdateOverlay()
-	{
 	}
 }	// VulkanLib namespace

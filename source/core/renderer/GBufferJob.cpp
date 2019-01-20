@@ -77,9 +77,9 @@ namespace Utopian
 		mGBufferEffectTerrain->BindCombinedImage("textureSampler", &textureArray);
 
 		const uint32_t size = 240;
-		renderer->AddScreenQuad(size + 20, height - (size + 10), size, size, positionImage.get(), renderTarget->GetSampler());
-		renderer->AddScreenQuad(2 * (size + 10) + 10, height - (size + 10), size, size, normalImage.get(), renderTarget->GetSampler());
-		renderer->AddScreenQuad(3 * (size + 10) + 10, height - (size + 10), size, size, albedoImage.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(size + 20, height - (size + 10), size, size, positionImage.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(2 * (size + 10) + 10, height - (size + 10), size, size, normalImage.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(3 * (size + 10) + 10, height - (size + 10), size, size, albedoImage.get(), renderTarget->GetSampler());
 	}
 
 	GBufferJob::~GBufferJob()

@@ -47,7 +47,7 @@ namespace Utopian::Vk
 	class PipelineInterface;
 	class Renderer;
 	class RenderTarget;
-	class ScreenGui;
+	class ScreenQuadUi;
 	class ShaderBuffer;
 	class ShaderFactory;
 	class StaticModel;

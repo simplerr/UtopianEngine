@@ -4,8 +4,9 @@
 #include "vulkan/ScreenQuadEffect.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
+#include "utility/Module.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
 	class ScreenQuad
 	{
@@ -32,12 +33,12 @@ namespace Utopian::Vk
 		Utopian::Vk::DescriptorSet* descriptorSet;
 	};
 
-	class ScreenGui
+	class ScreenQuadUi : public Module<ScreenQuadUi>
 	{
 	public:
-		ScreenGui(Renderer* renderer);
+		ScreenQuadUi(Vk::Renderer* renderer);
 
-		void Render(Renderer* renderer);
+		void Render(Vk::Renderer* renderer);
 		void ToggleVisible(uint32_t layer);
 		void SetVisible(uint32_t layer, bool visible);
 
@@ -60,4 +61,6 @@ namespace Utopian::Vk
 
 		const uint32_t NUM_MAX_LAYERS = 3u;
 	};
+
+	ScreenQuadUi& gScreenQuadUi();
 }

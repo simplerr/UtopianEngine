@@ -15,7 +15,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, grassViewDistance)
 		UNIFORM_BLOCK_END()
 
-			GrassJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		GrassJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
 		~GrassJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;

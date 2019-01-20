@@ -2,6 +2,7 @@
 
 #include "core/renderer/BaseJob.h"
 #include "vulkan/DeferredEffect.h"
+#include "vulkan/ScreenQuadUi.h"
 
 namespace Utopian
 {
@@ -18,6 +19,6 @@ namespace Utopian
 		SharedPtr<Vk::Sampler> depthSampler;
 		SharedPtr<Vk::DeferredEffect> effect;
 	private:
-		SharedPtr<Vk::ScreenQuad> mScreenQuad;
+		SharedPtr<ScreenQuad> mScreenQuad;
 	};
 }

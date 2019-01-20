@@ -28,6 +28,7 @@
 #include "core/World.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/EffectManager.h"
+#include "vulkan/ScreenQuadUi.h"
 #include "core/renderer/RenderingManager.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
@@ -72,13 +73,14 @@ namespace Utopian
 		Input::Start();
 		LuaManager::Start();
 		AssetLoader::Start();
+		Vk::ShaderFactory::Start(mRenderer->GetDevice());
+		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
+		ScreenQuadUi::Start(mRenderer.get());
 
 		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 
 		ScriptExports::Register();
 		ScriptImports::Register();
-		Vk::ShaderFactory::Start(mRenderer->GetDevice());
-		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
 		Vk::ModelLoader::Start(mRenderer->GetDevice());
 		Vk::TextureLoader::Start(mRenderer.get());
@@ -123,6 +125,7 @@ namespace Utopian
 	{
 		RenderingManager::Instance().Render();
 		mEditor->Draw();
+		gScreenQuadUi().Render(mRenderer.get());
 		mRenderer->Render();
 	}
 	

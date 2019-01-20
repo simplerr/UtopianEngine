@@ -1,5 +1,5 @@
 #include <vector>
-#include "vulkan/ScreenGui.h"
+#include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
@@ -7,9 +7,14 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
-	ScreenGui::ScreenGui(Renderer* renderer)
+	ScreenQuadUi& gScreenQuadUi()
+	{
+		return ScreenQuadUi::Instance();
+	}
+
+	ScreenQuadUi::ScreenQuadUi(Vk::Renderer* renderer)
 	{
 		mEffect.Init(renderer);
 
@@ -20,7 +25,7 @@ namespace Utopian::Vk
 		CreateQuadBuffers();
 	}
 
-	void ScreenGui::CreateQuadBuffers()
+	void ScreenQuadUi::CreateQuadBuffers()
 	{
 		std::vector<Vk::ScreenQuadVertex> vertices =
 		{
@@ -37,7 +42,7 @@ namespace Utopian::Vk
 		mScreenQuad.indexBuffer = new Utopian::Vk::Buffer(mRenderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
-	void ScreenGui::Render(Renderer* renderer)
+	void ScreenQuadUi::Render(Vk::Renderer* renderer)
 	{
 		mCommandBuffer->Begin(renderer->GetRenderPass(), renderer->GetCurrentFrameBuffer());
 		mCommandBuffer->CmdSetViewPort(renderer->GetWindowWidth(), renderer->GetWindowHeight());
@@ -52,7 +57,7 @@ namespace Utopian::Vk
 				if (mQuadList[i]->visible == false || mQuadList[i]->layer != (layer - 1))
 					continue;
 
-				ScreenQuadEffect::PushConstantBlock pushConstantBlock;
+				Vk::ScreenQuadEffect::PushConstantBlock pushConstantBlock;
 
 				float horizontalRatio = (float)mQuadList[i]->width / renderer->GetWindowWidth();
 				float verticalRatio = (float)mQuadList[i]->height / renderer->GetWindowHeight();
@@ -63,7 +68,7 @@ namespace Utopian::Vk
 				pushConstantBlock.world = glm::translate(pushConstantBlock.world, glm::vec3(offsetX * 2.0f - 1.0f, offsetY * 2.0f - 1.0, 0));
 				pushConstantBlock.world = glm::scale(pushConstantBlock.world, glm::vec3(horizontalRatio, verticalRatio, 0));
 
-				mCommandBuffer->CmdPushConstants(&mEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(ScreenQuadEffect::PushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdPushConstants(&mEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(Vk::ScreenQuadEffect::PushConstantBlock), &pushConstantBlock);
 				VkDescriptorSet descriptorSets[1] = { mQuadList[i]->descriptorSet->descriptorSet };
 				mCommandBuffer->CmdBindDescriptorSet(&mEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 
@@ -76,7 +81,7 @@ namespace Utopian::Vk
 		mCommandBuffer->End();
 	}
 
-	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
+	SharedPtr<ScreenQuad> ScreenQuadUi::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
@@ -88,7 +93,7 @@ namespace Utopian::Vk
 		return textureQuad;
 	}
 
-	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer)
+	SharedPtr<ScreenQuad> ScreenQuadUi::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
@@ -100,7 +105,7 @@ namespace Utopian::Vk
 		return textureQuad;
 	}
 
-	SharedPtr<ScreenQuad> ScreenGui::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
+	SharedPtr<ScreenQuad> ScreenQuadUi::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
@@ -112,7 +117,7 @@ namespace Utopian::Vk
 		return textureQuad;
 	}
 
-	void ScreenGui::ToggleVisible(uint32_t layer)
+	void ScreenQuadUi::ToggleVisible(uint32_t layer)
 	{
 		for (int i = 0; i < mQuadList.size(); i++)
 		{
@@ -121,7 +126,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	void ScreenGui::SetVisible(uint32_t layer, bool visible)
+	void ScreenQuadUi::SetVisible(uint32_t layer, bool visible)
 	{
 		for (int i = 0; i < mQuadList.size(); i++)
 		{

@@ -258,9 +258,6 @@
     <ClCompile Include="source\vulkan\ScreenQuadEffect.cpp">
       <Filter>Source Files\vulkan\effects\screenquad</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\ScreenGui.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\RenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -459,6 +456,9 @@
     <ClCompile Include="source\core\renderer\SkyboxJob.cpp">
       <Filter>Source Files\scene\jobs</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\ScreenQuadUi.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -580,9 +580,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\ScreenQuadEffect.h">
       <Filter>Source Files\vulkan\effects\screenquad</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\ScreenGui.h">
-      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\RenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
@@ -826,6 +823,9 @@
     </ClInclude>
     <ClInclude Include="source\core\renderer\RenderSettings.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\ScreenQuadUi.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

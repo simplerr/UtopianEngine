@@ -148,7 +148,7 @@
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
     <ClCompile Include="source\vulkan\NormalDebugEffect.cpp" />
     <ClCompile Include="source\vulkan\RenderTarget.cpp" />
-    <ClCompile Include="source\vulkan\ScreenGui.cpp" />
+    <ClCompile Include="source\vulkan\ScreenQuadUi.cpp" />
     <ClCompile Include="source\vulkan\ScreenQuadEffect.cpp" />
     <ClCompile Include="source\vulkan\PhongEffect.cpp" />
     <ClCompile Include="source\vulkan\SkyboxEffect.cpp" />
@@ -266,7 +266,7 @@
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\NormalDebugEffect.h" />
     <ClInclude Include="source\vulkan\RenderTarget.h" />
-    <ClInclude Include="source\vulkan\ScreenGui.h" />
+    <ClInclude Include="source\vulkan\ScreenQuadUi.h" />
     <ClInclude Include="source\vulkan\ScreenQuadEffect.h" />
     <ClInclude Include="source\vulkan\PhongEffect.h" />
     <ClInclude Include="source\vulkan\SkyboxEffect.h" />

@@ -16,8 +16,6 @@ namespace Utopian
 		renderTarget->Create();
 
 		effect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
-
-		//renderer->AddScreenQuad(width - 650 - 50, height - 950, 600, 600, ssaoImage.get(), renderTarget->GetSampler());
 	}
 
 	SSAOJob::~SSAOJob()
