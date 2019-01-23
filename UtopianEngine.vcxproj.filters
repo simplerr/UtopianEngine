@@ -459,6 +459,9 @@
     <ClCompile Include="source\vulkan\ScreenQuadUi.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\renderer\RendererUtility.cpp">
+      <Filter>Source Files\scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -826,6 +829,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\ScreenQuadUi.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\RendererUtility.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

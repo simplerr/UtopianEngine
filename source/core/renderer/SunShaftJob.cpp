@@ -87,7 +87,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
 		radialBlurEffect->BindDescriptorSets(commandBuffer);
 
-		renderer->DrawFullscreenQuad(commandBuffer);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
 		radialBlurRenderTarget->End(renderer->GetQueue());
 	}

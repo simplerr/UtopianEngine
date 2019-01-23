@@ -14,29 +14,9 @@
 #include "VertexDescription.h"
 #include "ShaderBuffer.h"
 
-namespace ECS
-{
-	class RenderSystem;
-}
 
 namespace Utopian::Vk
 {
-	class ScreenQuad;
-
-	enum PipelineType
-	{
-		PIPELINE_BASIC,
-		PIPELINE_WIREFRAME,
-		PIPELINE_TEST,
-		PIPELINE_DEBUG
-	};
-
-	struct InstanceData {
-		glm::vec3 position;
-		glm::vec3 scale;
-		glm::vec3 color;
-	};
-
 	struct PushConstantBlock {
 		PushConstantBlock() {
 			world = glm::mat4();
@@ -75,17 +55,9 @@ namespace Utopian::Vk
 		void Prepare();
 		void PostInitPrepare();
 
-		void SetupDescriptorSetLayout();
-		void SetupDescriptorPool();
-		void PrepareCommandBuffers();						
-
 		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
 
 		virtual void Render();
-		virtual void Update();
-
-		// Note: This should probably be moved to some utility class
-		void DrawFullscreenQuad(CommandBuffer* commandBuffer);
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -111,7 +83,6 @@ namespace Utopian::Vk
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
 
 		Camera*							mCamera;
-		TextOverlay*					mTextOverlay;
 		glm::vec4						mClearColor;
 
 		UIOverlay*						mUiOverlay = nullptr;

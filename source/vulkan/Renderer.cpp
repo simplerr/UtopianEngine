@@ -54,19 +54,13 @@ namespace Utopian::Vk
 	{
 		VulkanBase::Prepare();
 
-		PrepareCommandBuffers();
+		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
 	void Renderer::PostInitPrepare()
 	{
 		//mTextOverlay = new TextOverlay(this);
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
-	}
-
-	void Renderer::PrepareCommandBuffers()
-	{
-		// Create the primary and secondary command buffers
-		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
 	void Renderer::CompileShaders()
@@ -163,26 +157,6 @@ namespace Utopian::Vk
 		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
 		mQueue->Submit(mPrimaryCommandBuffer, nullptr);
-	}
-
-	void Renderer::Update()
-	{
-		// if (mTextOverlay->IsVisible())
-		// {
-		// 	mTextOverlay->BeginTextUpdate();
-
-		// 	mTextOverlay->AddText("Camera pos", mCamera->GetPosition(), 5.0f, 5.0f, TextOverlay::ALIGN_LEFT);
-		// 	mTextOverlay->AddText("Camera dir", mCamera->GetDirection(), 5.0f, 50.0f, TextOverlay::ALIGN_LEFT);
-
-		// 	glm::mat4 mat = glm::mat4();
-		// 	mTextOverlay->AddText("Camera view matrix", mCamera->GetView(), 5.0f, 90.0f, TextOverlay::ALIGN_LEFT);
-		// 	mTextOverlay->EndTextUpdate();
-		// }
-	}
-
-	void Renderer::DrawFullscreenQuad(CommandBuffer* commandBuffer)
-	{
-		commandBuffer->CmdDraw(3, 1, 0, 0);
 	}
 
 	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

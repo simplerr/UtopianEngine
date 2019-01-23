@@ -69,7 +69,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
 		effect->BindDescriptorSets(commandBuffer);
 
-		renderer->DrawFullscreenQuad(commandBuffer);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
 		renderTarget->End(renderer->GetQueue());
 	}

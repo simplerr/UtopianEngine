@@ -38,7 +38,6 @@ namespace Utopian::Vk
 
 		virtual void Prepare();
 
-		virtual void Update() = 0;
 		virtual void Render() = 0;
 
 		void InitSwapchain(Utopian::Window* window);

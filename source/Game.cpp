@@ -30,6 +30,7 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "core/renderer/RenderingManager.h"
+#include "core/renderer/RendererUtility.h"
 #include "editor/Editor.h"
 #include "utility/Utility.h"
 #include "core/LuaManager.h"
@@ -93,6 +94,7 @@ namespace Utopian
 
 		Vk::StaticModel* model = Vk::gModelLoader().LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Rocks/Rocks/Models/m_rock_01.FBX");
 
+		RendererUtility::Start();
 		RenderingManager::Start(mRenderer.get());
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 
@@ -116,7 +118,6 @@ namespace Utopian
 		RenderingManager::Instance().Update();
 		Vk::EffectManager::Instance().Update();
 		mEditor->Update();
-		mRenderer->Update();
 
 		mRenderer->EndUiUpdate();
 	}
