@@ -89,6 +89,6 @@ namespace Utopian
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		radialBlurRenderTarget->End(renderer->GetQueue());
+		radialBlurRenderTarget->End();
 	}
 }

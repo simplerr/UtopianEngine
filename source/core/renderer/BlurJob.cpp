@@ -43,6 +43,6 @@ namespace Utopian
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		renderTarget->End(renderer->GetQueue());
+		renderTarget->End();
 	}
 }

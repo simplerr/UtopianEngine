@@ -52,7 +52,6 @@ namespace Utopian::Vk
 		VkDevice GetVkDevice();
 		CommandPool* GetCommandPool();
 		RenderPass* GetRenderPass();
-		Queue* GetQueue();
 		VkFramebuffer GetCurrentFrameBuffer();
 		VkFormat GetColorFormat();
 		VkFormat GetDepthFormat();
@@ -76,13 +75,9 @@ namespace Utopian::Vk
 
 		Instance*						mInstance = nullptr;
 		Device*							mDevice = nullptr;
-		Queue*							mQueue = nullptr;
 		CommandPool*					mCommandPool = nullptr;
 		Window*							mWindow = nullptr;
 		RenderPass*						mRenderPass = nullptr;
-		Semaphore*						mPresentComplete = nullptr;
-		Semaphore*						mRenderComplete = nullptr;
-		Semaphore*						mOverlayComplete = nullptr;
 		Image*							mDepthStencil = nullptr;
 
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;

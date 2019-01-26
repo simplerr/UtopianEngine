@@ -46,11 +46,7 @@ namespace Utopian::Vk
 		mSwapChain.cleanup();
 
 		// Destroy Vulkan handles
-		delete mPresentComplete;
-		delete mRenderComplete;
-		delete mOverlayComplete;
 		delete mCommandPool;
-		delete mQueue;
 		delete mDepthStencil;
 		delete mRenderPass;
 		delete mFrameBuffers;
@@ -67,10 +63,6 @@ namespace Utopian::Vk
 		SetupSwapchain();				// Setup the swap chain with the helper class
 
 		mCommandPool = new CommandPool(mDevice, 0);
-		mPresentComplete = new Semaphore(mDevice);
-		mRenderComplete = new Semaphore(mDevice);
-		mOverlayComplete = new Semaphore(mDevice);
-		mQueue = new Queue(mDevice, mPresentComplete, mRenderComplete);
 
 		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
 			mDepthFormat,
@@ -93,14 +85,19 @@ namespace Utopian::Vk
 
 	void VulkanBase::PrepareFrame()
 	{
-		// Acquire the next image from the swap chaing
-		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(mPresentComplete->GetVkHandle(), &mFrameBuffers->mCurrentFrameBuffer));
+		Queue* queue = mDevice->GetQueue();
+		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(queue->GetWaitSemaphore()->GetVkHandle(),
+													        &mFrameBuffers->mCurrentFrameBuffer));
 	}
 
 	void VulkanBase::SubmitFrame()
 	{
-		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(mQueue->GetVkHandle(), mFrameBuffers->mCurrentFrameBuffer, mRenderComplete->GetVkHandle()));
-		mQueue->WaitIdle();
+		Queue* queue = mDevice->GetQueue();
+		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
+														mFrameBuffers->mCurrentFrameBuffer,
+														queue->GetSignalSemaphore()->GetVkHandle()));
+
+		queue->WaitIdle();
 	}
 
 	void VulkanBase::InitSwapchain(Utopian::Window* window)
@@ -133,11 +130,6 @@ namespace Utopian::Vk
 	RenderPass* VulkanBase::GetRenderPass()
 	{
 		return mRenderPass;
-	}
-
-	Queue* VulkanBase::GetQueue()
-	{
-		return mQueue;
 	}
 
 	void VulkanBase::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

@@ -367,7 +367,7 @@ namespace Utopian
 
 		mWaterRenderer->GetReflectionRenderTarget()->Begin();	
 		RenderScene(mWaterRenderer->GetReflectionRenderTarget()->GetCommandBuffer());
-		mWaterRenderer->GetReflectionRenderTarget()->End(mRenderer->GetQueue());
+		mWaterRenderer->GetReflectionRenderTarget()->End();
 
 		// Refraction renderpass
 		SetClippingPlane(glm::vec4(0, 1, 0, 0));
@@ -376,7 +376,7 @@ namespace Utopian
 
 		mWaterRenderer->GetRefractionRenderTarget()->Begin();	
 		RenderScene(mWaterRenderer->GetRefractionRenderTarget()->GetCommandBuffer());
-		mWaterRenderer->GetRefractionRenderTarget()->End(mRenderer->GetQueue());
+		mWaterRenderer->GetRefractionRenderTarget()->End();
 
 		SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
 

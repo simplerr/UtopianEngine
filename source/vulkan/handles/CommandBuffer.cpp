@@ -6,6 +6,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/handles/Queue.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/EffectLegacy.h"
 #include "CommandBuffer.h"
@@ -88,12 +89,9 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
 	}
 
-	void CommandBuffer::Flush(VkQueue queue, CommandPool* commandPool, bool free)
+	void CommandBuffer::Flush(CommandPool* commandPool, bool free)
 	{
-		if (mHandle == VK_NULL_HANDLE)
-		{
-			return;
-		}
+		assert(mHandle);
 
 		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
 
@@ -102,8 +100,9 @@ namespace Utopian::Vk
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &mHandle;
 
-		VulkanDebug::ErrorCheck(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(queue));	// [TODO] Wait for fence instead?
+		Queue* queue = GetDevice()->GetQueue();
+		queue->Submit(this, nullptr, false);
+		queue->WaitIdle();
 
 		if (free)
 		{

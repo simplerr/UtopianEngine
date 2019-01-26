@@ -2,6 +2,7 @@
 #include <array>
 #include "Device.h"
 #include "handles/Instance.h"
+#include "handles/Queue.h"
 #include "VulkanDebug.h"
 
 namespace Utopian::Vk
@@ -15,6 +16,7 @@ namespace Utopian::Vk
 		Create(instance, enableValidation);
 
 		mCommandPool = CreateCommandPool(0); // [NOTE] Hardcoded
+		mQueue = new Queue(this);
 
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
 	}
@@ -23,6 +25,8 @@ namespace Utopian::Vk
 	{
 		vkDestroyCommandPool(mDevice, mCommandPool, nullptr);
 		vkDestroyDevice(mDevice, nullptr);
+
+		delete mQueue;
 	}
 
 	void Device::Create(Instance* instance, bool enableValidation)
@@ -171,5 +175,10 @@ namespace Utopian::Vk
 	VkPhysicalDeviceMemoryProperties Device::GetPhysicalDeviceMemoryProperties()
 	{
 		return mDeviceMemoryProperties;
+	}
+
+	Queue* Device::GetQueue() const
+	{
+		return mQueue;
 	}
 }

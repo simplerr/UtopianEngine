@@ -185,7 +185,7 @@ void Terrain::GenerateBlocks(float time)
 
 			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer.CmdDispatch(32, 32, 32);
-			commandBuffer.Flush(mRenderer->GetQueue()->GetVkHandle(), mRenderer->GetCommandPool());
+			commandBuffer.Flush(mRenderer->GetCommandPool());
 
 			// Get # of vertices so we can tell how many to draw
 			uint32_t* mapped;

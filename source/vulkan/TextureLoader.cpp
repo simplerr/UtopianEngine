@@ -15,8 +15,8 @@ namespace Utopian::Vk
 	TextureLoader::TextureLoader(Renderer* renderer)
 	{
 		mRenderer = renderer;
-		mQueue = renderer->GetQueue()->GetVkHandle();
 		mDevice = mRenderer->GetDevice();
+		mQueue = mDevice->GetQueue()->GetVkHandle();
 	}
 
 	TextureLoader::~TextureLoader()

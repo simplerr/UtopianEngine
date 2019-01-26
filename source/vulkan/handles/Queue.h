@@ -8,16 +8,22 @@ namespace Utopian::Vk
 	class Queue : public Handle<VkQueue>
 	{
 	public:
-		Queue(Device* device, Semaphore* waitSemaphore, Semaphore* signalSemaphore);
-		void Create(VkSemaphore* waitSemaphore, VkSemaphore* signalSemaphore);
-		void Submit(CommandBuffer* commandBuffer, Fence* renderFence);
-		void Submit(CommandBuffer* commandBuffer, VkSubmitInfo submitInfo);
-		void Submit(CommandBuffer* commandBuffer, Semaphore* waitSemaphore, Semaphore* signalSemaphore, VkPipelineStageFlags stageFlags);
+		Queue(Device* device);
+		~Queue();
+
+		/**
+		 * @param useSemaphores Controls if the wait and signal semaphores associated
+		 * with the Queue should be used or not.
+		 */
+		void Submit(CommandBuffer* commandBuffer, Fence* renderFence, bool useSemaphores);
 		void WaitIdle();
 
-		void SetWaitSemaphore(Semaphore* semaphore);
-		void SetSignalSemaphore(Semaphore* semaphore);
+		Semaphore* GetWaitSemaphore() const;
+		Semaphore* GetSignalSemaphore() const;
+
 	protected:
+		Semaphore* mPresentComplete = nullptr;
+		Semaphore* mRenderComplete = nullptr;
 		VkSubmitInfo mSubmitInfo = {};
 		VkPipelineStageFlags mStageFlags = {};
 	};

@@ -178,6 +178,6 @@ namespace Utopian
 			}
 		}
 
-		renderTarget->End(renderer->GetQueue());
+		renderTarget->End();
 	}
 }

@@ -93,6 +93,6 @@ namespace Utopian
 		commandBuffer->CmdBindIndexBuffer(mSkydomeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		commandBuffer->CmdDrawIndexed(mSkydomeModel->GetNumIndices(), 1, 0, 0, 0);
 
-		renderTarget->End(renderer->GetQueue());
+		renderTarget->End();
 	}
 }

@@ -20,7 +20,7 @@ namespace Utopian::Vk
 		// will use the supplied one. 
 		// Note: Assumes that the renderpass and framebuffers are compatible.
 		void Begin(VkFramebuffer framebuffer);
-		void End(Utopian::Vk::Queue* queue);
+		void End();
 
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 

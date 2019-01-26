@@ -15,7 +15,7 @@ namespace Utopian::Vk
 		void Begin();
 		void Begin(RenderPass* renderPass, VkFramebuffer frameBuffer);
 		void End();
-		void Flush(VkQueue queue, CommandPool* commandPool = nullptr, bool free = false);
+		void Flush(CommandPool* commandPool = nullptr, bool free = false);
 		void Cleanup(CommandPool* commandPool);
 
 		void CmdBeginRenderPass(VkRenderPassBeginInfo* renderPassBeginInfo, VkSubpassContents subpassContents);

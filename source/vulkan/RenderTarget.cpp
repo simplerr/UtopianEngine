@@ -120,10 +120,10 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
 	}
 
-	void RenderTarget::End(Utopian::Vk::Queue* queue)
+	void RenderTarget::End()
 	{
 		mCommandBuffer->CmdEndRenderPass();
-		mCommandBuffer->Flush(queue->GetVkHandle());
+		mCommandBuffer->Flush();
 	}
 
 	uint32_t RenderTarget::GetWidth()
