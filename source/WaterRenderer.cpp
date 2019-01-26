@@ -22,8 +22,8 @@ namespace Utopian
 		uint32_t width = renderer->GetWindowWidth();
 		uint32_t height = renderer->GetWindowHeight();
 
-		mReflectionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		mRefractionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mReflectionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mRefractionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 
 		mWaterEffect.Init(renderer);
 

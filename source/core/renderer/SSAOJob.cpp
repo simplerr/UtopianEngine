@@ -10,7 +10,7 @@ namespace Utopian
 	{
 		ssaoImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), width, height);
 		renderTarget->AddColorAttachment(ssaoImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();

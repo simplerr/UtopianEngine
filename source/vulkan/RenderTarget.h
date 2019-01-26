@@ -11,7 +11,7 @@ namespace Utopian::Vk
 	class RenderTarget
 	{
 	public:
-		RenderTarget(Device* device, CommandPool* commandPool, uint32_t width, uint32_t height);
+		RenderTarget(Device* device, uint32_t width, uint32_t height);
 		~RenderTarget();
 
 		void Begin();

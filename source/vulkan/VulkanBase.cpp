@@ -46,7 +46,6 @@ namespace Utopian::Vk
 		mSwapChain.cleanup();
 
 		// Destroy Vulkan handles
-		delete mCommandPool;
 		delete mDepthStencil;
 		delete mRenderPass;
 		delete mFrameBuffers;
@@ -61,8 +60,6 @@ namespace Utopian::Vk
 	{
 		CompileShaders();				// Compile shaders using batch files
 		SetupSwapchain();				// Setup the swap chain with the helper class
-
-		mCommandPool = new CommandPool(mDevice, 0);
 
 		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
 			mDepthFormat,
@@ -120,11 +117,6 @@ namespace Utopian::Vk
 	VkDevice VulkanBase::GetVkDevice()
 	{
 		return mDevice->GetVkDevice();
-	}
-
-	CommandPool* VulkanBase::GetCommandPool()
-	{
-		return mCommandPool;
 	}
 
 	RenderPass* VulkanBase::GetRenderPass()

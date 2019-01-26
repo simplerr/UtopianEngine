@@ -9,7 +9,7 @@ namespace Utopian
 	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
 		: BaseJob(renderer, width, height)
 	{
-		renderTarget = std::make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		renderTarget = std::make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
 
 		mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);

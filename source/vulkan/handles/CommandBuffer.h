@@ -8,15 +8,15 @@ namespace Utopian::Vk
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{
 	public:
-		CommandBuffer(Device* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
+		CommandBuffer(Device* device, VkCommandBufferLevel level, bool begin = false);
 		~CommandBuffer();
 
-		void Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin = false);
+		void Create(VkCommandBufferLevel level, bool begin = false);
 		void Begin();
 		void Begin(RenderPass* renderPass, VkFramebuffer frameBuffer);
 		void End();
-		void Flush(CommandPool* commandPool = nullptr, bool free = false);
-		void Cleanup(CommandPool* commandPool);
+		void Flush(bool free = false);
+		void Cleanup();
 
 		void CmdBeginRenderPass(VkRenderPassBeginInfo* renderPassBeginInfo, VkSubpassContents subpassContents);
 		void CmdEndRenderPass();
@@ -47,7 +47,6 @@ namespace Utopian::Vk
 		void ToggleActive();
 	
 	private:
-		CommandPool* mCommandPool; // The command pool this command buffer comes from 
 		bool mActive;
 	};
 }

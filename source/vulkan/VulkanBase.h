@@ -50,7 +50,6 @@ namespace Utopian::Vk
 
 		Device* GetDevice();
 		VkDevice GetVkDevice();
-		CommandPool* GetCommandPool();
 		RenderPass* GetRenderPass();
 		VkFramebuffer GetCurrentFrameBuffer();
 		VkFormat GetColorFormat();
@@ -75,7 +74,6 @@ namespace Utopian::Vk
 
 		Instance*						mInstance = nullptr;
 		Device*							mDevice = nullptr;
-		CommandPool*					mCommandPool = nullptr;
 		Window*							mWindow = nullptr;
 		RenderPass*						mRenderPass = nullptr;
 		Image*							mDepthStencil = nullptr;

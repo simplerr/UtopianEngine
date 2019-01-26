@@ -15,15 +15,14 @@
 
 namespace Utopian::Vk
 {
-	CommandBuffer::CommandBuffer(Device* device, CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+	CommandBuffer::CommandBuffer(Device* device, VkCommandBufferLevel level, bool begin)
 		: Handle(device, nullptr)
 	{
-		mCommandPool = commandPool;
 		mActive = true;
 
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = commandPool->GetVkHandle();
+		allocateInfo.commandPool = GetDevice()->GetCommandPool()->GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
@@ -39,14 +38,14 @@ namespace Utopian::Vk
 	CommandBuffer::~CommandBuffer()
 	{
 		// [NOTE] Maybe not needed, if the command pool frees all it's command buffers
-		vkFreeCommandBuffers(GetVkDevice(), mCommandPool->GetVkHandle(), 1, &mHandle);
+		vkFreeCommandBuffers(GetVkDevice(), GetDevice()->GetCommandPool()->GetVkHandle(), 1, &mHandle);
 	}
 
-	void CommandBuffer::Create(CommandPool* commandPool, VkCommandBufferLevel level, bool begin)
+	void CommandBuffer::Create(VkCommandBufferLevel level, bool begin)
 	{
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = commandPool->GetVkHandle();
+		allocateInfo.commandPool = GetDevice()->GetCommandPool()->GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
@@ -89,7 +88,7 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
 	}
 
-	void CommandBuffer::Flush(CommandPool* commandPool, bool free)
+	void CommandBuffer::Flush(bool free)
 	{
 		assert(mHandle);
 
@@ -106,13 +105,13 @@ namespace Utopian::Vk
 
 		if (free)
 		{
-			Cleanup(commandPool);
+			Cleanup();
 		}
 	}
 
-	void CommandBuffer::Cleanup(CommandPool* commandPool)
+	void CommandBuffer::Cleanup()
 	{
-		vkFreeCommandBuffers(GetVkDevice(), commandPool->GetVkHandle(), 1, &mHandle);
+		vkFreeCommandBuffers(GetVkDevice(), GetDevice()->GetCommandPool()->GetVkHandle(), 1, &mHandle);
 	}
 
 	void CommandBuffer::CmdBeginRenderPass(VkRenderPassBeginInfo* renderPassBeginInfo, VkSubpassContents subpassContents)

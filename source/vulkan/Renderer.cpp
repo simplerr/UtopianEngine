@@ -53,7 +53,7 @@ namespace Utopian::Vk
 	{
 		VulkanBase::Prepare();
 
-		mPrimaryCommandBuffer = new CommandBuffer(mDevice, GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+		mPrimaryCommandBuffer = new CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
 	void Renderer::PostInitPrepare()
@@ -93,7 +93,7 @@ namespace Utopian::Vk
 
 	CommandBuffer* Renderer::CreateCommandBuffer(VkCommandBufferLevel level)
 	{
-		CommandBuffer* commandBuffer = new CommandBuffer(mDevice, GetCommandPool(), level);
+		CommandBuffer* commandBuffer = new CommandBuffer(mDevice, level);
 		mApplicationCommandBuffers.push_back(commandBuffer);
 		return commandBuffer;
 	}

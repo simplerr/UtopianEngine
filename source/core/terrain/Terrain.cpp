@@ -172,7 +172,7 @@ void Terrain::GenerateBlocks(float time)
 			mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
 			mMarchingCubesEffect.mDescriptorSet1->UpdateDescriptorSets();
 
-			Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mRenderer->GetDevice(), mRenderer->GetCommandPool(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mRenderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
 			// TODO: Use the firstSet parameter to only update the Block descriptor
@@ -185,7 +185,7 @@ void Terrain::GenerateBlocks(float time)
 
 			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer.CmdDispatch(32, 32, 32);
-			commandBuffer.Flush(mRenderer->GetCommandPool());
+			commandBuffer.Flush();
 
 			// Get # of vertices so we can tell how many to draw
 			uint32_t* mapped;

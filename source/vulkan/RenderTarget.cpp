@@ -10,12 +10,12 @@
 
 namespace Utopian::Vk
 {
-	RenderTarget::RenderTarget(Device* device, CommandPool* commandPool, uint32_t width, uint32_t height)
+	RenderTarget::RenderTarget(Device* device, uint32_t width, uint32_t height)
 	{
 		mWidth = width;
 		mHeight = height;
 
-		mCommandBuffer = new CommandBuffer(device, commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
+		mCommandBuffer = new CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
 		mRenderPass = new RenderPass(device);
 		mFrameBuffer = new FrameBuffers(device);
 		mSampler = std::make_shared<Sampler>(device);

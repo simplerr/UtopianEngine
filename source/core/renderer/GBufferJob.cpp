@@ -12,7 +12,7 @@ namespace Utopian
 		albedoImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), renderer->GetCommandPool(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), width, height);
 		renderTarget->AddColorAttachment(positionImage);
 		renderTarget->AddColorAttachment(normalImage);
 		renderTarget->AddColorAttachment(albedoImage);

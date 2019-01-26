@@ -14,7 +14,7 @@ namespace Utopian::Vk
 	class BasicRenderTarget : public RenderTarget
 	{
 	public:
-		BasicRenderTarget(Device* device, CommandPool* commandPool, uint32_t width, uint32_t height, VkFormat colorFormat, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT);
+		BasicRenderTarget(Device* device, uint32_t width, uint32_t height, VkFormat colorFormat, VkFormat depthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT);
 		~BasicRenderTarget();
 
 		Image* GetColorImage();

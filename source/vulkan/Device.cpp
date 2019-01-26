@@ -3,6 +3,7 @@
 #include "Device.h"
 #include "handles/Instance.h"
 #include "handles/Queue.h"
+#include "handles/CommandPool.h"
 #include "VulkanDebug.h"
 
 namespace Utopian::Vk
@@ -15,7 +16,7 @@ namespace Utopian::Vk
 
 		Create(instance, enableValidation);
 
-		mCommandPool = CreateCommandPool(0); // [NOTE] Hardcoded
+		mCommandPool = new CommandPool(this, 0);
 		mQueue = new Queue(this);
 
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
@@ -23,7 +24,7 @@ namespace Utopian::Vk
 
 	Device::~Device()
 	{
-		vkDestroyCommandPool(mDevice, mCommandPool, nullptr);
+		vkDestroyCommandPool(mDevice, mCommandPool->GetVkHandle(), nullptr);
 		vkDestroyDevice(mDevice, nullptr);
 
 		delete mQueue;
@@ -88,23 +89,12 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
 	}
 
-	VkCommandPool Device::CreateCommandPool(uint32_t queueFamilyIndex)
-	{
-		VkCommandPoolCreateInfo cmdPoolInfo = {};
-		cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		cmdPoolInfo.queueFamilyIndex = queueFamilyIndex;
-		cmdPoolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		VkCommandPool cmdPool;
-		VulkanDebug::ErrorCheck(vkCreateCommandPool(mDevice, &cmdPoolInfo, nullptr, &cmdPool));
-		return cmdPool;
-	}
-
 	VkCommandBuffer Device::CreateCommandBuffer(VkCommandBufferLevel level, bool begin)
 	{
 		VkCommandBuffer cmdBuffer;
 		VkCommandBufferAllocateInfo allocateInfo = {};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool;
+		allocateInfo.commandPool = mCommandPool->GetVkHandle();
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
@@ -141,7 +131,7 @@ namespace Utopian::Vk
 
 		if (free)
 		{
-			vkFreeCommandBuffers(mDevice, mCommandPool, 1, &commandBuffer);
+			vkFreeCommandBuffers(mDevice, mCommandPool->GetVkHandle(), 1, &commandBuffer);
 		}
 	}
 	VkPhysicalDevice Device::GetPhysicalDevice()
@@ -180,5 +170,10 @@ namespace Utopian::Vk
 	Queue* Device::GetQueue() const
 	{
 		return mQueue;
+	}
+
+	CommandPool* Device::GetCommandPool() const
+	{
+		return mCommandPool;
 	}
 }
