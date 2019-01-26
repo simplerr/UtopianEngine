@@ -34,7 +34,6 @@ namespace Utopian::Vk
 {
 	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
-		mCamera = nullptr;
 		mApplicationCommandBuffers.resize(0);
 	}
 
@@ -80,16 +79,6 @@ namespace Utopian::Vk
 		//system("cd data/shaders/deferred/ && generate-spirv.bat");
 		//system("cd data/shaders/ssao/ && generate-spirv.bat");
 		//system("cd data/shaders/blur/ && generate-spirv.bat");
-	}
-
-	void Renderer::SetCamera(Utopian::Camera* camera)
-	{
-		mCamera = camera;
-	}
-
-	Utopian::Camera* Renderer::GetCamera()
-	{
-		return mCamera;
 	}
 
 	void Renderer::SetClearColor(glm::vec4 color)
@@ -190,5 +179,10 @@ namespace Utopian::Vk
 	void Renderer::ToggleUi()
 	{
 		mUiOverlay->ToggleVisible();
+	}
+	
+	UIOverlay* Renderer::GetUiOverlay()
+	{
+		return mUiOverlay;
 	}
 }	// VulkanLib namespace

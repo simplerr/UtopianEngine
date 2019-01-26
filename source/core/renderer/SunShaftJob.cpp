@@ -70,7 +70,7 @@ namespace Utopian
 		float skydomeRadius = mSkydomeModel->GetBoundingBox().GetWidth() / 2.0f;
 		// Note: Todo: Why -X -Z here?
 		// Note: Todo: Why - camera position?
-		glm::vec3 sunWorldPos = glm::vec3(-1, 1, -1) * sunDir * skydomeRadius * skydomeScale - mRenderer->GetCamera()->GetPosition();
+		glm::vec3 sunWorldPos = glm::vec3(-1, 1, -1) * sunDir * skydomeRadius * skydomeScale - jobInput.sceneInfo.eyePos;;
 		glm::vec4 clipPos = jobInput.sceneInfo.projectionMatrix * jobInput.sceneInfo.viewMatrix * glm::vec4(sunWorldPos, 1.0f);
 		glm::vec4 ndcPos = clipPos / clipPos.w;
 		glm::vec2 texCoord = glm::vec2(ndcPos) / 2.0f + 0.5f;

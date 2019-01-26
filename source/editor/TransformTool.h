@@ -26,7 +26,7 @@ class Terrain;
 class TransformTool
 {
 public:
-	TransformTool(Utopian::Vk::Renderer* renderer, Utopian::BaseTerrain* terrain);
+	TransformTool(Utopian::BaseTerrain* terrain, Utopian::Camera* camera);
 	~TransformTool();
 
 	void Update(Utopian::Input* pInput, float dt);

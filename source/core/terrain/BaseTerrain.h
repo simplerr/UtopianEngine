@@ -61,7 +61,7 @@ namespace Utopian
 	class BaseTerrain
 	{
 	public:
-		BaseTerrain(Vk::Renderer* renderer);
+		BaseTerrain(Vk::Renderer* renderer, Camera* camera);
 
 		virtual void Update();
 		virtual void GenerateBlocks() = 0;
@@ -82,6 +82,7 @@ namespace Utopian
 	protected:
 		std::map<BlockKey, SharedPtr<Block2>> mBlockList;
 		Vk::Renderer* mRenderer;
+		Camera* mCamera;
 		int32_t mCellsInBlock = 32;
 		int32_t mCellSize = 40;
 		// int32_t mBlockViewDistance = 4;

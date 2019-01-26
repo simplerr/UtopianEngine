@@ -23,11 +23,11 @@ using namespace Utopian::Vk;
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-TransformTool::TransformTool(Utopian::Vk::Renderer* renderer, Utopian::BaseTerrain* terrain)
+TransformTool::TransformTool(Utopian::BaseTerrain* terrain, Utopian::Camera* camera)
 {
 	// nullptr as default.
 	mSelectedActor = nullptr;
-	mCamera = renderer->GetCamera();
+	mCamera = camera;
 	mTerrain = terrain;
 
 	mAxisX = Utopian::Renderable::Create();

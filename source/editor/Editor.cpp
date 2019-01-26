@@ -15,14 +15,14 @@
 
 namespace Utopian
 {
-	Editor::Editor(Utopian::Vk::Renderer* renderer, World* world, BaseTerrain* terrain)
-		: mRenderer(renderer), mWorld(world), mTerrain(terrain)
+	Editor::Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, BaseTerrain* terrain)
+		: mUiOverlay(uiOverlay), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
 
 		mActorInspector = new ActorInspector();
 
-		mTransformTool = new TransformTool(renderer, mTerrain);
+		mTransformTool = new TransformTool(mTerrain, camera);
 
 		AddActorCreation("Spot light", ActorTemplate::LIGHT);
 
@@ -47,7 +47,7 @@ namespace Utopian
 		// Was an Entity selected?
 		if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
 		{
-			Ray ray = mRenderer->GetCamera()->GetPickingRay();
+			Ray ray = mCamera->GetPickingRay();
 
 			Actor* selectedActor = mWorld->RayIntersection(ray);
 			if (selectedActor != nullptr && selectedActor != mSelectedActor)
@@ -93,7 +93,7 @@ namespace Utopian
 		// Hide/show UI
 		if (gInput().KeyPressed('H'))
 		{
-			mRenderer->ToggleUi();
+			mUiOverlay->ToggleVisible();
 		}
 
 		// Reload scene

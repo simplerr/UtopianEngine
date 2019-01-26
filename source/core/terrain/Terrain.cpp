@@ -52,9 +52,10 @@ void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
 	}
 }
 
-Terrain::Terrain(Utopian::Vk::Renderer* renderer)
+Terrain::Terrain(Utopian::Vk::Renderer* renderer, Utopian::Camera* camera)
 {
 	mRenderer = renderer;
+	mCamera = camera;
 
 	/* 
 		Initialize Vulkan handles
@@ -105,7 +106,7 @@ void Terrain::UpdateBlockList()
 	// 2) Are they already added? 
 	// 3) Add them
 
-	glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
+	glm::vec3 cameraPos = mCamera->GetPosition();
 	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 	int32_t blockY = cameraPos.y / (float)(mVoxelSize * mVoxelsInBlock) + 1;
 	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
@@ -158,8 +159,8 @@ void Terrain::GenerateBlocks(float time)
 			const uint32_t h = 16;
 			const uint32_t d = 16;
 
-			mMarchingCubesEffect.ubo.data.projection = mRenderer->GetCamera()->GetProjection();
-			mMarchingCubesEffect.ubo.data.view = mRenderer->GetCamera()->GetView();
+			mMarchingCubesEffect.ubo.data.projection = mCamera->GetProjection();
+			mMarchingCubesEffect.ubo.data.view = mCamera->GetView();
 			mMarchingCubesEffect.ubo.data.voxelSize = mVoxelSize;
 			mMarchingCubesEffect.ubo.data.time = time;
 
@@ -276,14 +277,14 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				Utopian::Vk::VulkanDebug::ConsolePrint(numBlocks, "numBlocks: ");
 				Utopian::Vk::VulkanDebug::ConsolePrint(numVertices, "numVertices: ");
 
-				glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
+				glm::vec3 cameraPos = mCamera->GetPosition();
 				int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
 				int32_t blockY = 0;
 				int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
 
 				Utopian::Vk::VulkanDebug::ConsolePrint(blockX, "blockX: ");
 				Utopian::Vk::VulkanDebug::ConsolePrint(blockZ, "blockZ: ");
-				Utopian::Vk::VulkanDebug::ConsolePrint(GetHeight(mRenderer->GetCamera()->GetPosition().x, mRenderer->GetCamera()->GetPosition().z), "terrain height: ");
+				Utopian::Vk::VulkanDebug::ConsolePrint(GetHeight(mCamera->GetPosition().x, mCamera->GetPosition().z), "terrain height: ");
 
 				UpdateBlockList();
 			}

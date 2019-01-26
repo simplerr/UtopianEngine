@@ -76,6 +76,8 @@ namespace Utopian
 
 		void AddJob(BaseJob* job);
 
+		Camera* GetMainCamera();
+
 		BaseTerrain* GetTerrain();
 		RenderingSettings& GetRenderingSettings();
 	private:

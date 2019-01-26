@@ -22,7 +22,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(Utopian::Vk::Renderer* renderer, World* world, BaseTerrain* terrain);
+		Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, BaseTerrain* terrain);
 		~Editor();
 
 		void Update();
@@ -37,9 +37,10 @@ namespace Utopian
 
 		void AddPaths();
 
-		Utopian::Vk::Renderer* mRenderer;
 		World* mWorld;
 		BaseTerrain* mTerrain;
+		Camera* mCamera;
+		Vk::UIOverlay* mUiOverlay;
 		ActorInspector* mActorInspector;
 		TransformTool* mTransformTool;
 		Actor* mSelectedActor;

@@ -13,11 +13,11 @@
 
 namespace Utopian
 {
-	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer)
-		: BaseTerrain(renderer)
+	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer, Camera* camera)
+		: BaseTerrain(renderer, camera)
 	{
 		mPerlinNoise = std::make_shared<PerlinNoise<float>>(std::random_device{}());
-		GenerateGrassInstances(renderer->GetCamera()->GetPosition());
+		GenerateGrassInstances(mCamera->GetPosition());
 	}
 
 	float PerlinTerrain::GetHeight(float x, float z)
@@ -60,10 +60,10 @@ namespace Utopian
 	{
 		BaseTerrain::Update();
 
-		float distanceDelta = glm::length(mRenderer->GetCamera()->GetPosition() - mLastGrassGenPosition);
+		float distanceDelta = glm::length(mCamera->GetPosition() - mLastGrassGenPosition);
 		if (distanceDelta > 500.0f || gInput().KeyPressed('G'))
 		{
-			GenerateGrassInstances(mRenderer->GetCamera()->GetPosition());
+			GenerateGrassInstances(mCamera->GetPosition());
 		}
 	}
 

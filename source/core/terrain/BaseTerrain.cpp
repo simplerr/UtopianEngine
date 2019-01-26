@@ -73,9 +73,10 @@ namespace Utopian
 
 	}
 
-	BaseTerrain::BaseTerrain(Vk::Renderer* renderer)
+	BaseTerrain::BaseTerrain(Vk::Renderer* renderer, Camera* camera)
 	{
 		mRenderer = renderer;
+		mCamera = camera;
 	}
 
 	void BaseTerrain::Update()
@@ -85,7 +86,7 @@ namespace Utopian
 		// 2) Are they already added? 
 		// 3) Add them
 
-		glm::vec3 cameraPos = mRenderer->GetCamera()->GetPosition();
+		glm::vec3 cameraPos = mCamera->GetPosition();
 		int32_t blockX = cameraPos.x / (float)(mCellSize * mCellsInBlock) + 1;
 		int32_t blockY = cameraPos.y / (float)(mCellSize * mCellsInBlock) + 1;
 		int32_t blockZ = cameraPos.z / (float)(mCellSize * mCellsInBlock) + 1;

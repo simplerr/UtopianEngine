@@ -72,8 +72,7 @@ namespace Utopian::Vk
 
 		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
-		void SetCamera(Utopian::Camera* camera);
-		Utopian::Camera* GetCamera();
+		UIOverlay* GetUiOverlay();
 
 		void SetClearColor(glm::vec4 color);
 		glm::vec4 GetClearColor();
@@ -81,10 +80,7 @@ namespace Utopian::Vk
 	private:
 		CommandBuffer*					mPrimaryCommandBuffer;
 		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
-
-		Camera*							mCamera;
 		glm::vec4						mClearColor;
-
 		UIOverlay*						mUiOverlay = nullptr;
 	};
 }	// VulkanLib namespace

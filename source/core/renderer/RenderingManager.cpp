@@ -42,7 +42,7 @@ namespace Utopian
 	{
 		mNextNodeId = 0;
 		mMainCamera = nullptr;
-		mMainCamera = renderer->GetCamera();
+		//mMainCamera = renderer->GetCamera();
 		mRenderer = renderer;
 		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 
@@ -83,7 +83,7 @@ namespace Utopian
 		InitShaderResources();
 		InitShader();
 
-		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mRenderer);
+		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mRenderer, mMainCamera);
 		//mSceneInfo.terrain->SetViewDistance(4);
 	}
 
@@ -569,7 +569,6 @@ namespace Utopian
 
 	void RenderingManager::SetMainCamera(Camera* camera)
 	{
-		mRenderer->SetCamera(camera);
 		mMainCamera = camera;
 	}
 
@@ -597,5 +596,10 @@ namespace Utopian
 	RenderingSettings& RenderingManager::GetRenderingSettings()
 	{
 		return mRenderingSettings;
+	}
+
+	Camera* RenderingManager::GetMainCamera()
+	{
+		return mMainCamera;
 	}
 }

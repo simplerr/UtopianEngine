@@ -86,20 +86,20 @@ namespace Utopian
 		Vk::ModelLoader::Start(mRenderer->GetDevice());
 		Vk::TextureLoader::Start(mRenderer.get());
 
-		// Note: There are dependencies on the initialization order here
-		mTerrain = std::make_shared<Terrain>(mRenderer.get());
-		mTerrain->SetEnabled(false);
-
 		mRenderer->PostInitPrepare();
 
 		Vk::StaticModel* model = Vk::gModelLoader().LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Rocks/Rocks/Models/m_rock_01.FBX");
 
 		RendererUtility::Start();
 		RenderingManager::Start(mRenderer.get());
-		RenderingManager::Instance().SetTerrain(mTerrain.get());
 
 		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
 		World::Instance().LoadScene();
+
+		// Note: There are dependencies on the initialization order here
+		mTerrain = std::make_shared<Terrain>(mRenderer.get(), gRenderingManager().GetMainCamera());
+		mTerrain->SetEnabled(false);
+		RenderingManager::Instance().SetTerrain(mTerrain.get());
 		
 		World::Instance().Update();
 
@@ -107,7 +107,7 @@ namespace Utopian
 		ObjectManager::Instance().PrintObjects();
 
 		// Note: Needs to be called after a camera have been added to the scene
-		mEditor = std::make_shared<Editor>(mRenderer.get(), &World::Instance(), RenderingManager::Instance().GetTerrain());
+		mEditor = std::make_shared<Editor>(mRenderer->GetUiOverlay(), gRenderingManager().GetMainCamera(), &World::Instance(), RenderingManager::Instance().GetTerrain());
 	}
 
 	void Game::Update()
