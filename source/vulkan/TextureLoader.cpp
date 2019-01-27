@@ -1,4 +1,4 @@
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/Queue.h"
@@ -165,8 +165,8 @@ namespace Utopian::Vk
 		CreateImageSampler(&texture->sampler);
 
 		// Create the descriptor set for the texture
-		//texture->CreateDescriptorSet(mRenderer->GetDevice(), layout, pool);
-		//texture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		//texture->CreateDescriptorSet(mVulkanApp->GetDevice(), layout, pool);
+		//texture->CreateDescriptorSet(mVulkanApp->GetDevice(), mVulkanApp->GetTextureDescriptorSetLayout(), mVulkanApp->GetDescriptorPool());
 
 		vkDestroyImage(device, stagingImage, nullptr);
 		vkFreeMemory(device, stagingMemory, nullptr);

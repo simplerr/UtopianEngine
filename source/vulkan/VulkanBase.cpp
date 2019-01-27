@@ -93,21 +93,12 @@ namespace Utopian::Vk
 	{
 		mWindow = window;
 
-#if defined(_WIN32)
 		mSwapChain.initSurface(mWindow->GetInstance(), mWindow->GetHwnd());
-#elif defined(__linux__)
-		mSwapChain.initSurface(mWindow->GetConnection(), mWindow->GetWindow());
-#endif
 	}
 
 	Device* VulkanBase::GetDevice()
 	{
 		return mDevice;
-	}
-
-	VkDevice VulkanBase::GetVkDevice()
-	{
-		return mDevice->GetVkDevice();
 	}
 
 	RenderPass* VulkanBase::GetRenderPass()
@@ -120,12 +111,12 @@ namespace Utopian::Vk
 		// Game::HandleMessages() handles the closing of the window
 	}
 
-	int VulkanBase::GetWindowWidth()
+	uint32_t VulkanBase::GetWindowWidth()
 	{
 		return mWindow->GetWidth();
 	}
 
-	int VulkanBase::GetWindowHeight()
+	uint32_t VulkanBase::GetWindowHeight()
 	{
 		return mWindow->GetHeight();
 	}

@@ -36,9 +36,9 @@ namespace Utopian
 	class ScreenQuadUi : public Module<ScreenQuadUi>
 	{
 	public:
-		ScreenQuadUi(Vk::Renderer* renderer);
+		ScreenQuadUi(Vk::VulkanApp* vulkanApp);
 
-		void Render(Vk::Renderer* renderer);
+		void Render(Vk::VulkanApp* vulkanApp);
 		void ToggleVisible(uint32_t layer);
 		void SetVisible(uint32_t layer, bool visible);
 
@@ -48,7 +48,7 @@ namespace Utopian
 	private:
 		void CreateQuadBuffers();
 
-		Utopian::Vk::Renderer* mRenderer;
+		Utopian::Vk::VulkanApp* mVulkanApp;
 		Utopian::Vk::ScreenQuadEffect mEffect;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 

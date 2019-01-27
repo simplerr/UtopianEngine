@@ -7,23 +7,23 @@
 #include "vulkan/Handles/CommandBuffer.h"
 #include "vulkan/Handles/DescriptorSet.h"
 #include "vulkan/Handles/Image.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"
 
 namespace Utopian
 {
-	WaterRenderer::WaterRenderer(Vk::TextureLoader* textureLoader, Vk::Renderer* renderer)
+	WaterRenderer::WaterRenderer(Vk::TextureLoader* textureLoader, Vk::VulkanApp* vulkanApp)
 	{
-		//mGridModel = modelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
+		//mGridModel = modelLoader->LoadGrid(vulkanApp->GetDevice(), 2000.0f, 80);
 
-		uint32_t width = renderer->GetWindowWidth();
-		uint32_t height = renderer->GetWindowHeight();
+		uint32_t width = vulkanApp->GetWindowWidth();
+		uint32_t height = vulkanApp->GetWindowHeight();
 
-		mReflectionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		mRefractionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mReflectionRenderTarget = new Vk::BasicRenderTarget(vulkanApp->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mRefractionRenderTarget = new Vk::BasicRenderTarget(vulkanApp->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 
-		mWaterEffect.Init(renderer->GetDevice(), renderer->GetRenderPass());
+		mWaterEffect.Init(vulkanApp->GetDevice(), vulkanApp->GetRenderPass());
 
 		dudvTexture = textureLoader->LoadTexture("data/textures/water_dudv.png");
 

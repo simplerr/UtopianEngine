@@ -1,7 +1,7 @@
 #include <fstream>
 #include <random>
 #include <numeric>
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"

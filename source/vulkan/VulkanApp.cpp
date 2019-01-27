@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <thread>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "VulkanDebug.h"
 #include "StaticModel.h"
 #include "Camera.h"
@@ -32,12 +32,12 @@
 
 namespace Utopian::Vk
 {
-	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
+	VulkanApp::VulkanApp() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
 		mSecondaryCommandBuffers.resize(0);
 	}
 
-	Renderer::~Renderer()
+	VulkanApp::~VulkanApp()
 	{
 		delete mPrimaryCommandBuffer;
 
@@ -45,24 +45,22 @@ namespace Utopian::Vk
 		{
 			delete commandBuffer;
 		}
-
-		//delete mTextOverlay;
 	}
 
-	void Renderer::Prepare()
+	void VulkanApp::Prepare()
 	{
 		VulkanBase::Prepare();
 
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
-	void Renderer::PostInitPrepare()
+	void VulkanApp::PostInitPrepare()
 	{
 		//mTextOverlay = new TextOverlay(this);
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
 
-	void Renderer::CompileShaders()
+	void VulkanApp::CompileShaders()
 	{
 		// [TODO] Move to ShaderManager
 		system("cd data/shaders/phong/ && generate-spirv.bat");
@@ -81,22 +79,22 @@ namespace Utopian::Vk
 		//system("cd data/shaders/blur/ && generate-spirv.bat");
 	}
 
-	void Renderer::SetClearColor(glm::vec4 color)
+	void VulkanApp::SetClearColor(glm::vec4 color)
 	{
 		mClearColor = color;
 	}
 
-	glm::vec4 Renderer::GetClearColor()
+	glm::vec4 VulkanApp::GetClearColor()
 	{
 		return mClearColor;
 	}
 
-	void Renderer::AddSecondaryCommandBuffer(CommandBuffer* commandBuffer)
+	void VulkanApp::AddSecondaryCommandBuffer(CommandBuffer* commandBuffer)
 	{
 		mSecondaryCommandBuffers.push_back(commandBuffer);
 	}
 
-	void Renderer::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
+	void VulkanApp::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
 	{
 		VkClearValue clearValues[2];
 		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, 1.0f };
@@ -135,7 +133,7 @@ namespace Utopian::Vk
 		mPrimaryCommandBuffer->End();
 	}
 
-	void Renderer::Render()
+	void VulkanApp::Render()
 	{
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
@@ -146,7 +144,7 @@ namespace Utopian::Vk
 		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, nullptr, true);
 	}
 
-	void Renderer::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (msg)
 		{
@@ -162,24 +160,24 @@ namespace Utopian::Vk
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
 	}
 
-	void Renderer::BeginUiUpdate()
+	void VulkanApp::BeginUiUpdate()
 	{
 		ImGui::NewFrame();
 	}
 
-	void Renderer::EndUiUpdate()
+	void VulkanApp::EndUiUpdate()
 	{
 		ImGui::Render();
 
 		mUiOverlay->Update();
 	}
 
-	void Renderer::ToggleUi()
+	void VulkanApp::ToggleUi()
 	{
 		mUiOverlay->ToggleVisible();
 	}
 	
-	UIOverlay* Renderer::GetUiOverlay()
+	UIOverlay* VulkanApp::GetUiOverlay()
 	{
 		return mUiOverlay;
 	}

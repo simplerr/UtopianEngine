@@ -23,7 +23,7 @@ namespace Utopian::Vk
 	class UIOverlay 
 	{
 	public:
-		UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::Renderer* renderer);
+		UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp);
 		~UIOverlay();
 
 		void Update();
@@ -41,7 +41,7 @@ namespace Utopian::Vk
 		void ToggleVisible();
 
 	private:
-		Utopian::Vk::Renderer* mRenderer;
+		Utopian::Vk::VulkanApp* mVulkanApp;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 		Utopian::Vk::Buffer mVertexBuffer;
 		Utopian::Vk::Buffer mIndexBuffer;

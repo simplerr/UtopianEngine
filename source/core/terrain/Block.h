@@ -7,7 +7,7 @@
 
 namespace Utopian::Vk
 {
-	class Renderer;
+	class VulkanApp;
 	class Buffer;
 	class DescriptorSetLayout;
 	class DescriptorSet;

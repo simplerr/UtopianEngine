@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <array>
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "core/renderer/Renderable.h"
 #include "core/renderer/Light.h"
 #include "core/terrain/PerlinTerrain.h"

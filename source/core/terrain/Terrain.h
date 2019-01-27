@@ -35,7 +35,7 @@
 namespace Utopian::Vk
 {
 	class Buffer;
-	class Renderer;
+	class VulkanApp;
 	class Camera;
 	class PipelineLegacy;
 	class ComputePipeline;

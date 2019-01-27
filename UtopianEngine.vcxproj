@@ -183,7 +183,7 @@
     <ClCompile Include="source\vulkan\TextOverlay.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
-    <ClCompile Include="source\vulkan\Renderer.cpp" />
+    <ClCompile Include="source\vulkan\VulkanApp.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
     <ClCompile Include="source\vulkan\VulkanDebug.cpp" />
     <ClCompile Include="source\vulkan\UIOverlay.cpp" />
@@ -304,7 +304,7 @@
     <ClInclude Include="source\vulkan\ShaderBuffer.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />
     <ClInclude Include="source\vulkan\VertexDescription.h" />
-    <ClInclude Include="source\vulkan\Renderer.h" />
+    <ClInclude Include="source\vulkan\VulkanApp.h" />
     <ClInclude Include="source\vulkan\VulkanBase.h" />
     <ClInclude Include="source\vulkan\VulkanDebug.h" />
     <ClInclude Include="source\vulkan\VulkanInclude.h" />
@@ -313,7 +313,7 @@
     <ClInclude Include="source\vulkan\CubeMapTexture.h" />
     <ClInclude Include="source\vulkan\VulkanUtilities.h" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
-    <ClInclude Include="source\WaterRenderer.h" />
+    <ClInclude Include="source\WaterVulkanApp.h" />
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>

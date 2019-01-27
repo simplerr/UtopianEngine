@@ -40,7 +40,7 @@ namespace Utopian
 			DEBUG_INDEX,
 		};
 
-		RenderingManager(Vk::Renderer* renderer);
+		RenderingManager(Vk::VulkanApp* vulkanApp);
 		~RenderingManager();
 
 		void PostWorldInit();
@@ -85,7 +85,7 @@ namespace Utopian
 		Camera* mMainCamera;
 		uint32_t mNextNodeId;
 
-		Vk::Renderer* mRenderer;
+		Vk::VulkanApp* mVulkanApp;
 		Vk::Device* mDevice;
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;

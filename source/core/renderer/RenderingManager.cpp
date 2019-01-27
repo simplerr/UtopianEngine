@@ -1,7 +1,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "core/renderer/RenderingManager.h"
 #include "core/renderer/Renderable.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -38,34 +38,34 @@ namespace Utopian
 		return RenderingManager::Instance();
 	}
 
-	RenderingManager::RenderingManager(Vk::Renderer* renderer)
+	RenderingManager::RenderingManager(Vk::VulkanApp* vulkanApp)
 	{
 		mNextNodeId = 0;
 		mMainCamera = nullptr;
-		//mMainCamera = renderer->GetCamera();
-		mRenderer = renderer;
-		mDevice = renderer->GetDevice();
+		//mMainCamera = vulkanApp->GetCamera();
+		mVulkanApp = vulkanApp;
+		mDevice = vulkanApp->GetDevice();
 		mCommandBuffer = new Vk::CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
+		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 
 		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
 		// The real solution is to cleanup and remove this.
 		mCommandBuffer->ToggleActive();
 
-		mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), renderer);
+		mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), vulkanApp);
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		AddJob(new GBufferJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new SSAOJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new BlurJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new ShadowJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new DeferredJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new GrassJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		//AddJob(new SkyboxJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new SkydomeJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new SunShaftJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new DebugJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new GBufferJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new SSAOJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new BlurJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new ShadowJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new DeferredJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new GrassJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		//AddJob(new SkyboxJob(renderer, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new SkydomeJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new SunShaftJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
+		AddJob(new DebugJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -118,12 +118,12 @@ namespace Utopian
 		mCommonDescriptorSet->UpdateDescriptorSets();
 
 		mEffects[Vk::EffectType::PHONG] = new Vk::PhongEffect();
-		mEffects[Vk::EffectType::PHONG]->Init(mDevice, mRenderer->GetRenderPass());
+		mEffects[Vk::EffectType::PHONG]->Init(mDevice, mVulkanApp->GetRenderPass());
 	}
 
 	void RenderingManager::InitShader()
 	{
-		mPhongEffect.Init(mDevice, mRenderer->GetRenderPass());
+		mPhongEffect.Init(mDevice, mVulkanApp->GetRenderPass());
 	}
 
 	void RenderingManager::Update()
@@ -346,9 +346,9 @@ namespace Utopian
 			/* Legacy forward rendering pipeline */
 			RenderOffscreen();
 
-			mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
-			mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-			mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+			mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
+			mCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+			mCommandBuffer->CmdSetScissor(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 			RenderScene(mCommandBuffer);
 
@@ -387,7 +387,7 @@ namespace Utopian
 
 	void RenderingManager::UpdateUniformBuffers()
 	{
-		// From Renderer.cpp
+		// From VulkanApp.cpp
 		if (mMainCamera != nullptr)
 		{
 			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
@@ -396,7 +396,7 @@ namespace Utopian
 			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
 		}
 
-		fog_ubo.data.fogColor = mRenderer->GetClearColor();
+		fog_ubo.data.fogColor = mVulkanApp->GetClearColor();
 		fog_ubo.data.fogStart = 41500.0f;
 		fog_ubo.data.fogDistance = 15400.0f;
 

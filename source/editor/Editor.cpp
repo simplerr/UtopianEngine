@@ -1,6 +1,6 @@
 #include "Editor.h"
 #include "Input.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "Camera.h"
 #include "core/World.h"
 #include "core/components/Actor.h"

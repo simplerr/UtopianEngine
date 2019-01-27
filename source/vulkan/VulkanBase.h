@@ -29,7 +29,7 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 
 namespace Utopian::Vk
 {
-	// This is the base class that contains common code for creating a Vulkan application
+	/** Base class that contains common code for creating a Vulkan application. */
 	class VulkanBase
 	{
 	public:
@@ -49,34 +49,28 @@ namespace Utopian::Vk
 		virtual void CompileShaders() = 0;
 
 		Device* GetDevice();
-		VkDevice GetVkDevice();
 		RenderPass* GetRenderPass();
 		VkFramebuffer GetCurrentFrameBuffer();
 		VkFormat GetColorFormat();
 		VkFormat GetDepthFormat();
 
-		int GetWindowWidth();
-		int GetWindowHeight();
+		uint32_t GetWindowWidth();
+		uint32_t GetWindowHeight();
 
+		Window* GetWindow();
 
-		Window*  GetWindow();
-
-		// Platform specific
-#if defined(_WIN32)
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-#endif
-		// TODO: TEMP: should be protected
-		FrameBuffers*					mFrameBuffers = nullptr;
-
 	protected:
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
-
+		FrameBuffers*					mFrameBuffers = nullptr;
 		Instance*						mInstance = nullptr;
 		Device*							mDevice = nullptr;
 		Window*							mWindow = nullptr;
-		RenderPass*						mRenderPass = nullptr;
 		Image*							mDepthStencil = nullptr;
+
+		// Note: Todo: Used by legacy effects
+		RenderPass*						mRenderPass = nullptr;
 
 		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
 		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;

@@ -10,7 +10,7 @@
 #include <glm/gtx/intersect.hpp>
 #include "core/components/Actor.h"
 #include "core/components/CTransform.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ModelLoader.h"
 #include "core/renderer/Renderable.h"

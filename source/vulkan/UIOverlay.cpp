@@ -10,7 +10,7 @@
 #include "UIOverlay.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Texture.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -23,8 +23,8 @@
 
 namespace Utopian::Vk 
 {
-	UIOverlay::UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::Renderer* renderer)
-		: mRenderer(renderer)
+	UIOverlay::UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp)
+		: mVulkanApp(vulkanApp)
 	{
 		// Color scheme
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -62,13 +62,13 @@ namespace Utopian::Vk
 		io.Fonts->GetTexDataAsRGBA32(&fontData, &texWidth, &texHeight, &pixelSize);
 
 		// Note: Must be performed before Init()
-		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mRenderer->GetDevice(), mRenderer->GetRenderPass());
+		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass());
 
 		mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
-		mCommandBuffer = new Vk::CommandBuffer(mRenderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
+		mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 	}
 
 
@@ -76,7 +76,7 @@ namespace Utopian::Vk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
-		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+		mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 
 		mCommandBuffer->CmdSetViewPort(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 		mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
@@ -143,7 +143,7 @@ namespace Utopian::Vk
 		if ((mVertexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mVertexCount != imDrawData->TotalVtxCount)) {
 			mVertexBuffer.UnmapMemory();
 			mVertexBuffer.Destroy();
-			mVertexBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
+			mVertexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
 			mVertexCount = imDrawData->TotalVtxCount;
 			mVertexBuffer.MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedVertices);
 			updateCmdBuffers = true;
@@ -154,7 +154,7 @@ namespace Utopian::Vk
 		if ((mIndexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mIndexCount < imDrawData->TotalIdxCount)) {
 			mIndexBuffer.UnmapMemory();
 			mIndexBuffer.Destroy();
-			mIndexBuffer.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, indexBufferSize);
+			mIndexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, indexBufferSize);
 			mIndexCount = imDrawData->TotalIdxCount;
 			mIndexBuffer.MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedIndices);
 			updateCmdBuffers = true;

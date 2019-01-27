@@ -1,6 +1,6 @@
 #include "core/terrain/BaseTerrain.h"
 #include "core/renderer/RenderingManager.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "Camera.h"
 #include <random>
 

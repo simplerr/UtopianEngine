@@ -45,7 +45,7 @@ namespace Utopian::Vk
 	class Mesh;
 	class ModelLoader;
 	class PipelineInterface;
-	class Renderer;
+	class VulkanApp;
 	class RenderTarget;
 	class ScreenQuadUi;
 	class ShaderBuffer;

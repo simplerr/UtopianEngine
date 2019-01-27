@@ -1,5 +1,5 @@
 #include "PerlinTerrain.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/Mesh.h"
 #include "vulkan/StaticModel.h"
 #include "vulkan/ModelLoader.h"
@@ -162,7 +162,7 @@ namespace Utopian
 		//block->renderable->AppendRenderFlags(RenderFlags::RENDER_FLAG_TERRAIN);
 		https://forum.unity.com/threads/foliage-similar-to-the-witness.399585/
 
-		//block->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
+		//block->GenerateGrassInstances(mVulkanApp, this, mCellsInBlock, mCellSize);
 
 		mBlockList[blockKey] = block;
 	}

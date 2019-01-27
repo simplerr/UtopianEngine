@@ -46,11 +46,18 @@ namespace Utopian::Vk
 		glm::vec2 pad;
 	};
 
-	class Renderer : public VulkanBase
+	/**
+	 * Handles the creation of the Vulkan instance, device, swap chain and
+	 * submits the primary command buffer including all the secondary ones.
+	 * 
+	 * By creating a VulkanApp object the application is ready to start configuring and
+	 * rendering to the window using Vulkan.
+	 */
+	class VulkanApp : public VulkanBase
 	{
 	public:
-		Renderer();
-		~Renderer();
+		VulkanApp();
+		~VulkanApp();
 
 		void Prepare();
 		void PostInitPrepare();

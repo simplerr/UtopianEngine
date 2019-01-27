@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "core/terrain/Terrain.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/VulkanDebug.h"
 #include <string>
 #include <sstream>
@@ -52,10 +52,10 @@ namespace Utopian
 
 		Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
 
-		mRenderer = std::make_shared<Vk::Renderer>();
-		mRenderer->InitSwapchain(window);
-		mRenderer->Prepare();
-		mRenderer->SetClearColor(ColorRGB(47, 141, 255));
+		mVulkanApp = std::make_shared<Vk::VulkanApp>();
+		mVulkanApp->InitSwapchain(window);
+		mVulkanApp->Prepare();
+		mVulkanApp->SetClearColor(ColorRGB(47, 141, 255));
 
 		InitScene();
 
@@ -74,30 +74,30 @@ namespace Utopian
 		Input::Start();
 		LuaManager::Start();
 		AssetLoader::Start();
-		Vk::ShaderFactory::Start(mRenderer->GetDevice());
+		Vk::ShaderFactory::Start(mVulkanApp->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
-		ScreenQuadUi::Start(mRenderer.get());
+		ScreenQuadUi::Start(mVulkanApp.get());
 
 		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 
 		ScriptExports::Register();
 		ScriptImports::Register();
 		Vk::EffectManager::Start();
-		Vk::ModelLoader::Start(mRenderer->GetDevice());
-		Vk::TextureLoader::Start(mRenderer->GetDevice());
+		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
+		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
 
-		mRenderer->PostInitPrepare();
+		mVulkanApp->PostInitPrepare();
 
 		Vk::StaticModel* model = Vk::gModelLoader().LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Rocks/Rocks/Models/m_rock_01.FBX");
 
 		RendererUtility::Start();
-		RenderingManager::Start(mRenderer.get());
+		RenderingManager::Start(mVulkanApp.get());
 
 		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
 		World::Instance().LoadScene();
 
 		// Note: There are dependencies on the initialization order here
-		mTerrain = std::make_shared<Terrain>(mRenderer->GetDevice(), gRenderingManager().GetMainCamera(), mRenderer->GetRenderPass());
+		mTerrain = std::make_shared<Terrain>(mVulkanApp->GetDevice(), gRenderingManager().GetMainCamera(), mVulkanApp->GetRenderPass());
 		mTerrain->SetEnabled(false);
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 		
@@ -107,27 +107,27 @@ namespace Utopian
 		ObjectManager::Instance().PrintObjects();
 
 		// Note: Needs to be called after a camera have been added to the scene
-		mEditor = std::make_shared<Editor>(mRenderer->GetUiOverlay(), gRenderingManager().GetMainCamera(), &World::Instance(), RenderingManager::Instance().GetTerrain());
+		mEditor = std::make_shared<Editor>(mVulkanApp->GetUiOverlay(), gRenderingManager().GetMainCamera(), &World::Instance(), RenderingManager::Instance().GetTerrain());
 	}
 
 	void Game::Update()
 	{
-		mRenderer->BeginUiUpdate();
+		mVulkanApp->BeginUiUpdate();
 
 		World::Instance().Update();
 		RenderingManager::Instance().Update();
 		Vk::EffectManager::Instance().Update();
 		mEditor->Update();
 
-		mRenderer->EndUiUpdate();
+		mVulkanApp->EndUiUpdate();
 	}
 
 	void Game::Draw()
 	{
 		RenderingManager::Instance().Render();
 		mEditor->Draw();
-		gScreenQuadUi().Render(mRenderer.get());
-		mRenderer->Render();
+		gScreenQuadUi().Render(mVulkanApp.get());
+		mVulkanApp->Render();
 	}
 	
 	bool Game::IsClosing()
@@ -158,9 +158,9 @@ namespace Utopian
 				}
 			}
 
-			if (mRenderer != nullptr && IsClosing() == false)
+			if (mVulkanApp != nullptr && IsClosing() == false)
 			{
-				mRenderer->PrepareFrame();
+				mVulkanApp->PrepareFrame();
 
 				Update();
 				Draw();
@@ -168,7 +168,7 @@ namespace Utopian
 				// Note: This must be called after Camera::Update()
 				Input::Instance().Update(0);
 
-				mRenderer->SubmitFrame();
+				mVulkanApp->SubmitFrame();
 
 				// Frame end
 				auto fps = Timer::Instance().FrameEnd();
@@ -190,8 +190,8 @@ namespace Utopian
 
 	void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (mRenderer != nullptr)
-			mRenderer->HandleMessages(hWnd, uMsg, wParam, lParam);
+		if (mVulkanApp != nullptr)
+			mVulkanApp->HandleMessages(hWnd, uMsg, wParam, lParam);
 
 		Input::Instance().HandleMessages(uMsg, wParam, lParam);
 

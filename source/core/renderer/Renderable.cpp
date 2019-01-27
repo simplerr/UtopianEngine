@@ -36,7 +36,7 @@ namespace Utopian
 
 	void Renderable::Initialize()
 	{
-		// Add new instance to the Renderer (scene)
+		// Add new instance to the VulkanApp (scene)
 		RenderingManager::Instance().AddRenderable(this);
 	}
 

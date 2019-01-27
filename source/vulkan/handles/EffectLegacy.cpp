@@ -1,5 +1,5 @@
 #include "vulkan/EffectLegacy.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Device.h"
 
 namespace Utopian::Vk

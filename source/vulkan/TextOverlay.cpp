@@ -3,7 +3,7 @@
 #include "vulkan/TextOverlay.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/ShaderFactory.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Texture.h"
@@ -18,17 +18,17 @@
 
 namespace Utopian::Vk
 {
-	TextOverlay::TextOverlay(Renderer* renderer)
+	TextOverlay::TextOverlay(VulkanApp* vulkanApp)
 	{
-		mRenderer = renderer;
-		vulkanDevice = renderer->GetDevice();
+		mVulkanApp = vulkanApp;
+		vulkanDevice = vulkanApp->GetDevice();
 
-		mCommandBuffer = new Vk::CommandBuffer(renderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
+		mCommandBuffer = new Vk::CommandBuffer(vulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 
 		// Create a renderpass that loads the current framebuffer content
 		// and renders the text as an overlay
-		mRenderPass = new RenderPass(renderer->GetDevice(), renderer->GetColorFormat(), renderer->GetDepthFormat(), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, false);
+		mRenderPass = new RenderPass(vulkanApp->GetDevice(), vulkanApp->GetColorFormat(), vulkanApp->GetDepthFormat(), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, false);
 		mRenderPass->attachments[RenderPassAttachment::COLOR_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		mRenderPass->Create();
 
@@ -40,15 +40,15 @@ namespace Utopian::Vk
 		static unsigned char font24pixels[STB_FONT_HEIGHT][STB_FONT_WIDTH];
 		STB_FONT_NAME(stbFontData, font24pixels, STB_FONT_HEIGHT);
 		mTexture = gTextureLoader().CreateTexture((void*)font24pixels, VK_FORMAT_R8_UNORM, STB_FONT_WIDTH, STB_FONT_HEIGHT, 1, sizeof(unsigned char));
-		// Note: Texture descriptor set layout moved from Renderer, fix when updating TextOverlay to use new Effect
-		//mTexture->CreateDescriptorSet(mRenderer->GetDevice(), mRenderer->GetTextureDescriptorSetLayout(), mRenderer->GetDescriptorPool());
+		// Note: Texture descriptor set layout moved from VulkanApp, fix when updating TextOverlay to use new Effect
+		//mTexture->CreateDescriptorSet(mVulkanApp->GetDevice(), mVulkanApp->GetTextureDescriptorSetLayout(), mVulkanApp->GetDescriptorPool());
 
-		// NOTE: Uses the descriptor set layout for the texture from the Renderer
+		// NOTE: Uses the descriptor set layout for the texture from the VulkanApp
 		// If more descriptors where to be needed they should be added as a separate descriptor set
 		// This is cheating a bit since the shader don't use more than a sampler
-		mPipelineLayout = new Utopian::Vk::PipelineLayout(mRenderer->GetDevice());
-		// Note: Texture descriptor set layout moved from Renderer, fix when updating TextOverlay to use new Effect
-		//mPipelineLayout->AddDescriptorSetLayout(mRenderer->GetTextureDescriptorSetLayout());
+		mPipelineLayout = new Utopian::Vk::PipelineLayout(mVulkanApp->GetDevice());
+		// Note: Texture descriptor set layout moved from VulkanApp, fix when updating TextOverlay to use new Effect
+		//mPipelineLayout->AddDescriptorSetLayout(mVulkanApp->GetTextureDescriptorSetLayout());
 		mPipelineLayout->Create();
 
 		mVertexDescription = new VertexDescription();
@@ -59,7 +59,7 @@ namespace Utopian::Vk
 
 		// Create the pipeline
 		Utopian::Vk::Shader* shader = gShaderFactory().CreateShader("data/shaders/textoverlay/text.vert.spv", "data/shaders/textoverlay/text.frag.spv");
-		mPipeline = new Utopian::Vk::PipelineLegacy(mRenderer->GetDevice(), mPipelineLayout, mRenderer->GetRenderPass(), mVertexDescription, shader);
+		mPipeline = new Utopian::Vk::PipelineLegacy(mVulkanApp->GetDevice(), mPipelineLayout, mVulkanApp->GetRenderPass(), mVertexDescription, shader);
 		
         // Why triangle strip?
 		mPipeline->mInputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
@@ -101,8 +101,8 @@ namespace Utopian::Vk
 	{
 		assert(mapped != nullptr);
 
-		float fbW = (float)mRenderer->GetWindowWidth();
-		float fbH = (float)mRenderer->GetWindowHeight();
+		float fbW = (float)mVulkanApp->GetWindowWidth();
+		float fbH = (float)mVulkanApp->GetWindowHeight();
 		
 		const float charW = 1.5f / fbW;
 		const float charH = 1.5f / fbH;
@@ -210,12 +210,12 @@ namespace Utopian::Vk
 	// Needs to be called by the application
 	void TextOverlay::UpdateCommandBuffers()
 	{
-		mCommandBuffer->Begin(mRenderer->GetRenderPass(), mRenderer->GetCurrentFrameBuffer());
+		mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 
-		mCommandBuffer->CmdSetViewPort(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
-		mCommandBuffer->CmdSetScissor(mRenderer->GetWindowWidth(), mRenderer->GetWindowHeight());
+		mCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mCommandBuffer->CmdSetScissor(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
-		// TODO: This is currently done in the primary command buffer in Renderer
+		// TODO: This is currently done in the primary command buffer in VulkanApp
 		mCommandBuffer->CmdBindPipeline(mPipeline);
 
 		// Todo: Note: Disabled for now. TextOverlay need to have its own DescriptorSet for the texture since it's removed from Texture

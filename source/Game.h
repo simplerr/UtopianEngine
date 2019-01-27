@@ -32,7 +32,7 @@ namespace Utopian
 		bool IsClosing();
 
 		// Move all of these to other locations
-		SharedPtr<Vk::Renderer> mRenderer;
+		SharedPtr<Vk::VulkanApp> mVulkanApp;
 		SharedPtr<Camera> mCamera;
 		SharedPtr<Terrain> mTerrain;
 		SharedPtr<Editor> mEditor;

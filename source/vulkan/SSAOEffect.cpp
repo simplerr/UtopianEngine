@@ -2,7 +2,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
-#include "vulkan/Renderer.h"
+#include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Effect.h"

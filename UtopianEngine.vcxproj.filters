@@ -216,9 +216,6 @@
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\Renderer.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\TextOverlay.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -462,6 +459,9 @@
     <ClCompile Include="source\vulkan\handles\Device.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\VulkanApp.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -542,9 +542,6 @@
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\Renderer.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\TextOverlay.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -587,7 +584,7 @@
     <ClInclude Include="source\vulkan\WaterEffect.h">
       <Filter>Source Files\vulkan\effects\water</Filter>
     </ClInclude>
-    <ClInclude Include="source\WaterRenderer.h">
+    <ClInclude Include="source\WaterVulkanApp.h">
       <Filter>Source Files\terrain</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\NormalDebugEffect.h">
@@ -832,6 +829,9 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Device.h">
       <Filter>Source Files\vulkan\handles</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanApp.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

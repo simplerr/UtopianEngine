@@ -32,7 +32,7 @@ namespace Utopian::Vk
 			ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT 
 		};
 
-		TextOverlay(Renderer* renderer);
+		TextOverlay(VulkanApp* vulkanApp);
 		~TextOverlay();
 
 		// Map buffer 
@@ -56,7 +56,7 @@ namespace Utopian::Vk
 	private:
 		// My code
 		Device* vulkanDevice;
-		Renderer* mRenderer;
+		VulkanApp* mVulkanApp;
 		CommandBuffer* mCommandBuffer;
 		RenderPass* mRenderPass;
 		PipelineLegacy* mPipeline;
