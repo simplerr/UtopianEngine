@@ -30,6 +30,7 @@
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
 #include "vulkan/ScreenQuadUi.h"
+#include "vulkan/VulkanDebug.h"
 
 namespace Utopian
 {
@@ -40,6 +41,8 @@ namespace Utopian
 
 	RenderingManager::RenderingManager(Vk::VulkanApp* vulkanApp)
 	{
+		Vk::VulkanDebug::ConsolePrint("Initializing RenderingManager...");
+
 		mNextNodeId = 0;
 		mMainCamera = nullptr;
 		//mMainCamera = vulkanApp->GetCamera();

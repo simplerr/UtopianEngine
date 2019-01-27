@@ -11,6 +11,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/ScreenQuadUi.h"
+#include "vulkan/VulkanDebug.h"
 #include "Input.h"
 #include "vulkan/VulkanApp.h"
 
@@ -19,7 +20,11 @@ namespace Utopian
 	Engine::Engine(SharedPtr<Vk::VulkanApp> vulkanApp)
 		: mVulkanApp(vulkanApp)
 	{
+		Vk::VulkanDebug::ConsolePrint("Starting engine modules...");
+
 		StartModules();
+
+		Vk::VulkanDebug::ConsolePrint("Engine modules ready");
 	}
 	
 	Engine::~Engine()
@@ -47,8 +52,6 @@ namespace Utopian
 		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
 
 		mVulkanApp->PostInitPrepare();
-
-		Vk::StaticModel* model = Vk::gModelLoader().LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Rocks/Rocks/Models/m_rock_01.FBX");
 
 		RendererUtility::Start();
 		RenderingManager::Start(mVulkanApp.get());

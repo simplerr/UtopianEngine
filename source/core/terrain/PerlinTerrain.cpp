@@ -6,6 +6,7 @@
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/TextureLoader.h"
+#include "vulkan/VulkanDebug.h"
 #include "core/ScriptExports.h"
 #include "Camera.h"
 #include "Input.h"

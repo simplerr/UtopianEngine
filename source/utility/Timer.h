@@ -13,10 +13,10 @@ namespace Utopian
 		void		FrameBegin();
 		uint32_t	FrameEnd();				// Returns the FPS if 1000.0f milliseconds have passed
 
-		uint32_t	GetFPS();
-		float		GetTime();
+		uint32_t	GetFPS() const;
+		float		GetTime() const;
 
-		void		PrintLog(std::ofstream& fout);
+		void		PrintLog(std::ofstream& fout) const;
 		void		ResetLifetimeCounter();
 	private:
 		std::chrono::high_resolution_clock::time_point mFrameBegin;
@@ -31,4 +31,6 @@ namespace Utopian
 
 		std::vector<float> mFpsLog;
 	};
+
+	Timer& gTimer();
 }	// VulkanLib namespace

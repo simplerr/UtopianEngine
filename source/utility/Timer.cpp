@@ -3,6 +3,11 @@
 
 namespace Utopian
 {
+	Timer& gTimer()
+	{
+		return Timer::Instance();
+	}
+
 	void Timer::FrameBegin()
 	{
 		mFrameBegin = std::chrono::high_resolution_clock::now();
@@ -41,17 +46,17 @@ namespace Utopian
 		return -1;
 	}
 
-	uint32_t Timer::GetFPS()
+	uint32_t Timer::GetFPS() const
 	{
 		return mFramesPerSecond;
 	}
 
-	float Timer::GetTime()
+	float Timer::GetTime() const
 	{
 		return mLifetimeTimer;
 	}
 
-	void Timer::PrintLog(std::ofstream& fout)
+	void Timer::PrintLog(std::ofstream& fout) const
 	{
 		fout << "Capture time: " << mLifetimeTimer / 1000.0f << " seconds" << std::endl;
 

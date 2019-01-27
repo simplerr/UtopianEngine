@@ -13,7 +13,6 @@ namespace Utopian
 	public:
 		PerlinTerrain(Vk::Device* device, Camera* camera);
 
-
 		void GenerateGrassInstances(glm::vec3 origin);
 		Vk::Buffer* GetInstanceBuffer();
 		uint32_t GetNumInstances();

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 #include "VulkanDebug.h"
+#include "utility/Timer.h"
 
 namespace Utopian::Vk
 {
@@ -16,6 +17,7 @@ namespace Utopian::Vk
 		VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo = {};
 		VkDebugReportCallbackEXT msgCallback = nullptr;
 		bool performanceWarnings = true;
+		std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
 		void SetupDebugLayers()
 		{
@@ -77,8 +79,6 @@ namespace Utopian::Vk
 			AttachConsole(GetCurrentProcessId());
 			freopen("CON", "w", stdout);
 			SetConsoleTitle(TEXT(title.c_str()));
-
-			VulkanDebug::ConsolePrint("Utopian Engine (alpha)");
 #endif
 		}
 
@@ -196,7 +196,9 @@ namespace Utopian::Vk
 
 		void ConsolePrint(std::string text)
 		{
-			std::cout << text << std::endl;
+			auto currentTime = std::chrono::high_resolution_clock::now();
+			auto elapsedTime = std::chrono::duration<double, std::milli>(currentTime - startTime).count();
+			std::cout << (uint32_t)elapsedTime << " " << text << std::endl;
 		}
 
 		void ConsolePrint(int32_t num, std::string text)

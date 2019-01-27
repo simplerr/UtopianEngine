@@ -20,6 +20,8 @@ Game::Game(Utopian::Window* window)
 	mIsClosing = false;
 
 	Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
+	Utopian::Vk::VulkanDebug::SetupDebugLayers();
+	Utopian::Vk::VulkanDebug::ConsolePrint(mAppName);
 
 	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
 	mVulkanApp->Prepare();
@@ -33,7 +35,7 @@ Game::Game(Utopian::Window* window)
 
 	// Note: Needs to be called after a camera have been added to the scene
 	mEditor = std::make_shared<Utopian::Editor>(mVulkanApp->GetUiOverlay(), Utopian::gRenderingManager().GetMainCamera(), &Utopian::World::Instance(), Utopian::RenderingManager::Instance().GetTerrain());
-	mWindow->SetTitle("Utopian Engine (alpha)");
+	mWindow->SetTitle(mAppName);
 }
 
 Game::~Game()

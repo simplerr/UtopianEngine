@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <chrono>
 #include "vulkan/VulkanInclude.h"
 #include "utility/Platform.h"
 
@@ -26,7 +27,9 @@ namespace Utopian::Vk
 		void SetupConsole(std::string title);
 		void ErrorCheck(VkResult result);
 
+		/** Prints timestamped text to the console. */
 	  	void ConsolePrint(std::string text);
+		 
 		void ConsolePrint(uint32_t num, std::string text = "");
 		void ConsolePrint(int32_t num, std::string text = "");
 		void ConsolePrint(float num, std::string text = "");
@@ -53,5 +56,6 @@ namespace Utopian::Vk
 		extern VkDebugReportCallbackEXT msgCallback;
 
 		extern bool performanceWarnings;
+		extern std::chrono::high_resolution_clock::time_point startTime;
 	}
 }	// VulkanLib namespace
