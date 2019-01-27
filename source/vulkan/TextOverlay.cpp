@@ -23,8 +23,8 @@ namespace Utopian::Vk
 		mRenderer = renderer;
 		vulkanDevice = renderer->GetDevice();
 
-		// Command buffer
-		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mCommandBuffer = new Vk::CommandBuffer(renderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
 
 		// Create a renderpass that loads the current framebuffer content
 		// and renders the text as an overlay

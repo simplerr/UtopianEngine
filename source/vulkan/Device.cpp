@@ -24,10 +24,10 @@ namespace Utopian::Vk
 
 	Device::~Device()
 	{
-		vkDestroyCommandPool(mDevice, mCommandPool->GetVkHandle(), nullptr);
-		vkDestroyDevice(mDevice, nullptr);
-
+		delete mCommandPool;
 		delete mQueue;
+
+		vkDestroyDevice(mDevice, nullptr);
 	}
 
 	void Device::Create(Instance* instance, bool enableValidation)
@@ -89,62 +89,17 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
 	}
 
-	VkCommandBuffer Device::CreateCommandBuffer(VkCommandBufferLevel level, bool begin)
-	{
-		VkCommandBuffer cmdBuffer;
-		VkCommandBufferAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocateInfo.commandPool = mCommandPool->GetVkHandle();
-		allocateInfo.commandBufferCount = 1;
-		allocateInfo.level = level;
-
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(mDevice, &allocateInfo, &cmdBuffer));
-
-		// If requested, also start the new command buffer
-		if (begin)
-		{
-			VkCommandBufferBeginInfo beginInfo = {};
-			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-			VulkanDebug::ErrorCheck(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
-		}
-
-		return cmdBuffer;
-	}
-
-	void Device::FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free)
-	{
-		if (commandBuffer == VK_NULL_HANDLE)
-		{
-			return;
-		}
-
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(commandBuffer));
-
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffer;
-
-		VulkanDebug::ErrorCheck(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(queue));	// [TODO] Wait for fence instead?
-
-		if (free)
-		{
-			vkFreeCommandBuffers(mDevice, mCommandPool->GetVkHandle(), 1, &commandBuffer);
-		}
-	}
-	VkPhysicalDevice Device::GetPhysicalDevice()
+	VkPhysicalDevice Device::GetPhysicalDevice() const
 	{
 		return mPhysicalDevice;
 	}
 
-	VkDevice Device::GetVkDevice()
+	VkDevice Device::GetVkDevice() const
 	{
 		return mDevice;
 	}
 
-	VkBool32 Device::GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t* typeIndex)
+	VkBool32 Device::GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t* typeIndex) const
 	{
 		for (uint32_t i = 0; i < 32; i++)
 		{
@@ -162,7 +117,7 @@ namespace Utopian::Vk
 		return false;
 	}
 
-	VkPhysicalDeviceMemoryProperties Device::GetPhysicalDeviceMemoryProperties()
+	VkPhysicalDeviceMemoryProperties Device::GetPhysicalDeviceMemoryProperties() const
 	{
 		return mDeviceMemoryProperties;
 	}

@@ -9,22 +9,22 @@ namespace Utopian::Vk
 	{
 		void CopyBufferToImage(Device* device, Queue* queue, Buffer* buffer, Image* image, uint32_t regionCount, const VkBufferImageCopy* regions, VkImageLayout dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
 		{
-			VkCommandBuffer commandBuffer = device->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			CommandBuffer commandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			vkCmdCopyBufferToImage(
-				commandBuffer,
+				commandBuffer.GetVkHandle(),
 				buffer->GetVkBuffer(),
 				image->GetVkHandle(),
 				dstImageLayout,
 				regionCount,
 				regions);
 
-			device->FlushCommandBuffer(commandBuffer, queue->GetVkHandle(), true);
+			commandBuffer.Flush(true);
 		}
 
 		void TransitionImageLayout(Device* device, Queue* queue, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageSubresourceRange subresourceRange)
 		{
-			VkCommandBuffer commandBuffer = device->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			CommandBuffer commandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			VkImageMemoryBarrier barrier = {};
 			barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -56,7 +56,7 @@ namespace Utopian::Vk
 				assert(0);
 
 			vkCmdPipelineBarrier(
-				commandBuffer,
+				commandBuffer.GetVkHandle(),
 				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 				0,
 				0, nullptr,
@@ -64,7 +64,7 @@ namespace Utopian::Vk
 				1, &barrier
 			);
 
-			device->FlushCommandBuffer(commandBuffer, queue->GetVkHandle(), true);
+			commandBuffer.Flush(true);
 		}
 	}
 }

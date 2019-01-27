@@ -44,7 +44,8 @@ namespace Utopian
 		mMainCamera = nullptr;
 		//mMainCamera = renderer->GetCamera();
 		mRenderer = renderer;
-		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mCommandBuffer = new Vk::CommandBuffer(renderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
 
 		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
 		// The real solution is to cleanup and remove this.

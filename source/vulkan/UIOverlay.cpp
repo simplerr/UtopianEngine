@@ -67,7 +67,8 @@ namespace Utopian::Vk
 		mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
-		mCommandBuffer = mRenderer->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mCommandBuffer = new Vk::CommandBuffer(mRenderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
 	}
 
 

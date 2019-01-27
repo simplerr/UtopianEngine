@@ -34,14 +34,14 @@ namespace Utopian::Vk
 {
 	Renderer::Renderer() : VulkanBase(VULKAN_ENABLE_VALIDATION)
 	{
-		mApplicationCommandBuffers.resize(0);
+		mSecondaryCommandBuffers.resize(0);
 	}
 
 	Renderer::~Renderer()
 	{
 		delete mPrimaryCommandBuffer;
 
-		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
+		for (CommandBuffer* commandBuffer : mSecondaryCommandBuffers)
 		{
 			delete commandBuffer;
 		}
@@ -91,11 +91,9 @@ namespace Utopian::Vk
 		return mClearColor;
 	}
 
-	CommandBuffer* Renderer::CreateCommandBuffer(VkCommandBufferLevel level)
+	void Renderer::AddSecondaryCommandBuffer(CommandBuffer* commandBuffer)
 	{
-		CommandBuffer* commandBuffer = new CommandBuffer(mDevice, level);
-		mApplicationCommandBuffers.push_back(commandBuffer);
-		return commandBuffer;
+		mSecondaryCommandBuffers.push_back(commandBuffer);
 	}
 
 	void Renderer::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
@@ -118,7 +116,7 @@ namespace Utopian::Vk
 		mPrimaryCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
 
 		std::vector<VkCommandBuffer> commandBuffers;
-		for (CommandBuffer* commandBuffer : mApplicationCommandBuffers)
+		for (CommandBuffer* commandBuffer : mSecondaryCommandBuffers)
 		{
 			if (commandBuffer->IsActive()) 
 			{

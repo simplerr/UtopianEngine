@@ -2,6 +2,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/Queue.h"
+#include "vulkan/handles/CommandBuffer.h"
 #include "TextureLoader.h"
 #include "VulkanDebug.h"
 #include "Device.h"
@@ -210,7 +211,7 @@ namespace Utopian::Vk
 
 	void TextureLoader::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlagBits aspectMask)
 	{
-		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+		CommandBuffer commandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		VkImageMemoryBarrier barrier = {};
 		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -248,7 +249,7 @@ namespace Utopian::Vk
 		// Extend this with more image layout transitions
 
 		vkCmdPipelineBarrier(
-			commandBuffer,
+			commandBuffer.GetVkHandle(),
 			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 			0,
 			0, nullptr,
@@ -256,12 +257,12 @@ namespace Utopian::Vk
 			1, &barrier
 		);
 
-		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
+		commandBuffer.Flush();
 	}
 
 	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, VkImageAspectFlagBits aspectMask, uint32_t width, uint32_t height, uint32_t depth)
 	{
-		VkCommandBuffer commandBuffer = mDevice->CreateCommandBuffer(VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+		CommandBuffer commandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		VkImageSubresourceLayers subResource = {};
 		subResource.aspectMask = aspectMask;
@@ -280,13 +281,13 @@ namespace Utopian::Vk
 
 		// [NOTE] It's also possible to use vkCmdCopyBufferToImage() instead
 		vkCmdCopyImage(
-			commandBuffer,
+			commandBuffer.GetVkHandle(),
 			srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1, &region
 		);
 
-		mDevice->FlushCommandBuffer(commandBuffer, mQueue, true);
+		commandBuffer.Flush();
 	}
 
 	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth, VkImageAspectFlagBits aspectMask)

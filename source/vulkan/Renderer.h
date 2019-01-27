@@ -56,6 +56,7 @@ namespace Utopian::Vk
 		void PostInitPrepare();
 
 		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
+		void AddSecondaryCommandBuffer(CommandBuffer* commandBuffer);
 
 		virtual void Render();
 
@@ -65,12 +66,7 @@ namespace Utopian::Vk
 		void EndUiUpdate();
 		void ToggleUi();
 
-		// 
-		//	High level code
-		//
 		void CompileShaders();
-
-		CommandBuffer* CreateCommandBuffer(VkCommandBufferLevel level);
 
 		UIOverlay* GetUiOverlay();
 
@@ -79,7 +75,7 @@ namespace Utopian::Vk
 
 	private:
 		CommandBuffer*					mPrimaryCommandBuffer;
-		std::vector<CommandBuffer*>		mApplicationCommandBuffers;
+		std::vector<CommandBuffer*>		mSecondaryCommandBuffers;
 		glm::vec4						mClearColor;
 		UIOverlay*						mUiOverlay = nullptr;
 	};

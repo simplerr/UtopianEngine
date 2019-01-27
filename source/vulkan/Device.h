@@ -5,37 +5,41 @@
 
 namespace Utopian::Vk
 {
+	/** Wrapper for the Vulkan device. */
 	class Device
 	{
 	public:
 		Device(Instance* instance, bool enableValidation = false);
 		~Device();
-		
-		void Create(Instance* instance, bool enableValidation);
 
-		// [TODO] Add creation of the logical device
-		VkCommandBuffer CreateCommandBuffer(VkCommandBufferLevel level, bool begin);
-		void FlushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free = true);
-
-		VkPhysicalDevice GetPhysicalDevice();
-		VkDevice GetVkDevice();
-
-		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex);
-		VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties();
-
+		/**
+		 * Returns the graphics queue associated with the device.
+		 * 
+		 * @note Currently only one queue is fetched from the device.
+		 */
 		Queue* GetQueue() const;
+
+		/**
+		 * Returns the command pool from the device which new
+		 * command buffers can be allocated from.
+		 */
 		CommandPool* GetCommandPool() const;
+
+		VkPhysicalDevice GetPhysicalDevice() const;
+		VkDevice GetVkDevice() const;
+		VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties() const;
+		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex) const;
+
+	private:
+		void Create(Instance* instance, bool enableValidation);
 
 	private:
 		VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice mDevice = VK_NULL_HANDLE;
-
-		Queue*			mQueue = nullptr;
-		CommandPool*	mCommandPool = nullptr;
-
-		// Stores all available memory (type) properties for the physical device
 		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
-
 		VkPhysicalDeviceFeatures mEnabledFeatures{};
+
+		CommandPool* mCommandPool = nullptr;
+		Queue* mQueue = nullptr;
 	};
 }

@@ -17,11 +17,6 @@
 #include "handles/FrameBuffers.h"
 #include "handles/Queue.h"
 
-/*
--	Right now this code assumes that queueFamilyIndex is = 0 in all places,
-no looping is done to find a queue that have the proper support
-*/
-
 namespace Utopian::Vk
 {
 	VulkanBase::VulkanBase(bool enableValidation)
@@ -37,15 +32,12 @@ namespace Utopian::Vk
 
 		// Setup function pointers for the swap chain
 		mSwapChain.connect(mInstance->GetVkHandle(), mDevice->GetPhysicalDevice(), mDevice->GetVkDevice());
-
-		// Synchronization code missing here, VkSemaphore etc.
 	}
 
 	VulkanBase::~VulkanBase()
 	{
 		mSwapChain.cleanup();
 
-		// Destroy Vulkan handles
 		delete mDepthStencil;
 		delete mRenderPass;
 		delete mFrameBuffers;
@@ -58,8 +50,8 @@ namespace Utopian::Vk
 
 	void VulkanBase::Prepare()
 	{
-		CompileShaders();				// Compile shaders using batch files
-		SetupSwapchain();				// Setup the swap chain with the helper class
+		CompileShaders();
+		SetupSwapchain();
 
 		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
 			mDepthFormat,
@@ -101,7 +93,6 @@ namespace Utopian::Vk
 	{
 		mWindow = window;
 
-		// Platform dependent code to initialize the window surface
 #if defined(_WIN32)
 		mSwapChain.initSurface(mWindow->GetInstance(), mWindow->GetHwnd());
 #elif defined(__linux__)

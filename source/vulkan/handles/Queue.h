@@ -5,6 +5,7 @@
 
 namespace Utopian::Vk
 {
+	/** Wrapper for the Vulkan queue. */
 	class Queue : public Handle<VkQueue>
 	{
 	public:
