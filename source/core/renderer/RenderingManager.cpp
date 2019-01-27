@@ -142,7 +142,7 @@ namespace Utopian
 		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
-		mTerrain->Update();
+		//mTerrain->Update();
 		mWaterRenderer->Update(mMainCamera);
 	
 		UpdateUi();
@@ -190,6 +190,7 @@ namespace Utopian
 		glm::vec3 dir = mMainCamera->GetDirection();
 
 		Vk::UIOverlay::TextV("Time: %.2f", Timer::Instance().GetTime());
+		Vk::UIOverlay::TextV("FPS: %u", Timer::Instance().GetFPS());
 		Vk::UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 		Vk::UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
 		Vk::UIOverlay::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
@@ -322,7 +323,7 @@ namespace Utopian
 	{
 		UpdateUniformBuffers();
 
-		mTerrain->Render(commandBuffer, mCommonDescriptorSet);
+		//mTerrain->Render(commandBuffer, mCommonDescriptorSet);
 		RenderNodes(commandBuffer);
 	}
 

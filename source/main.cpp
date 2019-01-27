@@ -16,7 +16,7 @@ using namespace Utopian::Vk;
 // The Vulkan application
 //VulkanLib::renderer renderer;
 
-Utopian::Game* gGame = nullptr;
+Game* gGame = nullptr;
 
 #if defined(_WIN32)
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -54,10 +54,10 @@ int main(const int argc, const char *argv[])
 #endif
 
 	// Create the game
-	gGame = new Utopian::Game(&window);
+	gGame = new Game(&window);
 
 	// Game loop
-	gGame->RenderLoop();
+	gGame->Run();
 
 	delete gGame;
 

@@ -24,6 +24,7 @@
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
 #include "vulkan/UIOverlay.h"
+#include "utility/Utility.h"
 #include "ScreenQuadUi.h"
 
 #define VK_FLAGS_NONE 0
@@ -36,6 +37,7 @@ namespace Utopian::Vk
 		: VulkanBase(window, VULKAN_ENABLE_VALIDATION)
 	{
 		mSecondaryCommandBuffers.resize(0);
+		SetClearColor(ColorRGB(47, 141, 255));
 	}
 
 	VulkanApp::~VulkanApp()

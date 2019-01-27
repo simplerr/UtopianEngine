@@ -42,7 +42,6 @@ namespace Utopian
 
 			SharedPtr<T> newComponent(new T(this, std::forward<Args>(args)...));
 
-			//ObjectManager::Instance().RegisterObject(newComponent);
 			World::Instance().AddComponent(newComponent);
 			//World::Instance().NotifyComponentCreated(newComponent.get());
 

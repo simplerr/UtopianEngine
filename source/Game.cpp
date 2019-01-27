@@ -13,8 +13,6 @@
 #include "vulkan/TextureLoader.h"
 #include "Input.h"
 #include "imgui/imgui.h"
-
-// Testing
 #include "core/components/Actor.h"
 #include "core/components/Component.h"
 #include "core/components/CTransform.h"
@@ -37,170 +35,76 @@
 #include "core/ActorFactory.h"
 #include "core/AssetLoader.h"
 #include "core/ScriptExports.h"
+#include "core/Engine.h"
 #include "LuaPlus.h"
 
-using namespace Utopian;
-
-namespace Utopian
+Game::Game(Utopian::Window* window) 
+	: mWindow(window)
 {
-	Game::Game(Window* window) 
-		: mWindow(window)
-	{
-		srand(time(NULL));
+	srand(time(NULL));
 
-		mIsClosing = false;
+	mIsClosing = false;
 
-		Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
+	Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
 
-		mVulkanApp = std::make_shared<Vk::VulkanApp>(window);
-		mVulkanApp->Prepare();
-		mVulkanApp->SetClearColor(ColorRGB(47, 141, 255));
-
-		InitScene();
-
-		ObjectManager::Instance().PrintObjects();
-	}
-
-	Game::~Game()
-	{
-	}
-
-	void Game::InitScene()
-	{
-		ObjectManager::Start();
-		Timer::Start();
-		World::Start();
-		Input::Start();
-		LuaManager::Start();
-		AssetLoader::Start();
-		Vk::ShaderFactory::Start(mVulkanApp->GetDevice());
-		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
-		ScreenQuadUi::Start(mVulkanApp.get());
-
-		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
-
-		ScriptExports::Register();
-		ScriptImports::Register();
-		Vk::EffectManager::Start();
-		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
-		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
-
-		mVulkanApp->PostInitPrepare();
-
-		Vk::StaticModel* model = Vk::gModelLoader().LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Rocks/Rocks/Models/m_rock_01.FBX");
-
-		RendererUtility::Start();
-		RenderingManager::Start(mVulkanApp.get());
-
-		ActorFactory::LoadFromFile(mWindow, "data/scene.lua");
-		World::Instance().LoadScene();
-
-		// Note: There are dependencies on the initialization order here
-		mTerrain = std::make_shared<Terrain>(mVulkanApp->GetDevice(), gRenderingManager().GetMainCamera(), mVulkanApp->GetRenderPass());
-		mTerrain->SetEnabled(false);
-		RenderingManager::Instance().SetTerrain(mTerrain.get());
-		
-		World::Instance().Update();
-
-		RenderingManager::Instance().PostWorldInit();
-		ObjectManager::Instance().PrintObjects();
-
-		// Note: Needs to be called after a camera have been added to the scene
-		mEditor = std::make_shared<Editor>(mVulkanApp->GetUiOverlay(), gRenderingManager().GetMainCamera(), &World::Instance(), RenderingManager::Instance().GetTerrain());
-	}
-
-	void Game::Update()
-	{
-		mVulkanApp->BeginUiUpdate();
-
-		World::Instance().Update();
-		RenderingManager::Instance().Update();
-		Vk::EffectManager::Instance().Update();
-		mEditor->Update();
-
-		mVulkanApp->EndUiUpdate();
-	}
-
-	void Game::Draw()
-	{
-		RenderingManager::Instance().Render();
-		mEditor->Draw();
-		gScreenQuadUi().Render(mVulkanApp.get());
-		mVulkanApp->Render();
-	}
+	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
+	mVulkanApp->Prepare();
 	
-	bool Game::IsClosing()
+	// Start Utopian Engine
+	Utopian::gEngine().Start(mVulkanApp);
+	Utopian::gEngine().RegisterUpdateCallback(&Game::Update, this);
+	Utopian::gEngine().RegisterRenderCallback(&Game::Draw, this);
+
+	InitScene();
+
+	// Note: Needs to be called after a camera have been added to the scene
+	mEditor = std::make_shared<Utopian::Editor>(mVulkanApp->GetUiOverlay(), Utopian::gRenderingManager().GetMainCamera(), &Utopian::World::Instance(), Utopian::RenderingManager::Instance().GetTerrain());
+
+	std::stringstream ss;
+	ss << "Utopian Engine (alpha) ";
+	std::string windowTitle = ss.str();
+	SetWindowText(mWindow->GetHwnd(), windowTitle.c_str());
+}
+
+Game::~Game()
+{
+}
+
+void Game::InitScene()
+{
+
+}
+
+void Game::Update()
+{
+	mEditor->Update();
+}
+
+void Game::Draw()
+{
+	mEditor->Draw();
+}
+
+bool Game::IsClosing()
+{
+	return mIsClosing;
+}
+
+void Game::Run()
+{
+	Utopian::gEngine().Run();
+}
+
+void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
+
+	switch (uMsg)
 	{
-		return mIsClosing;
-	}
-
-#if defined(_WIN32)
-	void Game::RenderLoop()
-	{
-		MSG msg;
-
-		while (true)
-		{
-			// Frame begin
-			Timer::Instance().FrameBegin();
-
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				if (msg.message == WM_QUIT)
-				{
-					break;
-				}
-				else
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
-			}
-
-			if (mVulkanApp != nullptr && IsClosing() == false)
-			{
-				mVulkanApp->PrepareFrame();
-
-				Update();
-				Draw();
-
-				// Note: This must be called after Camera::Update()
-				Input::Instance().Update(0);
-
-				mVulkanApp->SubmitFrame();
-
-				// Frame end
-				auto fps = Timer::Instance().FrameEnd();
-
-				// Only display fps when 1.0s have passed
-				if (fps != -1)
-				{
-					std::stringstream ss;
-					ss << "Utopian Engine (alpha) ";
-					ss << "FPS: " << Timer::Instance().GetFPS();
-					std::string windowTitle = ss.str();
-					SetWindowText(mWindow->GetHwnd(), windowTitle.c_str());
-				}
-			}
-		}
-	}
-
-#endif
-
-	void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		if (mVulkanApp != nullptr)
-			mVulkanApp->HandleMessages(hWnd, uMsg, wParam, lParam);
-
-		Input::Instance().HandleMessages(uMsg, wParam, lParam);
-
-		switch (uMsg)
-		{
-		case WM_CLOSE:
-			DestroyWindow(mWindow->GetHwnd());
-			PostQuitMessage(0);
-			mIsClosing = true;
-			break;
-		}
+	case WM_CLOSE:
+		DestroyWindow(mWindow->GetHwnd());
+		PostQuitMessage(0);
+		mIsClosing = true;
+		break;
 	}
 }

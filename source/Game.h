@@ -14,30 +14,26 @@ namespace Utopian
 	class Editor;
 }
 
-namespace Utopian
+class Game
 {
-	class Game
-	{
-	public:
-		Game(Window* window);
-		~Game();
+public:
+	Game(Utopian::Window* window);
+	~Game();
 
-		void RenderLoop();
-		void Update();
-		void Draw();
+	void Run();
+	void Update();
+	void Draw();
 
-		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	private:
-		void InitScene();	
-		bool IsClosing();
+	virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+private:
+	void InitScene();	
+	bool IsClosing();
 
-		// Move all of these to other locations
-		SharedPtr<Vk::VulkanApp> mVulkanApp;
-		SharedPtr<Camera> mCamera;
-		SharedPtr<Terrain> mTerrain;
-		SharedPtr<Editor> mEditor;
-		Window* mWindow;
-		std::string mTestCaseName;
-		bool mIsClosing;
-	};
-}
+	// Move all of these to other locations
+	SharedPtr<Utopian::Vk::VulkanApp> mVulkanApp;
+	SharedPtr<Utopian::Editor> mEditor;
+	SharedPtr<Terrain> mTerrain;
+	Utopian::Window* mWindow;
+	std::string mTestCaseName;
+	bool mIsClosing;
+};
