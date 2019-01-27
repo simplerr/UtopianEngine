@@ -249,9 +249,6 @@
     <ClCompile Include="source\vulkan\handles\Sampler.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\ScreenQuadEffect.cpp">
-      <Filter>Source Files\vulkan\effects\screenquad</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\RenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -577,9 +574,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Sampler.h">
       <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\ScreenQuadEffect.h">
-      <Filter>Source Files\vulkan\effects\screenquad</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\RenderTarget.h">
       <Filter>Source Files\vulkan</Filter>

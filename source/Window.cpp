@@ -1,4 +1,5 @@
 #include "Window.h"
+#include <sstream>
 
 namespace Utopian
 {
@@ -7,13 +8,21 @@ namespace Utopian
 		mWidth = width;
 		mHeight = height;
 	}
+	
+	void Window::SetTitle(std::string title)
+	{
+		std::stringstream ss;
+		ss << title;
+		std::string windowTitle = ss.str();
+		SetWindowText(GetHwnd(), windowTitle.c_str());
+	}
 
-	int Window::GetWidth()
+	int Window::GetWidth() const
 	{
 		return mWidth;
 	}
 
-	int Window::GetHeight()
+	int Window::GetHeight() const
 	{
 		return mHeight;
 	}

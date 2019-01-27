@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utility/Platform.h"
+#include <string>
 
 namespace Utopian
 {
@@ -11,8 +12,10 @@ namespace Utopian
 
 		Window(int width, int height);
 
-		int GetWidth();
-		int GetHeight();
+		void SetTitle(std::string title);
+
+		int GetWidth() const;
+		int GetHeight() const;
 
 		// Platform specific
 #if defined(_WIN32)

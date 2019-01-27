@@ -2,6 +2,7 @@
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/Vertex.h"
+#include "vulkan/EffectManager.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -17,10 +18,18 @@ namespace Utopian
 	ScreenQuadUi::ScreenQuadUi(Vk::VulkanApp* vulkanApp)
 	{
 		mVulkanApp = vulkanApp;
-		mEffect.Init(vulkanApp->GetDevice(), vulkanApp->GetRenderPass());
+
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(),
+			vulkanApp->GetRenderPass(),
+			"data/shaders/screenquad/screenquad.vert",
+			"data/shaders/screenquad/screenquad.frag");
+		mEffect->CreatePipeline();
 
 		mCommandBuffer = new Vk::CommandBuffer(vulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
+
+		mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 20);
+		mDescriptorPool.Create(vulkanApp->GetDevice());
 	
 		CreateQuadBuffers();
 	}
@@ -48,7 +57,7 @@ namespace Utopian
 		mCommandBuffer->CmdSetViewPort(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight());
 		mCommandBuffer->CmdSetScissor(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight());
 
-		mCommandBuffer->CmdBindPipeline(mEffect.GetPipeline(0));
+		mCommandBuffer->CmdBindPipeline(mEffect->GetPipeline());
 
 		for (uint32_t layer = NUM_MAX_LAYERS; layer > 0u; layer--)
 		{
@@ -57,7 +66,7 @@ namespace Utopian
 				if (mQuadList[i]->visible == false || mQuadList[i]->layer != (layer - 1))
 					continue;
 
-				Vk::ScreenQuadEffect::PushConstantBlock pushConstantBlock;
+				PushConstantBlock pushConstantBlock;
 
 				float horizontalRatio = (float)mQuadList[i]->width / vulkanApp->GetWindowWidth();
 				float verticalRatio = (float)mQuadList[i]->height / vulkanApp->GetWindowHeight();
@@ -68,9 +77,9 @@ namespace Utopian
 				pushConstantBlock.world = glm::translate(pushConstantBlock.world, glm::vec3(offsetX * 2.0f - 1.0f, offsetY * 2.0f - 1.0, 0));
 				pushConstantBlock.world = glm::scale(pushConstantBlock.world, glm::vec3(horizontalRatio, verticalRatio, 0));
 
-				mCommandBuffer->CmdPushConstants(&mEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(Vk::ScreenQuadEffect::PushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock), &pushConstantBlock);
 				VkDescriptorSet descriptorSets[1] = { mQuadList[i]->descriptorSet->descriptorSet };
-				mCommandBuffer->CmdBindDescriptorSet(&mEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
+				mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 
 				mCommandBuffer->CmdBindVertexBuffer(0, 1, mScreenQuad.vertexBuffer);
 				mCommandBuffer->CmdBindIndexBuffer(mScreenQuad.indexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
@@ -85,7 +94,7 @@ namespace Utopian
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
-		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mVulkanApp->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mVulkanApp->GetDevice(), mEffect.get(), 0, &mDescriptorPool);
 		textureQuad->descriptorSet->BindCombinedImage(0, image, sampler);
 		textureQuad->descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);
@@ -97,7 +106,7 @@ namespace Utopian
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
-		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mVulkanApp->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mVulkanApp->GetDevice(), mEffect.get(), 0, &mDescriptorPool);
 		textureQuad->descriptorSet->BindCombinedImage(0, imageView, sampler);
 		textureQuad->descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);
@@ -109,7 +118,7 @@ namespace Utopian
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
-		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mVulkanApp->GetDevice(), mEffect.GetDescriptorSetLayout(0), mEffect.GetDescriptorPool());
+		textureQuad->descriptorSet = new Utopian::Vk::DescriptorSet(mVulkanApp->GetDevice(), mEffect.get(), 0, &mDescriptorPool);
 		textureQuad->descriptorSet->BindCombinedImage(0, texture->GetTextureDescriptorInfo());
 		textureQuad->descriptorSet->UpdateDescriptorSets();
 		mQuadList.push_back(textureQuad);

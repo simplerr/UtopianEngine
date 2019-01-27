@@ -1,10 +1,10 @@
 #pragma once
 #include <stdint.h>
 #include <glm/glm.hpp>
-#include "vulkan/ScreenQuadEffect.h"
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 #include "utility/Module.h"
+#include "vulkan/handles/Effect.h"
 
 namespace Utopian
 {
@@ -35,6 +35,11 @@ namespace Utopian
 
 	class ScreenQuadUi : public Module<ScreenQuadUi>
 	{
+		struct PushConstantBlock
+		{
+			glm::mat4 world;
+		};
+
 	public:
 		ScreenQuadUi(Vk::VulkanApp* vulkanApp);
 
@@ -48,8 +53,9 @@ namespace Utopian
 	private:
 		void CreateQuadBuffers();
 
+		SharedPtr<Utopian::Vk::Effect> mEffect;
+		Utopian::Vk::DescriptorPool mDescriptorPool;
 		Utopian::Vk::VulkanApp* mVulkanApp;
-		Utopian::Vk::ScreenQuadEffect mEffect;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 
 		struct {

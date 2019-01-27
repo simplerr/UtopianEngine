@@ -45,7 +45,6 @@ namespace Utopian
 
 		void PostWorldInit();
 		void InitShaderResources();
-		void InitShader();
 
 		void Update();
 		void UpdateUi();
@@ -88,7 +87,7 @@ namespace Utopian
 		Vk::VulkanApp* mVulkanApp;
 		Vk::Device* mDevice;
 		Vk::CommandBuffer* mCommandBuffer;
-		Vk::PhongEffect mPhongEffect;
+		SharedPtr<Vk::PhongEffect> mPhongEffect;
 		Terrain* mTerrain;
 		WaterRenderer* mWaterRenderer;
 
@@ -101,8 +100,6 @@ namespace Utopian
 		Vk::DescriptorSet* mCommonDescriptorSet;
 		Vk::DescriptorPool* mCommonDescriptorPool;
 		glm::vec4 mClippingPlane;
-
-		std::map<uint32_t, Vk::EffectLegacy*> mEffects;
 
 		/*  Deferred rendering experimentation */
 		std::vector<BaseJob*> mJobs;

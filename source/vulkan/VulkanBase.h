@@ -45,8 +45,6 @@ namespace Utopian::Vk
 		/** To be called at the end of a frame. */
 		void SubmitFrame();
 
-		virtual void CompileShaders() = 0;
-
 		Device* GetDevice();
 		RenderPass* GetRenderPass();
 		VkFramebuffer GetCurrentFrameBuffer();

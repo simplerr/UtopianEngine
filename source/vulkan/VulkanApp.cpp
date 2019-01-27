@@ -62,19 +62,6 @@ namespace Utopian::Vk
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
 
-	void VulkanApp::CompileShaders()
-	{
-		// [TODO] Move to ShaderManager
-		system("cd data/shaders/phong/ && generate-spirv.bat");
-		system("cd data/shaders/test/ && generate-spirv.bat");
-		system("cd data/shaders/textoverlay/ && generate-spirv.bat");
-		system("cd data/shaders/terrain/ && generate-spirv.bat");
-		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
-		system("cd data/shaders/screenquad/ && generate-spirv.bat");
-		system("cd data/shaders/water/ && generate-spirv.bat");
-		system("cd data/shaders/color/ && generate-spirv.bat");
-	}
-
 	void VulkanApp::SetClearColor(glm::vec4 color)
 	{
 		mClearColor = color;

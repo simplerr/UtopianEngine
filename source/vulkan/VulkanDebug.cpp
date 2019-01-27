@@ -78,7 +78,7 @@ namespace Utopian::Vk
 			freopen("CON", "w", stdout);
 			SetConsoleTitle(TEXT(title.c_str()));
 
-			VulkanDebug::ConsolePrint("Debug console:");
+			VulkanDebug::ConsolePrint("Utopian Engine (alpha)");
 #endif
 		}
 

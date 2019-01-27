@@ -47,7 +47,6 @@ namespace Utopian::Vk
 
 	void VulkanBase::Prepare()
 	{
-		CompileShaders();
 		SetupSwapchain();
 
 		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),

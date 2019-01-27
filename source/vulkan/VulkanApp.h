@@ -80,8 +80,6 @@ namespace Utopian::Vk
 		void EndUiUpdate();
 		void ToggleUi();
 
-		void CompileShaders();
-
 		UIOverlay* GetUiOverlay();
 
 		void SetClearColor(glm::vec4 color);

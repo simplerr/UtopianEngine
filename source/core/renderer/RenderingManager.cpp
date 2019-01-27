@@ -50,11 +50,11 @@ namespace Utopian
 
 		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
 		// The real solution is to cleanup and remove this.
-		mCommandBuffer->ToggleActive();
+		//mCommandBuffer->ToggleActive();
 
-		mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), vulkanApp);
-		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
-		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
+		//mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), vulkanApp);
+		//mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
+		//mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
 		AddJob(new GBufferJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
 		AddJob(new SSAOJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
@@ -83,7 +83,9 @@ namespace Utopian
 	void RenderingManager::PostWorldInit()
 	{
 		InitShaderResources();
-		InitShader();
+
+		/*mPhongEffect = std::make_shared<Vk::PhongEffect>();
+		mPhongEffect->Init(mDevice, mVulkanApp->GetRenderPass());*/
 
 		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mDevice, mMainCamera);
 		//mSceneInfo.terrain->SetViewDistance(4);
@@ -116,14 +118,6 @@ namespace Utopian
 		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
-
-		mEffects[Vk::EffectType::PHONG] = new Vk::PhongEffect();
-		mEffects[Vk::EffectType::PHONG]->Init(mDevice, mVulkanApp->GetRenderPass());
-	}
-
-	void RenderingManager::InitShader()
-	{
-		mPhongEffect.Init(mDevice, mVulkanApp->GetRenderPass());
 	}
 
 	void RenderingManager::Update()
@@ -143,7 +137,7 @@ namespace Utopian
 		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
 		//mTerrain->Update();
-		mWaterRenderer->Update(mMainCamera);
+		//mWaterRenderer->Update(mMainCamera);
 	
 		UpdateUi();
 	}
@@ -305,13 +299,13 @@ namespace Utopian
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
-				commandBuffer->CmdBindPipeline(mEffects[renderable->GetMaterial().effectType]->GetPipeline(renderable->GetMaterial().variation));
+				commandBuffer->CmdBindPipeline(mPhongEffect->GetPipeline(renderable->GetMaterial().variation));
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mEffects[Vk::EffectType::PHONG]->GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
+				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect->GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
 
-				commandBuffer->CmdPushConstants(mEffects[Vk::EffectType::PHONG], VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdPushConstants(mPhongEffect.get(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
@@ -345,7 +339,7 @@ namespace Utopian
 		else
 		{
 			/* Legacy forward rendering pipeline */
-			RenderOffscreen();
+			//RenderOffscreen();
 
 			mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 			mCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
@@ -353,7 +347,7 @@ namespace Utopian
 
 			RenderScene(mCommandBuffer);
 
-			mWaterRenderer->Render(mCommandBuffer);
+			//mWaterRenderer->Render(mCommandBuffer);
 
 			mCommandBuffer->End();
 		}

@@ -36,13 +36,13 @@ namespace Utopian
 		AssetLoader::Start();
 		Vk::ShaderFactory::Start(mVulkanApp->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
+		Vk::EffectManager::Start();
 		ScreenQuadUi::Start(mVulkanApp.get());
 
 		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 
 		ScriptExports::Register();
 		ScriptImports::Register();
-		Vk::EffectManager::Start();
 		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
 		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
 
