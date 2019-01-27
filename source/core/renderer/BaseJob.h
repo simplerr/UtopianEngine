@@ -27,8 +27,8 @@ namespace Utopian
 	class BaseJob
 	{
 	public:
-		BaseJob(Vk::Renderer* renderer, uint32_t width, uint32_t height) {
-			mRenderer = renderer;
+		BaseJob(Vk::Device* device, uint32_t width, uint32_t height) {
+			mDevice = device;
 			mWidth = width;
 			mHeight = height;
 		}
@@ -41,9 +41,9 @@ namespace Utopian
 		*/
 		virtual void Init(const std::vector<BaseJob*>& jobs) = 0;
 
-		virtual void Render(Vk::Renderer* renderer, const JobInput& jobInput) = 0;
+		virtual void Render(const JobInput& jobInput) = 0;
 	protected:
-		Vk::Renderer* mRenderer;
+		Vk::Device* mDevice;
 		uint32_t mWidth;
 		uint32_t mHeight;
 	};

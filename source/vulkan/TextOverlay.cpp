@@ -1,7 +1,7 @@
 #include <sstream>
 #include <iomanip>
 #include "vulkan/TextOverlay.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/Renderer.h"
 #include "vulkan/VulkanDebug.h"

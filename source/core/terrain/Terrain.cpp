@@ -52,9 +52,9 @@ void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
 	}
 }
 
-Terrain::Terrain(Utopian::Vk::Renderer* renderer, Utopian::Camera* camera)
+Terrain::Terrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::Vk::RenderPass* renderPass)
 {
-	mRenderer = renderer;
+	mDevice = device;
 	mCamera = camera;
 
 	/* 
@@ -76,8 +76,8 @@ Terrain::Terrain(Utopian::Vk::Renderer* renderer, Utopian::Camera* camera)
 
 	mMarchingCubesEffect.texture3d = Utopian::Vk::gTextureLoader().CreateTexture(texture3d, VK_FORMAT_R32_SFLOAT, w, h, d, sizeof(float));
 
-	mTerrainEffect.Init(renderer);
-	mMarchingCubesEffect.Init(renderer);
+	mTerrainEffect.Init(device, renderPass);
+	mMarchingCubesEffect.Init(device, renderPass);
 
 	mMarchingCubesEffect.ubo.data.offsets[0] = glm::vec4(0, 0, 0, 0);
 	mMarchingCubesEffect.ubo.data.offsets[1] = glm::vec4(mVoxelSize, 0, 0, 0);
@@ -130,7 +130,7 @@ void Terrain::UpdateBlockList()
 					glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
 					//color = glm::vec3(0.0f, 0.7f, 0.0f);
 					Utopian::Vk::DescriptorSetLayout* setLayout1 = mMarchingCubesEffect.GetDescriptorSetLayout(SET_1);
-					Block* block = new Block(mRenderer, position, color, mVoxelsInBlock, mVoxelSize, setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
+					Block* block = new Block(mDevice, position, color, mVoxelsInBlock, mVoxelSize, setLayout1, mMarchingCubesEffect.GetDescriptorPool()); // NOTE: The descriptor set layout
 
 					mBlockList[blockKey] = block;
 
@@ -172,7 +172,7 @@ void Terrain::GenerateBlocks(float time)
 			mMarchingCubesEffect.mDescriptorSet1->BindStorageBuffer(BINDING_0, &block->GetBufferInfo());
 			mMarchingCubesEffect.mDescriptorSet1->UpdateDescriptorSets();
 
-			Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mRenderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect.GetComputePipeline());
 			// TODO: Use the firstSet parameter to only update the Block descriptor

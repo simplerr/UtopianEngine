@@ -23,11 +23,11 @@ namespace Utopian
 			UNIFORM_PARAM(int, onlySun)
 		UNIFORM_BLOCK_END()
 
-			SkydomeJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+			SkydomeJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SkydomeJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
-		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 

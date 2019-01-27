@@ -210,9 +210,6 @@
     <ClCompile Include="source\vulkan\VulkanDebug.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\Device.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\Mesh.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -462,6 +459,9 @@
     <ClCompile Include="source\core\renderer\RendererUtility.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\handles\Device.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -525,9 +525,6 @@
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\VulkanDebug.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\Device.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
@@ -832,6 +829,9 @@
     </ClInclude>
     <ClInclude Include="source\core\renderer\RendererUtility.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\Device.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

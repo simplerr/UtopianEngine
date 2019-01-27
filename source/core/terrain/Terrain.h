@@ -79,7 +79,7 @@ bool operator<(BlockKey const& a, BlockKey const& b);
 class Terrain
 {
 public:
-	Terrain(Utopian::Vk::Renderer* renderer, Utopian::Camera* camera);
+	Terrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::Vk::RenderPass* renderPass);
 	~Terrain();
 
 	void Update();
@@ -107,7 +107,7 @@ public:
 	void SetEnabled(bool enabled);
 
 private:
-	Utopian::Vk::Renderer* mRenderer;
+	Utopian::Vk::Device* mDevice;
 	Utopian::Camera* mCamera;
 
 	// Experimentation

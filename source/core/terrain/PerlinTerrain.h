@@ -11,7 +11,7 @@ namespace Utopian
 	class PerlinTerrain : public BaseTerrain
 	{
 	public:
-		PerlinTerrain(Vk::Renderer* renderer, Camera* camera);
+		PerlinTerrain(Vk::Device* device, Camera* camera);
 
 
 		void GenerateGrassInstances(glm::vec3 origin);

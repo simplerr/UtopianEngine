@@ -44,27 +44,28 @@ namespace Utopian
 		mMainCamera = nullptr;
 		//mMainCamera = renderer->GetCamera();
 		mRenderer = renderer;
-		mCommandBuffer = new Vk::CommandBuffer(renderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mDevice = renderer->GetDevice();
+		mCommandBuffer = new Vk::CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);
 
 		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
 		// The real solution is to cleanup and remove this.
 		mCommandBuffer->ToggleActive();
 
-		mWaterRenderer = new WaterRenderer(mRenderer, &Vk::gTextureLoader());
+		mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), renderer);
 		mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
-		AddJob(new GBufferJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new SSAOJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new BlurJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new ShadowJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new DeferredJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new GrassJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new GBufferJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new SSAOJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new BlurJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new ShadowJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new DeferredJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new GrassJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 		//AddJob(new SkyboxJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new SkydomeJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new SunShaftJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
-		AddJob(new DebugJob(renderer, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new SkydomeJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new SunShaftJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
+		AddJob(new DebugJob(mDevice, renderer->GetWindowWidth(), renderer->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -84,7 +85,7 @@ namespace Utopian
 		InitShaderResources();
 		InitShader();
 
-		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mRenderer, mMainCamera);
+		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mDevice, mMainCamera);
 		//mSceneInfo.terrain->SetViewDistance(4);
 	}
 
@@ -97,32 +98,32 @@ namespace Utopian
 
 		per_frame_ps.constants.numLights = per_frame_ps.lights.size();
 
-		per_frame_vs.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		per_frame_ps.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		fog_ubo.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		per_frame_vs.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		per_frame_ps.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+		fog_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mCommonDescriptorPool = new Vk::DescriptorPool(mRenderer->GetDevice());
+		mCommonDescriptorPool = new Vk::DescriptorPool(mDevice);
 		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100);
 		mCommonDescriptorPool->Create();
 
 		mCommonDescriptorSetLayout.AddUniformBuffer(0, VK_SHADER_STAGE_VERTEX_BIT);
 		mCommonDescriptorSetLayout.AddUniformBuffer(1, VK_SHADER_STAGE_FRAGMENT_BIT);
 		mCommonDescriptorSetLayout.AddUniformBuffer(2, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mCommonDescriptorSetLayout.Create(mRenderer->GetDevice());
+		mCommonDescriptorSetLayout.Create(mDevice);
 
-		mCommonDescriptorSet = new Vk::DescriptorSet(mRenderer->GetDevice(), &mCommonDescriptorSetLayout, mCommonDescriptorPool);
+		mCommonDescriptorSet = new Vk::DescriptorSet(mDevice, &mCommonDescriptorSetLayout, mCommonDescriptorPool);
 		mCommonDescriptorSet->BindUniformBuffer(0, per_frame_vs.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
 		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
 
 		mEffects[Vk::EffectType::PHONG] = new Vk::PhongEffect();
-		mEffects[Vk::EffectType::PHONG]->Init(mRenderer);
+		mEffects[Vk::EffectType::PHONG]->Init(mDevice, mRenderer->GetRenderPass());
 	}
 
 	void RenderingManager::InitShader()
 	{
-		mPhongEffect.Init(mRenderer);
+		mPhongEffect.Init(mDevice, mRenderer->GetRenderPass());
 	}
 
 	void RenderingManager::Update()
@@ -142,7 +143,7 @@ namespace Utopian
 		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
 		mCommonDescriptorSet->UpdateDescriptorSets();
 		mTerrain->Update();
-		mWaterRenderer->Update(mRenderer, mMainCamera);
+		mWaterRenderer->Update(mMainCamera);
 	
 		UpdateUi();
 	}
@@ -337,7 +338,7 @@ namespace Utopian
 			JobInput jobInput(mSceneInfo, mJobs, mRenderingSettings);
 			for (auto& job : mJobs)
 			{
-				job->Render(mRenderer, jobInput);
+				job->Render(jobInput);
 			}
 		}
 		else
@@ -351,7 +352,7 @@ namespace Utopian
 
 			RenderScene(mCommandBuffer);
 
-			mWaterRenderer->Render(mRenderer, mCommandBuffer);
+			mWaterRenderer->Render(mCommandBuffer);
 
 			mCommandBuffer->End();
 		}
@@ -459,14 +460,14 @@ namespace Utopian
 		mInstanceBuffer = nullptr;
 	}
 
-	void InstanceGroup::BuildBuffer(Vk::Renderer* renderer)
+	void InstanceGroup::BuildBuffer(Vk::Device* device)
 	{
 		// Todo: use device local buffer for better performance
 		// Note: Recreating the buffer every time since if the size has increased just
 		// mapping and updating the memory is not enough.
 		if (GetNumInstances() != 0)
 		{
-			mInstanceBuffer = std::make_shared<Vk::Buffer>(renderer->GetDevice(),
+			mInstanceBuffer = std::make_shared<Vk::Buffer>(device,
 														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
 														   mInstances.size() * sizeof(InstanceData),
@@ -529,7 +530,7 @@ namespace Utopian
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
 		{
-			mSceneInfo.instanceGroups[i]->BuildBuffer(mRenderer);
+			mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
 		}
 	}
 

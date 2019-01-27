@@ -9,11 +9,11 @@ namespace Utopian
 	class DeferredJob : public BaseJob
 	{
 	public:
-		DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		DeferredJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~DeferredJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
-		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;
 		SharedPtr<Vk::Sampler> depthSampler;

@@ -6,16 +6,16 @@
 
 namespace Utopian
 {
-	DeferredJob::DeferredJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	DeferredJob::DeferredJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
-		renderTarget = std::make_shared<Vk::BasicRenderTarget>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		renderTarget = std::make_shared<Vk::BasicRenderTarget>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(device, renderTarget->GetRenderPass());
 
 		mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage(), renderTarget->GetSampler(), 1u);
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
-		depthSampler = std::make_shared<Vk::Sampler>(renderer->GetDevice(), false);
+		depthSampler = std::make_shared<Vk::Sampler>(device, false);
 		depthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropy filter causes artifacts at the edge between cascades
 		depthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 		depthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
@@ -42,7 +42,7 @@ namespace Utopian
 		effect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), depthSampler.get());
 	}
 
-	void DeferredJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void DeferredJob::Render(const JobInput& jobInput)
 	{
 		effect->SetSettingsData(jobInput.renderingSettings);
 		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));

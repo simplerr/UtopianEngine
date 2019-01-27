@@ -30,11 +30,11 @@ namespace Utopian
 			uint32_t cascadeIndex;
 		};
 
-		ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		ShadowJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~ShadowJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
-		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 		SharedPtr<Vk::Image> depthColorImage;

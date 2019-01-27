@@ -14,11 +14,11 @@ namespace Utopian
 	class WaterRenderer
 	{
 	public:
-		WaterRenderer(Vk::Renderer* renderer, Vk::TextureLoader* textureLoader);
+		WaterRenderer(Vk::TextureLoader* textureLoader, Vk::Renderer* renderer);
 		~WaterRenderer();
 
-		void Render(Vk::Renderer* renderer, Vk::CommandBuffer* commandBuffer);
-		void Update(Vk::Renderer* renderer, Camera* camera);
+		void Render(Vk::CommandBuffer* commandBuffer);
+		void Update(Camera* camera);
 
 		void AddWater(glm::vec3 position, uint32_t numCells);
 
@@ -34,8 +34,6 @@ namespace Utopian
 			Vk::StaticModel* gridModel;
 			glm::vec3 position;
 		};
-
-		Vk::Renderer* mRenderer;
 
 		Vk::WaterEffect mWaterEffect;
 		Vk::BasicRenderTarget* mReflectionRenderTarget;

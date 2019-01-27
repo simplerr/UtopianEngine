@@ -43,7 +43,7 @@ namespace Utopian
 
 		~Block2();
 
-		void GenerateGrassInstances(Vk::Renderer* renderer, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize);
+		void GenerateGrassInstances(Vk::Device* device, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize);
 
 		SharedPtr<Renderable> renderable;
 		std::vector<GrassInstance> grassInstances;
@@ -61,7 +61,7 @@ namespace Utopian
 	class BaseTerrain
 	{
 	public:
-		BaseTerrain(Vk::Renderer* renderer, Camera* camera);
+		BaseTerrain(Vk::Device* device, Camera* camera);
 
 		virtual void Update();
 		virtual void GenerateBlocks() = 0;
@@ -81,7 +81,7 @@ namespace Utopian
 
 	protected:
 		std::map<BlockKey, SharedPtr<Block2>> mBlockList;
-		Vk::Renderer* mRenderer;
+		Vk::Device* mDevice;
 		Camera* mCamera;
 		int32_t mCellsInBlock = 32;
 		int32_t mCellSize = 40;

@@ -4,13 +4,13 @@
 
 namespace Utopian
 {
-	ShadowJob::ShadowJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	ShadowJob::ShadowJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
-		depthColorImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT, 4);
-		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		depthColorImage = std::make_shared<Vk::ImageColor>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT, 4);
+		depthImage = std::make_shared<Vk::ImageDepth>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
+		renderTarget = std::make_shared<Vk::RenderTarget>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 		renderTarget->AddColorAttachment(depthColorImage->GetLayerView(0), depthColorImage->GetFormat());
 		renderTarget->AddDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
@@ -19,21 +19,21 @@ namespace Utopian
 		// Create multiple framebuffers with attachments to the individual array layers in the depth buffer image
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
-			SharedPtr<Vk::FrameBuffers> frameBuffer = std::make_shared<Vk::FrameBuffers>(renderer->GetDevice());
+			SharedPtr<Vk::FrameBuffers> frameBuffer = std::make_shared<Vk::FrameBuffers>(device);
 			frameBuffer->AddAttachmentImage(depthColorImage->GetLayerView(i));
 			frameBuffer->AddAttachmentImage(depthImage.get());
 			frameBuffer->Create(renderTarget->GetRenderPass(), SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 			mFrameBuffers.push_back(frameBuffer);
 		}
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
 			renderTarget->GetRenderPass(),
 			"data/shaders/shadowmap/shadowmap.vert",
 			"data/shaders/shadowmap/shadowmap.frag");
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
-		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(renderer->GetDevice(),
+		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
 			renderTarget->GetRenderPass(),
 			"data/shaders/shadowmap/shadowmap_instancing.vert",
 			"data/shaders/shadowmap/shadowmap.frag");
@@ -49,7 +49,7 @@ namespace Utopian
 
 		effectInstanced->CreatePipeline();
 
-		cascadeTransforms.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		cascadeTransforms.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 		effectInstanced->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 
@@ -69,7 +69,7 @@ namespace Utopian
 
 	}
 
-	void ShadowJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void ShadowJob::Render(const JobInput& jobInput)
 	{
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{

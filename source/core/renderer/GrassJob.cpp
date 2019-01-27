@@ -6,8 +6,8 @@
 
 namespace Utopian
 {
-	GrassJob::GrassJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	GrassJob::GrassJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
 		//effect->BindCombinedImage("textureSampler", todo)
 	}
@@ -21,14 +21,14 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[RenderingManager::DEFERRED_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mWidth, mHeight);
+		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
 		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice,
 			renderTarget->GetRenderPass(),
 			"data/shaders/grass/grass.vert",
 			"data/shaders/grass/grass.frag");
@@ -55,11 +55,11 @@ namespace Utopian
 		effect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
 		effect->CreatePipeline();
 
-		viewProjectionBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		// Need clamp to edge when using transparent textures to not get artifacts at the top
-		sampler = std::make_shared<Vk::Sampler>(mRenderer->GetDevice(), false);
+		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		sampler->Create();
@@ -73,7 +73,7 @@ namespace Utopian
 		effect->BindCombinedImage("textureSampler", &textureArray);
 	}
 
-	void GrassJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void GrassJob::Render(const JobInput& jobInput)
 	{
 		//return;
 		viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);

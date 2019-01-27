@@ -6,8 +6,8 @@
 
 namespace Utopian
 {
-	SkyboxJob::SkyboxJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	SkyboxJob::SkyboxJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
 	}
 
@@ -20,7 +20,7 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[RenderingManager::DEFERRED_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mWidth, mHeight);
+		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
 		// Todo: Investigate why this does not work
@@ -29,15 +29,15 @@ namespace Utopian
 		renderTarget->Create();
 
 		skybox = std::make_shared<Vk::CubeMapTexture>();
-		skybox->LoadFromFile("data/textures/cubemap_space.ktx", VK_FORMAT_R8G8B8A8_UNORM, mRenderer->GetDevice(), mRenderer->GetDevice()->GetQueue());
+		skybox->LoadFromFile("data/textures/cubemap_space.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice, mDevice->GetQueue());
 
-		effect = Vk::gEffectManager().AddEffect<Vk::SkyboxEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		effect = Vk::gEffectManager().AddEffect<Vk::SkyboxEffect>(mDevice, renderTarget->GetRenderPass());
 		effect->BindCombinedImage("samplerCubeMap", skybox->image, renderTarget->GetSampler()); // skybox->sampler);
 
 		mCubeModel = Vk::gModelLoader().LoadDebugBox();
 	}
 
-	void SkyboxJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void SkyboxJob::Render(const JobInput& jobInput)
 	{
 		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 

@@ -13,10 +13,8 @@
 
 namespace Utopian
 {
-	WaterRenderer::WaterRenderer(Vk::Renderer* renderer, Vk::TextureLoader* textureLoader)
+	WaterRenderer::WaterRenderer(Vk::TextureLoader* textureLoader, Vk::Renderer* renderer)
 	{
-		mRenderer = renderer;
-
 		//mGridModel = modelLoader->LoadGrid(renderer->GetDevice(), 2000.0f, 80);
 
 		uint32_t width = renderer->GetWindowWidth();
@@ -25,7 +23,7 @@ namespace Utopian
 		mReflectionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		mRefractionRenderTarget = new Vk::BasicRenderTarget(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
 
-		mWaterEffect.Init(renderer);
+		mWaterEffect.Init(renderer->GetDevice(), renderer->GetRenderPass());
 
 		dudvTexture = textureLoader->LoadTexture("data/textures/water_dudv.png");
 
@@ -42,7 +40,7 @@ namespace Utopian
 		delete mRefractionRenderTarget;
 	}
 
-	void WaterRenderer::Render(Vk::Renderer* renderer, Vk::CommandBuffer* commandBuffer)
+	void WaterRenderer::Render(Vk::CommandBuffer* commandBuffer)
 	{
 		commandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline(0));
 
@@ -69,7 +67,7 @@ namespace Utopian
 		}
 	}
 
-	void WaterRenderer::Update(Vk::Renderer* renderer, Camera* camera)
+	void WaterRenderer::Update(Camera* camera)
 	{
 		mWaterEffect.per_frame_vs.data.projection= camera->GetProjection();
 		mWaterEffect.per_frame_vs.data.view = camera->GetView();

@@ -50,7 +50,7 @@ public:
 class Block
 {
 public:
-	Block(Utopian::Vk::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool);
+	Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool);
 	~Block();
 
 	Utopian::Vk::Buffer* GetVertexBuffer();

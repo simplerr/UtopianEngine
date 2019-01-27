@@ -1,5 +1,5 @@
 #include "vulkan/VulkanDebug.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "Fence.h"
 
 namespace Utopian::Vk

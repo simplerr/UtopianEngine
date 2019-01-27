@@ -37,7 +37,7 @@ namespace Utopian::Vk
 		virtual void CreateVertexDescription(Device* device);
 		virtual void CreatePipelineInterface(Device* device);
 		virtual void CreateDescriptorSets(Device* device);
-		virtual void CreatePipeline(Renderer* renderer);
+		virtual void CreatePipeline(Device* device, RenderPass* renderPass);
 
 		/* Updates the memory for the effects descriptors
 		*/

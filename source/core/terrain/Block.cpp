@@ -4,7 +4,7 @@
 #include "vulkan/TerrainEffect.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-Block::Block(Utopian::Vk::Renderer* renderer, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool)
+Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool)
 {
 	mPosition = position;
 	mColor = color;
@@ -13,7 +13,7 @@ Block::Block(Utopian::Vk::Renderer* renderer, glm::vec3 position, glm::vec3 colo
 	mVoxelSize = voxelSize;
 
 	uint32_t size = blockSize*blockSize*blockSize * 5 * 3;
-	mVertexBuffer = new Utopian::Vk::Buffer(renderer->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, nullptr);
+	mVertexBuffer = new Utopian::Vk::Buffer(device, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, nullptr);
 	mBufferInfo.buffer = mVertexBuffer->GetVkBuffer();
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;

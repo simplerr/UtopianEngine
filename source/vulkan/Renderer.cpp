@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "LightData.h"
 #include "TextureLoader.h"
-#include "Device.h"
+#include "vulkan/handles/Device.h"
 #include "ShaderFactory.h"
 #include "TextOverlay.h"
 #include "ModelLoader.h"

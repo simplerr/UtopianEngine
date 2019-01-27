@@ -5,7 +5,7 @@
 #include <chrono>
 #include "utility/Platform.h"
 #include "VulkanBase.h"
-#include "Device.h"
+#include "vulkan/handles/Device.h"
 #include "VulkanDebug.h"
 #include "Window.h"
 #include "ShaderFactory.h"

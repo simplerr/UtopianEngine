@@ -67,10 +67,10 @@ namespace Utopian::Vk
 		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, setLayout1, mDescriptorPool);
 	}
 
-	void MarchingCubesEffect::CreatePipeline(Renderer* renderer)
+	void MarchingCubesEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		Utopian::Vk::Shader* computeShader = gShaderFactory().CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
-		mComputePipeline = new Utopian::Vk::ComputePipeline(renderer->GetDevice(), &mPipelineInterface, computeShader);
+		mComputePipeline = new Utopian::Vk::ComputePipeline(device, &mPipelineInterface, computeShader);
 		mComputePipeline->Create();
 	}
 

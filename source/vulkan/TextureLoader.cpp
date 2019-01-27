@@ -5,7 +5,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "TextureLoader.h"
 #include "VulkanDebug.h"
-#include "Device.h"
+#include "vulkan/handles/Device.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
 //#include <gli/gli.hpp>
@@ -13,10 +13,9 @@
 
 namespace Utopian::Vk
 {
-	TextureLoader::TextureLoader(Renderer* renderer)
+	TextureLoader::TextureLoader(Device* device)
 	{
-		mRenderer = renderer;
-		mDevice = mRenderer->GetDevice();
+		mDevice = device;
 		mQueue = mDevice->GetQueue()->GetVkHandle();
 	}
 

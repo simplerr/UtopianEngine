@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <functional>
-#include "vulkan/Device.h" 
+#include "vulkan/handles/Device.h" 
 #include "vulkan/VulkanInclude.h"
 
 namespace Utopian::Vk

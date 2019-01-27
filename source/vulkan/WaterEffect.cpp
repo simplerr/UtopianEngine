@@ -51,11 +51,11 @@ namespace Utopian::Vk
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
 
-	void WaterEffect::CreatePipeline(Renderer* renderer)
+	void WaterEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		Shader* shader = gShaderFactory().CreateShader("data/shaders/water/water.vert.spv", "data/shaders/water/water.frag.spv");
 
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2*  pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->Create();

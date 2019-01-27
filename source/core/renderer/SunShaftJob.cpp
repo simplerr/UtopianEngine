@@ -6,8 +6,8 @@
 
 namespace Utopian
 {
-	SunShaftJob::SunShaftJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	SunShaftJob::SunShaftJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
 		sunAzimuth = 0.0f;
 	}
@@ -22,11 +22,11 @@ namespace Utopian
 		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[RenderingManager::SKYBOX_INDEX]);
 
 		// Note: Todo: Probably don't need to be the native window size
-		radialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mWidth, mHeight);
+		radialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		radialBlurRenderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		radialBlurRenderTarget->Create();
 
-		radialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+		radialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice,
 			radialBlurRenderTarget->GetRenderPass(),
 			"data/shaders/common/fullscreen.vert",
 			"data/shaders/sun_shafts/sun_shafts.frag");
@@ -46,14 +46,14 @@ namespace Utopian
 		radialBlurEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
 		radialBlurEffect->CreatePipeline();
 
-		radialBlurParameters.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		radialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		radialBlurEffect->BindUniformBuffer("UBO_parameters", &radialBlurParameters);
 		radialBlurEffect->BindCombinedImage("sunSampler", skydomeJob->sunImage.get(), radialBlurRenderTarget->GetSampler());
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 	}
 
-	void SunShaftJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void SunShaftJob::Render(const JobInput& jobInput)
 	{
 		// Move sun
 		sunAzimuth += Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;

@@ -11,7 +11,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/Renderer.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"

@@ -1,5 +1,5 @@
 #include "Sampler.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/VulkanDebug.h"
 
 namespace Utopian::Vk

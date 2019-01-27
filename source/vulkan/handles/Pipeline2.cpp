@@ -1,5 +1,5 @@
 #include "vulkan/ShaderFactory.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/PipelineInterface.h"

@@ -41,11 +41,11 @@ namespace Utopian::Vk
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
 	}
 
-	void ScreenQuadEffect::CreatePipeline(Renderer* renderer)
+	void ScreenQuadEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		Shader* shader = gShaderFactory().CreateShader("data/shaders/screenquad/screenquad.vert.spv", "data/shaders/screenquad/screenquad.frag.spv");
 
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2*  pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->Create();

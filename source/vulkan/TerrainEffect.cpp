@@ -44,17 +44,17 @@ namespace Utopian::Vk
 		
 	}
 
-	void TerrainEffect::CreatePipeline(Renderer* renderer)
+	void TerrainEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		Utopian::Vk::Shader* shader = gShaderFactory().CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
 
-		Pipeline2* pipeline = new Utopian::Vk::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2* pipeline = new Utopian::Vk::Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->Create();
 		mPipelines[PipelineType2::WIREFRAME] = pipeline;
 
-		Pipeline2* pipeline1 = new Utopian::Vk::Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2* pipeline1 = new Utopian::Vk::Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline1->SetPipelineInterface(&mPipelineInterface);
 		pipeline1->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline1->Create();

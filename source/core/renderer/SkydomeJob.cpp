@@ -6,14 +6,14 @@
 
 namespace Utopian
 {
-	SkydomeJob::SkydomeJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	SkydomeJob::SkydomeJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
 		parameterBlock.data.inclination = 90.0f;
 		parameterBlock.data.azimuth = 0.0f;
 		sunAzimuth = 0.0f;
 
-		sunImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		sunImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
 	}
 
 	SkydomeJob::~SkydomeJob()
@@ -25,7 +25,7 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[RenderingManager::DEFERRED_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mWidth, mHeight);
+		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddColorAttachment(sunImage);
 		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
@@ -34,7 +34,7 @@ namespace Utopian
 		renderTarget->SetClearColor(0, 0, 0);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice,
 			renderTarget->GetRenderPass(),
 			"data/shaders/skydome/skydome.vert",
 			"data/shaders/skydome/skydome.frag");
@@ -44,15 +44,15 @@ namespace Utopian
 		//effect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		effect->CreatePipeline();
 
-		viewProjectionBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		parameterBlock.Create(mRenderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		parameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		effect->BindUniformBuffer("UBO_parameters", &parameterBlock);
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 	}
 
-	void SkydomeJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void SkydomeJob::Render(const JobInput& jobInput)
 	{
 		// Move sun
 		sunAzimuth += Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;

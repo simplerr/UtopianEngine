@@ -22,7 +22,7 @@ namespace Utopian
 		renderable->OnDestroyed();
 	}
 
-	void Block2::GenerateGrassInstances(Vk::Renderer* renderer, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize)
+	void Block2::GenerateGrassInstances(Vk::Device* device, BaseTerrain* terrain, int32_t cellsInBlock, int32_t cellSize)
 	{
 		std::default_random_engine rndGenerator((unsigned)time(nullptr));
 		std::uniform_real_distribution<float> uniformDist(-cellsInBlock * cellSize, 0);
@@ -55,11 +55,11 @@ namespace Utopian
 		if (grassGenerated && instanceBuffer == nullptr)
 		{
 			// Todo: use device local buffer for better performance
-			instanceBuffer = std::make_shared<Vk::Buffer>(renderer->GetDevice(),
-														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-														   grassInstances.size() * sizeof(GrassInstance),
-														   grassInstances.data());
+			instanceBuffer = std::make_shared<Vk::Buffer>(device,
+														  VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+														  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+														  grassInstances.size() * sizeof(GrassInstance),
+														  grassInstances.data());
 		}
 		else if(grassGenerated)
 		{
@@ -73,9 +73,9 @@ namespace Utopian
 
 	}
 
-	BaseTerrain::BaseTerrain(Vk::Renderer* renderer, Camera* camera)
+	BaseTerrain::BaseTerrain(Vk::Device* device, Camera* camera)
 	{
-		mRenderer = renderer;
+		mDevice = device;
 		mCamera = camera;
 	}
 
@@ -133,7 +133,7 @@ namespace Utopian
 				if (mBlockList.find(blockKey) != mBlockList.end())
 				{
 					if (!mBlockList[blockKey]->grassGenerated && mBlockList[blockKey]->hasGrass)
-						mBlockList[blockKey]->GenerateGrassInstances(mRenderer, this, mCellsInBlock, mCellSize);
+						mBlockList[blockKey]->GenerateGrassInstances(mDevice, this, mCellsInBlock, mCellSize);
 
 					mBlockList[blockKey]->grassVisible = true;
 				}

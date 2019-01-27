@@ -1,10 +1,10 @@
 #include <stdexcept>
 #include <array>
-#include "Device.h"
-#include "handles/Instance.h"
-#include "handles/Queue.h"
-#include "handles/CommandPool.h"
-#include "VulkanDebug.h"
+#include "vulkan/handles/Device.h"
+#include "vulkan/handles/Instance.h"
+#include "vulkan/handles/Queue.h"
+#include "vulkan/handles/CommandPool.h"
+#include "vulkan/VulkanDebug.h"
 
 namespace Utopian::Vk
 {

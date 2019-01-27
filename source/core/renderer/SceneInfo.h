@@ -22,7 +22,7 @@ namespace Utopian
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void ClearInstances();
-		void BuildBuffer(Vk::Renderer* renderer);
+		void BuildBuffer(Vk::Device* device);
 
 		uint32_t GetAssetId();
 		uint32_t GetNumInstances();

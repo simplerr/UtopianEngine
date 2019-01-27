@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "vulkan/vulkan.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/handles/Queue.h"
 #include "VulkanInclude.h"
 #include "vulkan/VulkanDebug.h"

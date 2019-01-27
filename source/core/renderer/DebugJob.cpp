@@ -5,8 +5,8 @@
 
 namespace Utopian
 {
-	DebugJob::DebugJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	DebugJob::DebugJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
 	}
 
@@ -19,7 +19,7 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[RenderingManager::DEFERRED_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mRenderer->GetDevice(), mWidth, mHeight);
+		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
 		// Todo: Investigate why this does not work
@@ -27,18 +27,18 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		colorEffect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		colorEffect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
 		colorEffect->CreatePipeline();
-		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mDevice, renderTarget->GetRenderPass());
 
-		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mRenderer->GetDevice(), renderTarget->GetRenderPass());
+		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
 		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		colorEffectWireframe->CreatePipeline();
 
 		mCubeModel = Vk::gModelLoader().LoadDebugBox();
 	}
 
-	void DebugJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void DebugJob::Render(const JobInput& jobInput)
 	{
 		colorEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		normalEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);

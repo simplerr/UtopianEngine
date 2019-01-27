@@ -8,11 +8,11 @@ namespace Utopian
 	class SSAOJob : public BaseJob
 	{
 	public:
-		SSAOJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		SSAOJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SSAOJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
-		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::Image> ssaoImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;

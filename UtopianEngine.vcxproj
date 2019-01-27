@@ -142,6 +142,7 @@
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\EffectManager.cpp" />
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
+    <ClCompile Include="source\vulkan\handles\Device.cpp" />
     <ClCompile Include="source\vulkan\handles\Effect.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
@@ -162,7 +163,6 @@
     <ClCompile Include="source\vulkan\handles\Pipeline2.cpp" />
     <ClCompile Include="source\vulkan\handles\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
-    <ClCompile Include="source\vulkan\Device.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandPool.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSet.cpp" />
@@ -261,6 +261,7 @@
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\EffectManager.h" />
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
+    <ClInclude Include="source\vulkan\handles\Device.h" />
     <ClInclude Include="source\vulkan\handles\Effect.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
@@ -281,7 +282,6 @@
     <ClInclude Include="source\vulkan\handles\Pipeline2.h" />
     <ClInclude Include="source\vulkan\handles\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
-    <ClInclude Include="source\vulkan\Device.h" />
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h" />
     <ClInclude Include="source\vulkan\handles\CommandPool.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSet.h" />

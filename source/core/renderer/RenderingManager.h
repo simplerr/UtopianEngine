@@ -86,6 +86,7 @@ namespace Utopian
 		uint32_t mNextNodeId;
 
 		Vk::Renderer* mRenderer;
+		Vk::Device* mDevice;
 		Vk::CommandBuffer* mCommandBuffer;
 		Vk::PhongEffect mPhongEffect;
 		Terrain* mTerrain;

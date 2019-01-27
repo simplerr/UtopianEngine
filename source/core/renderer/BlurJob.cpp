@@ -4,17 +4,17 @@
 
 namespace Utopian
 {
-	BlurJob::BlurJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	BlurJob::BlurJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
-		blurImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		blurImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		renderTarget->AddColorAttachment(blurImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::BlurEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		effect = Vk::gEffectManager().AddEffect<Vk::BlurEffect>(device, renderTarget->GetRenderPass());
 
 		const uint32_t size = 240;
 		gScreenQuadUi().AddQuad(10, height - (size + 10), size, size, blurImage.get(), renderTarget->GetSampler());
@@ -30,7 +30,7 @@ namespace Utopian
 		effect->BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
 	}
 
-	void BlurJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void BlurJob::Render(const JobInput& jobInput)
 	{
 		effect->SetSettings(jobInput.renderingSettings.blurRadius);
 

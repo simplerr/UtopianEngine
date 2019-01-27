@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "ShaderFactory.h"
-#include "Device.h"
+#include "vulkan/handles/Device.h"
 #include "VulkanDebug.h"
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <DirStackFileIncluder.h>

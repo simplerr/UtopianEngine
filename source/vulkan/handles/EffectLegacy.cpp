@@ -1,6 +1,6 @@
 #include "vulkan/EffectLegacy.h"
 #include "vulkan/Renderer.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 
 namespace Utopian::Vk
 {
@@ -9,13 +9,13 @@ namespace Utopian::Vk
 		mActivePipeline = 0;
 	}
 
-	void EffectLegacy::Init(Renderer* renderer)
+	void EffectLegacy::Init(Device* device, RenderPass* renderPass)
 	{
-		CreateDescriptorPool(renderer->GetDevice());
-		CreateVertexDescription(renderer->GetDevice());
-		CreatePipelineInterface(renderer->GetDevice());
-		CreatePipeline(renderer); // To access the shader manager.
-		CreateDescriptorSets(renderer->GetDevice());
+		CreateDescriptorPool(device);
+		CreateVertexDescription(device);
+		CreatePipelineInterface(device);
+		CreatePipeline(device, renderPass);
+		CreateDescriptorSets(device);
 	}
 
 	void EffectLegacy::SetPipeline(uint32_t pipelineType)

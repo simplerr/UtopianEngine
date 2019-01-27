@@ -3,16 +3,16 @@
 
 namespace Utopian
 {
-	GBufferJob::GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	GBufferJob::GBufferJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
-		positionImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
-		normalImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		normalViewImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		albedoImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		depthImage = std::make_shared<Vk::ImageDepth>(renderer->GetDevice(), width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		positionImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
+		normalImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		normalViewImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		renderTarget->AddColorAttachment(positionImage);
 		renderTarget->AddColorAttachment(normalImage);
 		renderTarget->AddColorAttachment(albedoImage);
@@ -22,17 +22,17 @@ namespace Utopian
 		renderTarget->Create();
 
 		// Todo: Implement a better way for multiple pipelines in the same Effect
-		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
-		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(device, renderTarget->GetRenderPass());
+		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(device, renderTarget->GetRenderPass());
 		//mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mGBufferEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 
-		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
 																		   renderTarget->GetRenderPass(),
 																		   "data/shaders/gbuffer/gbuffer.vert",
 																		   "data/shaders/gbuffer/gbuffer_terrain.frag");
 
-		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mRenderer->GetDevice(),
+		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
 																		     renderTarget->GetRenderPass(),
 																		   	 "data/shaders/gbuffer/gbuffer_instancing.vert",
 																		     "data/shaders/gbuffer/gbuffer.frag");
@@ -53,17 +53,17 @@ namespace Utopian
 		mGBufferEffect->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
 
-		viewProjectionBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
-		settingsBlock.Create(renderer->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
 
 		// Bind the different terrain textures
-		sampler = std::make_shared<Vk::Sampler>(mRenderer->GetDevice(), false);
+		sampler = std::make_shared<Vk::Sampler>(device, false);
 		sampler->Create();
 
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.png");
@@ -90,7 +90,7 @@ namespace Utopian
 	{
 	}
 
-	void GBufferJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void GBufferJob::Render(const JobInput& jobInput)
 	{
 		mGBufferEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		mGBufferEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);

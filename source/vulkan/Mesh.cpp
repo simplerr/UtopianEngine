@@ -3,7 +3,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <glm/gtc/matrix_transform.hpp>
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/VulkanDebug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ModelLoader.h"

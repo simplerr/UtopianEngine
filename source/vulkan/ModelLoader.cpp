@@ -7,7 +7,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/VulkanDebug.h"
 #include "StaticModel.h"
-#include "Device.h"
+#include "vulkan/handles/Device.h"
 
 // TODO: Note that the format should be #include <assimp/Importer.hpp> but something in the project settings is wrong
 #include "../external/assimp/assimp/Importer.hpp"

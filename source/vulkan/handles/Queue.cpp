@@ -1,5 +1,5 @@
 #include "vulkan/VulkanDebug.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "Queue.h"
 #include "Fence.h"
 #include "CommandBuffer.h"

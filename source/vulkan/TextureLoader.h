@@ -12,7 +12,7 @@ namespace Utopian::Vk
 	class TextureLoader : public Module<TextureLoader>
 	{
 	public:
-		TextureLoader(Renderer* renderer);
+		TextureLoader(Device* device);
 		~TextureLoader();
 
 		/** \brief Loads a texture from a file
@@ -40,7 +40,6 @@ namespace Utopian::Vk
 
 	private:
 		std::map<std::string, Texture*> mTextureMap;
-		Renderer* mRenderer;
 		Device*  mDevice;
 		VkQueue mQueue;
 	};

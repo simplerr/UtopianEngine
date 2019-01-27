@@ -13,8 +13,8 @@
 
 namespace Utopian
 {
-	PerlinTerrain::PerlinTerrain(Vk::Renderer* renderer, Camera* camera)
-		: BaseTerrain(renderer, camera)
+	PerlinTerrain::PerlinTerrain(Vk::Device* device, Camera* camera)
+		: BaseTerrain(device, camera)
 	{
 		mPerlinNoise = std::make_shared<PerlinNoise<float>>(std::random_device{}());
 		GenerateGrassInstances(mCamera->GetPosition());
@@ -78,7 +78,7 @@ namespace Utopian
 		SharedPtr<Block2> block = std::make_shared<Block2>(blockPosition, color);
 
 		Vk::StaticModel* model = new Vk::StaticModel();
-		Vk::Mesh* mesh = new Vk::Mesh(mRenderer->GetDevice());
+		Vk::Mesh* mesh = new Vk::Mesh(mDevice);
 
 		float ANY = 0;
 		for (int x = 0; x < mCellsInBlock; x++)
@@ -149,7 +149,7 @@ namespace Utopian
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");*/
 		mesh->LoadTextures("data/textures/ground/grass2.tga");
 		//mesh->LoadTextures("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga", "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_N.png");
-		mesh->BuildBuffers(mRenderer->GetDevice());
+		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
 		// Generate block renderable
@@ -196,7 +196,7 @@ namespace Utopian
 		if (mInstanceBuffer == nullptr)
 		{
 			// Todo: use device local buffer for better performance
-			mInstanceBuffer = std::make_shared<Vk::Buffer>(mRenderer->GetDevice(),
+			mInstanceBuffer = std::make_shared<Vk::Buffer>(mDevice,
 														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
 														   mGrassInstances.size() * sizeof(GrassInstance),

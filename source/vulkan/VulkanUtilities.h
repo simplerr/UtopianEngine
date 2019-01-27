@@ -1,6 +1,6 @@
 #pragma once
 #include <vulkan/vulkan.h>
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/handles/Queue.h"
 
 namespace Utopian::Vk

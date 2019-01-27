@@ -41,13 +41,13 @@ namespace Utopian::Vk
 	public:
 		EffectLegacy();
 
-		void Init(Renderer* renderer);
+		void Init(Device* device, RenderPass* renderPass);
 
 		virtual void CreateDescriptorPool(Device* device) = 0;
 		virtual void CreateVertexDescription(Device* device) = 0;
 		virtual void CreatePipelineInterface(Device* device) = 0;
 		virtual void CreateDescriptorSets(Device* device) = 0;
-		virtual void CreatePipeline(Renderer* renderer) = 0;
+		virtual void CreatePipeline(Device* device, RenderPass* renderPass) = 0;
 		virtual void UpdateMemory() = 0;
 
 		void SetPipeline(uint32_t pipelineType);

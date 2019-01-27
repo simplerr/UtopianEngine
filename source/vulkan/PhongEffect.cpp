@@ -43,21 +43,21 @@ namespace Utopian::Vk
 	{
 	}
 
-	void PhongEffect::CreatePipeline(Renderer* renderer)
+	void PhongEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		// Load shader
 		// [TODO] Move this into Pipeline?
 		Shader* shader = gShaderFactory().CreateShader("data/shaders/phong/phong.vert.spv", "data/shaders/phong/phong.frag.spv");
 
 		// Solid pipeline
-		Pipeline2*  pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		Pipeline2*  pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->Create();
 		mPipelines[Variation::NORMAL] = pipeline;
 
 		// Wireframe pipeline
-		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->Create();
@@ -65,14 +65,14 @@ namespace Utopian::Vk
 
 		// Test pipeline
 		Shader* testShader = gShaderFactory().CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
-		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;
 		pipeline->Create();
 		mPipelines[Variation::TEST] = pipeline;
 
-		pipeline = new Pipeline2(renderer->GetDevice(), renderer->GetRenderPass(), mVertexDescription, shader);
+		pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
 		pipeline->SetPipelineInterface(&mPipelineInterface);
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		// TODO: Disable depth test

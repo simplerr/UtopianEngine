@@ -1,5 +1,5 @@
 #include "vulkan/VulkanDebug.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/Effect.h"

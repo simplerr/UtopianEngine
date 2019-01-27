@@ -5,17 +5,17 @@
 
 namespace Utopian
 {
-	SSAOJob::SSAOJob(Vk::Renderer* renderer, uint32_t width, uint32_t height)
-		: BaseJob(renderer, width, height)
+	SSAOJob::SSAOJob(Vk::Device* device, uint32_t width, uint32_t height)
+		: BaseJob(device, width, height)
 	{
-		ssaoImage = std::make_shared<Vk::ImageColor>(renderer->GetDevice(), width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		ssaoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(renderer->GetDevice(), width, height);
+		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		renderTarget->AddColorAttachment(ssaoImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(renderer->GetDevice(), renderTarget->GetRenderPass());
+		effect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(device, renderTarget->GetRenderPass());
 	}
 
 	SSAOJob::~SSAOJob()
@@ -33,7 +33,7 @@ namespace Utopian
 		CreateKernelSamples();
 	}
 
-	void SSAOJob::Render(Vk::Renderer* renderer, const JobInput& jobInput)
+	void SSAOJob::Render(const JobInput& jobInput)
 	{
 		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
 		effect->SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);

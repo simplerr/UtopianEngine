@@ -17,7 +17,7 @@ namespace Utopian
 	ScreenQuadUi::ScreenQuadUi(Vk::Renderer* renderer)
 	{
 		mRenderer = renderer;
-		mEffect.Init(renderer);
+		mEffect.Init(renderer->GetDevice(), renderer->GetRenderPass());
 
 		mCommandBuffer = new Vk::CommandBuffer(renderer->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mRenderer->AddSecondaryCommandBuffer(mCommandBuffer);

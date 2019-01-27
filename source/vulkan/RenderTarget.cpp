@@ -1,5 +1,5 @@
 #include "vulkan/RenderTarget.h"
-#include "vulkan/Device.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/FrameBuffers.h"

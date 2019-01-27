@@ -84,7 +84,7 @@ namespace Utopian
 		ScriptImports::Register();
 		Vk::EffectManager::Start();
 		Vk::ModelLoader::Start(mRenderer->GetDevice());
-		Vk::TextureLoader::Start(mRenderer.get());
+		Vk::TextureLoader::Start(mRenderer->GetDevice());
 
 		mRenderer->PostInitPrepare();
 
@@ -97,7 +97,7 @@ namespace Utopian
 		World::Instance().LoadScene();
 
 		// Note: There are dependencies on the initialization order here
-		mTerrain = std::make_shared<Terrain>(mRenderer.get(), gRenderingManager().GetMainCamera());
+		mTerrain = std::make_shared<Terrain>(mRenderer->GetDevice(), gRenderingManager().GetMainCamera(), mRenderer->GetRenderPass());
 		mTerrain->SetEnabled(false);
 		RenderingManager::Instance().SetTerrain(mTerrain.get());
 		

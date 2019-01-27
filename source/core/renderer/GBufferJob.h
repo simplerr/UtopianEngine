@@ -17,11 +17,11 @@ namespace Utopian
 			UNIFORM_PARAM(int, normalMapping)
 		UNIFORM_BLOCK_END()
 
-			GBufferJob(Vk::Renderer* renderer, uint32_t width, uint32_t height);
+		GBufferJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~GBufferJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
-		void Render(Vk::Renderer* renderer, const JobInput& jobInput) override;
+		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::Image> positionImage;
 		SharedPtr<Vk::Image> normalImage;
