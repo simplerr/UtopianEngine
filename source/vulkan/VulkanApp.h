@@ -56,15 +56,22 @@ namespace Utopian::Vk
 	class VulkanApp : public VulkanBase
 	{
 	public:
-		VulkanApp();
+		VulkanApp(Window* window);
 		~VulkanApp();
 
 		void Prepare();
 		void PostInitPrepare();
 
-		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
+		/**
+		 * Adds a secondary command buffer that will be executed by
+		 * VulkanApp::Render().
+		 * 
+		 * @note For example one secondary command buffer is used by the
+		 * ScreenQuadUi and ImGui.
+		 */
 		void AddSecondaryCommandBuffer(CommandBuffer* commandBuffer);
 
+		/** Submits the primary command buffer to the graphics queue. */
 		virtual void Render();
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -79,6 +86,13 @@ namespace Utopian::Vk
 
 		void SetClearColor(glm::vec4 color);
 		glm::vec4 GetClearColor();
+
+	private:
+		/**
+		 * Collects all the secondary command buffers that has been added by
+		 * the application and executes them from the primary command buffer.
+		 */
+		void RecordRenderingCommandBuffer(VkFramebuffer frameBuffer);
 
 	private:
 		CommandBuffer*					mPrimaryCommandBuffer;

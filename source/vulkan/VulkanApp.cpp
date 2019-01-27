@@ -32,7 +32,8 @@
 
 namespace Utopian::Vk
 {
-	VulkanApp::VulkanApp() : VulkanBase(VULKAN_ENABLE_VALIDATION)
+	VulkanApp::VulkanApp(Window* window)
+		: VulkanBase(window, VULKAN_ENABLE_VALIDATION)
 	{
 		mSecondaryCommandBuffers.resize(0);
 	}
@@ -56,7 +57,6 @@ namespace Utopian::Vk
 
 	void VulkanApp::PostInitPrepare()
 	{
-		//mTextOverlay = new TextOverlay(this);
 		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
 	}
 
@@ -65,18 +65,12 @@ namespace Utopian::Vk
 		// [TODO] Move to ShaderManager
 		system("cd data/shaders/phong/ && generate-spirv.bat");
 		system("cd data/shaders/test/ && generate-spirv.bat");
-		//system("cd data/shaders/normal_debug/ && generate-spirv.bat");
 		system("cd data/shaders/textoverlay/ && generate-spirv.bat");
 		system("cd data/shaders/terrain/ && generate-spirv.bat");
 		system("cd data/shaders/marching_cubes/ && generate-spirv.bat");
 		system("cd data/shaders/screenquad/ && generate-spirv.bat");
 		system("cd data/shaders/water/ && generate-spirv.bat");
-		//system("cd data/shaders/imgui/ && generate-spirv.bat");
 		system("cd data/shaders/color/ && generate-spirv.bat");
-		//system("cd data/shaders/gbuffer/ && generate-spirv.bat");
-		//system("cd data/shaders/deferred/ && generate-spirv.bat");
-		//system("cd data/shaders/ssao/ && generate-spirv.bat");
-		//system("cd data/shaders/blur/ && generate-spirv.bat");
 	}
 
 	void VulkanApp::SetClearColor(glm::vec4 color)

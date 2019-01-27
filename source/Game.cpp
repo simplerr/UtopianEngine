@@ -52,8 +52,7 @@ namespace Utopian
 
 		Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
 
-		mVulkanApp = std::make_shared<Vk::VulkanApp>();
-		mVulkanApp->InitSwapchain(window);
+		mVulkanApp = std::make_shared<Vk::VulkanApp>(window);
 		mVulkanApp->Prepare();
 		mVulkanApp->SetClearColor(ColorRGB(47, 141, 255));
 

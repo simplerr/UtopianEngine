@@ -19,19 +19,16 @@
 
 namespace Utopian::Vk
 {
-	VulkanBase::VulkanBase(bool enableValidation)
+	VulkanBase::VulkanBase(Utopian::Window* window, bool enableValidation)
+		: mWindow(window)
 	{
 		VulkanDebug::SetupDebugLayers();
 
-		// Create VkInstance
 		mInstance = new Instance("Utopian Engine (pre-alpha)", enableValidation);
 
 		VulkanDebug::InitDebug(mInstance->GetVkHandle());
 
 		mDevice = new Device(mInstance);
-
-		// Setup function pointers for the swap chain
-		mSwapChain.connect(mInstance->GetVkHandle(), mDevice->GetPhysicalDevice(), mDevice->GetVkDevice());
 	}
 
 	VulkanBase::~VulkanBase()
@@ -54,19 +51,22 @@ namespace Utopian::Vk
 		SetupSwapchain();
 
 		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
-			mDepthFormat,
-			VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+								  mDepthFormat,
+								  VK_IMAGE_TILING_OPTIMAL,
+								  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+								  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+								  VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
 		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-		mRenderPass->Create();
 		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());
 	}
 
 	void VulkanBase::SetupSwapchain()
 	{
+		// Setup function pointers for the swap chain
+		mSwapChain.connect(mInstance->GetVkHandle(), mDevice->GetPhysicalDevice(), mDevice->GetVkDevice());
+		mSwapChain.initSurface(mWindow->GetInstance(), mWindow->GetHwnd());
+
 		uint32_t width = GetWindowWidth();
 		uint32_t height = GetWindowHeight();
 		mSwapChain.create(&width, &height);
@@ -87,13 +87,6 @@ namespace Utopian::Vk
 														queue->GetSignalSemaphore()->GetVkHandle()));
 
 		queue->WaitIdle();
-	}
-
-	void VulkanBase::InitSwapchain(Utopian::Window* window)
-	{
-		mWindow = window;
-
-		mSwapChain.initSurface(mWindow->GetInstance(), mWindow->GetHwnd());
 	}
 
 	Device* VulkanBase::GetDevice()

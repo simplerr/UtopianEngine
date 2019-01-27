@@ -33,17 +33,16 @@ namespace Utopian::Vk
 	class VulkanBase
 	{
 	public:
-		VulkanBase(bool enableValidation);
+		VulkanBase(Utopian::Window* window, bool enableValidation);
 		virtual ~VulkanBase();
 
 		virtual void Prepare();
-
 		virtual void Render() = 0;
 
-		void InitSwapchain(Utopian::Window* window);
-		void SetupSwapchain();
-
+		/** To be called at the start of a frame. */
 		void PrepareFrame();
+
+		/** To be called at the end of a frame. */
 		void SubmitFrame();
 
 		virtual void CompileShaders() = 0;
@@ -60,6 +59,9 @@ namespace Utopian::Vk
 		Window* GetWindow();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	private:
+		void SetupSwapchain();
+
 	protected:
 		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
 		VulkanSwapChain					mSwapChain;
