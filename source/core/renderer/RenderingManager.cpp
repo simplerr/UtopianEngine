@@ -45,11 +45,12 @@ namespace Utopian
 
 		mNextNodeId = 0;
 		mMainCamera = nullptr;
-		//mMainCamera = vulkanApp->GetCamera();
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
 		mCommandBuffer = new Vk::CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
+
+		mJobGraph = std::make_shared<JobGraph>(mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
 		// The real solution is to cleanup and remove this.
@@ -58,17 +59,6 @@ namespace Utopian
 		//mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), vulkanApp);
 		//mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
 		//mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
-
-		AddJob(new GBufferJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new SSAOJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new BlurJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new ShadowJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new DeferredJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new GrassJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		//AddJob(new SkyboxJob(renderer, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new SkydomeJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new SunShaftJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-		AddJob(new DebugJob(mDevice, vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -333,11 +323,7 @@ namespace Utopian
 			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
 			mSceneInfo.eyePos = mMainCamera->GetPosition();
 
-			JobInput jobInput(mSceneInfo, mJobs, mRenderingSettings);
-			for (auto& job : mJobs)
-			{
-				job->Render(jobInput);
-			}
+			mJobGraph->ExecuteJobs(mSceneInfo, mRenderingSettings);
 		}
 		else
 		{
@@ -580,12 +566,6 @@ namespace Utopian
 	void RenderingManager::SetClippingPlane(glm::vec4 clippingPlane)
 	{
 		mClippingPlane = clippingPlane;
-	}
-
-	void RenderingManager::AddJob(BaseJob* job)
-	{
-		mJobs.push_back(job);
-		job->Init(mJobs);
 	}
 
 	BaseTerrain* RenderingManager::GetTerrain()

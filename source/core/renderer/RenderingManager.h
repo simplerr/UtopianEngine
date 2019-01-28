@@ -8,6 +8,7 @@
 #include "core/CommonBuffers.h"
 #include "core/renderer/BaseJob.h"
 #include "core/renderer/RenderSettings.h"
+#include "core/renderer/JobGraph.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 
 class Terrain;
@@ -73,13 +74,12 @@ namespace Utopian
 		void SetTerrain(Terrain* terrain);
 		void SetClippingPlane(glm::vec4 clippingPlane);
 
-		void AddJob(BaseJob* job);
-
 		Camera* GetMainCamera();
 
 		BaseTerrain* GetTerrain();
 		RenderingSettings& GetRenderingSettings();
 	private:
+		SharedPtr<JobGraph> mJobGraph;
 		SceneInfo mSceneInfo;
 		Camera* mMainCamera;
 		uint32_t mNextNodeId;
@@ -102,7 +102,6 @@ namespace Utopian
 		glm::vec4 mClippingPlane;
 
 		/*  Deferred rendering experimentation */
-		std::vector<BaseJob*> mJobs;
 		RenderingSettings mRenderingSettings;
 	};
 

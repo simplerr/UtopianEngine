@@ -462,6 +462,9 @@
     <ClCompile Include="source\core\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\renderer\JobGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -832,6 +835,9 @@
     </ClInclude>
     <ClInclude Include="source\core\Engine.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\JobGraph.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
