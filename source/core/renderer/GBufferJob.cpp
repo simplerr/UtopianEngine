@@ -117,7 +117,7 @@ namespace Utopian
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-					VkDescriptorSet descriptorSets[2] = { mGBufferEffectInstanced->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+					VkDescriptorSet descriptorSets[2] = { mGBufferEffectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
 
 					commandBuffer->CmdBindDescriptorSet(mGBufferEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
@@ -152,7 +152,7 @@ namespace Utopian
 				if (!renderable->HasRenderFlags(RENDER_FLAG_TERRAIN))
 				{
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).descriptorSet, textureDescriptorSet };
+					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
 
 					commandBuffer->CmdBindPipeline(effect->GetPipeline());
 					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);

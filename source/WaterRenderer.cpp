@@ -44,7 +44,7 @@ namespace Utopian
 	{
 		commandBuffer->CmdBindPipeline(mWaterEffect.GetPipeline(0));
 
-		VkDescriptorSet descriptorSets[1] = { mWaterEffect.mDescriptorSet0->descriptorSet };
+		VkDescriptorSet descriptorSets[1] = { mWaterEffect.mDescriptorSet0->GetVkHandle() };
 		commandBuffer->CmdBindDescriptorSet(&mWaterEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 		// Push the world matrix constant

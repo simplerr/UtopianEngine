@@ -76,7 +76,7 @@ namespace Utopian::Vk
 
 	VkDescriptorSet Mesh::GetTextureDescriptorSet()
 	{
-		return mTextureDescriptorSet->descriptorSet;
+		return mTextureDescriptorSet->GetVkHandle();
 	}
 
 	void Mesh::CreateDescriptorSets(SharedPtr<DescriptorSetLayout> descriptorSetLayout, SharedPtr<DescriptorPool> descriptorPool)

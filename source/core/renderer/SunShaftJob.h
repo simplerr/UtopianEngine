@@ -13,7 +13,7 @@ namespace Utopian
 			UNIFORM_PARAM(glm::vec2, radialOrigin)
 		UNIFORM_BLOCK_END()
 
-			SunShaftJob(Vk::Device* device, uint32_t width, uint32_t height);
+		SunShaftJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SunShaftJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;

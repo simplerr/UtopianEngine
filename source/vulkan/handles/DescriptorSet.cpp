@@ -12,43 +12,27 @@ namespace Utopian::Vk
 {
 	DescriptorSet::DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
-		mDevice = device;
-		mSetLayout = setLayout;
-
-		VkDescriptorSetLayout setLayoutVk = mSetLayout->GetVkHandle();
-
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptorPool->GetVkHandle();
-		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &setLayoutVk;
-
-		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &descriptorSet));
+		Create(device, setLayout, descriptorPool);
 	}
 
-	DescriptorSet::DescriptorSet(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool)
+	DescriptorSet::DescriptorSet(Device* device, Effect* effect, uint32_t set, DescriptorPool* descriptorPool)
 	{
-		Create(device, pipeline, set, descriptorPool);
-	}
+		mShader = effect->GetShader();
 
-	DescriptorSet::DescriptorSet()
-	{
-		mDevice = nullptr;
-		mSetLayout = nullptr;
+		Create(device, effect->GetPipelineInterface()->GetDescriptorSetLayout(set), descriptorPool);
 	}
 
 	DescriptorSet::~DescriptorSet()
 	{
-		//vkDestroyDescriptorSetLayout(device, setLayout, nullptr);
+		// The descriptor set should be freed once the descriptor pool is released
 	}
 
-	void DescriptorSet::Create(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool)
+	void DescriptorSet::Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
 		mDevice = device;
-		mSetLayout = pipeline->GetPipelineInterface()->GetDescriptorSetLayout(set);
-		mShader = pipeline->GetShader();
+		mSetLayout = setLayout;
 
-		VkDescriptorSetLayout setLayoutVk = mSetLayout->GetVkHandle();
+		VkDescriptorSetLayout setLayoutVk = setLayout->GetVkHandle();
 
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -56,7 +40,7 @@ namespace Utopian::Vk
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &setLayoutVk;
 
-		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &descriptorSet));
+		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &mDescriptorSet));
 	}
 
 	void DescriptorSet::BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
@@ -75,7 +59,7 @@ namespace Utopian::Vk
 		{
 			VkWriteDescriptorSet writeDescriptorSet = {};
 			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			writeDescriptorSet.dstSet = descriptorSet;
+			writeDescriptorSet.dstSet = mDescriptorSet;
 			writeDescriptorSet.descriptorCount = 1;
 			writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			writeDescriptorSet.pBufferInfo = bufferInfo;
@@ -101,7 +85,7 @@ namespace Utopian::Vk
 		{
 			VkWriteDescriptorSet writeDescriptorSet = {};
 			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			writeDescriptorSet.dstSet = descriptorSet;
+			writeDescriptorSet.dstSet = mDescriptorSet;
 			writeDescriptorSet.descriptorCount = 1;
 			writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 			writeDescriptorSet.pBufferInfo = bufferInfo;
@@ -115,7 +99,7 @@ namespace Utopian::Vk
 	{
 		VkWriteDescriptorSet writeDescriptorSet = {};
 		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = descriptorSet;
+		writeDescriptorSet.dstSet = mDescriptorSet;
 		writeDescriptorSet.descriptorCount = descriptorCount;
 		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		writeDescriptorSet.pImageInfo = imageInfo;
@@ -148,7 +132,7 @@ namespace Utopian::Vk
 
 		VkWriteDescriptorSet writeDescriptorSet = {};
 		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = descriptorSet;
+		writeDescriptorSet.dstSet = mDescriptorSet;
 		writeDescriptorSet.descriptorCount = 1;
 		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
@@ -164,32 +148,32 @@ namespace Utopian::Vk
 
 	void DescriptorSet::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
 	{
+		assert(mShader != nullptr);
 		BindUniformBuffer(mShader->NameToBinding(name), bufferInfo);
 	}
 
 	void DescriptorSet::BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
 	{
+		assert(mShader != nullptr);
 		BindStorageBuffer(mShader->NameToBinding(name), bufferInfo);
 	}
 
 	void DescriptorSet::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
 	{
+		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), imageInfo, descriptorCount);
 	}
 
 	void DescriptorSet::BindCombinedImage(std::string name, Image* image, Sampler* sampler)
 	{
+		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), image, sampler);
 	}
 
 	void DescriptorSet::BindCombinedImage(std::string name, VkImageView imageView, Sampler* sampler)
 	{
+		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), imageView, sampler);
-	}
-
-	void DescriptorSet::UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo)
-	{
-		// [TODO]
 	}
 
 	void DescriptorSet::UpdateDescriptorSets()
@@ -197,14 +181,13 @@ namespace Utopian::Vk
 		vkUpdateDescriptorSets(mDevice->GetVkDevice(), mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
 	}
 
-	DescriptorPool::DescriptorPool(Device* device)
-		: Handle(device, vkDestroyDescriptorPool)
+	VkDescriptorSet DescriptorSet::GetVkHandle() const
 	{
-
+		return mDescriptorSet;
 	}
 
-	DescriptorPool::DescriptorPool()
-		: Handle(nullptr, vkDestroyDescriptorPool)
+	DescriptorPool::DescriptorPool(Device* device)
+		: Handle(device, vkDestroyDescriptorPool)
 	{
 
 	}
@@ -219,11 +202,6 @@ namespace Utopian::Vk
 
 	void DescriptorPool::Create()
 	{
-		Create(GetDevice());
-	}
-
-	void DescriptorPool::Create(Device* device)
-	{
 		uint32_t maxSets = 0;
 		for (auto descriptorSize : mDescriptorSizes) 
 		{
@@ -236,6 +214,6 @@ namespace Utopian::Vk
 		createInfo.poolSizeCount = mDescriptorSizes.size();
 		createInfo.pPoolSizes = mDescriptorSizes.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(device->GetVkDevice(), &createInfo, nullptr, &mHandle));
+		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

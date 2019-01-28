@@ -212,7 +212,7 @@ void Terrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::Des
 				mTerrainEffect.SetPipeline(block->pipelineType);
 
 				commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline(0));
-				VkDescriptorSet descriptorSets[1] = { commonDescriptorSet->descriptorSet };
+				VkDescriptorSet descriptorSets[1] = { commonDescriptorSet->GetVkHandle() };
 				commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 				commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());

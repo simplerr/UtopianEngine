@@ -57,6 +57,6 @@ namespace Utopian::Vk
 		std::string mVertexShaderPath;
 		std::string mFragmentShaderPath;
 		std::string mGeometryShaderPath;
-		DescriptorPool mDescriptorPool;
+		SharedPtr<DescriptorPool> mDescriptorPool;
 	};
 }

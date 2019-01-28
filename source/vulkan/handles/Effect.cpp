@@ -19,6 +19,7 @@ namespace Utopian::Vk
 		mGeometryShaderPath = geometryShader;
 		mRenderPass = renderPass;
 		mDevice = device;
+		mDescriptorPool = std::make_shared<DescriptorPool>(device);
 
 		Init();
 	}
@@ -57,14 +58,14 @@ namespace Utopian::Vk
 			for (auto& iter : shader->compiledShaders[i]->reflection.uniformBlocks)
 			{
 				mPipelineInterface.AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);
-				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
+				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 			}
 
 			// Combined image samplers
 			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
 			{
 				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage, iter.second.arraySize);
-				mDescriptorPool.AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, iter.second.arraySize);
+				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, iter.second.arraySize);
 			}
 
 			// Push constants
@@ -75,12 +76,12 @@ namespace Utopian::Vk
 		}
 
 		mPipelineInterface.CreateLayouts(device);
-		mDescriptorPool.Create(device);
+		mDescriptorPool->Create();
 
 		for (uint32_t set = 0; set < mPipelineInterface.GetNumDescriptorSets(); set++)
 		{
-			mDescriptorSets.push_back(DescriptorSet(device, this, set, &mDescriptorPool));
-			mVkDescriptorSets.push_back(mDescriptorSets[set].descriptorSet);	// Todo
+			mDescriptorSets.push_back(DescriptorSet(device, this, set, mDescriptorPool.get()));
+			mVkDescriptorSets.push_back(mDescriptorSets[set].GetVkHandle());	// Todo
 		}
 	}
 

@@ -8,63 +8,63 @@
 
 namespace Utopian::Vk
 {
-	/*
-	Wraps VkDescriptorSetLayout and VkDescriptorSet to make them easier to work with
-	*/
+	/**
+	 * Wrapper for handling descriptor sets, making binding descriptors to them easier.
+	 */
 	class DescriptorSet
 	{
 	public:
 		DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
-		DescriptorSet(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool);
-		DescriptorSet();
+		DescriptorSet(Device* device, Effect* effect, uint32_t set, DescriptorPool* descriptorPool);
 		~DescriptorSet();
 
-		void Create(Device* device, Effect* pipeline, uint32_t set, DescriptorPool* descriptorPool);
+		/** Update the descriptors bound to this descriptor set. */
 		void UpdateDescriptorSets();
 
+		/** Functions for binding different types of descriptors by ID. */
 		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler);
 		void BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler);
 
-		// Bind a uniform buffer by name, note that name must match the GLSL representation
+		/**
+		 * Functions for binding different types of descriptors by their name. 
+		 * @note the name argument must match the name in the GLSL shader.
+		 */
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
 		void BindCombinedImage(std::string name, VkImageView, Sampler* sampler);
 
-		// NOTE: TODO: Legacy
-		void UpdateCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);	// Will be used for changing the texture
+		VkDescriptorSet GetVkHandle() const;
 
-		VkDescriptorSet descriptorSet = VK_NULL_HANDLE;
+	private:
+		void Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 
 	private:
 		Device* mDevice;
 		DescriptorSetLayout* mSetLayout;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 		std::map<int, VkDescriptorImageInfo> mImageInfoMap;
+		VkDescriptorSet mDescriptorSet = VK_NULL_HANDLE;
 
-		// The shader that this descriptor set was created from.
-		// This is used in order to get access to the shader reflection
-		// to perform the string -> binding lookup.
-		// Note: Maybe don't belong here.
-		SharedPtr<Shader> mShader;
+		/**
+		 * The shader that this descriptor set was created from.
+		 * This is used in order to get access to the shader reflection
+		 * to perform the string -> binding lookup.
+		 * Note: Maybe don't belong here. */
+		SharedPtr<Shader> mShader = nullptr;
 	};
 
-	/*
-	Wraps VkDescriptorPool to make it easier to work with
-	Can be created directly from a descriptor layout vector
-	*/
+	/** Wrapper for VkDescriptorPool. */
 	class DescriptorPool : public Handle<VkDescriptorPool>
 	{
 	public:
 		DescriptorPool(Device* device);
-		DescriptorPool();
 		void AddDescriptor(VkDescriptorType type, uint32_t count);
 		void Create();
-		void Create(Device* device);
 	private:
 		std::vector<VkDescriptorPoolSize> mDescriptorSizes;
 	};

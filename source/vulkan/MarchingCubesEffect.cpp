@@ -87,12 +87,12 @@ namespace Utopian::Vk
 
 	VkDescriptorSet MarchingCubesEffect::GetDescriptorSet0()
 	{
-		return mDescriptorSet0->descriptorSet;
+		return mDescriptorSet0->GetVkHandle();
 	}
 
 	VkDescriptorSet MarchingCubesEffect::GetDescriptorSet1()
 	{
-		return mDescriptorSet1->descriptorSet;
+		return mDescriptorSet1->GetVkHandle();
 	}
 
 	void MarchingCubesEffect::UniformBuffer::UpdateMemory()

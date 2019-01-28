@@ -12,7 +12,7 @@ namespace Utopian
 			UNIFORM_PARAM(glm::mat4, viewProjection[SHADOW_MAP_CASCADE_COUNT])
 		UNIFORM_BLOCK_END()
 
-			struct CascadePushConst
+		struct CascadePushConst
 		{
 			CascadePushConst(glm::mat4 _world, uint32_t _cascadeIndex) {
 

@@ -54,7 +54,7 @@ namespace Utopian
 		void CreateQuadBuffers();
 
 		SharedPtr<Utopian::Vk::Effect> mEffect;
-		Utopian::Vk::DescriptorPool mDescriptorPool;
+		SharedPtr<Utopian::Vk::DescriptorPool> mDescriptorPool;
 		Utopian::Vk::VulkanApp* mVulkanApp;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 

@@ -16,6 +16,7 @@ namespace Utopian::Vk
 
 		Create(instance, enableValidation);
 
+		// Note: The queueFamilyIndex is hardcoded to 0
 		mCommandPool = new CommandPool(this, 0);
 		mQueue = new Queue(this);
 
