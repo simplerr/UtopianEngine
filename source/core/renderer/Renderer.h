@@ -17,11 +17,11 @@ namespace Utopian
 	 * The scene renderer that manages and renders all the nodes in the scene.
 	 * Rendering is performed by executing all the jobs in the JobGraph.
 	 */
-	class RenderingManager : public Module<RenderingManager>
+	class Renderer : public Module<Renderer>
 	{
 	public:
-		RenderingManager(Vk::VulkanApp* vulkanApp);
-		~RenderingManager();
+		Renderer(Vk::VulkanApp* vulkanApp);
+		~Renderer();
 
 		/** Updates the cascade frustums, ImGui interface and the terrain. */
 		void Update();
@@ -87,5 +87,5 @@ namespace Utopian
 		uint32_t mNextNodeId;
 	};
 
-	RenderingManager& gRenderingManager();
+	Renderer& gRenderer();
 }

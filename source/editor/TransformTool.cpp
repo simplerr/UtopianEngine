@@ -14,7 +14,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ModelLoader.h"
 #include "core/renderer/Renderable.h"
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 #include "utility/math/Ray.h"
 #include "Colors.h"
 

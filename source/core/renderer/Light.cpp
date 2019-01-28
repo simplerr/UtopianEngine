@@ -1,5 +1,5 @@
 #include "core/renderer/Light.h"
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 
 namespace Utopian
 {
@@ -31,12 +31,12 @@ namespace Utopian
 
 	void Light::Initialize()
 	{
-		RenderingManager::Instance().AddLight(this);
+		Renderer::Instance().AddLight(this);
 	}
 
 	void Light::OnDestroyed()
 	{
-		RenderingManager::Instance().RemoveLight(this);
+		Renderer::Instance().RemoveLight(this);
 	}
 
 	void Light::SetLightData(const Utopian::Vk::LightData& lightData)

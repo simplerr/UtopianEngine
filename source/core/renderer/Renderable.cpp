@@ -1,5 +1,5 @@
 #include "core/renderer/Renderable.h"
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 #include "vulkan/StaticModel.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "utility/math/BoundingBox.h"
@@ -31,13 +31,13 @@ namespace Utopian
 
 	void Renderable::OnDestroyed()
 	{
-		RenderingManager::Instance().RemoveRenderable(this);
+		Renderer::Instance().RemoveRenderable(this);
 	}
 
 	void Renderable::Initialize()
 	{
 		// Add new instance to the VulkanApp (scene)
-		RenderingManager::Instance().AddRenderable(this);
+		Renderer::Instance().AddRenderable(this);
 	}
 
 	Utopian::Vk::StaticModel* Renderable::GetModel()

@@ -1,5 +1,5 @@
 #include <glm/gtc/matrix_transform.hpp>
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 #include "core/renderer/Renderable.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/Vertex.h"
@@ -34,14 +34,14 @@
 
 namespace Utopian
 {
-	RenderingManager& gRenderingManager()
+	Renderer& gRenderer()
 	{
-		return RenderingManager::Instance();
+		return Renderer::Instance();
 	}
 
-	RenderingManager::RenderingManager(Vk::VulkanApp* vulkanApp)
+	Renderer::Renderer(Vk::VulkanApp* vulkanApp)
 	{
-		Vk::VulkanDebug::ConsolePrint("Initializing RenderingManager...");
+		Vk::VulkanDebug::ConsolePrint("Initializing Renderer...");
 
 		mNextNodeId = 0;
 		mMainCamera = nullptr;
@@ -59,16 +59,16 @@ namespace Utopian
 		mSceneInfo.directionalLight = nullptr;
 	}
 
-	RenderingManager::~RenderingManager()
+	Renderer::~Renderer()
 	{
 	}
 
-	void RenderingManager::PostWorldInit()
+	void Renderer::PostWorldInit()
 	{
 		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mDevice, mMainCamera);
 	}
 
-	void RenderingManager::Update()
+	void Renderer::Update()
 	{
 		UpdateCascades();
 
@@ -77,7 +77,7 @@ namespace Utopian
 		UpdateUi();
 	}
 		
-	void RenderingManager::UpdateUi()
+	void Renderer::UpdateUi()
 	{
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured 
@@ -133,7 +133,7 @@ namespace Utopian
 		Based on https://johanmedestrom.wordpress.com/2016/03/18/opengl-cascaded-shadow-maps/
 		From Sascha Willems example demos.
 	*/
-	void RenderingManager::UpdateCascades()
+	void Renderer::UpdateCascades()
 	{
 		float cascadeSplits[SHADOW_MAP_CASCADE_COUNT];
 
@@ -221,7 +221,7 @@ namespace Utopian
 		}
 	}
 
-	void RenderingManager::Render()
+	void Renderer::Render()
 	{
 		if (mRenderingSettings.deferredPipeline == true)
 		{
@@ -234,13 +234,13 @@ namespace Utopian
 		}
 	}
 
-	void RenderingManager::AddRenderable(Renderable* renderable)
+	void Renderer::AddRenderable(Renderable* renderable)
 	{
 		renderable->SetId(mNextNodeId++);
 		mSceneInfo.renderables.push_back(renderable);
 	}
 
-	void RenderingManager::AddLight(Light* light)
+	void Renderer::AddLight(Light* light)
 	{
 		if (light->GetType() == 0) { // Directional
 			if (mSceneInfo.directionalLight == nullptr)
@@ -253,7 +253,7 @@ namespace Utopian
 		mSceneInfo.lights.push_back(light);
 	}
 
-	void RenderingManager::AddCamera(Camera* camera)
+	void Renderer::AddCamera(Camera* camera)
 	{
 		camera->SetId(mNextNodeId++);
 		mSceneInfo.cameras.push_back(camera);
@@ -324,7 +324,7 @@ namespace Utopian
 		return mModel;
 	}
 
-	void RenderingManager::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+	void Renderer::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 	{
 		// Instance group already exists?
 		SharedPtr<InstanceGroup> instanceGroup = nullptr;
@@ -347,7 +347,7 @@ namespace Utopian
 		instanceGroup->AddInstance(position, rotation, scale);
 	}
 	
-	void RenderingManager::ClearInstanceGroups()
+	void Renderer::ClearInstanceGroups()
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
 		{
@@ -355,7 +355,7 @@ namespace Utopian
 		}
 	}
 
-	void RenderingManager::BuildAllInstances()
+	void Renderer::BuildAllInstances()
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
 		{
@@ -363,7 +363,7 @@ namespace Utopian
 		}
 	}
 
-	void RenderingManager::RemoveRenderable(Renderable* renderable)
+	void Renderer::RemoveRenderable(Renderable* renderable)
 	{
 		for (auto iter = mSceneInfo.renderables.begin(); iter != mSceneInfo.renderables.end(); iter++)
 		{
@@ -375,7 +375,7 @@ namespace Utopian
 			}
 		}
 	}
-	void RenderingManager::RemoveLight(Light* light)
+	void Renderer::RemoveLight(Light* light)
 	{
 		for (auto iter = mSceneInfo.lights.begin(); iter != mSceneInfo.lights.end(); iter++)
 		{
@@ -386,7 +386,7 @@ namespace Utopian
 			}
 		}
 	}
-	void RenderingManager::RemoveCamera(Camera* camera)
+	void Renderer::RemoveCamera(Camera* camera)
 	{
 		for (auto iter = mSceneInfo.cameras.begin(); iter != mSceneInfo.cameras.end(); iter++)
 		{
@@ -398,22 +398,22 @@ namespace Utopian
 		}
 	}
 
-	void RenderingManager::SetMainCamera(Camera* camera)
+	void Renderer::SetMainCamera(Camera* camera)
 	{
 		mMainCamera = camera;
 	}
 
-	BaseTerrain* RenderingManager::GetTerrain() const
+	BaseTerrain* Renderer::GetTerrain() const
 	{
 		return mSceneInfo.terrain.get();
 	}
 
-	const RenderingSettings& RenderingManager::GetRenderingSettings() const
+	const RenderingSettings& Renderer::GetRenderingSettings() const
 	{
 		return mRenderingSettings;
 	}
 
-	Camera* RenderingManager::GetMainCamera() const
+	Camera* Renderer::GetMainCamera() const
 	{
 		return mMainCamera;
 	}

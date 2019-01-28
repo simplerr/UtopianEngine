@@ -5,7 +5,7 @@
 */
 
 #include "core/renderer/Renderable.h"
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 #include "core/renderer/RendererUtility.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Image.h"

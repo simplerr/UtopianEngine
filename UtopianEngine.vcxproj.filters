@@ -360,9 +360,6 @@
     <ClCompile Include="source\vulkan\BasicRenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\renderer\RenderingManager.cpp">
-      <Filter>Source Files\scene</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\SSAOEffect.cpp">
       <Filter>Source Files\vulkan\effects\ssao</Filter>
     </ClCompile>
@@ -464,6 +461,9 @@
     </ClCompile>
     <ClCompile Include="source\core\renderer\JobGraph.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\Renderer.cpp">
+      <Filter>Source Files\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -710,9 +710,6 @@
     <ClInclude Include="source\vulkan\BasicRenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\renderer\RenderingManager.h">
-      <Filter>Source Files\scene</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\Common.h">
       <Filter>Source Files\utility</Filter>
     </ClInclude>
@@ -838,6 +835,9 @@
     </ClInclude>
     <ClInclude Include="source\core\renderer\JobGraph.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\Renderer.h">
+      <Filter>Source Files\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

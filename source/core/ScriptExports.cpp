@@ -3,7 +3,7 @@
 #include "core/components/Actor.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CTransform.h"
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 #include "vulkan/VulkanDebug.h"
 #include "utility/Common.h"
 
@@ -45,23 +45,23 @@ namespace Utopian
 		}
 		else
 		{
-			gRenderingManager().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale));
+			gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale));
 		}
 	}
 
 	void ScriptExports::AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale)
 	{
-		gRenderingManager().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale));
+		gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale));
 	}
 
 	void ScriptExports::BuildInstanceBuffers()
 	{
-		gRenderingManager().BuildAllInstances();
+		gRenderer().BuildAllInstances();
 	}
 
 	void ScriptExports::ClearInstanceGroups()
 	{
-		gRenderingManager().ClearInstanceGroups();
+		gRenderer().ClearInstanceGroups();
 	}
 
 	void ScriptExports::SeedNoise(uint32_t seed)

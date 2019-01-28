@@ -1,6 +1,6 @@
 #include "core/Engine.h"
 #include "core/World.h"
-#include "core/renderer/RenderingManager.h"
+#include "core/renderer/Renderer.h"
 #include "core/LuaManager.h"
 #include "core/ScriptExports.h"
 #include "core/AssetLoader.h"
@@ -54,13 +54,13 @@ namespace Utopian
 		mVulkanApp->PostInitPrepare();
 
 		RendererUtility::Start();
-		RenderingManager::Start(mVulkanApp.get());
+		Renderer::Start(mVulkanApp.get());
 
 		ActorFactory::LoadFromFile(mVulkanApp->GetWindow(), "data/scene.lua");
 		World::Instance().LoadScene();
 		World::Instance().Update();
 
-		RenderingManager::Instance().PostWorldInit();
+		Renderer::Instance().PostWorldInit();
 	}
 
 	void Engine::Run()
@@ -99,7 +99,7 @@ namespace Utopian
 		mVulkanApp->BeginUiUpdate();
 
 		World::Instance().Update();
-		RenderingManager::Instance().Update();
+		Renderer::Instance().Update();
 		Vk::EffectManager::Instance().Update();
 
 		// Call the applications Update() function
@@ -110,7 +110,7 @@ namespace Utopian
 
 	void Engine::Render()
 	{
-		RenderingManager::Instance().Render();
+		Renderer::Instance().Render();
 		gScreenQuadUi().Render(mVulkanApp.get());
 
 		// Call the applications Render() function
