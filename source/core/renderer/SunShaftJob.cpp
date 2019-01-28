@@ -18,8 +18,8 @@ namespace Utopian
 
 	void SunShaftJob::Init(const std::vector<BaseJob*>& jobs)
 	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[RenderingManager::DEFERRED_INDEX]);
-		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[RenderingManager::SKYBOX_INDEX]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
+		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[JobGraph::SKYBOX_INDEX]);
 
 		// Note: Todo: Probably don't need to be the native window size
 		radialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);

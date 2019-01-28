@@ -30,9 +30,9 @@ namespace Utopian
 
 	void DeferredJob::Init(const std::vector<BaseJob*>& jobs)
 	{
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[RenderingManager::GBUFFER_INDEX]);
-		BlurJob* blurJob = static_cast<BlurJob*>(jobs[RenderingManager::BLUR_INDEX]);
-		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[RenderingManager::SHADOW_INDEX]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
+		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
+		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 		effect->BindImages(gbufferJob->positionImage.get(),
 			gbufferJob->normalImage.get(),
 			gbufferJob->albedoImage.get(),

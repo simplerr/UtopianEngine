@@ -1,108 +1,90 @@
 #pragma once
-#include <vector>
-#include "vulkan/VulkanInclude.h"
-#include "core/Object.h"
-#include "utility/Module.h"
-#include "utility/Common.h"
-#include "utility/Timer.h"
 #include "core/CommonBuffers.h"
 #include "core/renderer/BaseJob.h"
 #include "core/renderer/RenderSettings.h"
 #include "core/renderer/JobGraph.h"
+#include "core/Object.h"
+#include "vulkan/VulkanInclude.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
-
-class Terrain;
+#include "utility/Module.h"
+#include "utility/Common.h"
+#include "utility/Timer.h"
+#include <vector>
 
 namespace Utopian
 {
-	class Renderable;
-	class Light;
-	class WaterRenderer;
-	class BaseTerrain;
-
-	namespace Vk
-	{
-		class BasicRenderTarget;
-	}
-
+	/** 
+	 * The scene renderer that manages and renders all the nodes in the scene.
+	 * Rendering is performed by executing all the jobs in the JobGraph.
+	 */
 	class RenderingManager : public Module<RenderingManager>
 	{
 	public:
-		enum JobIndex
-		{
-			GBUFFER_INDEX = 0,
-			SSAO_INDEX,
-			BLUR_INDEX,
-			SHADOW_INDEX,
-			DEFERRED_INDEX,
-			GRASS_INDEX,
-			SKYBOX_INDEX,
-			SUN_SHAFT_INDEX,
-			DEBUG_INDEX,
-		};
-
 		RenderingManager(Vk::VulkanApp* vulkanApp);
 		~RenderingManager();
 
-		void PostWorldInit();
-		void InitShaderResources();
-
+		/** Updates the cascade frustums, ImGui interface and the terrain. */
 		void Update();
-		void UpdateUi();
-		void UpdateCascades();
-		void RenderNodes(Vk::CommandBuffer* commandBuffer);
-		void RenderScene(Vk::CommandBuffer* commandBuffer);
-		void Render();
-		void RenderOffscreen();
-		void UpdateUniformBuffers();
 
+		/** Executes the job graph to render the scene. */
+		void Render();
+
+		/** Initialization that needs to be performed after actors are added to the scene.*/
+		void PostWorldInit();
+
+		/** Adds a Renderable to the scene. */
 		void AddRenderable(Renderable* renderable);
+
+		/** Adds a Light to the scene. */
 		void AddLight(Light* light);
+
+		/** 
+		 * Adds a Camera to the scene.
+		 * @note Currently only one camera is supported.
+		 */
 		void AddCamera(Camera* camera);
 
-		// Instancing experimentation
+		/** Removes a Renderable from the scene. */
+		void RemoveRenderable(Renderable* renderable);
+
+		/** Removes a Light from the scene. */
+		void RemoveLight(Light* light);
+
+		/** Removes a Camera from the scene. */
+		void RemoveCamera(Camera* camera);
+
+		/** Sets the main camera of the scene. */
+		void SetMainCamera(Camera* camera);
+
+		/** Returns the main camera of the scene. */
+		Camera* GetMainCamera() const;
+
+		/** Returns the terrain. */
+		BaseTerrain* GetTerrain() const;
+
+		/** Returns the configured rendering settings. */
+		const RenderingSettings& GetRenderingSettings() const;
+
+		/** Instancing experimentation. */
 		void AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void BuildAllInstances();
 		void ClearInstanceGroups();
 
-		void RemoveRenderable(Renderable* renderable);
-		void RemoveLight(Light* light);
-		void RemoveCamera(Camera* camera);
+	private:
+		/** Adds widgets to the ImGui use interface for rendering settings. */
+		void UpdateUi();
 
-		void SetMainCamera(Camera* camera);
+		/** Updates the cascade shadow mapping frustum splits. */
+		void UpdateCascades();
 
-		void SetTerrain(Terrain* terrain);
-		void SetClippingPlane(glm::vec4 clippingPlane);
-
-		Camera* GetMainCamera();
-
-		BaseTerrain* GetTerrain();
-		RenderingSettings& GetRenderingSettings();
 	private:
 		SharedPtr<JobGraph> mJobGraph;
+		RenderingSettings mRenderingSettings;
 		SceneInfo mSceneInfo;
-		Camera* mMainCamera;
-		uint32_t mNextNodeId;
-
 		Vk::VulkanApp* mVulkanApp;
 		Vk::Device* mDevice;
-		Vk::CommandBuffer* mCommandBuffer;
-		SharedPtr<Vk::PhongEffect> mPhongEffect;
-		Terrain* mTerrain;
-		WaterRenderer* mWaterRenderer;
-
-		// TODO: Move these
-		CameraUniformBuffer per_frame_vs;
-		LightUniformBuffer per_frame_ps;
-		SettingsUniformBuffer fog_ubo;
-
-		Vk::DescriptorSetLayout mCommonDescriptorSetLayout;
-		Vk::DescriptorSet* mCommonDescriptorSet;
-		Vk::DescriptorPool* mCommonDescriptorPool;
-		glm::vec4 mClippingPlane;
-
-		/*  Deferred rendering experimentation */
-		RenderingSettings mRenderingSettings;
+		Camera* mMainCamera;
+		uint32_t mNextNodeId;
 	};
 
 	RenderingManager& gRenderingManager();

@@ -15,6 +15,19 @@ namespace Utopian
 	class JobGraph
 	{
 	public:
+		enum JobIndex
+		{
+			GBUFFER_INDEX = 0,
+			SSAO_INDEX,
+			BLUR_INDEX,
+			SHADOW_INDEX,
+			DEFERRED_INDEX,
+			GRASS_INDEX,
+			SKYBOX_INDEX,
+			SUN_SHAFT_INDEX,
+			DEBUG_INDEX,
+		};
+
 		JobGraph(Vk::Device* device, uint32_t width, uint32_t height);
 		~JobGraph();
 

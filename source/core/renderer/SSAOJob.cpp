@@ -24,7 +24,7 @@ namespace Utopian
 
 	void SSAOJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[RenderingManager::GBUFFER_INDEX]);
+		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[JobGraph::GBUFFER_INDEX]);
 		effect->BindGBuffer(gbufferRenderer->positionImage.get(),
 			gbufferRenderer->normalViewImage.get(),
 			gbufferRenderer->albedoImage.get(),

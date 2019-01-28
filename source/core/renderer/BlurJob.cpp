@@ -26,7 +26,7 @@ namespace Utopian
 
 	void BlurJob::Init(const std::vector<BaseJob*>& renderers)
 	{
-		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[RenderingManager::SSAO_INDEX]);
+		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[JobGraph::SSAO_INDEX]);
 		effect->BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
 	}
 

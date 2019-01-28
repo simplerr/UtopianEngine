@@ -47,18 +47,8 @@ namespace Utopian
 		mMainCamera = nullptr;
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
-		mCommandBuffer = new Vk::CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 
 		mJobGraph = std::make_shared<JobGraph>(mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
-
-		// To solve problem with RenderDoc not working with a secondary command buffer that is empty.
-		// The real solution is to cleanup and remove this.
-		//mCommandBuffer->ToggleActive();
-
-		//mWaterRenderer = new WaterRenderer(&Vk::gTextureLoader(), vulkanApp);
-		//mWaterRenderer->AddWater(glm::vec3(123000.0f, 0.0f, 106000.0f), 20);
-		//mWaterRenderer->AddWater(glm::vec3(103000.0f, 0.0f, 96000.0f), 20);
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -75,42 +65,7 @@ namespace Utopian
 
 	void RenderingManager::PostWorldInit()
 	{
-		InitShaderResources();
-
-		/*mPhongEffect = std::make_shared<Vk::PhongEffect>();
-		mPhongEffect->Init(mDevice, mVulkanApp->GetRenderPass());*/
-
 		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mDevice, mMainCamera);
-		//mSceneInfo.terrain->SetViewDistance(4);
-	}
-
-	void RenderingManager::InitShaderResources()
-	{
-		for (auto& light : mSceneInfo.lights)
-		{
-			per_frame_ps.lights.push_back(light->GetLightData());
-		}
-
-		per_frame_ps.constants.numLights = per_frame_ps.lights.size();
-
-		per_frame_vs.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		per_frame_ps.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		fog_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-		mCommonDescriptorPool = new Vk::DescriptorPool(mDevice);
-		mCommonDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100);
-		mCommonDescriptorPool->Create();
-
-		mCommonDescriptorSetLayout.AddUniformBuffer(0, VK_SHADER_STAGE_VERTEX_BIT);
-		mCommonDescriptorSetLayout.AddUniformBuffer(1, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mCommonDescriptorSetLayout.AddUniformBuffer(2, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mCommonDescriptorSetLayout.Create(mDevice);
-
-		mCommonDescriptorSet = new Vk::DescriptorSet(mDevice, &mCommonDescriptorSetLayout, mCommonDescriptorPool);
-		mCommonDescriptorSet->BindUniformBuffer(0, per_frame_vs.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
-		mCommonDescriptorSet->UpdateDescriptorSets();
 	}
 
 	void RenderingManager::Update()
@@ -119,19 +74,6 @@ namespace Utopian
 
 		mSceneInfo.terrain->Update();
 
-		per_frame_ps.lights.clear();
-		for (auto& light : mSceneInfo.lights)
-		{
-			per_frame_ps.lights.push_back(light->GetLightData());
-		}
-
-		mCommonDescriptorSet->BindUniformBuffer(0, per_frame_vs.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(1, per_frame_ps.GetDescriptor());
-		mCommonDescriptorSet->BindUniformBuffer(2, fog_ubo.GetDescriptor());
-		mCommonDescriptorSet->UpdateDescriptorSets();
-		//mTerrain->Update();
-		//mWaterRenderer->Update(mMainCamera);
-	
 		UpdateUi();
 	}
 		
@@ -171,7 +113,7 @@ namespace Utopian
 
 		Vk::UIOverlay::EndWindow();
 
-		Vk::UIOverlay::BeginWindow("Utopian v0.1", glm::vec2(10, 10), 350.0f);
+		Vk::UIOverlay::BeginWindow("Utopian Engine (alpha)", glm::vec2(10, 10), 350.0f);
 
 		glm::vec3 pos = mMainCamera->GetPosition();
 		glm::vec3 dir = mMainCamera->GetDirection();
@@ -279,41 +221,6 @@ namespace Utopian
 		}
 	}
 
-	void RenderingManager::RenderNodes(Vk::CommandBuffer* commandBuffer)
-	{
-		for (auto& renderable : mSceneInfo.renderables)
-		{
-			Vk::StaticModel* model = renderable->GetModel();
-
-			// Todo:: should be able to use other pipelines that PhongEffect
-
-			for (Vk::Mesh* mesh : model->mMeshes)
-			{
-				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
-
-				commandBuffer->CmdBindPipeline(mPhongEffect->GetPipeline(renderable->GetMaterial().variation));
-
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-				VkDescriptorSet descriptorSets[2] = { mCommonDescriptorSet->descriptorSet, textureDescriptorSet };
-				vkCmdBindDescriptorSets(commandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mPhongEffect->GetPipelineLayout(), 0, 2, descriptorSets, 0, NULL);
-
-				commandBuffer->CmdPushConstants(mPhongEffect.get(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-			}
-		}
-	}
-
-	void RenderingManager::RenderScene(Vk::CommandBuffer* commandBuffer)
-	{
-		UpdateUniformBuffers();
-
-		//mTerrain->Render(commandBuffer, mCommonDescriptorSet);
-		RenderNodes(commandBuffer);
-	}
-
 	void RenderingManager::Render()
 	{
 		if (mRenderingSettings.deferredPipeline == true)
@@ -325,68 +232,6 @@ namespace Utopian
 
 			mJobGraph->ExecuteJobs(mSceneInfo, mRenderingSettings);
 		}
-		else
-		{
-			/* Legacy forward rendering pipeline */
-			//RenderOffscreen();
-
-			mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
-			mCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
-			mCommandBuffer->CmdSetScissor(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
-
-			RenderScene(mCommandBuffer);
-
-			//mWaterRenderer->Render(mCommandBuffer);
-
-			mCommandBuffer->End();
-		}
-	}
-
-	void RenderingManager::RenderOffscreen()
-	{
-		glm::vec3 cameraPos = mMainCamera->GetPosition();
-
-		// Reflection renderpass
-		mMainCamera->SetPosition(mMainCamera->GetPosition() - glm::vec3(0, mMainCamera->GetPosition().y *  2, 0)); // NOTE: Water is hardcoded to be at y = 0
-		mMainCamera->SetOrientation(mMainCamera->GetYaw(), -mMainCamera->GetPitch());
-		SetClippingPlane(glm::vec4(0, -1, 0, 0));
-
-		mWaterRenderer->GetReflectionRenderTarget()->Begin();	
-		RenderScene(mWaterRenderer->GetReflectionRenderTarget()->GetCommandBuffer());
-		mWaterRenderer->GetReflectionRenderTarget()->End();
-
-		// Refraction renderpass
-		SetClippingPlane(glm::vec4(0, 1, 0, 0));
-		mMainCamera->SetPosition(cameraPos);
-		mMainCamera->SetOrientation(mMainCamera->GetYaw(), -mMainCamera->GetPitch());
-
-		mWaterRenderer->GetRefractionRenderTarget()->Begin();	
-		RenderScene(mWaterRenderer->GetRefractionRenderTarget()->GetCommandBuffer());
-		mWaterRenderer->GetRefractionRenderTarget()->End();
-
-		SetClippingPlane(glm::vec4(0, 1, 0, 1500000));
-
-		UpdateUniformBuffers();
-	}
-
-	void RenderingManager::UpdateUniformBuffers()
-	{
-		// From VulkanApp.cpp
-		if (mMainCamera != nullptr)
-		{
-			per_frame_vs.camera.projectionMatrix = mMainCamera->GetProjection();
-			per_frame_vs.camera.viewMatrix = mMainCamera->GetView();
-			per_frame_vs.camera.clippingPlane = mClippingPlane;
-			per_frame_vs.camera.eyePos = mMainCamera->GetPosition();
-		}
-
-		fog_ubo.data.fogColor = mVulkanApp->GetClearColor();
-		fog_ubo.data.fogStart = 41500.0f;
-		fog_ubo.data.fogDistance = 15400.0f;
-
-		per_frame_vs.UpdateMemory();
-		per_frame_ps.UpdateMemory();
-		fog_ubo.UpdateMemory();
 	}
 
 	void RenderingManager::AddRenderable(Renderable* renderable)
@@ -558,27 +403,17 @@ namespace Utopian
 		mMainCamera = camera;
 	}
 
-	void RenderingManager::SetTerrain(Terrain* terrain)
-	{
-		mTerrain = terrain;
-	}
-
-	void RenderingManager::SetClippingPlane(glm::vec4 clippingPlane)
-	{
-		mClippingPlane = clippingPlane;
-	}
-
-	BaseTerrain* RenderingManager::GetTerrain()
+	BaseTerrain* RenderingManager::GetTerrain() const
 	{
 		return mSceneInfo.terrain.get();
 	}
 
-	RenderingSettings& RenderingManager::GetRenderingSettings()
+	const RenderingSettings& RenderingManager::GetRenderingSettings() const
 	{
 		return mRenderingSettings;
 	}
 
-	Camera* RenderingManager::GetMainCamera()
+	Camera* RenderingManager::GetMainCamera() const
 	{
 		return mMainCamera;
 	}
