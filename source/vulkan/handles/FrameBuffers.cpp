@@ -12,30 +12,6 @@ namespace Utopian::Vk
 	{
 	}
 
-	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, Image* colorImage, uint32_t width, uint32_t height)
-		: mDevice(device)
-	{
-		// Note: Todo: Seems to be unused!
-		assert(0);
-
-		VkImageView attachments[2];
-		attachments[0] = colorImage->GetView();
-		attachments[1] = depthStencilImage->GetView();
-
-		VkFramebufferCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		createInfo.renderPass = renderPass->GetVkHandle();
-		createInfo.attachmentCount = 2;
-		createInfo.pAttachments = attachments;
-		createInfo.width = width;
-		createInfo.height = height;
-		createInfo.layers = 1;
-
-		// Create a single frame buffer
-		mFrameBuffers.resize(1);
-		VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
-	}
-
 	FrameBuffers::FrameBuffers(Device* device, RenderPass* renderPass, Image* depthStencilImage, VulkanSwapChain* swapChain, uint32_t width, uint32_t height)
 		: mDevice(device)
 	{
@@ -94,13 +70,13 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
 	}
 
-	VkFramebuffer FrameBuffers::GetFrameBuffer(uint32_t index)
+	VkFramebuffer FrameBuffers::GetFrameBuffer(uint32_t index) const
 	{
 		// [TODO] Add bound checks
 		return mFrameBuffers.at(index);
 	}
-	VkFramebuffer FrameBuffers::GetCurrent()
+	VkFramebuffer FrameBuffers::GetCurrent() const
 	{
-		return mFrameBuffers[mCurrentFrameBuffer];
+		return mFrameBuffers[currentFrameBuffer];
 	}
 }

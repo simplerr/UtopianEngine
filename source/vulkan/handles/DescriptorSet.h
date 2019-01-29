@@ -18,7 +18,10 @@ namespace Utopian::Vk
 		DescriptorSet(Device* device, Effect* effect, uint32_t set, DescriptorPool* descriptorPool);
 		~DescriptorSet();
 
-		/** Update the descriptors bound to this descriptor set. */
+		/** 
+		 * Update the descriptors bound to this descriptor set.
+		 * @note Needs to be called after calling the Bind* functions for them to have effect. 
+		 */
 		void UpdateDescriptorSets();
 
 		/** Functions for binding different types of descriptors by ID. */

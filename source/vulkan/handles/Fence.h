@@ -5,6 +5,7 @@
 
 namespace Utopian::Vk
 {
+	/** Wrapper for VkFence. */
 	class Fence : public Handle<VkFence>
 	{
 	public:

@@ -51,7 +51,7 @@ namespace Utopian::Vk
 		RenderPass* mRenderPass = nullptr;
 		Device* mDevice = nullptr;
 		SharedPtr<Shader> mShader;
-		PipelineInterface mPipelineInterface;
+		SharedPtr<PipelineInterface> mPipelineInterface;
 		std::vector<DescriptorSet> mDescriptorSets;
 		std::vector<VkDescriptorSet> mVkDescriptorSets;
 		std::string mVertexShaderPath;

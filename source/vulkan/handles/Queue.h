@@ -5,7 +5,7 @@
 
 namespace Utopian::Vk
 {
-	/** Wrapper for the Vulkan queue. */
+	/** Wrapper for VkQueue. */
 	class Queue : public Handle<VkQueue>
 	{
 	public:
@@ -13,8 +13,11 @@ namespace Utopian::Vk
 		~Queue();
 
 		/**
+		 * Submits a recorded command buffer to the graphics queue.
+		 * 
 		 * @param useSemaphores Controls if the wait and signal semaphores associated
-		 * with the Queue should be used or not.
+		 * with the Queue should be used or not. For example when submitting a command buffer
+		 * in offscreen render passes semaphores are not currently used.
 		 */
 		void Submit(CommandBuffer* commandBuffer, Fence* renderFence, bool useSemaphores);
 		void WaitIdle();

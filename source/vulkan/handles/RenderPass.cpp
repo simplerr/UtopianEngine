@@ -17,7 +17,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	RenderPass::RenderPass(Device * device)
+	RenderPass::RenderPass(Device* device)
 		: Handle(device, vkDestroyRenderPass)
 	{
 

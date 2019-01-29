@@ -174,9 +174,6 @@
     <ClCompile Include="source\vulkan\handles\FrameBuffers.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\Handle.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\Image.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>

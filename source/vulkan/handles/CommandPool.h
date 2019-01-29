@@ -5,7 +5,7 @@
 
 namespace Utopian::Vk
 {
-	/** Wrapper for the Vulkan command pool object. */
+	/** Wrapper for VkCommandPool. */
 	class CommandPool : public Handle<VkCommandPool>
 	{
 	public:

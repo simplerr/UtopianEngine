@@ -31,12 +31,13 @@ namespace Utopian::Vk
 
 	void PhongEffect::CreatePipelineInterface(Device* device)
 	{
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.CreateLayouts(device);
+		mPipelineInterface = std::make_shared<PipelineInterface>(device);
+		mPipelineInterface->AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface->AddUniformBuffer(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface->AddUniformBuffer(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface->AddCombinedImageSampler(SET_1, BINDING_0, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface->AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface->Create();
 	}
 
 	void PhongEffect::CreateDescriptorSets(Device* device)
@@ -51,14 +52,14 @@ namespace Utopian::Vk
 
 		// Solid pipeline
 		Pipeline2*  pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
-		pipeline->SetPipelineInterface(&mPipelineInterface);
+		pipeline->SetPipelineInterface(mPipelineInterface.get());
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->Create();
 		mPipelines[Variation::NORMAL] = pipeline;
 
 		// Wireframe pipeline
 		pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
-		pipeline->SetPipelineInterface(&mPipelineInterface);
+		pipeline->SetPipelineInterface(mPipelineInterface.get());
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->Create();
 		mPipelines[Variation::WIREFRAME] = pipeline;
@@ -66,14 +67,14 @@ namespace Utopian::Vk
 		// Test pipeline
 		Shader* testShader = gShaderFactory().CreateShader("data/shaders/test/test.vert.spv", "data/shaders/test/test.frag.spv");
 		pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
-		pipeline->SetPipelineInterface(&mPipelineInterface);
+		pipeline->SetPipelineInterface(mPipelineInterface.get());
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		pipeline->mRasterizationState.cullMode = VK_CULL_MODE_NONE;
 		pipeline->Create();
 		mPipelines[Variation::TEST] = pipeline;
 
 		pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
-		pipeline->SetPipelineInterface(&mPipelineInterface);
+		pipeline->SetPipelineInterface(mPipelineInterface.get());
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		// TODO: Disable depth test
 		pipeline->mDepthStencilState.depthTestEnable = VK_FALSE;

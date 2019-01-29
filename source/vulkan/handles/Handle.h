@@ -7,6 +7,10 @@
 
 namespace Utopian::Vk
 {
+	/**
+	 * Base class for all the Vulkan wrappers which contains their
+	 * Vulkan object and handles their destruction.
+	 */
 	template<typename T>
 	class Handle
 	{
@@ -20,10 +24,6 @@ namespace Utopian::Vk
 
 		virtual ~Handle()
 		{
-			// REMOVE THIS
-			if (mDevice == VK_NULL_HANDLE)
-				return;
-
 			// Some handles will need a custom destroy function, like CommandBuffer
 			// If there's no mDestroyFunc the derived handle class is trusted to handle destruction
 			if (mDestroyFunc == nullptr)
@@ -45,41 +45,37 @@ namespace Utopian::Vk
 			mDestroyFunc = destroyFunction;
 		}
 
-		Handle(std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
-		{
-			mDestroyFunc = destroyFunction;
-		}
-		
-		virtual void Cleanup(VkDevice device)
-		{
-			assert(mDestroyFunc);
-			assert(mHandle);
-
-			mDestroyFunc(device, mHandle, nullptr);
-
-			mHandle = VK_NULL_HANDLE;
-		}
-
+		/** Returns the Vulkan handle. */
 		T GetVkHandle()
 		{
 			return mHandle;
 		}
 
+		/** Returns a pointer to the Vulkan handle. */
+		T* GetVkHandlePtr()
+		{
+			return &mHandle;
+		}
+
+		/** Returns the Vulkan device. */
 		VkDevice GetVkDevice()
 		{
 			return mDevice->GetVkDevice();
 		}
 
+		/** Returns device wrapper. */
 		Device* GetDevice()
 		{
 			return mDevice;
 		}
 
+		/** Sets the device. */
 		void SetDevice(Device* device)
 		{
 			mDevice = device;
 		}
 
+	protected:
 		T mHandle = VK_NULL_HANDLE;
 	private:
 		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;

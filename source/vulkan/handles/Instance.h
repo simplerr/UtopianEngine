@@ -5,6 +5,7 @@
 
 namespace Utopian::Vk
 {
+	/** Wrapper for the Vulkan instance. */
 	class Instance 
 	{
 	public:

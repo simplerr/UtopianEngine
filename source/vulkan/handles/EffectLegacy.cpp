@@ -25,12 +25,12 @@ namespace Utopian::Vk
 
 	VkPipelineLayout EffectLegacy::GetPipelineLayout()
 	{
-		return mPipelineInterface.GetPipelineLayout();
+		return mPipelineInterface->GetPipelineLayout();
 	}
 
 	DescriptorSetLayout* EffectLegacy::GetDescriptorSetLayout(uint32_t descriptorSet)
 	{
-		return mPipelineInterface.GetDescriptorSetLayout(descriptorSet);
+		return mPipelineInterface->GetDescriptorSetLayout(descriptorSet);
 	}
 
 	Pipeline2* EffectLegacy::GetPipeline(uint32_t variation)

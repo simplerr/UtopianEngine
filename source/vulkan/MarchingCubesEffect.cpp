@@ -32,18 +32,19 @@ namespace Utopian::Vk
 	void MarchingCubesEffect::CreatePipelineInterface(Device* device)
 	{
 		// Descriptor set 0
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_0, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_1, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_3, VK_SHADER_STAGE_COMPUTE_BIT);
-		mPipelineInterface.AddStorageBuffer(SET_0, 4, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface = std::make_shared<PipelineInterface>(device);
+		mPipelineInterface->AddCombinedImageSampler(SET_0, BINDING_0, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface->AddCombinedImageSampler(SET_0, BINDING_1, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface->AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface->AddUniformBuffer(SET_0, BINDING_3, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface->AddStorageBuffer(SET_0, 4, VK_SHADER_STAGE_COMPUTE_BIT);
 
 		// Descriptor set 1
-		mPipelineInterface.AddStorageBuffer(SET_1, 0, VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface->AddStorageBuffer(SET_1, 0, VK_SHADER_STAGE_COMPUTE_BIT);
 
-		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_COMPUTE_BIT);
+		mPipelineInterface->AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_COMPUTE_BIT);
 
-		mPipelineInterface.CreateLayouts(device);
+		mPipelineInterface->Create();
 	}
 
 	void MarchingCubesEffect::CreateDescriptorSets(Device* device)
@@ -54,7 +55,7 @@ namespace Utopian::Vk
 		mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 		mCounterSSBO.UpdateMemory();
 
-		DescriptorSetLayout* setLayout0 = mPipelineInterface.GetDescriptorSetLayout(SET_0);
+		DescriptorSetLayout* setLayout0 = mPipelineInterface->GetDescriptorSetLayout(SET_0);
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, setLayout0, mDescriptorPool);
 		mDescriptorSet0->BindCombinedImage(BINDING_0, edgeTableTex->GetTextureDescriptorInfo());
 		mDescriptorSet0->BindCombinedImage(BINDING_1, triangleTableTex->GetTextureDescriptorInfo());
@@ -63,14 +64,14 @@ namespace Utopian::Vk
 		mDescriptorSet0->BindStorageBuffer(BINDING_4, mCounterSSBO.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 
-		DescriptorSetLayout* setLayout1 = mPipelineInterface.GetDescriptorSetLayout(SET_1);
+		DescriptorSetLayout* setLayout1 = mPipelineInterface->GetDescriptorSetLayout(SET_1);
 		mDescriptorSet1 = new Utopian::Vk::DescriptorSet(device, setLayout1, mDescriptorPool);
 	}
 
 	void MarchingCubesEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		Utopian::Vk::Shader* computeShader = gShaderFactory().CreateComputeShader("data/shaders/marching_cubes/marching_cubes.comp.spv");
-		mComputePipeline = new Utopian::Vk::ComputePipeline(device, &mPipelineInterface, computeShader);
+		mComputePipeline = new Utopian::Vk::ComputePipeline(device, mPipelineInterface.get(), computeShader);
 		mComputePipeline->Create();
 	}
 

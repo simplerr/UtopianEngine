@@ -4,18 +4,23 @@
 
 namespace Utopian::Vk
 {
-	void PipelineInterface::CreateLayouts(Device* device)
+	PipelineInterface::PipelineInterface(Device* device)
+	{
+		mDevice = device;
+	}
+
+	void PipelineInterface::Create()
 	{
 		// Create all VkDescriptorSetLayouts
 		for (auto& setLayout : mDescriptorSetLayouts)
 		{
-			setLayout.second.Create(device);
+			setLayout.second->Create();
 		}
 
 		std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
 		for (auto& setLayout : mDescriptorSetLayouts)
 		{
-			descriptorSetLayouts.push_back(setLayout.second.GetVkHandle());
+			descriptorSetLayouts.push_back(setLayout.second->GetVkHandle());
 		}
 
 		// Create a VkPipelineLayout from all the VkDescriptorSetLayouts and Push Constant ranges
@@ -31,7 +36,7 @@ namespace Utopian::Vk
 			createInfo.pPushConstantRanges = mPushConstantRanges.data();
 		}
 
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(device->GetVkDevice(), &createInfo, nullptr, &mPipelineLayout));
+		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(mDevice->GetVkDevice(), &createInfo, nullptr, &mPipelineLayout));
 	}
 
 	void PipelineInterface::AddUniformBuffer(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
@@ -64,7 +69,7 @@ namespace Utopian::Vk
 		if (mDescriptorSetLayouts.find(descriptorSet) == mDescriptorSetLayouts.end())
 			assert(0);
 
-		return &mDescriptorSetLayouts[descriptorSet];
+		return mDescriptorSetLayouts[descriptorSet].get();
 	}
 
 	VkDescriptorSetLayout PipelineInterface::GetVkDescriptorSetLayout(uint32_t descriptorSet)
@@ -72,7 +77,7 @@ namespace Utopian::Vk
 		if (mDescriptorSetLayouts.find(descriptorSet) == mDescriptorSetLayouts.end())
 			assert(0);
 
-		return mDescriptorSetLayouts[descriptorSet].GetVkHandle();
+		return mDescriptorSetLayouts[descriptorSet]->GetVkHandle();
 	}
 
 	VkPipelineLayout PipelineInterface::GetPipelineLayout()
@@ -84,10 +89,10 @@ namespace Utopian::Vk
 	{
 		if (mDescriptorSetLayouts.find(descriptorSet) == mDescriptorSetLayouts.end())
 		{
-			mDescriptorSetLayouts[descriptorSet] = DescriptorSetLayout();
+			mDescriptorSetLayouts[descriptorSet] = std::make_shared<DescriptorSetLayout>(mDevice);
 		}
 
-		mDescriptorSetLayouts[descriptorSet].AddBinding(binding, descriptorType, descriptorCount, stageFlags);
+		mDescriptorSetLayouts[descriptorSet]->AddBinding(binding, descriptorType, descriptorCount, stageFlags);
 	}
 
 	uint32_t PipelineInterface::GetNumDescriptorSets() const

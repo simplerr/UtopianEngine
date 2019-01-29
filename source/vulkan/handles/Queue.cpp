@@ -20,8 +20,8 @@ namespace Utopian::Vk
 		mSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		mSubmitInfo.waitSemaphoreCount = 1;
 		mSubmitInfo.signalSemaphoreCount = 1;
-		mSubmitInfo.pWaitSemaphores = &mPresentComplete->mHandle;		// Waits for swapChain.acquireNextImage to complete
-		mSubmitInfo.pSignalSemaphores = &mRenderComplete->mHandle;		// swapChain.queuePresent will wait for this submit to complete
+		mSubmitInfo.pWaitSemaphores = mPresentComplete->GetVkHandlePtr();		// Waits for swapChain.acquireNextImage to complete
+		mSubmitInfo.pSignalSemaphores = mRenderComplete->GetVkHandlePtr();		// swapChain.queuePresent will wait for this submit to complete
 		mSubmitInfo.pWaitDstStageMask = &mStageFlags;
 
 		// Get the queue from the device

@@ -169,7 +169,6 @@
     <ClCompile Include="source\vulkan\handles\DescriptorSet.cpp" />
     <ClCompile Include="source\vulkan\handles\Fence.cpp" />
     <ClCompile Include="source\vulkan\handles\FrameBuffers.cpp" />
-    <ClCompile Include="source\vulkan\handles\Handle.cpp" />
     <ClCompile Include="source\vulkan\handles\Image.cpp" />
     <ClCompile Include="source\vulkan\handles\Instance.cpp" />
     <ClCompile Include="source\vulkan\handles\PipelineLegacy.cpp" />

@@ -36,7 +36,7 @@ namespace Utopian::Vk
 
 	void Effect::CreatePipeline()
 	{
-		mPipeline->Create(mShader.get(), &mPipelineInterface);
+		mPipeline->Create(mShader.get(), mPipelineInterface.get());
 	}
 
 	void Effect::RecompileShader()
@@ -52,33 +52,35 @@ namespace Utopian::Vk
 
 	void Effect::CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device)
 	{
+		mPipelineInterface = std::make_shared<PipelineInterface>(mDevice);
+
 		for (int i = 0; i < shader->compiledShaders.size(); i++)
 		{
 			// Uniform blocks
 			for (auto& iter : shader->compiledShaders[i]->reflection.uniformBlocks)
 			{
-				mPipelineInterface.AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);
+				mPipelineInterface->AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);
 				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 			}
 
 			// Combined image samplers
 			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
 			{
-				mPipelineInterface.AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage, iter.second.arraySize);
+				mPipelineInterface->AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage, iter.second.arraySize);
 				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, iter.second.arraySize);
 			}
 
 			// Push constants
 			for (auto& iter : shader->compiledShaders[i]->reflection.pushConstants)
 			{
-				mPipelineInterface.AddPushConstantRange(iter.second.size, shader->compiledShaders[i]->shaderStage);
+				mPipelineInterface->AddPushConstantRange(iter.second.size, shader->compiledShaders[i]->shaderStage);
 			}
 		}
 
-		mPipelineInterface.CreateLayouts(device);
+		mPipelineInterface->Create();
 		mDescriptorPool->Create();
 
-		for (uint32_t set = 0; set < mPipelineInterface.GetNumDescriptorSets(); set++)
+		for (uint32_t set = 0; set < mPipelineInterface->GetNumDescriptorSets(); set++)
 		{
 			mDescriptorSets.push_back(DescriptorSet(device, this, set, mDescriptorPool.get()));
 			mVkDescriptorSets.push_back(mDescriptorSets[set].GetVkHandle());	// Todo
@@ -138,7 +140,7 @@ namespace Utopian::Vk
 
 	PipelineInterface* Effect::GetPipelineInterface()
 	{
-		return &mPipelineInterface;
+		return mPipelineInterface.get();
 	}
 
 	SharedPtr<Shader> Effect::GetShader()

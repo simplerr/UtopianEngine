@@ -33,12 +33,13 @@ namespace Utopian::Vk
 	void WaterEffect::CreatePipelineInterface(Device* device)
 	{
 		// Descriptor set 0
-		mPipelineInterface.AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddCombinedImageSampler(SET_0, BINDING_3, VK_SHADER_STAGE_FRAGMENT_BIT);
-		mPipelineInterface.AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
-		mPipelineInterface.CreateLayouts(device);
+		mPipelineInterface = std::make_shared<PipelineInterface>(device);
+		mPipelineInterface->AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
+		mPipelineInterface->AddCombinedImageSampler(SET_0, BINDING_1, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface->AddCombinedImageSampler(SET_0, BINDING_2, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface->AddCombinedImageSampler(SET_0, BINDING_3, VK_SHADER_STAGE_FRAGMENT_BIT);
+		mPipelineInterface->AddPushConstantRange(sizeof(PushConstantBlock), VK_SHADER_STAGE_VERTEX_BIT);
+		mPipelineInterface->Create();
 	}
 
 	void WaterEffect::CreateDescriptorSets(Device* device)
@@ -46,7 +47,7 @@ namespace Utopian::Vk
 		per_frame_vs.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 		per_frame_ps.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
-		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface.GetDescriptorSetLayout(SET_0), mDescriptorPool);
+		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, mPipelineInterface->GetDescriptorSetLayout(SET_0), mDescriptorPool);
 		mDescriptorSet0->BindUniformBuffer(BINDING_0, per_frame_vs.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();
 	}
@@ -56,7 +57,7 @@ namespace Utopian::Vk
 		Shader* shader = gShaderFactory().CreateShader("data/shaders/water/water.vert.spv", "data/shaders/water/water.frag.spv");
 
 		Pipeline2*  pipeline = new Pipeline2(device, renderPass, mVertexDescription, shader);
-		pipeline->SetPipelineInterface(&mPipelineInterface);
+		pipeline->SetPipelineInterface(mPipelineInterface.get());
 		pipeline->mRasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		pipeline->Create();
 		mPipelines[0] = pipeline;

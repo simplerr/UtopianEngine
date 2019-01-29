@@ -6,10 +6,13 @@
 
 namespace Utopian::Vk
 {
+	/** 
+	 * Wrapper for handling pipeline layouts.
+	 * @note This is currently not used by PipelineInterface.
+	 */
 	class PipelineLayout : public Handle<VkPipelineLayout>
 	{
 	public:
-		//PipelineLayout(Device* device, VkDescriptorSetLayout* setLayout, PushConstantRange* pushConstantRage);
 		PipelineLayout(Device* device);
 
 		void AddDescriptorSetLayout(DescriptorSetLayout* descriptorSetLayout);

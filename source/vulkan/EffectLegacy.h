@@ -5,6 +5,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/VertexDescription.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
@@ -59,7 +60,7 @@ namespace Utopian::Vk
 
 	protected:
 		DescriptorPool* mDescriptorPool;
-		PipelineInterface mPipelineInterface;
+		SharedPtr<PipelineInterface> mPipelineInterface;
 		VertexDescription mVertexDescription;
 		std::map<int, Pipeline2*> mPipelines;
 		uint32_t mActivePipeline;

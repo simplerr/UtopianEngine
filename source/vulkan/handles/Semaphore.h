@@ -5,6 +5,7 @@
 
 namespace Utopian::Vk
 {
+	/** Wrapper for VkSemaphore. */
 	class Semaphore : public Handle<VkSemaphore>
 	{
 	public:
