@@ -108,12 +108,12 @@ namespace Utopian::Vk
 		VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
 	}
 
-	VkImageView Image::GetView()
+	VkImageView Image::GetView() const
 	{
 		return mImageView;
 	}
 
-	VkImageView Image::GetLayerView(uint32_t layer)
+	VkImageView Image::GetLayerView(uint32_t layer) const
 	{
 		if (layer < mLayerViews.size())
 		{
@@ -123,7 +123,7 @@ namespace Utopian::Vk
 		assert(0);
 	}
 
-	VkFormat Image::GetFormat()
+	VkFormat Image::GetFormat() const
 	{
 		return mFormat;
 	}

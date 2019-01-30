@@ -19,7 +19,6 @@ namespace Utopian::Vk
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
-		// ...
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 		colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		colorBlendState.attachmentCount = blendAttachmentState.size();
@@ -66,7 +65,7 @@ namespace Utopian::Vk
 		pipelineCreateInfo.stageCount = shader->shaderStages.size();
 		pipelineCreateInfo.pStages = shader->shaderStages.data();
 
-		// Create the colored pipeline	
+		// Create the pipeline	
 		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 
 		mCreated = true;
