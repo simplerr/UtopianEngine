@@ -52,7 +52,7 @@ namespace Utopian
 		virtual void UpdateUi() override;
 	private:
 		CLight* mLight;
-		Utopian::Vk::LightData mLightData;
+		Utopian::LightData mLightData;
 		int mType;
 	};
 }

@@ -4,7 +4,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "utility/Common.h"
 #include "utility/Module.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 
 namespace Utopian
 {

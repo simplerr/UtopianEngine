@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace Utopian::Vk
+namespace Utopian
 {
 	enum LightType
 	{

@@ -8,7 +8,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/Pipeline.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "vulkan/EffectLegacy.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"

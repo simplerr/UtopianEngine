@@ -6,7 +6,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "core/CommonBuffers.h"
 
 namespace Utopian

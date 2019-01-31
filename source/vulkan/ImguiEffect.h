@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "vulkan/VulkanInclude.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "utility/Common.h"
 
 namespace Utopian::Vk

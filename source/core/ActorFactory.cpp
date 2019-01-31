@@ -64,7 +64,7 @@ namespace Utopian
 					light->SetDirection(dir);
 					light->SetAtt(att.x, att.y, att.z);
 					light->SetIntensity(intensity);
-					light->SetType((Vk::LightType)type);
+					light->SetType((LightType)type);
 					light->SetRange(range);
 					light->SetSpot(spot);
 				}

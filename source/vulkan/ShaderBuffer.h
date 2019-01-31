@@ -2,11 +2,13 @@
 
 #include "vulkan/VulkanInclude.h"
 
-/* Macros that can be used to ease the creation of the C++ representation
-   of the GLSL uniform blocks.
-   
-   Note: Will not be sufficient in complicated uniform blocks (eg. light data)
-   but in those cases ShaderBuffer can be inherited and used manually instead. */
+/**
+ * Macros that can be used to ease the creation of the C++ representation
+ * of the GLSL uniform blocks.
+ *  
+ * @note Will not be sufficient in complicated uniform blocks (eg. light data)
+ * but in those cases ShaderBuffer can be inherited and used manually instead.
+ */
 #define UNIFORM_BLOCK_BEGIN(Name) 											\
 		class Name : public Utopian::Vk::ShaderBuffer 						\
 		{ 																	\
@@ -32,9 +34,7 @@
 
 namespace Utopian::Vk
 {
-	/*
-		Base class for uniform and storage buffer.
-	*/
+	/** Base class for uniform and storage buffer. */
 	class ShaderBuffer
 	{
 	public:

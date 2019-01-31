@@ -375,9 +375,6 @@
     <ClCompile Include="source\vulkan\handles\EffectLegacy.cpp">
       <Filter>Source Files\vulkan\effects</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\Effect.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\EffectManager.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -461,6 +458,9 @@
     </ClCompile>
     <ClCompile Include="source\core\renderer\Renderer.cpp">
       <Filter>Source Files\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\Effect.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -728,9 +728,6 @@
     <ClInclude Include="source\vulkan\EffectLegacy.h">
       <Filter>Source Files\vulkan\effects</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\handles\Effect.h">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\EffectManager.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -835,6 +832,9 @@
     </ClInclude>
     <ClInclude Include="source\core\renderer\Renderer.h">
       <Filter>Source Files\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\Effect.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

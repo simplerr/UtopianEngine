@@ -5,7 +5,7 @@
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/ShaderFactory.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/PipelineInterface.h"

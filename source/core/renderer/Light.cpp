@@ -12,7 +12,7 @@ namespace Utopian
 		SetRange(1000000.0f);
 		SetSpot(100.0f);
 		SetAtt(1.0f, 1.0f, 1.0f);
-		SetType(Utopian::Vk::LightType::DIRECTIONAL_LIGHT);
+		SetType(Utopian::LightType::DIRECTIONAL_LIGHT);
 		SetIntensity(1.0f, 1.0f, 1.0f);
 	}
 
@@ -39,12 +39,12 @@ namespace Utopian
 		Renderer::Instance().RemoveLight(this);
 	}
 
-	void Light::SetLightData(const Utopian::Vk::LightData& lightData)
+	void Light::SetLightData(const Utopian::LightData& lightData)
 	{
 		mLightData = lightData;
 	}
 
-	const Utopian::Vk::LightData& Light::GetLightData()
+	const Utopian::LightData& Light::GetLightData()
 	{
 		// Todo: Is this ok?
 		mLightData.position = GetTransform().GetPosition();
@@ -53,17 +53,17 @@ namespace Utopian
 
 	void Light::SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
 	{
-		mLightData.material = Utopian::Vk::Material(ambient, diffuse, specular);
+		mLightData.material = Utopian::Material(ambient, diffuse, specular);
 		mLightData.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
 	}
 
 	void Light::SetMaterial(const glm::vec4& color)
 	{
-		mLightData.material = Utopian::Vk::Material(color);
+		mLightData.material = Utopian::Material(color);
 		mLightData.intensity = glm::vec3(1.0f, 1.0f, 1.0f);
 	}
 
-	void Light::SetMaterial(const Utopian::Vk::Material & material)
+	void Light::SetMaterial(const Utopian::Material & material)
 	{
 		mLightData.material = material;
 	}
@@ -88,7 +88,7 @@ namespace Utopian
 		mLightData.att = glm::vec3(a0, a1, a2);
 	}
 
-	void Light::SetType(Utopian::Vk::LightType type)
+	void Light::SetType(Utopian::LightType type)
 	{
 		mLightData.type = type;
 	}
@@ -113,17 +113,17 @@ namespace Utopian
 		return mLightData.intensity;
 	}
 
-	Utopian::Vk::LightData* Light::GetLightDataPtr()
+	Utopian::LightData* Light::GetLightDataPtr()
 	{
 		return &mLightData;
 	}
 
-	const Utopian::Vk::LightData& Light::GetLightData() const
+	const Utopian::LightData& Light::GetLightData() const
 	{
 		return mLightData;
 	}
 
-	Utopian::Vk::Material Light::GetMaterial() const
+	Utopian::Material Light::GetMaterial() const
 	{
 		return mLightData.material;
 	}

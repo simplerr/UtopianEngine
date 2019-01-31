@@ -31,7 +31,7 @@ namespace Utopian
 		SetDirection(glm::vec3(0.614f, -0.1f, 0.0f));
 		SetAtt(0.145, 0, 0);
 		SetIntensity(0, 0.193, 0);
-		SetType(Vk::LightType::SPOT_LIGHT);
+		SetType(LightType::SPOT_LIGHT);
 		SetRange(100000);
 		SetSpot(4.0f);
 	}
@@ -51,7 +51,7 @@ namespace Utopian
 		LuaPlus::LuaObject luaObject;
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-		Vk::Material material = GetMaterial();
+		Material material = GetMaterial();
 		luaObject.SetNumber("color_r", material.ambient.r);
 		luaObject.SetNumber("color_g", material.ambient.g);
 		luaObject.SetNumber("color_b", material.ambient.b);
@@ -88,7 +88,7 @@ namespace Utopian
 		mInternal->SetMaterial(color);
 	}
 
-	void CLight::SetMaterial(const Utopian::Vk::Material& material)
+	void CLight::SetMaterial(const Utopian::Material& material)
 	{
 		mInternal->SetMaterial(material);
 	}
@@ -123,7 +123,7 @@ namespace Utopian
 		mInternal->SetAtt(attenuation.x, attenuation.y, attenuation.z);
 	}
 
-	void CLight::SetType(Utopian::Vk::LightType type)
+	void CLight::SetType(Utopian::LightType type)
 	{
 		mInternal->SetType(type);
 	}
@@ -138,7 +138,7 @@ namespace Utopian
 		SetIntensity(intensity.x, intensity.y, intensity.z);
 	}
 
-	const Utopian::Vk::LightData& CLight::GetLightData() const
+	const Utopian::LightData& CLight::GetLightData() const
 	{
 		return mInternal->GetLightData();
 	}
@@ -158,7 +158,7 @@ namespace Utopian
 		return mInternal->GetIntensity();
 	}
 
-	Utopian::Vk::Material CLight::GetMaterial() const
+	Utopian::Material CLight::GetMaterial() const
 	{
 		return mInternal->GetMaterial();
 	}

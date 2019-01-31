@@ -1,5 +1,5 @@
 #include "vulkan/EffectManager.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "imgui/imgui.h"
 #include "vulkan/UIOverlay.h"
 

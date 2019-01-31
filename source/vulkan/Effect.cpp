@@ -6,9 +6,9 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Texture.h"
+#include "vulkan/handles/RenderPass.h"
+#include "vulkan/handles/PipelineLayout.h"
 #include "Effect.h"
-#include "RenderPass.h"
-#include "PipelineLayout.h"
 
 namespace Utopian::Vk
 {

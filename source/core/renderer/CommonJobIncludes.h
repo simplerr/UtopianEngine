@@ -13,7 +13,7 @@
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/RenderPass.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/StaticModel.h"

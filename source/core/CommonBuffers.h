@@ -54,7 +54,7 @@ namespace Utopian
 
 			// Map and update number of lights
 			dataOffset += dataSize;
-			dataSize = lights.size() * sizeof(Utopian::Vk::LightData);
+			dataSize = lights.size() * sizeof(Utopian::LightData);
 			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
 			memcpy(mapped, lights.data(), dataSize);
 			mBuffer->UnmapMemory();
@@ -62,7 +62,7 @@ namespace Utopian
 
 		virtual int GetSize()
 		{
-			return (NUM_MAX_LIGHTS) * sizeof(Utopian::Vk::LightData) + sizeof(constants);
+			return (NUM_MAX_LIGHTS) * sizeof(Utopian::LightData) + sizeof(constants);
 		}
 
 		struct {
@@ -72,7 +72,7 @@ namespace Utopian
 
 		// Note: Todo:
 		const uint32_t NUM_MAX_LIGHTS = 100;
-		std::vector<Utopian::Vk::LightData> lights;
+		std::vector<Utopian::LightData> lights;
 	};
 
 	class SettingsUniformBuffer : public Utopian::Vk::ShaderBuffer

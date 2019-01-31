@@ -139,6 +139,6 @@ void Utopian::LightInspector::UpdateUi()
 		mLight->SetRange(mLightData.range);
 		mLight->SetSpot(mLightData.spot);
 		mLight->SetAttenuation(mLightData.att);
-		mLight->SetType((Utopian::Vk::LightType)mType);
+		mLight->SetType((Utopian::LightType)mType);
 	}
 }

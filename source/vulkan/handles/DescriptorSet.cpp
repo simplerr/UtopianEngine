@@ -2,7 +2,7 @@
 #include "vulkan/handles/Device.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/PipelineInterface.h"
-#include "vulkan/handles/Effect.h"
+#include "vulkan/Effect.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"
 #include "DescriptorSet.h"
