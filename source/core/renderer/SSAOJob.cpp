@@ -43,7 +43,7 @@ namespace Utopian
 
 		// Todo: Should this be moved to the effect instead?
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		effect->BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindDescriptorSets(effect);
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 

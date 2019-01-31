@@ -5,6 +5,7 @@
 
 namespace Utopian::Vk
 {
+	/** Todo: Note: Legacy. */
 	class ComputePipeline : public Handle<VkPipeline>
 	{
 	public:

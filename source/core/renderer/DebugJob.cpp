@@ -63,7 +63,7 @@ namespace Utopian
 					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
 					commandBuffer->CmdBindPipeline(colorEffect->GetPipeline());
-					colorEffect->BindDescriptorSets(commandBuffer);
+					commandBuffer->CmdBindDescriptorSets(colorEffect);
 					commandBuffer->CmdPushConstants(colorEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
@@ -79,7 +79,7 @@ namespace Utopian
 					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
 					commandBuffer->CmdBindPipeline(normalEffect->GetPipeline());
-					normalEffect->BindDescriptorSets(commandBuffer);
+					commandBuffer->CmdBindDescriptorSets(normalEffect);
 					commandBuffer->CmdPushConstants(normalEffect->GetPipelineInterface(), VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
@@ -99,7 +99,7 @@ namespace Utopian
 				Vk::PushConstantBlock pushConsts(world, glm::vec4(0, 1, 0, 1));
 
 				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
-				colorEffectWireframe->BindDescriptorSets(commandBuffer);
+				commandBuffer->CmdBindDescriptorSets(colorEffectWireframe);
 				commandBuffer->CmdPushConstants(colorEffectWireframe->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 				commandBuffer->CmdBindVertexBuffer(0, 1, mCubeModel->mMeshes[0]->GetVertxBuffer());
 				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);

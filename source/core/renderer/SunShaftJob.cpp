@@ -85,7 +85,7 @@ namespace Utopian
 		Vk::CommandBuffer* commandBuffer = radialBlurRenderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
-		radialBlurEffect->BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindDescriptorSets(radialBlurEffect);
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 

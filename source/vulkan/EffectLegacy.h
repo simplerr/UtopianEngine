@@ -52,8 +52,8 @@ namespace Utopian::Vk
 		virtual void UpdateMemory() = 0;
 
 		void SetPipeline(uint32_t pipelineType);
-		VkPipelineLayout GetPipelineLayout();
-		DescriptorSetLayout* GetDescriptorSetLayout(uint32_t descriptorSet);
+		VkPipelineLayout GetPipelineLayout() const;
+		const DescriptorSetLayout* GetDescriptorSetLayout(uint32_t descriptorSet);
 		Pipeline2* GetPipeline(uint32_t variation);
 		DescriptorPool* GetDescriptorPool();
 		VertexDescription GetVertexDescription();

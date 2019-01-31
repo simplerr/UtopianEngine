@@ -30,7 +30,7 @@ namespace Utopian::Vk
 	void DescriptorSet::Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
 	{
 		mDevice = device;
-		mSetLayout = setLayout;
+		mSetLayout = (DescriptorSetLayout*)setLayout;
 
 		VkDescriptorSetLayout setLayoutVk = setLayout->GetVkHandle();
 

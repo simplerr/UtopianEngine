@@ -80,7 +80,7 @@ namespace Utopian::Vk
 		return mDescriptorSetLayouts[descriptorSet]->GetVkHandle();
 	}
 
-	VkPipelineLayout PipelineInterface::GetPipelineLayout()
+	VkPipelineLayout PipelineInterface::GetPipelineLayout() const
 	{
 		return mPipelineLayout;
 	}

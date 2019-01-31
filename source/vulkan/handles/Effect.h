@@ -17,31 +17,46 @@ namespace Utopian::Vk
 	class Effect
 	{
 	public:
+		/** @note CreatePipeline() must be called explicitly after constructor. */
 		Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader = "NONE");
 
+		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipelie. */
 		void RecompileShader();
-		// This must explictly be called
-		// The constructor sets default values and to make modifications to the pipeline they should be made between the constructor and Create()
+
+		/**
+		 * This must explictly be called. Reason being that the constructor sets default values and to make
+		 * modifications to the pipeline they must be made between before calling this function.
+		 */
 		void CreatePipeline();
 
+		/** 
+		 * Functions used to bind shader resources by name.
+		 * @note the name must match the name in the GLSL shader.
+		 * @note uses the internal shader reflection to perform name -> set ID mapping.
+		 */
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
+		void BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock);
 		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
 		void BindCombinedImage(std::string name, TextureArray* textureArray);
 
-		void BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock);
+		/** 
+		 * Returns a descriptor set by index.
+		 * Needs to be used if you want to bind additional descriptor sets that not are part of the Effect itself,
+		 * for example Meshes contains their own descriptor set for their texture.
+		 * @note This should only be used in rare cases.
+		 */
+		const DescriptorSet& GetDescriptorSet(uint32_t set) const;
 
-		void BindDescriptorSets(CommandBuffer* commandBuffer);
-
-		// Note: This should only be used in rare cases
-		DescriptorSet& GetDescriptorSet(uint32_t set);
-
-		PipelineInterface* GetPipelineInterface();
+		/** Returns a pointer to the Pipeline object. It is expected to be modified. */
 		Pipeline* GetPipeline();
 
-		SharedPtr<Shader> GetShader();
-		std::string GetVertexShaderPath();
+		const VkDescriptorSet* GetDescriptorSets() const;
+		uint32_t GetNumDescriptorSets() const;
+		PipelineInterface* GetPipelineInterface();
+		SharedPtr<Shader> GetShader() const;
+		std::string GetVertexShaderPath() const;
 	protected:
 		SharedPtr<Pipeline> mPipeline;
 	private:

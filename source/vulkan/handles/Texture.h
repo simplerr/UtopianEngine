@@ -21,8 +21,8 @@ namespace Utopian::Vk
 		uint32_t GetNumImages();
 	private:
 		std::vector<VkDescriptorImageInfo> mImageInfos;
-
 	};
+
 	class Texture
 	{
 	public:

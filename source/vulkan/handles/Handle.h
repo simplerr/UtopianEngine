@@ -46,7 +46,7 @@ namespace Utopian::Vk
 		}
 
 		/** Returns the Vulkan handle. */
-		T GetVkHandle()
+		T GetVkHandle() const
 		{
 			return mHandle;
 		}
@@ -58,7 +58,7 @@ namespace Utopian::Vk
 		}
 
 		/** Returns the Vulkan device. */
-		VkDevice GetVkDevice()
+		VkDevice GetVkDevice() const
 		{
 			return mDevice->GetVkDevice();
 		}

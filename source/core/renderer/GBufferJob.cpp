@@ -166,7 +166,7 @@ namespace Utopian
 				else
 				{
 					commandBuffer->CmdBindPipeline(mGBufferEffectTerrain->GetPipeline());
-					mGBufferEffectTerrain->BindDescriptorSets(commandBuffer);
+					commandBuffer->CmdBindDescriptorSets(mGBufferEffectTerrain);
 					commandBuffer->CmdPushConstants(mGBufferEffectTerrain->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
 
 					// Note: Move out from else

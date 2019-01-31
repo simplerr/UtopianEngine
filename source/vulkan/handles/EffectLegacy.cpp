@@ -23,12 +23,12 @@ namespace Utopian::Vk
 		mActivePipeline = pipelineType;
 	}
 
-	VkPipelineLayout EffectLegacy::GetPipelineLayout()
+	VkPipelineLayout EffectLegacy::GetPipelineLayout() const
 	{
 		return mPipelineInterface->GetPipelineLayout();
 	}
 
-	DescriptorSetLayout* EffectLegacy::GetDescriptorSetLayout(uint32_t descriptorSet)
+	const DescriptorSetLayout* EffectLegacy::GetDescriptorSetLayout(uint32_t descriptorSet)
 	{
 		return mPipelineInterface->GetDescriptorSetLayout(descriptorSet);
 	}

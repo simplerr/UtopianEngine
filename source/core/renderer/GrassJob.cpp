@@ -75,7 +75,6 @@ namespace Utopian
 
 	void GrassJob::Render(const JobInput& jobInput)
 	{
-		//return;
 		viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
@@ -87,7 +86,7 @@ namespace Utopian
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		effect->BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindDescriptorSets(effect);
 
 		// Loop over all blocks and render their grass instance buffers
 		auto blocks = jobInput.sceneInfo.terrain->GetBlocks();

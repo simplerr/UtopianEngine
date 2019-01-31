@@ -1,20 +1,25 @@
 #pragma once
 
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
 #include "Handle.h"
 
 namespace Utopian::Vk
 {
+	/** Wrapper for VkCommandBuffer. See Vulkan specification for documentation. */
 	class CommandBuffer : public Handle<VkCommandBuffer>
 	{
 	public:
 		CommandBuffer(Device* device, VkCommandBufferLevel level, bool begin = false);
 		~CommandBuffer();
 
-		void Create(VkCommandBufferLevel level, bool begin = false);
-		void Begin();
+		/** Should be used for secondary command buffers. */
 		void Begin(RenderPass* renderPass, VkFramebuffer frameBuffer);
+
+		void Begin();
 		void End();
+
+		/** Uses the Queue from the Device to submit recorded commands. */
 		void Flush(bool free = false);
 		void Cleanup();
 
@@ -27,14 +32,15 @@ namespace Utopian::Vk
 		void CmdBindPipeline(Pipeline2* pipeline);
 		void CmdBindPipeline(ComputePipeline* pipeline);
 		void CmdBindPipeline(VkPipeline pipeline);
-		void CmdBindPipeline(Pipeline* pipeline);
-		void CmdBindDescriptorSet(PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);
-		void CmdBindDescriptorSet(EffectLegacy* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
+		void CmdBindPipeline(const Pipeline* pipeline);
+		void CmdBindDescriptorSet(const PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);
+		void CmdBindDescriptorSet(const EffectLegacy* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdBindDescriptorSet(VkPipelineLayout pipelineLayout, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
-		void CmdBindDescriptorSet(PipelineInterface* pipelineInterface, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
-		void CmdPushConstants(PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
-		void CmdPushConstants(EffectLegacy* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
-		void CmdPushConstants(PipelineInterface* pipelineInterface, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
+		void CmdBindDescriptorSet(const PipelineInterface* pipelineInterface, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
+		void CmdBindDescriptorSets(const SharedPtr<Effect>& effect, uint32_t firstSet = 0, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
+		void CmdPushConstants(const PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
+		void CmdPushConstants(const EffectLegacy* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
+		void CmdPushConstants(const PipelineInterface* pipelineInterface, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* buffers);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, Buffer* buffer);
 		void CmdBindIndexBuffer(VkBuffer buffer, VkDeviceSize offset, VkIndexType indexType);

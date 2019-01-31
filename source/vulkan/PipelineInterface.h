@@ -36,7 +36,7 @@ namespace Utopian::Vk
 
 		DescriptorSetLayout* GetDescriptorSetLayout(uint32_t descriptorSet);
 		VkDescriptorSetLayout GetVkDescriptorSetLayout(uint32_t descriptorSet);
-		VkPipelineLayout GetPipelineLayout();
+		VkPipelineLayout GetPipelineLayout() const;
 		uint32_t GetNumDescriptorSets() const;
 
 	private:

@@ -44,9 +44,8 @@ namespace Utopian
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-		// Todo: Should this be moved to the effect instead?
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		effect->BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindDescriptorSets(effect);
 
 		commandBuffer->CmdBindVertexBuffer(0, 1, mCubeModel->mMeshes[0]->GetVertxBuffer());
 		commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);

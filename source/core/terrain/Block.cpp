@@ -4,7 +4,7 @@
 #include "vulkan/TerrainEffect.h"
 #include "vulkan/handles/DescriptorSet.h"
 
-Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool)
+Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, const Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool)
 {
 	mPosition = position;
 	mColor = color;

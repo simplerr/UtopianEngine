@@ -82,9 +82,7 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 
 		mCommandBuffer->CmdBindPipeline(mImguiEffect->GetPipeline());
-		//VkDescriptorSet descriptorSets[1] = { mImguiEffect.mDescriptorSet0->descriptorSet };
-		//vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mImguiEffect.GetPipelineLayout(), 0, 1, descriptorSets, 0, NULL);
-		mImguiEffect->BindDescriptorSets(mCommandBuffer);
+		mCommandBuffer->CmdBindDescriptorSets(mImguiEffect);
 
 		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mVertexBuffer);
 		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer.GetVkBuffer(), 0, VK_INDEX_TYPE_UINT16);

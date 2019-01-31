@@ -87,7 +87,7 @@ namespace Utopian
 
 		// Todo: Should this be moved to the effect instead?
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		effect->BindDescriptorSets(commandBuffer);
+		commandBuffer->CmdBindDescriptorSets(effect);
 
 		commandBuffer->CmdBindVertexBuffer(0, 1, mSkydomeModel->mMeshes[0]->GetVertxBuffer());
 		commandBuffer->CmdBindIndexBuffer(mSkydomeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);

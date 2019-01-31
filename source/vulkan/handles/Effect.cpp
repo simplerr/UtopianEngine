@@ -125,12 +125,7 @@ namespace Utopian::Vk
 		BindUniformBuffer(name, shaderBlock->GetDescriptor());
 	}
 
-	void Effect::BindDescriptorSets(CommandBuffer* commandBuffer)
-	{
-		commandBuffer->CmdBindDescriptorSet(GetPipelineInterface()->GetPipelineLayout(), mVkDescriptorSets.size(), mVkDescriptorSets.data(), VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
-	}
-
-	DescriptorSet& Effect::GetDescriptorSet(uint32_t set)
+	const DescriptorSet& Effect::GetDescriptorSet(uint32_t set) const
 	{
 		if (set < 0 || set >= mDescriptorSets.size())
 			assert(0);
@@ -143,12 +138,12 @@ namespace Utopian::Vk
 		return mPipelineInterface.get();
 	}
 
-	SharedPtr<Shader> Effect::GetShader()
+	SharedPtr<Shader> Effect::GetShader() const
 	{
 		return mShader;
 	}
 
-	std::string Effect::GetVertexShaderPath()
+	std::string Effect::GetVertexShaderPath() const
 	{
 		return mVertexShaderPath;
 	}
@@ -156,5 +151,15 @@ namespace Utopian::Vk
 	Pipeline* Effect::GetPipeline()
 	{
 		return mPipeline.get();
+	}
+	
+	const VkDescriptorSet* Effect::GetDescriptorSets() const
+	{
+		return mVkDescriptorSets.data();
+	}
+
+	uint32_t Effect::GetNumDescriptorSets() const
+	{
+		return mVkDescriptorSets.size();
 	}
 }
