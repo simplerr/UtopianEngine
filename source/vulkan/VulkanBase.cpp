@@ -22,13 +22,13 @@ namespace Utopian::Vk
 	VulkanBase::VulkanBase(Utopian::Window* window, bool enableValidation)
 		: mWindow(window)
 	{
-		VulkanDebug::SetupDebugLayers();
+		VulkanDebug::SetupConsole("Vulkan Debug Console");
 
 		mInstance = new Instance("Utopian Engine (pre-alpha)", enableValidation);
-
-		VulkanDebug::InitDebug(mInstance->GetVkHandle());
+		VulkanDebug::InitDebug(mInstance);
 
 		mDevice = new Device(mInstance);
+		DebugMarker::Setup(mDevice);
 	}
 
 	VulkanBase::~VulkanBase()

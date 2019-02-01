@@ -1,5 +1,6 @@
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "vulkan/VulkanDebug.h"
 
 namespace Utopian
 {
@@ -104,6 +105,8 @@ namespace Utopian
 		renderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
+		Vk::DebugMarker::BeginRegion(commandBuffer->GetVkHandle(), "G-buffer pass", glm::vec4(1.0f, 0.78f, 0.05f, 1.0f));
+
 		/* Render instanced assets */
 		commandBuffer->CmdBindPipeline(mGBufferEffectInstanced->GetPipeline());
 		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
@@ -176,8 +179,9 @@ namespace Utopian
 				}
 
 			}
-		}
-
+		}	
+		
+		Vk::DebugMarker::EndRegion(commandBuffer->GetVkHandle());
 		renderTarget->End();
 	}
 }

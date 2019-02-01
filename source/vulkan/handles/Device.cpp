@@ -14,13 +14,15 @@ namespace Utopian::Vk
 		mEnabledFeatures.shaderTessellationAndGeometryPointSize = VK_TRUE;
 		mEnabledFeatures.fillModeNonSolid = VK_TRUE;
 
-		Create(instance, enableValidation);
+		RetrievePhysical(instance);
+		RetrieveSupportedExtensions();
+		CreateLogical(enableValidation);
+
+		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
 
 		// Note: The queueFamilyIndex is hardcoded to 0
 		mCommandPool = new CommandPool(this, 0);
 		mQueue = new Queue(this);
-
-		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
 	}
 
 	Device::~Device()
@@ -31,7 +33,7 @@ namespace Utopian::Vk
 		vkDestroyDevice(mDevice, nullptr);
 	}
 
-	void Device::Create(Instance* instance, bool enableValidation)
+	void Device::RetrievePhysical(Instance* instance)
 	{
 		// Query for the number of GPUs
 		uint32_t gpuCount = 0;
@@ -49,7 +51,10 @@ namespace Utopian::Vk
 
 		// Assume that there only is 1 GPU
 		mPhysicalDevice = physicalDevices[0];
+	}
 
+	void Device::CreateLogical(bool enableValidation)
+	{
 		// This is not used right now, but GPU vendor and model can be retrieved
 		//VkPhysicalDeviceProperties physicalDeviceProperties;
 		//vkGetPhysicalDeviceProperties(physicalDevice, &physicalDeviceProperties);
@@ -68,9 +73,16 @@ namespace Utopian::Vk
 		queueInfo.pQueuePriorities = queuePriorities.data();
 		queueInfo.queueCount = 1;
 
-		// Use the VK_KHR_SWAPCHAIN_EXTENSION_NAME extension
-		// [NOTE] There is another VK_EXT_DEBUG_MARKER_EXTENSION_NAME extension that might be good to add later.
+		// VK_KHR_SWAPCHAIN_EXTENSION_NAME allways needs to be used
 		std::vector<const char*> enabledExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+		// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
+		if (IsExtensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
+		{
+			enabledExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+			mDebugMarkersEnabled = true;
+		}
+
 		VkDeviceCreateInfo deviceInfo = {};
 		deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		deviceInfo.pNext = nullptr;
@@ -78,7 +90,7 @@ namespace Utopian::Vk
 		deviceInfo.queueCreateInfoCount = 1;
 		deviceInfo.pQueueCreateInfos = &queueInfo;
 		deviceInfo.pEnabledFeatures = &mEnabledFeatures;
-		deviceInfo.enabledExtensionCount = enabledExtensions.size();				// Extensions
+		deviceInfo.enabledExtensionCount = enabledExtensions.size();
 		deviceInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 		if (enableValidation)
@@ -88,6 +100,33 @@ namespace Utopian::Vk
 		}
 
 		VulkanDebug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
+	}
+
+	void Device::RetrieveSupportedExtensions()
+	{
+		uint32_t extCount = 0;
+		vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extCount, nullptr);
+		if (extCount > 0)
+		{
+			std::vector<VkExtensionProperties> extensions(extCount);
+			if (vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extCount, &extensions.front()) == VK_SUCCESS)
+			{
+				for (auto ext : extensions)
+				{
+					mSupportedExtensions.push_back(ext.extensionName);
+				}
+			}
+		}
+	}
+
+	bool Device::IsExtensionSupported(std::string extension)
+	{
+		return (std::find(mSupportedExtensions.begin(), mSupportedExtensions.end(), extension) != mSupportedExtensions.end());
+	}
+
+	bool Device::IsDebugMarkersEnabled() const
+	{
+		return mDebugMarkersEnabled;
 	}
 
 	VkPhysicalDevice Device::GetPhysicalDevice() const

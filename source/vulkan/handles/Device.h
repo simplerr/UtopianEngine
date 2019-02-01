@@ -1,7 +1,9 @@
 #pragma once
 
-#include <vulkan\vulkan.h>
+#include <vulkan/vulkan.h>
 #include "vulkan/VulkanInclude.h"
+#include <vector>
+#include <string>
 
 namespace Utopian::Vk
 {
@@ -19,27 +21,30 @@ namespace Utopian::Vk
 		 */
 		Queue* GetQueue() const;
 
-		/**
-		 * Returns the command pool from the device which new
-		 * command buffers can be allocated from.
-		 */
+		/** Returns the command pool from the device which new command buffers can be allocated from. */
 		CommandPool* GetCommandPool() const;
 
 		VkPhysicalDevice GetPhysicalDevice() const;
 		VkDevice GetVkDevice() const;
 		VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties() const;
 		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex) const;
+		bool IsDebugMarkersEnabled() const;
 
 	private:
-		void Create(Instance* instance, bool enableValidation);
+		void RetrievePhysical(Instance* instance);
+		void CreateLogical(bool enableValidation);
+		void RetrieveSupportedExtensions();
+		bool IsExtensionSupported(std::string extension);
 
 	private:
 		VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice mDevice = VK_NULL_HANDLE;
 		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
 		VkPhysicalDeviceFeatures mEnabledFeatures{};
+		std::vector<std::string> mSupportedExtensions;
 
 		CommandPool* mCommandPool = nullptr;
 		Queue* mQueue = nullptr;
+		bool mDebugMarkersEnabled = false;
 	};
 }
