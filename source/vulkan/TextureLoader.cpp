@@ -155,7 +155,7 @@ namespace Utopian::Vk
 
 		CopyImage(stagingImage, texture->image, aspectMask, width, height, depth);
 
-		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, aspectMask);
+		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, aspectMask);
 
 		// Create the image view
 		CreateImageView(texture->image, format, &texture->imageView, depth, aspectMask);
@@ -189,7 +189,7 @@ namespace Utopian::Vk
 		imageInfo.arrayLayers = 1;
 		imageInfo.format = format;
 		imageInfo.tiling = tiling;
-		//imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+		imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 		imageInfo.usage = usage;
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -249,7 +249,7 @@ namespace Utopian::Vk
 
 		vkCmdPipelineBarrier(
 			commandBuffer.GetVkHandle(),
-			VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+			VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
 			0,
 			0, nullptr,
 			0, nullptr,

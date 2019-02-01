@@ -50,6 +50,13 @@ namespace Utopian::Vk
 		virtual uint32_t GetSize() { return sizeof(unsigned int); }
 	};
 
+	class S32Attribute : public VertexAttribute
+	{
+	public:
+		virtual VkFormat GetFormat() { return VK_FORMAT_R32_SINT; }
+		virtual uint32_t GetSize() { return sizeof(unsigned int); }
+	};
+
 	/*
 	Contains the binding information used to bind the vertex data in C++ to GLSL
 	Make sure you add attributes with a format that corresponds to  your vertex format

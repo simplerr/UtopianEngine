@@ -19,9 +19,10 @@ layout (location = 0) out vec3 outColor;
 layout(push_constant) uniform PushConsts {
 	 mat4 world;
 	 mat4 worldInvTranspose;
-	 vec4 color;
-	 vec2 textureTiling;
-	 vec2 pad;
+	 // These exceeds the 128 byte limit
+	 // vec4 color;
+	 // vec2 textureTiling;
+	 // vec2 pad;
 } pushConsts;
 
 void main(void)

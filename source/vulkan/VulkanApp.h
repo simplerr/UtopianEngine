@@ -17,18 +17,19 @@
 
 namespace Utopian::Vk
 {
+	// Todo: Move from here
 	struct PushConstantBlock {
 		PushConstantBlock() {
 			world = glm::mat4();
-			color = glm::vec4(1.0f);
 			worldInvTranspose = glm::mat4();
-			textureTiling = glm::vec2(1.0f, 1.0f);
+			// color = glm::vec4(1.0f);
+			// textureTiling = glm::vec2(1.0f, 1.0f);
 		}
 
 		PushConstantBlock(glm::mat4 w, glm::vec4 c = glm::vec4(1.0f), glm::vec2 tiling = glm::vec2(1.0f, 1.0f)) {
 			world = w;
-			color = c;
-			textureTiling = tiling;
+			// color = c;
+			// textureTiling = tiling;
 
 			// Note: This needs to be done to have the physical world match the rendered world.
 			// See https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/ for more information.
@@ -41,9 +42,10 @@ namespace Utopian::Vk
 		
 		glm::mat4 world;
 		glm::mat4 worldInvTranspose;
-		glm::vec4 color;
-		glm::vec2 textureTiling;
-		glm::vec2 pad;
+	 	// These exceeds the 128 byte limit
+		// glm::vec4 color;
+		// glm::vec2 textureTiling;
+		// glm::vec2 pad;
 	};
 
 	/**

@@ -57,7 +57,7 @@ namespace Utopian::Vk
 
 			vkCmdPipelineBarrier(
 				commandBuffer.GetVkHandle(),
-				VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+				VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 				0,
 				0, nullptr,
 				0, nullptr,

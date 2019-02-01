@@ -17,9 +17,11 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
 	 mat4 worldInvTranspose;
-	 vec4 color;
-	 vec2 textureTiling;
-	 vec2 pad;
+	 
+	 // These exceeds the 128 byte limit
+	 // vec4 color;
+	 // vec2 textureTiling;
+	 // vec2 pad;
 } pushConstants;
 
 layout (location = 0) out vec3 OutColor;
@@ -45,13 +47,13 @@ void main()
 	vec3 N = normalize(mat3(pushConstants.world) * InNormalL);
 	OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
 
-	OutColor = pushConstants.color.rgb;
+	OutColor = vec3(1.0, 1.0, 1.0); //pushConstants.color.rgb;
 	OutPosW = (pushConstants.world * vec4(InPosL.xyz, 1.0)).xyz;
 	OutNormalW  = mat3(pushConstants.worldInvTranspose) * InNormalL;
 	mat3 normalMatrix = transpose(inverse(mat3(per_frame_vs.view * pushConstants.world)));
 	OutNormalV = normalMatrix * InNormalL;
 	OutTex = InTex;
-	OutTextureTiling = pushConstants.textureTiling;
+	OutTextureTiling = vec2(1.0, 1.0); //pushConstants.textureTiling;
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

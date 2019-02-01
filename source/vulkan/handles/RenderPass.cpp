@@ -76,7 +76,7 @@ namespace Utopian::Vk
 	{
 		VkAttachmentReference colorReference = {};
 		colorReference.attachment = attachments.size();
-		colorReference.layout = imageLayout;	
+		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		colorReferences.push_back(colorReference);
 
@@ -109,6 +109,7 @@ namespace Utopian::Vk
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		// When using loadOp = VK_ATTACHMENT_LOAD_OP_LOAD for some unknown reason the initialLayout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+		// Setting to VK_IMAGE_LAYOUT_UNDEFINED breaks the skydome
 		// Todo: Investigate
 		attachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 		attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;

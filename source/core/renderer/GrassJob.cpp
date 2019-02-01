@@ -38,7 +38,7 @@ namespace Utopian
 		vertexDescription->AddBinding(BINDING_0, sizeof(GrassInstance), VK_VERTEX_INPUT_RATE_INSTANCE);
 		vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());	// Location 0 : InstancePos
 		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 1 : Color
-		vertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());		// Location 2 : InTexId
+		vertexDescription->AddAttribute(BINDING_0, Vk::S32Attribute());		// Location 2 : InTexId
 
 		effect->GetPipeline()->OverrideVertexInput(vertexDescription);
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;

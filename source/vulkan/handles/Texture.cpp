@@ -47,7 +47,7 @@ namespace Utopian::Vk
 		texDescriptor = {};
 		texDescriptor.sampler = sampler;
 		texDescriptor.imageView = imageView;
-		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		return &texDescriptor;
 	}
