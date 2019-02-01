@@ -71,7 +71,6 @@ namespace Utopian::Vk
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 	}
 
-
 	void UIOverlay::UpdateCommandBuffers()
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -174,7 +173,10 @@ namespace Utopian::Vk
 		mVertexBuffer.Flush();
 		mIndexBuffer.Flush();
 
-		if (updateCmdBuffers) {
+		// Todo: Note: Currently the command buffer needs to be updated each frame since if it is not
+		// then the framebuffer used when beginning the command buffer will get out of sync with the current one from the swap chain.
+		const bool alwaysUpdate = true;
+		if (alwaysUpdate || updateCmdBuffers) {
 			UpdateCommandBuffers();
 		}
 	}

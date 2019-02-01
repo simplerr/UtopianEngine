@@ -125,7 +125,7 @@ namespace Utopian::Vk
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.sampler = sampler->GetVkHandle();
 			imageInfo.imageView = imageView;
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 			mImageInfoMap[binding] = imageInfo;
 		}

@@ -8,6 +8,7 @@ const float NEAR_PLANE = 1.0f; //todo: specialization const
 const float FAR_PLANE = 10000.0f; //todo: specialization const 
 
 layout (set = 1, binding = 0) uniform sampler2D texSampler;
+layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 
 float linearDepth(float depth)
 {
@@ -18,6 +19,9 @@ float linearDepth(float depth)
 void main() 
 {
 	vec4 color = texture(texSampler, InTex);
+
+	// Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
+	vec4 hack = texture(normalSampler, InTex);
 
 	if (color.a < 0.01f)
 		discard;

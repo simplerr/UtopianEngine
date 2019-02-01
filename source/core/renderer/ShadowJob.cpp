@@ -112,9 +112,7 @@ namespace Utopian
 				}
 			}
 
-			// Todo: Should this be moved to the effect instead?
 			commandBuffer->CmdBindPipeline(effect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSets(effect);
 
 			/* Render all renderables */
 			for (auto& renderable : jobInput.sceneInfo.renderables)
