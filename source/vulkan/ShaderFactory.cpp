@@ -3,7 +3,7 @@
 #include <iostream>
 #include "ShaderFactory.h"
 #include "vulkan/handles/Device.h"
-#include "VulkanDebug.h"
+#include "Debug.h"
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <DirStackFileIncluder.h>
 #include <ResourceLimits.h>
@@ -564,7 +564,7 @@ namespace Utopian::Vk
 			moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
 			moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
 
-			VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
+			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
 		}
 
 		/* Pixel shader */
@@ -576,7 +576,7 @@ namespace Utopian::Vk
 			moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
 			moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
 
-			VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
+			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
 		}
 
 		/* Geometry shader */
@@ -591,7 +591,7 @@ namespace Utopian::Vk
 				moduleCreateInfo.codeSize = compiledGeometryShader->spirvBytecode.size() * sizeof(unsigned int);
 				moduleCreateInfo.pCode = compiledGeometryShader->spirvBytecode.data();
 
-				VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledGeometryShader->shaderModule));
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledGeometryShader->shaderModule));
 			}
 		}
 
@@ -653,7 +653,7 @@ namespace Utopian::Vk
 			moduleCreateInfo.codeSize = size;
 			moduleCreateInfo.pCode = (uint32_t*)shaderCode;
 
-			VulkanDebug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &shaderModule));
+			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &shaderModule));
 
 			delete[] shaderCode;
 

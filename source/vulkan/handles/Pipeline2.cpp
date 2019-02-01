@@ -1,6 +1,6 @@
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/PipelineInterface.h"
 #include "Pipeline2.h"
@@ -108,7 +108,7 @@ namespace Utopian::Vk
 
 		// Create the colored pipeline	
 		//rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 	}
 
 	void Pipeline2::SetPipelineInterface(PipelineInterface* pipelineInterface)

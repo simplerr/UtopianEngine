@@ -7,7 +7,7 @@
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {

@@ -4,7 +4,7 @@
 #include "vulkan/handles/Instance.h"
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/CommandPool.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -40,10 +40,10 @@ namespace Utopian::Vk
 		VkResult result = vkEnumeratePhysicalDevices(instance->GetVkHandle(), &gpuCount, NULL);
 
 		if (result != VK_SUCCESS)
-			VulkanDebug::ConsolePrint("vkEnumeratePhysicalDevices failed");
+			Debug::ConsolePrint("vkEnumeratePhysicalDevices failed");
 
 		if (gpuCount < 1)
-			VulkanDebug::ConsolePrint("vkEnumeratePhysicalDevices didn't find any valid devices for Vulkan");
+			Debug::ConsolePrint("vkEnumeratePhysicalDevices didn't find any valid devices for Vulkan");
 
 		// Enumerate devices
 		std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
@@ -96,11 +96,11 @@ namespace Utopian::Vk
 
 		if (enableValidation)
 		{
-			deviceInfo.enabledLayerCount = VulkanDebug::validation_layers.size();	// Debug validation layers
-			deviceInfo.ppEnabledLayerNames = VulkanDebug::validation_layers.data();
+			deviceInfo.enabledLayerCount = Debug::validation_layers.size();	// Debug validation layers
+			deviceInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
 
-		VulkanDebug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
+		Debug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
 	}
 
 	void Device::RetrieveSupportedExtensions()

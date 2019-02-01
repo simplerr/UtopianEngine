@@ -142,6 +142,7 @@
     <ClCompile Include="source\vulkan\BasicRenderTarget.cpp" />
     <ClCompile Include="source\vulkan\BlurEffect.cpp" />
     <ClCompile Include="source\vulkan\ColorEffect.cpp" />
+    <ClCompile Include="source\vulkan\Debug.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\Effect.cpp" />
     <ClCompile Include="source\vulkan\EffectManager.cpp" />
@@ -186,7 +187,6 @@
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
     <ClCompile Include="source\vulkan\VulkanApp.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
-    <ClCompile Include="source\vulkan\VulkanDebug.cpp" />
     <ClCompile Include="source\vulkan\UIOverlay.cpp" />
     <ClCompile Include="source\vulkan\WaterEffect.cpp" />
     <ClCompile Include="source\WaterRenderer.cpp" />
@@ -261,6 +261,7 @@
     <ClInclude Include="source\vulkan\BasicRenderTarget.h" />
     <ClInclude Include="source\vulkan\BlurEffect.h" />
     <ClInclude Include="source\vulkan\ColorEffect.h" />
+    <ClInclude Include="source\vulkan\Debug.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\Effect.h" />
     <ClInclude Include="source\vulkan\EffectManager.h" />
@@ -304,16 +305,15 @@
     <ClInclude Include="source\vulkan\TextOverlay.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\ShaderBuffer.h" />
+    <ClInclude Include="source\vulkan\Utilities.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />
     <ClInclude Include="source\vulkan\VertexDescription.h" />
     <ClInclude Include="source\vulkan\VulkanApp.h" />
     <ClInclude Include="source\vulkan\VulkanBase.h" />
-    <ClInclude Include="source\vulkan\VulkanDebug.h" />
     <ClInclude Include="source\vulkan\VulkanInclude.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
     <ClInclude Include="source\vulkan\UIOverlay.h" />
     <ClInclude Include="source\vulkan\CubeMapTexture.h" />
-    <ClInclude Include="source\vulkan\VulkanUtilities.h" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
     <ClInclude Include="source\WaterVulkanApp.h" />
     <ClInclude Include="source\Window.h" />

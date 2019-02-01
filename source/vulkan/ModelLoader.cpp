@@ -5,7 +5,7 @@
 #include "vulkan/Mesh.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "StaticModel.h"
 #include "vulkan/handles/Device.h"
 

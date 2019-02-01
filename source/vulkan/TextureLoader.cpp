@@ -4,7 +4,7 @@
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "TextureLoader.h"
-#include "VulkanDebug.h"
+#include "Debug.h"
 #include "vulkan/handles/Device.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
@@ -133,7 +133,7 @@ namespace Utopian::Vk
 		if (data != nullptr)
 		{
 			uint8_t* mappedMemory;
-			VulkanDebug::ErrorCheck(vkMapMemory(device, stagingMemory, 0, imageSize, 0, (void **)&mappedMemory));
+			Debug::ErrorCheck(vkMapMemory(device, stagingMemory, 0, imageSize, 0, (void **)&mappedMemory));
 			// Size of the font texture is WIDTH * HEIGHT * 1 byte (only one channel)
 			memcpy(mappedMemory, data, imageSize);
 			vkUnmapMemory(device, stagingMemory);
@@ -194,7 +194,7 @@ namespace Utopian::Vk
 		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 
-		VulkanDebug::ErrorCheck(vkCreateImage(device, &imageInfo, nullptr, image));
+		Debug::ErrorCheck(vkCreateImage(device, &imageInfo, nullptr, image));
 
 		VkMemoryRequirements memRequirements;
 		vkGetImageMemoryRequirements(device, *image, &memRequirements);
@@ -204,8 +204,8 @@ namespace Utopian::Vk
 		allocInfo.allocationSize = memRequirements.size;
 		mDevice->GetMemoryType(memRequirements.memoryTypeBits, properties, &allocInfo.memoryTypeIndex);
 
-		VulkanDebug::ErrorCheck(vkAllocateMemory(device, &allocInfo, nullptr, imageMemory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(device, *image, *imageMemory, 0));
+		Debug::ErrorCheck(vkAllocateMemory(device, &allocInfo, nullptr, imageMemory));
+		Debug::ErrorCheck(vkBindImageMemory(device, *image, *imageMemory, 0));
 	}
 
 	void TextureLoader::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlagBits aspectMask)
@@ -308,7 +308,7 @@ namespace Utopian::Vk
 			VK_COMPONENT_SWIZZLE_A
 		};
 
-		VulkanDebug::ErrorCheck(vkCreateImageView(mDevice->GetVkDevice(), &viewInfo, nullptr, imageView));
+		Debug::ErrorCheck(vkCreateImageView(mDevice->GetVkDevice(), &viewInfo, nullptr, imageView));
 	}
 
 	void TextureLoader::CreateImageSampler(VkSampler* sampler)
@@ -328,6 +328,6 @@ namespace Utopian::Vk
 		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
 		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
 
-		VulkanDebug::ErrorCheck(vkCreateSampler(mDevice->GetVkDevice(), &samplerInfo, nullptr, sampler));
+		Debug::ErrorCheck(vkCreateSampler(mDevice->GetVkDevice(), &samplerInfo, nullptr, sampler));
 	}
 }

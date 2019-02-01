@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "vulkan/VulkanApp.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include <string>
 #include <sstream>
 #include <stdlib.h>
@@ -19,9 +19,9 @@ Game::Game(Utopian::Window* window)
 
 	mIsClosing = false;
 
-	Utopian::Vk::VulkanDebug::TogglePerformanceWarnings();
-	Utopian::Vk::VulkanDebug::SetupDebugLayers();
-	Utopian::Vk::VulkanDebug::ConsolePrint(mAppName);
+	Utopian::Vk::Debug::TogglePerformanceWarnings();
+	Utopian::Vk::Debug::SetupDebugLayers();
+	Utopian::Vk::Debug::ConsolePrint(mAppName);
 
 	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
 	mVulkanApp->Prepare();

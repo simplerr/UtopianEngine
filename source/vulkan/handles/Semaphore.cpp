@@ -1,6 +1,6 @@
 #include "Semaphore.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -10,6 +10,6 @@ namespace Utopian::Vk
 		VkSemaphoreCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-		VulkanDebug::ErrorCheck(vkCreateSemaphore(GetVkDevice(), &createInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateSemaphore(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

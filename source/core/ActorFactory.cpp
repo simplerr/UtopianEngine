@@ -8,13 +8,13 @@
 #include "core/components/CPlayerControl.h"
 #include "core/components/CNoClip.h"
 #include "core/components/CRenderable.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian
 {
 	void ActorFactory::LoadFromFile(Window* window, std::string filename)
 	{
-		Vk::VulkanDebug::ConsolePrint("Loading actors from file...");
+		Vk::Debug::ConsolePrint("Loading actors from file...");
 
 		gLuaManager().ExecuteFile(filename.c_str());
 

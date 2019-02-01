@@ -4,7 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/handles/Texture.h"

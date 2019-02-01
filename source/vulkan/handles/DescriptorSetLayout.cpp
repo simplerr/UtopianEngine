@@ -1,5 +1,5 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -42,6 +42,6 @@ namespace Utopian::Vk
 		createInfo.bindingCount = mLayoutBindings.size();
 		createInfo.pBindings = mLayoutBindings.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorSetLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateDescriptorSetLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

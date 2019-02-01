@@ -10,10 +10,10 @@
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Queue.h"
 #include "VulkanInclude.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Image.h"
-#include "vulkan/VulkanUtilities.h"
+#include "vulkan/Utilities.h"
 
 namespace Utopian::Vk
 {
@@ -176,7 +176,7 @@ namespace Utopian::Vk
 			samplerCreateInfo.minLod = 0.0f;
 			samplerCreateInfo.maxLod = (float)mipLevels;
 			samplerCreateInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
-			VulkanDebug::ErrorCheck(vkCreateSampler(device->GetVkDevice(), &samplerCreateInfo, nullptr, &sampler));
+			Debug::ErrorCheck(vkCreateSampler(device->GetVkDevice(), &samplerCreateInfo, nullptr, &sampler));
 
 			// Update descriptor image info member that can be used for setting up descriptor sets
 			UpdateDescriptor();

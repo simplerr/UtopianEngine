@@ -1,4 +1,4 @@
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/PipelineLegacy.h"
 #include "vulkan/handles/Pipeline2.h"
@@ -27,7 +27,7 @@ namespace Utopian::Vk
 		allocateInfo.commandBufferCount = 1;
 		allocateInfo.level = level;
 
-		VulkanDebug::ErrorCheck(vkAllocateCommandBuffers(GetVkDevice(), &allocateInfo, &mHandle));
+		Debug::ErrorCheck(vkAllocateCommandBuffers(GetVkDevice(), &allocateInfo, &mHandle));
 
 		// If requested, also start the new command buffer
 		if (begin)
@@ -49,7 +49,7 @@ namespace Utopian::Vk
 	 	beginInfo.flags = 0;
 	 	beginInfo.pInheritanceInfo = nullptr;
 
-	 	VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mHandle, &beginInfo));
+	 	Debug::ErrorCheck(vkBeginCommandBuffer(mHandle, &beginInfo));
 	 }
 
 	void CommandBuffer::Begin(RenderPass* renderPass, VkFramebuffer frameBuffer)
@@ -64,19 +64,19 @@ namespace Utopian::Vk
 		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
 		beginInfo.pInheritanceInfo = &inheritanceInfo;
 
-		VulkanDebug::ErrorCheck(vkBeginCommandBuffer(mHandle, &beginInfo));
+		Debug::ErrorCheck(vkBeginCommandBuffer(mHandle, &beginInfo));
 	}
 
 	void CommandBuffer::End()
 	{
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
+		Debug::ErrorCheck(vkEndCommandBuffer(mHandle));
 	}
 
 	void CommandBuffer::Flush(bool free)
 	{
 		assert(mHandle);
 
-		VulkanDebug::ErrorCheck(vkEndCommandBuffer(mHandle));
+		Debug::ErrorCheck(vkEndCommandBuffer(mHandle));
 
 		VkSubmitInfo submitInfo = {};
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

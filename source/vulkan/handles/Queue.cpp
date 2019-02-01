@@ -1,4 +1,4 @@
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
 #include "Queue.h"
 #include "Fence.h"
@@ -50,14 +50,14 @@ namespace Utopian::Vk
 		submitInfo.pCommandBuffers = &cmdBuffer;
 
 		if (renderFence == nullptr)
-			VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &submitInfo, VK_NULL_HANDLE));
+			Debug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &submitInfo, VK_NULL_HANDLE));
 		else
-			VulkanDebug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &submitInfo, renderFence->GetVkHandle()));
+			Debug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &submitInfo, renderFence->GetVkHandle()));
 	}
 
 	void Queue::WaitIdle()
 	{
-		VulkanDebug::ErrorCheck(vkQueueWaitIdle(GetVkHandle()));
+		Debug::ErrorCheck(vkQueueWaitIdle(GetVkHandle()));
 	}
 
 	Semaphore* Queue::GetWaitSemaphore() const

@@ -14,7 +14,7 @@
 
 namespace Utopian::Vk
 {
-	namespace VulkanDebug
+	namespace Debug
 	{
 		// This sets up the debug create info (so that the creation of VkInstance can use it
 		// Must be called before VulkanBase::CreateInstance() 

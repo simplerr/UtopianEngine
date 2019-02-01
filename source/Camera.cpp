@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "Window.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "../external/glm/glm/gtc/matrix_transform.hpp"
 #include "Input.h"
 #include "core/renderer/Renderer.h"

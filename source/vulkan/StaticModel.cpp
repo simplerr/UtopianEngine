@@ -1,5 +1,5 @@
 #include "StaticModel.h"
-#include "VulkanDebug.h"
+#include "Debug.h"
 #include "vulkan/handles/Device.h"
 
 namespace Utopian::Vk

@@ -1,6 +1,6 @@
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian
 {

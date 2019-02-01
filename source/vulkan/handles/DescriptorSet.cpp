@@ -1,4 +1,4 @@
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/PipelineInterface.h"
@@ -40,7 +40,7 @@ namespace Utopian::Vk
 		allocInfo.descriptorSetCount = 1;
 		allocInfo.pSetLayouts = &setLayoutVk;
 
-		VulkanDebug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &mDescriptorSet));
+		Debug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &mDescriptorSet));
 	}
 
 	void DescriptorSet::BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
@@ -214,6 +214,6 @@ namespace Utopian::Vk
 		createInfo.poolSizeCount = mDescriptorSizes.size();
 		createInfo.pPoolSizes = mDescriptorSizes.data();
 
-		VulkanDebug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

@@ -1,6 +1,6 @@
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/handles/RenderPass.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/ShaderFactory.h"
 
@@ -66,7 +66,7 @@ namespace Utopian::Vk
 		pipelineCreateInfo.pStages = shader->shaderStages.data();
 
 		// Create the pipeline	
-		VulkanDebug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
 
 		mCreated = true;
 	}

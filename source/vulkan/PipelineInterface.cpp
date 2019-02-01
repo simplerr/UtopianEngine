@@ -1,6 +1,6 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -36,7 +36,7 @@ namespace Utopian::Vk
 			createInfo.pPushConstantRanges = mPushConstantRanges.data();
 		}
 
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(mDevice->GetVkDevice(), &createInfo, nullptr, &mPipelineLayout));
+		Debug::ErrorCheck(vkCreatePipelineLayout(mDevice->GetVkDevice(), &createInfo, nullptr, &mPipelineLayout));
 	}
 
 	void PipelineInterface::AddUniformBuffer(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)

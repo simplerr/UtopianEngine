@@ -1,6 +1,6 @@
 #include "Sampler.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -29,6 +29,6 @@ namespace Utopian::Vk
 
 	void Sampler::Create()
 	{
-		VulkanDebug::ErrorCheck(vkCreateSampler(GetVkDevice(), &createInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateSampler(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }

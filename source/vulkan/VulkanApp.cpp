@@ -4,7 +4,7 @@
 #include <thread>
 #include <glm/gtc/matrix_transform.hpp>
 #include "vulkan/VulkanApp.h"
-#include "VulkanDebug.h"
+#include "Debug.h"
 #include "StaticModel.h"
 #include "Camera.h"
 #include "LightData.h"

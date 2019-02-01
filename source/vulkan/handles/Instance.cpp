@@ -1,5 +1,5 @@
 #include <vector>
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "Instance.h"
 
 namespace Utopian::Vk
@@ -29,7 +29,7 @@ namespace Utopian::Vk
 
 		VkInstanceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;	// Must be VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
-		createInfo.pNext = &VulkanDebug::debugCallbackCreateInfo;	// Enables debugging when creating the instance
+		createInfo.pNext = &Debug::debugCallbackCreateInfo;	// Enables debugging when creating the instance
 		createInfo.flags = 0;										// Must be 0
 		createInfo.pApplicationInfo = &appInfo;
 		createInfo.enabledExtensionCount = enabledExtensions.size();			// Extensions
@@ -37,11 +37,11 @@ namespace Utopian::Vk
 
 		if (enableValidation)
 		{
-			createInfo.enabledLayerCount = VulkanDebug::validation_layers.size();	// Debug validation layers
-			createInfo.ppEnabledLayerNames = VulkanDebug::validation_layers.data();
+			createInfo.enabledLayerCount = Debug::validation_layers.size();	// Debug validation layers
+			createInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
 
-		VulkanDebug::ErrorCheck(vkCreateInstance(&createInfo, NULL, &mInstance));
+		Debug::ErrorCheck(vkCreateInstance(&createInfo, NULL, &mInstance));
 	}
 
 	Instance::~Instance()

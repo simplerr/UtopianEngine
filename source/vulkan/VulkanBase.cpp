@@ -6,7 +6,7 @@
 #include "utility/Platform.h"
 #include "VulkanBase.h"
 #include "vulkan/handles/Device.h"
-#include "VulkanDebug.h"
+#include "Debug.h"
 #include "Window.h"
 #include "ShaderFactory.h"
 #include "handles/CommandPool.h"
@@ -22,10 +22,10 @@ namespace Utopian::Vk
 	VulkanBase::VulkanBase(Utopian::Window* window, bool enableValidation)
 		: mWindow(window)
 	{
-		VulkanDebug::SetupConsole("Vulkan Debug Console");
+		Debug::SetupConsole("Vulkan Debug Console");
 
 		mInstance = new Instance("Utopian Engine (pre-alpha)", enableValidation);
-		VulkanDebug::InitDebug(mInstance);
+		Debug::InitDebug(mInstance);
 
 		mDevice = new Device(mInstance);
 		DebugMarker::Setup(mDevice);
@@ -40,7 +40,7 @@ namespace Utopian::Vk
 		delete mFrameBuffers;
 		delete mDevice;
 
-		VulkanDebug::CleanupDebugging(mInstance->GetVkHandle());
+		Debug::CleanupDebugging(mInstance->GetVkHandle());
 
 		delete mInstance;
 	}
@@ -74,14 +74,14 @@ namespace Utopian::Vk
 	void VulkanBase::PrepareFrame()
 	{
 		Queue* queue = mDevice->GetQueue();
-		VulkanDebug::ErrorCheck(mSwapChain.acquireNextImage(queue->GetWaitSemaphore()->GetVkHandle(),
+		Debug::ErrorCheck(mSwapChain.acquireNextImage(queue->GetWaitSemaphore()->GetVkHandle(),
 													        &mFrameBuffers->currentFrameBuffer));
 	}
 
 	void VulkanBase::SubmitFrame()
 	{
 		Queue* queue = mDevice->GetQueue();
-		VulkanDebug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
+		Debug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
 														mFrameBuffers->currentFrameBuffer,
 														queue->GetSignalSemaphore()->GetVkHandle()));
 

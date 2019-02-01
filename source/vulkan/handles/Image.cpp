@@ -1,5 +1,5 @@
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "Image.h"
 
 namespace Utopian::Vk
@@ -64,7 +64,7 @@ namespace Utopian::Vk
 				viewCreateInfo.image = mHandle;
 
 				VkImageView layerView = VK_NULL_HANDLE;
-				VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &layerView));
+				Debug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &layerView));
 				mLayerViews.push_back(layerView);
 			}
 		}
@@ -86,7 +86,7 @@ namespace Utopian::Vk
 
 	void Image::CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties)
 	{
-		VulkanDebug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mHandle));
 
 		// Get memory requirements
 		VkMemoryRequirements memRequirments;
@@ -98,14 +98,14 @@ namespace Utopian::Vk
 
 		GetDevice()->GetMemoryType(memRequirments.memoryTypeBits, properties, &allocateInfo.memoryTypeIndex);
 
-		VulkanDebug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &allocateInfo, nullptr, &mDeviceMemory));
-		VulkanDebug::ErrorCheck(vkBindImageMemory(GetVkDevice(), mHandle, mDeviceMemory, 0));
+		Debug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &allocateInfo, nullptr, &mDeviceMemory));
+		Debug::ErrorCheck(vkBindImageMemory(GetVkDevice(), mHandle, mDeviceMemory, 0));
 	}
 
 	void Image::CreateView(VkImageViewCreateInfo viewCreateInfo)
 	{
 		viewCreateInfo.image = mHandle;
-		VulkanDebug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
+		Debug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
 	}
 
 	VkImageView Image::GetView() const

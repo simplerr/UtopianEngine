@@ -204,9 +204,6 @@
     <ClCompile Include="source\vulkan\VulkanBase.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\VulkanDebug.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\Mesh.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
@@ -462,6 +459,9 @@
     <ClCompile Include="source\vulkan\Effect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -522,9 +522,6 @@
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\VulkanBase.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\VulkanDebug.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp">
@@ -740,9 +737,6 @@
     <ClInclude Include="source\vulkan\CubeMapTexture.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\VulkanUtilities.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\SkyboxEffect.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -834,6 +828,12 @@
       <Filter>Source Files\scene</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\Effect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include "core/terrain/Terrain.h"
 #include "core/terrain/BaseTerrain.h"
 #include "Input.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/intersect.hpp>
 #include "core/components/Actor.h"

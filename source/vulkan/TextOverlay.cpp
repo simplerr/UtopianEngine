@@ -4,7 +4,7 @@
 #include "vulkan/handles/Device.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/VulkanApp.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"

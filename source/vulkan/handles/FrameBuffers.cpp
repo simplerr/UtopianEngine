@@ -1,5 +1,5 @@
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/vulkanswapchain.hpp"
 #include "FrameBuffers.h"
 #include "Image.h"
@@ -32,7 +32,7 @@ namespace Utopian::Vk
 		for (uint32_t i = 0; i < mFrameBuffers.size(); i++)
 		{
 			attachments[0] = swapChain->buffers[i].view;
-			VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[i]));
+			Debug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[i]));
 		}
 	}
 
@@ -67,7 +67,7 @@ namespace Utopian::Vk
 
 		// Create a single frame buffer
 		mFrameBuffers.resize(1);
-		VulkanDebug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
+		Debug::ErrorCheck(vkCreateFramebuffer(mDevice->GetVkDevice(), &createInfo, nullptr, &mFrameBuffers[0]));
 	}
 
 	VkFramebuffer FrameBuffers::GetFrameBuffer(uint32_t index) const

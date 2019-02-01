@@ -11,7 +11,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/ScreenQuadUi.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "Input.h"
 #include "vulkan/VulkanApp.h"
 
@@ -20,11 +20,11 @@ namespace Utopian
 	Engine::Engine(SharedPtr<Vk::VulkanApp> vulkanApp)
 		: mVulkanApp(vulkanApp)
 	{
-		Vk::VulkanDebug::ConsolePrint("Starting engine modules...");
+		Vk::Debug::ConsolePrint("Starting engine modules...");
 
 		StartModules();
 
-		Vk::VulkanDebug::ConsolePrint("Engine modules ready");
+		Vk::Debug::ConsolePrint("Engine modules ready");
 	}
 	
 	Engine::~Engine()

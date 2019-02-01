@@ -1,4 +1,4 @@
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
 #include "Fence.h"
 
@@ -32,7 +32,7 @@ namespace Utopian::Vk
 			fenceRes = vkWaitForFences(GetVkDevice(), 1, &mHandle, VK_TRUE, 100000000);
 		} while (fenceRes == VK_TIMEOUT);
 
-		VulkanDebug::ErrorCheck(fenceRes);
+		Debug::ErrorCheck(fenceRes);
 
 		Reset();
 	}

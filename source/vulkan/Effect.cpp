@@ -1,6 +1,6 @@
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/PipelineInterface.h"

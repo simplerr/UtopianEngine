@@ -1,6 +1,6 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -37,23 +37,23 @@ namespace Utopian::Vk
 		bufferCreateInfo.flags = 0;
 
 		VkDevice vkDevice = mDevice->GetVkDevice();
-		VulkanDebug::ErrorCheck(vkCreateBuffer(vkDevice, &bufferCreateInfo, nullptr, &mBuffer));
+		Debug::ErrorCheck(vkCreateBuffer(vkDevice, &bufferCreateInfo, nullptr, &mBuffer));
 
 		vkGetBufferMemoryRequirements(vkDevice, mBuffer, &memReqs);
 		memAllocInfo.allocationSize = memReqs.size;
 		mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &memAllocInfo.memoryTypeIndex);
 		memAllocInfo.memoryTypeIndex = 1; // Note: Todo: Workaround
-		VulkanDebug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
+		Debug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
 
 		if (data != nullptr)
 		{
 			void *mapped;
-			VulkanDebug::ErrorCheck(vkMapMemory(vkDevice, mMemory, 0, size, 0, &mapped));
+			Debug::ErrorCheck(vkMapMemory(vkDevice, mMemory, 0, size, 0, &mapped));
 			memcpy(mapped, data, size);
 			vkUnmapMemory(vkDevice, mMemory);
 		}
 
-		VulkanDebug::ErrorCheck(vkBindBufferMemory(vkDevice, mBuffer, mMemory, 0));
+		Debug::ErrorCheck(vkBindBufferMemory(vkDevice, mBuffer, mMemory, 0));
 	}
 
 	void Buffer::Destroy()
@@ -75,7 +75,7 @@ namespace Utopian::Vk
 
 	void Buffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
 	{
-		VulkanDebug::ErrorCheck(vkMapMemory(mDevice->GetVkDevice(), mMemory, offset, size, flags, data));
+		Debug::ErrorCheck(vkMapMemory(mDevice->GetVkDevice(), mMemory, offset, size, flags, data));
 		mMapped = true;
 	}
 

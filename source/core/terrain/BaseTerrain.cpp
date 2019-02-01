@@ -110,8 +110,8 @@ namespace Utopian
 					if (mBlockList.find(blockKey) == mBlockList.end())
 					{
 						AddBlock(blockKey);
-						//Vulkan::VulkanDebug::ConsolePrint(x, "loaded blockX: ");
-						//Vulkan::VulkanDebug::ConsolePrint(z, "loaded blockZ: ");
+						//Vulkan::Debug::ConsolePrint(x, "loaded blockX: ");
+						//Vulkan::Debug::ConsolePrint(z, "loaded blockZ: ");
 					}
 					else
 					{

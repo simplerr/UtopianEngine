@@ -1,7 +1,7 @@
 #include <array>
 #include "RenderPass.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
@@ -69,7 +69,7 @@ namespace Utopian::Vk
 		renderPassInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());	
 		renderPassInfo.pDependencies = dependencies.data();							
 		
-		VulkanDebug::ErrorCheck(vkCreateRenderPass(GetVkDevice(), &renderPassInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreateRenderPass(GetVkDevice(), &renderPassInfo, nullptr, &mHandle));
 	}
 
 	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)

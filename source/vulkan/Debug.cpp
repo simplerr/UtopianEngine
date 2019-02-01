@@ -1,14 +1,14 @@
 #include <sstream>
 #include <iostream>
 #include <cassert>
-#include "VulkanDebug.h"
+#include "Debug.h"
 #include "utility/Timer.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Instance.h"
 
 namespace Utopian::Vk
 {
-	namespace VulkanDebug
+	namespace Debug
 	{
 		// Debug extension callbacks
 		PFN_vkCreateDebugReportCallbackEXT CreateDebugReportCallback = nullptr;
@@ -27,7 +27,7 @@ namespace Utopian::Vk
 			SetupConsole("Vulkan Debug Console");
 
 			// TODO: Add #ifdef _DEBUG
-			// Configure so that VulkanDebug::VulkanDebugCallback() gets all debug messages
+			// Configure so that Debug::VulkanDebugCallback() gets all debug messages
 			debugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
 			debugCallbackCreateInfo.pNext = nullptr;
 			debugCallbackCreateInfo.flags =
@@ -52,7 +52,7 @@ namespace Utopian::Vk
 			dbgBreakCallback = (PFN_vkDebugReportMessageEXT)vkGetInstanceProcAddr(vkInstance, "vkDebugReportMessageEXT");
 
 			if (CreateDebugReportCallback == nullptr || DestroyDebugReportCallback == nullptr || dbgBreakCallback == nullptr) {
-				VulkanDebug::ConsolePrint("Error fetching debug function pointers");
+				Debug::ConsolePrint("Error fetching debug function pointers");
 			}
 
 			ErrorCheck(CreateDebugReportCallback(vkInstance, &debugCallbackCreateInfo, nullptr, &msgCallback));
@@ -111,7 +111,7 @@ namespace Utopian::Vk
 			stream << "@[" << pLayerPrefix << "]: ";
 			stream << pMessage << std::endl;
 
-			VulkanDebug::ConsolePrint(stream.str());
+			Debug::ConsolePrint(stream.str());
 
 			// Critical errors will be printed in a message box (Win32)
 #ifdef _WIN32

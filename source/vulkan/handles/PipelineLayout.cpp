@@ -1,4 +1,4 @@
-#include "vulkan/VulkanDebug.h"
+#include "vulkan/Debug.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "PipelineLayout.h"
@@ -40,6 +40,6 @@ namespace Utopian::Vk
 			createInfo.pPushConstantRanges = &mPushConstantRange;
 		}
 
-		VulkanDebug::ErrorCheck(vkCreatePipelineLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));
+		Debug::ErrorCheck(vkCreatePipelineLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));
 	}
 }
