@@ -79,8 +79,9 @@ namespace Utopian::Vk
 		// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
 		if (IsExtensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
 		{
-			enabledExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
-			mDebugMarkersEnabled = true;
+			// Note: Todo: Enabling debug markers seems to break RenderDoc.
+			//enabledExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
+			//mDebugMarkersEnabled = true;
 		}
 
 		VkDeviceCreateInfo deviceInfo = {};

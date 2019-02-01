@@ -102,10 +102,8 @@ namespace Utopian
 		settingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
 		settingsBlock.UpdateMemory();
 
-		renderTarget->Begin();
+		renderTarget->Begin("G-buffer pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
-
-		Vk::DebugMarker::BeginRegion(commandBuffer->GetVkHandle(), "G-buffer pass", glm::vec4(1.0f, 0.78f, 0.05f, 1.0f));
 
 		/* Render instanced assets */
 		commandBuffer->CmdBindPipeline(mGBufferEffectInstanced->GetPipeline());
