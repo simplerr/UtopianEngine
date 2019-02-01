@@ -29,9 +29,11 @@ namespace Utopian::Vk
 		VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties() const;
 		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex) const;
 		bool IsDebugMarkersEnabled() const;
+		uint32_t GetQueueFamilyIndex(VkQueueFlagBits queueFlags) const;
 
 	private:
 		void RetrievePhysical(Instance* instance);
+		void RetrieveQueueFamilyProperites();
 		void CreateLogical(bool enableValidation);
 		void RetrieveSupportedExtensions();
 		bool IsExtensionSupported(std::string extension);
@@ -40,8 +42,9 @@ namespace Utopian::Vk
 		VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice mDevice = VK_NULL_HANDLE;
 		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
-		VkPhysicalDeviceFeatures mEnabledFeatures{};
+		VkPhysicalDeviceFeatures mEnabledFeatures {};
 		std::vector<std::string> mSupportedExtensions;
+		std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
 
 		CommandPool* mCommandPool = nullptr;
 		Queue* mQueue = nullptr;

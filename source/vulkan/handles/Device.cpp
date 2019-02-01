@@ -16,12 +16,13 @@ namespace Utopian::Vk
 
 		RetrievePhysical(instance);
 		RetrieveSupportedExtensions();
+		RetrieveQueueFamilyProperites();
 		CreateLogical(enableValidation);
 
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
 
-		// Note: The queueFamilyIndex is hardcoded to 0
-		mCommandPool = new CommandPool(this, 0);
+		uint32_t queueFamilyIndex = GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+		mCommandPool = new CommandPool(this, queueFamilyIndex);
 		mQueue = new Queue(this);
 	}
 
@@ -53,6 +54,30 @@ namespace Utopian::Vk
 		mPhysicalDevice = physicalDevices[0];
 	}
 
+	void Device::RetrieveQueueFamilyProperites()
+	{
+		// Queue family properties, used for setting up requested queues upon device creation
+		uint32_t queueFamilyCount;
+		vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, nullptr);
+		assert(queueFamilyCount > 0);
+		mQueueFamilyProperties.resize(queueFamilyCount);
+		vkGetPhysicalDeviceQueueFamilyProperties(mPhysicalDevice, &queueFamilyCount, mQueueFamilyProperties.data());
+	}
+
+	uint32_t Device::GetQueueFamilyIndex(VkQueueFlagBits queueFlags) const
+	{
+		for (uint32_t i = 0; i < static_cast<uint32_t>(mQueueFamilyProperties.size()); i++)
+		{
+			if (mQueueFamilyProperties[i].queueFlags & queueFlags)
+			{
+				return i;
+			}
+		}
+
+		// No queue was found
+		assert(0);
+	}
+
 	void Device::CreateLogical(bool enableValidation)
 	{
 		// This is not used right now, but GPU vendor and model can be retrieved
@@ -69,7 +94,7 @@ namespace Utopian::Vk
 		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 		queueInfo.pNext = nullptr;
 		queueInfo.flags = 0;
-		queueInfo.queueFamilyIndex = 0; // 0 seems to always be the first valid queue (see above)
+		queueInfo.queueFamilyIndex = GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 		queueInfo.pQueuePriorities = queuePriorities.data();
 		queueInfo.queueCount = 1;
 

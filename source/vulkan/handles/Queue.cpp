@@ -26,7 +26,8 @@ namespace Utopian::Vk
 
 		// Get the queue from the device
 		// [NOTE] that queueFamilyIndex is hard coded to 0
-		vkGetDeviceQueue(GetVkDevice(), 0, 0, &mHandle);
+		uint32_t queueFamilyIndex = device->GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
+		vkGetDeviceQueue(GetVkDevice(), queueFamilyIndex, 0, &mHandle);
 	}
 
 	Queue::~Queue()
