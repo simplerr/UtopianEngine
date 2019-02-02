@@ -81,7 +81,7 @@ namespace Utopian
 		viewProjectionBlock.UpdateMemory();
 
 		/* Render instances */
-		renderTarget->Begin();
+		renderTarget->Begin("Grass pass", glm::vec4(0.0, 0.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindPipeline(effect->GetPipeline());

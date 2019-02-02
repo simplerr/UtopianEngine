@@ -105,7 +105,7 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
 	}
 
-	void RenderTarget::Begin(VkFramebuffer framebuffer)
+	void RenderTarget::Begin(VkFramebuffer framebuffer, std::string debugName, glm::vec4 debugColor)
 	{
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -118,6 +118,9 @@ namespace Utopian::Vk
 
 		// Begin command buffer recording & the render pass
 		mCommandBuffer->Begin();
+
+		Vk::DebugMarker::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
+
 		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());

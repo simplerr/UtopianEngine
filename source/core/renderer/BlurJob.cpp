@@ -34,7 +34,7 @@ namespace Utopian
 	{
 		effect->SetSettings(jobInput.renderingSettings.blurRadius);
 
-		renderTarget->Begin();
+		renderTarget->Begin("SSAO blur pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?

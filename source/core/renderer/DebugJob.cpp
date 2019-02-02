@@ -44,7 +44,7 @@ namespace Utopian
 		normalEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		colorEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 
-		renderTarget->Begin();
+		renderTarget->Begin("Debug pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		/* Render all renderables */

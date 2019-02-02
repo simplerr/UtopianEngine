@@ -62,7 +62,7 @@ namespace Utopian
 
 		// End of temporary
 
-		renderTarget->Begin();
+		renderTarget->Begin("Deferred pass", glm::vec4(0.0, 1.0, 1.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?

@@ -81,7 +81,7 @@ namespace Utopian
 		radialBlurParameters.data.radialBlurStrength = 1.0f;
 		radialBlurParameters.UpdateMemory();
 
-		radialBlurRenderTarget->Begin();
+		radialBlurRenderTarget->Begin("Sun shaft pass", glm::vec4(0.7, 0.7, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = radialBlurRenderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
