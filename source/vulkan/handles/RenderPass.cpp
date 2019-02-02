@@ -72,7 +72,7 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(vkCreateRenderPass(GetVkDevice(), &renderPassInfo, nullptr, &mHandle));
 	}
 
-	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
 		VkAttachmentReference colorReference = {};
 		colorReference.attachment = attachments.size();
@@ -87,9 +87,13 @@ namespace Utopian::Vk
 		attachment.storeOp = storeOp;
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; // Todo: Note: If the attachment is used in another pass then the initial layout
-															  // will not be UNDEFINED anymore, for example when GrassJob adds the color image from DeferredJob, it has already been transitioned
-		attachment.finalLayout = imageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+
+		if (loadOp == VK_ATTACHMENT_LOAD_OP_LOAD)
+			attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		else
+			attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+		attachment.finalLayout = finalImageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 
 		attachments.push_back(attachment);
 	}
@@ -109,12 +113,12 @@ namespace Utopian::Vk
 		attachment.storeOp = storeOp;
 		attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		// When using loadOp = VK_ATTACHMENT_LOAD_OP_LOAD for some unknown reason the initialLayout must be VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-		// Setting to VK_IMAGE_LAYOUT_UNDEFINED breaks the skydome
-		// Todo: Investigate
-		// Solution: The depth attachment form the G-buffer pass has already been transitioned to VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL!
-		// this needs to be parameterized
-		attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+		if (loadOp == VK_ATTACHMENT_LOAD_OP_LOAD)
+			attachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		else
+			attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
 		attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		attachments.push_back(attachment);

@@ -9,7 +9,7 @@ namespace Utopian::Vk
 		mColorImage = new ImageColor(device, width, height, colorFormat);
 		mDepthImage = new ImageDepth(device, width, height, depthFormat);
 
-		AddColorAttachment(mColorImage);
+		AddColorAttachment(mColorImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		AddDepthAttachment(mDepthImage);
 		Create();
 	}

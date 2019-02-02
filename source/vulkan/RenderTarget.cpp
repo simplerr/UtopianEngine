@@ -29,9 +29,9 @@ namespace Utopian::Vk
 
 	}
 
-	void RenderTarget::AddColorAttachment(Image* image, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderTarget::AddColorAttachment(Image* image, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout, loadOp, storeOp);
+		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(image);
 	}
 
@@ -41,9 +41,9 @@ namespace Utopian::Vk
 		mFrameBuffer->AddAttachmentImage(image);
 	}
 
-	void RenderTarget::AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderTarget::AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), imageLayout, loadOp, storeOp);
+		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 
@@ -53,9 +53,9 @@ namespace Utopian::Vk
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 
-	void RenderTarget::AddColorAttachment(VkImageView imageView, VkFormat format, VkImageLayout imageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderTarget::AddColorAttachment(VkImageView imageView, VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
 	{
-		mRenderPass->AddColorAttachment(format, imageLayout, loadOp, storeOp);
+		mRenderPass->AddColorAttachment(format, finalImageLayout, loadOp, storeOp);
 		mFrameBuffer->AddAttachmentImage(imageView);
 	}
 

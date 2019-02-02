@@ -26,11 +26,9 @@ namespace Utopian
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[JobGraph::GBUFFER_INDEX]);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddColorAttachment(sunImage);
-		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
-		// Note: Todo: Hardcoded to 2
-		renderTarget->GetRenderPass()->attachments[2].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		renderTarget->AddDepthAttachment(gbufferJob->depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->SetClearColor(0, 0, 0);
 		renderTarget->Create();
 

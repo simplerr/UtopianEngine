@@ -26,7 +26,7 @@ namespace Utopian::Vk
 
 		/* Note: The order in which these are called is important */
 		void AddColorAttachment(Image* image,
-								VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+								VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
@@ -35,7 +35,7 @@ namespace Utopian::Vk
 								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
 		void AddColorAttachment(const SharedPtr<Image>& image,
-		 						VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		 						VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
@@ -47,7 +47,7 @@ namespace Utopian::Vk
 		// you must provide the exact VkImageView
 		void AddColorAttachment(VkImageView imageView,
 								VkFormat format,
-								VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+								VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
 
