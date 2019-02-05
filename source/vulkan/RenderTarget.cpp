@@ -117,7 +117,7 @@ namespace Utopian::Vk
 		renderPassBeginInfo.framebuffer = framebuffer;
 
 		// Begin command buffer recording & the render pass
-		mCommandBuffer->Begin();
+		//mCommandBuffer->Begin();
 
 		Vk::DebugMarker::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
 

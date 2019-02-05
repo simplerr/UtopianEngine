@@ -19,6 +19,7 @@ namespace Utopian::Vk
 		// Special version that instead of using the framebuffer in RenderTarget
 		// will use the supplied one. 
 		// Note: Assumes that the renderpass and framebuffers are compatible.
+		// Todo: Note: Does not begin the command buffer, has to be done before calling this.
 		void Begin(VkFramebuffer framebuffer, std::string debugName = "Unnamed pass", glm::vec4 debugColor = glm::vec4(1.0, 0.0, 0.0, 1.0));
 		void End();
 

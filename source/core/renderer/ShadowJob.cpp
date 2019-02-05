@@ -1,6 +1,7 @@
 #include "core/renderer/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/handles/FrameBuffers.h"
+#include "vulkan/Debug.h"
 
 namespace Utopian
 {
@@ -78,11 +79,13 @@ namespace Utopian
 
 		cascadeTransforms.UpdateMemory();
 
+		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		commandBuffer->Begin();
+
 		for (uint32_t cascadeIndex = 0; cascadeIndex < SHADOW_MAP_CASCADE_COUNT; cascadeIndex++)
 		{
 			// Begin the renderpass with the framebuffer attachments connected to the current cascade layer
 			renderTarget->Begin(mFrameBuffers[cascadeIndex]->GetFrameBuffer(0), "Cascade pass", glm::vec4(1.0, 1.0, 0.0, 1.0));
-			Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 			/* Render instanced assets */
 			commandBuffer->CmdBindPipeline(effectInstanced->GetPipeline());
@@ -137,7 +140,10 @@ namespace Utopian
 				}
 			}
 
-			renderTarget->End();
+			commandBuffer->CmdEndRenderPass();
+			Vk::DebugMarker::EndRegion(commandBuffer->GetVkHandle());
 		}
+
+		commandBuffer->Flush();
 	}
 }
