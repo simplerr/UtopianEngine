@@ -40,6 +40,8 @@ namespace Utopian
 			gbufferJob->renderTarget->GetSampler());
 
 		effect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), depthSampler.get());
+
+		SetWaitSemaphore(shadowJob->GetCompletedSemahore());
 	}
 
 	void DeferredJob::Render(const JobInput& jobInput)
@@ -71,6 +73,6 @@ namespace Utopian
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		renderTarget->End();
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

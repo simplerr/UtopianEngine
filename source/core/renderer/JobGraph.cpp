@@ -13,18 +13,26 @@
 
 namespace Utopian
 {
-	JobGraph::JobGraph(Vk::Device* device, uint32_t width, uint32_t height)
+	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Vk::Device* device, uint32_t width, uint32_t height)
 	{
-		AddJob(new GBufferJob(device, width, height));
+		GBufferJob* gbufferJob = new GBufferJob(device, width, height);
+		gbufferJob->SetWaitSemaphore(vulkanApp->GetImageAvailableSemaphore());
+
+		AddJob(gbufferJob);
+
 		AddJob(new SSAOJob(device, width, height));
 		AddJob(new BlurJob(device, width, height));
 		AddJob(new ShadowJob(device, width, height));
 		AddJob(new DeferredJob(device, width, height));
-		AddJob(new GrassJob(device, width, height));
+		//AddJob(new GrassJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
 		//AddJob(new SkyboxJob(renderer, width, height));
 		AddJob(new SkydomeJob(device, width, height));
-		AddJob(new SunShaftJob(device, width, height));
-		AddJob(new DebugJob(device, width, height));
+
+		SunShaftJob* sunShaftJob = new SunShaftJob(device, width, height);
+		vulkanApp->SetJobGraphWaitSemaphore(sunShaftJob->GetCompletedSemahore());
+		
+		AddJob(sunShaftJob);
+		//AddJob(new DebugJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
 	}
 
 	JobGraph::~JobGraph()

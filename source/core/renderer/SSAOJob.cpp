@@ -30,6 +30,8 @@ namespace Utopian
 			gbufferRenderer->albedoImage.get(),
 			gbufferRenderer->renderTarget->GetSampler());
 
+		SetWaitSemaphore(gbufferRenderer->GetCompletedSemahore());
+
 		CreateKernelSamples();
 	}
 
@@ -47,7 +49,7 @@ namespace Utopian
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		renderTarget->End();
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 
 	void SSAOJob::CreateKernelSamples()

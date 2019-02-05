@@ -51,6 +51,6 @@ namespace Utopian
 		commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 
-		renderTarget->End();
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

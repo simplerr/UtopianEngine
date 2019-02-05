@@ -24,7 +24,8 @@ namespace Utopian::Vk
 	{
 		VkSubmitInfo submitInfo = {};
 
-		VkPipelineStageFlags stageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		//VkPipelineStageFlags stageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		VkPipelineStageFlags stageFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
 		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 

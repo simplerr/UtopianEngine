@@ -48,6 +48,8 @@ namespace Utopian
 		effect->BindUniformBuffer("UBO_parameters", &parameterBlock);
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+
+		SetWaitSemaphore(deferredJob->GetCompletedSemahore());
 	}
 
 	void SkydomeJob::Render(const JobInput& jobInput)
@@ -91,6 +93,6 @@ namespace Utopian
 		commandBuffer->CmdBindIndexBuffer(mSkydomeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 		commandBuffer->CmdDrawIndexed(mSkydomeModel->GetNumIndices(), 1, 0, 0, 0);
 
-		renderTarget->End();
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

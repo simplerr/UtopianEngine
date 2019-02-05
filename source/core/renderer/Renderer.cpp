@@ -48,7 +48,7 @@ namespace Utopian
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
 
-		mJobGraph = std::make_shared<JobGraph>(mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;

@@ -56,8 +56,10 @@ namespace Utopian::Vk
 		uint32_t GetWindowWidth();
 		uint32_t GetWindowHeight();
 
-		const SharedPtr<Semaphore>& GetWaitSemaphore() const;
-		const SharedPtr<Semaphore>& GetSignalSemaphore() const;
+		const SharedPtr<Semaphore>& GetImageAvailableSemaphore() const;
+		const SharedPtr<Semaphore>& GetRenderCompleteSemaphore() const;
+
+		void SetJobGraphWaitSemaphore(SharedPtr<Semaphore>& waitSemaphore);
 
 		Window* GetWindow();
 
@@ -73,8 +75,9 @@ namespace Utopian::Vk
 		Device*							mDevice = nullptr;
 		Window*							mWindow = nullptr;
 		Image*							mDepthStencil = nullptr;
-		SharedPtr<Semaphore>			mPresentComplete = nullptr;
+		SharedPtr<Semaphore>			mImageAvailable = nullptr;
 		SharedPtr<Semaphore>			mRenderComplete = nullptr;
+		SharedPtr<Semaphore>			mJobGraphWaitSemaphore = nullptr;
 
 		// Note: Todo: Used by legacy effects
 		RenderPass*						mRenderPass = nullptr;

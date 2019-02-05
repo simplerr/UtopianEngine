@@ -70,6 +70,8 @@ namespace Utopian
 		textureArray.AddTexture(texture2->imageView, sampler.get());
 
 		effect->BindCombinedImage("textureSampler", &textureArray);
+
+		SetWaitSemaphore(deferredJob->GetCompletedSemahore());
 	}
 
 	void GrassJob::Render(const JobInput& jobInput)
@@ -99,6 +101,6 @@ namespace Utopian
 			}
 		}
 
-		renderTarget->End();
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());;
 	}
 }

@@ -107,6 +107,6 @@ namespace Utopian
 			}
 		}
 
-		renderTarget->End();
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

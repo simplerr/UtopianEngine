@@ -22,13 +22,13 @@ namespace Utopian
 			BLUR_INDEX,
 			SHADOW_INDEX,
 			DEFERRED_INDEX,
-			GRASS_INDEX,
+			//GRASS_INDEX,
 			SKYBOX_INDEX,
 			SUN_SHAFT_INDEX,
-			DEBUG_INDEX,
+			//DEBUG_INDEX,
 		};
 
-		JobGraph(Vk::Device* device, uint32_t width, uint32_t height);
+		JobGraph(Vk::VulkanApp* vulkanApp, Vk::Device* device, uint32_t width, uint32_t height);
 		~JobGraph();
 
 		/** Executes all jobs added to the graph. */

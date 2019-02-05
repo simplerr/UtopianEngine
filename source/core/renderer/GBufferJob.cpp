@@ -1,6 +1,7 @@
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/Debug.h"
+#include "vulkan/handles/Queue.h"
 
 namespace Utopian
 {
@@ -175,11 +176,11 @@ namespace Utopian
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 				}
-
 			}
 		}	
 		
 		Vk::DebugMarker::EndRegion(commandBuffer->GetVkHandle());
-		renderTarget->End();
+
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }
