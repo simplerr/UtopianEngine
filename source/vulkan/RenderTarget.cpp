@@ -132,7 +132,17 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdEndRenderPass();
 
 		Vk::DebugMarker::EndRegion(mCommandBuffer->GetVkHandle());
+
 		mCommandBuffer->Flush();
+	}
+
+	void RenderTarget::End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore)
+	{
+		mCommandBuffer->CmdEndRenderPass();
+
+		Vk::DebugMarker::EndRegion(mCommandBuffer->GetVkHandle());
+
+		mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
 	}
 
 	uint32_t RenderTarget::GetWidth()

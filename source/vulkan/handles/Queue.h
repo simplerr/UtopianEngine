@@ -2,6 +2,8 @@
 
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
+#include "vulkan/handles/Semaphore.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
@@ -20,14 +22,15 @@ namespace Utopian::Vk
 		 * in offscreen render passes semaphores are not currently used.
 		 */
 		void Submit(CommandBuffer* commandBuffer, Fence* renderFence, bool useSemaphores);
+		void Submit(CommandBuffer* commandBuffer, Fence* renderFence, const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore);
 		void WaitIdle();
 
-		Semaphore* GetWaitSemaphore() const;
-		Semaphore* GetSignalSemaphore() const;
+		const SharedPtr<Semaphore>& GetWaitSemaphore() const;
+		const SharedPtr<Semaphore>& GetSignalSemaphore() const;
 
 	protected:
-		Semaphore* mPresentComplete = nullptr;
-		Semaphore* mRenderComplete = nullptr;
+		SharedPtr<Semaphore> mPresentComplete = nullptr;
+		SharedPtr<Semaphore> mRenderComplete = nullptr;
 		VkSubmitInfo mSubmitInfo = {};
 		VkPipelineStageFlags mStageFlags = {};
 	};

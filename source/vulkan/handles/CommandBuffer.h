@@ -22,6 +22,7 @@ namespace Utopian::Vk
 		/** Uses the Queue from the Device to submit recorded commands. */
 		void Flush(bool free = false);
 		void Cleanup();
+		void Submit(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore);
 
 		void CmdBeginRenderPass(VkRenderPassBeginInfo* renderPassBeginInfo, VkSubpassContents subpassContents);
 		void CmdEndRenderPass();

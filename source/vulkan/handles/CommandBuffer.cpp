@@ -93,6 +93,16 @@ namespace Utopian::Vk
 		}
 	}
 
+	void CommandBuffer::Submit(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore)
+	{
+		assert(mHandle);
+
+		Debug::ErrorCheck(vkEndCommandBuffer(mHandle));
+
+		Queue* queue = GetDevice()->GetQueue();
+		queue->Submit(this, nullptr, waitSemaphore, signalSemaphore);
+	}
+
 	void CommandBuffer::Cleanup()
 	{
 		vkFreeCommandBuffers(GetVkDevice(), GetDevice()->GetCommandPool()->GetVkHandle(), 1, &mHandle);

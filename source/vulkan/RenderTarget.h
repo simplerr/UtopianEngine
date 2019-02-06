@@ -22,6 +22,7 @@ namespace Utopian::Vk
 		// Todo: Note: Does not begin the command buffer, has to be done before calling this.
 		void Begin(VkFramebuffer framebuffer, std::string debugName = "Unnamed pass", glm::vec4 debugColor = glm::vec4(1.0, 0.0, 0.0, 1.0));
 		void End();
+		void End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore);
 
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
