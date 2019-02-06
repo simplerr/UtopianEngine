@@ -84,7 +84,7 @@ namespace Utopian::Vk
 		submitInfo.pCommandBuffers = &mHandle;
 
 		Queue* queue = GetDevice()->GetQueue();
-		queue->Submit(this, nullptr, false);
+		queue->Submit(this, nullptr, nullptr, nullptr);
 		queue->WaitIdle();
 
 		if (free)

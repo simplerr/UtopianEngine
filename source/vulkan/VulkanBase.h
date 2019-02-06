@@ -6,8 +6,10 @@
 
 #include "vulkan/vulkanswapchain.hpp"
 #include "vulkan/VulkanInclude.h"
+//#include "vulkan/handles/Semaphore.h"
 #include "Window.h"
 #include "utility/Timer.h"
+#include "utility/Common.h"
 
 /*
 Resources
@@ -54,6 +56,9 @@ namespace Utopian::Vk
 		uint32_t GetWindowWidth();
 		uint32_t GetWindowHeight();
 
+		const SharedPtr<Semaphore>& GetWaitSemaphore() const;
+		const SharedPtr<Semaphore>& GetSignalSemaphore() const;
+
 		Window* GetWindow();
 
 		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -68,6 +73,8 @@ namespace Utopian::Vk
 		Device*							mDevice = nullptr;
 		Window*							mWindow = nullptr;
 		Image*							mDepthStencil = nullptr;
+		SharedPtr<Semaphore>			mPresentComplete = nullptr;
+		SharedPtr<Semaphore>			mRenderComplete = nullptr;
 
 		// Note: Todo: Used by legacy effects
 		RenderPass*						mRenderPass = nullptr;

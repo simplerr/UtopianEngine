@@ -10,20 +10,6 @@ namespace Utopian::Vk
 	Queue::Queue(Device* device)
 		: Handle(device, nullptr)
 	{
-		mPresentComplete = std::make_shared<Semaphore>(device);
-		mRenderComplete = std::make_shared<Semaphore>(device);
-
-		mSubmitInfo = {};
-		mStageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-
-		// Setup default submit info
-		mSubmitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		mSubmitInfo.waitSemaphoreCount = 1;
-		mSubmitInfo.signalSemaphoreCount = 1;
-		mSubmitInfo.pWaitSemaphores = mPresentComplete->GetVkHandlePtr();		// Waits for swapChain.acquireNextImage to complete
-		mSubmitInfo.pSignalSemaphores = mRenderComplete->GetVkHandlePtr();		// swapChain.queuePresent will wait for this submit to complete
-		mSubmitInfo.pWaitDstStageMask = &mStageFlags;
-
 		// Get the queue from the device
 		// [NOTE] that queueFamilyIndex is hard coded to 0
 		uint32_t queueFamilyIndex = device->GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
@@ -32,26 +18,6 @@ namespace Utopian::Vk
 
 	Queue::~Queue()
 	{
-	}
-
-	void Queue::Submit(CommandBuffer* commandBuffer, Fence* renderFence, bool useSemaphores)
-	{
-		VkSubmitInfo submitInfo = {};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-		if (useSemaphores)
-		{
-			submitInfo = mSubmitInfo;
-		}
-
-		VkCommandBuffer cmdBuffer = commandBuffer->GetVkHandle();
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &cmdBuffer;
-
-		if (renderFence == nullptr)
-			Debug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &submitInfo, VK_NULL_HANDLE));
-		else
-			Debug::ErrorCheck(vkQueueSubmit(GetVkHandle(), 1, &submitInfo, renderFence->GetVkHandle()));
 	}
 
 	void Queue::Submit(CommandBuffer* commandBuffer, Fence* renderFence, const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore)
@@ -91,15 +57,5 @@ namespace Utopian::Vk
 	void Queue::WaitIdle()
 	{
 		Debug::ErrorCheck(vkQueueWaitIdle(GetVkHandle()));
-	}
-
-	const SharedPtr<Semaphore>& Queue::GetWaitSemaphore() const
-	{
-		return mPresentComplete;
-	}
-
-	const SharedPtr<Semaphore>& Queue::GetSignalSemaphore() const
-	{
-		return mRenderComplete;
 	}
 }

@@ -58,6 +58,9 @@ namespace Utopian::Vk
 		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());
+
+		mPresentComplete = std::make_shared<Semaphore>(mDevice);
+		mRenderComplete = std::make_shared<Semaphore>(mDevice);
 	}
 
 	void VulkanBase::SetupSwapchain()
@@ -74,7 +77,7 @@ namespace Utopian::Vk
 	void VulkanBase::PrepareFrame()
 	{
 		Queue* queue = mDevice->GetQueue();
-		Debug::ErrorCheck(mSwapChain.acquireNextImage(queue->GetWaitSemaphore()->GetVkHandle(),
+		Debug::ErrorCheck(mSwapChain.acquireNextImage(GetWaitSemaphore()->GetVkHandle(),
 													        &mFrameBuffers->currentFrameBuffer));
 	}
 
@@ -83,7 +86,7 @@ namespace Utopian::Vk
 		Queue* queue = mDevice->GetQueue();
 		Debug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
 														mFrameBuffers->currentFrameBuffer,
-														queue->GetSignalSemaphore()->GetVkHandle()));
+														GetSignalSemaphore()->GetVkHandle()));
 
 		queue->WaitIdle();
 	}
@@ -131,5 +134,15 @@ namespace Utopian::Vk
 	VkFormat VulkanBase::GetDepthFormat()
 	{
 		return mDepthFormat;	
+	}
+
+	const SharedPtr<Semaphore>& VulkanBase::GetWaitSemaphore() const
+	{
+		return mPresentComplete;
+	}
+
+	const SharedPtr<Semaphore>& VulkanBase::GetSignalSemaphore() const
+	{
+		return mRenderComplete;
 	}
 }	// VulkanLib namespace
