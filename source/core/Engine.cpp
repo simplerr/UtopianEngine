@@ -83,19 +83,17 @@ namespace Utopian
 
 	void Engine::Tick()
 	{
-		Timer::Instance().FrameBegin();
 
 		Update();
 		Render();
 
 		Input::Instance().Update(0);
 
-		auto fps = Timer::Instance().FrameEnd();
 	}
 
 	void Engine::Update()
 	{
-		mVulkanApp->BeginUiUpdate();
+		ImGui::NewFrame();
 
 		World::Instance().Update();
 		Renderer::Instance().Update();
@@ -109,15 +107,11 @@ namespace Utopian
 
 	void Engine::Render()
 	{
-		static bool firstCall = true;
-		if (firstCall || mVulkanApp->GetFenceStatus() == VK_SUCCESS)
+		if (mVulkanApp->PreviousFrameComplete())
 		{
-			firstCall = false;
-
 			mVulkanApp->PrepareFrame();
-			mVulkanApp->EndUiUpdate();
 
-			Renderer::Instance().Render();
+			gRenderer().Render();
 			gScreenQuadUi().Render(mVulkanApp.get());
 
 			// Call the applications Render() function

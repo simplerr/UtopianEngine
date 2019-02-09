@@ -79,6 +79,8 @@ namespace Utopian::Vk
 
 	void VulkanBase::PrepareFrame()
 	{
+		Timer::Instance().FrameBegin();
+
 		Queue* queue = mDevice->GetQueue();
 		Debug::ErrorCheck(mSwapChain.acquireNextImage(GetImageAvailableSemaphore()->GetVkHandle(),
 													        &mFrameBuffers->currentFrameBuffer));
@@ -88,20 +90,30 @@ namespace Utopian::Vk
 	{
 		Queue* queue = mDevice->GetQueue();
 		Debug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
-														mFrameBuffers->currentFrameBuffer,
-														GetRenderCompleteSemaphore()->GetVkHandle()));
+												  mFrameBuffers->currentFrameBuffer,
+												  GetRenderCompleteSemaphore()->GetVkHandle()));
+
+		Timer::Instance().FrameEnd();
 	}
 
-	VkResult VulkanBase::GetFenceStatus()
+	bool VulkanBase::PreviousFrameComplete()
 	{
-		VkResult fenceStatus = vkGetFenceStatus(mDevice->GetVkDevice(), mWaitFence->GetVkHandle());
 
+		static bool firstFrame = true;
+		if (firstFrame)
+		{
+			firstFrame = false;
+			return true;
+		}
+
+		VkResult fenceStatus = vkGetFenceStatus(mDevice->GetVkDevice(), mWaitFence->GetVkHandle());
 		if (fenceStatus == VK_SUCCESS)
 		{
 			mWaitFence->Reset();
+			return true;
 		}
-	
-		return fenceStatus;
+
+		return false;
 	}
 
 	Device* VulkanBase::GetDevice()

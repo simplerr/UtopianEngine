@@ -118,25 +118,15 @@ namespace Utopian::Vk
 
 	void VulkanApp::Render()
 	{
+		UpdateImgui();
+
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
-		//mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, nullptr, mJobGraphWaitSemaphore, GetRenderCompleteSemaphore());
 		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, mWaitFence.get(), mJobGraphWaitSemaphore, GetRenderCompleteSemaphore());
-
-		/*VkResult fenceStatus = VK_NOT_READY;
-		while (fenceStatus != VK_SUCCESS)
-		{
-			fenceStatus = vkGetFenceStatus(mDevice->GetVkDevice(), mWaitFence->GetVkHandle());
-		}
-
-		mWaitFence->Reset();*/
-
-		//mWaitFence->Wait();
-		//mDevice->GetQueue()->WaitIdle();
 	}
 
 	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -155,15 +145,8 @@ namespace Utopian::Vk
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
 	}
 
-	void VulkanApp::BeginUiUpdate()
+	void VulkanApp::UpdateImgui()
 	{
-		ImGui::NewFrame();
-	}
-
-	void VulkanApp::EndUiUpdate()
-	{
-		//ImGui::Render();
-
 		mUiOverlay->Update();
 	}
 

@@ -82,7 +82,7 @@ actor_list =
 			},
 			CNoClip = 
 			{
-				speed = 16,
+				speed = 1,
 			},
 			CPlayerControl = 
 			{

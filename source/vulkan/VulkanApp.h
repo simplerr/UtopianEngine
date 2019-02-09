@@ -78,8 +78,7 @@ namespace Utopian::Vk
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-		void BeginUiUpdate();
-		void EndUiUpdate();
+		void UpdateImgui();
 		void ToggleUi();
 
 		UIOverlay* GetUiOverlay();

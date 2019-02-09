@@ -59,7 +59,7 @@ namespace Utopian::Vk
 		const SharedPtr<Semaphore>& GetImageAvailableSemaphore() const;
 		const SharedPtr<Semaphore>& GetRenderCompleteSemaphore() const;
 
-		VkResult GetFenceStatus();
+		bool PreviousFrameComplete();
 
 		void SetJobGraphWaitSemaphore(SharedPtr<Semaphore>& waitSemaphore);
 

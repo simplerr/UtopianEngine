@@ -6,7 +6,7 @@ generate_random_foliage = function(instancing)
     end
 
     math.randomseed(os.time())
-    local range = 1000
+    local range = 2000
 
     -- Trees
     for i=0, 1 do
@@ -21,7 +21,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Grass and flowers
-    for i=0, 100 do
+    for i=0, 1000 do
         local asset_id = math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
@@ -30,7 +30,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Rocks
-    for i=0, 20 do
+    for i=0, 200 do
         local asset_id = math.random(91, 92)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
@@ -41,7 +41,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Bushes
-    for i=0, 50 do
+    for i=0, 500 do
         local asset_id = 143 --math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
