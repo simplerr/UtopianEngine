@@ -59,6 +59,8 @@ namespace Utopian::Vk
 		const SharedPtr<Semaphore>& GetImageAvailableSemaphore() const;
 		const SharedPtr<Semaphore>& GetRenderCompleteSemaphore() const;
 
+		VkResult GetFenceStatus();
+
 		void SetJobGraphWaitSemaphore(SharedPtr<Semaphore>& waitSemaphore);
 
 		Window* GetWindow();
@@ -78,6 +80,7 @@ namespace Utopian::Vk
 		SharedPtr<Semaphore>			mImageAvailable = nullptr;
 		SharedPtr<Semaphore>			mRenderComplete = nullptr;
 		SharedPtr<Semaphore>			mJobGraphWaitSemaphore = nullptr;
+		SharedPtr<Fence>				mWaitFence = nullptr;
 
 		// Note: Todo: Used by legacy effects
 		RenderPass*						mRenderPass = nullptr;

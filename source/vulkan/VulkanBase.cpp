@@ -12,6 +12,7 @@
 #include "handles/CommandPool.h"
 #include "handles/Semaphore.h"
 #include "handles/Image.h"
+#include "handles/Fence.h"
 #include "handles/RenderPass.h"
 #include "handles/Instance.h"
 #include "handles/FrameBuffers.h"
@@ -62,6 +63,7 @@ namespace Utopian::Vk
 		mImageAvailable = std::make_shared<Semaphore>(mDevice);
 		mRenderComplete = std::make_shared<Semaphore>(mDevice);
 		mJobGraphWaitSemaphore = std::make_shared<Semaphore>(mDevice);
+		mWaitFence = std::make_shared<Fence>(mDevice, 0*VK_FENCE_CREATE_SIGNALED_BIT);
 	}
 
 	void VulkanBase::SetupSwapchain()
@@ -88,6 +90,18 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
 														mFrameBuffers->currentFrameBuffer,
 														GetRenderCompleteSemaphore()->GetVkHandle()));
+	}
+
+	VkResult VulkanBase::GetFenceStatus()
+	{
+		VkResult fenceStatus = vkGetFenceStatus(mDevice->GetVkDevice(), mWaitFence->GetVkHandle());
+
+		if (fenceStatus == VK_SUCCESS)
+		{
+			mWaitFence->Reset();
+		}
+	
+		return fenceStatus;
 	}
 
 	Device* VulkanBase::GetDevice()

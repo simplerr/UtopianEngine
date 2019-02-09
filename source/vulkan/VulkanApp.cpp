@@ -124,8 +124,19 @@ namespace Utopian::Vk
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
-		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, nullptr, mJobGraphWaitSemaphore, GetRenderCompleteSemaphore());
-		mDevice->GetQueue()->WaitIdle();
+		//mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, nullptr, mJobGraphWaitSemaphore, GetRenderCompleteSemaphore());
+		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, mWaitFence.get(), mJobGraphWaitSemaphore, GetRenderCompleteSemaphore());
+
+		/*VkResult fenceStatus = VK_NOT_READY;
+		while (fenceStatus != VK_SUCCESS)
+		{
+			fenceStatus = vkGetFenceStatus(mDevice->GetVkDevice(), mWaitFence->GetVkHandle());
+		}
+
+		mWaitFence->Reset();*/
+
+		//mWaitFence->Wait();
+		//mDevice->GetQueue()->WaitIdle();
 	}
 
 	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -151,7 +162,7 @@ namespace Utopian::Vk
 
 	void VulkanApp::EndUiUpdate()
 	{
-		ImGui::Render();
+		//ImGui::Render();
 
 		mUiOverlay->Update();
 	}

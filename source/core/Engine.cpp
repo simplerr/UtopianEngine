@@ -14,6 +14,7 @@
 #include "vulkan/Debug.h"
 #include "Input.h"
 #include "vulkan/VulkanApp.h"
+#include "imgui/imgui.h"
 
 namespace Utopian
 {
@@ -83,14 +84,12 @@ namespace Utopian
 	void Engine::Tick()
 	{
 		Timer::Instance().FrameBegin();
-		mVulkanApp->PrepareFrame();
 
 		Update();
 		Render();
 
 		Input::Instance().Update(0);
 
-		mVulkanApp->SubmitFrame();
 		auto fps = Timer::Instance().FrameEnd();
 	}
 
@@ -105,19 +104,30 @@ namespace Utopian
 		// Call the applications Update() function
 		mUpdateCallback();
 
-		mVulkanApp->EndUiUpdate();
+		ImGui::Render();
 	}
 
 	void Engine::Render()
 	{
-		Renderer::Instance().Render();
-		gScreenQuadUi().Render(mVulkanApp.get());
+		static bool firstCall = true;
+		if (firstCall || mVulkanApp->GetFenceStatus() == VK_SUCCESS)
+		{
+			firstCall = false;
 
-		// Call the applications Render() function
-		mRenderCallback();
+			mVulkanApp->PrepareFrame();
+			mVulkanApp->EndUiUpdate();
 
-		// Present to screen
-		mVulkanApp->Render();
+			Renderer::Instance().Render();
+			gScreenQuadUi().Render(mVulkanApp.get());
+
+			// Call the applications Render() function
+			mRenderCallback();
+
+			// Present to screen
+			mVulkanApp->Render();
+
+			mVulkanApp->SubmitFrame();
+		}
 	}
 	
 	void Engine::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
