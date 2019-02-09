@@ -11,10 +11,15 @@ namespace Utopian
 	void Timer::FrameBegin()
 	{
 		mFrameBegin = std::chrono::high_resolution_clock::now();
+		mFirstFrame = false;
 	}
 
 	uint32_t Timer::FrameEnd()
 	{
+		// FrameBegin() needs to be called first
+		if (mFirstFrame)
+			return -1;
+
 		mFrameCounter++;
 		auto frameEnd = std::chrono::high_resolution_clock::now();
 		auto tDiff = std::chrono::duration<double, std::milli>(frameEnd - mFrameBegin).count();

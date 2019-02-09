@@ -79,8 +79,6 @@ namespace Utopian::Vk
 
 	void VulkanBase::PrepareFrame()
 	{
-		Timer::Instance().FrameBegin();
-
 		Queue* queue = mDevice->GetQueue();
 		Debug::ErrorCheck(mSwapChain.acquireNextImage(GetImageAvailableSemaphore()->GetVkHandle(),
 													        &mFrameBuffers->currentFrameBuffer));
@@ -92,8 +90,6 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(mSwapChain.queuePresent(queue->GetVkHandle(),
 												  mFrameBuffers->currentFrameBuffer,
 												  GetRenderCompleteSemaphore()->GetVkHandle()));
-
-		Timer::Instance().FrameEnd();
 	}
 
 	bool VulkanBase::PreviousFrameComplete()

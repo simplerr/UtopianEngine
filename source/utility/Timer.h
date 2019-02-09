@@ -28,6 +28,7 @@ namespace Utopian
 		float		mFpsTimer = 0.0f;		// FPS timer (one second interval)
 		float		mLifetimeTimer = 0.0f;
 		uint32_t	mFramesPerSecond;
+		bool		mFirstFrame = true;
 
 		std::vector<float> mFpsLog;
 	};

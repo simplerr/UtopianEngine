@@ -83,12 +83,10 @@ namespace Utopian
 
 	void Engine::Tick()
 	{
-
 		Update();
 		Render();
 
 		Input::Instance().Update(0);
-
 	}
 
 	void Engine::Update()
@@ -109,6 +107,8 @@ namespace Utopian
 	{
 		if (mVulkanApp->PreviousFrameComplete())
 		{
+			gTimer().FrameEnd();
+
 			mVulkanApp->PrepareFrame();
 
 			gRenderer().Render();
@@ -121,6 +121,7 @@ namespace Utopian
 			mVulkanApp->Render();
 
 			mVulkanApp->SubmitFrame();
+			gTimer().FrameBegin();
 		}
 	}
 	
