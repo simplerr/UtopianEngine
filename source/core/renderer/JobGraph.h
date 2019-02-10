@@ -34,6 +34,7 @@ namespace Utopian
 		/** Executes all jobs added to the graph. */
 		void ExecuteJobs(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);
 
+		void EnableJob(JobIndex jobIndex, bool enabled);
 	private:
 		/** Adds a job to the graph. */
 		void AddJob(BaseJob* job);

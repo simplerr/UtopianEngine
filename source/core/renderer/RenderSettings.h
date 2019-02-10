@@ -17,6 +17,7 @@ namespace Utopian
 		bool shadowsEnabled = true;
 		bool normalMapping = true;
 		bool ssaoEnabled = true;
+		bool godRaysEnabled = true;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;

@@ -97,6 +97,7 @@ namespace Utopian
 		ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
 		ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
 		ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
+		ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
 		ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
 		ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
 		ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
@@ -105,6 +106,11 @@ namespace Utopian
 		ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
 		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
 		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
+
+		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
+		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
+		mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
+		mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
 
 		// Temp:
 		mMainCamera->SetNearPlane(mRenderingSettings.nearPlane);

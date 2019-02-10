@@ -121,9 +121,7 @@ void main()
 	// Note: Disabled for now
 	//litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
 
-	float ssao = 1.0;
-	if (settings_ubo.ssaoEnabled == 1)
-		ssao = texture(ssaoSampler, InTex).r;
+	float ssao = texture(ssaoSampler, InTex).r;
 
 	OutFragColor = litColor * ssao;
 

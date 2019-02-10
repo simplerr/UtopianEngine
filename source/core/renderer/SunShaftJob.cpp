@@ -86,10 +86,12 @@ namespace Utopian
 		radialBlurRenderTarget->Begin("Sun shaft pass", glm::vec4(0.7, 0.7, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = radialBlurRenderTarget->GetCommandBuffer();
 
-		commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(radialBlurEffect);
-
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		if (IsEnabled())
+		{
+			commandBuffer->CmdBindPipeline(radialBlurEffect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(radialBlurEffect);
+			gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		}
 
 		radialBlurRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}

@@ -56,10 +56,10 @@ namespace Utopian
 		effectInstanced->BindUniformBuffer("UBO_cascadeTransforms", &cascadeTransforms);
 
 		const uint32_t size = 240;
-		gScreenQuadUi().AddQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(0), renderTarget->GetSampler());
+		/*gScreenQuadUi().AddQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(0), renderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(1), renderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(6 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(2), renderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(4 * (size + 10) + 10, height - 2 * (size + 10), size, size, depthColorImage->GetLayerView(3), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(4 * (size + 10) + 10, height - 2 * (size + 10), size, size, depthColorImage->GetLayerView(3), renderTarget->GetSampler());*/
 	}
 
 	ShadowJob::~ShadowJob()
@@ -90,56 +90,59 @@ namespace Utopian
 			// Begin the renderpass with the framebuffer attachments connected to the current cascade layer
 			renderTarget->Begin(mFrameBuffers[cascadeIndex]->GetFrameBuffer(0), "Cascade pass", glm::vec4(1.0, 1.0, 0.0, 1.0));
 
-			/* Render instanced assets */
-			commandBuffer->CmdBindPipeline(effectInstanced->GetPipeline());
-
-			for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
+			if (IsEnabled())
 			{
-				SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
-				Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
-				Vk::StaticModel* model = instanceGroup->GetModel();
+				/* Render instanced assets */
+				commandBuffer->CmdBindPipeline(effectInstanced->GetPipeline());
 
-				if (instanceBuffer != nullptr && model != nullptr)
+				for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
 				{
-					for (Vk::Mesh* mesh : model->mMeshes)
+					SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
+					Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
+					Vk::StaticModel* model = instanceGroup->GetModel();
+
+					if (instanceBuffer != nullptr && model != nullptr)
 					{
-						CascadePushConst pushConst(glm::mat4(), cascadeIndex);
-						commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+						for (Vk::Mesh* mesh : model->mMeshes)
+						{
+							CascadePushConst pushConst(glm::mat4(), cascadeIndex);
+							commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
 
-						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-						VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-						commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+							VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
+							VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
+							commandBuffer->CmdBindDescriptorSet(effectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-						commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-						commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
-						commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-						commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+							commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+							commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+							commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+							commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+						}
 					}
 				}
-			}
 
-			commandBuffer->CmdBindPipeline(effect->GetPipeline());
+				commandBuffer->CmdBindPipeline(effect->GetPipeline());
 
-			/* Render all renderables */
-			for (auto& renderable : jobInput.sceneInfo.renderables)
-			{
-				if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
-					continue;
-
-				Vk::StaticModel* model = renderable->GetModel();
-
-				for (Vk::Mesh* mesh : model->mMeshes)
+				/* Render all renderables */
+				for (auto& renderable : jobInput.sceneInfo.renderables)
 				{
-					CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
-					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+					if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+						continue;
 
-					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+					Vk::StaticModel* model = renderable->GetModel();
 
-					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+					for (Vk::Mesh* mesh : model->mMeshes)
+					{
+						CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
+						commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+
+						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
+						VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
+						commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+						commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+						commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+						commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+					}
 				}
 			}
 

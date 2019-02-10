@@ -43,11 +43,12 @@ namespace Utopian
 		renderTarget->Begin("SSAO pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(effect);
-
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		if (IsEnabled())
+		{
+			commandBuffer->CmdBindPipeline(effect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(effect);
+			gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		}
 
 		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}

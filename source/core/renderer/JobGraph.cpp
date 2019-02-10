@@ -53,4 +53,11 @@ namespace Utopian
 		mJobs.push_back(job);
 		job->Init(mJobs);
 	}
+
+	void JobGraph::EnableJob(JobIndex jobIndex, bool enabled)
+	{
+		assert(jobIndex < mJobs.size());
+
+		mJobs[jobIndex]->SetEnabled(enabled);
+	}
 }

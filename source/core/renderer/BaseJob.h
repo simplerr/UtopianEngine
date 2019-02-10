@@ -33,6 +33,7 @@ namespace Utopian
 			mWidth = width;
 			mHeight = height;
 			mCompletedSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
+			mEnabled = true;
 		}
 
 		virtual ~BaseJob() {};
@@ -46,14 +47,18 @@ namespace Utopian
 		virtual void Render(const JobInput& jobInput) = 0;
 
 		void SetWaitSemaphore(const SharedPtr<Vk::Semaphore>& waitSemaphore) { mWaitSemaphore = waitSemaphore; };
+		void SetEnabled(bool enabled) { mEnabled = enabled; };
 
 		SharedPtr<Vk::Semaphore>& GetCompletedSemahore() { return mCompletedSemaphore; };
 		SharedPtr<Vk::Semaphore>& GetWaitSemahore() { return mWaitSemaphore; };
+
+		bool IsEnabled() const { return mEnabled; };
 	protected:
 		Vk::Device* mDevice;
 		SharedPtr<Vk::Semaphore> mCompletedSemaphore;
 		SharedPtr<Vk::Semaphore> mWaitSemaphore;
 		uint32_t mWidth;
 		uint32_t mHeight;
+		bool mEnabled;
 	};
 }
