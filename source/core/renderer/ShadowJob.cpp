@@ -28,17 +28,18 @@ namespace Utopian
 			mFrameBuffers.push_back(frameBuffer);
 		}
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
-			renderTarget->GetRenderPass(),
-			"data/shaders/shadowmap/shadowmap.vert",
-			"data/shaders/shadowmap/shadowmap.frag");
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/shadowmap/shadowmap.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/shadowmap/shadowmap.frag";
+
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		effect->CreatePipeline();
 
-		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
-			renderTarget->GetRenderPass(),
-			"data/shaders/shadowmap/shadowmap_instancing.vert",
-			"data/shaders/shadowmap/shadowmap.frag");
+		shaderCreateInfo.vertexShaderPath = "data/shaders/shadowmap/shadowmap_instancing.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/shadowmap/shadowmap.frag";
+		effectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+
 		effectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());

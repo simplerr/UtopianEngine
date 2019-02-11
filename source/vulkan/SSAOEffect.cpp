@@ -16,8 +16,13 @@
 namespace Utopian::Vk
 {
 	SSAOEffect::SSAOEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/common/fullscreen.vert", "data/shaders/ssao/ssao.frag")
+		: Effect(device, renderPass)
 	{
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
+		SetShaderCreateInfo(shaderCreateInfo);
+
 		mPipeline->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		mPipeline->depthStencilState.depthTestEnable = VK_TRUE;
 

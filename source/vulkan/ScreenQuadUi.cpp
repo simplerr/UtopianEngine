@@ -19,10 +19,11 @@ namespace Utopian
 	{
 		mVulkanApp = vulkanApp;
 
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(),
-			vulkanApp->GetRenderPass(),
-			"data/shaders/screenquad/screenquad.vert",
-			"data/shaders/screenquad/screenquad.frag");
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/screenquad/screenquad.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/screenquad/screenquad.frag";
+
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(), vulkanApp->GetRenderPass(), shaderCreateInfo);
 		mEffect->CreatePipeline();
 
 		mCommandBuffer = new Vk::CommandBuffer(vulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);

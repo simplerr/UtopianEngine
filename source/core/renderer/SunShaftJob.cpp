@@ -26,10 +26,11 @@ namespace Utopian
 		radialBlurRenderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		radialBlurRenderTarget->Create();
 
-		radialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice,
-			radialBlurRenderTarget->GetRenderPass(),
-			"data/shaders/common/fullscreen.vert",
-			"data/shaders/sun_shafts/sun_shafts.frag");
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/sun_shafts/sun_shafts.frag";
+
+		radialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, radialBlurRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
 		radialBlurEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;

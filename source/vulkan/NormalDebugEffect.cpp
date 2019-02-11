@@ -13,8 +13,14 @@
 namespace Utopian::Vk
 {
 	NormalDebugEffect::NormalDebugEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/normal_debug/normal_debug.vert", "data/shaders/normal_debug/normal_debug.frag", "data/shaders/normal_debug/normal_debug.geom")
+		: Effect(device, renderPass)
 	{
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
+		shaderCreateInfo.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
+		SetShaderCreateInfo(shaderCreateInfo);
+
 		CreatePipeline();
 
 		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

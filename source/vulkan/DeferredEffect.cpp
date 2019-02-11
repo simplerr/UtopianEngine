@@ -16,8 +16,13 @@
 namespace Utopian::Vk
 {
 	DeferredEffect::DeferredEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/common/fullscreen.vert", "data/shaders/deferred/deferred.frag")
+		: Effect(device, renderPass)
 	{
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/deferred/deferred.frag";
+		SetShaderCreateInfo(shaderCreateInfo);
+
 		mPipeline->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
 		mPipeline->depthStencilState.depthTestEnable = VK_TRUE;
 

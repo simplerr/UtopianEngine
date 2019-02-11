@@ -3,6 +3,7 @@
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/terrain/PerlinTerrain.h"
+#include "vulkan/ShaderFactory.h"
 
 namespace Utopian
 {
@@ -27,10 +28,11 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice,
-			renderTarget->GetRenderPass(),
-			"data/shaders/grass/grass.vert",
-			"data/shaders/grass/grass.frag");
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/grass/grass.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/grass/grass.frag";
+
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
 

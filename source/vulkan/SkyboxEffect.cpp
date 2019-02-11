@@ -1,19 +1,25 @@
 #include "vulkan/SkyboxEffect.h"
+#include "vulkan/ShaderFactory.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian::Vk
 {
 	SkyboxEffect::SkyboxEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/skybox/skybox.vert", "data/shaders/skybox/skybox.frag")
+		: Effect(device, renderPass)
 	{
-		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/skybox/skybox.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
+		SetShaderCreateInfo(shaderCreateInfo);
 
-		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
 		GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 
 		CreatePipeline();
+
+		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 	}
 
 	void SkyboxEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)

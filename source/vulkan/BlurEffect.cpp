@@ -15,8 +15,13 @@
 namespace Utopian::Vk
 {
 	BlurEffect::BlurEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/common/fullscreen.vert", "data/shaders/blur/blur.frag")
+		: Effect(device, renderPass)
 	{
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/blur/blur.frag";
+		SetShaderCreateInfo(shaderCreateInfo);
+
 		// Vertices generated in fullscreen.vert are in clockwise order
 		mPipeline->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mPipeline->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;

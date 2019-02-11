@@ -13,8 +13,13 @@
 namespace Utopian::Vk
 {
 	ColorEffect::ColorEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/color/color.vert", "data/shaders/color/color.frag")
+		: Effect(device, renderPass)
 	{
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/color/color.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/color/color.frag";
+		SetShaderCreateInfo(shaderCreateInfo);
+
 		// Note: Uncommented since the DebugJob is calling this instead right now
 		//CreatePipeline();
 

@@ -551,6 +551,70 @@ namespace Utopian::Vk
 			reflection->vertexDescription->AddBinding(BINDING_0, totalSize, VK_VERTEX_INPUT_RATE_VERTEX);
 	}
 
+	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(const ShaderCreateInfo& shaderCreateInfo)
+	{
+		SharedPtr<Shader> shader = nullptr;
+
+		/* Vertex shader */
+		SharedPtr<CompiledShader> compiledVertexShader = CompileShader(shaderCreateInfo.vertexShaderPath);
+		if (compiledVertexShader != nullptr)
+		{
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
+			moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
+
+			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
+		}
+
+		/* Pixel shader */
+		SharedPtr<CompiledShader> compiledPixelShader = CompileShader(shaderCreateInfo.fragmentShaderPath);
+		if (compiledPixelShader != nullptr)
+		{
+			VkShaderModuleCreateInfo moduleCreateInfo{};
+			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
+			moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
+
+			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
+		}
+
+		/* Geometry shader */
+		SharedPtr<CompiledShader> compiledGeometryShader;
+		if (shaderCreateInfo.geometryShaderPath != "NONE")
+		{
+			compiledGeometryShader = CompileShader(shaderCreateInfo.geometryShaderPath);
+			if (compiledGeometryShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledGeometryShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledGeometryShader->spirvBytecode.data();
+
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledGeometryShader->shaderModule));
+			}
+		}
+
+		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
+		{
+			if (shaderCreateInfo.geometryShaderPath != "NONE" && compiledGeometryShader != nullptr)
+			{
+				shader = std::make_shared<Shader>();
+				shader->AddCompiledShader(compiledVertexShader);
+				shader->AddCompiledShader(compiledPixelShader);
+				shader->AddCompiledShader(compiledGeometryShader);
+			}
+			else if (shaderCreateInfo.geometryShaderPath  == "NONE")
+			{
+				shader = std::make_shared<Shader>();
+				shader->AddCompiledShader(compiledVertexShader);
+				shader->AddCompiledShader(compiledPixelShader);
+			}
+		}
+
+		return shader;
+	}
+
 	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
 	{
 		SharedPtr<Shader> shader = nullptr;

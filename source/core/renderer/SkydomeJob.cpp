@@ -32,10 +32,10 @@ namespace Utopian
 		renderTarget->SetClearColor(0, 0, 0);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice,
-			renderTarget->GetRenderPass(),
-			"data/shaders/skydome/skydome.vert",
-			"data/shaders/skydome/skydome.frag");
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/skydome/skydome.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/skydome/skydome.frag";
+		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		effect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
 		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;

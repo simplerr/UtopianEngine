@@ -16,8 +16,13 @@
 namespace Utopian::Vk
 {
 	ImguiEffect::ImguiEffect(Device* device, RenderPass* renderPass)
-		: Effect(device, renderPass, "data/shaders/imgui/uioverlay.vert", "data/shaders/imgui/uioverlay.frag")
+		: Effect(device, renderPass)
 	{
+		ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/imgui/uioverlay.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/imgui/uioverlay.frag";
+		SetShaderCreateInfo(shaderCreateInfo);
+
 		// Customize the pipeline with blending
 		mPipeline->blendAttachmentState[0].blendEnable = VK_TRUE;
 		mPipeline->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;

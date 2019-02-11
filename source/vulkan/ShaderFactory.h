@@ -78,6 +78,24 @@ namespace Utopian::Vk
 		VkShaderModule shaderModule;
 	};
 
+	struct ShaderCreateInfo
+	{
+		ShaderCreateInfo()
+		{
+			vertexShaderPath = "NONE";
+			fragmentShaderPath = "NONE";
+			geometryShaderPath = "NONE";
+			tescShaderPath = "NONE";
+			teseShaderPath = "NONE";
+		}
+
+		std::string vertexShaderPath;
+		std::string fragmentShaderPath;
+		std::string geometryShaderPath;
+		std::string tescShaderPath;
+		std::string teseShaderPath;
+	};
+
 	class Shader
 	{
 	public:
@@ -103,6 +121,7 @@ namespace Utopian::Vk
 		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
 		Shader* CreateComputeShader(std::string computeShaderFilename);
 		SharedPtr<Shader> CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
+		SharedPtr<Shader> CreateShaderOnline(const ShaderCreateInfo& shaderCreateInfo);
 		SharedPtr<CompiledShader> CompileShader(std::string filename);
 
 		void AddIncludeDirectory(std::string directory);

@@ -27,17 +27,17 @@ namespace Utopian
 		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(device, renderTarget->GetRenderPass());
 		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(device, renderTarget->GetRenderPass());
 		//mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		mGBufferEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 
-		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
-																		   renderTarget->GetRenderPass(),
-																		   "data/shaders/gbuffer/gbuffer.vert",
-																		   "data/shaders/gbuffer/gbuffer_terrain.frag");
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer_terrain.frag";
 
-		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device,
-																		     renderTarget->GetRenderPass(),
-																		   	 "data/shaders/gbuffer/gbuffer_instancing.vert",
-																		     "data/shaders/gbuffer/gbuffer.frag");
+		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+
+		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+
+		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		mGBufferEffectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 
@@ -52,7 +52,6 @@ namespace Utopian
 
 		mGBufferEffectInstanced->CreatePipeline();
 		mGBufferEffectTerrain->CreatePipeline();
-		mGBufferEffect->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
 
 		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

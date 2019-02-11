@@ -12,11 +12,18 @@
 
 namespace Utopian::Vk
 {
-	Effect::Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader)
+	Effect::Effect(Device* device, RenderPass* renderPass)
 	{
-		mVertexShaderPath = vertexShader;
-		mFragmentShaderPath = fragmentShader;
-		mGeometryShaderPath = geometryShader;
+		mRenderPass = renderPass;
+		mDevice = device;
+		mDescriptorPool = std::make_shared<DescriptorPool>(device);
+
+		Init();
+	}
+
+	Effect::Effect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo)
+	{
+		mShaderCreateInfo = shaderCreateInfo;
 		mRenderPass = renderPass;
 		mDevice = device;
 		mDescriptorPool = std::make_shared<DescriptorPool>(device);
@@ -27,21 +34,30 @@ namespace Utopian::Vk
 	void Effect::Init()
 	{
 		mPipeline = std::make_shared<Pipeline>(mDevice, mRenderPass);
-		mShader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath, mGeometryShaderPath);
+	}
 
-		assert(mShader != nullptr);
-
-		CreatePipelineInterface(mShader, mDevice);
+	void Effect::SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo)
+	{
+		mShaderCreateInfo = shaderCreateInfo;
 	}
 
 	void Effect::CreatePipeline()
 	{
+		// Note: Todo: Hack: the code in the if-statement should be in the constructor and not here
+		// but since there needs to a constructor that does not take a ShaderCreateInfo argument
+		// mShaderCreateInfo is only set after SetShaderCreateInfo() has been called.
+		if (mShader == nullptr)
+		{
+			mShader = gShaderFactory().CreateShaderOnline(mShaderCreateInfo);
+			CreatePipelineInterface(mShader, mDevice);
+		}
+
 		mPipeline->Create(mShader.get(), mPipelineInterface.get());
 	}
 
 	void Effect::RecompileShader()
 	{
-		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mVertexShaderPath, mFragmentShaderPath, mGeometryShaderPath);
+		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mShaderCreateInfo);
 
 		if (shader != nullptr)
 		{
@@ -145,7 +161,7 @@ namespace Utopian::Vk
 
 	std::string Effect::GetVertexShaderPath() const
 	{
-		return mVertexShaderPath;
+		return mShaderCreateInfo.vertexShaderPath;
 	}
 	
 	Pipeline* Effect::GetPipeline()

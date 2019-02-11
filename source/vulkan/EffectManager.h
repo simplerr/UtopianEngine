@@ -2,6 +2,7 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
+#include "vulkan/ShaderFactory.h"
 #include <vector>
 
 namespace Utopian::Vk
@@ -16,7 +17,7 @@ namespace Utopian::Vk
 		SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass);
 
 		template <typename T>
-		SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader = "NONE");
+		SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo);
 
 		// Recompiles shaders if requested from the UI
 		void Update();
@@ -36,9 +37,9 @@ namespace Utopian::Vk
 	}
 
 	template<typename T>
-	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader)
+	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo)
 	{
-		SharedPtr<T> effect = std::make_shared<T>(device, renderPass, vertexShader, fragmentShader);
+		SharedPtr<T> effect = std::make_shared<T>(device, renderPass, shaderCreateInfo);
 
 		mEffects.push_back(effect);
 		return effect;

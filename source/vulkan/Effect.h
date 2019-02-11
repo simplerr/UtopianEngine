@@ -10,6 +10,7 @@
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/PipelineInterface.h"
+#include "vulkan/ShaderFactory.h"
 #include "utility/Common.h"
 
 namespace Utopian::Vk
@@ -18,7 +19,8 @@ namespace Utopian::Vk
 	{
 	public:
 		/** @note CreatePipeline() must be called explicitly after constructor. */
-		Effect(Device* device, RenderPass* renderPass, std::string vertexShader, std::string fragmentShader, std::string geometryShader = "NONE");
+		Effect(Device* device, RenderPass* renderPass);
+		Effect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo);
 
 		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipelie. */
 		void RecompileShader();
@@ -58,6 +60,8 @@ namespace Utopian::Vk
 		SharedPtr<Shader> GetShader() const;
 		std::string GetVertexShaderPath() const;
 	protected:
+		void SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo);
+
 		SharedPtr<Pipeline> mPipeline;
 	private:
 		void Init();
@@ -69,9 +73,7 @@ namespace Utopian::Vk
 		SharedPtr<PipelineInterface> mPipelineInterface;
 		std::vector<DescriptorSet> mDescriptorSets;
 		std::vector<VkDescriptorSet> mVkDescriptorSets;
-		std::string mVertexShaderPath;
-		std::string mFragmentShaderPath;
-		std::string mGeometryShaderPath;
+		ShaderCreateInfo mShaderCreateInfo;
 		SharedPtr<DescriptorPool> mDescriptorPool;
 	};
 }
