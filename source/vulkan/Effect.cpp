@@ -49,6 +49,9 @@ namespace Utopian::Vk
 		if (mShader == nullptr)
 		{
 			mShader = gShaderFactory().CreateShaderOnline(mShaderCreateInfo);
+
+			assert(mShader);
+
 			CreatePipelineInterface(mShader, mDevice);
 		}
 
@@ -161,7 +164,7 @@ namespace Utopian::Vk
 
 	std::string Effect::GetVertexShaderPath() const
 	{
-		return mShaderCreateInfo.vertexShaderPath;
+		return mShaderCreateInfo.fragmentShaderPath;
 	}
 	
 	Pipeline* Effect::GetPipeline()

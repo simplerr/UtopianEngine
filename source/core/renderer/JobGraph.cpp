@@ -8,6 +8,7 @@
 #include "core/renderer/SkydomeJob.h"
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
+#include "core/renderer/TessellationJob.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/VulkanApp.h"
 
@@ -29,9 +30,13 @@ namespace Utopian
 		AddJob(new SkydomeJob(device, width, height));
 
 		SunShaftJob* sunShaftJob = new SunShaftJob(device, width, height);
-		vulkanApp->SetJobGraphWaitSemaphore(sunShaftJob->GetCompletedSemahore());
-		
+		//vulkanApp->SetJobGraphWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 		AddJob(sunShaftJob);
+
+		TessellationJob* tessellationJob = new TessellationJob(device, width, height);
+		AddJob(tessellationJob);
+		vulkanApp->SetJobGraphWaitSemaphore(tessellationJob->GetCompletedSemahore());
+
 		//AddJob(new DebugJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
 	}
 

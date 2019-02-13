@@ -82,7 +82,7 @@ namespace Utopian
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured 
 		Vk::UIOverlay::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
-		static bool debugQuads = false;
+		static bool debugQuads = true;
 
 		//ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
 		ImGui::Checkbox("Debug quads", &debugQuads);

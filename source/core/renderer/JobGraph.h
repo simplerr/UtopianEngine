@@ -26,6 +26,7 @@ namespace Utopian
 			SKYBOX_INDEX,
 			SUN_SHAFT_INDEX,
 			//DEBUG_INDEX,
+			TESSELLATION_INDEX
 		};
 
 		JobGraph(Vk::VulkanApp* vulkanApp, Vk::Device* device, uint32_t width, uint32_t height);

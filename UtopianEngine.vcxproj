@@ -104,6 +104,7 @@
     <ClCompile Include="source\core\renderer\SkydomeJob.cpp" />
     <ClCompile Include="source\core\renderer\SSAOJob.cpp" />
     <ClCompile Include="source\core\renderer\SunShaftJob.cpp" />
+    <ClCompile Include="source\core\renderer\TessellationJob.cpp" />
     <ClCompile Include="source\core\ScriptExports.cpp" />
     <ClCompile Include="source\core\terrain\BaseTerrain.cpp" />
     <ClCompile Include="source\core\terrain\Block.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="source\core\renderer\SkydomeJob.h" />
     <ClInclude Include="source\core\renderer\SSAOJob.h" />
     <ClInclude Include="source\core\renderer\SunShaftJob.h" />
+    <ClInclude Include="source\core\renderer\TessellationJob.h" />
     <ClInclude Include="source\core\ScriptExports.h" />
     <ClInclude Include="source\core\terrain\BaseTerrain.h" />
     <ClInclude Include="source\core\terrain\Block.h" />
