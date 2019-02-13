@@ -14,6 +14,7 @@ namespace Utopian::Vk
 		mEnabledFeatures.shaderTessellationAndGeometryPointSize = VK_TRUE;
 		mEnabledFeatures.fillModeNonSolid = VK_TRUE;
 		mEnabledFeatures.samplerAnisotropy = VK_TRUE;
+		mEnabledFeatures.tessellationShader = VK_TRUE;
 
 		RetrievePhysical(instance);
 		RetrieveSupportedExtensions();

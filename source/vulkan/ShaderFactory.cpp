@@ -284,6 +284,10 @@ namespace Utopian::Vk
 			return VK_SHADER_STAGE_FRAGMENT_BIT;
 		else if (suffix == "geom")
 			return VK_SHADER_STAGE_GEOMETRY_BIT;
+		else if (suffix == "tesc")
+			return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+		else if (suffix == "tese")
+			return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
 		else {
 			assert(0 && "Unknown shader stage");
 		}
@@ -593,22 +597,62 @@ namespace Utopian::Vk
 
 				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledGeometryShader->shaderModule));
 			}
-		}
+		}	
+
+		/* Tessellation control shader */
+		SharedPtr<CompiledShader> compiledTescShader;
+		if (shaderCreateInfo.tescShaderPath != "NONE")
+		{
+			compiledTescShader = CompileShader(shaderCreateInfo.tescShaderPath);
+			if (compiledTescShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledTescShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledTescShader->spirvBytecode.data();
+
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledTescShader->shaderModule));
+			}
+		}	
+
+		/* Tessellation evaluation shader */
+		SharedPtr<CompiledShader> compiledTeseShader;
+		if (shaderCreateInfo.teseShaderPath != "NONE")
+		{
+			compiledTeseShader = CompileShader(shaderCreateInfo.teseShaderPath);
+			if (compiledTeseShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledTeseShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledTeseShader->spirvBytecode.data();
+
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledTeseShader->shaderModule));
+			}
+		}	
 
 		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
 		{
-			if (shaderCreateInfo.geometryShaderPath != "NONE" && compiledGeometryShader != nullptr)
+			shader = std::make_shared<Shader>();
+			shader->AddCompiledShader(compiledVertexShader);
+			shader->AddCompiledShader(compiledPixelShader);
+
+			if (shaderCreateInfo.geometryShaderPath != "NONE")
 			{
-				shader = std::make_shared<Shader>();
-				shader->AddCompiledShader(compiledVertexShader);
-				shader->AddCompiledShader(compiledPixelShader);
+				assert(compiledGeometryShader);
 				shader->AddCompiledShader(compiledGeometryShader);
 			}
-			else if (shaderCreateInfo.geometryShaderPath  == "NONE")
+
+			if (shaderCreateInfo.tescShaderPath != "NONE")
 			{
-				shader = std::make_shared<Shader>();
-				shader->AddCompiledShader(compiledVertexShader);
-				shader->AddCompiledShader(compiledPixelShader);
+				assert(compiledTescShader);
+				shader->AddCompiledShader(compiledTescShader);
+			}
+
+			if (shaderCreateInfo.teseShaderPath != "NONE")
+			{
+				assert(compiledTeseShader);
+				shader->AddCompiledShader(compiledTeseShader);
 			}
 		}
 

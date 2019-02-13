@@ -36,6 +36,8 @@ namespace Utopian::Vk
 		/** Returns true if Create() has been called. */
 		bool IsCreated() const;
 
+		void AddTessellationState(uint32_t patchSize);
+
 		/** Public so they can be modified before calling Create(). */
 		VkPipelineRasterizationStateCreateInfo rasterizationState = {};
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyState = {};
@@ -46,6 +48,7 @@ namespace Utopian::Vk
 
 		RenderPass* mRenderPass;	
 		SharedPtr<VertexDescription> mOverridenVertexDescription;
+		SharedPtr<VkPipelineTessellationStateCreateInfo> mTessellationCreateInfo;
 		bool mCreated;
 	};
 }

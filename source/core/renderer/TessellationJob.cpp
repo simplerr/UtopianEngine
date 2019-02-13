@@ -26,6 +26,8 @@ namespace Utopian
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+		mEffect->GetPipeline()->AddTessellationState(4);
 
 		mEffect->CreatePipeline();
 
@@ -33,7 +35,6 @@ namespace Utopian
 		mEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		settingsBlock.data.color = glm::vec3(0, 0, 1);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
 		mQuadModel = Vk::gModelLoader().LoadGrid(512.0f, 2);
@@ -55,11 +56,12 @@ namespace Utopian
 
 	void TessellationJob::Render(const JobInput& jobInput)
 	{
-		//effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		//effect->SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		viewProjectionBlock.UpdateMemory();
+
+		settingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
+		settingsBlock.UpdateMemory();
 
 		renderTarget->Begin("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -70,7 +72,7 @@ namespace Utopian
 			glm::mat4 world = glm::mat4();
 			Vk::PushConstantBlock pushConsts(world);
 
-			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
 			commandBuffer->CmdBindDescriptorSets(mEffect);
 

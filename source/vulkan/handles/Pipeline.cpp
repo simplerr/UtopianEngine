@@ -62,6 +62,7 @@ namespace Utopian::Vk
 		pipelineCreateInfo.pDynamicState = &dynamicState;
 		pipelineCreateInfo.pDepthStencilState = &depthStencilState;
 		pipelineCreateInfo.pMultisampleState = &multisampleState;
+		pipelineCreateInfo.pTessellationState = mTessellationCreateInfo.get();
 		pipelineCreateInfo.stageCount = shader->shaderStages.size();
 		pipelineCreateInfo.pStages = shader->shaderStages.data();
 
@@ -116,5 +117,12 @@ namespace Utopian::Vk
 			colorBlend.blendEnable = VK_FALSE;
 			blendAttachmentState.push_back(colorBlend);
 		}
+	}
+
+	void Pipeline::AddTessellationState(uint32_t patchSize)
+	{
+		mTessellationCreateInfo = std::make_shared<VkPipelineTessellationStateCreateInfo>();
+		mTessellationCreateInfo->sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+		mTessellationCreateInfo->patchControlPoints = patchSize;
 	}
 }
