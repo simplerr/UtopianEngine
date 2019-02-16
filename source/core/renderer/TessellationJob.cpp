@@ -44,7 +44,8 @@ namespace Utopian
 		mQueryPool = std::make_shared<Vk::QueryPool>(device);
 
 		const uint32_t size = 640;
-		gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
+		//gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(0u, 0u, width, height, image.get(), renderTarget->GetSampler(), 1u);
 	}
 
 	TessellationJob::~TessellationJob()
@@ -56,7 +57,7 @@ namespace Utopian
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 	
-		GeneratePatches(256.0f, 128);
+		GeneratePatches(1024.0f, 128);
 	}
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
@@ -102,7 +103,11 @@ namespace Utopian
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		viewProjectionBlock.UpdateMemory();
 
+		settingsBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		settingsBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		settingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
 		settingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
+		settingsBlock.data.edgeSize = 200.0f;
 		settingsBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));

@@ -465,6 +465,9 @@
     <ClCompile Include="source\core\renderer\TessellationJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\vulkan\handles\QueryPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -840,6 +843,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\core\renderer\TessellationJob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\handles\QueryPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

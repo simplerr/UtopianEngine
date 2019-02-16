@@ -150,6 +150,7 @@
     <ClCompile Include="source\vulkan\GBufferEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Device.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
+    <ClCompile Include="source\vulkan\handles\QueryPool.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
@@ -270,6 +271,7 @@
     <ClInclude Include="source\vulkan\GBufferEffect.h" />
     <ClInclude Include="source\vulkan\handles\Device.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline.h" />
+    <ClInclude Include="source\vulkan\handles\QueryPool.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />

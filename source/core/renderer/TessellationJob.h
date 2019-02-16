@@ -14,7 +14,11 @@ namespace Utopian
 			UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
-			UNIFORM_PARAM(int, tessellationFactor)
+			UNIFORM_PARAM(glm::mat4, projection)
+			UNIFORM_PARAM(glm::mat4, view)
+			UNIFORM_PARAM(glm::vec2, viewportSize)
+			UNIFORM_PARAM(float, edgeSize)
+			UNIFORM_PARAM(float, tessellationFactor)
 		UNIFORM_BLOCK_END()
 
 		TessellationJob(Vk::Device* device, uint32_t width, uint32_t height);
