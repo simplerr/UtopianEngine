@@ -83,7 +83,13 @@ namespace Utopian::Vk
 		mClearValues.push_back(clearValue);
 	}
 
-	void RenderTarget::Begin(std::string debugName, glm::vec4 debugColor)
+	void RenderTarget::BeginCommandBuffer(std::string debugName, glm::vec4 debugColor)
+	{
+		mCommandBuffer->Begin();
+		Vk::DebugMarker::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
+	}
+	
+	void RenderTarget::BeginRenderPass()
 	{
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -94,15 +100,16 @@ namespace Utopian::Vk
 		renderPassBeginInfo.pClearValues = mClearValues.data();
 		renderPassBeginInfo.framebuffer = mFrameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
 
-		// Begin command buffer recording & the render pass
-		mCommandBuffer->Begin();
-
-		Vk::DebugMarker::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
-
 		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 		mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
+	}
+
+	void RenderTarget::Begin(std::string debugName, glm::vec4 debugColor)
+	{
+		BeginCommandBuffer(debugName, debugColor);
+		BeginRenderPass();
 	}
 
 	void RenderTarget::Begin(VkFramebuffer framebuffer, std::string debugName, glm::vec4 debugColor)

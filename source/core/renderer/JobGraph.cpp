@@ -44,12 +44,20 @@ namespace Utopian
 	{
 	}
 
-	void JobGraph::ExecuteJobs(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings)
+	void JobGraph::Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings)
 	{
 		JobInput jobInput(sceneInfo, mJobs, renderingSettings);
 		for (auto& job : mJobs)
 		{
 			job->Render(jobInput);
+		}
+	}
+
+	void JobGraph::Update()
+	{
+		for (auto& job : mJobs)
+		{
+			job->Update();
 		}
 	}
 

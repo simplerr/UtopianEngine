@@ -45,6 +45,7 @@ namespace Utopian
 		virtual void Init(const std::vector<BaseJob*>& jobs) = 0;
 
 		virtual void Render(const JobInput& jobInput) = 0;
+		virtual void Update() {};
 
 		void SetWaitSemaphore(const SharedPtr<Vk::Semaphore>& waitSemaphore) { mWaitSemaphore = waitSemaphore; };
 		void SetEnabled(bool enabled) { mEnabled = enabled; };

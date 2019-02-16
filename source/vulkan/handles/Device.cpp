@@ -15,6 +15,8 @@ namespace Utopian::Vk
 		mEnabledFeatures.fillModeNonSolid = VK_TRUE;
 		mEnabledFeatures.samplerAnisotropy = VK_TRUE;
 		mEnabledFeatures.tessellationShader = VK_TRUE;
+		mEnabledFeatures.pipelineStatisticsQuery = VK_TRUE;
+		mEnabledFeatures.occlusionQueryPrecise = VK_TRUE;
 
 		RetrievePhysical(instance);
 		RetrieveSupportedExtensions();

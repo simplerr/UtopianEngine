@@ -32,8 +32,10 @@ namespace Utopian
 		JobGraph(Vk::VulkanApp* vulkanApp, Vk::Device* device, uint32_t width, uint32_t height);
 		~JobGraph();
 
-		/** Executes all jobs added to the graph. */
-		void ExecuteJobs(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);
+		/** Renders all jobs added to the graph. */
+		void Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);
+
+		void Update();
 
 		void EnableJob(JobIndex jobIndex, bool enabled);
 	private:

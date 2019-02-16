@@ -39,6 +39,7 @@ namespace Utopian::Vk
 	class Semaphore;
 	class Texture;
 	class Pipeline;
+	class QueryPool;
 
 	// Other
 	class Device;

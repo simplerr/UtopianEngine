@@ -14,7 +14,12 @@ namespace Utopian::Vk
 		RenderTarget(Device* device, uint32_t width, uint32_t height);
 		~RenderTarget();
 
+		/** Begins the command buffer and the render pass. */
 		void Begin(std::string debugName = "Unnamed pass", glm::vec4 debugColor = glm::vec4(1.0, 0.0, 0.0, 1.0));
+
+		void BeginCommandBuffer(std::string debugName = "Unnamed pass", glm::vec4 debugColor = glm::vec4(1.0, 0.0, 0.0, 1.0));
+		void BeginRenderPass();
+
 		
 		// Special version that instead of using the framebuffer in RenderTarget
 		// will use the supplied one. 

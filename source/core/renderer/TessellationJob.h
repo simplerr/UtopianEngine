@@ -22,6 +22,7 @@ namespace Utopian
 
 		void Init(const std::vector<BaseJob*>& jobs) override;
 		void Render(const JobInput& jobInput) override;
+		void Update() override;
 
 		SharedPtr<Vk::Image> image;
 		SharedPtr<Vk::RenderTarget> renderTarget;
@@ -30,6 +31,7 @@ namespace Utopian
 		void GeneratePatches(float cellSize, int numCells);
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
+		SharedPtr<Vk::QueryPool> mQueryPool;
 		ViewProjection viewProjectionBlock;
 		SettingsBlock settingsBlock;
 	};

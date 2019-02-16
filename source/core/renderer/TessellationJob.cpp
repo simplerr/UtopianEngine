@@ -2,9 +2,11 @@
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/ShaderFactory.h"
+#include "vulkan/UIOverlay.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Vertex.h"
+#include "vulkan/handles/QueryPool.h"
 #include <random>
 
 namespace Utopian
@@ -38,6 +40,8 @@ namespace Utopian
 
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+
+		mQueryPool = std::make_shared<Vk::QueryPool>(device);
 
 		const uint32_t size = 640;
 		gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
@@ -101,17 +105,21 @@ namespace Utopian
 		settingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
 		settingsBlock.UpdateMemory();
 
-		renderTarget->Begin("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
+		renderTarget->BeginCommandBuffer("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+
+		mQueryPool->Reset(commandBuffer);
+
+		renderTarget->BeginRenderPass();
 
 		if (IsEnabled())
 		{
-			// Push the world matrix constant
-			glm::mat4 world = glm::mat4();
-			world = glm::scale(world, glm::vec3(1.0f));
-			Vk::PushConstantBlock pushConsts(world);
+			mQueryPool->Begin(commandBuffer);
 
+			glm::mat4 world = glm::mat4();
+			Vk::PushConstantBlock pushConsts(world);
 			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT, sizeof(pushConsts), &pushConsts);
+
 			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
 			commandBuffer->CmdBindDescriptorSets(mEffect);
 
@@ -119,8 +127,25 @@ namespace Utopian
 			commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 			commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 			commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+
+			mQueryPool->End(commandBuffer);
 		}
 
 		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
+
+		mQueryPool->RetreiveResults();
+	}
+
+	void TessellationJob::Update()
+	{
+		// Display Actor creation list
+		Vk::UIOverlay::BeginWindow("Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
+
+		Vk::UIOverlay::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
+		Vk::UIOverlay::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
+		Vk::UIOverlay::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
+		Vk::UIOverlay::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+
+		Vk::UIOverlay::EndWindow();
 	}
 }

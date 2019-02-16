@@ -73,6 +73,7 @@ namespace Utopian
 		UpdateCascades();
 
 		mSceneInfo.terrain->Update();
+		mJobGraph->Update();
 
 		UpdateUi();
 	}
@@ -237,7 +238,7 @@ namespace Utopian
 			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
 			mSceneInfo.eyePos = mMainCamera->GetPosition();
 
-			mJobGraph->ExecuteJobs(mSceneInfo, mRenderingSettings);
+			mJobGraph->Render(mSceneInfo, mRenderingSettings);
 		}
 	}
 
