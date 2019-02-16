@@ -14,7 +14,7 @@ namespace Utopian
 			UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
-			UNIFORM_PARAM(float, tessellationFactor)
+			UNIFORM_PARAM(int, tessellationFactor)
 		UNIFORM_BLOCK_END()
 
 		TessellationJob(Vk::Device* device, uint32_t width, uint32_t height);
@@ -27,6 +27,7 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 	private:
+		void GeneratePatches(float cellSize, int numCells);
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		ViewProjection viewProjectionBlock;

@@ -106,7 +106,7 @@ namespace Utopian
 		ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
 		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
 		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
-		ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 64.0f);
+		ImGui::SliderInt("Tessellation factor", &mRenderingSettings.tessellationFactor, 0, 64);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);

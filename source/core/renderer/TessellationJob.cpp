@@ -4,6 +4,7 @@
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/ScreenQuadUi.h"
+#include "vulkan/Vertex.h"
 #include <random>
 
 namespace Utopian
@@ -27,6 +28,7 @@ namespace Utopian
 
 		mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mEffect->GetPipeline()->AddTessellationState(4);
 
 		mEffect->CreatePipeline();
@@ -36,8 +38,6 @@ namespace Utopian
 
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
-
-		mQuadModel = Vk::gModelLoader().LoadGrid(512.0f, 2);
 
 		const uint32_t size = 640;
 		gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
@@ -50,8 +50,46 @@ namespace Utopian
 	void TessellationJob::Init(const std::vector<BaseJob*>& renderers)
 	{
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
-
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
+	
+		GeneratePatches(256.0f, 128);
+	}
+
+	void TessellationJob::GeneratePatches(float cellSize, int numCells)
+	{
+		mQuadModel = new Vk::StaticModel();
+		Vk::Mesh* mesh = new Vk::Mesh(mDevice);
+
+		// Vertices
+		for (auto x = 0; x < numCells; x++)
+		{
+			for (auto z = 0; z < numCells; z++)
+			{
+				Vk::Vertex vertex;
+				const float originOffset = (float)numCells * cellSize / 2.0f;
+				vertex.Pos = glm::vec3(x * cellSize + cellSize / 2.0f - originOffset, 0.0f, z * cellSize + cellSize / 2.0f - originOffset);
+				vertex.Tex = glm::vec2((float)x / numCells, (float)z / numCells);
+				mesh->AddVertex(vertex);
+			}
+		}
+
+		// Indices
+		const uint32_t w = (numCells - 1);
+		for (auto x = 0; x < w; x++)
+		{
+			for (auto z = 0; z < w; z++)
+			{
+				uint32_t v1 = (x + z * numCells);
+				uint32_t v2 = v1 + numCells;
+				uint32_t v3 = v2 + 1;
+				uint32_t v4 = v1 + 1;
+				mesh->AddQuad(v1, v2, v3, v4);
+			}
+		}
+
+		mesh->LoadTextures("data/textures/ground/grass2.tga");
+		mesh->BuildBuffers(mDevice);
+		mQuadModel->AddMesh(mesh);
 	}
 
 	void TessellationJob::Render(const JobInput& jobInput)
@@ -70,6 +108,7 @@ namespace Utopian
 		{
 			// Push the world matrix constant
 			glm::mat4 world = glm::mat4();
+			world = glm::scale(world, glm::vec3(1.0f));
 			Vk::PushConstantBlock pushConsts(world);
 
 			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT, sizeof(pushConsts), &pushConsts);

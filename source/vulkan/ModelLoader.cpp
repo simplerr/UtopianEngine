@@ -372,8 +372,11 @@ namespace Utopian::Vk
 		{
 			for (int z = 0; z < numCells - 1; z++)
 			{
-				mesh->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
-				mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+				//mesh->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+				//mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+				uint32_t index = (x + z * (numCells - 1)) * 4;
+				uint32_t first = (x + z * numCells);
+				mesh->AddQuad(first, first + 1, first + 2, first + 3);
 			}
 		}
 					

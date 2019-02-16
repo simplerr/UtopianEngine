@@ -42,6 +42,14 @@ namespace Utopian::Vk
 		indexVector.push_back(v3);
 	}
 
+	void Mesh::AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
+	{
+		indexVector.push_back(v1);
+		indexVector.push_back(v2);
+		indexVector.push_back(v3);
+		indexVector.push_back(v4);
+	}
+
 	void Mesh::BuildBuffers(Device* device)
 	{
 		mVerticesCount = vertexVector.size();
