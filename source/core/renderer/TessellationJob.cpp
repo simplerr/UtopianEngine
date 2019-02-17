@@ -15,9 +15,11 @@ namespace Utopian
 		: BaseJob(device, width, height)
 	{
 		image = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		renderTarget->AddColorAttachment(image);
+		renderTarget->AddDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 

@@ -29,6 +29,7 @@ namespace Utopian
 		void Update() override;
 
 		SharedPtr<Vk::Image> image;
+		SharedPtr<Vk::Image> depthImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 	private:
