@@ -90,11 +90,11 @@ namespace Utopian
 		//ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
 		//ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
 		//ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
-		ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
-		ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
-		ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
-		ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
-		ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
+		//ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
+		//ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
+		//ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
+		//ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
+		//ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
 		ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
 		ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
 		ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
@@ -108,6 +108,8 @@ namespace Utopian
 		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
 		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
 		ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
+		ImGui::SliderFloat("Terrain amplitude", &mRenderingSettings.terrainAmplitude, 1000.0f, 40000.0f);
+		ImGui::SliderFloat("Terraint texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 10.0f);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);

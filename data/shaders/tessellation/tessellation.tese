@@ -1,10 +1,8 @@
 #version 450
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_GOOGLE_include_directive : enable
 
-layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
-{
-	mat4 projection;
-	mat4 view;
-} ubo;
+#include "shared.glsl"
 
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
@@ -12,8 +10,6 @@ layout (push_constant) uniform PushConstants {
 } pushConstants;
 
 layout(quads, fractional_odd_spacing, ccw) in;
-
-layout (set = 0, binding = 2) uniform sampler2D samplerHeightmap;
 
 layout (location = 0) in vec3 InNormalL[];
 layout (location = 1) in vec2 InTex[];
@@ -39,8 +35,8 @@ void main()
 	vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
 	// Displace
-    pos.y = texture(samplerHeightmap, OutTex / 5).r * 18000.0f;
+    pos.y = getHeight(OutTex);
 
 	// Perspective projection
-	gl_Position = ubo.projection * ubo.view * pushConstants.world * pos;
+	gl_Position = ubo_camera.projection * ubo_camera.view * pushConstants.world * pos;
 }

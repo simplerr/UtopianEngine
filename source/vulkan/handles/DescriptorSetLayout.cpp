@@ -11,13 +11,28 @@ namespace Utopian::Vk
 
 	void DescriptorSetLayout::AddBinding(uint32_t binding, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags stageFlags)
 	{
-		VkDescriptorSetLayoutBinding layoutBinding = {};
-		layoutBinding.binding = binding;
-		layoutBinding.descriptorType = descriptorType;
-		layoutBinding.descriptorCount = descriptorCount;
-		layoutBinding.stageFlags = stageFlags;
+		// Check for duplicates. Can happen if two different stages include a shared .glsl file.
+		bool duplicate = false;
+		for (uint32_t i = 0; i < mLayoutBindings.size(); i++)
+		{
+			if (mLayoutBindings[i].binding == binding)
+			{
+				assert(mLayoutBindings[i].descriptorType == descriptorType);
+				assert(mLayoutBindings[i].stageFlags == stageFlags);
+				duplicate = true;
+			}
+		}
 
-		mLayoutBindings.push_back(layoutBinding);
+		if (!duplicate)
+		{
+			VkDescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = binding;
+			layoutBinding.descriptorType = descriptorType;
+			layoutBinding.descriptorCount = descriptorCount;
+			layoutBinding.stageFlags = stageFlags;
+
+			mLayoutBindings.push_back(layoutBinding);
+		}
 	}
 
 	void DescriptorSetLayout::AddUniformBuffer(uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)

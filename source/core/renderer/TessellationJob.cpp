@@ -119,7 +119,6 @@ namespace Utopian
 
 		// Bind terrain height and normal maps
 		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("samplerHeightmapVS", heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), normalRenderTarget->GetSampler());
 
 		//const uint32_t size = 640;
@@ -171,11 +170,11 @@ namespace Utopian
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		viewProjectionBlock.UpdateMemory();
 
-		settingsBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		settingsBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		settingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
 		settingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
 		settingsBlock.data.edgeSize = 200.0f;
+		settingsBlock.data.amplitude = jobInput.renderingSettings.terrainAmplitude;
+		settingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
 		settingsBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));

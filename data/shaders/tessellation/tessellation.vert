@@ -1,4 +1,8 @@
 #version 450
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_GOOGLE_include_directive : enable
+
+#include "shared.glsl"
 
 layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
@@ -9,9 +13,6 @@ layout (location = 5) in vec3 InBitangentL;
 
 layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
-
-// Todo: This should be shared between the vertex and the tessellation evaluation shader
-layout (set = 0, binding = 4) uniform sampler2D samplerHeightmapVS;
 
 out gl_PerVertex 
 {
@@ -27,7 +28,7 @@ void main()
     // Need to displace the Y coordinate here so that the tessellation factor
     // calculation in the .tesc shader works as expected. Otherwise all vertices will
     // have y=0.0.
-    gl_Position.y = texture(samplerHeightmapVS, OutTex).r * 18000.0f;
+    gl_Position.y = getHeight(OutTex);
 
 	// Note: workaround to avoid glslang to optimize unused inputs
 	vec3 temp = InColor;

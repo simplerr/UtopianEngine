@@ -1,4 +1,8 @@
 #version 450
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_GOOGLE_include_directive : enable
+
+#include "shared.glsl"
 
 layout (vertices = 4) out;
  
@@ -7,15 +11,6 @@ layout (location = 1) in vec2 InTex[];
  
 layout (location = 0) out vec3 OutNormalL[4];
 layout (location = 1) out vec2 OutTex[4];
-
-layout (std140, set = 0, binding = 1) uniform UBO_settings
-{
-	mat4 projection;
-	mat4 view;
-    vec2 viewportSize;
-    float edgeSize; // The size in pixels that all edges should have
-	float tessellationFactor;
-} ubo;
 
 // Calculate the tessellation factor based on screen space
 // dimensions of the edge
@@ -28,32 +23,32 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 	float radius = distance(p0, p1) / 2.0;
 
 	// View space
-	vec4 v0 = ubo.view * midPoint;
+	vec4 v0 = ubo_camera.view * midPoint;
 
 	// Project into clip space
-	vec4 clip0 = (ubo.projection * (v0 - vec4(radius, vec3(0.0))));
-	vec4 clip1 = (ubo.projection * (v0 + vec4(radius, vec3(0.0))));
+	vec4 clip0 = (ubo_camera.projection * (v0 - vec4(radius, vec3(0.0))));
+	vec4 clip1 = (ubo_camera.projection * (v0 + vec4(radius, vec3(0.0))));
 
 	// Get normalized device coordinates
 	clip0 /= clip0.w;
 	clip1 /= clip1.w;
 
 	// Convert to viewport coordinates
-	clip0.xy *= ubo.viewportSize;
-	clip1.xy *= ubo.viewportSize;
+	clip0.xy *= ubo_settings.viewportSize;
+	clip1.xy *= ubo_settings.viewportSize;
 	
 	// Return the tessellation factor based on the screen size 
 	// given by the distance of the two edge control points in screen space
 	// and a reference (min.) tessellation size for the edge set by the application
     float edgeSize = 20.0f;
-	return clamp(distance(clip0, clip1) / edgeSize * ubo.tessellationFactor, 1.0, 64.0);
+	return clamp(distance(clip0, clip1) / edgeSize * ubo_settings.tessellationFactor, 1.0, 64.0);
 }
 
 void main()
 {
 	if (gl_InvocationID == 0)
 	{
-        if (ubo.tessellationFactor > 0.0)
+        if (ubo_settings.tessellationFactor > 0.0)
 		{
             gl_TessLevelOuter[0] = screenSpaceTessFactor(gl_in[3].gl_Position, gl_in[0].gl_Position);
             gl_TessLevelOuter[1] = screenSpaceTessFactor(gl_in[0].gl_Position, gl_in[1].gl_Position);
