@@ -39,7 +39,7 @@ void main()
 	vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
 	// Displace
-    pos.y = texture(samplerHeightmap, OutTex).r * 8000.0f;
+    pos.y = texture(samplerHeightmap, OutTex / 5).r * 18000.0f;
 
 	// Perspective projection
 	gl_Position = ubo.projection * ubo.view * pushConstants.world * pos;

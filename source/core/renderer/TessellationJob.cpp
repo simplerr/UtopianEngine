@@ -32,7 +32,6 @@ namespace Utopian
 
 		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
-		//mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mEffect->GetPipeline()->AddTessellationState(4);
 
 		mEffect->CreatePipeline();
@@ -59,7 +58,7 @@ namespace Utopian
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 	
-		GeneratePatches(512.0f, 64);
+		GeneratePatches(512.0f, 128);
 		GenerateTerrainMaps();
 	}
 
@@ -120,6 +119,7 @@ namespace Utopian
 
 		// Bind terrain height and normal maps
 		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("samplerHeightmapVS", heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), normalRenderTarget->GetSampler());
 
 		//const uint32_t size = 640;

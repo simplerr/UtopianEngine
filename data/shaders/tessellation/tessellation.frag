@@ -10,6 +10,6 @@ layout (location = 0) out vec4 OutColor;
 void main() 
 {
     //OutColor = vec4(InTex.x, InTex.y, 0, 1);
-    vec3 normal = texture(samplerNormalmap, InTex).xyz;
+    vec3 normal = texture(samplerNormalmap, InTex / 5).xyz;
     OutColor = vec4(normal, 1.0);
 }

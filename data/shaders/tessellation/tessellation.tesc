@@ -45,7 +45,8 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 	// Return the tessellation factor based on the screen size 
 	// given by the distance of the two edge control points in screen space
 	// and a reference (min.) tessellation size for the edge set by the application
-	return clamp(distance(clip0, clip1) / ubo.edgeSize * ubo.tessellationFactor, 1.0, 64.0);
+    float edgeSize = 20.0f;
+	return clamp(distance(clip0, clip1) / edgeSize * ubo.tessellationFactor, 1.0, 64.0);
 }
 
 void main()
@@ -74,7 +75,8 @@ void main()
         }
 	}
 
-	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;
+	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+	//gl_out[gl_InvocationID].gl_Position.y = 0.0f;
 	OutNormalL[gl_InvocationID] = InNormalL[gl_InvocationID];
 	OutTex[gl_InvocationID] = InTex[gl_InvocationID];
 } 
