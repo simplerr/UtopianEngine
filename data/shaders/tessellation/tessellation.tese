@@ -11,7 +11,9 @@ layout (push_constant) uniform PushConstants {
 	 mat4 worldInv;
 } pushConstants;
 
-layout(quads, equal_spacing, cw) in;
+layout(quads, fractional_odd_spacing, ccw) in;
+
+layout (set = 0, binding = 2) uniform sampler2D samplerHeightmap;
 
 layout (location = 0) in vec3 InNormalL[];
 layout (location = 1) in vec2 InTex[];
@@ -37,7 +39,7 @@ void main()
 	vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
 	// Displace
-	//pos.y -= textureLod(displacementMap, outUV, 0.0).r * ubo.displacementFactor;
+    pos.y = texture(samplerHeightmap, OutTex).r * 8000.0f;
 
 	// Perspective projection
 	gl_Position = ubo.projection * ubo.view * pushConstants.world * pos;

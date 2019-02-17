@@ -32,11 +32,20 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 	private:
+		void GenerateTerrainMaps();
 		void GeneratePatches(float cellSize, int numCells);
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
 		ViewProjection viewProjectionBlock;
 		SettingsBlock settingsBlock;
+
+		// Height & normal map members
+		SharedPtr<Vk::Effect> mHeightmapEffect;
+		SharedPtr<Vk::Effect> mNormalmapEffect;
+		SharedPtr<Vk::Image> heightmapImage;
+		SharedPtr<Vk::RenderTarget> heightmapRenderTarget;
+		SharedPtr<Vk::Image> normalImage;
+		SharedPtr<Vk::RenderTarget> normalRenderTarget;
 	};
 }

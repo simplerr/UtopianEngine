@@ -28,7 +28,7 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 	float radius = distance(p0, p1) / 2.0;
 
 	// View space
-	vec4 v0 = ubo.view  * midPoint;
+	vec4 v0 = ubo.view * midPoint;
 
 	// Project into clip space
 	vec4 clip0 = (ubo.projection * (v0 - vec4(radius, vec3(0.0))));

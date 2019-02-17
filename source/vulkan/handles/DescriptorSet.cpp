@@ -208,12 +208,15 @@ namespace Utopian::Vk
 			maxSets += descriptorSize.descriptorCount;
 		}
 
-		VkDescriptorPoolCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		createInfo.maxSets = maxSets;
-		createInfo.poolSizeCount = mDescriptorSizes.size();
-		createInfo.pPoolSizes = mDescriptorSizes.data();
+		if (maxSets > 0)
+		{
+			VkDescriptorPoolCreateInfo createInfo = {};
+			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+			createInfo.maxSets = maxSets;
+			createInfo.poolSizeCount = mDescriptorSizes.size();
+			createInfo.pPoolSizes = mDescriptorSizes.data();
 
-		Debug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
+			Debug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
+		}
 	}
 }

@@ -28,9 +28,9 @@ namespace Utopian
 		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/tessellation.tese";
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
 
-		mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		//mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mEffect->GetPipeline()->AddTessellationState(4);
 
 		mEffect->CreatePipeline();
@@ -57,7 +57,72 @@ namespace Utopian
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 	
-		GeneratePatches(1024.0f, 128);
+		GeneratePatches(512.0f, 64);
+		GenerateTerrainMaps();
+	}
+
+	void TessellationJob::GenerateTerrainMaps()
+	{
+		uint32_t resolution = 2048;
+		/* Height map */
+		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, resolution, resolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, resolution, resolution);
+		heightmapRenderTarget->AddColorAttachment(heightmapImage);
+		heightmapRenderTarget->SetClearColor(1, 1, 1, 1);
+		heightmapRenderTarget->Create();
+
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/heightmap.frag";
+		mHeightmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapRenderTarget->GetRenderPass(), shaderCreateInfo);
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mHeightmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mHeightmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mHeightmapEffect->CreatePipeline();
+
+		/* Normal map */
+		normalImage = std::make_shared<Vk::ImageColor>(mDevice, resolution, resolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, resolution, resolution);
+		normalRenderTarget->AddColorAttachment(normalImage);
+		normalRenderTarget->SetClearColor(1, 1, 1, 1);
+		normalRenderTarget->Create();
+
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/normalmap.frag";
+		mNormalmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, normalRenderTarget->GetRenderPass(), shaderCreateInfo);
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mNormalmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mNormalmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mNormalmapEffect->CreatePipeline();
+
+		mNormalmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
+
+		/* Render the heightmap to texture */
+		heightmapRenderTarget->Begin("Heightmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		Vk::CommandBuffer* commandBuffer = heightmapRenderTarget->GetCommandBuffer();
+		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		heightmapRenderTarget->End();
+
+		/* Render the heightmap to texture */
+		normalRenderTarget->Begin("Normalmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		commandBuffer = normalRenderTarget->GetCommandBuffer();
+		commandBuffer->CmdBindPipeline(mNormalmapEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mNormalmapEffect);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		normalRenderTarget->End();
+
+		// Bind terrain height and normal maps
+		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), normalRenderTarget->GetSampler());
+
+		//const uint32_t size = 640;
+		//gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		//gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
 	}
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
@@ -73,6 +138,7 @@ namespace Utopian
 				Vk::Vertex vertex;
 				const float originOffset = (float)numCells * cellSize / 2.0f;
 				vertex.Pos = glm::vec3(x * cellSize + cellSize / 2.0f - originOffset, 0.0f, z * cellSize + cellSize / 2.0f - originOffset);
+				vertex.Normal = glm::vec3(0.0f, 1.0f, 0.0f);
 				vertex.Tex = glm::vec2((float)x / numCells, (float)z / numCells);
 				mesh->AddVertex(vertex);
 			}

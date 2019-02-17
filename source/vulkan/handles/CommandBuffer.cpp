@@ -191,6 +191,8 @@ namespace Utopian::Vk
 	
 	void CommandBuffer::CmdBindDescriptorSets(const SharedPtr<Effect>& effect, uint32_t firstSet, VkPipelineBindPoint bindPoint)
 	{
+		assert(effect->GetNumDescriptorSets() > 0);
+
 		vkCmdBindDescriptorSets(mHandle,
 		 						bindPoint,
 								effect->GetPipelineInterface()->GetPipelineLayout(),
