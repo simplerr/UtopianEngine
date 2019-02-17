@@ -58,13 +58,13 @@ namespace Utopian
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 	
-		GeneratePatches(512.0f, 128);
+		GeneratePatches(128.0f, 128);
 		GenerateTerrainMaps();
 	}
 
 	void TessellationJob::GenerateTerrainMaps()
 	{
-		uint32_t resolution = 2048;
+		uint32_t resolution = 8192;
 		/* Height map */
 		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, resolution, resolution, VK_FORMAT_R16G16B16A16_SFLOAT);
 
@@ -117,9 +117,14 @@ namespace Utopian
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		normalRenderTarget->End();
 
+		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		sampler->Create();
+
 		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), normalRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), sampler.get());
+		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
 
 		//const uint32_t size = 640;
 		//gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());

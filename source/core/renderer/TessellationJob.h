@@ -48,5 +48,6 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> heightmapRenderTarget;
 		SharedPtr<Vk::Image> normalImage;
 		SharedPtr<Vk::RenderTarget> normalRenderTarget;
+		SharedPtr<Vk::Sampler> sampler;
 	};
 }

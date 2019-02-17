@@ -13,5 +13,9 @@ void main()
 {
     //OutColor = vec4(InTex.x, InTex.y, 0, 1);
     vec3 normal = getNormal(InTex);
-    OutColor = vec4(normal, 1.0);
+
+    vec3 lightDir = vec3(1, 1, 1);
+    float diffuse = dot(normal, normalize(lightDir)); 
+    OutColor = vec4(vec3(0.0, 1.0, 0.0) * diffuse, 1.0);
+    //OutColor = vec4(normal, 1.0);
 }
