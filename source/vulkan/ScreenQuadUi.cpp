@@ -79,7 +79,7 @@ namespace Utopian
 				pushConstantBlock.world = glm::translate(pushConstantBlock.world, glm::vec3(offsetX * 2.0f - 1.0f, offsetY * 2.0f - 1.0, 0));
 				pushConstantBlock.world = glm::scale(pushConstantBlock.world, glm::vec3(horizontalRatio, verticalRatio, 0));
 
-				mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(PushConstantBlock), &pushConstantBlock);
+				mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(PushConstantBlock), &pushConstantBlock);
 				VkDescriptorSet descriptorSets[1] = { mQuadList[i]->descriptorSet->GetVkHandle() };
 				mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 

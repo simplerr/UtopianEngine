@@ -157,7 +157,7 @@ namespace Utopian
 
 					commandBuffer->CmdBindPipeline(effect->GetPipeline());
 					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
 					// Note: Move out from if
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
@@ -168,7 +168,7 @@ namespace Utopian
 				{
 					commandBuffer->CmdBindPipeline(mGBufferEffectTerrain->GetPipeline());
 					commandBuffer->CmdBindDescriptorSets(mGBufferEffectTerrain);
-					commandBuffer->CmdPushConstants(mGBufferEffectTerrain->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdPushConstants(mGBufferEffectTerrain->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
 					// Note: Move out from else
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());

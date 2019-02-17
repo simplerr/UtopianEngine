@@ -24,8 +24,8 @@ namespace Utopian::Vk
 		mDevice = device;
 
 		mMeshTexturesDescriptorSetLayout = std::make_shared<DescriptorSetLayout>(device);
-		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // diffuseSampler
-		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_FRAGMENT_BIT, 1); // normalSampler
+		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
+		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
 		mMeshTexturesDescriptorSetLayout->Create();
 
 		mMeshTexturesDescriptorPool = std::make_shared<DescriptorPool>(device);

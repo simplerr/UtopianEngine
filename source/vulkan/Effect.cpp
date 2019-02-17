@@ -78,21 +78,21 @@ namespace Utopian::Vk
 			// Uniform blocks
 			for (auto& iter : shader->compiledShaders[i]->reflection.uniformBlocks)
 			{
-				mPipelineInterface->AddUniformBuffer(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage);
+				mPipelineInterface->AddUniformBuffer(iter.second.set, iter.second.binding, VK_SHADER_STAGE_ALL);
 				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 			}
 
 			// Combined image samplers
 			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
 			{
-				mPipelineInterface->AddCombinedImageSampler(iter.second.set, iter.second.binding, shader->compiledShaders[i]->shaderStage, iter.second.arraySize);
+				mPipelineInterface->AddCombinedImageSampler(iter.second.set, iter.second.binding, VK_SHADER_STAGE_ALL, iter.second.arraySize);
 				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, iter.second.arraySize);
 			}
 
 			// Push constants
 			for (auto& iter : shader->compiledShaders[i]->reflection.pushConstants)
 			{
-				mPipelineInterface->AddPushConstantRange(iter.second.size, shader->compiledShaders[i]->shaderStage);
+				mPipelineInterface->AddPushConstantRange(iter.second.size, VK_SHADER_STAGE_ALL);
 			}
 		}
 

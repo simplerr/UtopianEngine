@@ -90,7 +90,7 @@ namespace Utopian::Vk
 		ImguiEffect::PushConstantBlock pushConstBlock;
 		pushConstBlock.scale = glm::vec2(2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y);
 		pushConstBlock.translate = glm::vec2(-1.0f);
-		mCommandBuffer->CmdPushConstants(mImguiEffect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstBlock), &pushConstBlock);
+		mCommandBuffer->CmdPushConstants(mImguiEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConstBlock), &pushConstBlock);
 
 		// Render commands
 		ImDrawData* imDrawData = ImGui::GetDrawData();

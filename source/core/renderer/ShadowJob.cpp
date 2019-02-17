@@ -107,7 +107,7 @@ namespace Utopian
 						for (Vk::Mesh* mesh : model->mMeshes)
 						{
 							CascadePushConst pushConst(glm::mat4(), cascadeIndex);
-							commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+							commandBuffer->CmdPushConstants(effectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
 							VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 							VkDescriptorSet descriptorSets[2] = { effectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
@@ -134,7 +134,7 @@ namespace Utopian
 					for (Vk::Mesh* mesh : model->mMeshes)
 					{
 						CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
-						commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_VERTEX_BIT, sizeof(CascadePushConst), &pushConst);
+						commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
 						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 						VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };

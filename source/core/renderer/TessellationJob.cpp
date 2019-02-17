@@ -191,7 +191,7 @@ namespace Utopian
 
 			glm::mat4 world = glm::mat4();
 			Vk::PushConstantBlock pushConsts(world);
-			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT, sizeof(pushConsts), &pushConsts);
+			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
 			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
 			commandBuffer->CmdBindDescriptorSets(mEffect);
