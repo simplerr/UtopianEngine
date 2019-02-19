@@ -9,13 +9,25 @@ layout (location = 1) in vec2 InTex;
 
 layout (location = 0) out vec4 OutColor;
 
+layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse;
+layout (set = 0, binding = 5) uniform sampler2D samplerNormal;
+
 void main() 
 {
-    //OutColor = vec4(InTex.x, InTex.y, 0, 1);
+    float textureScaling = 45.0;
+    vec3 diffuseTexture = texture(samplerDiffuse, InTex * textureScaling).xyz;
+    vec3 normalTexture = texture(samplerNormal, InTex * textureScaling).xyz;
+    //vec3 displacementTexture = texture(samplerDisplacement, InTex * textureScaling).xyz;
     vec3 normal = getNormal(InTex);
+    normal = normalTexture.rbg;
+    normal = normalize(normal * 2.0 - 1.0);
 
-    vec3 lightDir = vec3(1, 1, 1);
+    vec3 lightDir = vec3(sin(ubo_camera.time / 600.0), 1, 1);
     float diffuse = dot(normal, normalize(lightDir)); 
-    OutColor = vec4(vec3(0.0, 1.0, 0.0) * diffuse, 1.0);
+    OutColor = vec4(diffuseTexture * diffuse, 1.0);
+
+    // OutColor = vec4(diffuseTexture, 1.0);
+    // OutColor = vec4(normalTexture, 1.0);
+    //OutColor = vec4(displacementTexture, 1.0);
     //OutColor = vec4(normal, 1.0);
 }

@@ -23,9 +23,17 @@ float noise (in vec2 st) {
 
     vec2 u = f * f * (3.0 - 2.0 * f);
 
-    return mix(a, b, u.x) +
+    float n = mix(a, b, u.x) +
             (c - a)* u.y * (1.0 - u.x) +
             (d - b) * u.x * u.y;
+
+    return n;
+
+    // Ridge noise
+    // n = (n * 2) - 1;
+    // n = abs(n);
+    // n = n;
+    // return abs(n); 
 }
 
 #define OCTAVES 6

@@ -17,6 +17,8 @@ layout (location = 1) in vec2 InTex[];
 layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 
+layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement;
+
 void main()
 {
 	// Interpolate UV coordinates
@@ -36,6 +38,11 @@ void main()
 
 	// Displace
     pos.y = getHeight(OutTex);
+
+	float textureScaling = 45.0;
+	float amplitude = 4.0;
+    vec3 displacementTexture = texture(samplerDisplacement, OutTex * textureScaling).xyz;
+	pos.y += displacementTexture.x * amplitude;
 
 	// Perspective projection
 	gl_Position = ubo_camera.projection * ubo_camera.view * pushConstants.world * pos;

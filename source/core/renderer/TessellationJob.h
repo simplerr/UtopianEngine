@@ -11,6 +11,7 @@ namespace Utopian
 		UNIFORM_BLOCK_BEGIN(ViewProjection)
 			UNIFORM_PARAM(glm::mat4, projection)
 			UNIFORM_PARAM(glm::mat4, view)
+			UNIFORM_PARAM(float, time)
 			UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
@@ -49,5 +50,10 @@ namespace Utopian
 		SharedPtr<Vk::Image> normalImage;
 		SharedPtr<Vk::RenderTarget> normalRenderTarget;
 		SharedPtr<Vk::Sampler> sampler;
+		
+		// Temporary textures
+		Vk::Texture* diffuseTexture;
+		Vk::Texture* normalTexture;
+		Vk::Texture* displacementTexture;
 	};
 }

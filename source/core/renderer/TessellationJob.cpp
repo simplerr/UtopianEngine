@@ -4,6 +4,7 @@
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/UIOverlay.h"
 #include "vulkan/ModelLoader.h"
+#include "vulkan/TextureLoader.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/QueryPool.h"
@@ -42,11 +43,23 @@ namespace Utopian
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
-		mQueryPool = std::make_shared<Vk::QueryPool>(device);
+		// Load textures for experimentation
+		//diffuseTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Albedo.jpg");
+		//normalTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Normal.jpg");
+		//displacementTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Displacement.jpg");
+		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
+		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
+		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
+
+		mEffect->BindCombinedImage("samplerDiffuse", diffuseTexture->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("samplerNormal", normalTexture->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("samplerDisplacement", displacementTexture->GetTextureDescriptorInfo());
 
 		const uint32_t size = 640;
 		//gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(0u, 0u, width, height, image.get(), renderTarget->GetSampler(), 1u);
+
+		mQueryPool = std::make_shared<Vk::QueryPool>(device);
 	}
 
 	TessellationJob::~TessellationJob()
@@ -58,7 +71,7 @@ namespace Utopian
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 	
-		GeneratePatches(128.0f, 128);
+		GeneratePatches(32.0f, 128);
 		GenerateTerrainMaps();
 	}
 
@@ -102,14 +115,14 @@ namespace Utopian
 
 		mNormalmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
 
-		/* Render the heightmap to texture */
+		/* Render the height map to texture */
 		heightmapRenderTarget->Begin("Heightmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = heightmapRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		heightmapRenderTarget->End();
 
-		/* Render the heightmap to texture */
+		/* Render the normal map to texture */
 		normalRenderTarget->Begin("Normalmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		commandBuffer = normalRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mNormalmapEffect->GetPipeline());
@@ -173,6 +186,7 @@ namespace Utopian
 	{
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.data.time = gTimer().GetTime();
 		viewProjectionBlock.UpdateMemory();
 
 		settingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
