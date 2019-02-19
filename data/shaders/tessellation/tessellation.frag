@@ -30,4 +30,5 @@ void main()
     // OutColor = vec4(normalTexture, 1.0);
     //OutColor = vec4(displacementTexture, 1.0);
     //OutColor = vec4(normal, 1.0);
+    //OutColor = vec4(getNormal(InTex), 1.0);
 }

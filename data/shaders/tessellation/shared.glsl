@@ -22,7 +22,7 @@ layout (set = 0, binding = 3) uniform sampler2D samplerNormalmap;
 float getHeight(vec2 texCoord)
 {
     float height = texture(samplerHeightmap, texCoord / ubo_settings.textureScaling).r * ubo_settings.amplitude;
-    height = 0.0f;
+    //height = 0.0f;
 
     return height;
 }
@@ -30,7 +30,7 @@ float getHeight(vec2 texCoord)
 vec3 getNormal(vec2 texCoord)
 {
     vec3 normal = texture(samplerNormalmap, texCoord / ubo_settings.textureScaling).xyz;
-    normal = vec3(0, 1, 0);
+    //normal = vec3(0, 1, 0);
 
     return normal;
 }

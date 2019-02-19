@@ -108,7 +108,7 @@ namespace Utopian
 		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
 		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
 		ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
-		ImGui::SliderFloat("Terrain amplitude", &mRenderingSettings.terrainAmplitude, 1000.0f, 40000.0f);
+		ImGui::SliderFloat("Terrain amplitude", &mRenderingSettings.terrainAmplitude, 50.0f, 3000.0f);
 		ImGui::SliderFloat("Terraint texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 10.0f);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);

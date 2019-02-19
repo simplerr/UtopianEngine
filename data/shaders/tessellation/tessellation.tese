@@ -36,13 +36,15 @@ void main()
 	vec4 pos2 = mix(gl_in[3].gl_Position, gl_in[2].gl_Position, gl_TessCoord.x);
 	vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
-	// Displace
+	// Displace large details
     pos.y = getHeight(OutTex);
 
+	// Displace small details from displacement map along normal
+	vec3 normal = normalize(getNormal(OutTex));
 	float textureScaling = 45.0;
-	float amplitude = 4.0;
-    vec3 displacementTexture = texture(samplerDisplacement, OutTex * textureScaling).xyz;
-	pos.y += displacementTexture.x * amplitude;
+	float amplitude = 14.0;
+    vec3 displacement = texture(samplerDisplacement, OutTex * textureScaling).xyz;
+	pos.xyz += normal * displacement.x * amplitude;
 
 	// Perspective projection
 	gl_Position = ubo_camera.projection * ubo_camera.view * pushConstants.world * pos;

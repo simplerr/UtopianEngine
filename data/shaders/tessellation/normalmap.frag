@@ -25,7 +25,8 @@ vec3 calculateNormal(vec2 texCoord)
     float z6 = texture(samplerHeightmap, texCoord + vec2(0.0, texelSize)).r;
     float z7 = texture(samplerHeightmap, texCoord + vec2(texelSize, texelSize)).r;
 
-    float strength = 20.0;
+    // Todo: Note: Different sized terrain need different strength
+    float strength = 100.0;
     vec3 normal = vec3(0.0f);
 
     normal.x = z0 + 2 * z3 + z5 - z2 - 2 * z4 - z7;

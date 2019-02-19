@@ -139,9 +139,9 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), sampler.get());
 		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
 
-		//const uint32_t size = 640;
-		//gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		//gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
+		/*const uint32_t size = 640;
+		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());*/
 	}
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
