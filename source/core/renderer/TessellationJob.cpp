@@ -29,6 +29,7 @@ namespace Utopian
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/tessellation.frag";
 		shaderCreateInfo.tescShaderPath = "data/shaders/tessellation/tessellation.tesc";
 		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/tessellation.tese";
+		shaderCreateInfo.geometryShaderPath = "data/shaders/tessellation/tessellation.geom";
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
@@ -49,6 +50,7 @@ namespace Utopian
 		//displacementTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Displacement.jpg");
 		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
 		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
+		//normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/flat_normalmap.png");
 		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
 
 		mEffect->BindCombinedImage("samplerDiffuse", diffuseTexture->GetTextureDescriptorInfo());

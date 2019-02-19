@@ -16,6 +16,7 @@ layout (location = 1) in vec2 InTex[];
  
 layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
+layout (location = 2) out vec3 OutPosW;
 
 layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement;
 
@@ -44,8 +45,9 @@ void main()
 	float textureScaling = 45.0;
 	float amplitude = 14.0;
     vec3 displacement = texture(samplerDisplacement, OutTex * textureScaling).xyz;
-	pos.xyz += normal * displacement.x * amplitude;
+	pos.xyz -= normal * displacement.x * amplitude;
 
+	OutPosW = (pushConstants.world * pos).xyz;
 	// Perspective projection
 	gl_Position = ubo_camera.projection * ubo_camera.view * pushConstants.world * pos;
 }
