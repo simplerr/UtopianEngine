@@ -196,6 +196,7 @@ namespace Utopian
 		settingsBlock.data.edgeSize = 200.0f;
 		settingsBlock.data.amplitude = jobInput.renderingSettings.terrainAmplitude;
 		settingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
+		settingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		settingsBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));

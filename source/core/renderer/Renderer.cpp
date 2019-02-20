@@ -110,6 +110,7 @@ namespace Utopian
 		ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
 		ImGui::SliderFloat("Terrain amplitude", &mRenderingSettings.terrainAmplitude, 50.0f, 3000.0f);
 		ImGui::SliderFloat("Terraint texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 10.0f);
+		ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);

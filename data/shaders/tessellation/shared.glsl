@@ -14,6 +14,7 @@ layout (std140, set = 0, binding = 1) uniform UBO_settings
 	float tessellationFactor;
     float amplitude;
     float textureScaling;
+    int wireframe;
 } ubo_settings;
 
 layout (set = 0, binding = 2) uniform sampler2D samplerHeightmap;

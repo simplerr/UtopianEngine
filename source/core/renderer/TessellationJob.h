@@ -20,6 +20,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, tessellationFactor)
 			UNIFORM_PARAM(float, amplitude)
 			UNIFORM_PARAM(float, textureScaling)
+			UNIFORM_PARAM(int, wireframe)
 		UNIFORM_BLOCK_END()
 
 		TessellationJob(Vk::Device* device, uint32_t width, uint32_t height);

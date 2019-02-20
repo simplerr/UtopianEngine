@@ -8,6 +8,7 @@ layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
 layout (location = 2) in vec3 InTangent;
 layout (location = 3) in vec3 InPosW;
+layout (location = 4) in vec3 InBarycentric;
 
 layout (location = 0) out vec4 OutColor;
 
@@ -60,6 +61,19 @@ void main()
     vec3 lightDir = vec3(sin(ubo_camera.time / 600.0), 1, 1);
     float diffuse = dot(bumpNormal, normalize(lightDir)); 
     OutColor = vec4(diffuseTexture * diffuse, 1.0);
+
+    // Apply wireframe
+    // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
+    if (ubo_settings.wireframe == 1)
+    {
+        vec3 d = fwidth(InBarycentric);
+        vec3 a3 = smoothstep(vec3(0.0), d * 0.8, InBarycentric);
+        float edgeFactor = min(min(a3.x, a3.y), a3.z);
+        OutColor.rgb = mix(vec3(1.0), OutColor.rgb, edgeFactor);
+
+        // Simple method but agly aliasing:
+        // if(any(lessThan(InBarycentric, vec3(0.02))))
+    }
 
     // Debugging:
     //bumpNormal = bumpNormal.rbg;

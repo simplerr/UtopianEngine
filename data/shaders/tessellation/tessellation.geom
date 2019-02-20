@@ -15,6 +15,7 @@ layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 layout (location = 2) out vec3 OutTangent;
 layout (location = 3) out vec3 OutPosW;
+layout (location = 4) out vec3 OutBarycentric;
 
 vec3 calculateTangent()
 {
@@ -45,6 +46,8 @@ void main()
     // The tangent is the same for all vertices since they share triangle face
     vec3 tangent = calculateTangent();
 
+    vec3[3] corners = vec3[](vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 1));
+
     for (int i = 0; i < gl_in.length(); i++)
     {
         gl_Position = gl_in[i].gl_Position;
@@ -52,6 +55,7 @@ void main()
         OutTex = InTex[i];
         OutPosW = InPosW[i];
         OutTangent = tangent;
+        OutBarycentric = corners[i];
         EmitVertex();
     }
 
