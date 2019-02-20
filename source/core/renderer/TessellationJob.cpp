@@ -73,7 +73,7 @@ namespace Utopian
 		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
 		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 	
-		GeneratePatches(32.0f, 128);
+		GeneratePatches(128.0, 128);
 		GenerateTerrainMaps();
 	}
 
