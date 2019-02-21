@@ -8,6 +8,7 @@
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/QueryPool.h"
+#include "Camera.h"
 #include <random>
 
 namespace Utopian
@@ -48,10 +49,10 @@ namespace Utopian
 		//diffuseTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Albedo.jpg");
 		//normalTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Normal.jpg");
 		//displacementTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Displacement.jpg");
-		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
-		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
+		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
+		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
+		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
 		//normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/flat_normalmap.png");
-		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
 
 		mEffect->BindCombinedImage("samplerDiffuse", diffuseTexture->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("samplerNormal", normalTexture->GetTextureDescriptorInfo());
@@ -189,6 +190,10 @@ namespace Utopian
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		viewProjectionBlock.data.time = gTimer().GetTime();
+
+		const Frustum& frustum = gRenderer().GetMainCamera()->GetFrustum();
+		memcpy(viewProjectionBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
+
 		viewProjectionBlock.UpdateMemory();
 
 		settingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);

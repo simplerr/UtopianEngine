@@ -11,6 +11,7 @@ namespace Utopian
 		UNIFORM_BLOCK_BEGIN(ViewProjection)
 			UNIFORM_PARAM(glm::mat4, projection)
 			UNIFORM_PARAM(glm::mat4, view)
+			UNIFORM_PARAM(glm::vec4, frustumPlanes[6])
 			UNIFORM_PARAM(float, time)
 			UNIFORM_BLOCK_END()
 

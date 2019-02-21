@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include "utility/Platform.h"
 #include "utility/math/Ray.h"
+#include "utility/math/Frustum.h"
 #include "utility/Common.h"
 #include "core/SceneNode.h"
 #include "vulkan/VulkanInclude.h"
@@ -22,6 +23,8 @@ namespace Utopian
 
 		static SharedPtr<Camera> Create(Utopian::Window* window, glm::vec3 position, float fieldOfView, float nearPlane, float farPlane);
 		void Initialize();
+
+		void UpdateFrustum();
 
 		void SetFov(float fov);
 		void SetNearPlane(float nearPlane);
@@ -47,6 +50,7 @@ namespace Utopian
 		float GetFov() const;
 		float GetNearPlane() const;
 		float GetFarPlane() const;
+		const Frustum& GetFrustum() const;
 
 		void AddOrientation(float yaw, float pitch);
 		void SetOrientation(float yaw, float pitch);
@@ -58,6 +62,7 @@ namespace Utopian
 		// [NOTE][HACK] Vulkan & OpenGL have different pitch movement
 		int hack = 1;
 	private:
+		Frustum mFrustum;
 		Utopian::Window* mWindow;
 		glm::vec3 mUp;
 		glm::vec3 mLookAt; // Note: This is only the initial target position

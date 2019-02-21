@@ -44,30 +44,58 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 	return clamp(distance(clip0, clip1) / edgeSize * ubo_settings.tessellationFactor, 1.0, 64.0);
 }
 
+bool frustumCheck()
+{
+	// Fixed radius, need to be updated if patch size changes
+	const float radius = 180.0f;
+	vec4 pos = gl_in[gl_InvocationID].gl_Position;
+
+	// Check sphere against frustum planes
+	for (int i = 0; i < 6; i++) {
+		if (dot(pos, ubo_camera.frustumPlanes[i]) + radius < 0.0)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 void main()
 {
 	if (gl_InvocationID == 0)
 	{
-        if (ubo_settings.tessellationFactor > 0.0)
+		if (!frustumCheck())
 		{
-            gl_TessLevelOuter[0] = screenSpaceTessFactor(gl_in[3].gl_Position, gl_in[0].gl_Position);
-            gl_TessLevelOuter[1] = screenSpaceTessFactor(gl_in[0].gl_Position, gl_in[1].gl_Position);
-            gl_TessLevelOuter[2] = screenSpaceTessFactor(gl_in[1].gl_Position, gl_in[2].gl_Position);
-            gl_TessLevelOuter[3] = screenSpaceTessFactor(gl_in[2].gl_Position, gl_in[3].gl_Position);
-            gl_TessLevelInner[0] = mix(gl_TessLevelOuter[0], gl_TessLevelOuter[3], 0.5);
-            gl_TessLevelInner[1] = mix(gl_TessLevelOuter[2], gl_TessLevelOuter[1], 0.5);
-        }
-        else
-        {
-            // Tessellation factor can be set to zero by example
-            // to demonstrate a simple passthrough
-            gl_TessLevelOuter[0] = 1.0f;
-            gl_TessLevelOuter[1] = 1.0f;
-            gl_TessLevelOuter[2] = 1.0f;
-            gl_TessLevelOuter[3] = 1.0f;
-            gl_TessLevelInner[0] = 1.0f;
-            gl_TessLevelInner[1] = 1.0f;
-        }
+			// Discard patch
+			gl_TessLevelOuter[0] = 0.0;
+			gl_TessLevelOuter[1] = 0.0;
+			gl_TessLevelOuter[2] = 0.0;
+			gl_TessLevelOuter[3] = 0.0;
+			gl_TessLevelInner[0] = 0.0;
+			gl_TessLevelInner[1] = 0.0;
+		}
+		else
+		{
+			if (ubo_settings.tessellationFactor > 0.0)
+			{
+				gl_TessLevelOuter[0] = screenSpaceTessFactor(gl_in[3].gl_Position, gl_in[0].gl_Position);
+				gl_TessLevelOuter[1] = screenSpaceTessFactor(gl_in[0].gl_Position, gl_in[1].gl_Position);
+				gl_TessLevelOuter[2] = screenSpaceTessFactor(gl_in[1].gl_Position, gl_in[2].gl_Position);
+				gl_TessLevelOuter[3] = screenSpaceTessFactor(gl_in[2].gl_Position, gl_in[3].gl_Position);
+				gl_TessLevelInner[0] = mix(gl_TessLevelOuter[0], gl_TessLevelOuter[3], 0.5);
+				gl_TessLevelInner[1] = mix(gl_TessLevelOuter[2], gl_TessLevelOuter[1], 0.5);
+			}
+			else
+			{
+				// No tessellation, simple passthrough
+				gl_TessLevelOuter[0] = 1.0f;
+				gl_TessLevelOuter[1] = 1.0f;
+				gl_TessLevelOuter[2] = 1.0f;
+				gl_TessLevelOuter[3] = 1.0f;
+				gl_TessLevelInner[0] = 1.0f;
+				gl_TessLevelInner[1] = 1.0f;
+			}
+		}
 	}
 
 	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;

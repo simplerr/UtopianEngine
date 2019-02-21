@@ -27,6 +27,11 @@ namespace Utopian
 		return instance;
 	}
 
+	void Camera::UpdateFrustum()
+	{
+		mFrustum.Update(GetProjection() * GetView());
+	}
+
 	void Camera::SetMainCamera()
 	{
 		Utopian::Renderer::Instance().SetMainCamera(this);
@@ -179,6 +184,11 @@ namespace Utopian
 			mPitch = -85.0;
 	}
 
+	const Frustum& Camera::GetFrustum() const
+	{
+		return mFrustum;
+	}
+
 	float Camera::GetPitch()
 	{
 		return mPitch;
@@ -188,14 +198,17 @@ namespace Utopian
 	{
 		return mYaw;
 	}
+
 	float Camera::GetFov() const
 	{
 		return mFov;
 	}
+
 	float Camera::GetNearPlane() const
 	{
 		return mNearPlane;
 	}
+
 	float Camera::GetFarPlane() const
 	{
 		return mFarPlane;

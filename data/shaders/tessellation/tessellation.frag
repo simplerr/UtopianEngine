@@ -59,7 +59,7 @@ void main()
     bumpNormal = normalize(TBN * bumpNormal);
 
     vec3 lightDir = vec3(sin(ubo_camera.time / 600.0), 1, 1);
-    float diffuse = dot(bumpNormal, normalize(lightDir)); 
+    float diffuse = dot(bumpNormal, normalize(lightDir)) * 1.2; 
     OutColor = vec4(diffuseTexture * diffuse, 1.0);
 
     // Apply wireframe

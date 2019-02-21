@@ -4,6 +4,7 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 {
 	mat4 projection;
 	mat4 view;
+    vec4 frustumPlanes[6];
     float time;
 } ubo_camera;
 

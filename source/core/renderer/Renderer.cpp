@@ -72,6 +72,7 @@ namespace Utopian
 	{
 		UpdateCascades();
 
+		mMainCamera->UpdateFrustum();
 		mSceneInfo.terrain->Update();
 		mJobGraph->Update();
 
