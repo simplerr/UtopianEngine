@@ -1,6 +1,7 @@
 #pragma once
 #include "core/renderer/BaseJob.h"
 #include "vulkan/VulkanInclude.h"
+#include "vulkan/handles/Texture.h"
 #include <glm/glm.hpp>
 
 namespace Utopian
@@ -52,10 +53,9 @@ namespace Utopian
 		SharedPtr<Vk::Image> normalImage;
 		SharedPtr<Vk::RenderTarget> normalRenderTarget;
 		SharedPtr<Vk::Sampler> sampler;
-		
-		// Temporary textures
-		Vk::Texture* diffuseTexture;
-		Vk::Texture* normalTexture;
-		Vk::Texture* displacementTexture;
+
+		Vk::TextureArray diffuseArray;
+		Vk::TextureArray normalArray;
+		Vk::TextureArray displacementArray;
 	};
 }

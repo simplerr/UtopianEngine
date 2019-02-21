@@ -12,34 +12,58 @@ layout (location = 4) in vec3 InBarycentric;
 
 layout (location = 0) out vec4 OutColor;
 
-layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse;
-layout (set = 0, binding = 5) uniform sampler2D samplerNormal;
+layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[2];
+layout (set = 0, binding = 5) uniform sampler2D samplerNormal[2];
 
 // Calculates the TBN matrix.
 // From http://www.thetenthplanet.de/archives/1180
-mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv )
+mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
 {
-    // get edge vectors of the pixel triangle
-    vec3 dp1 = dFdx( p );
-    vec3 dp2 = dFdy( p );
-    vec2 duv1 = dFdx( uv );
-    vec2 duv2 = dFdy( uv );
+    // Get edge vectors of the pixel triangle
+    vec3 dp1 = dFdx(p);
+    vec3 dp2 = dFdy(p);
+    vec2 duv1 = dFdx(uv);
+    vec2 duv2 = dFdy(uv);
  
-    // solve the linear system
-    vec3 dp2perp = cross( dp2, N );
-    vec3 dp1perp = cross( N, dp1 );
+    // Solve the linear system
+    vec3 dp2perp = cross(dp2, N);
+    vec3 dp1perp = cross(N, dp1);
     vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
     vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
  
-    // construct a scale-invariant frame 
-    float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
-    return mat3( T * invmax, B * invmax, N );
+    // Construct a scale-invariant frame 
+    float invmax = inversesqrt(max(dot(T,T), dot(B,B)));
+    return mat3(T * invmax, B * invmax, N);
 }
 
 void main() 
 {
     float textureScaling = 45.0;
-    vec3 diffuseTexture = texture(samplerDiffuse, InTex * textureScaling).xyz;
+
+	// Test
+	vec3 lowAltitudeDiffuse = texture(samplerDiffuse[0], InTex * textureScaling).xyz; 
+	vec3 highAltitudeDiffuse = texture(samplerDiffuse[1], InTex * textureScaling).xyz; 
+	vec3 finalDiffuse = vec3(0.0);
+
+	vec3 lowAltitudeNormal = texture(samplerNormal[0], InTex * textureScaling).xyz; 
+	vec3 highAltitudeNormal = texture(samplerNormal[1], InTex * textureScaling).xyz; 
+	vec3 finalNormal = vec3(0.0);
+
+	// Choose texture based on height
+	const float fadeStart = 800.0f;
+	const float fadeEnd = 900.0f;
+	if (InPosW.y > fadeEnd) {
+		finalDiffuse = highAltitudeDiffuse;
+		finalNormal = highAltitudeNormal;
+    }
+	else if (InPosW.y > fadeStart && InPosW.y <= fadeEnd) {
+		finalDiffuse = mix(lowAltitudeDiffuse, highAltitudeDiffuse, (InPosW.y - fadeStart) / (fadeEnd - fadeStart));
+		finalNormal = mix(lowAltitudeNormal, highAltitudeNormal, (InPosW.y - fadeStart) / (fadeEnd - fadeStart));
+    }
+	else {
+		finalDiffuse = lowAltitudeDiffuse;
+		finalNormal = lowAltitudeNormal;
+    }
 
     // Gets normal from normal map
     // Note: Todo: When changing ubo_settings.amplitude the normal does not get updated as expected
@@ -54,13 +78,12 @@ void main()
     //mat3 TBN = mat3(InTangent, bitangent, normal);
     mat3 TBN = cotangent_frame(normal, InPosW, InTex);
 
-    vec3 normalTexture = texture(samplerNormal, InTex * textureScaling).xyz;
-    vec3 bumpNormal = normalize(normalTexture.rgb * 2.0 - 1.0);
+    vec3 bumpNormal = normalize(finalNormal.rgb * 2.0 - 1.0);
     bumpNormal = normalize(TBN * bumpNormal);
 
     vec3 lightDir = vec3(sin(ubo_camera.time / 600.0), 1, 1);
     float diffuse = dot(bumpNormal, normalize(lightDir)) * 1.2; 
-    OutColor = vec4(diffuseTexture * diffuse, 1.0);
+    OutColor = vec4(finalDiffuse * diffuse, 1.0);
 
     // Apply wireframe
     // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/

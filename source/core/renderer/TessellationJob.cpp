@@ -49,14 +49,27 @@ namespace Utopian
 		//diffuseTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Albedo.jpg");
 		//normalTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Normal.jpg");
 		//displacementTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Displacement.jpg");
-		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
-		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
-		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
 		//normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/flat_normalmap.png");
 
-		mEffect->BindCombinedImage("samplerDiffuse", diffuseTexture->GetTextureDescriptorInfo());
-		mEffect->BindCombinedImage("samplerNormal", normalTexture->GetTextureDescriptorInfo());
-		mEffect->BindCombinedImage("samplerDisplacement", displacementTexture->GetTextureDescriptorInfo());
+		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
+		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
+		Vk::Texture* displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
+
+		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
+		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
+		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());
+
+		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
+		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
+		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
+
+		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
+		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
+		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());
+
+		mEffect->BindCombinedImage("samplerDiffuse", &diffuseArray);
+		mEffect->BindCombinedImage("samplerNormal", &normalArray);
+		mEffect->BindCombinedImage("samplerDisplacement", &displacementArray);
 
 		const uint32_t size = 640;
 		//gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());

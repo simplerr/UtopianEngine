@@ -26,9 +26,9 @@ namespace Utopian
 		float sunSpeed = 1.0f;
 		float sunInclination = 45.0f;
 		float sunAzimuth = 0.0f;
-		float tessellationFactor = 1.5f;
-		float terrainAmplitude = 1000.0f;
-		float terrainTextureScaling = 5.0f;
+		float tessellationFactor = 2.8f;
+		float terrainAmplitude = 3000.0f;
+		float terrainTextureScaling = 2.2f;
 		bool terrainWireframe = 0;
 	};
 }
