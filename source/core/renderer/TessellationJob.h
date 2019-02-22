@@ -3,6 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/handles/Texture.h"
 #include <glm/glm.hpp>
+#include <string>
 
 namespace Utopian
 {
@@ -32,6 +33,8 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 		void Update() override;
 
+		void EffectRecomiledCallback(std::string name);
+
 		SharedPtr<Vk::Image> image;
 		SharedPtr<Vk::Image> depthImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
@@ -39,6 +42,12 @@ namespace Utopian
 	private:
 		void GenerateTerrainMaps();
 		void GeneratePatches(float cellSize, int numCells);
+		void SetupHeightmapEffect();
+		void SetupNormalmapEffect();
+		void SetupBlendmapEffect();
+		void RenderHeightmap();
+		void RenderNormalmap();
+		void RenderBlendmap();
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
@@ -46,12 +55,19 @@ namespace Utopian
 		SettingsBlock settingsBlock;
 
 		// Height & normal map members
+		uint32_t mapResolution = 8192;
 		SharedPtr<Vk::Effect> mHeightmapEffect;
-		SharedPtr<Vk::Effect> mNormalmapEffect;
 		SharedPtr<Vk::Image> heightmapImage;
 		SharedPtr<Vk::RenderTarget> heightmapRenderTarget;
+
+		SharedPtr<Vk::Effect> mNormalmapEffect;
 		SharedPtr<Vk::Image> normalImage;
 		SharedPtr<Vk::RenderTarget> normalRenderTarget;
+
+		SharedPtr<Vk::Effect> mBlendmapEffect;
+		SharedPtr<Vk::Image> blendmapImage;
+		SharedPtr<Vk::RenderTarget> blendmapRenderTarget;
+
 		SharedPtr<Vk::Sampler> sampler;
 
 		Vk::TextureArray diffuseArray;

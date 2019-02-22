@@ -28,9 +28,18 @@ namespace Utopian::Vk
 			if (ImGui::Button(path.c_str()))
 			{
 				effect->RecompileShader();
+				NotifyCallbacks(effect->GetVertexShaderPath());
 			}
 		}
 
 		Vk::UIOverlay::EndWindow();
+	}
+
+	void EffectManager::NotifyCallbacks(std::string name)
+	{
+		for (auto& callback : mRecompileCallbacks)
+		{
+			callback(name);
+		}
 	}
 }

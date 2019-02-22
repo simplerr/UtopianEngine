@@ -89,15 +89,47 @@ namespace Utopian
 	
 		GeneratePatches(128.0, 128);
 		GenerateTerrainMaps();
+
+		Vk::gEffectManager().RegisterRecompileCallback(&TessellationJob::EffectRecomiledCallback, this);
+	}
+	
+	void TessellationJob::EffectRecomiledCallback(std::string name)
+	{
+		RenderHeightmap();
+		RenderNormalmap();
+		RenderBlendmap();
 	}
 
 	void TessellationJob::GenerateTerrainMaps()
 	{
-		uint32_t resolution = 8192;
-		/* Height map */
-		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, resolution, resolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+		SetupHeightmapEffect();
+		SetupNormalmapEffect();
+		SetupBlendmapEffect();
 
-		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, resolution, resolution);
+		RenderHeightmap();
+		RenderNormalmap();
+		RenderBlendmap();
+
+		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		sampler->Create();
+
+		// Bind terrain height and normal maps
+		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), sampler.get());
+		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
+
+		const uint32_t size = 440;
+		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (size + 310), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());
+	}
+
+	void TessellationJob::SetupHeightmapEffect()
+	{
+		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
 		heightmapRenderTarget->AddColorAttachment(heightmapImage);
 		heightmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapRenderTarget->Create();
@@ -111,15 +143,18 @@ namespace Utopian
 		mHeightmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mHeightmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		mHeightmapEffect->CreatePipeline();
+	}
+	
+	void TessellationJob::SetupNormalmapEffect()
+	{
+		normalImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		/* Normal map */
-		normalImage = std::make_shared<Vk::ImageColor>(mDevice, resolution, resolution, VK_FORMAT_R16G16B16A16_SFLOAT);
-
-		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, resolution, resolution);
+		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
 		normalRenderTarget->AddColorAttachment(normalImage);
 		normalRenderTarget->SetClearColor(1, 1, 1, 1);
 		normalRenderTarget->Create();
 
+		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/normalmap.frag";
 		mNormalmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, normalRenderTarget->GetRenderPass(), shaderCreateInfo);
@@ -130,34 +165,61 @@ namespace Utopian
 		mNormalmapEffect->CreatePipeline();
 
 		mNormalmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
+	}
 
+	void TessellationJob::SetupBlendmapEffect()
+	{
+		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
+		blendmapRenderTarget->AddColorAttachment(blendmapImage);
+		blendmapRenderTarget->SetClearColor(1, 1, 1, 1);
+		blendmapRenderTarget->Create();
+
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/blendmap.frag";
+		mBlendmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapRenderTarget->GetRenderPass(), shaderCreateInfo);
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mBlendmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mBlendmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mBlendmapEffect->CreatePipeline();
+
+		mBlendmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		mBlendmapEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), heightmapRenderTarget->GetSampler());
+	}
+
+	void TessellationJob::RenderHeightmap()
+	{
 		/* Render the height map to texture */
 		heightmapRenderTarget->Begin("Heightmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = heightmapRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		heightmapRenderTarget->End();
+	}
 
+	void TessellationJob::RenderNormalmap()
+	{
 		/* Render the normal map to texture */
 		normalRenderTarget->Begin("Normalmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
-		commandBuffer = normalRenderTarget->GetCommandBuffer();
+		Vk::CommandBuffer* commandBuffer = normalRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mNormalmapEffect->GetPipeline());
 		commandBuffer->CmdBindDescriptorSets(mNormalmapEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		normalRenderTarget->End();
+	}
 
-		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
-		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler->Create();
-
-		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), sampler.get());
-		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
-
-		/*const uint32_t size = 640;
-		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());*/
+	void TessellationJob::RenderBlendmap()
+	{
+		/* Render the normal map to texture */
+		blendmapRenderTarget->Begin("Blendmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		Vk::CommandBuffer* commandBuffer = blendmapRenderTarget->GetCommandBuffer();
+		commandBuffer->CmdBindPipeline(mBlendmapEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mBlendmapEffect);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		blendmapRenderTarget->End();
 	}
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
