@@ -45,12 +45,6 @@ namespace Utopian
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
-		// Load textures for experimentation
-		//diffuseTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Albedo.jpg");
-		//normalTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Normal.jpg");
-		//displacementTexture = Vk::gTextureLoader().LoadTexture("data/Quixel/smokagcp_4K_Displacement.jpg");
-		//normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/flat_normalmap.png");
-
 		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
 		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
 		Vk::Texture* displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
@@ -62,6 +56,14 @@ namespace Utopian
 		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
 		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
 		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
+
+		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
+		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
+		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());
+
+		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_21_DIF.jpg");
+		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_21_NRM.jpg");
+		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_21_DISP.jpg");
 
 		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
 		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
@@ -118,6 +120,7 @@ namespace Utopian
 		// Bind terrain height and normal maps
 		mEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), sampler.get());
 		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
+		mEffect->BindCombinedImage("samplerBlendmap", blendmapImage.get(), sampler.get());
 
 		const uint32_t size = 440;
 		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
@@ -169,9 +172,9 @@ namespace Utopian
 
 	void TessellationJob::SetupBlendmapEffect()
 	{
-		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
+		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
 		blendmapRenderTarget->AddColorAttachment(blendmapImage);
 		blendmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapRenderTarget->Create();
@@ -188,6 +191,7 @@ namespace Utopian
 
 		mBlendmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		mBlendmapEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), heightmapRenderTarget->GetSampler());
+		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 	}
 
 	void TessellationJob::RenderHeightmap()
@@ -278,6 +282,13 @@ namespace Utopian
 		settingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
 		settingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		settingsBlock.UpdateMemory();
+
+		// Todo: Note: Hack: The blendmap depends on rendering settings that are not uploaded to GPU until here
+		static bool first = true;
+		if (first) {
+			RenderBlendmap();
+			first = false;
+		}
 
 		renderTarget->BeginCommandBuffer("Tessellation pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

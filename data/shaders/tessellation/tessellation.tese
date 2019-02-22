@@ -18,7 +18,7 @@ layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 layout (location = 2) out vec3 OutPosW;
 
-layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement[2];
+layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement[3];
 
 void main()
 {
@@ -43,25 +43,19 @@ void main()
 	float textureScaling = 45.0;
 
 	// Test
-	vec3 lowAltitudeDisp = texture(samplerDisplacement[0], OutTex * textureScaling).xyz; 
-	vec3 highAltitudeDisp = texture(samplerDisplacement[1], OutTex * textureScaling).xyz; 
-	vec3 finalDisplacement = vec3(0.0);
+	float lowAltitudeDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling).r; 
+	float highAltitudeDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling).r; 
+	float cliffDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling).r; 
+    vec4 blend = texture(samplerBlendmap, OutTex / ubo_settings.textureScaling);
 
-	// Choose texture based on height
-	const float fadeStart = 800.0f;
-	const float fadeEnd = 900.0f;
-	if (pos.y > fadeEnd)
-		finalDisplacement = highAltitudeDisp;
-	else if (pos.y > fadeStart && pos.y <= fadeEnd)
-		finalDisplacement = mix(lowAltitudeDisp, highAltitudeDisp, (pos.y - fadeStart) / (fadeEnd - fadeStart));
-	else
-		finalDisplacement = lowAltitudeDisp;
+    float finalDisplacement = blend.r * lowAltitudeDisplacement +
+							  blend.g * highAltitudeDisplacement +
+							  blend.b * cliffDisplacement;
 
 	// Displace small details from displacement map along normal
 	vec3 normal = normalize(getNormal(OutTex));
 	float amplitude = 14.0;
-    vec3 displacement = finalDisplacement;//texture(samplerDisplacement[textureIndex], OutTex * textureScaling).xyz;
-	pos.xyz -= normal * displacement.x * amplitude;
+	pos.xyz -= normal * finalDisplacement * amplitude;
 
 	OutPosW = (pushConstants.world * pos).xyz;
 	// Perspective projection

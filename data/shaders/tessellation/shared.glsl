@@ -20,6 +20,7 @@ layout (std140, set = 0, binding = 1) uniform UBO_settings
 
 layout (set = 0, binding = 2) uniform sampler2D samplerHeightmap;
 layout (set = 0, binding = 3) uniform sampler2D samplerNormalmap;
+layout (set = 0, binding = 7) uniform sampler2D samplerBlendmap;
 
 float getHeight(vec2 texCoord)
 {
