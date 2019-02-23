@@ -100,6 +100,7 @@ namespace Utopian
 		RenderHeightmap();
 		RenderNormalmap();
 		RenderBlendmap();
+		RenderBlendmapBrush();
 	}
 
 	void TessellationJob::GenerateTerrainMaps()
@@ -107,10 +108,12 @@ namespace Utopian
 		SetupHeightmapEffect();
 		SetupNormalmapEffect();
 		SetupBlendmapEffect();
+		SetupBlendmapBrushEffect();
 
 		RenderHeightmap();
 		RenderNormalmap();
 		RenderBlendmap();
+		RenderBlendmapBrush();
 
 		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
@@ -173,9 +176,10 @@ namespace Utopian
 	void TessellationJob::SetupBlendmapEffect()
 	{
 		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R16G16B16A16_SFLOAT);
+		blendmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL); // Special case since it needs to be used both as color attachment and descriptor
 
 		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
-		blendmapRenderTarget->AddColorAttachment(blendmapImage);
+		blendmapRenderTarget->AddColorAttachment(blendmapImage, VK_IMAGE_LAYOUT_GENERAL);
 		blendmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapRenderTarget->Create();
 
@@ -192,6 +196,38 @@ namespace Utopian
 		mBlendmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		mBlendmapEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), heightmapRenderTarget->GetSampler());
 		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+	}
+
+	void TessellationJob::SetupBlendmapBrushEffect()
+	{
+		blendmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
+		blendmapBrushRenderTarget->AddColorAttachment(blendmapImage, VK_IMAGE_LAYOUT_GENERAL, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_GENERAL);
+		blendmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
+		blendmapBrushRenderTarget->Create();
+
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/blendmap_brush.frag";
+		mBlendmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mBlendmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mBlendmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
+		// Enable additive blending
+		/*mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;*/
+
+		mBlendmapBrushEffect->CreatePipeline();
+
+		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
 	}
 
 	void TessellationJob::RenderHeightmap()
@@ -224,6 +260,20 @@ namespace Utopian
 		commandBuffer->CmdBindDescriptorSets(mBlendmapEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		blendmapRenderTarget->End();
+	}
+
+	void TessellationJob::RenderBlendmapBrush()
+	{
+		brushBlock.data.brushPos = brushPos;
+		brushBlock.UpdateMemory();
+
+		/* Render the normal map to texture */
+		blendmapBrushRenderTarget->Begin("Blendmap brush pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		Vk::CommandBuffer* commandBuffer = blendmapBrushRenderTarget->GetCommandBuffer();
+		commandBuffer->CmdBindPipeline(mBlendmapBrushEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mBlendmapBrushEffect);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		blendmapBrushRenderTarget->End();
 	}
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
@@ -287,6 +337,7 @@ namespace Utopian
 		static bool first = true;
 		if (first) {
 			RenderBlendmap();
+			RenderBlendmapBrush();
 			first = false;
 		}
 
@@ -330,6 +381,12 @@ namespace Utopian
 		Vk::UIOverlay::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
 		Vk::UIOverlay::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
 		Vk::UIOverlay::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+
+		if (ImGui::Button("Brush stroke"))
+		{
+			brushPos.x += 0.05;
+			RenderBlendmapBrush();
+		}
 
 		Vk::UIOverlay::EndWindow();
 	}

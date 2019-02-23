@@ -15,7 +15,7 @@ namespace Utopian
 			UNIFORM_PARAM(glm::mat4, view)
 			UNIFORM_PARAM(glm::vec4, frustumPlanes[6])
 			UNIFORM_PARAM(float, time)
-			UNIFORM_BLOCK_END()
+		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
 			UNIFORM_PARAM(glm::vec2, viewportSize)
@@ -24,6 +24,10 @@ namespace Utopian
 			UNIFORM_PARAM(float, amplitude)
 			UNIFORM_PARAM(float, textureScaling)
 			UNIFORM_PARAM(int, wireframe)
+		UNIFORM_BLOCK_END()
+
+		UNIFORM_BLOCK_BEGIN(BrushBlock)
+			UNIFORM_PARAM(glm::vec2, brushPos)
 		UNIFORM_BLOCK_END()
 
 		TessellationJob(Vk::Device* device, uint32_t width, uint32_t height);
@@ -45,9 +49,11 @@ namespace Utopian
 		void SetupHeightmapEffect();
 		void SetupNormalmapEffect();
 		void SetupBlendmapEffect();
+		void SetupBlendmapBrushEffect();
 		void RenderHeightmap();
 		void RenderNormalmap();
 		void RenderBlendmap();
+		void RenderBlendmapBrush();
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
@@ -67,6 +73,11 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mBlendmapEffect;
 		SharedPtr<Vk::Image> blendmapImage;
 		SharedPtr<Vk::RenderTarget> blendmapRenderTarget;
+
+		SharedPtr<Vk::Effect> mBlendmapBrushEffect;
+		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
+		BrushBlock brushBlock;
+		glm::vec2 brushPos = glm::vec2(0.0, 0.5);
 
 		SharedPtr<Vk::Sampler> sampler;
 

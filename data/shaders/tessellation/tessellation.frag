@@ -39,6 +39,7 @@ mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
 void main() 
 {
     vec4 blend = texture(samplerBlendmap, InTex / ubo_settings.textureScaling);
+	blend = clamp(blend, vec4(0.0), vec4(1.0));
 
     float textureScaling = 45.0;
 	vec3 lowAltitudeDiffuse = texture(samplerDiffuse[0], InTex * textureScaling).xyz; 

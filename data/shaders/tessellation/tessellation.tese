@@ -47,6 +47,7 @@ void main()
 	float highAltitudeDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling).r; 
 	float cliffDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling).r; 
     vec4 blend = texture(samplerBlendmap, OutTex / ubo_settings.textureScaling);
+	blend = clamp(blend, vec4(0.0), vec4(1.0));
 
     float finalDisplacement = blend.r * lowAltitudeDisplacement +
 							  blend.g * highAltitudeDisplacement +
