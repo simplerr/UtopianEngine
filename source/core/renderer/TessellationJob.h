@@ -50,10 +50,12 @@ namespace Utopian
 		void SetupNormalmapEffect();
 		void SetupBlendmapEffect();
 		void SetupBlendmapBrushEffect();
+		void SetupHeightmapBrushEffect();
 		void RenderHeightmap();
 		void RenderNormalmap();
 		void RenderBlendmap();
 		void RenderBlendmapBrush();
+		void RenderHeightmapBrush();
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
@@ -78,6 +80,9 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
 		BrushBlock brushBlock;
 		glm::vec2 brushPos = glm::vec2(0.0, 0.5);
+
+		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
+		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 
 		SharedPtr<Vk::Sampler> sampler;
 

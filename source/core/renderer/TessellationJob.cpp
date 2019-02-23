@@ -101,6 +101,7 @@ namespace Utopian
 		RenderNormalmap();
 		RenderBlendmap();
 		RenderBlendmapBrush();
+		RenderHeightmapBrush();
 	}
 
 	void TessellationJob::GenerateTerrainMaps()
@@ -109,11 +110,13 @@ namespace Utopian
 		SetupNormalmapEffect();
 		SetupBlendmapEffect();
 		SetupBlendmapBrushEffect();
+		SetupHeightmapBrushEffect();
 
 		RenderHeightmap();
 		RenderNormalmap();
 		RenderBlendmap();
 		RenderBlendmapBrush();
+		RenderHeightmapBrush();
 
 		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
@@ -134,9 +137,10 @@ namespace Utopian
 	void TessellationJob::SetupHeightmapEffect()
 	{
 		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+		heightmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL);
 
 		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
-		heightmapRenderTarget->AddColorAttachment(heightmapImage);
+		heightmapRenderTarget->AddColorAttachment(heightmapImage, VK_IMAGE_LAYOUT_GENERAL);
 		heightmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapRenderTarget->Create();
 
@@ -213,26 +217,45 @@ namespace Utopian
 		// Vertices generated in fullscreen.vert are in clockwise order
 		mBlendmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mBlendmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		// Enable additive blending
-		/*mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-		mBlendmapBrushEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;*/
-
 		mBlendmapBrushEffect->CreatePipeline();
 
 		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
 	}
 
+	void TessellationJob::SetupHeightmapBrushEffect()
+	{
+		heightmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
+		heightmapBrushRenderTarget->AddColorAttachment(heightmapImage, VK_IMAGE_LAYOUT_GENERAL, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_GENERAL);
+		heightmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
+		heightmapBrushRenderTarget->Create();
+
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/heightmap_brush.frag";
+		mHeightmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mHeightmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mHeightmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
+		// Enable additive blending
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+
+		mHeightmapBrushEffect->CreatePipeline();
+
+		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
+	}
+
 	void TessellationJob::RenderHeightmap()
 	{
-		/* Render the height map to texture */
 		heightmapRenderTarget->Begin("Heightmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = heightmapRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
@@ -242,7 +265,6 @@ namespace Utopian
 
 	void TessellationJob::RenderNormalmap()
 	{
-		/* Render the normal map to texture */
 		normalRenderTarget->Begin("Normalmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = normalRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mNormalmapEffect->GetPipeline());
@@ -253,7 +275,6 @@ namespace Utopian
 
 	void TessellationJob::RenderBlendmap()
 	{
-		/* Render the normal map to texture */
 		blendmapRenderTarget->Begin("Blendmap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = blendmapRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mBlendmapEffect->GetPipeline());
@@ -267,13 +288,25 @@ namespace Utopian
 		brushBlock.data.brushPos = brushPos;
 		brushBlock.UpdateMemory();
 
-		/* Render the normal map to texture */
 		blendmapBrushRenderTarget->Begin("Blendmap brush pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = blendmapBrushRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mBlendmapBrushEffect->GetPipeline());
 		commandBuffer->CmdBindDescriptorSets(mBlendmapBrushEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		blendmapBrushRenderTarget->End();
+	}
+
+	void TessellationJob::RenderHeightmapBrush()
+	{
+		brushBlock.data.brushPos = brushPos;
+		brushBlock.UpdateMemory();
+
+		heightmapBrushRenderTarget->Begin("Heightmap brush pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		Vk::CommandBuffer* commandBuffer = heightmapBrushRenderTarget->GetCommandBuffer();
+		commandBuffer->CmdBindPipeline(mHeightmapBrushEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mHeightmapBrushEffect);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		heightmapBrushRenderTarget->End();
 	}
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
@@ -386,6 +419,8 @@ namespace Utopian
 		{
 			brushPos.x += 0.05;
 			RenderBlendmapBrush();
+			RenderHeightmapBrush();
+			RenderNormalmap();
 		}
 
 		Vk::UIOverlay::EndWindow();
