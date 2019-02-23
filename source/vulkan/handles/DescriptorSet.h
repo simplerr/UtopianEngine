@@ -29,7 +29,7 @@ namespace Utopian::Vk
 		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler);
-		void BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler);
+		void BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		/**
 		 * Functions for binding different types of descriptors by their name. 

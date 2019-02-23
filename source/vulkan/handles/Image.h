@@ -33,15 +33,21 @@ namespace Utopian::Vk
 		void CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties);
 		void CreateView(VkImageViewCreateInfo viewCreateInfo);
 
+		void SetFinalLayout(VkImageLayout imageLayout);
+
 		VkImageView GetView() const;
 		VkImageView GetLayerView(uint32_t layer) const;
 		VkFormat GetFormat() const;
+		VkImageLayout GetFinalLayout() const;
 	private:
 		/** If the image has multiple layers this contains the view to each one of them. */
 		std::vector<VkImageView> mLayerViews;
 
 		/** Contains the view to the whole image, including all layers if more than one. */
 		VkImageView mImageView;
+
+		/** The image layout that's expected when used as a descriptor. */
+		VkImageLayout mFinalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		VkDeviceMemory mDeviceMemory;
 		VkFormat mFormat;

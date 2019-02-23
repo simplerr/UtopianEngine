@@ -44,7 +44,8 @@ namespace Utopian::Vk
 		void AddColorAttachment(const SharedPtr<Image>& image,
 		 						VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		 						VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
 		void AddDepthAttachment(const SharedPtr<Image>& image,
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,

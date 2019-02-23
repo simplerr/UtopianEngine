@@ -108,7 +108,7 @@ namespace Utopian::Vk
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler)
+	void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler, VkImageLayout imageLayout)
 	{
 		/* Check if the VkDescriptorImageInfo already is added to the map.
 		Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
@@ -125,7 +125,7 @@ namespace Utopian::Vk
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.sampler = sampler->GetVkHandle();
 			imageInfo.imageView = imageView;
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 
 			mImageInfoMap[binding] = imageInfo;
 		}
@@ -143,7 +143,7 @@ namespace Utopian::Vk
 
 	void DescriptorSet::BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler)
 	{
-		BindCombinedImage(binding, image->GetView(), sampler);
+		BindCombinedImage(binding, image->GetView(), sampler, image->GetFinalLayout());
 	}
 
 	void DescriptorSet::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)

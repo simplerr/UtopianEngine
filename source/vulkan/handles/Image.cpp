@@ -108,6 +108,11 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
 	}
 
+	void Image::SetFinalLayout(VkImageLayout imageLayout)
+	{
+		mFinalImageLayout = imageLayout;
+	}
+
 	VkImageView Image::GetView() const
 	{
 		return mImageView;
@@ -126,6 +131,11 @@ namespace Utopian::Vk
 	VkFormat Image::GetFormat() const
 	{
 		return mFormat;
+	}
+
+	VkImageLayout Image::GetFinalLayout() const
+	{
+		return mFinalImageLayout;
 	}
 
 	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)

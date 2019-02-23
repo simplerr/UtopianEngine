@@ -72,7 +72,7 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(vkCreateRenderPass(GetVkDevice(), &renderPassInfo, nullptr, &mHandle));
 	}
 
-	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkImageLayout initialImageLayout)
 	{
 		VkAttachmentReference colorReference = {};
 		colorReference.attachment = attachments.size();
@@ -89,7 +89,7 @@ namespace Utopian::Vk
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 		if (loadOp == VK_ATTACHMENT_LOAD_OP_LOAD)
-			attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			attachment.initialLayout = initialImageLayout; // Default is VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		else
 			attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
