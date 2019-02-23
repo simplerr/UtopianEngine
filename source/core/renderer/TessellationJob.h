@@ -84,6 +84,9 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 
+		// Copy testing
+		SharedPtr<Vk::Image> copyImage;
+
 		SharedPtr<Vk::Sampler> sampler;
 
 		Vk::TextureArray diffuseArray;

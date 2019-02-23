@@ -15,6 +15,8 @@ namespace Utopian::Vk
 				 uint32_t arrayLayers)
 		: Handle(device, nullptr)
 	{
+		mWidth = width;
+		mHeight = height;
 		mFormat = format;
 
 		VkImageCreateInfo imageCreateInfo = {};
@@ -28,7 +30,7 @@ namespace Utopian::Vk
 		imageCreateInfo.usage = usage;
 		imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		//imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+		imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		CreateImage(imageCreateInfo, properties);
 
@@ -138,10 +140,20 @@ namespace Utopian::Vk
 		return mFinalImageLayout;
 	}
 
+	uint32_t Image::GetWidth() const
+	{
+		return mWidth;
+	}
+
+	uint32_t Image::GetHeight() const
+	{
+		return mHeight;
+	}
+
 	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)
 		: Image(device, width, height, format,
 				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+				VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				VK_IMAGE_ASPECT_COLOR_BIT,
 				arrayLayers)

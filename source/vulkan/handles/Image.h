@@ -18,7 +18,7 @@ namespace Utopian::Vk
 			  VkImageTiling tiling,
 			  VkImageUsageFlags usage,
 			  VkMemoryPropertyFlags properties,
-			  VkImageAspectFlags aspectFlags,
+			  VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT,
 			  uint32_t arrayLayers = 1);
 
 		/** If specialized create infos are needed this should be called followed by CreateImage() and CreateView(). */
@@ -39,6 +39,8 @@ namespace Utopian::Vk
 		VkImageView GetLayerView(uint32_t layer) const;
 		VkFormat GetFormat() const;
 		VkImageLayout GetFinalLayout() const;
+		uint32_t GetWidth() const;
+		uint32_t GetHeight() const;
 	private:
 		/** If the image has multiple layers this contains the view to each one of them. */
 		std::vector<VkImageView> mLayerViews;
@@ -51,6 +53,8 @@ namespace Utopian::Vk
 
 		VkDeviceMemory mDeviceMemory;
 		VkFormat mFormat;
+		uint32_t mWidth;
+		uint32_t mHeight;
 	};
 
 	/** An image with flags corresponding to a color image. */

@@ -128,10 +128,22 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
 		mEffect->BindCombinedImage("samplerBlendmap", blendmapImage.get(), sampler.get());
 
+		// Test copying
+		CopyImageInfo info;
+		info.width = 64;
+		info.height = 64;
+		info.tiling = VK_IMAGE_TILING_LINEAR;
+		info.format = VK_FORMAT_R8G8B8A8_UNORM;
+		info.memoryProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		info.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		info.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		copyImage = gRendererUtility().CopyImage(mDevice, heightmapImage, info);
+
 		const uint32_t size = 440;
 		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (size + 310), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (2 * size + 310), size, size, copyImage.get(), blendmapRenderTarget->GetSampler());
 	}
 
 	void TessellationJob::SetupHeightmapEffect()
