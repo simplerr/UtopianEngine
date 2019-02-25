@@ -129,15 +129,8 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerBlendmap", blendmapImage.get(), sampler.get());
 
 		// Test copying
-		CopyImageInfo info;
-		info.width = 64;
-		info.height = 64;
-		info.tiling = VK_IMAGE_TILING_LINEAR;
-		info.format = VK_FORMAT_R8G8B8A8_UNORM;
-		info.memoryProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-		info.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		info.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-		copyImage = gRendererUtility().CopyImage(mDevice, heightmapImage, info);
+		copyImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, 64, 64, VK_FORMAT_R8G8B8A8_UNORM);
+		gRendererUtility().SaveToFile(mDevice, heightmapImage, "screen.ppm", 256, 256);
 
 		const uint32_t size = 440;
 		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());

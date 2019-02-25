@@ -140,6 +140,11 @@ namespace Utopian::Vk
 		return mFinalImageLayout;
 	}
 
+	VkDeviceMemory Image::GetDeviceMemory() const
+	{
+		return mDeviceMemory;
+	}
+
 	uint32_t Image::GetWidth() const
 	{
 		return mWidth;

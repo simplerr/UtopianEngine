@@ -1,6 +1,7 @@
 #include "core/renderer/RendererUtility.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
+#include <fstream>
 
 namespace Utopian
 {
@@ -12,6 +13,54 @@ namespace Utopian
 	void RendererUtility::DrawFullscreenQuad(Vk::CommandBuffer* commandBuffer)
 	{
 		commandBuffer->CmdDraw(3, 1, 0, 0);
+	}
+
+	void RendererUtility::SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height)
+	{
+		SharedPtr<Vk::Image> hostVisibleImage = CreateHostVisibleImage(device, image, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+
+		// Get layout of the image (including row pitch)
+		VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
+		VkSubresourceLayout subResourceLayout;
+		vkGetImageSubresourceLayout(device->GetVkDevice(), hostVisibleImage->GetVkHandle(), &subResource, &subResourceLayout);
+
+		const char* data;
+		vkMapMemory(device->GetVkDevice(), hostVisibleImage->GetDeviceMemory(), 0, VK_WHOLE_SIZE, 0, (void**)&data);
+		data += subResourceLayout.offset;
+
+		std::ofstream file(filename, std::ios::out | std::ios::binary);
+
+		// ppm header
+		file << "P6\n" << width << "\n" << height << "\n" << 255 << "\n";
+
+		// ppm binary pixel data
+		for (uint32_t y = 0; y < height; y++)
+		{
+			unsigned int *row = (unsigned int*)data;
+			for (uint32_t x = 0; x < width; x++)
+			{
+				file.write((char*)row, 3);
+				row++;
+			}
+			data += subResourceLayout.rowPitch;
+		}
+
+		file.close();
+	}
+
+	SharedPtr<Vk::Image> RendererUtility::CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, uint32_t width, uint32_t height, VkFormat format)
+	{
+		CopyImageInfo info;
+		info.width = width;
+		info.height = height;
+		info.tiling = VK_IMAGE_TILING_LINEAR;
+		info.format = format;
+		info.memoryProperties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		info.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		info.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		SharedPtr<Vk::Image> hostVisibleImage = gRendererUtility().CopyImage(device, srcImage, info);
+
+		return hostVisibleImage;
 	}
 
 	SharedPtr<Vk::Image> RendererUtility::CopyImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, const CopyImageInfo& info)

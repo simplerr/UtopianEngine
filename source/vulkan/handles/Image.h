@@ -39,6 +39,7 @@ namespace Utopian::Vk
 		VkImageView GetLayerView(uint32_t layer) const;
 		VkFormat GetFormat() const;
 		VkImageLayout GetFinalLayout() const;
+		VkDeviceMemory GetDeviceMemory() const;
 		uint32_t GetWidth() const;
 		uint32_t GetHeight() const;
 	private:
