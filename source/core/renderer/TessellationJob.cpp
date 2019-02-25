@@ -1,6 +1,7 @@
 #include "core/renderer/TessellationJob.h"
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/UIOverlay.h"
 #include "vulkan/ModelLoader.h"
@@ -102,6 +103,8 @@ namespace Utopian
 		RenderBlendmap();
 		RenderBlendmapBrush();
 		RenderHeightmapBrush();
+
+		//RetrieveHeightmap();
 	}
 
 	void TessellationJob::GenerateTerrainMaps()
@@ -128,20 +131,55 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), sampler.get());
 		mEffect->BindCombinedImage("samplerBlendmap", blendmapImage.get(), sampler.get());
 
-		// Test copying
-		copyImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, 64, 64, VK_FORMAT_R8G8B8A8_UNORM);
-		gRendererUtility().SaveToFile(mDevice, heightmapImage, "screen.ppm", 256, 256);
+		// Testing
+		RetrieveHeightmap();
+
+		testSampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		testSampler->createInfo.magFilter = VK_FILTER_NEAREST;
+		testSampler->createInfo.minFilter = VK_FILTER_NEAREST;
+		testSampler->Create();
 
 		const uint32_t size = 440;
 		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (size + 310), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (2 * size + 310), size, size, copyImage.get(), blendmapRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (2 * size + 310), size, size, hostImage.get(), testSampler.get());
+	}
+
+	void TessellationJob::RetrieveHeightmap()
+	{
+		//gRendererUtility().SaveToFile(mDevice, heightmapImage, "screen.ppm", 256, 256);
+
+		hostImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, 1024, 1024, VK_FORMAT_R32G32B32A32_SFLOAT);
+
+		// Get layout of the image (including row pitch)
+		VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
+		VkSubresourceLayout subResourceLayout;
+		vkGetImageSubresourceLayout(mDevice->GetVkDevice(), hostImage->GetVkHandle(), &subResource, &subResourceLayout);
+
+		const char* data;
+		vkMapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory(), 0, VK_WHOLE_SIZE, 0, (void**)&data);
+		data += subResourceLayout.offset;
+
+		//std::vector<glm::vec4> pixels;
+		for (uint32_t y = 0; y < hostImage->GetHeight(); y++)
+		{
+			glm::vec4* row = (glm::vec4*)data;
+			for (uint32_t x = 0; x < hostImage->GetHeight(); x++)
+			{
+				//pixels.push_back(*(row));
+				heightmap.push_back((*row).x);
+				row++;
+			}
+			data += subResourceLayout.rowPitch;
+		}
+
+		vkUnmapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory());
 	}
 
 	void TessellationJob::SetupHeightmapEffect()
 	{
-		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R32G32B32A32_SFLOAT);
 		heightmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL);
 
 		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
@@ -162,7 +200,7 @@ namespace Utopian
 	
 	void TessellationJob::SetupNormalmapEffect()
 	{
-		normalImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R16G16B16A16_SFLOAT);
+		normalImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R32G32B32A32_SFLOAT);
 
 		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
 		normalRenderTarget->AddColorAttachment(normalImage);
@@ -184,7 +222,7 @@ namespace Utopian
 
 	void TessellationJob::SetupBlendmapEffect()
 	{
-		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R16G16B16A16_SFLOAT);
+		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R32G32B32A32_SFLOAT);
 		blendmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL); // Special case since it needs to be used both as color attachment and descriptor
 
 		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
@@ -316,6 +354,8 @@ namespace Utopian
 
 	void TessellationJob::GeneratePatches(float cellSize, int numCells)
 	{
+		terrainSize = cellSize * (numCells - 1);
+
 		mQuadModel = new Vk::StaticModel();
 		Vk::Mesh* mesh = new Vk::Mesh(mDevice);
 
@@ -419,6 +459,34 @@ namespace Utopian
 		Vk::UIOverlay::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
 		Vk::UIOverlay::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
 		Vk::UIOverlay::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+
+		glm::vec3 cameraPos = gRenderer().GetMainCamera()->GetPosition();
+
+		// Transform to terrain UV coordinates [0, 1]
+		cameraPos.x += terrainSize / 2.0f;
+		cameraPos.z += terrainSize / 2.0f;
+		cameraPos /= terrainSize;
+
+		// To get correct UV coordinates
+		cameraPos.x = 1.0 - cameraPos.x;
+		cameraPos.z = 1.0 - cameraPos.z;
+
+		uint32_t col = floorf(cameraPos.x * hostImage->GetWidth());
+		uint32_t row = floorf(cameraPos.z * hostImage->GetHeight());
+
+		float height = -1.0f;
+		
+		if (row >= 0 && col >= 0 && row < hostImage->GetWidth() && col < hostImage->GetHeight())
+		{
+			height = heightmap[row * hostImage->GetWidth() + col] * settingsBlock.data.amplitude * -1; // Todo: Fix amplitude and -1
+			cameraPos = gRenderer().GetMainCamera()->GetPosition();
+			// Note: Causes the frustum check to fail
+			//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
+		}
+
+		Vk::UIOverlay::TextV("Terrain cam pos: %.2f, %.2f", cameraPos.x, cameraPos.z);
+		Vk::UIOverlay::TextV("Row: %u, Col:%u", row, col);
+		Vk::UIOverlay::TextV("Height: %.2f", height);
 
 		if (ImGui::Button("Brush stroke"))
 		{

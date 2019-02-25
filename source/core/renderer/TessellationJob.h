@@ -56,6 +56,9 @@ namespace Utopian
 		void RenderBlendmap();
 		void RenderBlendmapBrush();
 		void RenderHeightmapBrush();
+
+		void RetrieveHeightmap();
+
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
@@ -79,13 +82,16 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mBlendmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
 		BrushBlock brushBlock;
-		glm::vec2 brushPos = glm::vec2(0.0, 0.5);
+		glm::vec2 brushPos = glm::vec2(0.75, 0.25);
 
 		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 
 		// Copy testing
-		SharedPtr<Vk::Image> copyImage;
+		SharedPtr<Vk::Image> hostImage;
+		std::vector<float> heightmap;
+		SharedPtr<Vk::Sampler> testSampler;
+		float terrainSize;
 
 		SharedPtr<Vk::Sampler> sampler;
 

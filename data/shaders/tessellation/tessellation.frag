@@ -96,4 +96,5 @@ void main()
     //OutColor = vec4(bumpNormal, 1.0);
     //OutColor = vec4(getNormal(InTex), 1.0);
     //OutColor = blend;
+    //OutColor = vec4(InTex.x, InTex.y, 0, 1);
 }
