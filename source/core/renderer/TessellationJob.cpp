@@ -10,6 +10,7 @@
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/QueryPool.h"
 #include "Camera.h"
+#include "Input.h"
 #include <random>
 
 namespace Utopian
@@ -139,11 +140,11 @@ namespace Utopian
 		testSampler->createInfo.minFilter = VK_FILTER_NEAREST;
 		testSampler->Create();
 
-		const uint32_t size = 440;
+		/*const uint32_t size = 440;
 		gScreenQuadUi().AddQuad(300 + 20, mHeight - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(300 + size + 20, mHeight - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (size + 310), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (2 * size + 310), size, size, hostImage.get(), testSampler.get());
+		gScreenQuadUi().AddQuad(300 + 2 * size + 20, mHeight - (2 * size + 310), size, size, hostImage.get(), testSampler.get());*/
 	}
 
 	void TessellationJob::RetrieveHeightmap()
@@ -461,32 +462,33 @@ namespace Utopian
 		Vk::UIOverlay::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
 
 		glm::vec3 cameraPos = gRenderer().GetMainCamera()->GetPosition();
+		static glm::vec3 intersection = glm::vec3(0.0);
 
-		// Transform to terrain UV coordinates [0, 1]
-		cameraPos.x += terrainSize / 2.0f;
-		cameraPos.z += terrainSize / 2.0f;
-		cameraPos /= terrainSize;
-
-		// To get correct UV coordinates
-		cameraPos.x = 1.0 - cameraPos.x;
-		cameraPos.z = 1.0 - cameraPos.z;
-
-		uint32_t col = floorf(cameraPos.x * hostImage->GetWidth());
-		uint32_t row = floorf(cameraPos.z * hostImage->GetHeight());
-
-		float height = -1.0f;
-		
-		if (row >= 0 && col >= 0 && row < hostImage->GetWidth() && col < hostImage->GetHeight())
+		if (gInput().KeyPressed(VK_LBUTTON))
 		{
-			height = heightmap[row * hostImage->GetWidth() + col] * settingsBlock.data.amplitude * -1; // Todo: Fix amplitude and -1
-			cameraPos = gRenderer().GetMainCamera()->GetPosition();
-			// Note: Causes the frustum check to fail
-			//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
+			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+			intersection = GetIntersectPoint(ray);
+			brushPos = TransformToUv(intersection.x, intersection.z);
+
+			RenderBlendmapBrush();
+		}
+		if (gInput().KeyPressed(VK_RBUTTON))
+		{
+			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+			intersection = GetIntersectPoint(ray);
+			brushPos = TransformToUv(intersection.x, intersection.z);
+
+			RenderHeightmapBrush();
+			RenderNormalmap();
 		}
 
-		Vk::UIOverlay::TextV("Terrain cam pos: %.2f, %.2f", cameraPos.x, cameraPos.z);
-		Vk::UIOverlay::TextV("Row: %u, Col:%u", row, col);
+		float height = GetHeight(cameraPos.x, cameraPos.z);
+		//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
+
+		Vk::UIOverlay::TextV("Terrain cam pos: %.4f, %.4f", TransformToUv(cameraPos.x, 0).x, TransformToUv(0, cameraPos.z).y);
 		Vk::UIOverlay::TextV("Height: %.2f", height);
+		Vk::UIOverlay::TextV("Intersection: %.2f, %.2f, %.2f", intersection.x, intersection.y, intersection.z);
+		Vk::UIOverlay::TextV("Brush pos: %.4f, %.4f", brushPos.x, brushPos.y);
 
 		if (ImGui::Button("Brush stroke"))
 		{
@@ -497,5 +499,93 @@ namespace Utopian
 		}
 
 		Vk::UIOverlay::EndWindow();
+	}
+
+	glm::vec2 TessellationJob::TransformToUv(float x, float z)
+	{
+		// Transform to terrain UV coordinates [0, 1]
+		glm::vec2 uv = glm::vec2(x, z);
+		uv += terrainSize / 2.0f;
+		uv /= terrainSize;
+
+		// To get correct UV coordinates
+		uv = glm::vec2(1.0, 1.0) - uv;
+		return uv;
+	}
+
+	float TessellationJob::GetHeight(float x, float z)
+	{
+		float height = -1.0f;
+		
+		glm::vec2 uv = TransformToUv(x, z);
+
+		uint32_t col = floorf(uv.x * hostImage->GetWidth());
+		uint32_t row = floorf(uv.y * hostImage->GetHeight());
+
+		if (row >= 0 && col >= 0 && row < hostImage->GetWidth() && col < hostImage->GetHeight())
+		{
+			height = heightmap[row * hostImage->GetWidth() + col] * settingsBlock.data.amplitude * -1; // Todo: Fix amplitude and -1
+		}
+
+		return height;
+	}
+
+	glm::vec3 TessellationJob::GetIntersectPoint(Ray ray)
+	{
+		Ray shorterRay = LinearSearch(ray);
+
+		// This is good enough accuracy for now
+		return shorterRay.origin;
+		//return BinarySearch(shorterRay);
+	}
+
+	Ray TessellationJob::LinearSearch(Ray ray)
+	{
+		float stepSize = 10.0f;
+		glm::vec3 nextPoint = ray.origin + ray.direction * stepSize;
+		float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
+		int counter = 0;
+		while (heightAtNextPoint < nextPoint.y && counter < 1000)
+		{
+			counter++;
+			ray.origin = nextPoint;
+			nextPoint = ray.origin + ray.direction * stepSize;
+			heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
+		}
+
+		// Return infinity if the ray dont strike anything
+		if (counter >= 1000)
+			ray.direction.x = std::numeric_limits<float>::infinity();
+
+		return ray;
+	}
+
+	glm::vec3 TessellationJob::BinarySearch(Ray ray)
+	{
+		float accuracy = 10.0f;
+		float heightAtStartingPoint = GetHeight(ray.origin.x, ray.origin.z);
+		float currentError = ray.origin.y - heightAtStartingPoint;
+		int counter = 0;
+		while (currentError > accuracy && counter < 1000)
+		{
+			counter++;
+			//ray.direction /= 2.0f;
+
+			glm::vec3 nextPoint = ray.origin + ray.direction;
+			float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
+
+			// Is the next point above the terrain?
+			if (nextPoint.y > heightAtNextPoint)
+			{
+				ray.origin = nextPoint;
+				currentError = ray.origin.y - heightAtNextPoint;
+			}
+		}
+
+		// Return infinity if the ray dont strike anything
+		if (counter >= 1000)
+			return glm::vec3(std::numeric_limits<float>::infinity(), 0, 0);
+
+		return ray.origin;
 	}
 }

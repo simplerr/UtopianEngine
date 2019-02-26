@@ -59,6 +59,12 @@ namespace Utopian
 
 		void RetrieveHeightmap();
 
+		glm::vec2 TransformToUv(float x, float z);
+		float GetHeight(float x, float z);
+		glm::vec3 GetIntersectPoint(Ray ray);
+		Ray LinearSearch(Ray ray);
+		glm::vec3 BinarySearch(Ray ray);
+
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;

@@ -17,7 +17,7 @@ void main()
     vec2 center = ubo_brush.pos;
     //center = vec2(0.5, 0.5);
     //if (distance(ubo_brush.pos, InTex) < 0.1)
-    if (distance(center, InTex) < 0.1)
+    if (distance(center, InTex) < 0.01)
         color = vec3(0, 0, 1);
     else
         discard;
