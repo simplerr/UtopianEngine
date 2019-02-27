@@ -18,7 +18,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "utility/PerlinNoise.h"
 #include "Camera.h"
-#include "Terrain.h"
+#include "MarchingCubesTerrain.h"
 #include "Block.h"
 #include "MarchingCubes.h"
 
@@ -52,7 +52,7 @@ void GenerateNoiseTexture(float texture3d[], int width, int height, int depth)
 	}
 }
 
-Terrain::Terrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::Vk::RenderPass* renderPass)
+MarchingCubesTerrain::MarchingCubesTerrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::Vk::RenderPass* renderPass)
 {
 	mDevice = device;
 	mCamera = camera;
@@ -94,12 +94,12 @@ Terrain::Terrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::
 	mClippingPlane = glm::vec4(0, 1, 0, 1500000);
 }
 
-Terrain::~Terrain()
+MarchingCubesTerrain::~MarchingCubesTerrain()
 {
 
 }
 
-void Terrain::UpdateBlockList()
+void MarchingCubesTerrain::UpdateBlockList()
 {
 	// 1) Which blocks should be rendered? Based on the camera position
 		// Transform the camera position in to block grid coordinate
@@ -146,7 +146,7 @@ void Terrain::UpdateBlockList()
 	}
 }
 
-void Terrain::GenerateBlocks(float time)
+void MarchingCubesTerrain::GenerateBlocks(float time)
 {
 	for (auto blockIter : mBlockList)
 	{
@@ -200,7 +200,7 @@ void Terrain::GenerateBlocks(float time)
 	}
 }
 
-void Terrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::DescriptorSet* commonDescriptorSet)
+void MarchingCubesTerrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::DescriptorSet* commonDescriptorSet)
 {
 	if (mEnabled)
 	{
@@ -234,7 +234,7 @@ void Terrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::Des
 	}
 }
 
-void Terrain::Update()
+void MarchingCubesTerrain::Update()
 {
 	if (mEnabled)
 	{
@@ -253,12 +253,12 @@ void Terrain::Update()
 	}
 }
 
-void Terrain::UpdateUniformBuffer()
+void MarchingCubesTerrain::UpdateUniformBuffer()
 {
 	mTerrainEffect.UpdateMemory();
 }
 
-void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+void MarchingCubesTerrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -293,12 +293,12 @@ void Terrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void Terrain::DumpDebug()
+void MarchingCubesTerrain::DumpDebug()
 {
 	
 }
 
-void Terrain::SetClippingPlane(glm::vec4 clippingPlane)
+void MarchingCubesTerrain::SetClippingPlane(glm::vec4 clippingPlane)
 {
 	mClippingPlane = clippingPlane;
 }
@@ -312,7 +312,7 @@ float cosNoise(glm::vec2 pos)
 const glm::mat2 m2 = glm::mat2(1.6,-1.2,
                      1.2, 1.6);
 
-float Terrain::Density(glm::vec3 position)
+float MarchingCubesTerrain::Density(glm::vec3 position)
 {
 	float density = 1;	
 
@@ -336,7 +336,7 @@ float Terrain::Density(glm::vec3 position)
 	return density;
 }
 
-float Terrain::GetHeight(float x, float z)
+float MarchingCubesTerrain::GetHeight(float x, float z)
 {
 	glm::vec3 origin = glm::vec3(x, 25000, z);
 	glm::vec3 dir = glm::vec3(0, -1, 0);
@@ -346,7 +346,7 @@ float Terrain::GetHeight(float x, float z)
 	return intersection.y;
 }
 
-glm::vec3 Terrain::GetRayIntersection(glm::vec3 origin, glm::vec3 direction)
+glm::vec3 MarchingCubesTerrain::GetRayIntersection(glm::vec3 origin, glm::vec3 direction)
 {
 	glm::vec3 intersection = glm::vec3();
 	float tmax = 100000.0;
@@ -370,7 +370,7 @@ glm::vec3 Terrain::GetRayIntersection(glm::vec3 origin, glm::vec3 direction)
 	return intersection;
 }
 
-void Terrain::SetEnabled(bool enabled)
+void MarchingCubesTerrain::SetEnabled(bool enabled)
 {
 	mEnabled = enabled;
 }

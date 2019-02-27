@@ -1,7 +1,7 @@
 #include "Block.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/Debug.h"
-#include "vulkan/TerrainEffect.h"
+#include "vulkan/MarchingCubesTerrainEffect.h"
 #include "vulkan/handles/DescriptorSet.h"
 
 Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, uint32_t blockSize, float voxelSize, const Utopian::Vk::DescriptorSetLayout* desscriptorSetLayout, Utopian::Vk::DescriptorPool* descriptorPool)
@@ -18,7 +18,7 @@ Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, u
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;
 
-	pipelineType = Utopian::Vk::TerrainEffect::PipelineType2::SOLID;
+	pipelineType = Utopian::Vk::MarchingCubesTerrainEffect::PipelineType2::SOLID;
 	//if (rand() % 2 == 0)
 	//	pipelineType = Vulkan::TerrainEffect::PipelineType2::WIREFRAME;
 	//else

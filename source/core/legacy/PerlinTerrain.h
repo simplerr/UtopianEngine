@@ -4,7 +4,7 @@
 #include "utility/Common.h"
 #include "utility/PerlinNoise.h"
 #include "vulkan/VulkanInclude.h"
-#include "core/terrain/BaseTerrain.h"
+#include "core/legacy/BaseTerrain.h"
 
 namespace Utopian
 {

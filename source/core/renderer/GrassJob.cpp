@@ -2,7 +2,7 @@
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
-#include "core/terrain/PerlinTerrain.h"
+#include "core/legacy/PerlinTerrain.h"
 #include "vulkan/ShaderFactory.h"
 
 namespace Utopian
@@ -78,31 +78,31 @@ namespace Utopian
 
 	void GrassJob::Render(const JobInput& jobInput)
 	{
-		viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
-		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.data.grassViewDistance = jobInput.renderingSettings.grassViewDistance;
-		viewProjectionBlock.UpdateMemory();
+		//viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
+		//viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		//viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		//viewProjectionBlock.data.grassViewDistance = jobInput.renderingSettings.grassViewDistance;
+		//viewProjectionBlock.UpdateMemory();
 
-		/* Render instances */
-		renderTarget->Begin("Grass pass", glm::vec4(0.0, 0.0, 0.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		///* Render instances */
+		//renderTarget->Begin("Grass pass", glm::vec4(0.0, 0.0, 0.0, 1.0));
+		//Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(effect);
+		//commandBuffer->CmdBindPipeline(effect->GetPipeline());
+		//commandBuffer->CmdBindDescriptorSets(effect);
 
-		// Loop over all blocks and render their grass instance buffers
-		auto blocks = jobInput.sceneInfo.terrain->GetBlocks();
+		//// Loop over all blocks and render their grass instance buffers
+		//auto blocks = jobInput.sceneInfo.terrain->GetBlocks();
 
-		for (auto& iter : blocks)
-		{
-			if (iter.second->grassGenerated && iter.second->grassVisible)
-			{
-				commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
-				commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
-			}
-		}
+		//for (auto& iter : blocks)
+		//{
+		//	if (iter.second->grassGenerated && iter.second->grassVisible)
+		//	{
+		//		commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
+		//		commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
+		//	}
+		//}
 
-		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());;
+		//renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());;
 	}
 }

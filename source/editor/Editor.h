@@ -11,7 +11,7 @@ namespace Utopian
 	class World;
 	class Actor;
 	class ActorInspector;
-	class BaseTerrain;
+	class Terrain;
 
 	enum ActorTemplate
 	{
@@ -22,7 +22,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, BaseTerrain* terrain);
+		Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, Terrain* terrain);
 		~Editor();
 
 		void Update();
@@ -38,7 +38,7 @@ namespace Utopian
 		void AddPaths();
 
 		World* mWorld;
-		BaseTerrain* mTerrain;
+		Terrain* mTerrain;
 		Camera* mCamera;
 		Vk::UIOverlay* mUiOverlay;
 		ActorInspector* mActorInspector;

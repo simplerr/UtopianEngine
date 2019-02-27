@@ -10,7 +10,6 @@
 #include "vulkan/Mesh.h"
 #include "vulkan/StaticModel.h"
 #include "core/renderer/Light.h"
-#include "core/terrain/Terrain.h"
 #include "WaterRenderer.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/RenderTarget.h"
@@ -18,7 +17,7 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/UIOverlay.h"
-#include "core/terrain/PerlinTerrain.h"
+#include "core/Terrain.h"
 #include "core/AssetLoader.h"
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/SSAOJob.h"
@@ -48,7 +47,9 @@ namespace Utopian
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
 
-		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
+
+		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mSceneInfo.terrain.get(), mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -65,7 +66,6 @@ namespace Utopian
 
 	void Renderer::PostWorldInit()
 	{
-		mSceneInfo.terrain = std::make_shared<PerlinTerrain>(mDevice, mMainCamera);
 	}
 
 	void Renderer::Update()
@@ -135,7 +135,6 @@ namespace Utopian
 		Vk::UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 		Vk::UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
 		Vk::UIOverlay::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
-		Vk::UIOverlay::TextV("Blocks %u", mSceneInfo.terrain->GetNumBlocks());
 
 		Vk::UIOverlay::EndWindow();
 	}
@@ -415,7 +414,7 @@ namespace Utopian
 		mMainCamera = camera;
 	}
 
-	BaseTerrain* Renderer::GetTerrain() const
+	Terrain* Renderer::GetTerrain() const
 	{
 		return mSceneInfo.terrain.get();
 	}

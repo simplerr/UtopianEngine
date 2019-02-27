@@ -60,7 +60,7 @@ namespace Utopian
 		Camera* GetMainCamera() const;
 
 		/** Returns the terrain. */
-		BaseTerrain* GetTerrain() const;
+		Terrain* GetTerrain() const;
 
 		/** Returns the configured rendering settings. */
 		const RenderingSettings& GetRenderingSettings() const;

@@ -1,4 +1,4 @@
-#include "vulkan/TerrainEffect.h"
+#include "vulkan/MarchingCubesTerrainEffect.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
@@ -10,12 +10,12 @@
 
 namespace Utopian::Vk
 {
-	TerrainEffect::TerrainEffect()
+	MarchingCubesTerrainEffect::MarchingCubesTerrainEffect()
 	{
 		SetPipeline(PipelineType2::WIREFRAME);
 	}
 
-	void TerrainEffect::CreateDescriptorPool(Device* device)
+	void MarchingCubesTerrainEffect::CreateDescriptorPool(Device* device)
 	{
 		mDescriptorPool = new Utopian::Vk::DescriptorPool(device);
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 2);
@@ -23,12 +23,12 @@ namespace Utopian::Vk
 		mDescriptorPool->Create();
 	}
 
-	void TerrainEffect::CreateVertexDescription(Device* device)
+	void MarchingCubesTerrainEffect::CreateVertexDescription(Device* device)
 	{
 		mVertexDescription = TerrainVertex::GetDescription();
 	}
 
-	void TerrainEffect::CreatePipelineInterface(Device* device)
+	void MarchingCubesTerrainEffect::CreatePipelineInterface(Device* device)
 	{
 		mPipelineInterface = std::make_shared<PipelineInterface>(device);
 		mPipelineInterface->AddUniformBuffer(SET_0, BINDING_0, VK_SHADER_STAGE_VERTEX_BIT);						// per_frame_vs UBO
@@ -40,12 +40,12 @@ namespace Utopian::Vk
 		mPipelineInterface->Create();
 	}
 
-	void TerrainEffect::CreateDescriptorSets(Device* device)
+	void MarchingCubesTerrainEffect::CreateDescriptorSets(Device* device)
 	{
 		
 	}
 
-	void TerrainEffect::CreatePipeline(Device* device, RenderPass* renderPass)
+	void MarchingCubesTerrainEffect::CreatePipeline(Device* device, RenderPass* renderPass)
 	{
 		Utopian::Vk::Shader* shader = gShaderFactory().CreateShader("data/shaders/terrain/terrain.vert.spv", "data/shaders/terrain/terrain.frag.spv");
 
@@ -62,7 +62,7 @@ namespace Utopian::Vk
 		mPipelines[PipelineType2::SOLID] = pipeline1;
 	}
 
-	void TerrainEffect::UpdateMemory()
+	void MarchingCubesTerrainEffect::UpdateMemory()
 	{
 	}
 }

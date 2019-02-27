@@ -4,7 +4,7 @@
 #include "vulkan/VulkanApp.h"
 #include "core/renderer/Renderable.h"
 #include "core/renderer/Light.h"
-#include "core/terrain/PerlinTerrain.h"
+#include "core/Terrain.h"
 
 #define SHADOW_MAP_CASCADE_COUNT 4
 
@@ -48,7 +48,8 @@ namespace Utopian
 		std::vector<Renderable*> renderables;
 		std::vector<Light*> lights;
 		std::vector<Camera*> cameras;
-		SharedPtr<PerlinTerrain> terrain;
+		//SharedPtr<PerlinTerrain> terrain;
+		SharedPtr<Terrain> terrain;
 		std::vector<SharedPtr<InstanceGroup>> instanceGroups;
 		std::array<Cascade, SHADOW_MAP_CASCADE_COUNT> cascades;
 

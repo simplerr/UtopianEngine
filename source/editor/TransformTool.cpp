@@ -2,8 +2,6 @@
 #include "Camera.h"
 #include <limits>
 #include "Effects.h"
-#include "core/terrain/Terrain.h"
-#include "core/terrain/BaseTerrain.h"
 #include "Input.h"
 #include "vulkan/Debug.h"
 #define GLM_ENABLE_EXPERIMENTAL
@@ -15,6 +13,7 @@
 #include "vulkan/ModelLoader.h"
 #include "core/renderer/Renderable.h"
 #include "core/renderer/Renderer.h"
+#include "core/Terrain.h"
 #include "utility/math/Ray.h"
 #include "Colors.h"
 
@@ -23,7 +22,7 @@ using namespace Utopian::Vk;
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-TransformTool::TransformTool(Utopian::BaseTerrain* terrain, Utopian::Camera* camera)
+TransformTool::TransformTool(Utopian::Terrain* terrain, Utopian::Camera* camera)
 {
 	// nullptr as default.
 	mSelectedActor = nullptr;

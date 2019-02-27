@@ -14,7 +14,7 @@
 
 namespace Utopian
 {
-	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Vk::Device* device, uint32_t width, uint32_t height)
+	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, uint32_t width, uint32_t height)
 	{
 		GBufferJob* gbufferJob = new GBufferJob(device, width, height);
 		gbufferJob->SetWaitSemaphore(vulkanApp->GetImageAvailableSemaphore());
@@ -33,7 +33,7 @@ namespace Utopian
 		//vulkanApp->SetJobGraphWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 		AddJob(sunShaftJob);
 
-		TessellationJob* tessellationJob = new TessellationJob(device, width, height);
+		TessellationJob* tessellationJob = new TessellationJob(device, terrain, width, height);
 		AddJob(tessellationJob);
 		vulkanApp->SetJobGraphWaitSemaphore(tessellationJob->GetCompletedSemahore());
 

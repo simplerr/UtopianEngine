@@ -23,11 +23,7 @@ namespace Utopian::Vk
 		glm::vec3 color;
 	};
 
-	/** \brief Most basic effect
-	*
-	* Simply transforms each vertex and sets a pixel color
-	**/
-	class TerrainEffect : public EffectLegacy
+	class MarchingCubesTerrainEffect : public EffectLegacy
 	{
 	public:
 		enum PipelineType2
@@ -47,6 +43,6 @@ namespace Utopian::Vk
 		*/
 		virtual void UpdateMemory();
 
-		TerrainEffect();
+		MarchingCubesTerrainEffect();
 	};
 }

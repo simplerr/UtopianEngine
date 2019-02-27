@@ -9,13 +9,13 @@
 #include "core/components/CLight.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
-#include "core/terrain/BaseTerrain.h"
+#include "core/legacy/BaseTerrain.h"
 #include "editor/TransformTool.h"
 #include "core/ActorFactory.h"
 
 namespace Utopian
 {
-	Editor::Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, BaseTerrain* terrain)
+	Editor::Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, Terrain* terrain)
 		: mUiOverlay(uiOverlay), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
@@ -134,7 +134,6 @@ namespace Utopian
 		{
 			World::Instance().RemoveActors();
 			World::Instance().LoadScene();
-			mTerrain->ClearBlocks();
 		}
 
 		Vk::UIOverlay::EndWindow();

@@ -29,7 +29,7 @@ namespace Utopian
 			TESSELLATION_INDEX
 		};
 
-		JobGraph(Vk::VulkanApp* vulkanApp, Vk::Device* device, uint32_t width, uint32_t height);
+		JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, uint32_t width, uint32_t height);
 		~JobGraph();
 
 		/** Renders all jobs added to the graph. */

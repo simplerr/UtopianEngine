@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vulkan/VulkanInclude.h"
+#include "vulkan/handles/Buffer.h"
 
 /**
  * Macros that can be used to ease the creation of the C++ representation

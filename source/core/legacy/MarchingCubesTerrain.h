@@ -8,7 +8,7 @@
 #include <map>
 #include <glm/glm.hpp>
 #include "vulkan/handles/Buffer.h"
-#include "vulkan/TerrainEffect.h"
+#include "vulkan/MarchingCubesTerrainEffect.h"
 #include "vulkan/MarchingCubesEffect.h"
 
 /*
@@ -76,11 +76,11 @@ struct BlockKey
 
 bool operator<(BlockKey const& a, BlockKey const& b);
 
-class Terrain
+class MarchingCubesTerrain
 {
 public:
-	Terrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::Vk::RenderPass* renderPass);
-	~Terrain();
+	MarchingCubesTerrain(Utopian::Vk::Device* device, Utopian::Camera* camera, Utopian::Vk::RenderPass* renderPass);
+	~MarchingCubesTerrain();
 
 	void Update();
 	void Render(Utopian::Vk::CommandBuffer* commandBuffer, Utopian::Vk::DescriptorSet* commonDescriptorSet);
@@ -111,7 +111,7 @@ private:
 	Utopian::Camera* mCamera;
 
 	// Experimentation
-	Utopian::Vk::TerrainEffect mTerrainEffect;
+	Utopian::Vk::MarchingCubesTerrainEffect mTerrainEffect;
 	Utopian::Vk::MarchingCubesEffect mMarchingCubesEffect;
 
 	//std::vector<Block*> mBlockList;

@@ -231,9 +231,6 @@
     <ClCompile Include="source\vulkan\PipelineInterface.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\TerrainEffect.cpp">
-      <Filter>Source Files\vulkan\effects\terrain</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp">
       <Filter>Source Files\vulkan\effects\marching_cubes</Filter>
     </ClCompile>
@@ -384,21 +381,6 @@
     <ClCompile Include="source\vulkan\SkyboxEffect.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\terrain\Block.cpp">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\terrain\MarchingCubes.cpp">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\terrain\Terrain.cpp">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\terrain\BaseTerrain.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\terrain\PerlinTerrain.cpp">
-      <Filter>Source Files\terrain\heightmap</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\AssetLoader.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -466,6 +448,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\QueryPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\vulkan\MarchingCubesTerrainEffect.cpp">
+      <Filter>Source Files\vulkan\effects\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\legacy\BaseTerrain.cpp">
+      <Filter>Source Files\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\legacy\Block.cpp">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\legacy\MarchingCubes.cpp">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\legacy\MarchingCubesTerrain.cpp">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\legacy\PerlinTerrain.cpp">
+      <Filter>Source Files\terrain\heightmap</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -565,9 +568,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\PipelineInterface.h">
       <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\TerrainEffect.h">
-      <Filter>Source Files\vulkan\effects\terrain</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h">
       <Filter>Source Files\vulkan\effects\marching_cubes</Filter>
@@ -746,21 +746,6 @@
     <ClInclude Include="source\vulkan\SkyboxEffect.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\terrain\Block.h">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\terrain\MarchingCubes.h">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\terrain\Terrain.h">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\terrain\BaseTerrain.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\terrain\PerlinTerrain.h">
-      <Filter>Source Files\terrain\heightmap</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\PerlinNoise.h">
       <Filter>Source Files\utility</Filter>
     </ClInclude>
@@ -850,6 +835,27 @@
     </ClInclude>
     <ClInclude Include="source\utility\math\Frustum.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\MarchingCubesTerrainEffect.h">
+      <Filter>Source Files\vulkan\effects\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\legacy\BaseTerrain.h">
+      <Filter>Source Files\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\legacy\Block.h">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\legacy\MarchingCubes.h">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\legacy\MarchingCubesTerrain.h">
+      <Filter>Source Files\terrain\marching_cubes</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\legacy\PerlinTerrain.h">
+      <Filter>Source Files\terrain\heightmap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

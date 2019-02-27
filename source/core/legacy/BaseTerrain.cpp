@@ -1,4 +1,4 @@
-#include "core/terrain/BaseTerrain.h"
+#include "core/legacy/BaseTerrain.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/VulkanApp.h"
 #include "Camera.h"
