@@ -58,7 +58,7 @@ namespace Utopian
 		SettingsBlock settingsBlock;
 
 		// Height & normal map members
-		uint32_t mapResolution = 8192;
+		uint32_t mapResolution = 1024;
 		SharedPtr<Vk::Effect> mHeightmapEffect;
 		SharedPtr<Vk::Image> heightmapImage;
 		SharedPtr<Vk::RenderTarget> heightmapRenderTarget;

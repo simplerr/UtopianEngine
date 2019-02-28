@@ -75,7 +75,7 @@ end
 load_foliage = function()
     debug_print("Loading assets from Lua...")
     clear_instance_groups()
-    generate_random_foliage(true)
+    --generate_random_foliage(true)
     get_terrain_height(15000, 1000)
     --instancing_testing()
     build_instance_buffers()

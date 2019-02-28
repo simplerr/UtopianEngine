@@ -48,7 +48,6 @@ namespace Utopian
 		mDevice = vulkanApp->GetDevice();
 
 		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
-
 		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mSceneInfo.terrain.get(), mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		// Default rendering settings
