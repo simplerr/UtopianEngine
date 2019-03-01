@@ -13,7 +13,7 @@
 
 namespace Utopian
 {
-	/** 
+	/**
 	 * The scene renderer that manages and renders all the nodes in the scene.
 	 * Rendering is performed by executing all the jobs in the JobGraph.
 	 */
@@ -38,7 +38,7 @@ namespace Utopian
 		/** Adds a Light to the scene. */
 		void AddLight(Light* light);
 
-		/** 
+		/**
 		 * Adds a Camera to the scene.
 		 * @note Currently only one camera is supported.
 		 */
@@ -59,8 +59,11 @@ namespace Utopian
 		/** Returns the main camera of the scene. */
 		Camera* GetMainCamera() const;
 
+		/** Returns the Vulkan device. Note: Is this OK? */
+		Vk::Device* GetDevice() const;
+
 		/** Returns the terrain. */
-		Terrain* GetTerrain() const;
+		const SharedPtr<Terrain>& GetTerrain() const;
 
 		/** Returns the configured rendering settings. */
 		const RenderingSettings& GetRenderingSettings() const;

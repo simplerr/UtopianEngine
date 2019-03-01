@@ -11,10 +11,6 @@ namespace Utopian
 	class Terrain
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(BrushBlock)
-			UNIFORM_PARAM(glm::vec2, brushPos)
-		UNIFORM_BLOCK_END()
-
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
 			UNIFORM_PARAM(float, amplitudeScaling)
 		UNIFORM_BLOCK_END()
@@ -23,31 +19,29 @@ namespace Utopian
 
 		void Update();
 
-		void EffectRecomiledCallback(std::string name);
+		glm::vec2 TransformToUv(float x, float z);
+
+		glm::vec3 GetIntersectPoint(Ray ray);
+		SharedPtr<Vk::Image>& GetHeightmapImage();
+		SharedPtr<Vk::Image>& GetNormalmapImage();
+		SharedPtr<Vk::Image>& GetBlendmapImage();
+		Vk::Mesh* GetMesh();
 
 		float GetHeight(float x, float z);
 		glm::vec3 GetNormal(float x, float z);
 
-		glm::vec2 TransformToUv(float x, float z);
-		glm::vec3 GetIntersectPoint(Ray ray);
+		uint32_t GetMapResolution();
 
-		Vk::Image* GetHeightmapImage();
-		Vk::Image* GetNormalmapImage();
-		Vk::Image* GetBlendmapImage();
-		Vk::Mesh* GetMesh();
+		void RenderNormalmap();
 	private:
-		void GenerateTerrainMaps();
+		void EffectRecomiledCallback(std::string name);
 		void GeneratePatches(float cellSize, int numCells);
+		void GenerateTerrainMaps();
 		void SetupHeightmapEffect();
 		void SetupNormalmapEffect();
 		void SetupBlendmapEffect();
-		void SetupBlendmapBrushEffect();
-		void SetupHeightmapBrushEffect();
 		void RenderHeightmap();
-		void RenderNormalmap();
 		void RenderBlendmap();
-		void RenderBlendmapBrush();
-		void RenderHeightmapBrush();
 		void RetrieveHeightmap();
 		Ray LinearSearch(Ray ray);
 
@@ -70,14 +64,6 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mBlendmapEffect;
 		SharedPtr<Vk::Image> blendmapImage;
 		SharedPtr<Vk::RenderTarget> blendmapRenderTarget;
-
-		SharedPtr<Vk::Effect> mBlendmapBrushEffect;
-		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
-		BrushBlock brushBlock;
-		glm::vec2 brushPos = glm::vec2(0.75, 0.25);
-
-		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
-		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 
 		// Copy testing
 		SharedPtr<Vk::Image> hostImage;

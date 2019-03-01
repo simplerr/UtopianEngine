@@ -20,40 +20,43 @@ namespace Utopian
 	class Terrain;
 }
 
-class Terrain;
-
-//! The tool that move objects around.
-class TransformTool
+namespace Utopian
 {
-public:
-	TransformTool(Utopian::Terrain* terrain, Utopian::Camera* camera);
-	~TransformTool();
+	class Terrain;
 
-	void Update(Utopian::Input* pInput, float dt);
-	bool IsMovingObject();
-	void SetActor(Utopian::Actor* actor);
+	//! The tool that move objects around.
+	class TransformTool
+	{
+	public:
+		TransformTool(const SharedPtr<Terrain>& terrain, Camera* camera);
+		~TransformTool();
 
-	// These are only supposed to be called by an BaseInspector type.
-	void SetPosition(glm::vec3 position);
+		void Update(Input* pInput, float dt);
+		bool IsMovingObject();
+		void SetActor(Actor* actor);
 
-private:
-	glm::vec3 MoveAxisX(glm::vec3 pos, glm::vec3 dir);
-	glm::vec3 MoveAxisY(glm::vec3 pos, glm::vec3 dir);
-	glm::vec3 MoveAxisZ(glm::vec3 pos, glm::vec3 dir);
-	void UpdatePosition(glm::vec3 delta);
-	void InitStartingPosition(Utopian::Input* pInput, glm::vec3& dir, glm::vec3& cameraPos, float& dist);
-	void ScaleAxisArrows();
+		// These are only supposed to be called by an BaseInspector type.
+		void SetPosition(glm::vec3 position);
 
-private:
-	SharedPtr<Utopian::Renderable> mAxisX;
-	SharedPtr<Utopian::Renderable> mAxisY;
-	SharedPtr<Utopian::Renderable> mAxisZ;
-	Utopian::Actor* mSelectedActor;
-	Utopian::Camera* mCamera;
-	Utopian::Terrain* mTerrain;
-	MovingAxis	  mMovingAxis;
-	glm::vec3	  mLastPlanePos;
+	private:
+		glm::vec3 MoveAxisX(glm::vec3 pos, glm::vec3 dir);
+		glm::vec3 MoveAxisY(glm::vec3 pos, glm::vec3 dir);
+		glm::vec3 MoveAxisZ(glm::vec3 pos, glm::vec3 dir);
+		void UpdatePosition(glm::vec3 delta);
+		void InitStartingPosition(Input* pInput, glm::vec3& dir, glm::vec3& cameraPos, float& dist);
+		void ScaleAxisArrows();
 
-	const float AXIS_SCALE = 180.0f;
-	const float AXIS_SCALE_MAIN = 10.0f;
-};
+	private:
+		SharedPtr<Renderable> mAxisX;
+		SharedPtr<Renderable> mAxisY;
+		SharedPtr<Renderable> mAxisZ;
+		SharedPtr<Terrain> mTerrain;
+		Actor* mSelectedActor;
+		Camera* mCamera;
+		MovingAxis	  mMovingAxis;
+		glm::vec3	  mLastPlanePos;
+
+		const float AXIS_SCALE = 180.0f;
+		const float AXIS_SCALE_MAIN = 10.0f;
+	};
+}

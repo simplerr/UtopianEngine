@@ -15,7 +15,7 @@
 
 namespace Utopian
 {
-	TessellationJob::TessellationJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height)
+	TessellationJob::TessellationJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
 		image = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
@@ -77,9 +77,9 @@ namespace Utopian
 		sampler->Create();
 
 		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", terrain->GetHeightmapImage(), sampler.get());
-		mEffect->BindCombinedImage("samplerNormalmap", terrain->GetNormalmapImage(), sampler.get());
-		mEffect->BindCombinedImage("samplerBlendmap", terrain->GetBlendmapImage(), sampler.get());
+		mEffect->BindCombinedImage("samplerHeightmap", terrain->GetHeightmapImage().get(), sampler.get());
+		mEffect->BindCombinedImage("samplerNormalmap", terrain->GetNormalmapImage().get(), sampler.get());
+		mEffect->BindCombinedImage("samplerBlendmap", terrain->GetBlendmapImage().get(), sampler.get());
 
 		mEffect->BindCombinedImage("samplerDiffuse", &diffuseArray);
 		mEffect->BindCombinedImage("samplerNormal", &normalArray);

@@ -4,11 +4,11 @@
 
 namespace Utopian
 {
-	/** 
+	/**
 	 * Each render pass is defined as a Job that can have multiple inputs and outputs.
 	 * The inputs and outputs are typically render targets but can be any kind of data.
 	 * JobGraph handles the order and execution of these jobs.
-	 * 
+	 *
 	 * For example the SkydomeJob has the Depth buffer from the G-Buffer job as an input
 	 * to not render the skydome infront of all objects.
 	*/
@@ -29,7 +29,7 @@ namespace Utopian
 			TESSELLATION_INDEX
 		};
 
-		JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, uint32_t width, uint32_t height);
+		JobGraph(Vk::VulkanApp* vulkanApp, const SharedPtr<Terrain>& terrain, Vk::Device* device, uint32_t width, uint32_t height);
 		~JobGraph();
 
 		/** Renders all jobs added to the graph. */

@@ -22,7 +22,7 @@ using namespace Utopian::Vk;
 
 #define GLM_FORCE_RIGHT_HANDED 
 
-TransformTool::TransformTool(Utopian::Terrain* terrain, Utopian::Camera* camera)
+TransformTool::TransformTool(const SharedPtr<Terrain>& terrain, Camera* camera)
 {
 	// nullptr as default.
 	mSelectedActor = nullptr;

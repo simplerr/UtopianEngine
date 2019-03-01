@@ -30,7 +30,7 @@ namespace Utopian
 			UNIFORM_PARAM(glm::vec2, brushPos)
 		UNIFORM_BLOCK_END()
 
-		TessellationJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height);
+		TessellationJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height);
 		~TessellationJob();
 
 		void Init(const std::vector<BaseJob*>& jobs) override;

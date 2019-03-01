@@ -48,7 +48,7 @@ namespace Utopian
 		mDevice = vulkanApp->GetDevice();
 
 		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
-		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mSceneInfo.terrain.get(), mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mSceneInfo.terrain, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -77,11 +77,11 @@ namespace Utopian
 
 		UpdateUi();
 	}
-		
+
 	void Renderer::UpdateUi()
 	{
 		// Draw UI overlay for rendering settings
-		// It's expected that each rendering node might have it's own settings that can be configured 
+		// It's expected that each rendering node might have it's own settings that can be configured
 		Vk::UIOverlay::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
 		static bool debugQuads = true;
 
@@ -278,7 +278,7 @@ namespace Utopian
 
 		assert(mModel);
 	}
-		
+
 	void InstanceGroup::AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 	{
 		glm::mat4 world = glm::translate(glm::mat4(), position);
@@ -356,7 +356,7 @@ namespace Utopian
 
 		instanceGroup->AddInstance(position, rotation, scale);
 	}
-	
+
 	void Renderer::ClearInstanceGroups()
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
@@ -378,7 +378,7 @@ namespace Utopian
 		for (auto iter = mSceneInfo.renderables.begin(); iter != mSceneInfo.renderables.end(); iter++)
 		{
 			// Note: No need to free memory here since that will happen when the SharedPtr is removed from the CRenderable
-			if ((*iter)->GetId() == renderable->GetId()) 
+			if ((*iter)->GetId() == renderable->GetId())
 			{
 				mSceneInfo.renderables.erase(iter);
 				break;
@@ -413,9 +413,9 @@ namespace Utopian
 		mMainCamera = camera;
 	}
 
-	Terrain* Renderer::GetTerrain() const
+	const SharedPtr<Terrain>& Renderer::GetTerrain() const
 	{
-		return mSceneInfo.terrain.get();
+		return mSceneInfo.terrain;
 	}
 
 	const RenderingSettings& Renderer::GetRenderingSettings() const
@@ -426,5 +426,10 @@ namespace Utopian
 	Camera* Renderer::GetMainCamera() const
 	{
 		return mMainCamera;
+	}
+
+	Vk::Device* Renderer::GetDevice() const
+	{
+		return mDevice;
 	}
 }

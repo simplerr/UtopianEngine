@@ -11,18 +11,19 @@
 #include "editor/ActorInspector.h"
 #include "core/legacy/BaseTerrain.h"
 #include "editor/TransformTool.h"
+#include "editor/TerrainTool.h"
 #include "core/ActorFactory.h"
+#include "core/renderer/Renderer.h"
 
 namespace Utopian
 {
-	Editor::Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, Terrain* terrain)
+	Editor::Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, const SharedPtr<Terrain>& terrain)
 		: mUiOverlay(uiOverlay), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
-
 		mActorInspector = new ActorInspector();
-
-		mTransformTool = new TransformTool(mTerrain, camera);
+		mTransformTool = std::make_shared<TransformTool>(mTerrain, camera);
+		mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
 
 		AddActorCreation("Spot light", ActorTemplate::LIGHT);
 
@@ -35,12 +36,12 @@ namespace Utopian
 			delete mModelPaths[i];
 
 		delete mActorInspector;
-		delete mTransformTool;
 	}
 
 	void Editor::Update()
 	{
 		mTransformTool->Update(&gInput(), 0); // Note: Hack
+		mTerrainTool->Update();
 
 		UpdateUi();
 
@@ -153,7 +154,7 @@ namespace Utopian
 	{
 		return mSelectedActor != nullptr;
 	}
-	
+
 	void Editor::UnselectActor()
 	{
 		mSelectedActor = nullptr;

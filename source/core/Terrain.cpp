@@ -28,28 +28,6 @@ namespace Utopian
 
 	void Terrain::Update()
 	{
-		glm::vec3 cameraPos = gRenderer().GetMainCamera()->GetPosition();
-		static glm::vec3 intersection = glm::vec3(0.0);
-
-		if (gInput().KeyPressed(VK_LBUTTON))
-		{
-			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
-			intersection = GetIntersectPoint(ray);
-			brushPos = TransformToUv(intersection.x, intersection.z);
-
-			RenderBlendmapBrush();
-		}
-		if (gInput().KeyPressed(VK_RBUTTON))
-		{
-			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
-			intersection = GetIntersectPoint(ray);
-			brushPos = TransformToUv(intersection.x, intersection.z);
-
-			RenderHeightmapBrush();
-			RenderNormalmap();
-		}
-
-		float height = GetHeight(cameraPos.x, cameraPos.z);
 		//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
 
 		/*Vk::UIOverlay::TextV("Terrain cam pos: %.4f, %.4f", TransformToUv(cameraPos.x, 0).x, TransformToUv(0, cameraPos.z).y);
@@ -63,14 +41,10 @@ namespace Utopian
 		SetupHeightmapEffect();
 		SetupNormalmapEffect();
 		SetupBlendmapEffect();
-		SetupBlendmapBrushEffect();
-		SetupHeightmapBrushEffect();
 
 		RenderHeightmap();
 		RenderNormalmap();
 		RenderBlendmap();
-		RenderBlendmapBrush();
-		RenderHeightmapBrush();
 
 		// Testing
 		RetrieveHeightmap();
@@ -87,8 +61,6 @@ namespace Utopian
 		RenderHeightmap();
 		RenderNormalmap();
 		RenderBlendmap();
-		RenderBlendmapBrush();
-		RenderHeightmapBrush();
 
 		//RetrieveHeightmap();
 	}
@@ -193,58 +165,6 @@ namespace Utopian
 		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 	}
 
-	void Terrain::SetupBlendmapBrushEffect()
-	{
-		blendmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
-		blendmapBrushRenderTarget->AddColorAttachment(blendmapImage, VK_IMAGE_LAYOUT_GENERAL, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_GENERAL);
-		blendmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
-		blendmapBrushRenderTarget->Create();
-
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/blendmap_brush.frag";
-		mBlendmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mBlendmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mBlendmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mBlendmapBrushEffect->CreatePipeline();
-
-		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
-	}
-
-	void Terrain::SetupHeightmapBrushEffect()
-	{
-		heightmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
-		heightmapBrushRenderTarget->AddColorAttachment(heightmapImage, VK_IMAGE_LAYOUT_GENERAL, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_GENERAL);
-		heightmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
-		heightmapBrushRenderTarget->Create();
-
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/heightmap_brush.frag";
-		mHeightmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mHeightmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mHeightmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		// Enable additive blending
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
-
-		mHeightmapBrushEffect->CreatePipeline();
-
-		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
-	}
-
 	void Terrain::RenderHeightmap()
 	{
 		heightmapRenderTarget->Begin("Heightmap pass");
@@ -275,32 +195,6 @@ namespace Utopian
 		commandBuffer->CmdBindDescriptorSets(mBlendmapEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		blendmapRenderTarget->End();
-	}
-
-	void Terrain::RenderBlendmapBrush()
-	{
-		brushBlock.data.brushPos = brushPos;
-		brushBlock.UpdateMemory();
-
-		blendmapBrushRenderTarget->Begin("Blendmap brush pass");
-		Vk::CommandBuffer* commandBuffer = blendmapBrushRenderTarget->GetCommandBuffer();
-		commandBuffer->CmdBindPipeline(mBlendmapBrushEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mBlendmapBrushEffect);
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		blendmapBrushRenderTarget->End();
-	}
-
-	void Terrain::RenderHeightmapBrush()
-	{
-		brushBlock.data.brushPos = brushPos;
-		brushBlock.UpdateMemory();
-
-		heightmapBrushRenderTarget->Begin("Heightmap brush pass");
-		Vk::CommandBuffer* commandBuffer = heightmapBrushRenderTarget->GetCommandBuffer();
-		commandBuffer->CmdBindPipeline(mHeightmapBrushEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mHeightmapBrushEffect);
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		heightmapBrushRenderTarget->End();
 	}
 
 	void Terrain::GeneratePatches(float cellSize, int numCells)
@@ -407,23 +301,28 @@ namespace Utopian
 		return glm::vec3(0, 1, 0);
 	}
 
-	Vk::Image* Terrain::GetHeightmapImage()
+	SharedPtr<Vk::Image>& Terrain::GetHeightmapImage()
 	{
-		return heightmapImage.get();
+		return heightmapImage;
 	}
 
-	Vk::Image* Terrain::GetNormalmapImage()
+	SharedPtr<Vk::Image>& Terrain::GetNormalmapImage()
 	{
-		return normalImage.get();
+		return normalImage;
 	}
 
-	Vk::Image* Terrain::GetBlendmapImage()
+	SharedPtr<Vk::Image>& Terrain::GetBlendmapImage()
 	{
-		return blendmapImage.get();
+		return blendmapImage;
 	}
 
     Vk::Mesh* Terrain::GetMesh()
     {
         return mQuadModel->mMeshes[0];
     }
+
+	uint32_t Terrain::GetMapResolution()
+	{
+		return mapResolution;
+	}
 }

@@ -14,7 +14,7 @@
 
 namespace Utopian
 {
-	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, uint32_t width, uint32_t height)
+	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, const SharedPtr<Terrain>& terrain, Vk::Device* device, uint32_t width, uint32_t height)
 	{
 		GBufferJob* gbufferJob = new GBufferJob(device, width, height);
 		gbufferJob->SetWaitSemaphore(vulkanApp->GetImageAvailableSemaphore());

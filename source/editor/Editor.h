@@ -1,17 +1,17 @@
 #pragma once
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
 #include <vector>
 #include <string>
-
-class TransformTool;
-class Terrain;
 
 namespace Utopian
 {
 	class World;
 	class Actor;
 	class ActorInspector;
+	class TerrainTool;
 	class Terrain;
+	class TransformTool;
 
 	enum ActorTemplate
 	{
@@ -22,7 +22,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, Terrain* terrain);
+		Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, const SharedPtr<Terrain>& terrain);
 		~Editor();
 
 		void Update();
@@ -38,11 +38,12 @@ namespace Utopian
 		void AddPaths();
 
 		World* mWorld;
-		Terrain* mTerrain;
+		SharedPtr<Terrain> mTerrain;
 		Camera* mCamera;
 		Vk::UIOverlay* mUiOverlay;
 		ActorInspector* mActorInspector;
-		TransformTool* mTransformTool;
+		SharedPtr<TransformTool> mTransformTool;
+		SharedPtr<TerrainTool> mTerrainTool;
 		Actor* mSelectedActor;
 
 		std::vector<const char*> mModelPaths;

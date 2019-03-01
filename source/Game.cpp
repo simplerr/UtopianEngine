@@ -12,7 +12,7 @@
 #include "editor/Editor.h"
 #include "core/Engine.h"
 
-Game::Game(Utopian::Window* window) 
+Game::Game(Utopian::Window* window)
 	: mWindow(window)
 {
 	srand(time(NULL));
@@ -25,7 +25,7 @@ Game::Game(Utopian::Window* window)
 
 	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
 	mVulkanApp->Prepare();
-	
+
 	// Start Utopian Engine
 	Utopian::gEngine().Start(mVulkanApp);
 	Utopian::gEngine().RegisterUpdateCallback(&Game::Update, this);
@@ -34,7 +34,11 @@ Game::Game(Utopian::Window* window)
 	InitScene();
 
 	// Note: Needs to be called after a camera have been added to the scene
-	mEditor = std::make_shared<Utopian::Editor>(mVulkanApp->GetUiOverlay(), Utopian::gRenderer().GetMainCamera(), &Utopian::World::Instance(), Utopian::Renderer::Instance().GetTerrain());
+	mEditor = std::make_shared<Utopian::Editor>(mVulkanApp->GetUiOverlay(),
+															  Utopian::gRenderer().GetMainCamera(),
+															  &Utopian::World::Instance(),
+															  Utopian::Renderer::Instance().GetTerrain());
+
 	mWindow->SetTitle(mAppName);
 }
 

@@ -471,6 +471,9 @@
     <ClCompile Include="source\core\Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\editor\TerrainTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -856,6 +859,9 @@
     </ClInclude>
     <ClInclude Include="source\core\legacy\PerlinTerrain.h">
       <Filter>Source Files\terrain\heightmap</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\TerrainTool.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
