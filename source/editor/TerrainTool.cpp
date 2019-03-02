@@ -103,15 +103,7 @@ namespace Utopian
 		mHeightmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mHeightmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Enable additive blending
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].blendEnable = VK_TRUE;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-		mHeightmapBrushEffect->GetPipeline()->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		gRendererUtility().SetAdditiveBlending(mHeightmapBrushEffect->GetPipeline());
 
 		mHeightmapBrushEffect->CreatePipeline();
 

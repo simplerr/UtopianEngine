@@ -12,6 +12,7 @@
 #include "vulkan/Vertex.h"
 #include "vulkan/VertexDescription.h"
 #include "imgui/imgui.h"
+#include "core/renderer/RendererUtility.h"
 
 namespace Utopian::Vk
 {
@@ -23,15 +24,7 @@ namespace Utopian::Vk
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/imgui/uioverlay.frag";
 		SetShaderCreateInfo(shaderCreateInfo);
 
-		// Customize the pipeline with blending
-		mPipeline->blendAttachmentState[0].blendEnable = VK_TRUE;
-		mPipeline->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		mPipeline->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		mPipeline->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		mPipeline->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
-		mPipeline->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		mPipeline->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		mPipeline->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		gRendererUtility().SetAlphaBlending(GetPipeline());
 
 		// The front facing order is reversed in the Imgui vertex buffer
 		mPipeline->rasterizationState.cullMode = VK_CULL_MODE_NONE;

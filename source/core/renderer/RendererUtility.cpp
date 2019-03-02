@@ -1,6 +1,7 @@
 #include "core/renderer/RendererUtility.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/Pipeline.h"
 #include <fstream>
 
 namespace Utopian
@@ -13,6 +14,31 @@ namespace Utopian
 	void RendererUtility::DrawFullscreenQuad(Vk::CommandBuffer* commandBuffer)
 	{
 		commandBuffer->CmdDraw(3, 1, 0, 0);
+	}
+
+	void RendererUtility::SetAdditiveBlending(Vk::Pipeline* pipeline)
+	{
+		// Enable additive blending
+		pipeline->blendAttachmentState[0].blendEnable = VK_TRUE;
+		pipeline->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		pipeline->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		pipeline->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		pipeline->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		pipeline->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		pipeline->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+		pipeline->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+	}
+
+	void RendererUtility::SetAlphaBlending(Vk::Pipeline* pipeline)
+	{
+		pipeline->blendAttachmentState[0].blendEnable = VK_TRUE;
+		pipeline->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		pipeline->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		pipeline->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		pipeline->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
+		pipeline->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		pipeline->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		pipeline->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 
 	void RendererUtility::SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height)
