@@ -20,15 +20,14 @@ namespace Utopian
 	{
 	}
 
-	void SkydomeJob::Init(const std::vector<BaseJob*>& renderers)
+	void SkydomeJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[JobGraph::DEFERRED_INDEX]);
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[JobGraph::GBUFFER_INDEX]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->AddColorAttachment(sunImage);
-		renderTarget->AddDepthAttachment(gbufferJob->depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->SetClearColor(0, 0, 0);
 		renderTarget->Create();
 

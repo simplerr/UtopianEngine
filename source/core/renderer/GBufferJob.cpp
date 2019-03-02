@@ -1,4 +1,5 @@
 #include "core/renderer/GBufferJob.h"
+#include "core/renderer/GBufferTerrainJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Queue.h"
@@ -8,36 +9,42 @@ namespace Utopian
 	GBufferJob::GBufferJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		positionImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
-		normalImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		normalViewImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		
+	}
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-		renderTarget->AddColorAttachment(positionImage);
-		renderTarget->AddColorAttachment(normalImage);
-		renderTarget->AddColorAttachment(albedoImage);
-		renderTarget->AddColorAttachment(normalViewImage);
-		renderTarget->AddDepthAttachment(depthImage);
+	GBufferJob::~GBufferJob()
+	{
+	}
+
+	void GBufferJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+	{
+		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
+		SetWaitSemaphore(gbufferTerrainJob->GetCompletedSemahore());
+
+		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+		renderTarget->AddColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
+		renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
 		// Todo: Implement a better way for multiple pipelines in the same Effect
-		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(device, renderTarget->GetRenderPass());
-		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(device, renderTarget->GetRenderPass());
+		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, renderTarget->GetRenderPass());
+		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, renderTarget->GetRenderPass());
 		//mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer_terrain.frag";
 
-		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
 
-		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		mGBufferEffectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 
@@ -54,17 +61,17 @@ namespace Utopian
 		mGBufferEffectTerrain->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
 
-		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
-		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
 
 		// Bind the different terrain textures
-		sampler = std::make_shared<Vk::Sampler>(device, false);
+		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->Create();
 
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.png");
@@ -78,17 +85,9 @@ namespace Utopian
 		mGBufferEffectTerrain->BindCombinedImage("textureSampler", &textureArray);
 
 		const uint32_t size = 240;
-		gScreenQuadUi().AddQuad(size + 20, height - (size + 10), size, size, positionImage.get(), renderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(2 * (size + 10) + 10, height - (size + 10), size, size, normalImage.get(), renderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(3 * (size + 10) + 10, height - (size + 10), size, size, albedoImage.get(), renderTarget->GetSampler());
-	}
-
-	GBufferJob::~GBufferJob()
-	{
-	}
-
-	void GBufferJob::Init(const std::vector<BaseJob*>& jobs)
-	{
+		gScreenQuadUi().AddQuad(size + 20, mHeight - (size + 10), size, size, gbuffer.positionImage.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(2 * (size + 10) + 10, mHeight - (size + 10), size, size, gbuffer.normalImage.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(3 * (size + 10) + 10, mHeight - (size + 10), size, size, gbuffer.albedoImage.get(), renderTarget->GetSampler());
 	}
 
 	void GBufferJob::Render(const JobInput& jobInput)

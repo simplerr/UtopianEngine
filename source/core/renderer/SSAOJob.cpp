@@ -1,5 +1,6 @@
 #include "core/renderer/SSAOJob.h"
 #include "core/renderer/GBufferJob.h"
+#include "core/renderer/GBufferTerrainJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include <random>
 
@@ -22,15 +23,16 @@ namespace Utopian
 	{
 	}
 
-	void SSAOJob::Init(const std::vector<BaseJob*>& renderers)
+	void SSAOJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		GBufferJob* gbufferRenderer = static_cast<GBufferJob*>(renderers[JobGraph::GBUFFER_INDEX]);
-		effect->BindGBuffer(gbufferRenderer->positionImage.get(),
-			gbufferRenderer->normalViewImage.get(),
-			gbufferRenderer->albedoImage.get(),
-			gbufferRenderer->renderTarget->GetSampler());
+		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
+		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
+		effect->BindGBuffer(gbuffer.positionImage.get(),
+			gbuffer.normalViewImage.get(),
+			gbuffer.albedoImage.get(),
+			gbufferTerrainJob->renderTarget->GetSampler());
 
-		SetWaitSemaphore(gbufferRenderer->GetCompletedSemahore());
+		SetWaitSemaphore(gbufferJob->GetCompletedSemahore());
 
 		CreateKernelSamples();
 	}

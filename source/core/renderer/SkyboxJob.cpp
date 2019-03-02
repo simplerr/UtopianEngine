@@ -15,14 +15,13 @@ namespace Utopian
 	{
 	}
 
-	void SkyboxJob::Init(const std::vector<BaseJob*>& renderers)
+	void SkyboxJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(renderers[JobGraph::DEFERRED_INDEX]);
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(renderers[JobGraph::GBUFFER_INDEX]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
-		renderTarget->AddDepthAttachment(gbufferJob->depthImage);
+		renderTarget->AddDepthAttachment(gbuffer.depthImage);
 		// Todo: Investigate why this does not work
 		renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
 		renderTarget->SetClearColor(1, 1, 1, 1);

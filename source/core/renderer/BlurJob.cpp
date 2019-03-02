@@ -24,9 +24,9 @@ namespace Utopian
 	{
 	}
 
-	void BlurJob::Init(const std::vector<BaseJob*>& renderers)
+	void BlurJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		SSAOJob* ssaoJob = static_cast<SSAOJob*>(renderers[JobGraph::SSAO_INDEX]);
+		SSAOJob* ssaoJob = static_cast<SSAOJob*>(jobs[JobGraph::SSAO_INDEX]);
 		effect->BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
 
 		SetWaitSemaphore(ssaoJob->GetCompletedSemahore());

@@ -2,12 +2,15 @@
 #include "core/renderer/BaseJob.h"
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/handles/Texture.h"
+#include "core/renderer/JobGraph.h"
 #include <glm/glm.hpp>
 #include <string>
 
 namespace Utopian
 {
-	class TessellationJob : public BaseJob
+	class Terrain;
+
+	class GBufferTerrainJob : public BaseJob
 	{
 	public:
 		UNIFORM_BLOCK_BEGIN(ViewProjection)
@@ -30,10 +33,10 @@ namespace Utopian
 			UNIFORM_PARAM(glm::vec2, brushPos)
 		UNIFORM_BLOCK_END()
 
-		TessellationJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height);
-		~TessellationJob();
+		GBufferTerrainJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height);
+		~GBufferTerrainJob();
 
-		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 		void Update() override;
 
@@ -48,6 +51,7 @@ namespace Utopian
 		SharedPtr<Vk::Sampler> sampler;
 		ViewProjection viewProjectionBlock;
 		SettingsBlock settingsBlock;
+		SharedPtr<Terrain> mTerrain;
 
 		Vk::TextureArray diffuseArray;
 		Vk::TextureArray normalArray;

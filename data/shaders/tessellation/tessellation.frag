@@ -10,7 +10,15 @@ layout (location = 2) in vec3 InTangent;
 layout (location = 3) in vec3 InPosW;
 layout (location = 4) in vec3 InBarycentric;
 
-layout (location = 0) out vec4 OutColor;
+// GBuffer output attachments
+layout (location = 0) out vec4 OutPosition;
+layout (location = 1) out vec4 OutNormal;
+layout (location = 2) out vec4 OutAlbedo;
+
+// Output normals in view space so that the SSAO pass can use them.
+// Should be reworked so that you don't have to use two separate textures
+// for normals in world space vs view space.
+layout (location = 3) out vec4 OutNormalV;
 
 layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[3];
 layout (set = 0, binding = 5) uniform sampler2D samplerNormal[3];
@@ -76,7 +84,7 @@ void main()
 
     vec3 lightDir = vec3(0.5, 1, 1);
     float diffuse = max(0.1, dot(bumpNormal, normalize(lightDir)) * 1.2); 
-    OutColor = vec4(finalDiffuse * diffuse, 1.0);
+    vec4 color = vec4(finalDiffuse, 1.0);
 
     // Apply wireframe
     // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
@@ -85,11 +93,18 @@ void main()
         vec3 d = fwidth(InBarycentric);
         vec3 a3 = smoothstep(vec3(0.0), d * 0.8, InBarycentric);
         float edgeFactor = min(min(a3.x, a3.y), a3.z);
-        OutColor.rgb = mix(vec3(1.0), OutColor.rgb, edgeFactor);
+        color.rgb = mix(vec3(1.0), color.rgb, edgeFactor);
 
         // Simple method but agly aliasing:
         // if(any(lessThan(InBarycentric, vec3(0.02))))
     }
+
+    // GBuffer
+    OutPosition = vec4(InPosW, 1.0);
+    OutAlbedo = color;
+    bumpNormal.xz *= -1; // To make the normals align with the rest of the world
+    OutNormal = vec4(bumpNormal, 1.0);
+    OutNormalV = vec4(bumpNormal, 1.0); // Note: Todo
 
     // Debugging:
     //bumpNormal = bumpNormal.rbg;

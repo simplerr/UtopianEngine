@@ -1,5 +1,6 @@
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GBufferJob.h"
+#include "core/renderer/GBufferTerrainJob.h"
 #include "core/renderer/BlurJob.h"
 #include "core/renderer/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
@@ -28,17 +29,17 @@ namespace Utopian
 	{
 	}
 
-	void DeferredJob::Init(const std::vector<BaseJob*>& jobs)
+	void DeferredJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
+		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
-		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
-		effect->BindImages(gbufferJob->positionImage.get(),
-			gbufferJob->normalImage.get(),
-			gbufferJob->albedoImage.get(),
+		effect->BindImages(gbuffer.positionImage.get(),
+			gbuffer.normalImage.get(),
+			gbuffer.albedoImage.get(),
 			blurJob->blurImage.get(),
-			gbufferJob->renderTarget->GetSampler());
+			gbufferTerrainJob->renderTarget->GetSampler());
 
+		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 		effect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), depthSampler.get());
 
 		SetWaitSemaphore(shadowJob->GetCompletedSemahore());

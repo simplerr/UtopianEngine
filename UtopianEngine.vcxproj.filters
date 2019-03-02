@@ -444,9 +444,6 @@
     <ClCompile Include="source\vulkan\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\renderer\TessellationJob.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\QueryPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -472,6 +469,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\editor\TerrainTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\renderer\GBufferTerrainJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -830,9 +830,6 @@
     <ClInclude Include="source\vulkan\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\renderer\TessellationJob.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\handles\QueryPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -861,6 +858,9 @@
       <Filter>Source Files\terrain\heightmap</Filter>
     </ClInclude>
     <ClInclude Include="source\editor\TerrainTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\GBufferTerrainJob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

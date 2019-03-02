@@ -1,4 +1,4 @@
-#include "core/renderer/TessellationJob.h"
+#include "core/renderer/GBufferTerrainJob.h"
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Renderer.h"
@@ -15,17 +15,35 @@
 
 namespace Utopian
 {
-	TessellationJob::TessellationJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height)
+	GBufferTerrainJob::GBufferTerrainJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		image = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		mTerrain = terrain;
+	}
+
+	GBufferTerrainJob::~GBufferTerrainJob()
+	{
+	}
+
+	void GBufferTerrainJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+	{
+		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+		renderTarget->AddColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddDepthAttachment(gbuffer.depthImage);
+		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->Create();
+
+		/*image = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		renderTarget->AddColorAttachment(image);
 		renderTarget->AddDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();
+		renderTarget->Create();*/
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/tessellation/tessellation.vert";
@@ -33,7 +51,7 @@ namespace Utopian
 		shaderCreateInfo.tescShaderPath = "data/shaders/tessellation/tessellation.tesc";
 		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/tessellation.tese";
 		shaderCreateInfo.geometryShaderPath = "data/shaders/tessellation/tessellation.geom";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
@@ -41,10 +59,10 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
-		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
-		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
 		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
@@ -77,9 +95,9 @@ namespace Utopian
 		sampler->Create();
 
 		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", terrain->GetHeightmapImage().get(), sampler.get());
-		mEffect->BindCombinedImage("samplerNormalmap", terrain->GetNormalmapImage().get(), sampler.get());
-		mEffect->BindCombinedImage("samplerBlendmap", terrain->GetBlendmapImage().get(), sampler.get());
+		mEffect->BindCombinedImage("samplerHeightmap", mTerrain->GetHeightmapImage().get(), sampler.get());
+		mEffect->BindCombinedImage("samplerNormalmap", mTerrain->GetNormalmapImage().get(), sampler.get());
+		mEffect->BindCombinedImage("samplerBlendmap", mTerrain->GetBlendmapImage().get(), sampler.get());
 
 		mEffect->BindCombinedImage("samplerDiffuse", &diffuseArray);
 		mEffect->BindCombinedImage("samplerNormal", &normalArray);
@@ -87,22 +105,12 @@ namespace Utopian
 
 		const uint32_t size = 640;
 		//gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(0u, 0u, width, height, image.get(), renderTarget->GetSampler(), 1u);
+		gScreenQuadUi().AddQuad(0u, 0u, mWidth, mHeight, gbuffer.normalImage.get(), renderTarget->GetSampler(), 1u);
 
-		mQueryPool = std::make_shared<Vk::QueryPool>(device);
+		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 	}
 
-	TessellationJob::~TessellationJob()
-	{
-	}
-
-	void TessellationJob::Init(const std::vector<BaseJob*>& renderers)
-	{
-		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(renderers[JobGraph::SUN_SHAFT_INDEX]);
-		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
-	}
-
-	void TessellationJob::Render(const JobInput& jobInput)
+	void GBufferTerrainJob::Render(const JobInput& jobInput)
 	{
 		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
@@ -152,7 +160,7 @@ namespace Utopian
 		mQueryPool->RetreiveResults();
 	}
 
-	void TessellationJob::Update()
+	void GBufferTerrainJob::Update()
 	{
 		// Display Actor creation list
 		Vk::UIOverlay::BeginWindow("Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);

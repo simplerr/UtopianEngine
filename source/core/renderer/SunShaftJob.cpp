@@ -16,7 +16,7 @@ namespace Utopian
 	{
 	}
 
-	void SunShaftJob::Init(const std::vector<BaseJob*>& jobs)
+	void SunShaftJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[JobGraph::SKYBOX_INDEX]);

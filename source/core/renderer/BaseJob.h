@@ -12,6 +12,16 @@ namespace Utopian
 	class Camera;
 	class BaseJob;
 	class PerlinTerrain;	
+
+	struct GBuffer
+	{
+		SharedPtr<Vk::Image> positionImage;
+		SharedPtr<Vk::Image> normalImage;
+		SharedPtr<Vk::Image> normalViewImage; // Normals in view space
+		SharedPtr<Vk::Image> albedoImage;
+		SharedPtr<Vk::Image> depthImage;
+	};
+
 	
 	struct JobInput
 	{
@@ -42,7 +52,7 @@ namespace Utopian
 		 * If a job needs to query information from another job that's already added
 		   it should be done inside of this function.
 		*/
-		virtual void Init(const std::vector<BaseJob*>& jobs) = 0;
+		virtual void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) = 0;
 
 		virtual void Render(const JobInput& jobInput) = 0;
 		virtual void Update() {};

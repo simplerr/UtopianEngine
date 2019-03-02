@@ -17,7 +17,8 @@ namespace Utopian
 	public:
 		enum JobIndex
 		{
-			GBUFFER_INDEX = 0,
+			GBUFFER_TERRAIN_INDEX = 0,
+			GBUFFER_INDEX,
 			SSAO_INDEX,
 			BLUR_INDEX,
 			SHADOW_INDEX,
@@ -34,14 +35,16 @@ namespace Utopian
 
 		/** Renders all jobs added to the graph. */
 		void Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);
-
 		void Update();
-
 		void EnableJob(JobIndex jobIndex, bool enabled);
+
+		const GBuffer& GetGBuffer() const;
+
 	private:
 		/** Adds a job to the graph. */
 		void AddJob(BaseJob* job);
 	private:
 		std::vector<BaseJob*> mJobs;
+		GBuffer mGBuffer;
 	};
 }

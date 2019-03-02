@@ -11,7 +11,7 @@ namespace Utopian
 		SkyboxJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SkyboxJob();
 
-		void Init(const std::vector<BaseJob*>& jobs) override;
+		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::CubeMapTexture> skybox;
