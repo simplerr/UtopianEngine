@@ -116,7 +116,8 @@ void main()
     OutNormalV = vec4(bumpNormal, 1.0); // Note: Todo
 
     // Overlay that shows the area effect of the terrain brush
-    if (distance(InTex, ubo_brush.pos) < ubo_brush.radius)
+    float dist = distance(InTex, ubo_brush.pos);
+    if ((dist > ubo_brush.radius - 0.0005) && dist < ubo_brush.radius)
         OutAlbedo = vec4(ubo_brush.mode, 1 - ubo_brush.mode, 0, 1);
 
     // Debugging:
