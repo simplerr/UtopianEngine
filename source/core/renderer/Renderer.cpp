@@ -31,6 +31,7 @@
 #include "core/ScriptExports.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Debug.h"
+#include "utility/math/Helpers.h"
 
 namespace Utopian
 {
@@ -48,10 +49,7 @@ namespace Utopian
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
 
-		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
-		ScriptExports::SetTerrain(mSceneInfo.terrain);
-
-		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mSceneInfo.terrain, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
@@ -68,6 +66,10 @@ namespace Utopian
 
 	void Renderer::PostWorldInit()
 	{
+		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
+		ScriptExports::SetTerrain(mSceneInfo.terrain);
+
+		mJobGraph = std::make_shared<JobGraph>(mVulkanApp, mSceneInfo.terrain, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 	}
 
 	void Renderer::Update()
@@ -317,6 +319,16 @@ namespace Utopian
 		}
 	}
 
+	void InstanceGroup::UpdateAltitudes(const SharedPtr<Terrain>& terrain)
+	{
+		for (uint32_t i = 0; i < mInstances.size(); i++)
+		{
+			glm::vec3 translation = Math::GetTranslation(mInstances[i].world);
+			translation.y = -terrain->GetHeight(-translation.x, -translation.z);
+			mInstances[i].world = Math::SetTranslation(mInstances[i].world, translation);
+		}
+	}
+
 	uint32_t InstanceGroup::GetAssetId()
 	{
 		return mAssetId;
@@ -335,6 +347,15 @@ namespace Utopian
 	Vk::StaticModel* InstanceGroup::GetModel()
 	{
 		return mModel;
+	}
+	
+	void Renderer::UpdateInstanceAltitudes()
+	{
+		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		{
+			mSceneInfo.instanceGroups[i]->UpdateAltitudes(mSceneInfo.terrain);
+			mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
+		}
 	}
 
 	void Renderer::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)

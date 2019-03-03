@@ -57,11 +57,13 @@ namespace Utopian
 		RendererUtility::Start();
 		Renderer::Start(mVulkanApp.get());
 
+		// Todo: There is a dependency between loading the actors from Lua and the terrain creation
+		// Terrain needs to be created before World::Instance().LoadScene();
+		Renderer::Instance().PostWorldInit();
+
 		ActorFactory::LoadFromFile(mVulkanApp->GetWindow(), "data/scene.lua");
 		World::Instance().LoadScene();
 		World::Instance().Update();
-
-		Renderer::Instance().PostWorldInit();
 	}
 
 	void Engine::Run()

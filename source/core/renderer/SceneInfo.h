@@ -10,6 +10,8 @@
 
 namespace Utopian
 {
+	class Terrain;
+
 	struct InstanceData
 	{
 		glm::mat4 world;
@@ -22,6 +24,7 @@ namespace Utopian
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void ClearInstances();
+		void UpdateAltitudes(const SharedPtr<Terrain>& terrain);
 		void BuildBuffer(Vk::Device* device);
 
 		uint32_t GetAssetId();

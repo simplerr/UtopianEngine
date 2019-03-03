@@ -87,6 +87,9 @@ namespace Utopian
 		memcpy(heightmap.data(), data, subResourceLayout.size);
 
 		vkUnmapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory());
+
+		// Note: Todo: Hidden dependency to Renderer
+		gRenderer().UpdateInstanceAltitudes();
 	}
 
 	void Terrain::SetupHeightmapEffect()

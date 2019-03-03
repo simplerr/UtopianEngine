@@ -73,6 +73,9 @@ namespace Utopian
 		void BuildAllInstances();
 		void ClearInstanceGroups();
 
+		// Note: Todo: This is called from Terrain when the heightmap changes
+		void UpdateInstanceAltitudes();
+
 	private:
 		/** Adds widgets to the ImGui use interface for rendering settings. */
 		void UpdateUi();
