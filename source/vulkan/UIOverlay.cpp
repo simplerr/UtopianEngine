@@ -56,6 +56,8 @@ namespace Utopian::Vk
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
+		io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Medium.ttf", 16.0f);
+
 		// Create font texture
 		unsigned char* fontData;
 		int texWidth, texHeight, pixelSize;
