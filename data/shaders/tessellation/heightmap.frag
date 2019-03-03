@@ -9,7 +9,7 @@ layout (location = 0) out vec4 OutFragColor;
 
 void main() 
 {
-    float height = fbm(InTex * 10);
+    float height = fbm(InTex * 4);
     OutFragColor = vec4(vec3(height), 1);
     //OutFragColor = vec4(0, 0, 0, 1);
 }

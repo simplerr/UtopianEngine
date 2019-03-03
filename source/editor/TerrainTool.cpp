@@ -36,7 +36,7 @@ namespace Utopian
       glm::vec3 cameraPos = gRenderer().GetMainCamera()->GetPosition();
 		static glm::vec3 intersection = glm::vec3(0.0);
 
-		if (gInput().KeyPressed(VK_LBUTTON))
+		if (gInput().KeyDown(VK_LBUTTON))
 		{
 			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
 			intersection = mTerrain->GetIntersectPoint(ray);
@@ -45,7 +45,7 @@ namespace Utopian
 			RenderBlendmapBrush();
 		}
 
-		if (gInput().KeyPressed(VK_RBUTTON))
+		if (gInput().KeyDown(VK_RBUTTON))
 		{
 			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
 			intersection = mTerrain->GetIntersectPoint(ray);
@@ -53,6 +53,7 @@ namespace Utopian
 
 			RenderHeightmapBrush();
 			mTerrain->RenderNormalmap();
+			mTerrain->RetrieveHeightmap();
 		}
 
 		float height = mTerrain->GetHeight(cameraPos.x, cameraPos.z);

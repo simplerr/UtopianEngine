@@ -16,5 +16,5 @@ void main()
     //center = vec2(0.5, 0.5);
     float height = smoothstep(0.1, 0.0, distance(center, InTex));
 
-    OutFragColor = vec4(-height / 5.0f);
+    OutFragColor = vec4(-height / 50.0f);
 }

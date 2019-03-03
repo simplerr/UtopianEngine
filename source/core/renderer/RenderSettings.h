@@ -16,7 +16,7 @@ namespace Utopian
 		int blockViewDistance = 2;
 		bool shadowsEnabled = true;
 		bool normalMapping = true;
-		bool ssaoEnabled = true;
+		bool ssaoEnabled = false;
 		bool godRaysEnabled = true;
 		int shadowSampleSize = 1;
 		bool cascadeColorDebug = 0;

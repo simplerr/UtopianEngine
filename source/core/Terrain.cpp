@@ -62,14 +62,14 @@ namespace Utopian
 		RenderNormalmap();
 		RenderBlendmap();
 
-		//RetrieveHeightmap();
+		RetrieveHeightmap();
 	}
 
 	void Terrain::RetrieveHeightmap()
 	{
 		//gRendererUtility().SaveToFile(mDevice, heightmapImage, "screen.ppm", 256, 256);
 
-		hostImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, 1024, 1024, VK_FORMAT_R32G32B32A32_SFLOAT);
+		hostImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32_SFLOAT);
 
 		// Get layout of the image (including row pitch)
 		VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
@@ -80,26 +80,21 @@ namespace Utopian
 		vkMapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory(), 0, VK_WHOLE_SIZE, 0, (void**)&data);
 		data += subResourceLayout.offset;
 
-		for (uint32_t y = 0; y < hostImage->GetHeight(); y++)
-		{
-			glm::vec4* row = (glm::vec4*)data;
-			for (uint32_t x = 0; x < hostImage->GetHeight(); x++)
-			{
-				heightmap.push_back((*row).x);
-				row++;
-			}
-			data += subResourceLayout.rowPitch;
-		}
+		assert(subResourceLayout.rowPitch == MAP_RESOLUTION * sizeof(float));
+		assert(subResourceLayout.size == MAP_RESOLUTION * MAP_RESOLUTION * sizeof(float));
+
+		// Since the image tiling is linear we can use memcpy
+		memcpy(heightmap.data(), data, subResourceLayout.size);
 
 		vkUnmapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory());
 	}
 
 	void Terrain::SetupHeightmapEffect()
 	{
-		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R32G32B32A32_SFLOAT);
+		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT);
 		heightmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL);
 
-		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
+		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
 		heightmapRenderTarget->AddColorAttachment(heightmapImage, VK_IMAGE_LAYOUT_GENERAL);
 		heightmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapRenderTarget->Create();
@@ -117,9 +112,9 @@ namespace Utopian
 
 	void Terrain::SetupNormalmapEffect()
 	{
-		normalImage = std::make_shared<Vk::ImageColor>(mDevice, mapResolution, mapResolution, VK_FORMAT_R32G32B32A32_SFLOAT);
+		normalImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT);
 
-		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mapResolution, mapResolution);
+		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
 		normalRenderTarget->AddColorAttachment(normalImage);
 		normalRenderTarget->SetClearColor(1, 1, 1, 1);
 		normalRenderTarget->Create();
@@ -277,7 +272,7 @@ namespace Utopian
 
 	Ray Terrain::LinearSearch(Ray ray)
 	{
-		float stepSize = 10.0f;
+		float stepSize = 20.0f;
 		glm::vec3 nextPoint = ray.origin + ray.direction * stepSize;
 		float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
 		int counter = 0;
@@ -323,6 +318,6 @@ namespace Utopian
 
 	uint32_t Terrain::GetMapResolution()
 	{
-		return mapResolution;
+		return MAP_RESOLUTION;
 	}
 }

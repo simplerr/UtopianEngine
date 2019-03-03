@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <array>
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Texture.h"
@@ -33,6 +34,7 @@ namespace Utopian
 		uint32_t GetMapResolution();
 
 		void RenderNormalmap();
+		void RetrieveHeightmap();
 	private:
 		void EffectRecomiledCallback(std::string name);
 		void GeneratePatches(float cellSize, int numCells);
@@ -42,7 +44,6 @@ namespace Utopian
 		void SetupBlendmapEffect();
 		void RenderHeightmap();
 		void RenderBlendmap();
-		void RetrieveHeightmap();
 		Ray LinearSearch(Ray ray);
 
 	private:
@@ -52,7 +53,7 @@ namespace Utopian
 		SettingsBlock settingsBlock;
 
 		// Height & normal map members
-		uint32_t mapResolution = 1024;
+		#define MAP_RESOLUTION 512
 		SharedPtr<Vk::Effect> mHeightmapEffect;
 		SharedPtr<Vk::Image> heightmapImage;
 		SharedPtr<Vk::RenderTarget> heightmapRenderTarget;
@@ -67,7 +68,7 @@ namespace Utopian
 
 		// Copy testing
 		SharedPtr<Vk::Image> hostImage;
-		std::vector<float> heightmap;
+		std::array<float, MAP_RESOLUTION * MAP_RESOLUTION> heightmap;
 		float terrainSize;
 
 		SharedPtr<Vk::Sampler> sampler;
