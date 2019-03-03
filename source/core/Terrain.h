@@ -9,9 +9,26 @@
 
 namespace Utopian
 {
+	struct BrushSettings
+	{
+		glm::vec2 position;
+		float radius;
+		float strength;
+		int mode; // 0 = height, 1 = blend
+		int operation; // 0 = add, 1 = remove
+	};
+
 	class Terrain
 	{
 	public:
+		UNIFORM_BLOCK_BEGIN(BrushBlock)
+			UNIFORM_PARAM(glm::vec2, brushPos)
+			UNIFORM_PARAM(float, radius)
+			UNIFORM_PARAM(float, strength)
+			UNIFORM_PARAM(int, mode) // 0 = height, 1 = blend
+			UNIFORM_PARAM(int, operation) // 0 = add, 1 = remove
+		UNIFORM_BLOCK_END()
+
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
 			UNIFORM_PARAM(float, amplitudeScaling)
 		UNIFORM_BLOCK_END()
@@ -32,6 +49,10 @@ namespace Utopian
 		glm::vec3 GetNormal(float x, float z);
 
 		uint32_t GetMapResolution();
+		float GetTerrainSize();
+
+		const BrushSettings& GetBrushSettings();
+		void SetBrushSettings(const BrushSettings& brushSettings);
 
 		void RenderNormalmap();
 		void RetrieveHeightmap();
@@ -51,6 +72,7 @@ namespace Utopian
 		Vk::StaticModel* mQuadModel;
 		float mAmplitudeScaling = 3000.0f; // Terrain amplitude should be stored here and not as a render setting!
 		SettingsBlock settingsBlock;
+		BrushSettings mBrushSettings;
 
 		// Height & normal map members
 		#define MAP_RESOLUTION 512

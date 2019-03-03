@@ -29,10 +29,6 @@ namespace Utopian
 			UNIFORM_PARAM(int, wireframe)
 		UNIFORM_BLOCK_END()
 
-		UNIFORM_BLOCK_BEGIN(BrushBlock)
-			UNIFORM_PARAM(glm::vec2, brushPos)
-		UNIFORM_BLOCK_END()
-
 		GBufferTerrainJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height);
 		~GBufferTerrainJob();
 
@@ -51,6 +47,7 @@ namespace Utopian
 		SharedPtr<Vk::Sampler> sampler;
 		ViewProjection viewProjectionBlock;
 		SettingsBlock settingsBlock;
+		Terrain::BrushBlock brushBlock;
 		SharedPtr<Terrain> mTerrain;
 
 		Vk::TextureArray diffuseArray;

@@ -4,6 +4,7 @@
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/ShaderBuffer.h"
+#include "core/Terrain.h"
 
 namespace Utopian
 {
@@ -12,14 +13,11 @@ namespace Utopian
 	class TerrainTool
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(BrushBlock)
-			UNIFORM_PARAM(glm::vec2, brushPos)
-		UNIFORM_BLOCK_END()
-
 		TerrainTool(const SharedPtr<Terrain>& terrain, Vk::Device* device);
 		~TerrainTool();
 
 		void Update();
+		void RenderUi();
 
 		void EffectRecompiledCallback(std::string name);
 
@@ -35,7 +33,7 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
-		BrushBlock brushBlock;
-		glm::vec2 brushPos;
+		Terrain::BrushBlock brushBlock;
+		BrushSettings brushSettings;
 	};
 }

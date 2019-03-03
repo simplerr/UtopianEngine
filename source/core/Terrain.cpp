@@ -311,13 +311,28 @@ namespace Utopian
 		return blendmapImage;
 	}
 
-    Vk::Mesh* Terrain::GetMesh()
-    {
-        return mQuadModel->mMeshes[0];
-    }
+	Vk::Mesh* Terrain::GetMesh()
+	{
+		return mQuadModel->mMeshes[0];
+	}
 
 	uint32_t Terrain::GetMapResolution()
 	{
 		return MAP_RESOLUTION;
+	}
+
+	float Terrain::GetTerrainSize()
+	{
+		return terrainSize;
+	}
+
+	const BrushSettings& Terrain::GetBrushSettings()
+	{
+		return mBrushSettings;
+	}
+
+	void Terrain::SetBrushSettings(const BrushSettings& brushSettings)
+	{
+		mBrushSettings = brushSettings;
 	}
 }

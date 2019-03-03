@@ -65,6 +65,9 @@ namespace Utopian
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
+		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_brush", &brushBlock);
+
 		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
 		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
 		Vk::Texture* displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
@@ -128,6 +131,13 @@ namespace Utopian
 		settingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
 		settingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		settingsBlock.UpdateMemory();
+
+		BrushSettings brushSettings = mTerrain->GetBrushSettings();
+		brushBlock.data.brushPos = brushSettings.position;
+		brushBlock.data.radius = brushSettings.radius / mTerrain->GetTerrainSize();
+		brushBlock.data.strength = brushSettings.strength;
+		brushBlock.data.mode = brushSettings.mode;
+		brushBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

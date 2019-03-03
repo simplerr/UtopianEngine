@@ -20,6 +20,15 @@ layout (location = 2) out vec4 OutAlbedo;
 // for normals in world space vs view space.
 layout (location = 3) out vec4 OutNormalV;
 
+layout (std140, set = 0, binding = 8) uniform UBO_brush 
+{
+    vec2 pos;
+    float radius;
+    float strength;
+    int mode; // 0 = height, 1 = blend
+    int operation; // 0 = add, 1 = remove
+} ubo_brush;
+
 layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[3];
 layout (set = 0, binding = 5) uniform sampler2D samplerNormal[3];
 
@@ -105,6 +114,10 @@ void main()
     bumpNormal.xz *= -1; // To make the normals align with the rest of the world
     OutNormal = vec4(bumpNormal, 1.0);
     OutNormalV = vec4(bumpNormal, 1.0); // Note: Todo
+
+    // Overlay that shows the area effect of the terrain brush
+    if (distance(InTex, ubo_brush.pos) < ubo_brush.radius)
+        OutAlbedo = vec4(ubo_brush.mode, 1 - ubo_brush.mode, 0, 1);
 
     // Debugging:
     //bumpNormal = bumpNormal.rbg;
