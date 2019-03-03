@@ -35,6 +35,7 @@ namespace Utopian
 
 		glm::vec2 mMousePosition;
 		glm::vec2 mMouseDelta;
+		float mMouseWheelDelta;
 	};
 
 	Input& gInput();

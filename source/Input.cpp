@@ -24,6 +24,7 @@ namespace Utopian
 		// No delta movement to start with
 		mMouseDelta = glm::vec2(0.0f);
 		mMousePosition = glm::vec2(-1.0f);
+		mMouseWheelDelta = 0.0f;
 	}
 
 	//! Cleanup.
@@ -39,6 +40,7 @@ namespace Utopian
 	void Input::Update(float dt)
 	{
 		mMouseDelta = glm::vec2(0.0f);
+		mMouseWheelDelta = 0.0f;
 
 		// Set the old states.
 		memcpy(mLastKeyState, mKeyState, sizeof(mKeyState));
@@ -82,6 +84,9 @@ namespace Utopian
 
 			break;
 		}
+		case WM_MOUSEWHEEL:
+			mMouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam);
+			break;
 		}
 
 		return 0;
@@ -165,7 +170,7 @@ namespace Utopian
 
 	float Input::MouseDz()
 	{
-		return -1;
+		return mMouseWheelDelta;
 	}
 
 	void Input::Poll()
