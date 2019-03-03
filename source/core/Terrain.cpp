@@ -20,7 +20,7 @@ namespace Utopian
 	{
 		mDevice = device;
 
-		GeneratePatches(128.0, 128);
+		GeneratePatches(128.0, 256);
 		GenerateTerrainMaps();
 
 		Vk::gEffectManager().RegisterRecompileCallback(&Terrain::EffectRecomiledCallback, this);

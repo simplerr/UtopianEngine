@@ -6,6 +6,8 @@
 
 namespace Utopian
 {
+	class Terrain;
+
 	class ScriptExports
 	{
 	public:
@@ -17,10 +19,13 @@ namespace Utopian
 		static void ClearInstanceGroups();
 		static void SeedNoise(uint32_t seed);
 		static float GetNoise(float x, float y, float z);
-		// GetTerrainHeight(float x, float z);
-		// GetTerrainNormal(float x, float z);
+		static float GetTerrainHeight(float x, float z);
+		//static glm::vec3 GetTerrainNormal(float x, float z);
+
+		static void SetTerrain(const SharedPtr<Terrain>& terrain);
 	private:
 		static PerlinNoise<float> mPerlinNoise;
+		static SharedPtr<Terrain> mTerrain;
 	};
 
 	class ScriptImports

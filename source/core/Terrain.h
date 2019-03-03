@@ -55,6 +55,7 @@ namespace Utopian
 		void SetBrushSettings(const BrushSettings& brushSettings);
 
 		void RenderNormalmap();
+		void RenderBlendmap();
 		void RetrieveHeightmap();
 	private:
 		void EffectRecomiledCallback(std::string name);
@@ -64,7 +65,6 @@ namespace Utopian
 		void SetupNormalmapEffect();
 		void SetupBlendmapEffect();
 		void RenderHeightmap();
-		void RenderBlendmap();
 		Ray LinearSearch(Ray ray);
 
 	private:

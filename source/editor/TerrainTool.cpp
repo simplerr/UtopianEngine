@@ -29,7 +29,7 @@ namespace Utopian
 		// Temporary:
 		brushSettings.mode = 0;
 		brushSettings.operation = 0;
-		brushSettings.strength = 1.0f;
+		brushSettings.strength = 240.0f;
 		brushSettings.radius = 500.0f;
    }
 
@@ -61,22 +61,15 @@ namespace Utopian
 		}
 		else if (brushSettings.mode == 0) // Height
 		{
-			if (gInput().KeyDown(VK_LBUTTON))
+			if (gInput().KeyDown(VK_LBUTTON) || gInput().KeyDown(VK_RBUTTON))
 			{
-				brushSettings.operation = 0; // Add
+				brushSettings.operation = gInput().KeyDown(VK_LBUTTON) ? 0 : 1;
 				RenderHeightmapBrush();
 				mTerrain->RenderNormalmap();
-				mTerrain->RetrieveHeightmap();
-			}
-			else if (gInput().KeyDown(VK_RBUTTON))
-			{
-				brushSettings.operation = 1; // Remove
-				RenderHeightmapBrush();
-				mTerrain->RenderNormalmap();
+				mTerrain->RenderBlendmap();
 				mTerrain->RetrieveHeightmap();
 			}
 		}
-
 
 		float height = mTerrain->GetHeight(cameraPos.x, cameraPos.z);
    }

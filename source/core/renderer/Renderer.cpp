@@ -28,6 +28,7 @@
 #include "core/renderer/SkydomeJob.h"
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
+#include "core/ScriptExports.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Debug.h"
 
@@ -48,6 +49,8 @@ namespace Utopian
 		mDevice = vulkanApp->GetDevice();
 
 		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
+		ScriptExports::SetTerrain(mSceneInfo.terrain);
+
 		mJobGraph = std::make_shared<JobGraph>(vulkanApp, mSceneInfo.terrain, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		// Default rendering settings

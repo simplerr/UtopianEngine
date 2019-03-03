@@ -154,7 +154,7 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 	if (pInput->KeyPressed('O')) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		glm::vec3 position = transform->GetPosition();
-		transform->SetPosition(glm::vec3(position.x, -1 * mTerrain->GetHeight(position.x, position.z), position.z)); // Note: The -1 sign
+		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));
 	}
 }
 

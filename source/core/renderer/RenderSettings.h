@@ -23,7 +23,7 @@ namespace Utopian
 		float cascadeSplitLambda = 0.927f;
 		float nearPlane = 1.0f;
 		float farPlane = 25600.0f;
-		float sunSpeed = 1.0f;
+		float sunSpeed = 0.0f;
 		float sunInclination = 45.0f;
 		float sunAzimuth = 0.0f;
 		float tessellationFactor = 2.8f;

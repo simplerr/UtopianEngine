@@ -10,6 +10,7 @@
 namespace Utopian
 {
 	PerlinNoise<float> ScriptExports::mPerlinNoise;
+	SharedPtr<Terrain> ScriptExports::mTerrain;
 	SharedPtr<LuaPlus::LuaFunction<float>> ScriptImports::get_terrain_height;
 
 	void ScriptExports::Register()
@@ -23,6 +24,8 @@ namespace Utopian
 		globals.RegisterDirect("clear_instance_groups", &ScriptExports::ClearInstanceGroups);
 		globals.RegisterDirect("seed_noise", &ScriptExports::SeedNoise);
 		globals.RegisterDirect("get_noise", &ScriptExports::GetNoise);
+		globals.RegisterDirect("get_terrain_height", &ScriptExports::GetTerrainHeight);
+		//globals.RegisterDirect("get_terrain_normal", &ScriptExports::GetTerrainNormal);
 	}
 
 	void ScriptExports::DebugPrint(const char* text)
@@ -72,6 +75,21 @@ namespace Utopian
 	float ScriptExports::GetNoise(float x, float y, float z)
 	{
 		return mPerlinNoise.Noise(x, y, z);
+	}
+	
+	float ScriptExports::GetTerrainHeight(float x, float z)
+	{
+		return mTerrain->GetHeight(x, z);
+	}
+
+	//glm::vec3 ScriptExports::GetTerrainNormal(float x, float z)
+	//{
+	//	return mTerrain->GetNormal(x, z);
+	//}
+
+	void ScriptExports::SetTerrain(const SharedPtr<Terrain>& terrain)
+	{
+		mTerrain = terrain;
 	}
 
 	void ScriptImports::Register()
