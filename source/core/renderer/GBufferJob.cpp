@@ -88,6 +88,7 @@ namespace Utopian
 		gScreenQuadUi().AddQuad(size + 20, mHeight - (size + 10), size, size, gbuffer.positionImage.get(), renderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(2 * (size + 10) + 10, mHeight - (size + 10), size, size, gbuffer.normalImage.get(), renderTarget->GetSampler());
 		gScreenQuadUi().AddQuad(3 * (size + 10) + 10, mHeight - (size + 10), size, size, gbuffer.albedoImage.get(), renderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(4 * (size + 10) + 10, mHeight - (size + 10), size, size, gbuffer.normalViewImage.get(), renderTarget->GetSampler());
 	}
 
 	void GBufferJob::Render(const JobInput& jobInput)

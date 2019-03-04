@@ -115,6 +115,14 @@ void main()
     OutNormal = vec4(bumpNormal, 1.0);
     OutNormalV = vec4(bumpNormal, 1.0); // Note: Todo
 
+    OutNormal = vec4(normalize(bumpNormal), 1.0);
+
+    bumpNormal.y *= -1; // Unclear why this is needed
+    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
+	OutNormalV = vec4(normalMatrix * bumpNormal, 1.0);
+    OutNormalV.xyz = normalize(OutNormalV.xyz * 0.5 + 0.5);
+
+
     // Overlay that shows the area effect of the terrain brush
     float dist = distance(InTex, ubo_brush.pos);
     if ((dist > ubo_brush.radius - 0.0005) && dist < ubo_brush.radius)
