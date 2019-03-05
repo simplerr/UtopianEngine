@@ -10,6 +10,25 @@ namespace Utopian
 {
 	class Terrain;
 
+	struct BrushSettings
+	{
+		enum Mode {
+			HEIGHT = 0,
+			BLEND = 1
+		};
+
+		enum Operation {
+			ADD = 0,
+			REMOVE = 1
+		};
+
+		glm::vec2 position;
+		float radius;
+		float strength;
+		Mode mode;
+		Operation operation;
+	};
+
 	class TerrainTool
 	{
 	public:
@@ -26,6 +45,10 @@ namespace Utopian
 
 		void RenderBlendmapBrush();
 		void RenderHeightmapBrush();
+
+	private:
+		void UpdateBrushUniform();
+
 	private:
 		Vk::Device* mDevice;
 		SharedPtr<Terrain> mTerrain;
@@ -33,7 +56,7 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
-		Terrain::BrushBlock brushBlock;
+		SharedPtr<Terrain::BrushBlock> brushBlock;
 		BrushSettings brushSettings;
 	};
 }

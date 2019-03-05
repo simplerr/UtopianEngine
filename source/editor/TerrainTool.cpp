@@ -18,6 +18,8 @@ namespace Utopian
 		mTerrain = terrain;
 		mDevice = device;
 
+		brushBlock = terrain->GetBrushBlock();
+
 		SetupBlendmapBrushEffect();
 		SetupHeightmapBrushEffect();
 
@@ -27,8 +29,8 @@ namespace Utopian
 		Vk::gEffectManager().RegisterRecompileCallback(&TerrainTool::EffectRecompiledCallback, this);
 
 		// Temporary:
-		brushSettings.mode = 0;
-		brushSettings.operation = 0;
+		brushSettings.mode = BrushSettings::Mode::BLEND;
+		brushSettings.operation = BrushSettings::Operation::ADD;
 		brushSettings.strength = 240.0f;
 		brushSettings.radius = 500.0f;
    }
@@ -48,22 +50,25 @@ namespace Utopian
 		intersection = mTerrain->GetIntersectPoint(ray);
 		brushSettings.position = mTerrain->TransformToUv(intersection.x, intersection.z);
 		brushSettings.radius += gInput().MouseDz();
-		
-		// Terrain needs to know about the brush settings to render the debug circle
-		mTerrain->SetBrushSettings(brushSettings);
 
-		if (brushSettings.mode == 1) // Blend
+		UpdateBrushUniform();
+		
+		if (brushSettings.mode == BrushSettings::Mode::BLEND)
 		{
 			if (gInput().KeyDown(VK_LBUTTON))
 			{
 				RenderBlendmapBrush();
 			}
 		}
-		else if (brushSettings.mode == 0) // Height
+		else if (brushSettings.mode == BrushSettings::Mode::HEIGHT)
 		{
 			if (gInput().KeyDown(VK_LBUTTON) || gInput().KeyDown(VK_RBUTTON))
 			{
-				brushSettings.operation = gInput().KeyDown(VK_LBUTTON) ? 0 : 1;
+				if (gInput().KeyDown(VK_LBUTTON))
+					brushSettings.operation = BrushSettings::Operation::ADD;
+				else
+					brushSettings.operation = BrushSettings::Operation::REMOVE;
+
 				RenderHeightmapBrush();
 				mTerrain->RenderNormalmap();
 				mTerrain->RenderBlendmap();
@@ -79,9 +84,11 @@ namespace Utopian
 	   // Display Actor creation list
 	   Vk::UIOverlay::BeginWindow("Terrain tool", glm::vec2(1500.0f, 850.0f), 200.0f);
 
-	   ImGui::Combo("Brush mode", &brushSettings.mode, "Height\0Blend\0");
+	   int mode = brushSettings.mode;
+	   ImGui::Combo("Brush mode", &mode, "Height\0Blend\0");
 	   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
 	   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);
+	   brushSettings.mode = (BrushSettings::Mode)mode;
 
 	   Vk::UIOverlay::EndWindow();
    }
@@ -111,8 +118,7 @@ namespace Utopian
 		mBlendmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		mBlendmapBrushEffect->CreatePipeline();
 
-		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
+		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", brushBlock.get());
 	}
 
 	void TerrainTool::SetupHeightmapBrushEffect()
@@ -135,18 +141,21 @@ namespace Utopian
 
 		mHeightmapBrushEffect->CreatePipeline();
 
-		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", &brushBlock);
+		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", brushBlock.get());
+	}
+
+	void TerrainTool::UpdateBrushUniform()
+	{
+		brushBlock->data.brushPos = brushSettings.position;
+		brushBlock->data.radius = brushSettings.radius / mTerrain->GetTerrainSize();
+		brushBlock->data.strength = brushSettings.strength;
+		brushBlock->data.mode = brushSettings.mode;
+		brushBlock->data.operation = brushSettings.operation;
+		brushBlock->UpdateMemory();
 	}
 
    void TerrainTool::RenderBlendmapBrush()
 	{
-		brushBlock.data.brushPos = brushSettings.position;
-		brushBlock.data.radius = brushSettings.radius / mTerrain->GetTerrainSize();
-		brushBlock.data.strength = brushSettings.strength;
-		brushBlock.data.mode = brushSettings.mode;
-		brushBlock.data.operation = brushSettings.operation;
-		brushBlock.UpdateMemory();
-
 		blendmapBrushRenderTarget->Begin("Blendmap brush pass");
 		Vk::CommandBuffer* commandBuffer = blendmapBrushRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mBlendmapBrushEffect->GetPipeline());
@@ -157,13 +166,6 @@ namespace Utopian
 
 	void TerrainTool::RenderHeightmapBrush()
 	{
-		brushBlock.data.brushPos = brushSettings.position;
-		brushBlock.data.radius = brushSettings.radius / mTerrain->GetTerrainSize();
-		brushBlock.data.strength = brushSettings.strength;
-		brushBlock.data.mode = brushSettings.mode;
-		brushBlock.data.operation = brushSettings.operation;
-		brushBlock.UpdateMemory();
-
 		heightmapBrushRenderTarget->Begin("Heightmap brush pass");
 		Vk::CommandBuffer* commandBuffer = heightmapBrushRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mHeightmapBrushEffect->GetPipeline());

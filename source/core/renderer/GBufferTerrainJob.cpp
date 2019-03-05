@@ -36,15 +36,6 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		/*image = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
-		depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
-
-		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-		renderTarget->AddColorAttachment(image);
-		renderTarget->AddDepthAttachment(depthImage);
-		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();*/
-
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/tessellation/tessellation.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/tessellation.frag";
@@ -66,7 +57,7 @@ namespace Utopian
 		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
 		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_brush", &brushBlock);
+		mEffect->BindUniformBuffer("UBO_brush", mTerrain->GetBrushBlock().get());
 
 		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
 		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
@@ -131,13 +122,6 @@ namespace Utopian
 		settingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
 		settingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		settingsBlock.UpdateMemory();
-
-		BrushSettings brushSettings = mTerrain->GetBrushSettings();
-		brushBlock.data.brushPos = brushSettings.position;
-		brushBlock.data.radius = brushSettings.radius / mTerrain->GetTerrainSize();
-		brushBlock.data.strength = brushSettings.strength;
-		brushBlock.data.mode = brushSettings.mode;
-		brushBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

@@ -9,15 +9,6 @@
 
 namespace Utopian
 {
-	struct BrushSettings
-	{
-		glm::vec2 position;
-		float radius;
-		float strength;
-		int mode; // 0 = height, 1 = blend
-		int operation; // 0 = add, 1 = remove
-	};
-
 	class Terrain
 	{
 	public:
@@ -51,8 +42,8 @@ namespace Utopian
 		uint32_t GetMapResolution();
 		float GetTerrainSize();
 
-		const BrushSettings& GetBrushSettings();
-		void SetBrushSettings(const BrushSettings& brushSettings);
+		void SetBrushBlock(const SharedPtr<BrushBlock> brushBlock);
+		SharedPtr<BrushBlock> GetBrushBlock();
 
 		void RenderNormalmap();
 		void RenderBlendmap();
@@ -72,7 +63,7 @@ namespace Utopian
 		Vk::StaticModel* mQuadModel;
 		float mAmplitudeScaling = 3000.0f; // Terrain amplitude should be stored here and not as a render setting!
 		SettingsBlock settingsBlock;
-		BrushSettings mBrushSettings;
+		SharedPtr<BrushBlock> mBrushBlock;
 
 		// Height & normal map members
 		#define MAP_RESOLUTION 512

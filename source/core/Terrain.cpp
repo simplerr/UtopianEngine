@@ -24,6 +24,11 @@ namespace Utopian
 		GenerateTerrainMaps();
 
 		Vk::gEffectManager().RegisterRecompileCallback(&Terrain::EffectRecomiledCallback, this);
+
+		// This is used by both TerrainTool and GBufferTerrainJob
+		// TerrainTool is responsible for updating it
+		mBrushBlock = std::make_shared<Terrain::BrushBlock>();
+		mBrushBlock->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	}
 
 	void Terrain::Update()
@@ -329,13 +334,13 @@ namespace Utopian
 		return terrainSize;
 	}
 
-	const BrushSettings& Terrain::GetBrushSettings()
+	void Terrain::SetBrushBlock(const SharedPtr<BrushBlock> brushBlock)
 	{
-		return mBrushSettings;
+		mBrushBlock = brushBlock;
 	}
 
-	void Terrain::SetBrushSettings(const BrushSettings& brushSettings)
+	SharedPtr<Terrain::BrushBlock> Terrain::GetBrushBlock()
 	{
-		mBrushSettings = brushSettings;
+		return mBrushBlock;
 	}
 }
