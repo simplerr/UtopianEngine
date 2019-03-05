@@ -37,12 +37,11 @@ namespace Utopian
 		//AddJob(new GrassJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
 		//AddJob(new SkyboxJob(renderer, width, height));
 		AddJob(new SkydomeJob(device, width, height));
+		AddJob(new SunShaftJob(device, width, height));
 
-		SunShaftJob* sunShaftJob = new SunShaftJob(device, width, height);
-		vulkanApp->SetJobGraphWaitSemaphore(sunShaftJob->GetCompletedSemahore());
-		AddJob(sunShaftJob);
-
-		//AddJob(new DebugJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
+		DebugJob* debugJob = new DebugJob(device, width, height);
+		vulkanApp->SetJobGraphWaitSemaphore(debugJob->GetCompletedSemahore());
+		AddJob(debugJob);
 	}
 
 	JobGraph::~JobGraph()

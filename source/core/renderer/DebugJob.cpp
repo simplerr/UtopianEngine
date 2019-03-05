@@ -1,6 +1,7 @@
 #include "core/renderer/DebugJob.h"
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GBufferJob.h"
+#include "core/renderer/SunShaftJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 
 namespace Utopian
@@ -17,6 +18,8 @@ namespace Utopian
 	void DebugJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
+		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(jobs[JobGraph::SUN_SHAFT_INDEX]);
+		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
@@ -26,22 +29,32 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
+		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mDevice, renderTarget->GetRenderPass());
+		normalEffect->CreatePipeline();
+
 		colorEffect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
 		colorEffect->CreatePipeline();
-		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mDevice, renderTarget->GetRenderPass());
 
 		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
 		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		colorEffectWireframe->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		//colorEffectWireframe->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 		colorEffectWireframe->CreatePipeline();
+
+		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		colorEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		colorEffectWireframe->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		normalEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		mCubeModel = Vk::gModelLoader().LoadDebugBox();
 	}
 
 	void DebugJob::Render(const JobInput& jobInput)
 	{
-		colorEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
-		normalEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
-		colorEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
+		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		viewProjectionBlock.UpdateMemory();
 
 		renderTarget->Begin("Debug pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -79,7 +92,7 @@ namespace Utopian
 
 					commandBuffer->CmdBindPipeline(normalEffect->GetPipeline());
 					commandBuffer->CmdBindDescriptorSets(normalEffect);
-					commandBuffer->CmdPushConstants(normalEffect->GetPipelineInterface(), VK_SHADER_STAGE_GEOMETRY_BIT, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdPushConstants(normalEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);

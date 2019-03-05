@@ -33,7 +33,7 @@ namespace Utopian
 		// Todo: Implement a better way for multiple pipelines in the same Effect
 		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, renderTarget->GetRenderPass());
 		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, renderTarget->GetRenderPass());
-		//mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
@@ -67,6 +67,7 @@ namespace Utopian
 
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectTerrain->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
 

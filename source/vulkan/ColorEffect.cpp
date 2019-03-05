@@ -22,22 +22,6 @@ namespace Utopian::Vk
 
 		// Note: Uncommented since the DebugJob is calling this instead right now
 		//CreatePipeline();
-
-		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
-		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
-	}
-
-	void ColorEffect::UpdateMemory()
-	{
-		viewProjectionBlock.UpdateMemory();
-	}
-
-	void ColorEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)
-	{
-		viewProjectionBlock.data.view = view;
-		viewProjectionBlock.data.projection = projection;
-		UpdateMemory();
 	}
 
 	void ColorEffect::BindDeferredOutput(Image* deferredImage, Sampler* sampler)

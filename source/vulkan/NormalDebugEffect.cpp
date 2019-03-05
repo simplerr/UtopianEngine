@@ -20,23 +20,5 @@ namespace Utopian::Vk
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
 		shaderCreateInfo.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
 		SetShaderCreateInfo(shaderCreateInfo);
-
-		CreatePipeline();
-
-		viewProjectionBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
-		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
-	}
-
-	void NormalDebugEffect::UpdateMemory()
-	{
-		viewProjectionBlock.UpdateMemory();
-	}
-
-	void NormalDebugEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)
-	{
-		viewProjectionBlock.data.view = view;
-		viewProjectionBlock.data.projection = projection;
-		UpdateMemory();
 	}
 }
