@@ -24,6 +24,7 @@ namespace Utopian::Vk
 
 		void AddVertex(Vertex vertex);
 		void AddVertex(float x, float y, float z);
+		void AddLine(uint32_t v1, uint32_t v2);
 		void AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3);
 		void AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4);
 		void BuildBuffers(Device* device);

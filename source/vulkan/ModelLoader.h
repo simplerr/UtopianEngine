@@ -26,7 +26,8 @@ namespace Utopian::Vk
 
 		StaticModel* LoadModel(std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
 		StaticModel* GenerateTerrain(std::string filename);
-		StaticModel* LoadDebugBox();
+		StaticModel* LoadDebugBoxLines();		// Use with VK_PRIMITIVE_TOPOLOGY_LINE_LIST
+		StaticModel* LoadDebugBoxTriangles();	// Use with VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
 		StaticModel* LoadQuad();
 		StaticModel* LoadGrid(float cellSize, int numCells);
 

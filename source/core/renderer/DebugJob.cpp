@@ -23,9 +23,7 @@ namespace Utopian
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ATTACHMENT_LOAD_OP_LOAD);
-		renderTarget->AddDepthAttachment(gbuffer.depthImage);
-		// Todo: Investigate why this does not work
-		//renderTarget->GetRenderPass()->attachments[Vk::RenderPassAttachment::DEPTH_ATTACHMENT].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+		//renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
@@ -38,7 +36,7 @@ namespace Utopian
 		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
 		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		colorEffectWireframe->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		//colorEffectWireframe->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+		colorEffectWireframe->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 		colorEffectWireframe->CreatePipeline();
 
 		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -47,7 +45,7 @@ namespace Utopian
 		colorEffectWireframe->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		normalEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
-		mCubeModel = Vk::gModelLoader().LoadDebugBox();
+		mCubeModel = Vk::gModelLoader().LoadDebugBoxLines();
 	}
 
 	void DebugJob::Render(const JobInput& jobInput)

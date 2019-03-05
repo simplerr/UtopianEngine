@@ -33,7 +33,7 @@ namespace Utopian
 		effect = Vk::gEffectManager().AddEffect<Vk::SkyboxEffect>(mDevice, renderTarget->GetRenderPass());
 		effect->BindCombinedImage("samplerCubeMap", skybox->image, renderTarget->GetSampler()); // skybox->sampler);
 
-		mCubeModel = Vk::gModelLoader().LoadDebugBox();
+		mCubeModel = Vk::gModelLoader().LoadDebugBoxTriangles();
 	}
 
 	void SkyboxJob::Render(const JobInput& jobInput)

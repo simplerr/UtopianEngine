@@ -389,26 +389,81 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadDebugBox()
+	StaticModel* ModelLoader::LoadDebugBoxLines()
 	{
 		// Check if the model already is loaded
-		if (mModelMap.find("debug_box") != mModelMap.end())
-			return mModelMap["debug_box"];
+		if (mModelMap.find("debug_box_lines") != mModelMap.end())
+			return mModelMap["debug_box_lines"];
 
 		StaticModel* model = new StaticModel();
 		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
-		mesh->AddVertex(-0.5f, -0.5f, 0.5f);
-		mesh->AddVertex(0.5f, -0.5f, 0.5f);
-		mesh->AddVertex(0.5f, 0.5f, 0.5f);
-		mesh->AddVertex(-0.5f, 0.5f, 0.5f);
+		mesh->AddVertex(-0.5f, -0.5f, 0.5f);	// 0
+		mesh->AddVertex(0.5f, -0.5f, 0.5f);		// 1
+		mesh->AddVertex(0.5f, 0.5f, 0.5f);		// 2
+		mesh->AddVertex(-0.5f, 0.5f, 0.5f);		// 3
 
 		// Back
-		mesh->AddVertex(-0.5f, -0.5f, -0.5f);
-		mesh->AddVertex(0.5f, -0.5f, -0.5f);
-		mesh->AddVertex(0.5f, 0.5f, -0.5f);
-		mesh->AddVertex(-0.5f, 0.5f, -0.5f);
+		mesh->AddVertex(-0.5f, -0.5f, -0.5f);	// 4
+		mesh->AddVertex(0.5f, -0.5f, -0.5f);	// 5
+		mesh->AddVertex(0.5f, 0.5f, -0.5f);		// 6
+		mesh->AddVertex(-0.5f, 0.5f, -0.5f);	// 7
+
+		// Front
+		mesh->AddLine(0, 3);
+		mesh->AddLine(3, 2);
+		mesh->AddLine(2, 1);
+		mesh->AddLine(1, 0);
+
+		// Top
+		mesh->AddLine(0, 1);
+		mesh->AddLine(1, 5);
+		mesh->AddLine(5, 4);
+		mesh->AddLine(4, 0);
+
+		// Back
+		mesh->AddLine(5, 6);
+		mesh->AddLine(6, 7);
+		mesh->AddLine(7, 4);
+		mesh->AddLine(4, 5);
+
+		// Bottom
+		mesh->AddLine(6, 2);
+		mesh->AddLine(2, 3);
+		mesh->AddLine(3, 7);
+		mesh->AddLine(7, 6);
+
+		// No need to add more lines, a cube is already formed
+
+		mesh->BuildBuffers(mDevice);		
+		model->AddMesh(mesh);
+
+		model->Init(mDevice);
+		mModelMap["debug_box_lines"] = model;
+		return model;
+	}
+
+	StaticModel* ModelLoader::LoadDebugBoxTriangles()
+	{
+		// Check if the model already is loaded
+		if (mModelMap.find("debug_box_triangles") != mModelMap.end())
+			return mModelMap["debug_box_triangles"];
+
+		StaticModel* model = new StaticModel();
+		Mesh* mesh = new Mesh(mDevice);
+
+		// Front
+		mesh->AddVertex(-0.5f, -0.5f, 0.5f);	// 0
+		mesh->AddVertex(0.5f, -0.5f, 0.5f);		// 1
+		mesh->AddVertex(0.5f, 0.5f, 0.5f);		// 2
+		mesh->AddVertex(-0.5f, 0.5f, 0.5f);		// 3
+
+		// Back
+		mesh->AddVertex(-0.5f, -0.5f, -0.5f);	// 4
+		mesh->AddVertex(0.5f, -0.5f, -0.5f);	// 5
+		mesh->AddVertex(0.5f, 0.5f, -0.5f);		// 6
+		mesh->AddVertex(-0.5f, 0.5f, -0.5f);	// 7
 
 		// Front
 		mesh->AddTriangle(0, 2, 1);
@@ -434,11 +489,11 @@ namespace Utopian::Vk
 		mesh->AddTriangle(3, 6, 2);
 		mesh->AddTriangle(6, 3, 7);
 
-		mesh->BuildBuffers(mDevice);		
+		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-		mModelMap["debug_box"] = model;
+		mModelMap["debug_box_triangles"] = model;
 		return model;
 	}
 

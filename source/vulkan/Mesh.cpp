@@ -35,6 +35,12 @@ namespace Utopian::Vk
 		AddVertex(Vertex(x, y, z));
 	}
 
+	void Mesh::AddLine(uint32_t v1, uint32_t v2)
+	{
+		indexVector.push_back(v1);
+		indexVector.push_back(v2);
+	}
+
 	void Mesh::AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3)
 	{
 		indexVector.push_back(v1);
