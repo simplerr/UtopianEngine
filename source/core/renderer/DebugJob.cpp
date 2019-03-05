@@ -27,17 +27,23 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		normalEffect = Vk::gEffectManager().AddEffect<Vk::NormalDebugEffect>(mDevice, renderTarget->GetRenderPass());
-		normalEffect->CreatePipeline();
-
-		colorEffect = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/color/color.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/color/color.frag";
+		colorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 		colorEffect->CreatePipeline();
 
-		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::ColorEffect>(mDevice, renderTarget->GetRenderPass());
+		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		colorEffectWireframe->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		colorEffectWireframe->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 		colorEffectWireframe->CreatePipeline();
+
+		shaderCreateInfo.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
+		shaderCreateInfo.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
+		normalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		normalEffect->CreatePipeline();
 
 		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 

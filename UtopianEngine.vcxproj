@@ -144,7 +144,6 @@
     <ClCompile Include="source\utility\Utility.cpp" />
     <ClCompile Include="source\vulkan\BasicRenderTarget.cpp" />
     <ClCompile Include="source\vulkan\BlurEffect.cpp" />
-    <ClCompile Include="source\vulkan\ColorEffect.cpp" />
     <ClCompile Include="source\vulkan\Debug.cpp" />
     <ClCompile Include="source\vulkan\DeferredEffect.cpp" />
     <ClCompile Include="source\vulkan\Effect.cpp" />
@@ -156,7 +155,6 @@
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
-    <ClCompile Include="source\vulkan\NormalDebugEffect.cpp" />
     <ClCompile Include="source\vulkan\RenderTarget.cpp" />
     <ClCompile Include="source\vulkan\ScreenQuadUi.cpp" />
     <ClCompile Include="source\vulkan\PhongEffect.cpp" />
@@ -269,7 +267,6 @@
     <ClInclude Include="source\utility\Utility.h" />
     <ClInclude Include="source\vulkan\BasicRenderTarget.h" />
     <ClInclude Include="source\vulkan\BlurEffect.h" />
-    <ClInclude Include="source\vulkan\ColorEffect.h" />
     <ClInclude Include="source\vulkan\Debug.h" />
     <ClInclude Include="source\vulkan\DeferredEffect.h" />
     <ClInclude Include="source\vulkan\Effect.h" />
@@ -281,7 +278,6 @@
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
-    <ClInclude Include="source\vulkan\NormalDebugEffect.h" />
     <ClInclude Include="source\vulkan\RenderTarget.h" />
     <ClInclude Include="source\vulkan\ScreenQuadUi.h" />
     <ClInclude Include="source\vulkan\PhongEffect.h" />

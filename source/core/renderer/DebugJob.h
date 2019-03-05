@@ -1,8 +1,6 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/NormalDebugEffect.h"
-#include "vulkan/ColorEffect.h"
 
 namespace Utopian
 {
@@ -22,9 +20,9 @@ namespace Utopian
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
-		SharedPtr<Vk::ColorEffect> colorEffect;
-		SharedPtr<Vk::ColorEffect> colorEffectWireframe;
-		SharedPtr<Vk::NormalDebugEffect> normalEffect;
+		SharedPtr<Vk::Effect> colorEffect;
+		SharedPtr<Vk::Effect> colorEffectWireframe;
+		SharedPtr<Vk::Effect> normalEffect;
 	private:
 		Vk::StaticModel* mCubeModel;
 		ViewProjection viewProjectionBlock;
