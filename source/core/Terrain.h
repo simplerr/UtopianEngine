@@ -61,7 +61,7 @@ namespace Utopian
 	private:
 		Vk::Device* mDevice;
 		Vk::StaticModel* mQuadModel;
-		float mAmplitudeScaling = 3000.0f; // Terrain amplitude should be stored here and not as a render setting!
+		float mAmplitudeScaling = 6000.0f; // Terrain amplitude should be stored here and not as a render setting!
 		SettingsBlock settingsBlock;
 		SharedPtr<BrushBlock> mBrushBlock;
 

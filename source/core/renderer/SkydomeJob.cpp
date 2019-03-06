@@ -70,7 +70,7 @@ namespace Utopian
 		glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		viewProjectionBlock.data.view = glm::mat4(glm::mat3(jobInput.sceneInfo.viewMatrix));
 		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.data.world = glm::scale(world, glm::vec3(1000.0f));
+		viewProjectionBlock.data.world = glm::scale(world, glm::vec3(2000.0f));
 		viewProjectionBlock.UpdateMemory();
 
 		parameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;

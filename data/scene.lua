@@ -1,37 +1,12 @@
 actor_list = 
 {
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				path = "data/models/sponza/sponza.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				pos_x = -420.14501953125,
-				pos_y = 95.775772094727,
-				pos_z = -1028.5609130859,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
 	{
 		actor_name = "Camera",
 		components = 
 		{
 			CCamera = 
 			{
-				far_plane = 25600,
+				far_plane = 51200,
 				fov = 60,
 				look_at_x = -400,
 				look_at_y = 50,
