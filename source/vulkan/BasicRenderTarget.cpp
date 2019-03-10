@@ -6,26 +6,25 @@ namespace Utopian::Vk
 	BasicRenderTarget::BasicRenderTarget(Device* device, uint32_t width, uint32_t height, VkFormat colorFormat, VkFormat depthFormat)
 		: RenderTarget(device,  width, height)
 	{
-		mColorImage = new ImageColor(device, width, height, colorFormat);
-		mDepthImage = new ImageDepth(device, width, height, depthFormat);
+		mColorImage = std::make_shared<ImageColor>(device, width, height, colorFormat);
+		mDepthImage = std::make_shared<ImageDepth>(device, width, height, depthFormat);
 
-		AddColorAttachment(mColorImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		AddDepthAttachment(mDepthImage);
+		AddWriteOnlyColorAttachment(mColorImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		AddWriteOnlyDepthAttachment(mDepthImage);
 		Create();
 	}
 
 	BasicRenderTarget::~BasicRenderTarget()
 	{
-		delete mColorImage;
-		delete mDepthImage;
+
 	}
 
-	Image* BasicRenderTarget::GetColorImage()
+	SharedPtr<Image>& BasicRenderTarget::GetColorImage()
 	{
 		return mColorImage;
 	}
 
-	Image* BasicRenderTarget::GetDepthImage()
+	SharedPtr<Image>& BasicRenderTarget::GetDepthImage()
 	{
 		return mDepthImage;
 	}

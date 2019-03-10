@@ -104,7 +104,7 @@ namespace Utopian
    void TerrainTool::SetupBlendmapBrushEffect()
 	{
 		blendmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
-		blendmapBrushRenderTarget->AddColorAttachment(mTerrain->GetBlendmapImage(), VK_IMAGE_LAYOUT_GENERAL, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_GENERAL);
+		blendmapBrushRenderTarget->AddReadWriteColorAttachment(mTerrain->GetBlendmapImage(), VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
 		blendmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapBrushRenderTarget->Create();
 
@@ -124,7 +124,7 @@ namespace Utopian
 	void TerrainTool::SetupHeightmapBrushEffect()
 	{
 		heightmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mTerrain->GetMapResolution(), mTerrain->GetMapResolution());
-		heightmapBrushRenderTarget->AddColorAttachment(mTerrain->GetHeightmapImage(), VK_IMAGE_LAYOUT_GENERAL, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, VK_IMAGE_LAYOUT_GENERAL);
+		heightmapBrushRenderTarget->AddReadWriteColorAttachment(mTerrain->GetHeightmapImage(), VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
 		heightmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapBrushRenderTarget->Create();
 

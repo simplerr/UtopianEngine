@@ -103,7 +103,7 @@ namespace Utopian
 		heightmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL);
 
 		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
-		heightmapRenderTarget->AddColorAttachment(heightmapImage, VK_IMAGE_LAYOUT_GENERAL);
+		heightmapRenderTarget->AddWriteOnlyColorAttachment(heightmapImage, VK_IMAGE_LAYOUT_GENERAL);
 		heightmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapRenderTarget->Create();
 
@@ -123,7 +123,7 @@ namespace Utopian
 		normalImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT);
 
 		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
-		normalRenderTarget->AddColorAttachment(normalImage);
+		normalRenderTarget->AddWriteOnlyColorAttachment(normalImage);
 		normalRenderTarget->SetClearColor(1, 1, 1, 1);
 		normalRenderTarget->Create();
 
@@ -146,7 +146,7 @@ namespace Utopian
 		blendmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL); // Special case since it needs to be used both as color attachment and descriptor
 
 		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
-		blendmapRenderTarget->AddColorAttachment(blendmapImage, VK_IMAGE_LAYOUT_GENERAL);
+		blendmapRenderTarget->AddWriteOnlyColorAttachment(blendmapImage, VK_IMAGE_LAYOUT_GENERAL);
 		blendmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapRenderTarget->Create();
 

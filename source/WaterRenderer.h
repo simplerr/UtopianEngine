@@ -25,9 +25,6 @@ namespace Utopian
 		Vk::RenderTarget* GetReflectionRenderTarget();
 		Vk::RenderTarget* GetRefractionRenderTarget();
 
-		Vk::Image* GetReflectionImage();
-		Vk::Image* GetRefractionImage();
-
 	private:
 		struct Water
 		{

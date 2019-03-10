@@ -10,7 +10,7 @@ namespace Utopian
 		blurImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-		renderTarget->AddColorAttachment(blurImage);
+		renderTarget->AddWriteOnlyColorAttachment(blurImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 

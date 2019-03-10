@@ -20,7 +20,6 @@ namespace Utopian::Vk
 		void BeginCommandBuffer(std::string debugName = "Unnamed pass", glm::vec4 debugColor = glm::vec4(1.0, 0.0, 0.0, 1.0));
 		void BeginRenderPass();
 
-		
 		// Special version that instead of using the framebuffer in RenderTarget
 		// will use the supplied one. 
 		// Note: Assumes that the renderpass and framebuffers are compatible.
@@ -31,25 +30,16 @@ namespace Utopian::Vk
 
 		void SetClearColor(float r, float g, float b, float a = 0.0f);
 
-		/* Note: The order in which these are called is important */
-		void AddColorAttachment(Image* image,
-								VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+		void AddReadWriteColorAttachment(const SharedPtr<Image>& image,
+		 								 VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		 								 VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-		void AddDepthAttachment(Image* image,
-								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+		void AddWriteOnlyColorAttachment(const SharedPtr<Image>& image,
+		 								 VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		 								 VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
-		void AddColorAttachment(const SharedPtr<Image>& image,
-		 						VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-		 						VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-
-		void AddDepthAttachment(const SharedPtr<Image>& image,
-								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+		void AddReadWriteDepthAttachment(const SharedPtr<Image>& image);
+		void AddWriteOnlyDepthAttachment(const SharedPtr<Image>& image);
 
 		// Some images can have multiple views (array layers > 1) so in those cases
 		// you must provide the exact VkImageView

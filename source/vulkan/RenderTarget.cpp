@@ -29,27 +29,27 @@ namespace Utopian::Vk
 
 	}
 
-	void RenderTarget::AddColorAttachment(Image* image, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderTarget::AddReadWriteColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
 	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, loadOp, storeOp);
-		mFrameBuffer->AddAttachmentImage(image);
-	}
-
-	void RenderTarget::AddDepthAttachment(Image* image, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
-	{
-		mRenderPass->AddDepthAttachment(image->GetFormat(), loadOp, storeOp);
-		mFrameBuffer->AddAttachmentImage(image);
-	}
-
-	void RenderTarget::AddColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkImageLayout initialImageLayout)
-	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, loadOp, storeOp, initialImageLayout);
+		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, initialImageLayout);
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 
-	void RenderTarget::AddDepthAttachment(const SharedPtr<Image>& image, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderTarget::AddWriteOnlyColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
 	{
-		mRenderPass->AddDepthAttachment(image->GetFormat(), loadOp, storeOp);
+		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, initialImageLayout);
+		mFrameBuffer->AddAttachmentImage(image.get());
+	}
+
+	void RenderTarget::AddReadWriteDepthAttachment(const SharedPtr<Image>& image)
+	{
+		mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE);
+		mFrameBuffer->AddAttachmentImage(image.get());
+	}
+
+	void RenderTarget::AddWriteOnlyDepthAttachment(const SharedPtr<Image>& image)
+	{
+		mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE);
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 

@@ -28,11 +28,11 @@ namespace Utopian
 	void GBufferTerrainJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		renderTarget->AddColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		renderTarget->AddColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		renderTarget->AddColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		renderTarget->AddDepthAttachment(gbuffer.depthImage);
+		renderTarget->AddWriteOnlyColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddWriteOnlyColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddWriteOnlyColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddWriteOnlyColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddWriteOnlyDepthAttachment(gbuffer.depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 

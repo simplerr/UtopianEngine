@@ -14,7 +14,7 @@ namespace Utopian
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 		renderTarget->AddColorAttachment(depthColorImage->GetLayerView(0), depthColorImage->GetFormat());
-		renderTarget->AddDepthAttachment(depthImage);
+		renderTarget->AddWriteOnlyDepthAttachment(depthImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
