@@ -40,13 +40,13 @@ void main()
 	// Displace large details
     pos.y = getHeight(OutTex);
 
-	float textureScaling = 45.0;
+    float textureScaling = ubo_settings.textureScaling;
 
 	// Test
 	float lowAltitudeDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling).r; 
 	float highAltitudeDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling).r; 
 	float cliffDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling).r; 
-    vec4 blend = texture(samplerBlendmap, OutTex / ubo_settings.textureScaling);
+    vec4 blend = texture(samplerBlendmap, OutTex);
 	blend = clamp(blend, vec4(0.0), vec4(1.0));
 
     float finalDisplacement = blend.r * lowAltitudeDisplacement +
@@ -55,7 +55,7 @@ void main()
 
 	// Displace small details from displacement map along normal
 	vec3 normal = normalize(getNormal(OutTex));
-	float amplitude = 14.0;
+	float amplitude = ubo_settings.bumpmapAmplitude;
 	pos.xyz -= normal * finalDisplacement * amplitude;
 
 	OutPosW = (pushConstants.world * pos).xyz;

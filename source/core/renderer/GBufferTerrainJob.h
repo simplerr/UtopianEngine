@@ -26,6 +26,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, tessellationFactor)
 			UNIFORM_PARAM(float, amplitude)
 			UNIFORM_PARAM(float, textureScaling)
+			UNIFORM_PARAM(float, bumpmapAmplitude)
 			UNIFORM_PARAM(int, wireframe)
 		UNIFORM_BLOCK_END()
 

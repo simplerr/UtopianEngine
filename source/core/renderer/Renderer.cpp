@@ -111,8 +111,16 @@ namespace Utopian
 		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
 		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
 		ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
-		ImGui::SliderFloat("Terrain amplitude", &mRenderingSettings.terrainAmplitude, 50.0f, 12000.0f);
-		ImGui::SliderFloat("Terraint texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 10.0f);
+
+		float amplitudeScaling = mSceneInfo.terrain->GetAmplitudeScaling();
+		if (ImGui::SliderFloat("Terrain amplitude", &amplitudeScaling, 50.0f, 12000.0f))
+		{
+			mSceneInfo.terrain->SetAmplitudeScaling(amplitudeScaling);
+			//UpdateInstanceAltitudes(); Can't do this because the buffer is in use by a command buffer
+		}
+
+		ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 200.0f);
+		ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 1.0f, 50.0f);
 		ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);

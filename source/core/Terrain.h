@@ -36,6 +36,7 @@ namespace Utopian
 		SharedPtr<Vk::Image>& GetBlendmapImage();
 		Vk::Mesh* GetMesh();
 
+		float GetAmplitudeScaling();
 		float GetHeight(float x, float z);
 		glm::vec3 GetNormal(float x, float z);
 
@@ -44,6 +45,8 @@ namespace Utopian
 
 		void SetBrushBlock(const SharedPtr<BrushBlock> brushBlock);
 		SharedPtr<BrushBlock> GetBrushBlock();
+
+		void SetAmplitudeScaling(float amplitudeScaling);
 
 		void RenderNormalmap();
 		void RenderBlendmap();
@@ -61,7 +64,7 @@ namespace Utopian
 	private:
 		Vk::Device* mDevice;
 		Vk::StaticModel* mQuadModel;
-		float mAmplitudeScaling = 6000.0f; // Terrain amplitude should be stored here and not as a render setting!
+		float mAmplitudeScaling = 6000.0f;
 		SettingsBlock settingsBlock;
 		SharedPtr<BrushBlock> mBrushBlock;
 

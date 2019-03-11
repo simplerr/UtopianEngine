@@ -15,6 +15,7 @@ layout (std140, set = 0, binding = 1) uniform UBO_settings
 	float tessellationFactor;
     float amplitude;
     float textureScaling;
+    float bumpmapAmplitude;
     int wireframe;
 } ubo_settings;
 
@@ -24,7 +25,7 @@ layout (set = 0, binding = 7) uniform sampler2D samplerBlendmap;
 
 float getHeight(vec2 texCoord)
 {
-    float height = texture(samplerHeightmap, texCoord / ubo_settings.textureScaling).r * ubo_settings.amplitude;
+    float height = texture(samplerHeightmap, texCoord).r * ubo_settings.amplitude;
     //height = 0.0f;
 
     return height;
@@ -32,7 +33,7 @@ float getHeight(vec2 texCoord)
 
 vec3 getNormal(vec2 texCoord)
 {
-    vec3 normal = texture(samplerNormalmap, texCoord / ubo_settings.textureScaling).xyz;
+    vec3 normal = texture(samplerNormalmap, texCoord).xyz;
     //normal = vec3(0, 1, 0);
 
     return normal;

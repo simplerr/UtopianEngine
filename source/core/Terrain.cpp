@@ -280,7 +280,7 @@ namespace Utopian
 
 	Ray Terrain::LinearSearch(Ray ray)
 	{
-		float stepSize = 20.0f;
+		float stepSize = 30.0f;
 		glm::vec3 nextPoint = ray.origin + ray.direction * stepSize;
 		float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
 		int counter = 0;
@@ -342,5 +342,15 @@ namespace Utopian
 	SharedPtr<Terrain::BrushBlock> Terrain::GetBrushBlock()
 	{
 		return mBrushBlock;
+	}
+
+	float Terrain::GetAmplitudeScaling()
+	{
+		return mAmplitudeScaling;
+	}
+	
+	void Terrain::SetAmplitudeScaling(float amplitudeScaling)
+	{
+		mAmplitudeScaling = amplitudeScaling;
 	}
 }
