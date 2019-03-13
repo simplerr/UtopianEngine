@@ -31,6 +31,7 @@ namespace Utopian
 		// Temporary:
 		brushSettings.mode = BrushSettings::Mode::BLEND;
 		brushSettings.operation = BrushSettings::Operation::ADD;
+		brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
 		brushSettings.strength = 240.0f;
 		brushSettings.radius = 500.0f;
    }
@@ -85,10 +86,13 @@ namespace Utopian
 	   Vk::UIOverlay::BeginWindow("Terrain tool", glm::vec2(1500.0f, 850.0f), 200.0f);
 
 	   int mode = brushSettings.mode;
+	   int texture = brushSettings.blendLayer;
 	   ImGui::Combo("Brush mode", &mode, "Height\0Blend\0");
+	   ImGui::Combo("Texture", &texture, "Grass\0Rock\0Dirt\0");
 	   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
 	   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);
 	   brushSettings.mode = (BrushSettings::Mode)mode;
+	   brushSettings.blendLayer = (BrushSettings::BlendLayer)texture;
 
 	   Vk::UIOverlay::EndWindow();
    }
@@ -151,6 +155,7 @@ namespace Utopian
 		brushBlock->data.strength = brushSettings.strength;
 		brushBlock->data.mode = brushSettings.mode;
 		brushBlock->data.operation = brushSettings.operation;
+		brushBlock->data.blendLayer = brushSettings.blendLayer;
 		brushBlock->UpdateMemory();
 	}
 

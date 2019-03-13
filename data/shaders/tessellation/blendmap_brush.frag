@@ -12,20 +12,24 @@ layout (std140, set = 0, binding = 0) uniform UBO_brush
     float strength;
     int mode; // 0 = height, 1 = blend
     int operation; // 0 = add, 1 = remove
+    int blendLayer; // 0 = grass, 1 = rocks, 2 = dirt
 } ubo_brush;
 
 void main() 
 {
-    vec3 color = vec3(1, 0, 0);
+    vec3 blend = vec3(1, 0, 0);
+    vec3 layer = vec3(1, 0, 0);
+
+    if (ubo_brush.blendLayer == 1)
+        layer = vec3(0, 1, 0);
+    else if (ubo_brush.blendLayer == 2)
+        layer = vec3(0, 0, 1);
 
     vec2 center = ubo_brush.pos;
-    //center = vec2(0.5, 0.5);
-    //if (distance(ubo_brush.pos, InTex) < 0.1)
-    //if (distance(center, InTex) < 0.01)
     if (distance(center, InTex) < ubo_brush.radius)
-        color = vec3(0, 0, 1);
+        blend = layer;
     else
         discard;
 
-    OutFragColor = vec4(color, 1.0);
+    OutFragColor = vec4(blend, 1.0);
 }

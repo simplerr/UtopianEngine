@@ -22,11 +22,18 @@ namespace Utopian
 			REMOVE = 1
 		};
 
+		enum BlendLayer {
+			GRASS = 0,
+			ROCKS,
+			DIRT
+		};
+
 		glm::vec2 position;
 		float radius;
 		float strength;
 		Mode mode;
 		Operation operation;
+		BlendLayer blendLayer;
 	};
 
 	class TerrainTool

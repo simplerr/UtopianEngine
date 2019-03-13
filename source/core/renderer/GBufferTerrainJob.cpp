@@ -59,17 +59,9 @@ namespace Utopian
 		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_brush", mTerrain->GetBrushBlock().get());
 
-		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
-		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
-		Vk::Texture* displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
-
-		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
-		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
-		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());
-
-		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
-		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
-		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
+		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
+		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
+		Vk::Texture* displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
 
 		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
 		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
@@ -78,6 +70,14 @@ namespace Utopian
 		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_21_DIF.jpg");
 		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_21_NRM.jpg");
 		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_21_DISP.jpg");
+
+		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
+		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
+		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());
+
+		diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DIF.jpg");
+		normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_NRM.jpg");
+		displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_11_DISP.jpg");
 
 		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
 		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());

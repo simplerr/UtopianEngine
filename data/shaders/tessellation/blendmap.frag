@@ -25,20 +25,19 @@ void main()
     float height = texture(samplerHeightmap, InTex).r * ubo_settings.amplitudeScaling;
     vec3 normal = normalize(texture(samplerNormalmap, InTex).xyz);
 
-    vec4 blendmap = vec4(0.0);
+    vec3 blendmap = vec3(0.0);
 
     // Altitde 
-    float highAltitude = 1000.0;
-	if (height > highAltitude) {
-        blendmap.g = 1.0;
-    }
-	else {
-        blendmap.r = 1.0;
-    }
+    float highAltitude = 3500.0;
+    vec3 flatBlend = vec3(1, 0, 0); // grass
+    if (height > highAltitude)
+        flatBlend = vec3(0, 0, 1);  // dirt
 
     // Slope
-    if (normal.y < 0.70)
-        blendmap.b = 1.0;
+    if (normal.y > 0.70)
+        blendmap = flatBlend;
+    else
+        blendmap.g = 1.0;
 
-    OutFragColor = blendmap;
+    OutFragColor = vec4(blendmap, 1.0f);
 }

@@ -18,6 +18,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, strength)
 			UNIFORM_PARAM(int, mode) // 0 = height, 1 = blend
 			UNIFORM_PARAM(int, operation) // 0 = add, 1 = remove
+    		UNIFORM_PARAM(int, blendLayer)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
