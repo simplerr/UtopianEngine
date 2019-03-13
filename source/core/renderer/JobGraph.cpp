@@ -9,6 +9,7 @@
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
 #include "core/renderer/GBufferTerrainJob.h"
+#include "core/renderer/FXAAJob.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/VulkanApp.h"
@@ -38,10 +39,11 @@ namespace Utopian
 		//AddJob(new SkyboxJob(renderer, width, height));
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
+		AddJob(new DebugJob(device, width, height));
 
-		DebugJob* debugJob = new DebugJob(device, width, height);
-		vulkanApp->SetJobGraphWaitSemaphore(debugJob->GetCompletedSemahore());
-		AddJob(debugJob);
+		FXAAJob* fxaaJob = new FXAAJob(device, width, height);
+		vulkanApp->SetJobGraphWaitSemaphore(fxaaJob->GetCompletedSemahore());
+		AddJob(fxaaJob);
 	}
 
 	JobGraph::~JobGraph()

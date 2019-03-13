@@ -1,32 +1,21 @@
 actor_list = 
 {
+	
 	{
-		actor_name = "Camera",
+		actor_name = "Castle",
 		components = 
 		{
-			CCamera = 
+			CRenderable = 
 			{
-				far_plane = 51200,
-				fov = 60,
-				look_at_x = -400,
-				look_at_y = 50,
-				look_at_z = 0,
-				near_plane = 1,
-			},
-			CNoClip = 
-			{
-				speed = 1,
-			},
-			CPlayerControl = 
-			{
-				empty = 0,
+				path = "data/models/sponza/sponza.obj",
+				render_flags = 1,
 			},
 			CTransform = 
 			{
-				pos_x = -768.77526855469,
-				pos_y = -724.88452148438,
-				pos_z = 715.08923339844,
-				rotation_x = 0,
+				pos_x = -256.17031860352,
+				pos_y = 0,
+				pos_z = 40.218482971191,
+				rotation_x = 180,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 1,
@@ -34,8 +23,8 @@ actor_list =
 				scale_z = 1,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "EditorActor",
 		components = 
@@ -74,6 +63,42 @@ actor_list =
 				scale_x = 27.700000762939,
 				scale_y = 26.5,
 				scale_z = 22.60000038147,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "Camera",
+		components = 
+		{
+			CCamera = 
+			{
+				far_plane = 51200,
+				fov = 60,
+				look_at_x = -400,
+				look_at_y = 50,
+				look_at_z = 0,
+				near_plane = 1,
+			},
+			CNoClip = 
+			{
+				speed = 1,
+			},
+			CPlayerControl = 
+			{
+				empty = 0,
+			},
+			CTransform = 
+			{
+				pos_x = -461.9267578125,
+				pos_y = 198.3311920166,
+				pos_z = 46.613162994385,
+				rotation_x = 0,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
 	},

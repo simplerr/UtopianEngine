@@ -19,6 +19,5 @@ namespace Utopian
 		SharedPtr<Vk::Sampler> depthSampler;
 		SharedPtr<Vk::DeferredEffect> effect;
 	private:
-		SharedPtr<ScreenQuad> mScreenQuad;
 	};
 }

@@ -468,6 +468,9 @@
     <ClCompile Include="source\core\renderer\GBufferTerrainJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\renderer\FXAAJob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -852,6 +855,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\math\Helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\FXAAJob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

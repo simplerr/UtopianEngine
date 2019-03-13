@@ -27,7 +27,7 @@ namespace Utopian
 			SKYBOX_INDEX,
 			SUN_SHAFT_INDEX,
 			//DEBUG_INDEX,
-			TESSELLATION_INDEX
+			FXAA_INDEX
 		};
 
 		JobGraph(Vk::VulkanApp* vulkanApp, const SharedPtr<Terrain>& terrain, Vk::Device* device, uint32_t width, uint32_t height);

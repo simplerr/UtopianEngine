@@ -13,7 +13,7 @@ namespace Utopian
 		renderTarget = std::make_shared<Vk::BasicRenderTarget>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(device, renderTarget->GetRenderPass());
 
-		mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
+		//mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
 		depthSampler = std::make_shared<Vk::Sampler>(device, false);
