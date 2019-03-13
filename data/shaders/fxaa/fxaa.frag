@@ -6,8 +6,15 @@ layout (location = 0) out vec4 OutColor;
 
 layout (set = 0, binding = 0) uniform sampler2D textureSampler;
 
+layout(std140, set = 0, binding = 1) uniform UBO_settings
+{
+    int enabled;
+    int debug;
+    float threshold;
+} settings_ubo;
+
 #define EDGE_THRESHOLD_MIN 0.0312
-#define EDGE_THRESHOLD_MAX 0.325
+#define EDGE_THRESHOLD_MAX 0.125
 
 #define SCREEN_WIDTH 2000
 #define SCREEN_HEIGHT 1260
@@ -24,10 +31,17 @@ float rgb2luma(vec3 rgb)
 // Implementation from http://blog.simonrodriguez.fr/articles/30-07-2016_implementing_fxaa.html
 void main() 
 {
+    vec3 colorCenter = texture(textureSampler, InTex).rgb;
+
+    if (settings_ubo.enabled != 1)
+    {
+        OutColor = vec4(colorCenter, 1.0f);
+        return;
+    }
+
     /**
         Calculate where to apply AA
     */
-    vec3 colorCenter = texture(textureSampler, InTex).rgb;
 
     // Luma at the current fragment
     float lumaCenter = rgb2luma(colorCenter);
@@ -46,7 +60,7 @@ void main()
     float lumaRange = lumaMax - lumaMin;
 
     // If the luma variation is lower that a threshold (or if we are in a really dark area), we are not on an edge, don't perform any AA.
-    if(lumaRange < max(EDGE_THRESHOLD_MIN, lumaMax * EDGE_THRESHOLD_MAX))
+    if(lumaRange < max(EDGE_THRESHOLD_MIN, lumaMax * settings_ubo.threshold))
     {
         OutColor = vec4(colorCenter, 1.0f);
         return;
@@ -245,9 +259,11 @@ void main()
     vec3 finalColor = texture(textureSampler, finalUv).rgb;
     OutColor = vec4(finalColor, 1.0f);
 
-    // if (isHorizontal)
-    //     OutColor = vec4(1, 0, 0, 1.0f);
-    // else
-    //     OutColor = vec4(0, 1, 0, 1.0f);
-    //OutColor = vec4(colorCenter, 1.0f);
+    if (settings_ubo.debug == 1)
+    {
+        if (isHorizontal)
+            OutColor = vec4(1, 0, 0, 1.0f);
+        else
+            OutColor = vec4(0, 1, 0, 1.0f);
+    }
 }

@@ -104,6 +104,9 @@ namespace Utopian
 		ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
 		ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
 		ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
+		ImGui::Checkbox("FXAA", &mRenderingSettings.fxaaEnabled);
+		ImGui::Checkbox("FXAA debug", &mRenderingSettings.fxaaDebug);
+		ImGui::SliderFloat("FXAA threshold", &mRenderingSettings.fxaaThreshold, 0.0f, 1.5f);
 		ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
 		ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
 		ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);

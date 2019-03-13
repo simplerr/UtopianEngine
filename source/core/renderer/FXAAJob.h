@@ -8,6 +8,13 @@ namespace Utopian
 	class FXAAJob : public BaseJob
 	{
 	public:
+
+		UNIFORM_BLOCK_BEGIN(FXAASettingsBlock)
+			UNIFORM_PARAM(int, enabled)
+			UNIFORM_PARAM(int, debug)
+			UNIFORM_PARAM(float, threshold)
+		UNIFORM_BLOCK_END()
+
 		FXAAJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~FXAAJob();
 
@@ -19,5 +26,6 @@ namespace Utopian
 	private:
 		SharedPtr<Vk::Effect> effect;
 		SharedPtr<Vk::Sampler> sampler;
+		FXAASettingsBlock settingsBlock;
 	};
 }

@@ -26,6 +26,9 @@ namespace Utopian
 		effect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		effect->CreatePipeline();
 
+		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		effect->BindUniformBuffer("UBO_settings", &settingsBlock);
+
 		gScreenQuadUi().AddQuad(0u, 0u, width, height, fxaaImage.get(), renderTarget->GetSampler(), 1u);
 	}
 
@@ -46,6 +49,11 @@ namespace Utopian
 
 	void FXAAJob::Render(const JobInput& jobInput)
 	{
+		settingsBlock.data.enabled = jobInput.renderingSettings.fxaaEnabled;
+		settingsBlock.data.debug = jobInput.renderingSettings.fxaaDebug;
+		settingsBlock.data.threshold = jobInput.renderingSettings.fxaaThreshold;
+		settingsBlock.UpdateMemory();
+
 		renderTarget->Begin("FXAA pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
