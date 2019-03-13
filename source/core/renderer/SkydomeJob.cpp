@@ -47,8 +47,6 @@ namespace Utopian
 		effect->BindUniformBuffer("UBO_parameters", &parameterBlock);
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
-
-		SetWaitSemaphore(deferredJob->GetCompletedSemahore());
 	}
 
 	void SkydomeJob::Render(const JobInput& jobInput)

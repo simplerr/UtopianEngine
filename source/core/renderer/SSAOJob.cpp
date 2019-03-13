@@ -32,8 +32,6 @@ namespace Utopian
 			gbuffer.albedoImage.get(),
 			gbufferTerrainJob->renderTarget->GetSampler());
 
-		SetWaitSemaphore(gbufferJob->GetCompletedSemahore());
-
 		CreateKernelSamples();
 	}
 

@@ -19,7 +19,6 @@ namespace Utopian
 	void GBufferJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
-		SetWaitSemaphore(gbufferTerrainJob->GetCompletedSemahore());
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

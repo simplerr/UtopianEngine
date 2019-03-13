@@ -45,8 +45,6 @@ namespace Utopian
 		radialBlurEffect->BindCombinedImage("sunSampler", skydomeJob->sunImage.get(), radialBlurRenderTarget->GetSampler());
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
-
-		SetWaitSemaphore(skydomeJob->GetCompletedSemahore());
 	}
 
 	void SunShaftJob::Render(const JobInput& jobInput)

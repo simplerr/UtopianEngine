@@ -41,8 +41,6 @@ namespace Utopian
 
 		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 		effect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), depthSampler.get());
-
-		SetWaitSemaphore(shadowJob->GetCompletedSemahore());
 	}
 
 	void DeferredJob::Render(const JobInput& jobInput)

@@ -28,8 +28,6 @@ namespace Utopian
 	{
 		SSAOJob* ssaoJob = static_cast<SSAOJob*>(jobs[JobGraph::SSAO_INDEX]);
 		effect->BindSSAOOutput(ssaoJob->ssaoImage.get(), ssaoJob->renderTarget->GetSampler());
-
-		SetWaitSemaphore(ssaoJob->GetCompletedSemahore());
 	}
 
 	void BlurJob::Render(const JobInput& jobInput)

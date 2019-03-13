@@ -69,9 +69,6 @@ namespace Utopian
 
 	void ShadowJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		// In reality this job does not have to wait for the blur job
-		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
-		SetWaitSemaphore(blurJob->GetCompletedSemahore());
 	}
 
 	void ShadowJob::Render(const JobInput& jobInput)

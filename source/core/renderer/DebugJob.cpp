@@ -1,7 +1,6 @@
 #include "core/renderer/DebugJob.h"
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GBufferJob.h"
-#include "core/renderer/SunShaftJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 
 namespace Utopian
@@ -18,8 +17,6 @@ namespace Utopian
 	void DebugJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-		SunShaftJob* sunShaftJob = static_cast<SunShaftJob*>(jobs[JobGraph::SUN_SHAFT_INDEX]);
-		SetWaitSemaphore(sunShaftJob->GetCompletedSemahore());
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

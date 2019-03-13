@@ -67,6 +67,13 @@ namespace Utopian
 
 	void JobGraph::AddJob(BaseJob* job)
 	{
+		// Setup synchronization dependecy to the previous job
+		if (mJobs.size() > 0)
+		{
+			SharedPtr<Vk::Semaphore>& waitSemaphore = mJobs.back()->GetCompletedSemahore();
+			job->SetWaitSemaphore(waitSemaphore);
+		}
+
 		mJobs.push_back(job);
 		job->Init(mJobs, mGBuffer);
 	}
