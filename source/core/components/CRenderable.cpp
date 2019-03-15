@@ -129,4 +129,9 @@ namespace Utopian
 	{
 		return mInternal->HasRenderFlags(renderFlags);
 	}
+
+	glm::vec4 CRenderable::GetColor() const
+	{
+		return mInternal->GetColor();
+	}
 }

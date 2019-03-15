@@ -1,6 +1,6 @@
 #version 450
 
-layout (location = 0) in vec3 InColor;
+layout (location = 0) in vec4 InColor;
 layout (location = 1) in vec3 InPosW;
 layout (location = 2) in vec3 InNormalW;
 layout (location = 3) in vec2 InTex;
@@ -40,9 +40,9 @@ void main()
 
 	if (diffuse.a < 0.01f)
 		discard;
-
-	if (InColor != vec3(1.0f))
-		diffuse = vec4(InColor, 1.0f);
+	
+	// Multiply with the brightness of the mesh
+	diffuse.rgb *= InColor.a;
 
 	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
 

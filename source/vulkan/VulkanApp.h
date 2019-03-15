@@ -21,14 +21,15 @@ namespace Utopian::Vk
 	struct PushConstantBlock {
 		PushConstantBlock() {
 			world = glm::mat4();
-			worldInvTranspose = glm::mat4();
+			//worldInvTranspose = glm::mat4();
 			// color = glm::vec4(1.0f);
 			// textureTiling = glm::vec2(1.0f, 1.0f);
 		}
 
-		PushConstantBlock(glm::mat4 w, glm::vec4 c = glm::vec4(1.0f), glm::vec2 tiling = glm::vec2(1.0f, 1.0f)) {
-			world = w;
-			// color = c;
+		PushConstantBlock(glm::mat4 _world, glm::vec4 _color = glm::vec4(1.0f), glm::vec2 tiling = glm::vec2(1.0f, 1.0f)) {
+			world = _world;
+			color = _color;
+
 			// textureTiling = tiling;
 
 			// Note: This needs to be done to have the physical world match the rendered world.
@@ -36,14 +37,12 @@ namespace Utopian::Vk
 			world[3][0] = -world[3][0];
 			world[3][1] = -world[3][1];
 			world[3][2] = -world[3][2];
-
-			worldInvTranspose = glm::inverseTranspose(world);
 		}
 		
 		glm::mat4 world;
-		glm::mat4 worldInvTranspose;
+		glm::vec4 color; // r, g, b, brightness
+
 	 	// These exceeds the 128 byte limit
-		// glm::vec4 color;
 		// glm::vec2 textureTiling;
 		// glm::vec2 pad;
 	};

@@ -114,7 +114,7 @@ namespace Utopian
 		}
 
 		// Display Actor creation list
-		Vk::UIOverlay::BeginWindow("Actor list", glm::vec2(1500, 500), 400.0f);
+		Vk::UIOverlay::BeginWindow("Actor list", glm::vec2(1500, 700), 400.0f);
 
 		ImGui::Text("Models:");
 		ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());

@@ -16,14 +16,14 @@ layout (location = 0) in vec3 inNormal[];
 
 layout (location = 0) out vec3 outColor;
 
-layout(push_constant) uniform PushConsts {
+layout (push_constant) uniform PushConstants {
 	 mat4 world;
-	 mat4 worldInvTranspose;
+	 vec4 color;
+	 
 	 // These exceeds the 128 byte limit
-	 // vec4 color;
 	 // vec2 textureTiling;
 	 // vec2 pad;
-} pushConsts;
+} pushConstants;
 
 void main(void)
 {	
@@ -33,13 +33,13 @@ void main(void)
 		vec3 pos = gl_in[i].gl_Position.xyz;
 		vec3 normal = normalize(inNormal[i].xyz);
 
-		gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos, 1.0);
+		gl_Position = ubo.projection * ubo.view * pushConstants.world * vec4(pos, 1.0);
 		gl_PointSize = 1;
 		outColor = vec3(1.0, 0.0, 0.0);
 		EmitVertex();
 
 		// Todo: Correct this calculation so that the scaling does not affect normal length
-		gl_Position = ubo.projection * ubo.view * pushConsts.world * vec4(pos + normal * normalLength, 1.0);
+		gl_Position = ubo.projection * ubo.view * pushConstants.world * vec4(pos + normal * normalLength, 1.0);
 
 		outColor = vec3(0.0, 0.0, 1.0);
 		EmitVertex();

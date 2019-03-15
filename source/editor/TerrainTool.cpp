@@ -83,7 +83,7 @@ namespace Utopian
    void TerrainTool::RenderUi()
    {
 	   // Display Actor creation list
-	   Vk::UIOverlay::BeginWindow("Terrain tool", glm::vec2(1500.0f, 850.0f), 200.0f);
+	   Vk::UIOverlay::BeginWindow("Terrain tool", glm::vec2(1500.0f, 1050.0f), 200.0f);
 
 	   int mode = brushSettings.mode;
 	   int texture = brushSettings.blendLayer;

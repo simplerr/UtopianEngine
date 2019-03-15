@@ -16,14 +16,14 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
-	 mat4 worldInv;
+	 vec4 color;
+	 
 	 // These exceeds the 128 byte limit
-	 // vec4 color;
 	 // vec2 textureTiling;
 	 // vec2 pad;
 } pushConstants;
 
-layout (location = 0) out vec3 OutColor;
+layout (location = 0) out vec4 OutColor;
 
 out gl_PerVertex 
 {
@@ -32,7 +32,7 @@ out gl_PerVertex
 
 void main() 
 {
-	OutColor = vec3(1.0, 1.0, 1.0);//pushConstants.color.rgb;
+	OutColor = pushConstants.color;
 
 	// Note: workaround to avoid glslang to optimize unused inputs
 	vec3 temp = InColor;

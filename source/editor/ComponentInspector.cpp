@@ -104,6 +104,11 @@ void Utopian::RenderableInspector::UpdateUi()
 			mRenderable->SetRenderFlags(flag);
 		}
 
+		glm::vec4 color = mRenderable->GetColor();
+		ImGui::ColorEdit3("Color", &color.x);
+		ImGui::SliderFloat("Brightness", &color.w, 0.0f, 100.0, "%.1f");
+		mRenderable->SetColor(color);
+
 		ImGui::SliderInt("Tiling", &mTextureTiling.x, 1, 200);
 
 		mRenderable->SetTileFactor(glm::vec2(mTextureTiling.x, mTextureTiling.y));

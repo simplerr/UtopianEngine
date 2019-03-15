@@ -17,7 +17,7 @@ layout (std140, set = 0, binding = 0) uniform UBO_viewProjection
 	mat4 view;
 } per_frame_vs;
 
-layout (location = 0) out vec3 OutColor;
+layout (location = 0) out vec4 OutColor;
 layout (location = 1) out vec3 OutPosW;
 layout (location = 2) out vec3 OutNormalW;
 layout (location = 3) out vec2 OutTex;
@@ -40,9 +40,8 @@ void main()
 	vec3 N = normalize(mat3(InInstanceWorld) * InNormalL);
 	OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
 
-	OutColor = vec3(1.0);
+	OutColor = vec4(1.0);
 	OutPosW = (InInstanceWorld * vec4(InPosL.xyz, 1.0)).xyz;
-	//OutNormalW  = mat3(pushConstants.worldInvTranspose) * InNormalL;
 	OutNormalW  = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
 	mat3 normalMatrix = transpose(inverse(mat3(per_frame_vs.view * InInstanceWorld)));
 	OutNormalV = normalMatrix * InNormalL;

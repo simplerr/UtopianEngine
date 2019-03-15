@@ -89,7 +89,7 @@ namespace Utopian
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
 					// Push the world matrix constant
-					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
 
 					commandBuffer->CmdBindPipeline(normalEffect->GetPipeline());
 					commandBuffer->CmdBindDescriptorSets(normalEffect);
@@ -109,7 +109,7 @@ namespace Utopian
 				glm::mat4 world = glm::translate(glm::mat4(), translation);
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
 
-				Vk::PushConstantBlock pushConsts(world, glm::vec4(0, 1, 0, 1));
+				Vk::PushConstantBlock pushConsts(world);
 
 				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
 				commandBuffer->CmdBindDescriptorSets(colorEffectWireframe);

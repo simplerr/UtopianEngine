@@ -147,7 +147,7 @@ namespace Utopian
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
+				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
 				// Todo: Note: This is a temporary workaround
 				if (!renderable->HasRenderFlags(RENDER_FLAG_TERRAIN))

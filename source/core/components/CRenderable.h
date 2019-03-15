@@ -56,6 +56,7 @@ namespace Utopian
 		const BoundingBox GetBoundingBox() const;
 		const std::string GetPath() const;
 		glm::vec2 GetTextureTiling() const;
+		glm::vec4 GetColor() const;
 
 	private:
 		SharedPtr<Renderable> mInternal;
