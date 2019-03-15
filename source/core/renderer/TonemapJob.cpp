@@ -1,25 +1,24 @@
-#include "core/renderer/FXAAJob.h"
-#include "core/renderer/DeferredJob.h"
 #include "core/renderer/TonemapJob.h"
+#include "core/renderer/DeferredJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/handles/Sampler.h"
 
 namespace Utopian
 {
-	FXAAJob::FXAAJob(Vk::Device* device, uint32_t width, uint32_t height)
+	TonemapJob::TonemapJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		fxaaImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		outputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-		renderTarget->AddWriteOnlyColorAttachment(fxaaImage);
+		renderTarget->AddWriteOnlyColorAttachment(outputImage);
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/fxaa/fxaa.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/tonemap.frag";
 		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
@@ -29,33 +28,30 @@ namespace Utopian
 
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		effect->BindUniformBuffer("UBO_settings", &settingsBlock);
-
-		gScreenQuadUi().AddQuad(0u, 0u, width, height, fxaaImage.get(), renderTarget->GetSampler(), 1u);
 	}
 
-	FXAAJob::~FXAAJob()
+	TonemapJob::~TonemapJob()
 	{
 	}
 
-	void FXAAJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+	void TonemapJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		TonemapJob* tonemapJob = static_cast<TonemapJob*>(jobs[JobGraph::TONEMAP_INDEX]);
+		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
 		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->createInfo.anisotropyEnable = VK_FALSE;
 		sampler->Create();
 
-		effect->BindCombinedImage("textureSampler", tonemapJob->outputImage.get(), sampler.get());
+		effect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), sampler.get());
 	}
 
-	void FXAAJob::Render(const JobInput& jobInput)
+	void TonemapJob::Render(const JobInput& jobInput)
 	{
-		settingsBlock.data.enabled = jobInput.renderingSettings.fxaaEnabled;
-		settingsBlock.data.debug = jobInput.renderingSettings.fxaaDebug;
-		settingsBlock.data.threshold = jobInput.renderingSettings.fxaaThreshold;
+		settingsBlock.data.algorithm = 0;
+		settingsBlock.data.exposure = jobInput.renderingSettings.exposure;
 		settingsBlock.UpdateMemory();
 
-		renderTarget->Begin("FXAA pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		renderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?

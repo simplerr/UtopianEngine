@@ -2,72 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "Castle",
-		components = 
-		{
-			CRenderable = 
-			{
-				path = "data/models/sponza/sponza.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				pos_x = -256.17031860352,
-				pos_y = 0,
-				pos_z = 40.218482971191,
-				rotation_x = 180,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CLight = 
-			{
-				att_x = 0.57800000905991,
-				att_y = 0,
-				att_z = 0,
-				color_b = 0.7593954205513,
-				color_g = 0.90262448787689,
-				color_r = 0.91666668653488,
-				dir_x = 0.70710676908493,
-				dir_y = 0.70710676908493,
-				dir_z = -0,
-				intensity_x = 0.30100002884865,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 100000,
-				spot = 4,
-				type = 0,
-			},
-			CRenderable = 
-			{
-				path = "data/models/teapot.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				pos_x = 348.99584960938,
-				pos_y = 864.88568115234,
-				pos_z = 6350.1616210938,
-				rotation_x = 182.19999694824,
-				rotation_y = 0,
-				rotation_z = 0,
-				scale_x = 27.700000762939,
-				scale_y = 26.5,
-				scale_z = 22.60000038147,
-			},
-		},
-	}, 
-	[0] = 
-	{
 		actor_name = "Camera",
 		components = 
 		{
@@ -90,15 +24,81 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -461.9267578125,
-				pos_y = 198.3311920166,
-				pos_z = 46.613162994385,
+				pos_x = -2719.4907226563,
+				pos_y = 193.53289794922,
+				pos_z = -3435.5593261719,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Castle",
+		components = 
+		{
+			CRenderable = 
+			{
+				path = "data/models/sponza/sponza.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -2885.8703613281,
+				pos_y = 0,
+				pos_z = -3392.9382324219,
+				rotation_x = 180,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CLight = 
+			{
+				att_x = 0.57800000905991,
+				att_y = 0,
+				att_z = 0,
+				color_b = 0.99998998641968,
+				color_g = 0.99999910593033,
+				color_r = 1,
+				dir_x = 0.70710676908493,
+				dir_y = 0.70710676908493,
+				dir_z = -0,
+				intensity_x = 0.096000000834465,
+				intensity_y = 1,
+				intensity_z = 0,
+				range = 100000,
+				spot = 4,
+				type = 0,
+			},
+			CRenderable = 
+			{
+				path = "data/models/teapot.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				pos_x = -1782.9721679688,
+				pos_y = 231.34075927734,
+				pos_z = -3421.5627441406,
+				rotation_x = 182.19999694824,
+				rotation_y = 0,
+				rotation_z = 0,
+				scale_x = 3.6000001430511,
+				scale_y = 4.8000001907349,
+				scale_z = 3.6000001430511,
 			},
 		},
 	},

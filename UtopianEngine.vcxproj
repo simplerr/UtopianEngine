@@ -106,6 +106,7 @@
     <ClCompile Include="source\core\renderer\SSAOJob.cpp" />
     <ClCompile Include="source\core\renderer\SunShaftJob.cpp" />
     <ClCompile Include="source\core\renderer\GBufferTerrainJob.cpp" />
+    <ClCompile Include="source\core\renderer\TonemapJob.cpp" />
     <ClCompile Include="source\core\ScriptExports.cpp" />
     <ClCompile Include="source\core\legacy\BaseTerrain.cpp" />
     <ClCompile Include="source\core\legacy\Block.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="source\core\renderer\SSAOJob.h" />
     <ClInclude Include="source\core\renderer\SunShaftJob.h" />
     <ClInclude Include="source\core\renderer\GBufferTerrainJob.h" />
+    <ClInclude Include="source\core\renderer\TonemapJob.h" />
     <ClInclude Include="source\core\ScriptExports.h" />
     <ClInclude Include="source\core\Terrain.h" />
     <ClInclude Include="source\core\legacy\BaseTerrain.h" />
