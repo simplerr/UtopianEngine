@@ -92,6 +92,7 @@
     <ClCompile Include="source\core\AssetLoader.cpp" />
     <ClCompile Include="source\core\Engine.cpp" />
     <ClCompile Include="source\core\LuaManager.cpp" />
+    <ClCompile Include="source\core\renderer\BloomJob.cpp" />
     <ClCompile Include="source\core\renderer\BlurJob.cpp" />
     <ClCompile Include="source\core\renderer\DebugJob.cpp" />
     <ClCompile Include="source\core\renderer\DeferredJob.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="source\core\AssetLoader.h" />
     <ClInclude Include="source\core\Engine.h" />
     <ClInclude Include="source\core\LuaManager.h" />
+    <ClInclude Include="source\core\renderer\BloomJob.h" />
     <ClInclude Include="source\core\renderer\BlurJob.h" />
     <ClInclude Include="source\core\renderer\CommonJobIncludes.h" />
     <ClInclude Include="source\core\renderer\DebugJob.h" />

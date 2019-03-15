@@ -11,6 +11,7 @@
 #include "core/renderer/GBufferTerrainJob.h"
 #include "core/renderer/FXAAJob.h"
 #include "core/renderer/TonemapJob.h"
+#include "core/renderer/BloomJob.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/VulkanApp.h"
@@ -23,7 +24,7 @@ namespace Utopian
 		mGBuffer.positionImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
 		mGBuffer.normalImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.normalViewImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
-		mGBuffer.albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		mGBuffer.albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		/* Add jobs */
@@ -41,6 +42,7 @@ namespace Utopian
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new DebugJob(device, width, height));
+		AddJob(new BloomJob(device, width, height));
 		AddJob(new TonemapJob(device, width, height));
 
 		FXAAJob* fxaaJob = new FXAAJob(device, width, height);

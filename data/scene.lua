@@ -24,9 +24,9 @@ actor_list =
 			},
 			CTransform = 
 			{
-				pos_x = -2719.4907226563,
-				pos_y = 193.53289794922,
-				pos_z = -3435.5593261719,
+				pos_x = -2549.6999511719,
+				pos_y = 241.8283996582,
+				pos_z = -3422.75,
 				rotation_x = 0,
 				rotation_y = 0,
 				rotation_z = 0,
@@ -43,6 +43,10 @@ actor_list =
 		{
 			CRenderable = 
 			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
 				path = "data/models/sponza/sponza.obj",
 				render_flags = 1,
 			},
@@ -85,20 +89,24 @@ actor_list =
 			},
 			CRenderable = 
 			{
+				color_a = 5.2000002861023,
+				color_b = 0,
+				color_g = 0,
+				color_r = 1,
 				path = "data/models/teapot.obj",
 				render_flags = 1,
 			},
 			CTransform = 
 			{
-				pos_x = -1782.9721679688,
+				pos_x = -2401.7873535156,
 				pos_y = 231.34075927734,
-				pos_z = -3421.5627441406,
+				pos_z = -3428.3737792969,
 				rotation_x = 182.19999694824,
 				rotation_y = 0,
 				rotation_z = 0,
-				scale_x = 3.6000001430511,
-				scale_y = 4.8000001907349,
-				scale_z = 3.6000001430511,
+				scale_x = 1.2000000476837,
+				scale_y = 1.2000000476837,
+				scale_z = 1.2000000476837,
 			},
 		},
 	},

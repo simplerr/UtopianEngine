@@ -49,6 +49,12 @@ namespace Utopian
 		luaObject.SetString("path", GetPath().c_str());
 		luaObject.SetNumber("render_flags", GetRenderFlags());
 
+		glm::vec4 color = GetColor();
+		luaObject.SetNumber("color_r", color.r);
+		luaObject.SetNumber("color_g", color.g);
+		luaObject.SetNumber("color_b", color.b);
+		luaObject.SetNumber("color_a", color.a);
+
 		return luaObject;
 	}
 

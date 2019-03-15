@@ -32,5 +32,6 @@ namespace Utopian
 		float terrainBumpmapAmplitude = 14.0;
 		bool terrainWireframe = 0;
 		float exposure = 1.4f;
+		float bloomThreshold = 1.5f;
 	};
 }

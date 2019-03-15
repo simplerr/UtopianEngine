@@ -1,5 +1,6 @@
 #include "core/renderer/TonemapJob.h"
 #include "core/renderer/DeferredJob.h"
+#include "core/renderer/BloomJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/handles/Sampler.h"
@@ -37,12 +38,14 @@ namespace Utopian
 	void TonemapJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
+		BloomJob* bloomJob = static_cast<BloomJob*>(jobs[JobGraph::BLOOM_INDEX]);
 
 		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->createInfo.anisotropyEnable = VK_FALSE;
 		sampler->Create();
 
 		effect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), sampler.get());
+		effect->BindCombinedImage("bloomSampler", bloomJob->outputImage.get(), sampler.get());
 	}
 
 	void TonemapJob::Render(const JobInput& jobInput)

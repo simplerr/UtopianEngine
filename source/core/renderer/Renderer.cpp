@@ -126,6 +126,7 @@ namespace Utopian
 		ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 1.0f, 50.0f);
 		ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
 		ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);
+		ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);

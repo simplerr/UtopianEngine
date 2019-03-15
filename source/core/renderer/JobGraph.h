@@ -27,6 +27,7 @@ namespace Utopian
 			SKYBOX_INDEX,
 			SUN_SHAFT_INDEX,
 			DEBUG_INDEX,
+			BLOOM_INDEX,
 			TONEMAP_INDEX,
 			FXAA_INDEX
 		};
