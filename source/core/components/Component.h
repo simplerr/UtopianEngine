@@ -20,6 +20,7 @@ namespace Utopian
 			FREE_CAMERA,
 			ORBIT,
 			PLAYER_CONTROL,
+			RANDOM_PATHS,
 			BLOOM_LIGHT
 		};
 

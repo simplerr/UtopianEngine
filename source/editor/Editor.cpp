@@ -8,6 +8,7 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CLight.h"
 #include "core/components/CBloomLight.h"
+#include "core/components/CRandomPaths.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
 #include "core/legacy/BaseTerrain.h"
@@ -15,6 +16,7 @@
 #include "editor/TerrainTool.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
+#include <random>
 
 namespace Utopian
 {
@@ -26,7 +28,8 @@ namespace Utopian
 		mTransformTool = std::make_shared<TransformTool>(mTerrain, camera);
 		mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
 
-		AddActorCreation("Spot light", ActorTemplate::LIGHT);
+		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
+		AddActorCreation("Moving point light", ActorTemplate::MOVING_POINT_LIGHT);
 
 		AddPaths();
 	}
@@ -61,9 +64,12 @@ namespace Utopian
 		// Add new actor to scene
 		if (gInput().KeyPressed('C'))
 		{
+			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+			glm::vec3 intersection  = mTerrain->GetIntersectPoint(ray);
+
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
-			glm::vec3 pos = glm::vec3(0, 0, 0);
+			glm::vec3 pos = intersection + glm::vec3(0, 50.0f, 0);
 			CTransform* transform = actor->AddComponent<CTransform>(pos);
 			CRenderable* renderable = actor->AddComponent<CRenderable>();
 
@@ -75,12 +81,40 @@ namespace Utopian
 
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
 			}
-			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::LIGHT)
+			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_POINT_LIGHT)
 			{
 				renderable->LoadModel("data/models/teapot.obj");
+				renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
 
 				CLight* light = actor->AddComponent<CLight>();
-				actor->AddComponent<CBloomLight>();
+				CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
+
+				// Set random light color
+				std::random_device rd;
+				std::mt19937 mt(rd());
+				std::uniform_real_distribution<double> dist(0.0, 1.0);
+				glm::vec4 color = glm::vec4(dist(mt), dist(mt), dist(mt), 0.0f);
+				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f); // White for now
+				light->SetMaterial(color);
+				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4)); // Set brightness
+			}
+			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::MOVING_POINT_LIGHT)
+			{
+				renderable->LoadModel("data/models/teapot.obj");
+				renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
+
+				CLight* light = actor->AddComponent<CLight>();
+				CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
+				CRandomPaths* randomPaths = actor->AddComponent<CRandomPaths>(mTerrain);
+
+				// Set random light color
+				std::random_device rd;
+				std::mt19937 mt(rd());
+				std::uniform_real_distribution<double> dist(0.0, 1.0);
+				glm::vec4 color = glm::vec4(dist(mt), dist(mt), dist(mt), 0.0f);
+				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f); // White for now
+				light->SetMaterial(color);
+				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4)); // Set brightness
 			}
 
 			actor->PostInit();

@@ -480,6 +480,9 @@
     <ClCompile Include="source\core\components\CBloomLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\components\CRandomPaths.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -876,6 +879,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\core\components\CBloomLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\components\CRandomPaths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,7 +16,8 @@ namespace Utopian
 	enum ActorTemplate
 	{
 		STATIC_MODEL,
-		LIGHT
+		STATIC_POINT_LIGHT,
+		MOVING_POINT_LIGHT
 	};
 
 	class Editor
