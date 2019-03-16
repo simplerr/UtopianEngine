@@ -31,6 +31,7 @@ namespace Utopian
 		float terrainTextureScaling = 75.0;
 		float terrainBumpmapAmplitude = 14.0;
 		bool terrainWireframe = 0;
+		int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
 		float exposure = 1.4f;
 		float bloomThreshold = 1.5f;
 	};

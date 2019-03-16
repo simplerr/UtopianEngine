@@ -50,7 +50,7 @@ namespace Utopian
 
 	void TonemapJob::Render(const JobInput& jobInput)
 	{
-		settingsBlock.data.algorithm = 0;
+		settingsBlock.data.tonemapping = jobInput.renderingSettings.tonemapping;
 		settingsBlock.data.exposure = jobInput.renderingSettings.exposure;
 		settingsBlock.UpdateMemory();
 

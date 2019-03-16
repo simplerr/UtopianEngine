@@ -72,7 +72,6 @@ namespace Utopian
 
 		const uint32_t size = 240;
 		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, outputImage.get(), blurRenderTarget->GetSampler());
-		//gScreenQuadUi().AddQuad(0u, 0u, mWidth, mHeight, outputImage.get(), blurRenderTarget->GetSampler(), 1u);
 	}
 
 	void BloomJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)

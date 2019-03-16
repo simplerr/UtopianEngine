@@ -10,8 +10,8 @@ namespace Utopian
 	public:
 
 		UNIFORM_BLOCK_BEGIN(TonemapSettingsBlock)
-			UNIFORM_PARAM(int, algorithm) // 0 = Reinhard
-			UNIFORM_PARAM(float, exposure) // 0 = Reinhard
+			UNIFORM_PARAM(int, tonemapping) // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure
+			UNIFORM_PARAM(float, exposure)
 		UNIFORM_BLOCK_END()
 
 		TonemapJob(Vk::Device* device, uint32_t width, uint32_t height);
