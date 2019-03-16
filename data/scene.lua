@@ -108,6 +108,10 @@ actor_list =
 				scale_y = 1,
 				scale_z = 1,
 			},
+			CBloomLight = 
+			{
+				empty = 0,
+			},
 		},
 	},
 	
@@ -153,6 +157,10 @@ actor_list =
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+			CBloomLight = 
+			{
+				empty = 0,
 			},
 		},
 	},
@@ -228,6 +236,10 @@ actor_list =
 				scale_y = 1.2000000476837,
 				scale_z = 1.2000000476837,
 			},
+			CBloomLight = 
+			{
+				empty = 0,
+			},
 		},
 	}, 
 	[0] = 
@@ -273,6 +285,10 @@ actor_list =
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+			CBloomLight = 
+			{
+				empty = 0,
 			},
 		},
 	},

@@ -3,6 +3,7 @@
 #include "core/components/CTransform.h"
 #include "core/components/CLight.h"
 #include "core/components/CRenderable.h"
+#include "core/components/Actor.h"
 
 Utopian::ComponentInspector::ComponentInspector()
 {
@@ -104,8 +105,13 @@ void Utopian::RenderableInspector::UpdateUi()
 			mRenderable->SetRenderFlags(flag);
 		}
 
+		// If the renderable has a light then let the light inspector control the color
 		glm::vec4 color = mRenderable->GetColor();
-		ImGui::ColorEdit3("Color", &color.x);
+		if (!mRenderable->GetParent()->HasComponent<CLight>())
+		{
+			ImGui::ColorEdit3("Color", &color.x);
+		}
+		
 		ImGui::SliderFloat("Brightness", &color.w, 0.0f, 100.0, "%.1f");
 		mRenderable->SetColor(color);
 
@@ -134,9 +140,9 @@ void Utopian::LightInspector::UpdateUi()
 		ImGui::SliderFloat("Range", &mLightData.range, 0.0f, 10000.0f);
 		ImGui::SliderFloat("Spot", &mLightData.spot, 0.0f, 30.0f);
 
-		ImGui::ColorEdit4("Ambient color", &mLightData.material.ambient.x);
-		ImGui::ColorEdit4("Diffuse color", &mLightData.material.diffuse.x);
-		ImGui::ColorEdit4("Specular color", &mLightData.material.specular.x);
+		ImGui::ColorEdit3("Color", &mLightData.material.ambient.x);
+		mLightData.material.diffuse = mLightData.material.ambient;
+		mLightData.material.specular = mLightData.material.ambient;
 
 		mLight->SetIntensity(mLightData.intensity);
 		mLight->SetDirection(mLightData.direction);

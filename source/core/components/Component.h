@@ -19,7 +19,8 @@ namespace Utopian
 			CAMERA,
 			FREE_CAMERA,
 			ORBIT,
-			PLAYER_CONTROL
+			PLAYER_CONTROL,
+			BLOOM_LIGHT
 		};
 
 		Component(Actor* parent);

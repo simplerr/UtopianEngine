@@ -90,6 +90,7 @@
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
     <ClCompile Include="source\core\ActorFactory.cpp" />
     <ClCompile Include="source\core\AssetLoader.cpp" />
+    <ClCompile Include="source\core\components\CBloomLight.cpp" />
     <ClCompile Include="source\core\Engine.cpp" />
     <ClCompile Include="source\core\LuaManager.cpp" />
     <ClCompile Include="source\core\renderer\BloomJob.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="external\imgui\imgui_internal.h" />
     <ClInclude Include="source\core\ActorFactory.h" />
     <ClInclude Include="source\core\AssetLoader.h" />
+    <ClInclude Include="source\core\components\CBloomLight.h" />
     <ClInclude Include="source\core\Engine.h" />
     <ClInclude Include="source\core\LuaManager.h" />
     <ClInclude Include="source\core\renderer\BloomJob.h" />

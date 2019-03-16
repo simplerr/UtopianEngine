@@ -7,6 +7,7 @@
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CLight.h"
+#include "core/components/CBloomLight.h"
 #include "vulkan/UIOverlay.h"
 #include "editor/ActorInspector.h"
 #include "core/legacy/BaseTerrain.h"
@@ -79,6 +80,7 @@ namespace Utopian
 				renderable->LoadModel("data/models/teapot.obj");
 
 				CLight* light = actor->AddComponent<CLight>();
+				actor->AddComponent<CBloomLight>();
 			}
 
 			actor->PostInit();

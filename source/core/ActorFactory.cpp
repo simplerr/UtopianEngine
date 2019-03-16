@@ -8,6 +8,7 @@
 #include "core/components/CPlayerControl.h"
 #include "core/components/CNoClip.h"
 #include "core/components/CRenderable.h"
+#include "core/components/CBloomLight.h"
 #include "vulkan/Debug.h"
 
 namespace Utopian
@@ -96,6 +97,9 @@ namespace Utopian
 						renderable->SetRenderFlags(renderFlags);
 						renderable->SetColor(color);
 					}
+				}
+				else if (name == "CBloomLight") {
+					actor->AddComponent<CBloomLight>();
 				}
 			}
 
