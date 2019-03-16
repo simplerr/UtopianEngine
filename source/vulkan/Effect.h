@@ -59,6 +59,7 @@ namespace Utopian::Vk
 		PipelineInterface* GetPipelineInterface();
 		SharedPtr<Shader> GetShader() const;
 		std::string GetVertexShaderPath() const;
+		ShaderCreateInfo GetShaderCreateInfo() const;
 	protected:
 		void SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo);
 

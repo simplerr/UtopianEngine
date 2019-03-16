@@ -9,6 +9,12 @@
 
 namespace Utopian::Vk
 {
+	struct TrackedEffect
+	{
+		SharedPtr<Effect> effect;
+		time_t lastModification;
+	};
+
 	class EffectManager : public Module<EffectManager>
 	{
 	public:
@@ -34,29 +40,40 @@ namespace Utopian::Vk
 
 	private:
 		void NotifyCallbacks(std::string name);
+		uint64_t GetLatestModification(const ShaderCreateInfo& shaderCreateInfo);
 
 	private:
-		std::vector<SharedPtr<Effect>> mEffects;
+		std::vector<TrackedEffect> mEffects;
 		std::vector<std::function<void(std::string)>> mRecompileCallbacks;
 	};
 
 	EffectManager& gEffectManager();
 
+	// NOTE: TODO: Remove this
 	template<typename T>
 	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass)
 	{
 		SharedPtr<T> effect = std::make_shared<T>(device, renderPass);
+		TrackedEffect trackedEffect;
+		trackedEffect.effect = effect;
 
-		mEffects.push_back(effect);
+		// Set current time
+		time_t currentTime;
+		time(&currentTime);
+		trackedEffect.lastModification = currentTime;
+
+		mEffects.push_back(trackedEffect);
 		return effect;
 	}
 
 	template<typename T>
 	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo)
 	{
-		SharedPtr<T> effect = std::make_shared<T>(device, renderPass, shaderCreateInfo);
+		TrackedEffect trackedEffect;
+		trackedEffect.effect = std::make_shared<T>(device, renderPass, shaderCreateInfo);
+		trackedEffect.lastModification = GetLatestModification(shaderCreateInfo);
 
-		mEffects.push_back(effect);
-		return effect;
+		mEffects.push_back(trackedEffect);
+		return trackedEffect.effect;
 	}
 }

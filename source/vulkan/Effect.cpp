@@ -181,4 +181,9 @@ namespace Utopian::Vk
 	{
 		return mVkDescriptorSets.size();
 	}
+
+	ShaderCreateInfo Effect::GetShaderCreateInfo() const
+	{
+		return mShaderCreateInfo;
+	}
 }
