@@ -9,9 +9,9 @@ namespace Utopian
 		// Default values
 		SetMaterial(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		SetDirection(glm::vec3(1.0f, 1.0f, 1.0f));
-		SetRange(1000000.0f);
+		SetRange(10000.0f);
 		SetSpot(100.0f);
-		SetAtt(1.0f, 1.0f, 1.0f);
+		SetAtt(0.2f, 0.0014f, 0.000007f);
 		SetType(Utopian::LightType::DIRECTIONAL_LIGHT);
 		SetIntensity(1.0f, 1.0f, 1.0f);
 	}

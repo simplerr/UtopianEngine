@@ -85,8 +85,10 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	}
 
 	// Attenuate
+	// See http://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation for good constant values
 	float att = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
 
+	ambient *= att;
 	diffuse *= att;
 	spec    *= att;
 }

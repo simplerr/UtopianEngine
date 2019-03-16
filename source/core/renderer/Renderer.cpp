@@ -269,8 +269,6 @@ namespace Utopian
 		if (light->GetType() == 0) { // Directional
 			if (mSceneInfo.directionalLight == nullptr)
 				mSceneInfo.directionalLight = light;
-			else
-				assert(0); // Only one directional light in the scene
 		}
 
 		light->SetId(mNextNodeId++);

@@ -26,13 +26,12 @@ namespace Utopian
 
 		World::Instance().BindNode(mInternal, GetParent());
 
-		// The default is a spot light
 		SetMaterial(glm::vec4(1.0f));
 		SetDirection(glm::vec3(0.614f, -0.1f, 0.0f));
-		SetAtt(0.145, 0, 0);
+		SetAtt(0.2f, 0.0014f, 0.000007f);
 		SetIntensity(0, 0.193, 0);
-		SetType(LightType::SPOT_LIGHT);
-		SetRange(100000);
+		SetType(LightType::POINT_LIGHT);
+		SetRange(10000);
 		SetSpot(4.0f);
 	}
 

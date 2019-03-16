@@ -14,7 +14,7 @@ namespace Utopian
 		int blurRadius = 2;
 		float grassViewDistance = 0 * 1800.0f;
 		int blockViewDistance = 2;
-		bool shadowsEnabled = true;
+		bool shadowsEnabled = false;
 		bool normalMapping = true;
 		bool ssaoEnabled = true;
 		bool fxaaEnabled = true;
