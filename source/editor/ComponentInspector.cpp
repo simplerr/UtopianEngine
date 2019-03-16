@@ -132,7 +132,7 @@ void Utopian::LightInspector::UpdateUi()
 		ImGui::SliderFloat3("Direction", &mLightData.direction.x, -1.0f, 1.0f);
 		ImGui::SliderFloat3("Attenuation", &mLightData.att.x, 0.0f, 3.0f);
 		ImGui::SliderFloat("Range", &mLightData.range, 0.0f, 10000.0f);
-		ImGui::SliderFloat("Spot", &mLightData.spot, 0.0f, 100000.0f);
+		ImGui::SliderFloat("Spot", &mLightData.spot, 0.0f, 30.0f);
 
 		ImGui::ColorEdit4("Ambient color", &mLightData.material.ambient.x);
 		ImGui::ColorEdit4("Diffuse color", &mLightData.material.diffuse.x);

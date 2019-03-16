@@ -3,7 +3,6 @@
 
 namespace Utopian
 {
-
 	Light::Light()
 	{
 		// Default values
