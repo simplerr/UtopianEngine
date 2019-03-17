@@ -16,6 +16,7 @@ namespace Utopian::Vk
 		TextureArray();
 
 		void AddTexture(VkImageView imageView, Sampler* sampler);
+		void AddTexture(VkImageView imageView, VkSampler sampler);
 
 		VkDescriptorImageInfo* GetImageInfo();
 		uint32_t GetNumImages();

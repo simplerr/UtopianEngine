@@ -19,6 +19,16 @@ namespace Utopian::Vk
 		mImageInfos.push_back(imageInfo);
 	}
 
+	void TextureArray::AddTexture(VkImageView imageView, VkSampler sampler)
+	{
+		VkDescriptorImageInfo imageInfo;
+		imageInfo.sampler = sampler;
+		imageInfo.imageView = imageView;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		mImageInfos.push_back(imageInfo);
+	}
+
 	VkDescriptorImageInfo* TextureArray::GetImageInfo()
 	{
 		return mImageInfos.data();

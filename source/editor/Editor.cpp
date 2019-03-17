@@ -145,7 +145,7 @@ namespace Utopian
 	{
 		mActorInspector->UpdateUi();
 
-		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 750), 300.0f);
+		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
 
 		if (ImGui::Button("Recompile modified shaders"))
 		{

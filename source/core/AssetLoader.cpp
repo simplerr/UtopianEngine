@@ -75,7 +75,7 @@ namespace Utopian
 		AddAsset(GRASS_MEADOW_02_4, "Grass/Models/grass_meadow_02_4.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");
 		AddAsset(GRASS_MEADOW_02_5, "Grass/Models/grass_meadow_02_5.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");
 		AddAsset(GRASS_MEADOW_02_6, "Grass/Models/grass_meadow_02_6.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");
-		AddAsset(GRASS_MEADOW_02_CROSS_1, "Grass/Models/grass_meadow_02_cross_1.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");
+		AddAsset(GRASS_MEADOW_02_CROSS_1, "Grass/Models/grass_meadow_02_cross_1.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga", "Grass/Models/Textures/T_grass_meadow_02_N.png");
 		AddAsset(GRASS_MEADOW_02_CROSS_2, "Grass/Models/grass_meadow_02_cross_2.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");
 		AddAsset(GRASS_MEADOW_02_CROSS_3, "Grass/Models/grass_meadow_02_cross_3.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");
 		AddAsset(GRASS_MEADOW_02_DETAILED_1, "Grass/Models/grass_meadow_02_detailed_1.fbx", "Grass/Models/Textures/T_grass_meadow_02_A_M.tga");

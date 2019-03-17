@@ -8,6 +8,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Vertex.h"
+#include "vulkan/Texture2.h"
 #include "vulkan/handles/QueryPool.h"
 #include "Camera.h"
 #include "Input.h"
@@ -59,7 +60,7 @@ namespace Utopian
 		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_brush", mTerrain->GetBrushBlock().get());
 
-		Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
+		/*Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DIF.jpg");
 		Vk::Texture* normalTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_NRM.jpg");
 		Vk::Texture* displacementTexture = Vk::gTextureLoader().LoadTexture("data/textures/ground/Ground_17_DISP.jpg");
 
@@ -81,7 +82,29 @@ namespace Utopian
 
 		diffuseArray.AddTexture(diffuseTexture->imageView, renderTarget->GetSampler());
 		normalArray.AddTexture(normalTexture->imageView, renderTarget->GetSampler());
-		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());
+		displacementArray.AddTexture(displacementTexture->imageView, renderTarget->GetSampler());*/
+
+		// Experimentation
+		Vk::Texture2D* diffuseTexture = new Vk::Texture2D("data/textures/ground/grass_diffuse.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		Vk::Texture2D* normalTexture = new Vk::Texture2D("data/textures/ground/grass_normal.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		Vk::Texture2D* displacementTexture = new Vk::Texture2D("data/textures/ground/grass_displacement.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		diffuseArray.AddTexture(diffuseTexture->view, diffuseTexture->sampler);
+		normalArray.AddTexture(normalTexture->view, normalTexture->sampler);
+		displacementArray.AddTexture(displacementTexture->view, displacementTexture->sampler);
+
+		diffuseTexture = new Vk::Texture2D("data/textures/ground/rock_diffuse.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		normalTexture = new Vk::Texture2D("data/textures/ground/rock_normal.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		displacementTexture = new Vk::Texture2D("data/textures/ground/rock_displacement.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		diffuseArray.AddTexture(diffuseTexture->view, diffuseTexture->sampler);
+		normalArray.AddTexture(normalTexture->view, normalTexture->sampler);
+		displacementArray.AddTexture(displacementTexture->view, displacementTexture->sampler);
+
+		diffuseTexture = new Vk::Texture2D("data/textures/ground/dirt_diffuse.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		normalTexture = new Vk::Texture2D("data/textures/ground/dirt_normal.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		displacementTexture = new Vk::Texture2D("data/textures/ground/dirt_displacement.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice);
+		diffuseArray.AddTexture(diffuseTexture->view, diffuseTexture->sampler);
+		normalArray.AddTexture(normalTexture->view, normalTexture->sampler);
+		displacementArray.AddTexture(displacementTexture->view, displacementTexture->sampler);
 
 		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;

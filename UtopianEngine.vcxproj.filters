@@ -884,6 +884,9 @@
     <ClInclude Include="source\core\components\CRandomPaths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\vulkan\Texture2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
