@@ -305,10 +305,12 @@ namespace Utopian
 		mInstances.push_back(instanceData);
 	}
 
-	void InstanceGroup::ClearInstances()
+	void InstanceGroup::RemoveInstances()
 	{
 		mInstances.clear();
-		mInstanceBuffer = nullptr;
+		gRenderer().FreeBuffer(mInstanceBuffer);
+		//mDeleteBuffer = mInstanceBuffer;
+		//mInstanceBuffer = nullptr;
 	}
 
 	void InstanceGroup::BuildBuffer(Vk::Device* device)
@@ -392,7 +394,15 @@ namespace Utopian
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
 		{
-			mSceneInfo.instanceGroups[i]->ClearInstances();
+			mSceneInfo.instanceGroups[i]->RemoveInstances();
+		}
+	}
+
+	void Renderer::GarbageCollect()
+	{
+		if (mBuffersToFree.size() > 0)
+		{
+			mBuffersToFree.clear();
 		}
 	}
 
@@ -437,6 +447,12 @@ namespace Utopian
 				break;
 			}
 		}
+	}
+
+	void Renderer::FreeBuffer(SharedPtr<Vk::Buffer>& buffer)
+	{
+		mBuffersToFree.push_back(buffer);
+		buffer = nullptr;
 	}
 
 	void Renderer::SetMainCamera(Camera* camera)

@@ -109,6 +109,8 @@ namespace Utopian
 	{
 		if (mVulkanApp->PreviousFrameComplete())
 		{
+			gRenderer().GarbageCollect();
+
 			gTimer().FrameEnd();
 
 			mVulkanApp->PrepareFrame();

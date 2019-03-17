@@ -73,6 +73,12 @@ namespace Utopian
 		void BuildAllInstances();
 		void ClearInstanceGroups();
 
+		/** Adds the buffers the a garbage collect list that will be destroyed once no command buffer is active. */
+		void FreeBuffer(SharedPtr<Vk::Buffer>& buffer);
+
+		/** Destroys all Vulkan resources that have been added to the garbage collect list. */
+		void GarbageCollect();
+
 		// Note: Todo: This is called from Terrain when the heightmap changes
 		void UpdateInstanceAltitudes();
 
@@ -91,6 +97,7 @@ namespace Utopian
 		Vk::Device* mDevice;
 		Camera* mMainCamera;
 		uint32_t mNextNodeId;
+		std::vector<SharedPtr<Vk::Buffer>> mBuffersToFree;
 	};
 
 	Renderer& gRenderer();

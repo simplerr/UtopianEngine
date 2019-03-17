@@ -10,6 +10,7 @@
 #include "core/components/CBloomLight.h"
 #include "core/components/CRandomPaths.h"
 #include "vulkan/UIOverlay.h"
+#include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
 #include "core/legacy/BaseTerrain.h"
 #include "editor/TransformTool.h"
@@ -133,11 +134,10 @@ namespace Utopian
 			mUiOverlay->ToggleVisible();
 		}
 
-		// Reload scene
+		// Recompile shaders
 		if (gInput().KeyPressed('R'))
 		{
-			World::Instance().RemoveActors();
-			World::Instance().LoadScene();
+			Vk::gEffectManager().RecompileModifiedShaders();
 		}
 	}
 
@@ -145,9 +145,19 @@ namespace Utopian
 	{
 		mActorInspector->UpdateUi();
 
-		if (IsActorSelected())
+		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 750), 300.0f);
+
+		if (ImGui::Button("Recompile modified shaders"))
 		{
+			Vk::gEffectManager().RecompileModifiedShaders();
 		}
+
+		if (ImGui::Button("Recompile all shaders"))
+		{
+			Vk::gEffectManager().RecompileAllShaders();
+		}
+
+		Vk::UIOverlay::EndWindow();
 
 		// Display Actor creation list
 		Vk::UIOverlay::BeginWindow("Actor list", glm::vec2(1500, 700), 400.0f);

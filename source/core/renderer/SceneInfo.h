@@ -23,7 +23,7 @@ namespace Utopian
 		InstanceGroup(uint32_t assetId);
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
-		void ClearInstances();
+		void RemoveInstances();
 		void UpdateAltitudes(const SharedPtr<Terrain>& terrain);
 		void BuildBuffer(Vk::Device* device);
 

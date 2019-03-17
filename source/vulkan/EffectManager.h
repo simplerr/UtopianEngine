@@ -30,6 +30,9 @@ namespace Utopian::Vk
 		/** Recompiles shaders if requested from the UI. */
 		void Update();
 
+		void RecompileModifiedShaders();
+		void RecompileAllShaders();
+
 		/** Registers a callback function to be called when a shader is recompiled. */
 		template<class ...Args>
 		void RegisterRecompileCallback(Args &&...args)

@@ -22,40 +22,37 @@ namespace Utopian::Vk
 
 	void EffectManager::Update()
 	{
-		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 750), 300.0f);
+	}
 
-		if (ImGui::Button("Recompile modified shaders"))
+	void EffectManager::RecompileModifiedShaders()
+	{
+		for (auto& trackedEffect : mEffects)
 		{
-			for (auto& trackedEffect : mEffects)
+			ShaderCreateInfo shaderCreateInfo = trackedEffect.effect->GetShaderCreateInfo();
+			time_t updatedModificationTime = GetLatestModification(shaderCreateInfo);
+			if (updatedModificationTime > trackedEffect.lastModification)
 			{
-				ShaderCreateInfo shaderCreateInfo = trackedEffect.effect->GetShaderCreateInfo();
-				time_t updatedModificationTime = GetLatestModification(shaderCreateInfo);
-				if (updatedModificationTime > trackedEffect.lastModification)
-				{
-					trackedEffect.effect->RecompileShader();
-					NotifyCallbacks(trackedEffect.effect->GetVertexShaderPath());
-					trackedEffect.lastModification = updatedModificationTime;
-
-					Debug::ConsolePrint("Recompiled \"" + shaderCreateInfo.fragmentShaderPath + "\"");
-				}
-			}
-		}
-
-		if (ImGui::Button("Recompile all shaders"))
-		{
-			for (auto& trackedEffect : mEffects)
-			{
-				ShaderCreateInfo shaderCreateInfo = trackedEffect.effect->GetShaderCreateInfo();
-				time_t updatedModificationTime = GetLatestModification(shaderCreateInfo);
 				trackedEffect.effect->RecompileShader();
 				NotifyCallbacks(trackedEffect.effect->GetVertexShaderPath());
 				trackedEffect.lastModification = updatedModificationTime;
-			}
 
-			Debug::ConsolePrint("Recompiled all shaders");
+				Debug::ConsolePrint("Recompiled \"" + shaderCreateInfo.fragmentShaderPath + "\"");
+			}
+		}
+	}
+	
+	void EffectManager::RecompileAllShaders()
+	{
+		for (auto& trackedEffect : mEffects)
+		{
+			ShaderCreateInfo shaderCreateInfo = trackedEffect.effect->GetShaderCreateInfo();
+			time_t updatedModificationTime = GetLatestModification(shaderCreateInfo);
+			trackedEffect.effect->RecompileShader();
+			NotifyCallbacks(trackedEffect.effect->GetVertexShaderPath());
+			trackedEffect.lastModification = updatedModificationTime;
 		}
 
-		Vk::UIOverlay::EndWindow();
+		Debug::ConsolePrint("Recompiled all shaders");
 	}
 
 	void EffectManager::NotifyCallbacks(std::string name)
