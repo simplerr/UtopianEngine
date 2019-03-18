@@ -19,6 +19,7 @@
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/EffectManager.h"
+#include "vulkan/Debug.h"
 #include "Input.h"
 
 namespace Utopian::Vk 
@@ -41,6 +42,10 @@ namespace Utopian::Vk
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(width, height);
 		io.FontGlobalScale = mScale;
+
+		mTextureDescriptorPool = std::make_shared<DescriptorPool>(vulkanApp->GetDevice());
+		mTextureDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 50);
+		mTextureDescriptorPool->Create();
 
 		PrepareResources();
 	}
@@ -69,6 +74,8 @@ namespace Utopian::Vk
 		mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
+		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->sampler, mTexture->imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
 		mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 	}
@@ -83,7 +90,6 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 
 		mCommandBuffer->CmdBindPipeline(mImguiEffect->GetPipeline());
-		mCommandBuffer->CmdBindDescriptorSets(mImguiEffect);
 
 		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mVertexBuffer);
 		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer.GetVkBuffer(), 0, VK_INDEX_TYPE_UINT16);
@@ -108,6 +114,10 @@ namespace Utopian::Vk
 				scissorRect.extent.width = (uint32_t)(pcmd->ClipRect.z - pcmd->ClipRect.x);
 				scissorRect.extent.height = (uint32_t)(pcmd->ClipRect.w - pcmd->ClipRect.y);
 				mCommandBuffer->CmdSetScissor(scissorRect);
+
+				VkDescriptorSet desc_set[1] = { (VkDescriptorSet)pcmd->TextureId };
+				vkCmdBindDescriptorSets(mCommandBuffer->GetVkHandle(), VK_PIPELINE_BIND_POINT_GRAPHICS, mImguiEffect->GetPipelineInterface()->GetPipelineLayout(), 0, 1, desc_set, 0, NULL);
+
 				mCommandBuffer->CmdDrawIndexed(pcmd->ElemCount, 1, indexOffset, vertexOffset, 0);
 				indexOffset += pcmd->ElemCount;
 			}
@@ -181,6 +191,36 @@ namespace Utopian::Vk
 		if (alwaysUpdate || updateCmdBuffers) {
 			UpdateCommandBuffers();
 		}
+	}
+
+	ImTextureID UIOverlay::AddTexture(VkSampler sampler, VkImageView image_view, VkImageLayout image_layout)
+	{
+		VkDescriptorSet descriptorSet;
+
+		// Create Descriptor Set:
+		VkDescriptorSetAllocateInfo alloc_info = {};
+		alloc_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		alloc_info.descriptorPool = mTextureDescriptorPool->GetVkHandle();
+		alloc_info.descriptorSetCount = 1;
+		VkDescriptorSetLayout descriptorSetLayout = mImguiEffect->GetPipelineInterface()->GetDescriptorSetLayout(0)->GetVkHandle();
+		alloc_info.pSetLayouts = &descriptorSetLayout;
+		Debug::ErrorCheck(vkAllocateDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), &alloc_info, &descriptorSet));
+
+		// Update the Descriptor Set:
+		VkDescriptorImageInfo desc_image[1] = {};
+		desc_image[0].sampler = sampler;
+		desc_image[0].imageView = image_view;
+		desc_image[0].imageLayout = image_layout;
+
+		VkWriteDescriptorSet write_desc[1] = {};
+		write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write_desc[0].dstSet = descriptorSet;
+		write_desc[0].descriptorCount = 1;
+		write_desc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		write_desc[0].pImageInfo = desc_image;
+		vkUpdateDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), 1, write_desc, 0, NULL);
+
+		return (ImTextureID)descriptorSet;
 	}
 
 	void UIOverlay::Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers)
