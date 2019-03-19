@@ -23,10 +23,10 @@ namespace Utopian
 		mFrameCounter++;
 		auto frameEnd = std::chrono::high_resolution_clock::now();
 		auto tDiff = std::chrono::duration<double, std::milli>(frameEnd - mFrameBegin).count();
-		mFrameTimer = (float)tDiff / 1000.0f;
+		mFrameTime = (float)tDiff / 1000.0f;
 
 		// Convert to clamped timer value
-		mTimer += mTimerSpeed * mFrameTimer;
+		mTimer += mTimerSpeed * mFrameTime;
 		if (mTimer > 1.0)
 		{
 			mTimer -= 1.0f;
@@ -80,4 +80,10 @@ namespace Utopian
 		mLifetimeTimer = 0;
 		mFpsLog.clear();
 	}
+	
+	float Timer::GetFrameTime() const
+	{
+		return mFrameTime;
+	}
+
 }	// VulkanLib namespace

@@ -479,4 +479,9 @@ namespace Utopian
 	{
 		return mDevice;
 	}
+
+	Vk::UIOverlay* Renderer::GetUiOverlay()
+	{
+		return mVulkanApp->GetUiOverlay();
+	}
 }

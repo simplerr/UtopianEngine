@@ -82,6 +82,8 @@ namespace Utopian
 		// Note: Todo: This is called from Terrain when the heightmap changes
 		void UpdateInstanceAltitudes();
 
+		Vk::UIOverlay* GetUiOverlay();
+
 	private:
 		/** Adds widgets to the ImGui use interface for rendering settings. */
 		void UpdateUi();

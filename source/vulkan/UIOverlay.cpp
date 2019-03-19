@@ -48,6 +48,9 @@ namespace Utopian::Vk
 		mTextureDescriptorPool->Create();
 
 		PrepareResources();
+
+		mLastFrameTime = std::chrono::high_resolution_clock::now();
+		mDeltaTime = 0.0;
 	}
 
 	/** Free up all Vulkan resources acquired by the UI overlay */
@@ -130,13 +133,6 @@ namespace Utopian::Vk
 	/** Update vertex and index buffer containing the imGui elements when required */
 	void UIOverlay::Update()
 	{
-		// Update mouse state
-		ImGuiIO& io = ImGui::GetIO();
-		glm::vec2 mousePos = gInput().GetMousePosition();
-		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON);
-		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON);
-
 		ImDrawData* imDrawData = ImGui::GetDrawData();
 		bool updateCmdBuffers = false;
 
@@ -223,6 +219,32 @@ namespace Utopian::Vk
 		return (ImTextureID)descriptorSet;
 	}
 
+	void UIOverlay::NewFrame()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+
+		// Update elapsed frame time
+		auto now = std::chrono::high_resolution_clock::now();
+		mDeltaTime = std::chrono::duration<double, std::milli>(now - mLastFrameTime).count();
+		mDeltaTime /= 1000.0f; // To seconds
+		mLastFrameTime = now;
+		io.DeltaTime = mDeltaTime;
+
+		// Update mouse state
+		glm::vec2 mousePos = gInput().GetMousePosition();
+
+		io.MousePos = ImVec2(mousePos.x, mousePos.y);
+		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON);
+		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON);
+
+		ImGui::NewFrame();
+	}
+
+	void UIOverlay::Render()
+	{
+		ImGui::Render();
+	}
+
 	void UIOverlay::Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers)
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -245,10 +267,10 @@ namespace Utopian::Vk
 	
 	void UIOverlay::BeginWindow(std::string label, glm::vec2 position, float itemWidth)
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-		ImGui::SetNextWindowPos(ImVec2(position.x, position.y));
+		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+		ImGui::SetNextWindowPos(ImVec2(position.x, position.y), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
-		ImGui::Begin(label.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoFocusOnAppearing);
+		ImGui::Begin(label.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::PushItemWidth(itemWidth);
 	}
 
@@ -256,7 +278,7 @@ namespace Utopian::Vk
 	{
 		ImGui::PopItemWidth();
 		ImGui::End();
-		ImGui::PopStyleVar();
+		//ImGui::PopStyleVar();
 	}
 	
 	void UIOverlay::ToggleVisible()

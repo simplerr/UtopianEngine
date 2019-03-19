@@ -11,6 +11,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/ScreenQuadUi.h"
+#include "vulkan/UIOverlay.h"
 #include "vulkan/Debug.h"
 #include "Input.h"
 #include "vulkan/VulkanApp.h"
@@ -93,7 +94,7 @@ namespace Utopian
 
 	void Engine::Update()
 	{
-		ImGui::NewFrame();
+		mVulkanApp->GetUiOverlay()->NewFrame();
 
 		World::Instance().Update();
 		Renderer::Instance().Update();
@@ -102,7 +103,7 @@ namespace Utopian
 		// Call the applications Update() function
 		mUpdateCallback();
 
-		ImGui::Render();
+		mVulkanApp->GetUiOverlay()->Render();
 	}
 
 	void Engine::Render()

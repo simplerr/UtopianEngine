@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <glm/glm.hpp>
+#include <chrono>
 #include <vulkan/vulkan.h>
 
 #include "imgui/imgui.h"
@@ -27,6 +28,8 @@ namespace Utopian::Vk
 		~UIOverlay();
 
 		void Update();
+		void NewFrame();
+		void Render();
 		void Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers);
 
 		void PrepareResources();
@@ -58,5 +61,11 @@ namespace Utopian::Vk
 		int32_t mIndexCount = 0;
 		
 		float mScale = 1.0f;
+
+		// Note: This should be handled by the Timer component.
+		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 
+		// called at the same frequency as UIOverlay::Update.
+		std::chrono::high_resolution_clock::time_point mLastFrameTime;
+		double mDeltaTime;
 	};
 }
