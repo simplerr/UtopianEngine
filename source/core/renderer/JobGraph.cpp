@@ -14,6 +14,7 @@
 #include "core/renderer/BloomJob.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/UIOverlay.h"
 #include "vulkan/VulkanApp.h"
 
 namespace Utopian
@@ -48,6 +49,13 @@ namespace Utopian
 		FXAAJob* fxaaJob = new FXAAJob(device, width, height);
 		vulkanApp->SetJobGraphWaitSemaphore(fxaaJob->GetCompletedSemahore());
 		AddJob(fxaaJob);
+
+		/* Add debug render targets */
+		Vk::UIOverlay* uiOverlay = vulkanApp->GetUiOverlay();
+		mDebugDescriptorSets.position = uiOverlay->AddTexture(mGBuffer.positionImage->GetView());
+		mDebugDescriptorSets.normal = uiOverlay->AddTexture(mGBuffer.normalImage->GetView());
+		mDebugDescriptorSets.normalView = uiOverlay->AddTexture(mGBuffer.normalViewImage->GetView());
+		mDebugDescriptorSets.albedo = uiOverlay->AddTexture(mGBuffer.albedoImage->GetView());
 	}
 
 	JobGraph::~JobGraph()
@@ -69,6 +77,36 @@ namespace Utopian
 		{
 			job->Update();
 		}
+
+		// Display Actor creation list
+		Vk::UIOverlay::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
+
+		ImVec2 textureSize = ImVec2(256, 256);
+		ImGui::BeginGroup();
+		ImGui::Text("Position");
+		ImGui::Image(mDebugDescriptorSets.position, textureSize);
+		ImGui::EndGroup();
+
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Normal");
+		ImGui::Image(mDebugDescriptorSets.normal, textureSize);
+		ImGui::EndGroup();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Normal view space");
+		ImGui::Image(mDebugDescriptorSets.normalView, textureSize);
+		ImGui::EndGroup();
+
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Albedo");
+		ImGui::Image(mDebugDescriptorSets.albedo, textureSize);
+		ImGui::EndGroup();
+
+		Vk::UIOverlay::EndWindow();
 	}
 
 	void JobGraph::AddJob(BaseJob* job)

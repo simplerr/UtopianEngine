@@ -151,7 +151,7 @@ void TransformTool::Update(Utopian::Input* pInput, float dt)
 	}
 
 	// Stick to the terain?
-	if (pInput->KeyPressed('O')) {
+	if (pInput->KeyPressed('E')) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		glm::vec3 position = transform->GetPosition();
 		transform->SetPosition(glm::vec3(position.x, mTerrain->GetHeight(position.x, position.z), position.z));

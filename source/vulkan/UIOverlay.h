@@ -35,7 +35,7 @@ namespace Utopian::Vk
 		void PrepareResources();
 		void UpdateCommandBuffers();
 
-		ImTextureID AddTexture(VkSampler sampler, VkImageView image_view, VkImageLayout image_layout);
+		ImTextureID AddTexture(VkImageView imageView, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
 
@@ -52,6 +52,7 @@ namespace Utopian::Vk
 		Utopian::Vk::Buffer mIndexBuffer;
 		SharedPtr<Vk::ImguiEffect> mImguiEffect;
 		SharedPtr<DescriptorPool> mTextureDescriptorPool;
+		SharedPtr<Vk::Sampler> mSampler;
 		Utopian::Vk::Texture* mTexture;
 
 		ImDrawVert* mMappedVertices;

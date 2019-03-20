@@ -1,6 +1,7 @@
 #pragma once
 #include "core/renderer/BaseJob.h"
 #include "vulkan/VulkanInclude.h"
+#include "imgui\imgui.h"
 
 namespace Utopian
 {
@@ -15,6 +16,14 @@ namespace Utopian
 	class JobGraph
 	{
 	public:
+		struct GBufferDebugDescriptorSets
+		{
+			ImTextureID position;
+			ImTextureID normal;
+			ImTextureID normalView;
+			ImTextureID albedo;
+		};
+
 		enum JobIndex
 		{
 			GBUFFER_TERRAIN_INDEX = 0,
@@ -48,5 +57,7 @@ namespace Utopian
 	private:
 		std::vector<BaseJob*> mJobs;
 		GBuffer mGBuffer;
+		
+		GBufferDebugDescriptorSets mDebugDescriptorSets;
 	};
 }

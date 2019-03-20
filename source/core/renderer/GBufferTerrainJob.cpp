@@ -120,10 +120,6 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerNormal", &normalArray);
 		mEffect->BindCombinedImage("samplerDisplacement", &displacementArray);
 
-		const uint32_t size = 640;
-		//gScreenQuadUi().AddQuad(size + 20, height - (size + 310), size, size, image.get(), renderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(0u, 0u, mWidth, mHeight, gbuffer.normalImage.get(), renderTarget->GetSampler(), 1u);
-
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 	}
 

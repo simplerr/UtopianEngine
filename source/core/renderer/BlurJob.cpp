@@ -16,8 +16,8 @@ namespace Utopian
 
 		effect = Vk::gEffectManager().AddEffect<Vk::BlurEffect>(device, renderTarget->GetRenderPass());
 
-		const uint32_t size = 240;
-		gScreenQuadUi().AddQuad(10, height - (size + 10), size, size, blurImage.get(), renderTarget->GetSampler());
+		/*const uint32_t size = 240;
+		gScreenQuadUi().AddQuad(10, height - (size + 10), size, size, blurImage.get(), renderTarget->GetSampler());*/
 	}
 
 	BlurJob::~BlurJob()

@@ -18,6 +18,7 @@
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/handles/Sampler.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/Debug.h"
 #include "Input.h"
@@ -46,6 +47,8 @@ namespace Utopian::Vk
 		mTextureDescriptorPool = std::make_shared<DescriptorPool>(vulkanApp->GetDevice());
 		mTextureDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 50);
 		mTextureDescriptorPool->Create();
+
+		mSampler = std::make_shared<Vk::Sampler>(vulkanApp->GetDevice());
 
 		PrepareResources();
 
@@ -77,7 +80,7 @@ namespace Utopian::Vk
 		mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
-		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->sampler, mTexture->imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->imageView);
 
 		mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
@@ -189,7 +192,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	ImTextureID UIOverlay::AddTexture(VkSampler sampler, VkImageView image_view, VkImageLayout image_layout)
+	ImTextureID UIOverlay::AddTexture(VkImageView imageView, VkImageLayout imageLayout)
 	{
 		VkDescriptorSet descriptorSet;
 
@@ -204,9 +207,9 @@ namespace Utopian::Vk
 
 		// Update the Descriptor Set:
 		VkDescriptorImageInfo desc_image[1] = {};
-		desc_image[0].sampler = sampler;
-		desc_image[0].imageView = image_view;
-		desc_image[0].imageLayout = image_layout;
+		desc_image[0].sampler = mSampler->GetVkHandle();
+		desc_image[0].imageView = imageView;
+		desc_image[0].imageLayout = imageLayout;
 
 		VkWriteDescriptorSet write_desc[1] = {};
 		write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -232,7 +235,6 @@ namespace Utopian::Vk
 
 		// Update mouse state
 		glm::vec2 mousePos = gInput().GetMousePosition();
-
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
 		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON);
 		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON);

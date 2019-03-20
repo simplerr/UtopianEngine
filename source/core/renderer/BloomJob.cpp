@@ -43,8 +43,8 @@ namespace Utopian
 		extractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		extractEffect->BindUniformBuffer("UBO_settings", &extractSettings);
 
-		const uint32_t size = 240;
-		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (size + 10), size, size, brightColorsImage.get(), extractRenderTarget->GetSampler());
+		//const uint32_t size = 240;
+		//gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (size + 10), size, size, brightColorsImage.get(), extractRenderTarget->GetSampler());
 	}
 	
 	void BloomJob::InitBlurPass()
@@ -70,8 +70,8 @@ namespace Utopian
 		blurEffect->BindUniformBuffer("UBO_settings", &blurSettings);
 		blurEffect->BindCombinedImage("hdrSampler", brightColorsImage.get(), blurRenderTarget->GetSampler());
 
-		const uint32_t size = 240;
-		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, outputImage.get(), blurRenderTarget->GetSampler());
+		/*const uint32_t size = 240;
+		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, outputImage.get(), blurRenderTarget->GetSampler());*/
 	}
 
 	void BloomJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
