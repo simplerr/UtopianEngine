@@ -35,7 +35,7 @@ namespace Utopian::Vk
 		void PrepareResources();
 		void UpdateCommandBuffers();
 
-		ImTextureID AddTexture(VkImageView imageView, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
 

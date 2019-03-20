@@ -192,7 +192,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	ImTextureID UIOverlay::AddTexture(VkImageView imageView, VkImageLayout imageLayout)
+	ImTextureID UIOverlay::AddTexture(VkImageView imageView, const VkSampler sampler, VkImageLayout imageLayout)
 	{
 		VkDescriptorSet descriptorSet;
 
@@ -207,7 +207,7 @@ namespace Utopian::Vk
 
 		// Update the Descriptor Set:
 		VkDescriptorImageInfo desc_image[1] = {};
-		desc_image[0].sampler = mSampler->GetVkHandle();
+		desc_image[0].sampler = (sampler == VK_NULL_HANDLE ? mSampler->GetVkHandle() : sampler);
 		desc_image[0].imageView = imageView;
 		desc_image[0].imageLayout = imageLayout;
 

@@ -5,6 +5,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/UIOverlay.h"
+#include "vulkan/Texture2.h"
 #include "core/renderer/Renderer.h"
 #include "core/renderer/RendererUtility.h"
 #include "core/Terrain.h"
@@ -34,6 +35,14 @@ namespace Utopian
 		brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
 		brushSettings.strength = 240.0f;
 		brushSettings.radius = 500.0f;
+
+		heightToolTexture = std::make_shared<Vk::Texture2D>("data/textures/height-tool.ktx", mDevice);
+
+		Vk::UIOverlay* uiOverlay = gRenderer().GetUiOverlay();
+		textureIdentifiers.grass = uiOverlay->AddTexture(mTerrain->GetMaterial("grass").diffuse->view, mTerrain->GetMaterial("grass").diffuse->sampler);
+		textureIdentifiers.rock = uiOverlay->AddTexture(mTerrain->GetMaterial("rock").diffuse->view, mTerrain->GetMaterial("rock").diffuse->sampler);
+		textureIdentifiers.dirt = uiOverlay->AddTexture(mTerrain->GetMaterial("dirt").diffuse->view, mTerrain->GetMaterial("dirt").diffuse->sampler);
+		textureIdentifiers.heightTool = uiOverlay->AddTexture(heightToolTexture->view);
    }
 
    TerrainTool::~TerrainTool()
@@ -85,14 +94,37 @@ namespace Utopian
 	   // Display Actor creation list
 	   Vk::UIOverlay::BeginWindow("Terrain tool", glm::vec2(1500.0f, 1050.0f), 200.0f);
 
-	   int mode = brushSettings.mode;
-	   int texture = brushSettings.blendLayer;
-	   ImGui::Combo("Brush mode", &mode, "Height\0Blend\0");
-	   ImGui::Combo("Texture", &texture, "Grass\0Rock\0Dirt\0");
 	   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
 	   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);
-	   brushSettings.mode = (BrushSettings::Mode)mode;
-	   brushSettings.blendLayer = (BrushSettings::BlendLayer)texture;
+
+	   if (ImGui::ImageButton(textureIdentifiers.heightTool, ImVec2(64, 64)))
+	   {
+		   brushSettings.mode = BrushSettings::Mode::HEIGHT;
+	   }
+
+	   ImGui::SameLine();
+
+	   if (ImGui::ImageButton(textureIdentifiers.grass, ImVec2(64, 64)))
+	   {
+		   brushSettings.mode = BrushSettings::Mode::BLEND;
+		   brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
+	   }
+
+	   ImGui::SameLine();
+
+	   if (ImGui::ImageButton(textureIdentifiers.rock, ImVec2(64, 64)))
+	   {
+		   brushSettings.mode = BrushSettings::Mode::BLEND;
+		   brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
+	   }
+
+	   ImGui::SameLine();
+
+	   if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
+	   {
+		   brushSettings.mode = BrushSettings::Mode::BLEND;
+		   brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
+	   }
 
 	   Vk::UIOverlay::EndWindow();
    }

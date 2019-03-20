@@ -64,8 +64,8 @@ namespace Utopian::Vk
 
 		Texture2D(
 			std::string filename,
-			VkFormat format,
 			Device* device,
+			VkFormat format = VK_FORMAT_R8G8B8A8_UNORM,
 			VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT,
 			VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
 			bool forceLinear = false)

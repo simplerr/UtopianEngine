@@ -5,6 +5,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/ShaderBuffer.h"
 #include "core/Terrain.h"
+#include "imgui/imgui.h"
 
 namespace Utopian
 {
@@ -24,7 +25,7 @@ namespace Utopian
 
 		enum BlendLayer {
 			GRASS = 0,
-			ROCKS,
+			ROCK,
 			DIRT
 		};
 
@@ -65,5 +66,14 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
 		SharedPtr<Terrain::BrushBlock> brushBlock;
 		BrushSettings brushSettings;
+		SharedPtr<Vk::Texture2D> heightToolTexture;
+
+		struct TextureIdentifiers
+		{
+			ImTextureID grass;
+			ImTextureID rock;
+			ImTextureID dirt;
+			ImTextureID heightTool;
+		} textureIdentifiers;
 	};
 }

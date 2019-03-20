@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
@@ -17,6 +18,7 @@ namespace Utopian::Vk
 
 		void AddTexture(VkImageView imageView, Sampler* sampler);
 		void AddTexture(VkImageView imageView, VkSampler sampler);
+		void AddTexture(const SharedPtr<Vk::Texture2D>& texture);
 
 		VkDescriptorImageInfo* GetImageInfo();
 		uint32_t GetNumImages();

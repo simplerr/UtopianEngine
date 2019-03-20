@@ -10,6 +10,7 @@
 #include "vulkan/StaticModel.h"
 #include "vulkan/ScreenQuadUi.h"
 #include "vulkan/Mesh.h"
+#include "vulkan/Texture2.h"
 #include "core/renderer/Renderer.h"
 #include "Input.h"
 #include "Camera.h"
@@ -29,6 +30,11 @@ namespace Utopian
 		// TerrainTool is responsible for updating it
 		mBrushBlock = std::make_shared<Terrain::BrushBlock>();
 		mBrushBlock->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		// Load materials
+		AddMaterial("grass", "data/textures/ground/grass_diffuse.ktx", "data/textures/ground/grass_normal.ktx", "data/textures/ground/grass_displacement.ktx");
+		AddMaterial("rock", "data/textures/ground/rock_diffuse.ktx", "data/textures/ground/rock_normal.ktx", "data/textures/ground/rock_displacement.ktx");
+		AddMaterial("dirt", "data/textures/ground/dirt_diffuse.ktx", "data/textures/ground/dirt_normal.ktx", "data/textures/ground/dirt_displacement.ktx");
 	}
 
 	void Terrain::Update()
@@ -39,6 +45,15 @@ namespace Utopian
 		Vk::UIOverlay::TextV("Height: %.2f", height);
 		Vk::UIOverlay::TextV("Intersection: %.2f, %.2f, %.2f", intersection.x, intersection.y, intersection.z);
 		Vk::UIOverlay::TextV("Brush pos: %.4f, %.4f", brushPos.x, brushPos.y);*/
+	}
+
+	void Terrain::AddMaterial(std::string name, std::string diffuse, std::string normal, std::string displacement)
+	{
+		TerrainMaterial material;
+		material.diffuse = std::make_shared<Vk::Texture2D>(diffuse, mDevice);
+		material.normal = std::make_shared<Vk::Texture2D>(normal, mDevice);
+		material.displacement = std::make_shared<Vk::Texture2D>(displacement, mDevice);
+		mMaterials[name] = material;
 	}
 
 	void Terrain::GenerateTerrainMaps()
@@ -352,5 +367,15 @@ namespace Utopian
 	void Terrain::SetAmplitudeScaling(float amplitudeScaling)
 	{
 		mAmplitudeScaling = amplitudeScaling;
+	}
+
+	TerrainMaterial Terrain::GetMaterial(std::string material)
+	{
+		if (mMaterials.find(material) != mMaterials.end())
+		{
+			return mMaterials[material];
+		}
+		else
+			assert(0);
 	}
 }

@@ -38,6 +38,7 @@ namespace Utopian::Vk
 	class Sampler;
 	class Semaphore;
 	class Texture;
+	class Texture2D;
 	class Pipeline;
 	class QueryPool;
 

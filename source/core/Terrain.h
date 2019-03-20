@@ -9,6 +9,13 @@
 
 namespace Utopian
 {
+	struct TerrainMaterial
+	{
+		SharedPtr<Vk::Texture2D> diffuse;
+		SharedPtr<Vk::Texture2D> normal;
+		SharedPtr<Vk::Texture2D> displacement;
+	};
+
 	class Terrain
 	{
 	public:
@@ -31,11 +38,14 @@ namespace Utopian
 
 		glm::vec2 TransformToUv(float x, float z);
 
+		void AddMaterial(std::string name, std::string diffuse, std::string normal, std::string displacement);
+
 		glm::vec3 GetIntersectPoint(Ray ray);
 		SharedPtr<Vk::Image>& GetHeightmapImage();
 		SharedPtr<Vk::Image>& GetNormalmapImage();
 		SharedPtr<Vk::Image>& GetBlendmapImage();
 		Vk::Mesh* GetMesh();
+		TerrainMaterial GetMaterial(std::string material);
 
 		float GetAmplitudeScaling();
 		float GetHeight(float x, float z);
@@ -83,10 +93,12 @@ namespace Utopian
 		SharedPtr<Vk::Image> blendmapImage;
 		SharedPtr<Vk::RenderTarget> blendmapRenderTarget;
 
-		// Copy testing
+		// Heightmap on CPU
 		SharedPtr<Vk::Image> hostImage;
 		std::array<float, MAP_RESOLUTION * MAP_RESOLUTION> heightmap;
 		float terrainSize;
+
+		std::map<std::string, TerrainMaterial> mMaterials;
 
 		SharedPtr<Vk::Sampler> sampler;
 	};
