@@ -35,5 +35,6 @@ namespace Utopian
 		float exposure = 1.4f;
 		float bloomThreshold = 1.5f;
 		float windStrength = 0.2f;
+		float windFrequency = 10000.0f;
 	};
 }

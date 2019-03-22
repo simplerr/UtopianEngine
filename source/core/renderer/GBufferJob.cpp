@@ -92,6 +92,7 @@ namespace Utopian
 		animationParametersBlock.data.time = gTimer().GetTime();
 		animationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
 		animationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
+		animationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
 		animationParametersBlock.UpdateMemory();
 
 		renderTarget->Begin("G-buffer pass");

@@ -21,6 +21,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, time)
 			UNIFORM_PARAM(float, terrainSize)
 			UNIFORM_PARAM(float, strength)
+			UNIFORM_PARAM(float, frequency)
 		UNIFORM_BLOCK_END()
 
 		GBufferJob(Vk::Device* device, uint32_t width, uint32_t height);
