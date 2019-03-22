@@ -53,9 +53,9 @@ namespace Utopian
 
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
-		mRenderingSettings.fogColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-		mRenderingSettings.fogStart = 40000.0f;
-		mRenderingSettings.fogDistance = 16000.0f;
+		mRenderingSettings.fogColor = glm::vec4(0.426f, 0.440f, 0.532f, 1.0f);
+		mRenderingSettings.fogStart = 24000.0f;
+		mRenderingSettings.fogDistance = 18000.0f;
 
 		mSceneInfo.directionalLight = nullptr;
 	}
@@ -122,7 +122,7 @@ namespace Utopian
 			//UpdateInstanceAltitudes(); Can't do this because the buffer is in use by a command buffer
 		}
 
-		ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 200.0f);
+		ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 600.0f);
 		ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 1.0f, 50.0f);
 		ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
 		ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);

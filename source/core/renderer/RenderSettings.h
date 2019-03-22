@@ -28,8 +28,8 @@ namespace Utopian
 		float sunInclination = 45.0f;
 		float sunAzimuth = 0.0f;
 		float tessellationFactor = 2.8f;
-		float terrainTextureScaling = 75.0;
-		float terrainBumpmapAmplitude = 14.0;
+		float terrainTextureScaling = 200.0;
+		float terrainBumpmapAmplitude = 10.0;
 		bool terrainWireframe = 0;
 		int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
 		float exposure = 1.4f;

@@ -21,7 +21,7 @@ namespace Utopian
 	{
 		mDevice = device;
 
-		GeneratePatches(128.0, 256);
+		GeneratePatches(128.0, 512);
 		GenerateTerrainMaps();
 
 		Vk::gEffectManager().RegisterRecompileCallback(&Terrain::EffectRecomiledCallback, this);
@@ -299,7 +299,8 @@ namespace Utopian
 		glm::vec3 nextPoint = ray.origin + ray.direction * stepSize;
 		float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
 		int counter = 0;
-		while (heightAtNextPoint < nextPoint.y && counter < 1000)
+		const int numMaxSteps = 2000;
+		while (heightAtNextPoint < nextPoint.y && counter < numMaxSteps)
 		{
 			counter++;
 			ray.origin = nextPoint;
@@ -308,7 +309,7 @@ namespace Utopian
 		}
 
 		// Return infinity if the ray dont strike anything
-		if (counter >= 1000)
+		if (counter >= numMaxSteps)
 			ray.direction.x = std::numeric_limits<float>::infinity();
 
 		return ray;

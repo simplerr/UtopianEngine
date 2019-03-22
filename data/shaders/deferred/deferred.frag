@@ -118,8 +118,7 @@ void main()
 	float fogLerp = clamp((distToEye - settings_ubo.fogStart) / settings_ubo.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
-	// Note: Disabled for now
-	//litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
+	litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
 
 	float ssao = texture(ssaoSampler, InTex).r;
 
