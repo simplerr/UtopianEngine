@@ -64,4 +64,5 @@ void main()
 	outNormal.y *= -1.0f;
 	outAlbedo = vec4(diffuse);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
+	//outAlbedo = vec4(InTex.x, InTex.y, 0, 1);
 }

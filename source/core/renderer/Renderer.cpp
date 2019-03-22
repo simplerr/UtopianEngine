@@ -128,6 +128,7 @@ namespace Utopian
 		ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);
 		ImGui::Combo("Tonemapping", &mRenderingSettings.tonemapping, "Reinhard\0Uncharted 2\0Exposure\0None\0");
 		ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
+		ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 5.0f);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
@@ -281,10 +282,11 @@ namespace Utopian
 		mSceneInfo.cameras.push_back(camera);
 	}
 
-	InstanceGroup::InstanceGroup(uint32_t assetId)
+	InstanceGroup::InstanceGroup(uint32_t assetId, bool animated)
 	{
 		mAssetId = assetId;
 		mInstanceBuffer = nullptr;
+		mAnimated = animated;
 
 		mModel = gAssetLoader().LoadAsset(assetId);
 
@@ -338,6 +340,11 @@ namespace Utopian
 		}
 	}
 
+	void InstanceGroup::SetAnimated(bool animated)
+	{
+		mAnimated = animated;
+	}
+
 	uint32_t InstanceGroup::GetAssetId()
 	{
 		return mAssetId;
@@ -357,6 +364,11 @@ namespace Utopian
 	{
 		return mModel;
 	}
+
+	bool InstanceGroup::IsAnimated()
+	{
+		return mAnimated;
+	}
 	
 	void Renderer::UpdateInstanceAltitudes()
 	{
@@ -367,7 +379,7 @@ namespace Utopian
 		}
 	}
 
-	void Renderer::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
+	void Renderer::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, bool animated)
 	{
 		// Instance group already exists?
 		SharedPtr<InstanceGroup> instanceGroup = nullptr;
@@ -383,7 +395,7 @@ namespace Utopian
 		if (instanceGroup == nullptr)
 		{
 			// Todo: Check if assetId is valid
-			instanceGroup = std::make_shared<InstanceGroup>(assetId);
+			instanceGroup = std::make_shared<InstanceGroup>(assetId, animated);
 			mSceneInfo.instanceGroups.push_back(instanceGroup);
 		}
 

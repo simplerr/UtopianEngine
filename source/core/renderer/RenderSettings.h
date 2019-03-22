@@ -16,7 +16,7 @@ namespace Utopian
 		int blockViewDistance = 2;
 		bool shadowsEnabled = true;
 		bool normalMapping = true;
-		bool ssaoEnabled = true;
+		bool ssaoEnabled = false;
 		bool fxaaEnabled = true;
 		bool fxaaDebug = false;
 		bool godRaysEnabled = true;
@@ -34,5 +34,6 @@ namespace Utopian
 		int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
 		float exposure = 1.4f;
 		float bloomThreshold = 1.5f;
+		float windStrength = 0.2f;
 	};
 }

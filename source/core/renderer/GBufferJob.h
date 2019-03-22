@@ -17,6 +17,12 @@ namespace Utopian
 			UNIFORM_PARAM(int, normalMapping)
 		UNIFORM_BLOCK_END()
 
+		UNIFORM_BLOCK_BEGIN(AnimationParametersBlock)
+			UNIFORM_PARAM(float, time)
+			UNIFORM_PARAM(float, terrainSize)
+			UNIFORM_PARAM(float, strength)
+		UNIFORM_BLOCK_END()
+
 		GBufferJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~GBufferJob();
 
@@ -27,11 +33,14 @@ namespace Utopian
 
 		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
 		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
-		SharedPtr<Vk::Effect> mGBufferEffectTerrain;
+		SharedPtr<Vk::Effect> mInstancedAnimationEffect;
 		SharedPtr<Vk::Effect> mGBufferEffectInstanced;
 	private:
 		GBufferViewProjection viewProjectionBlock;
 		SettingsBlock settingsBlock;
-		SharedPtr<Vk::Sampler> sampler;
+
+		// Animated instancing
+		AnimationParametersBlock animationParametersBlock;
+		Vk::Texture* mWindmapTexture;
 	};
 }

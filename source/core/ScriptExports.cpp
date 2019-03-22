@@ -33,7 +33,7 @@ namespace Utopian
 		Vk::Debug::ConsolePrint(text);
 	}
 
-	void ScriptExports::AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool instanced)
+	void ScriptExports::AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool instanced, bool animated)
 	{
 		if (!instanced)
 		{
@@ -48,13 +48,13 @@ namespace Utopian
 		}
 		else
 		{
-			gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale));
+			gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale), animated);
 		}
 	}
 
-	void ScriptExports::AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale)
+	void ScriptExports::AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool animated)
 	{
-		gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale));
+		gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale), animated);
 	}
 
 	void ScriptExports::BuildInstanceBuffers()

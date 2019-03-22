@@ -13,8 +13,10 @@ namespace Utopian
 	public:
 		static void Register();
 		static void DebugPrint(const char* text);
-		static void AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool instanced);
-		static void AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale);
+		static void AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool instanced, bool animated);
+
+		// Note: Is this used?
+		static void AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool animated);
 		static void BuildInstanceBuffers();
 		static void ClearInstanceGroups();
 		static void SeedNoise(uint32_t seed);

@@ -20,23 +20,26 @@ namespace Utopian
 	class InstanceGroup
 	{
 	public:
-		InstanceGroup(uint32_t assetId);
+		InstanceGroup(uint32_t assetId, bool animated = false);
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void RemoveInstances();
 		void UpdateAltitudes(const SharedPtr<Terrain>& terrain);
 		void BuildBuffer(Vk::Device* device);
+		void SetAnimated(bool animated);
 
 		uint32_t GetAssetId();
 		uint32_t GetNumInstances();
 		Vk::Buffer* GetBuffer();
 		Vk::StaticModel* GetModel();
+		bool IsAnimated();
 
 	private:
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
 		Vk::StaticModel* mModel;
 		std::vector<InstanceData> mInstances;
 		uint32_t mAssetId;
+		bool mAnimated;
 	};
 
 	class Cascade

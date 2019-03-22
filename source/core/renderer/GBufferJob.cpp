@@ -35,10 +35,10 @@ namespace Utopian
 		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer_terrain.frag";
+		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
 
-		mGBufferEffectTerrain = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
@@ -55,34 +55,27 @@ namespace Utopian
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 2 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 3 : InInstanceWorld
 		mGBufferEffectInstanced->GetPipeline()->OverrideVertexInput(vertexDescription);
+		mInstancedAnimationEffect->GetPipeline()->OverrideVertexInput(vertexDescription);
 
 		mGBufferEffectInstanced->CreatePipeline();
-		mGBufferEffectTerrain->CreatePipeline();
+		mInstancedAnimationEffect->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
 
 		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mGBufferEffectTerrain->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", &settingsBlock);
-		mGBufferEffectTerrain->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
 
-		// Bind the different terrain textures
-		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
-		sampler->Create();
+		animationParametersBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", &animationParametersBlock);
 
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/ground/grass2.png");
-		Vk::Texture* texture2 = Vk::gTextureLoader().LoadTexture("data/textures/ground/rock.png");
-		Vk::Texture* texture3 = Vk::gTextureLoader().LoadTexture("data/textures/ground/snow.png");
-		Vk::TextureArray textureArray;
-		textureArray.AddTexture(texture->imageView, sampler.get());
-		textureArray.AddTexture(texture2->imageView, sampler.get());
-		textureArray.AddTexture(texture3->imageView, sampler.get());
-
-		mGBufferEffectTerrain->BindCombinedImage("textureSampler", &textureArray);
+		mWindmapTexture = Vk::gTextureLoader().LoadTexture("data/textures/windmap.jpg");
+		mInstancedAnimationEffect->BindCombinedImage("windmapSampler", mWindmapTexture->GetTextureDescriptorInfo());
 	}
 
 	void GBufferJob::Render(const JobInput& jobInput)
@@ -96,11 +89,15 @@ namespace Utopian
 		settingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
 		settingsBlock.UpdateMemory();
 
+		animationParametersBlock.data.time = gTimer().GetTime();
+		animationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
+		animationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
+		animationParametersBlock.UpdateMemory();
+
 		renderTarget->Begin("G-buffer pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		/* Render instanced assets */
-		commandBuffer->CmdBindPipeline(mGBufferEffectInstanced->GetPipeline());
 		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
 		{
 			SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
@@ -109,12 +106,20 @@ namespace Utopian
 
 			if (instanceBuffer != nullptr && model != nullptr)
 			{
+				SharedPtr<Vk::Effect> effect = nullptr;
+				if (!instanceGroup->IsAnimated())
+					effect = mGBufferEffectInstanced;
+				else
+					effect = mInstancedAnimationEffect;
+
+				commandBuffer->CmdBindPipeline(effect->GetPipeline());
+
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-					VkDescriptorSet descriptorSets[2] = { mGBufferEffectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
+					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
 
-					commandBuffer->CmdBindDescriptorSet(mGBufferEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 					// Note: Move out from if
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
@@ -143,32 +148,17 @@ namespace Utopian
 				// Push the world matrix constant
 				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
-				// Todo: Note: This is a temporary workaround
-				if (!renderable->HasRenderFlags(RENDER_FLAG_TERRAIN))
-				{
-					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-					VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
+				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
+				VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
 
-					commandBuffer->CmdBindPipeline(effect->GetPipeline());
-					commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+				commandBuffer->CmdBindPipeline(effect->GetPipeline());
+				commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
-					// Note: Move out from if
-					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-				}
-				else
-				{
-					commandBuffer->CmdBindPipeline(mGBufferEffectTerrain->GetPipeline());
-					commandBuffer->CmdBindDescriptorSets(mGBufferEffectTerrain);
-					commandBuffer->CmdPushConstants(mGBufferEffectTerrain->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
-
-					// Note: Move out from else
-					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-				}
+				// Note: Move out from if
+				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}	
 		

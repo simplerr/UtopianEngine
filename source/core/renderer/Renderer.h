@@ -69,7 +69,7 @@ namespace Utopian
 		const RenderingSettings& GetRenderingSettings() const;
 
 		/** Instancing experimentation. */
-		void AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
+		void AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, bool animated = false);
 		void BuildAllInstances();
 		void ClearInstanceGroups();
 
