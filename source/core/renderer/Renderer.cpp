@@ -128,7 +128,7 @@ namespace Utopian
 		ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);
 		ImGui::Combo("Tonemapping", &mRenderingSettings.tonemapping, "Reinhard\0Uncharted 2\0Exposure\0None\0");
 		ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
-		ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 5.0f);
+		ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 25.0f);
 		ImGui::SliderFloat("Wind frequency", &mRenderingSettings.windFrequency, 0.0f, 30000.0f);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);

@@ -24,6 +24,15 @@ namespace Utopian
 			UNIFORM_PARAM(float, frequency)
 		UNIFORM_BLOCK_END()
 
+		struct InstancePushConstantBlock
+		{
+			InstancePushConstantBlock(float _modelHeight) {
+				modelHeight = _modelHeight;
+			}
+
+			float modelHeight;
+		};
+
 		GBufferJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~GBufferJob();
 

@@ -34,7 +34,7 @@ namespace Utopian
 		int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
 		float exposure = 1.4f;
 		float bloomThreshold = 1.5f;
-		float windStrength = 0.2f;
+		float windStrength = 5.0f;
 		float windFrequency = 10000.0f;
 	};
 }

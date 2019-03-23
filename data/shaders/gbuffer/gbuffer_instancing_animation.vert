@@ -27,6 +27,10 @@ layout (std140, set = 0, binding = 2) uniform UBO_animationParameters
 
 layout (set = 0, binding = 3) uniform sampler2D windmapSampler;
 
+layout (push_constant) uniform PushConstants {
+	float modelHeight;
+} pushConstants;
+
 layout (location = 0) out vec4 OutColor;
 layout (location = 1) out vec3 OutPosW;
 layout (location = 2) out vec3 OutNormalW;
@@ -62,13 +66,13 @@ void main()
 	OutPosW = (InInstanceWorld * vec4(localPos, 1.0)).xyz;
 
 	// Wind animation
-	float meshHeight = 8.0;
+	float modelHeight = pushConstants.modelHeight;
 	float time = animationParameters_ubo.time;
 	vec2 uv = transformToUv(vec2(OutPosW.x, OutPosW.z));
 	uv = fract(uv * 400 + time / animationParameters_ubo.frequency);
 	vec3 windDir = texture(windmapSampler, uv).xyz;
 	windDir = windDir * 2 - 1.0f; // To [-1, 1] range
-	localPos.xyz += (localPos.y / meshHeight) * (localPos.y / meshHeight) * windDir * animationParameters_ubo.strength;
+	localPos.xyz += (localPos.y / modelHeight) * (localPos.y / modelHeight) * windDir * animationParameters_ubo.strength;
 
 	OutColor = vec4(1.0);
 	OutNormalW  = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;

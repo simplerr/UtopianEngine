@@ -115,6 +115,16 @@ namespace Utopian
 
 				commandBuffer->CmdBindPipeline(effect->GetPipeline());
 
+				float modelHeight = model->GetBoundingBox().GetHeight();
+
+				// Todo: Perhaps they can share the same shader and just have a flag for doing animation
+				if (instanceGroup->IsAnimated())
+				{
+					// Push the world matrix constant
+					InstancePushConstantBlock pushConsts(modelHeight);
+					commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+				}
+
 				for (Vk::Mesh* mesh : model->mMeshes)
 				{
 					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();

@@ -44,8 +44,6 @@ generate_random_foliage = function(instancing)
         -- add_asset(i, (i / 10) * 100, 0, (i % 10) * 100, 1)
     end
 
-    do return end
-
     -- Bushes
     for i=0, 50 do
         local asset_id = 143 --math.random(0, 24)
@@ -54,6 +52,7 @@ generate_random_foliage = function(instancing)
         local y = -get_terrain_height(-x, -z) -- Note: Negative signs
         local scale = 1--math.random(1, 20) / 100
         local type = math.random(0, 10)
+        type = 9
         if type < 8 then
             add_instanced_asset(133, x, y, z, 180, 0, 0, scale, false, true)
         else
