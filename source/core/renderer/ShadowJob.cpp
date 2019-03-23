@@ -96,6 +96,11 @@ namespace Utopian
 				for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
 				{
 					SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
+
+					// Skip if instance group does not cast shadows
+					if (!instanceGroup->IsCastingShadows())
+						continue;
+
 					Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
 					Vk::StaticModel* model = instanceGroup->GetModel();
 

@@ -20,19 +20,21 @@ namespace Utopian
 	class InstanceGroup
 	{
 	public:
-		InstanceGroup(uint32_t assetId, bool animated = false);
+		InstanceGroup(uint32_t assetId, bool animated = false, bool castShadows = false);
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void RemoveInstances();
 		void UpdateAltitudes(const SharedPtr<Terrain>& terrain);
 		void BuildBuffer(Vk::Device* device);
 		void SetAnimated(bool animated);
+		void SetCastShadows(bool castShadows);
 
 		uint32_t GetAssetId();
 		uint32_t GetNumInstances();
 		Vk::Buffer* GetBuffer();
 		Vk::StaticModel* GetModel();
 		bool IsAnimated();
+		bool IsCastingShadows();
 
 	private:
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
@@ -40,6 +42,7 @@ namespace Utopian
 		std::vector<InstanceData> mInstances;
 		uint32_t mAssetId;
 		bool mAnimated;
+		bool mCastShadows;
 	};
 
 	class Cascade

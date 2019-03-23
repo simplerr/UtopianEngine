@@ -17,7 +17,7 @@ generate_random_foliage = function(instancing)
         local x = math.random(-grass_range, grass_range)
         local z = math.random(-grass_range, grass_range)
         local y = -get_terrain_height(-x, -z) -- Note: Negative signs
-        add_asset(asset_id, x, y, z, 180, 0, 0, 1, instancing, true)
+        add_instanced_asset(asset_id, x, y, z, 180, 0, 0, 1, true, false)
     end
 
     -- Rocks
@@ -29,7 +29,7 @@ generate_random_foliage = function(instancing)
         local y = -get_terrain_height(-x, -z) -- Note: Negative signs
         local ry = math.random(0, 360)
         local scale = math.random(1, 30) / 100
-        add_asset(asset_id, x, y, z, 180, ry, 0, scale, instancing, false)
+        add_instanced_asset(asset_id, x, y, z, 180, ry, 0, scale, false, true)
     end
 
     -- Trees
@@ -40,7 +40,7 @@ generate_random_foliage = function(instancing)
         local y = -get_terrain_height(-x, -z) -- Note: Negative signs
         local ry = math.random(0, 360)
         local scale = 0.2--math.random(5, 10) / 100
-        add_asset(75, x, y, z, 180, ry, 0, scale, instancing, false)
+        add_instanced_asset(75, x, y, z, 180, ry, 0, scale, false, true)
         -- add_asset(i, (i / 10) * 100, 0, (i % 10) * 100, 1)
     end
 
@@ -55,10 +55,10 @@ generate_random_foliage = function(instancing)
         local scale = 1--math.random(1, 20) / 100
         local type = math.random(0, 10)
         if type < 8 then
-            add_asset(133, x, y, z, 180, 0, 0, scale, instancing, false)
+            add_instanced_asset(133, x, y, z, 180, 0, 0, scale, false, true)
         else
             scale = 2
-            add_asset(147, x, y, z, 180, 0, 0, scale, instancing, false)
+            add_instanced_asset(147, x, y, z, 180, 0, 0, scale, false, true)
         end
     end
 end

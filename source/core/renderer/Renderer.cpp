@@ -283,11 +283,12 @@ namespace Utopian
 		mSceneInfo.cameras.push_back(camera);
 	}
 
-	InstanceGroup::InstanceGroup(uint32_t assetId, bool animated)
+	InstanceGroup::InstanceGroup(uint32_t assetId, bool animated, bool castShadows)
 	{
 		mAssetId = assetId;
 		mInstanceBuffer = nullptr;
 		mAnimated = animated;
+		mCastShadows = castShadows;
 
 		mModel = gAssetLoader().LoadAsset(assetId);
 
@@ -346,6 +347,11 @@ namespace Utopian
 		mAnimated = animated;
 	}
 
+	void InstanceGroup::SetCastShadows(bool castShadows)
+	{
+		mCastShadows = castShadows;
+	}
+
 	uint32_t InstanceGroup::GetAssetId()
 	{
 		return mAssetId;
@@ -370,6 +376,11 @@ namespace Utopian
 	{
 		return mAnimated;
 	}
+
+	bool InstanceGroup::IsCastingShadows()
+	{
+		return mCastShadows;
+	}
 	
 	void Renderer::UpdateInstanceAltitudes()
 	{
@@ -380,7 +391,7 @@ namespace Utopian
 		}
 	}
 
-	void Renderer::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, bool animated)
+	void Renderer::AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, bool animated, bool castShadow)
 	{
 		// Instance group already exists?
 		SharedPtr<InstanceGroup> instanceGroup = nullptr;
@@ -389,6 +400,7 @@ namespace Utopian
 			if (mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
 			{
 				instanceGroup = mSceneInfo.instanceGroups[i];
+
 				break;
 			}
 		}
@@ -396,7 +408,7 @@ namespace Utopian
 		if (instanceGroup == nullptr)
 		{
 			// Todo: Check if assetId is valid
-			instanceGroup = std::make_shared<InstanceGroup>(assetId, animated);
+			instanceGroup = std::make_shared<InstanceGroup>(assetId, animated, castShadow);
 			mSceneInfo.instanceGroups.push_back(instanceGroup);
 		}
 
@@ -409,6 +421,8 @@ namespace Utopian
 		{
 			mSceneInfo.instanceGroups[i]->RemoveInstances();
 		}
+
+		mSceneInfo.instanceGroups.clear();
 	}
 
 	void Renderer::GarbageCollect()

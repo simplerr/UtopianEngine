@@ -33,28 +33,21 @@ namespace Utopian
 		Vk::Debug::ConsolePrint(text);
 	}
 
-	void ScriptExports::AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool instanced, bool animated)
+	void ScriptExports::AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale)
 	{
-		if (!instanced)
-		{
-			SharedPtr<Actor> actor = Actor::Create("Lua asset");
+		SharedPtr<Actor> actor = Actor::Create("Lua asset");
 
-			CTransform* transform = actor->AddComponent<CTransform>(glm::vec3(x, y, z));
-			transform->AddRotation(glm::vec3(rx, ry, rz));
-			transform->SetScale(glm::vec3(scale));
+		CTransform* transform = actor->AddComponent<CTransform>(glm::vec3(x, y, z));
+		transform->AddRotation(glm::vec3(rx, ry, rz));
+		transform->SetScale(glm::vec3(scale));
 
-			CRenderable* renderable = actor->AddComponent<CRenderable>();
-			renderable->SetModel(gAssetLoader().LoadAsset(assetId));
-		}
-		else
-		{
-			gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale), animated);
-		}
+		CRenderable* renderable = actor->AddComponent<CRenderable>();
+		renderable->SetModel(gAssetLoader().LoadAsset(assetId));
 	}
 
-	void ScriptExports::AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool animated)
+	void ScriptExports::AddInstancedAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale, bool animated, bool castShadow)
 	{
-		gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale), animated);
+		gRenderer().AddInstancedAsset(assetId, glm::vec3(x, y, z), glm::vec3(rx, ry, rz), glm::vec3(scale), animated, castShadow);
 	}
 
 	void ScriptExports::BuildInstanceBuffers()
