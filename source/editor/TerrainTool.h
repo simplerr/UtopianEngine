@@ -15,7 +15,8 @@ namespace Utopian
 	{
 		enum Mode {
 			HEIGHT = 0,
-			BLEND = 1
+			BLEND = 1,
+			VEGETATION = 2
 		};
 
 		enum Operation {
@@ -54,6 +55,10 @@ namespace Utopian
 		void RenderBlendmapBrush();
 		void RenderHeightmapBrush();
 
+		// Used by VegetationTool
+		// Note: Todo: Remove dependency
+		BrushSettings* GetBrushSettings();
+
 	private:
 		void UpdateBrushUniform();
 
@@ -64,7 +69,7 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
-		SharedPtr<Terrain::BrushBlock> brushBlock;
+		SharedPtr<Terrain::BrushBlock> brushBlock; // Note: Todo: This is retrieved from Terrain
 		BrushSettings brushSettings;
 		SharedPtr<Vk::Texture2D> heightToolTexture;
 

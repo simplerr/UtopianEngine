@@ -70,11 +70,12 @@ namespace Utopian
 
 		/** Instancing experimentation. */
 		void AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, bool animated = false, bool castShadow = false);
+		void RemoveInstancesWithinRadius(uint32_t assetId, glm::vec3 position, float radius);
 		void BuildAllInstances();
 		void ClearInstanceGroups();
 
 		/** Adds the buffers the a garbage collect list that will be destroyed once no command buffer is active. */
-		void FreeBuffer(SharedPtr<Vk::Buffer>& buffer);
+		void QueueDestroy(SharedPtr<Vk::Buffer>& buffer);
 
 		/** Destroys all Vulkan resources that have been added to the garbage collect list. */
 		void GarbageCollect();

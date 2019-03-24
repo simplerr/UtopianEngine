@@ -483,6 +483,9 @@
     <ClCompile Include="source\core\components\CRandomPaths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\editor\VegetationTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -885,6 +888,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\Texture2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\VegetationTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

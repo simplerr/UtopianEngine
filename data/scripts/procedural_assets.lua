@@ -9,8 +9,8 @@ generate_random_foliage = function(instancing)
     local range = 2000
 
      -- Grass and flowers
-    for i=0, 4000 do
-        grass_range = 2000
+    for i=0, 00 do
+        grass_range = 8000
         local asset_id = math.random(56 * 0, 66)
         asset_id = 67
         -- asset_id = 70
@@ -45,7 +45,7 @@ generate_random_foliage = function(instancing)
     end
 
     -- Bushes
-    for i=0, 50 do
+    for i=0, 25 do
         local asset_id = 143 --math.random(0, 24)
         local x = math.random(-range, range)
         local z = math.random(-range, range)
@@ -57,7 +57,7 @@ generate_random_foliage = function(instancing)
             add_instanced_asset(133, x, y, z, 180, 0, 0, scale, false, true)
         else
             scale = 2
-            add_instanced_asset(147, x, y, z, 180, 0, 0, scale, false, true)
+            add_instanced_asset(147, x, y, z, 180, 0, 0, scale, true, true)
         end
     end
 end

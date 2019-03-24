@@ -15,6 +15,7 @@
 #include "core/legacy/BaseTerrain.h"
 #include "editor/TransformTool.h"
 #include "editor/TerrainTool.h"
+#include "editor/VegetationTool.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
 #include <random>
@@ -28,6 +29,9 @@ namespace Utopian
 		mActorInspector = new ActorInspector();
 		mTransformTool = std::make_shared<TransformTool>(mTerrain, camera);
 		mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
+		mVegetationTool = std::make_shared<VegetationTool>(terrain, gRenderer().GetDevice());
+		mVegetationTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
+
 
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Moving point light", ActorTemplate::MOVING_POINT_LIGHT);
@@ -47,6 +51,7 @@ namespace Utopian
 	{
 		mTransformTool->Update(&gInput(), 0); // Note: Hack
 		mTerrainTool->Update();
+		mVegetationTool->Update();
 
 		UpdateUi();
 

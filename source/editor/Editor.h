@@ -9,9 +9,10 @@ namespace Utopian
 	class World;
 	class Actor;
 	class ActorInspector;
-	class TerrainTool;
 	class Terrain;
 	class TransformTool;
+	class TerrainTool;
+	class VegetationTool;
 
 	enum ActorTemplate
 	{
@@ -45,6 +46,7 @@ namespace Utopian
 		ActorInspector* mActorInspector;
 		SharedPtr<TransformTool> mTransformTool;
 		SharedPtr<TerrainTool> mTerrainTool;
+		SharedPtr<VegetationTool> mVegetationTool;
 		Actor* mSelectedActor;
 
 		std::vector<const char*> mModelPaths;

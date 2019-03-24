@@ -24,6 +24,7 @@ namespace Utopian
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void RemoveInstances();
+		void RemoveInstancesWithinRadius(glm::vec3 position, float radius);
 		void UpdateAltitudes(const SharedPtr<Terrain>& terrain);
 		void BuildBuffer(Vk::Device* device);
 		void SetAnimated(bool animated);
@@ -39,7 +40,8 @@ namespace Utopian
 	private:
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
 		Vk::StaticModel* mModel;
-		std::vector<InstanceData> mInstances;
+		std::vector<InstanceData> mInstances; // Uploaded to GPU
+		std::vector<glm::vec3> mCachedPositions;
 		uint32_t mAssetId;
 		bool mAnimated;
 		bool mCastShadows;

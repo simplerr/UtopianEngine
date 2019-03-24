@@ -25,7 +25,7 @@ layout (std140, set = 0, binding = 8) uniform UBO_brush
     vec2 pos;
     float radius;
     float strength;
-    int mode; // 0 = height, 1 = blend
+    int mode; // 0 = height, 1 = blend, 2 = foliage
     int operation; // 0 = add, 1 = remove
 } ubo_brush;
 
@@ -123,7 +123,14 @@ void main()
     // Overlay that shows the area effect of the terrain brush
     float dist = distance(InTex, ubo_brush.pos);
     if ((dist > ubo_brush.radius - 0.0005) && dist < ubo_brush.radius)
-        OutAlbedo = vec4(ubo_brush.mode, 1 - ubo_brush.mode, 0, 1);
+    {
+        if (ubo_brush.mode == 0)    // Height
+            OutAlbedo = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        if (ubo_brush.mode == 1)    // Blend
+            OutAlbedo = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+        if (ubo_brush.mode == 2)    // Vegetation
+            OutAlbedo = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    }
 
     // Debugging:
     //bumpNormal = bumpNormal.rbg;

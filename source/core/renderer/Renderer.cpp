@@ -80,6 +80,8 @@ namespace Utopian
 		mSceneInfo.terrain->Update();
 		mJobGraph->Update();
 
+		//BuildAllInstances();
+
 		UpdateUi();
 	}
 
@@ -307,14 +309,34 @@ namespace Utopian
 		instanceData.world = world;
 
 		mInstances.push_back(instanceData);
+		mCachedPositions.push_back(position);
 	}
 
 	void InstanceGroup::RemoveInstances()
 	{
 		mInstances.clear();
-		gRenderer().FreeBuffer(mInstanceBuffer);
-		//mDeleteBuffer = mInstanceBuffer;
-		//mInstanceBuffer = nullptr;
+		mCachedPositions.clear();
+
+		gRenderer().QueueDestroy(mInstanceBuffer);
+	}
+
+	void InstanceGroup::RemoveInstancesWithinRadius(glm::vec3 position, float radius)
+	{
+		for (auto iter = mInstances.begin(); iter != mInstances.end();)
+		{
+			if (glm::distance(position, Math::GetTranslation((*iter).world)) < radius)
+				iter = mInstances.erase(iter);
+			else
+				iter++;
+		}
+
+		for (auto iter = mCachedPositions.begin(); iter != mCachedPositions.end();)
+		{
+			if (glm::distance(position, (*iter)) < radius)
+				iter = mCachedPositions.erase(iter);
+			else
+				iter++;
+		}
 	}
 
 	void InstanceGroup::BuildBuffer(Vk::Device* device)
@@ -324,6 +346,8 @@ namespace Utopian
 		// mapping and updating the memory is not enough.
 		if (GetNumInstances() != 0)
 		{
+			gRenderer().QueueDestroy(mInstanceBuffer);
+
 			mInstanceBuffer = std::make_shared<Vk::Buffer>(device,
 														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
@@ -336,9 +360,10 @@ namespace Utopian
 	{
 		for (uint32_t i = 0; i < mInstances.size(); i++)
 		{
-			glm::vec3 translation = Math::GetTranslation(mInstances[i].world);
+			glm::vec3 translation = mCachedPositions[i];
 			translation.y = -terrain->GetHeight(-translation.x, -translation.z);
 			mInstances[i].world = Math::SetTranslation(mInstances[i].world, translation);
+			mCachedPositions[i] = translation;
 		}
 	}
 
@@ -415,6 +440,19 @@ namespace Utopian
 		instanceGroup->AddInstance(position, rotation, scale);
 	}
 
+	void Renderer::RemoveInstancesWithinRadius(uint32_t assetId, glm::vec3 position, float radius)
+	{
+		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		{
+			if (mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
+			{
+				mSceneInfo.instanceGroups[i]->RemoveInstancesWithinRadius(position, radius);
+				mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
+				break;
+			}
+		}
+	}
+
 	void Renderer::ClearInstanceGroups()
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
@@ -476,7 +514,7 @@ namespace Utopian
 		}
 	}
 
-	void Renderer::FreeBuffer(SharedPtr<Vk::Buffer>& buffer)
+	void Renderer::QueueDestroy(SharedPtr<Vk::Buffer>& buffer)
 	{
 		mBuffersToFree.push_back(buffer);
 		buffer = nullptr;

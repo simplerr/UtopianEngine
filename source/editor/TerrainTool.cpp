@@ -59,7 +59,7 @@ namespace Utopian
 		Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
 		intersection = mTerrain->GetIntersectPoint(ray);
 		brushSettings.position = mTerrain->TransformToUv(intersection.x, intersection.z);
-		brushSettings.radius += gInput().MouseDz();
+		brushSettings.radius += gInput().MouseDz() / 4.0f;
 
 		UpdateBrushUniform();
 		
@@ -85,8 +85,6 @@ namespace Utopian
 				mTerrain->RetrieveHeightmap();
 			}
 		}
-
-		float height = mTerrain->GetHeight(cameraPos.x, cameraPos.z);
    }
 
    void TerrainTool::RenderUi()
@@ -209,5 +207,10 @@ namespace Utopian
 		commandBuffer->CmdBindDescriptorSets(mHeightmapBrushEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		heightmapBrushRenderTarget->End();
+	}
+
+	BrushSettings* TerrainTool::GetBrushSettings()
+	{
+		return &brushSettings;
 	}
 }

@@ -119,6 +119,7 @@
     <ClCompile Include="source\editor\ActorInspector.cpp" />
     <ClCompile Include="source\editor\ComponentInspector.cpp" />
     <ClCompile Include="source\editor\TerrainTool.cpp" />
+    <ClCompile Include="source\editor\VegetationTool.cpp" />
     <ClCompile Include="source\Game.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="source\editor\ActorInspector.h" />
     <ClInclude Include="source\editor\ComponentInspector.h" />
     <ClInclude Include="source\editor\TerrainTool.h" />
+    <ClInclude Include="source\editor\VegetationTool.h" />
     <ClInclude Include="source\Game.h" />
     <ClInclude Include="source\utility\Common.h" />
     <ClInclude Include="source\utility\Exception.h" />
