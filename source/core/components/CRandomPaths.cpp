@@ -3,6 +3,7 @@
 #include "core/components/Actor.h"
 #include "core/Terrain.h"
 #include "imgui/imgui.h"
+#include "utility/Random.h"
 #include <random>
 
 namespace Utopian
@@ -36,12 +37,9 @@ namespace Utopian
 
 	glm::vec2 CRandomPaths::GenerateNewTarget()
 	{
-		std::random_device rd;
-		std::mt19937 mt(rd());
 		float range = mTerrain->GetTerrainSize();
-		std::uniform_real_distribution<float> dist(-range / 2, range / 2);
 
-		glm::vec2 target = glm::vec2(dist(mt), dist(mt));
+		glm::vec2 target = glm::vec2(GetRandomFloat(-range / 2.0f, range / 2.0f));
 		return target;
 	}
 

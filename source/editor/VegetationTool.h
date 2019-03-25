@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <glm/glm.hpp>
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
@@ -27,7 +28,7 @@ namespace Utopian
 		void RenderUi();
 
 	private:
-		void AddVegetation(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, float scale, bool animated, bool castShadows);
+		void AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows);
 	private:
 		Vk::Device* mDevice;
 		SharedPtr<Terrain> mTerrain;
@@ -36,9 +37,16 @@ namespace Utopian
 		struct VegetationSettings
 		{
 			bool continuous;
+			bool randomRotation;
+			bool randomScale;
 			float frequency;
+			float minScale;
+			float maxScale;
 			uint32_t assetId;
 		} mVegetationSettings;
+
+		std::vector<const char*> mAssetNames;
+		int mSelectedAsset;
 
 		// Note: This should be handled by the Timer component.
 		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 

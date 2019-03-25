@@ -27,3 +27,15 @@ std::string ReadFile(std::string filename)
 
 	return text;
 }
+
+namespace Utopian
+{
+	std::string ExtractFilename(std::string path)
+	{
+		std::size_t found = path.rfind("/");
+		if (found != std::string::npos)
+			path.replace(0, found + 1, "");
+
+		return path;
+	}
+}

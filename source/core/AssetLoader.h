@@ -210,6 +210,8 @@ namespace Utopian
 		void AddAsset(uint32_t id, std::string model, std::string texture = "-", std::string normalMap = "-");
 		Vk::StaticModel* LoadAsset(uint32_t assetId);
 		Asset FindAsset(uint32_t id);
+		Asset GetAssetByIndex(uint32_t index) const;
+		uint32_t GetNumAssets() const;
 	private:
 		std::vector<Asset> mAssets;
 

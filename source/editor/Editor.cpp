@@ -32,7 +32,6 @@ namespace Utopian
 		mVegetationTool = std::make_shared<VegetationTool>(terrain, gRenderer().GetDevice());
 		mVegetationTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
 
-
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Moving point light", ActorTemplate::MOVING_POINT_LIGHT);
 

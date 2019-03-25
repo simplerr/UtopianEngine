@@ -207,7 +207,7 @@ namespace Utopian
 		{
 			std::string fullDiffusePath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.diffuseTexture;
 			std::string fullNormalPath = DEFAULT_NORMAL_MAP_TEXTURE;
-		
+
 			if (asset.normalMap != "-")
 				fullNormalPath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.normalMap;
 
@@ -223,5 +223,17 @@ namespace Utopian
 		}
 
 		return model;
+	}
+
+	Asset AssetLoader::GetAssetByIndex(uint32_t index) const
+	{
+		assert(index < mAssets.size());
+
+		return mAssets[index];
+	}
+
+	uint32_t AssetLoader::GetNumAssets() const
+	{
+		return mAssets.size();
 	}
 }
