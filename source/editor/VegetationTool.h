@@ -39,6 +39,7 @@ namespace Utopian
 			bool continuous;
 			bool randomRotation;
 			bool randomScale;
+			bool restrictedDeletion; // Only deletes assets of the same type as the selected one
 			float frequency;
 			float minScale;
 			float maxScale;

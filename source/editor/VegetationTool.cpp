@@ -18,6 +18,7 @@ namespace Utopian
 		mDevice = device;
 		mLastAddTimestamp = std::chrono::high_resolution_clock::now();
 		mVegetationSettings.continuous = true;
+		mVegetationSettings.restrictedDeletion = true;
 		mVegetationSettings.frequency = 10.0f;
 		mVegetationSettings.assetId = 147;
 		mVegetationSettings.randomRotation = true;
@@ -87,7 +88,11 @@ namespace Utopian
 				glm::vec3 intersection = mTerrain->GetIntersectPoint(ray);
 				intersection *= -1; // Todo: Note: negative sign
 
-				gRenderer().RemoveInstancesWithinRadius(mSelectedAsset, intersection, radius);
+				if (mVegetationSettings.restrictedDeletion)
+					gRenderer().RemoveInstancesWithinRadius(mSelectedAsset, intersection, radius);
+				else
+					gRenderer().RemoveInstancesWithinRadius(DELETE_ALL_ASSETS_ID, intersection, radius);
+
 				gRenderer().BuildAllInstances();
 			}
 		}
@@ -102,6 +107,7 @@ namespace Utopian
 		ImGui::Checkbox("Continuous", &mVegetationSettings.continuous);
 		ImGui::Checkbox("Random rotation", &mVegetationSettings.randomRotation);
 		ImGui::Checkbox("Random scale", &mVegetationSettings.randomScale);
+		ImGui::Checkbox("Restricted deletion", &mVegetationSettings.restrictedDeletion);
 
 		if (mVegetationSettings.randomScale)
 		{

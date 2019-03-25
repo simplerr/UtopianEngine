@@ -444,11 +444,10 @@ namespace Utopian
 	{
 		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
 		{
-			if (mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
+			if (assetId == DELETE_ALL_ASSETS_ID || mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
 			{
 				mSceneInfo.instanceGroups[i]->RemoveInstancesWithinRadius(position, radius);
 				mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
-				break;
 			}
 		}
 	}

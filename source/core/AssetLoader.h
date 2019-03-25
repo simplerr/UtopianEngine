@@ -6,9 +6,11 @@
 #include "vulkan\VulkanInclude.h"
 
 #define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
+//#define DELETE_ALL_ASSETS_ID -1
 
 namespace Utopian
 {
+
 	enum GrassAsset
 	{
 		FLOWER_BOUNCING_BET_01_1 = 0,
@@ -186,6 +188,8 @@ namespace Utopian
 		MAPLE_BUSH_04_CROSS,
 		NUM_BUSH_ASSETS
 	};
+
+	const uint32_t DELETE_ALL_ASSETS_ID = BushAsset::NUM_BUSH_ASSETS;
 
 	struct Asset
 	{
