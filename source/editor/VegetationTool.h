@@ -14,6 +14,12 @@ namespace Utopian
 	class Terrain;
 	struct BrushSettings;
 
+	struct UiAsset
+	{
+		uint32_t assetId;
+		ImTextureID previewTextureId;
+	};
+
 	class VegetationTool
 	{
 	public:
@@ -23,6 +29,8 @@ namespace Utopian
 		// Uses brush settings from TerrainTool
 		// Note: Todo: Remove this dependency
 		void SetBrushSettings(BrushSettings* brushSettings);
+
+		void AddAssetToUi(uint32_t assetId, std::string previewPath);
 
 		void Update();
 		void RenderUi();
@@ -48,6 +56,8 @@ namespace Utopian
 
 		std::vector<const char*> mAssetNames;
 		int mSelectedAsset;
+
+		std::vector<UiAsset> mUiAssets;
 
 		// Note: This should be handled by the Timer component.
 		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 

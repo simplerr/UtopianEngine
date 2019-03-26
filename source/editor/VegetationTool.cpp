@@ -1,6 +1,8 @@
 #include "editor/VegetationTool.h"
 #include "editor/TerrainTool.h"
 #include "vulkan/UIOverlay.h"
+#include "vulkan/TextureLoader.h"
+#include "vulkan/Debug.h"
 #include "core/renderer/Renderer.h"
 #include "core/AssetLoader.h"
 #include "utility/Timer.h"
@@ -37,6 +39,16 @@ namespace Utopian
 
 			mAssetNames.push_back(strdup(name.c_str()));
 		}
+
+		AddAssetToUi(7, "data/textures/thumbnails/7.png");
+		AddAssetToUi(12, "data/textures/thumbnails/12.png");
+		AddAssetToUi(17, "data/textures/thumbnails/17.png");
+		AddAssetToUi(23, "data/textures/thumbnails/23.png");
+		AddAssetToUi(27, "data/textures/thumbnails/27.png");
+		AddAssetToUi(67, "data/textures/thumbnails/67.png");
+		AddAssetToUi(104, "data/textures/thumbnails/104.png");
+		AddAssetToUi(145, "data/textures/thumbnails/145.png");
+		AddAssetToUi(149, "data/textures/thumbnails/149.png");
 	}
 
 	VegetationTool::~VegetationTool()
@@ -100,8 +112,7 @@ namespace Utopian
 
 	void VegetationTool::RenderUi()
 	{
-		// Display Actor creation list
-		Vk::UIOverlay::BeginWindow("Vegetation tool", glm::vec2(1500.0f, 1350.0f), 200.0f);
+		Vk::UIOverlay::BeginWindow("Vegetation tool", glm::vec2(1500.0f, 1350.0f), 300.0f);
 
 		ImGui::SliderFloat("Frequency", &mVegetationSettings.frequency, 1.0f, 1000.0f);
 		ImGui::Checkbox("Continuous", &mVegetationSettings.continuous);
@@ -119,11 +130,41 @@ namespace Utopian
 			ImGui::SliderFloat("Scale", &mVegetationSettings.minScale, 0.0f, 20.0f);
 		}
 
+		// Display preview buttons for a select couple of assets
+		for (uint32_t i = 0; i < mUiAssets.size(); i++)
+		{
+			if (ImGui::ImageButton(mUiAssets[i].previewTextureId, ImVec2(64, 64)))
+			{
+				mSelectedAsset = mUiAssets[i].assetId;
+				mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+			}
+
+			if ((i % 3 != 0 || i == 0) && i != mUiAssets.size() - 1)
+				ImGui::SameLine();
+		}
+
 		// Listbox containing all assets that can be placed
-		if (ImGui::ListBox("", &mSelectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
-			mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+		// Todo: Some of them are broken
+		if (ImGui::CollapsingHeader("All available assets"))
+		{
+			if (ImGui::ListBox("", &mSelectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
+				mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+		}
+
 
 		Vk::UIOverlay::EndWindow();
+	}
+
+	void VegetationTool::AddAssetToUi(uint32_t assetId, std::string previewPath)
+	{
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture(previewPath);
+		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddTexture(texture->imageView, texture->sampler);;
+
+		UiAsset uiAsset;
+		uiAsset.assetId = assetId;
+		uiAsset.previewTextureId = previewTextureId;
+
+		mUiAssets.push_back(uiAsset);
 	}
 
 	void VegetationTool::AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows)
@@ -143,6 +184,8 @@ namespace Utopian
 		gRenderer().BuildAllInstances();
 
 		mLastAddTimestamp = std::chrono::high_resolution_clock::now();
+
+		Vk::Debug::ConsolePrint(assetId, "Added asset: ");
 	}
 
 	void VegetationTool::SetBrushSettings(BrushSettings* brushSettings)
