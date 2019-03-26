@@ -483,7 +483,7 @@
     <ClCompile Include="source\core\components\CRandomPaths.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\editor\VegetationTool.cpp">
+    <ClCompile Include="source\editor\FoliageTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\utility\Random.cpp">
@@ -893,7 +893,7 @@
     <ClInclude Include="source\vulkan\Texture2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\editor\VegetationTool.h">
+    <ClInclude Include="source\editor\FoliageTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\Random.h">

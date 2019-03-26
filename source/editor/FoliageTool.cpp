@@ -1,4 +1,4 @@
-#include "editor/VegetationTool.h"
+#include "editor/FoliageTool.h"
 #include "editor/TerrainTool.h"
 #include "vulkan/UIOverlay.h"
 #include "vulkan/TextureLoader.h"
@@ -14,7 +14,7 @@
 
 namespace Utopian
 {
-	VegetationTool::VegetationTool(const SharedPtr<Terrain>& terrain, Vk::Device* device)
+	FoliageTool::FoliageTool(const SharedPtr<Terrain>& terrain, Vk::Device* device)
 	{
 		mTerrain = terrain;
 		mDevice = device;
@@ -51,12 +51,12 @@ namespace Utopian
 		AddAssetToUi(149, "data/textures/thumbnails/149.png");
 	}
 
-	VegetationTool::~VegetationTool()
+	FoliageTool::~FoliageTool()
 	{
 
 	}
 
-	void VegetationTool::Update()
+	void FoliageTool::Update()
 	{
 		RenderUi();
 
@@ -110,7 +110,7 @@ namespace Utopian
 		}
 	}
 
-	void VegetationTool::RenderUi()
+	void FoliageTool::RenderUi()
 	{
 		Vk::UIOverlay::BeginWindow("Vegetation tool", glm::vec2(1500.0f, 1350.0f), 300.0f);
 
@@ -155,7 +155,7 @@ namespace Utopian
 		Vk::UIOverlay::EndWindow();
 	}
 
-	void VegetationTool::AddAssetToUi(uint32_t assetId, std::string previewPath)
+	void FoliageTool::AddAssetToUi(uint32_t assetId, std::string previewPath)
 	{
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture(previewPath);
 		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddTexture(texture->imageView, texture->sampler);;
@@ -167,7 +167,7 @@ namespace Utopian
 		mUiAssets.push_back(uiAsset);
 	}
 
-	void VegetationTool::AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows)
+	void FoliageTool::AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows)
 	{
 		float scale = 1.0f;
 		float rotationY = 0.0f;
@@ -184,11 +184,9 @@ namespace Utopian
 		gRenderer().BuildAllInstances();
 
 		mLastAddTimestamp = std::chrono::high_resolution_clock::now();
-
-		Vk::Debug::ConsolePrint(assetId, "Added asset: ");
 	}
 
-	void VegetationTool::SetBrushSettings(BrushSettings* brushSettings)
+	void FoliageTool::SetBrushSettings(BrushSettings* brushSettings)
 	{
 		mBrushSettings = brushSettings;
 	}

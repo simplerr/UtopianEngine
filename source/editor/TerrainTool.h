@@ -55,7 +55,7 @@ namespace Utopian
 		void RenderBlendmapBrush();
 		void RenderHeightmapBrush();
 
-		// Used by VegetationTool
+		// Used by FoliageTool
 		// Note: Todo: Remove dependency
 		BrushSettings* GetBrushSettings();
 
