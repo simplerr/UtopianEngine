@@ -6,7 +6,6 @@
 #include "vulkan\VulkanInclude.h"
 
 #define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
-//#define DELETE_ALL_ASSETS_ID -1
 
 namespace Utopian
 {

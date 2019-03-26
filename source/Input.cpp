@@ -1,5 +1,6 @@
 #include "Input.h"
 #include "Camera.h"
+#include "imgui/imgui.h"
 
 namespace Utopian
 {
@@ -97,7 +98,7 @@ namespace Utopian
 	@param key The to check.
 	@return True if pressed.
 	*/
-	bool Input::KeyPressed(int key)
+	bool Input::KeyPressed(int key, bool excludeUi)
 	{
 		if (key > 255 || key < 0)
 			return false;
@@ -105,7 +106,17 @@ namespace Utopian
 		// Usees bitwise AND to remove the least significant bit which is set if the key was pressed after the previous call to GetAsyncKeyState.
 		// See http://msdn.microsoft.com/en-us/library/windows/desktop/ms646293(v=VS.85).aspx for more info.
 		// The same thing in keyDown() and keyReleased()
-		return (mKeyState[key] & 0x80) && !(mLastKeyState[key] & 0x80);
+		bool keyPressed = (mKeyState[key] & 0x80) && !(mLastKeyState[key] & 0x80);
+
+		if (key == VK_LBUTTON || key == VK_RBUTTON)
+		{
+			if (excludeUi && mIsMouseInsideUiCallback())
+			{
+				keyPressed = false;
+			}
+		}
+
+		return keyPressed;
 	}
 
 	//! Checks if the key is down.
@@ -113,12 +124,22 @@ namespace Utopian
 	@param key The to check.
 	@return True if down.
 	*/
-	bool Input::KeyDown(int key)
+	bool Input::KeyDown(int key, bool excludeUi)
 	{
 		if (key > 255 || key < 0)
 			return false;
 
-		return mKeyState[key] & 0x80;
+		bool keyDown = mKeyState[key] & 0x80;
+	
+		if (key == VK_LBUTTON || key == VK_RBUTTON)
+		{
+			if (excludeUi && mIsMouseInsideUiCallback())
+			{
+				keyDown = false;
+			}
+		}
+
+		return keyDown;
 	}
 
 	//! Checks if the key was released.
@@ -126,12 +147,22 @@ namespace Utopian
 	@param key The to check.
 	@return True if released.
 	*/
-	bool Input::KeyReleased(int key)
+	bool Input::KeyReleased(int key, bool excludeUi)
 	{
 		if (key > 255 || key < 0)
 			return false;
 
-		return !(mKeyState[key] & 0x80) && (mLastKeyState[key] & 0x80);
+		bool keyReleased = !(mKeyState[key] & 0x80) && (mLastKeyState[key] & 0x80);
+
+		if (key == VK_LBUTTON || key == VK_RBUTTON)
+		{
+			if (excludeUi && mIsMouseInsideUiCallback())
+			{
+				keyReleased = false;
+			}
+		}
+
+		return keyReleased;
 	}
 
 	//! Get the mouse position

@@ -54,6 +54,8 @@ namespace Utopian::Vk
 
 		mLastFrameTime = std::chrono::high_resolution_clock::now();
 		mDeltaTime = 0.0;
+
+		gInput().RegisterUiCallback(&UIOverlay::IsMouseInsideUi, this);
 	}
 
 	/** Free up all Vulkan resources acquired by the UI overlay */
@@ -236,8 +238,8 @@ namespace Utopian::Vk
 		// Update mouse state
 		glm::vec2 mousePos = gInput().GetMousePosition();
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON);
-		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON);
+		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON, false);
+		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON, false);
 
 		ImGui::NewFrame();
 	}
@@ -286,5 +288,10 @@ namespace Utopian::Vk
 	void UIOverlay::ToggleVisible()
 	{
 		mCommandBuffer->ToggleActive();
+	}
+
+	bool UIOverlay::IsMouseInsideUi()
+	{
+		return (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) || ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 	}
 }
