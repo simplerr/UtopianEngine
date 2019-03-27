@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>external\luaplus;external\luaplus\lua53-luaplus\src;external\glslang\StandAlone;external\glslang;source\;base;external\glm;external\gli;external\assimp;external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external\bullet3-2.88;external\luaplus;external\luaplus\lua53-luaplus\src;external\glslang\StandAlone;external\glslang;source\;base;external\glm;external\gli;external\assimp;external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/FS /std:c++latest %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -65,7 +65,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>libs/luaplus/lua53-luaplus-static.debug.lib;OSDependentd.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;SPIRVd.lib;SPVRemapperd.lib;libs\vulkan\vulkan-1.lib;libs\assimp\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libs/bullet3-2.88/BulletCollision_x64_debug.lib;libs/bullet3-2.88/BulletDynamics_x64_debug.lib;libs/bullet3-2.88/BulletSoftBody_x64_debug.lib;libs/bullet3-2.88/LinearMath_x64_debug.lib;libs/luaplus/lua53-luaplus-static.debug.lib;OSDependentd.lib;glslangd.lib;HLSLd.lib;OGLCompilerd.lib;SPIRVd.lib;SPVRemapperd.lib;libs\vulkan\vulkan-1.lib;libs\assimp\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
