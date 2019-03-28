@@ -21,7 +21,8 @@ namespace Utopian
 			ORBIT,
 			PLAYER_CONTROL,
 			RANDOM_PATHS,
-			BLOOM_LIGHT
+			BLOOM_LIGHT,
+			RIGID_BODY
 		};
 
 		Component(Actor* parent);

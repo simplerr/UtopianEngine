@@ -1,5 +1,6 @@
 #include "core/Engine.h"
 #include "core/World.h"
+#include "core/Physics.h"
 #include "core/renderer/Renderer.h"
 #include "core/LuaManager.h"
 #include "core/ScriptExports.h"
@@ -38,6 +39,7 @@ namespace Utopian
 	{
 		Timer::Start();
 		World::Start();
+
 		Input::Start();
 		LuaManager::Start();
 		AssetLoader::Start();
@@ -57,6 +59,7 @@ namespace Utopian
 
 		RendererUtility::Start();
 		Renderer::Start(mVulkanApp.get());
+		Physics::Start();
 
 		// Todo: There is a dependency between loading the actors from Lua and the terrain creation
 		// Terrain needs to be created before World::Instance().LoadScene();
@@ -110,6 +113,8 @@ namespace Utopian
 	{
 		if (mVulkanApp->PreviousFrameComplete())
 		{
+			Physics::Instance().Update();
+
 			gRenderer().GarbageCollect();
 
 			gTimer().FrameEnd();

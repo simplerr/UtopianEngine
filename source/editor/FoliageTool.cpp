@@ -112,7 +112,7 @@ namespace Utopian
 
 	void FoliageTool::RenderUi()
 	{
-		Vk::UIOverlay::BeginWindow("Vegetation tool", glm::vec2(1500.0f, 1350.0f), 300.0f);
+		Vk::UIOverlay::BeginWindow("Foliage tool", glm::vec2(1500.0f, 1350.0f), 300.0f);
 
 		ImGui::SliderFloat("Frequency", &mVegetationSettings.frequency, 1.0f, 1000.0f);
 		ImGui::Checkbox("Continuous", &mVegetationSettings.continuous);

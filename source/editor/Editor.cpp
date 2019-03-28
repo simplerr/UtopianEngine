@@ -9,6 +9,7 @@
 #include "core/components/CLight.h"
 #include "core/components/CBloomLight.h"
 #include "core/components/CRandomPaths.h"
+#include "core/components/CRigidBody.h"
 #include "vulkan/UIOverlay.h"
 #include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
@@ -83,6 +84,10 @@ namespace Utopian
 				// Models from adventure_village needs to be scaled and rotated
 				transform->SetScale(glm::vec3(50));
 				transform->SetRotation(glm::vec3(180, 0, 0));
+
+				// Temporary physics testing:
+				transform->AddTranslation(glm::vec3(0.0f, 2000.0f, 0.0f));
+				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
 			}
