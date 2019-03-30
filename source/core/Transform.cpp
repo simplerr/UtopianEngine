@@ -44,6 +44,11 @@ namespace Utopian
 		RebuildWorldMatrix();
 	}
 
+	void Transform::SetQuaternion(const glm::quat& quaternion)
+	{
+		mQuaternion = quaternion;
+	}
+
 	void Transform::AddTranslation(const glm::vec3& translation)
 	{
 		mPosition += translation;
@@ -102,11 +107,20 @@ namespace Utopian
 	{
 		glm::mat4 world;
 
-		world = glm::translate(world, mPosition);
-		world = glm::rotate(world, glm::radians(mRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		world = glm::rotate(world, glm::radians(mRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		world = glm::rotate(world, glm::radians(mRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-		world = glm::scale(world, mScale);
+		//world = glm::translate(world, mPosition);
+		//world = glm::rotate(world, glm::radians(mRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		//world = glm::rotate(world, glm::radians(mRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		//world = glm::rotate(world, glm::radians(mRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		//world = glm::scale(world, mScale);
+
+		glm::mat4 translation = glm::translate(glm::mat4(), mPosition);
+		//glm::mat4 rotation = glm::rotate(glm::mat4(), glm::radians(mRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		//rotation = glm::rotate(rotation, glm::radians(mRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		//rotation = glm::rotate(rotation, glm::radians(mRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::mat4 rotation = glm::mat4_cast(mQuaternion);
+		glm::mat4 scale = glm::scale(glm::mat4(), mScale);
+
+		world = translation * rotation * scale;
 
 		mWorld = world;
 	}

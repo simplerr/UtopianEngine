@@ -1,11 +1,13 @@
 #include "core/components/CRigidBody.h"
 #include "core/components/CTransform.h"
+#include "core/components/CRenderable.h"
 #include "core/components/Actor.h"
 #include "core/Physics.h"
 #include "core/BulletHelpers.h"
 #include "imgui/imgui.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "btBulletDynamicsCommon.h"
+#include <glm/gtc/quaternion.hpp>
 
 namespace Utopian
 {
@@ -16,21 +18,27 @@ namespace Utopian
 
 	void MotionState::getWorldTransform(btTransform& worldTrans) const
 	{
+		// Todo: This needs to be called by the application in some way
 		glm::vec3 position = mRigidBody->GetTransform().GetPosition();
 		glm::vec3 rotation = mRigidBody->GetTransform().GetRotation();
+		glm::quat quaternion = glm::quat(glm::radians(rotation));
+
+		quaternion = quaternion * quaternion;
 
 		worldTrans.setOrigin(ToBulletVec3(position));
-		//worldTrans.setBasis(ToBtVec3(rotation));
+		worldTrans.setRotation(ToBulletQuaternion(quaternion));
 	}
 
 	void MotionState::setWorldTransform(const btTransform& worldTrans)
 	{
-		//Quaternion newWorldRot = ToQuaternion(worldTrans.getRotation());
 		glm::vec3 position = ToVec3(worldTrans.getOrigin());
+		glm::quat quaternion = ToQuaternion(worldTrans.getRotation());
+		glm::vec3 rotation = glm::eulerAngles(quaternion);
+		//glm::mat4 rotationMatrix = glm::mat4_cast(quaternion);
 
 		mRigidBody->SetPosition(position);
-		// Todo:
-		//mRigidBody->SetRotation(rotation);
+		mRigidBody->SetRotation(glm::degrees(rotation));
+		mRigidBody->SetQuaternion(quaternion);
 	}
 
 	CRigidBody::CRigidBody(Actor* parent)
@@ -64,11 +72,13 @@ namespace Utopian
 	void CRigidBody::PostInit()
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();
+		mRenderable = GetParent()->GetComponent<CRenderable>();
 
 		MotionState* motionState = new MotionState(this);
 
 		btVector3 localInertia(0, 0, 0);
-		mCollisionShape = new btSphereShape(btScalar(1.0f));
+		BoundingBox aabb = mRenderable->GetBoundingBox();
+		mCollisionShape = new btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
 		mCollisionShape->calculateLocalInertia(mMass, localInertia);
 
 		btRigidBody::btRigidBodyConstructionInfo constructionInfo(mMass, motionState, mCollisionShape, localInertia);
@@ -92,6 +102,16 @@ namespace Utopian
 	void CRigidBody::SetPosition(const glm::vec3& position)
 	{
 		mTransform->SetPosition(position);
+	}
+
+	void CRigidBody::SetRotation(const glm::vec3& rotation)
+	{
+		mTransform->SetRotation(rotation);
+	}
+
+	void CRigidBody::SetQuaternion(const glm::quat& quaternion)
+	{
+		mTransform->SetQuaternion(quaternion);
 	}
 
 	const Utopian::Transform& CRigidBody::GetTransform() const

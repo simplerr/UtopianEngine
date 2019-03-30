@@ -103,6 +103,8 @@ namespace Utopian
 				}
 			}
 
+			// Todo: Fix this
+			World::Instance().SynchronizeNodeTransforms();
 			actor->PostInit();
 		}
 	}

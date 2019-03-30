@@ -70,6 +70,15 @@ namespace Utopian
 		}
 	}
 
+	void World::SynchronizeNodeTransforms()
+	{
+		// Synchronize transform between nodes and entities
+		for (auto& entry : mBoundNodes)
+		{
+			entry.second.node->SetTransform(entry.second.actor->GetTransform());
+		}
+	}
+
 	void World::Update()
 	{
 		// Loop through actors and check if any should be removed
@@ -90,11 +99,7 @@ namespace Utopian
 			}
 		}
 
-		// Synchronize transform between nodes and entities
-		for (auto& entry : mBoundNodes)
-		{
-			entry.second.node->SetTransform(entry.second.actor->GetTransform());
-		}
+		SynchronizeNodeTransforms();
 		
 		// Update every active component
 		for (auto& entry : mComponents)

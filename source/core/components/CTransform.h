@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include "Component.h"
 #include "core/Transform.h"
 #include "core/LuaManager.h"
@@ -22,6 +23,7 @@ namespace Utopian
 		void SetPosition(const glm::vec3& position);
 		void SetRotation(const glm::vec3& rotation);
 		void SetScale(const glm::vec3& scale);
+		void SetQuaternion(const glm::quat& quaternion);
 
 		void AddTranslation(const glm::vec3& translation);
 

@@ -36,6 +36,8 @@ namespace Utopian
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Moving point light", ActorTemplate::MOVING_POINT_LIGHT);
 
+		mSelectedModel = 16;
+
 		AddPaths();
 	}
 
@@ -83,10 +85,10 @@ namespace Utopian
 			{
 				// Models from adventure_village needs to be scaled and rotated
 				transform->SetScale(glm::vec3(50));
-				transform->SetRotation(glm::vec3(180, 0, 0));
+				//transform->SetRotation(glm::vec3(180, 0, 0));
 
 				// Temporary physics testing:
-				transform->AddTranslation(glm::vec3(0.0f, 2000.0f, 0.0f));
+				transform->AddTranslation(glm::vec3(0.0f, 200.0f, 0.0f));
 				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
@@ -127,6 +129,7 @@ namespace Utopian
 				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4)); // Set brightness
 			}
 
+			World::Instance().SynchronizeNodeTransforms();
 			actor->PostInit();
 		}
 

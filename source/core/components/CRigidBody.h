@@ -14,6 +14,7 @@ namespace Utopian
 {
 	class Actor;
 	class CTransform;
+	class CRenderable;
 
 	class CRigidBody : public Component
 	{
@@ -27,6 +28,8 @@ namespace Utopian
 		void PostInit() override;
 
 		void SetPosition(const glm::vec3& position);
+		void SetRotation(const glm::vec3& rotation);
+		void SetQuaternion(const glm::quat& quaternion);
 
 		const Transform& GetTransform() const;
 
@@ -43,6 +46,7 @@ namespace Utopian
 
 	private:
 		CTransform* mTransform;
+		CRenderable* mRenderable;
 		btRigidBody* mRigidBody;
 		btCollisionShape* mCollisionShape;
 

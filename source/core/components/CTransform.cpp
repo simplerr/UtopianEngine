@@ -65,6 +65,11 @@ namespace Utopian
 		mTransform.SetScale(scale);
 	}
 
+	void CTransform::SetQuaternion(const glm::quat& quaternion)
+	{
+		mTransform.SetQuaternion(quaternion);
+	}
+
 	void CTransform::AddTranslation(const glm::vec3& translation)
 	{
 		mTransform.AddTranslation(translation);

@@ -32,6 +32,12 @@ namespace Utopian
 		void AddActor(const SharedPtr<Actor>& actor);
 		void AddComponent(const SharedPtr<Component>& component);
 
+		// The transforms from the Actors needds to update the transforms of the SceneNodes
+		// CRigidBody needs the correct bounding box which only is available of they have been synchronized.
+		// We can't do it in BindNode() since we can't gurantee that CTransform is added before CRenderable
+		// Todo: Note: This should be handled better!
+		void SynchronizeNodeTransforms();
+
 		void RemoveActor(Actor* actor);
 		void RemoveActors();
 		void LoadScene();

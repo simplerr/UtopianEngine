@@ -5,6 +5,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace Utopian
 {
@@ -18,6 +19,7 @@ namespace Utopian
 		void SetPosition(const glm::vec3& position);
 		void SetRotation(const glm::vec3& rotation);
 		void SetScale(const glm::vec3& scale);
+		void SetQuaternion(const glm::quat& quaternion);
 
 		void AddTranslation(const glm::vec3& translation);
 		void AddRotation(float x, float y, float z);
@@ -38,6 +40,7 @@ namespace Utopian
 		glm::vec3 mPosition;
 		glm::vec3 mRotation;
 		glm::vec3 mScale;
+		glm::quat mQuaternion;
 	};
 
 }

@@ -101,6 +101,8 @@ namespace Utopian
 
 		World::Instance().Update();
 		Renderer::Instance().Update();
+		Physics::Instance().Update();
+
 		Vk::EffectManager::Instance().Update();
 
 		// Call the applications Update() function
@@ -113,8 +115,6 @@ namespace Utopian
 	{
 		if (mVulkanApp->PreviousFrameComplete())
 		{
-			Physics::Instance().Update();
-
 			gRenderer().GarbageCollect();
 
 			gTimer().FrameEnd();
