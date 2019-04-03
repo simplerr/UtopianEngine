@@ -38,6 +38,7 @@ namespace Utopian
 		const glm::vec3& GetScale() const;
 		const glm::mat4& GetWorldMatrix() const;
 		const glm::mat4& GetWorldInverseTransposeMatrix() const;
+		const glm::quat& GetQuaternion() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {

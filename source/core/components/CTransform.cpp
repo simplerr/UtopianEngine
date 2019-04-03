@@ -124,4 +124,9 @@ namespace Utopian
 	{
 		return mTransform.GetWorldInverseTransposeMatrix();
 	}
+
+	const glm::quat& CTransform::GetQuaternion() const
+	{
+		return mTransform.GetQuaternion();
+	}
 }

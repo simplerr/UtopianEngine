@@ -37,7 +37,6 @@ namespace Utopian
 		//glm::mat4 rotationMatrix = glm::mat4_cast(quaternion);
 
 		mRigidBody->SetPosition(position);
-		mRigidBody->SetRotation(glm::degrees(rotation));
 		mRigidBody->SetQuaternion(quaternion);
 	}
 

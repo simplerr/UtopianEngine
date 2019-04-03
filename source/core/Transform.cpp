@@ -103,6 +103,11 @@ namespace Utopian
 		return glm::inverseTranspose(mWorld);
 	}
 
+	const glm::quat& Transform::GetQuaternion() const
+	{
+		return mQuaternion;
+	}
+
 	void Transform::RebuildWorldMatrix()
 	{
 		glm::mat4 world;

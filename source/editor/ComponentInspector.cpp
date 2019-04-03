@@ -1,9 +1,11 @@
 #include "ComponentInspector.h"
 #include "vulkan/UIOverlay.h"
+#include "vulkan/Debug.h"
 #include "core/components/CTransform.h"
 #include "core/components/CLight.h"
 #include "core/components/CRenderable.h"
 #include "core/components/Actor.h"
+#include <glm/gtc/quaternion.hpp>
 
 Utopian::ComponentInspector::ComponentInspector()
 {
@@ -23,7 +25,29 @@ void Utopian::TransformInspector::UpdateUi()
 	{
 		ImGui::InputFloat3("Position", &mTransform.mPosition.x, 2);
 		ImGui::SliderFloat3("Scale", &mTransform.mScale.x, 0.0f, 100.0f, "%.1f");
-		ImGui::SliderFloat3("Rotation", &mTransform.mRotation.x, 0.0f, 360.0f, "%.1f");
+
+		static bool localRotate = true;
+		ImGui::Checkbox("Local", &localRotate);
+
+		glm::vec3 rotate = glm::vec3(0.0f);
+		ImGui::Text("Rotation");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(1.0f);
+		ImGui::InputFloat("X", &rotate.x, 0.15);
+		ImGui::SameLine();
+		ImGui::InputFloat("Y", &rotate.y, 0.15);
+		ImGui::SameLine();
+		ImGui::InputFloat("Z", &rotate.z, 0.15);
+		ImGui::PopItemWidth();
+
+		glm::quat orientationDelta = glm::angleAxis(rotate.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		orientationDelta = orientationDelta * glm::angleAxis(rotate.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		orientationDelta = orientationDelta * glm::angleAxis(rotate.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		if (localRotate)
+			mComponent->SetQuaternion(mComponent->GetQuaternion() * orientationDelta);
+		else
+			mComponent->SetQuaternion(orientationDelta * mComponent->GetQuaternion());
 
 		mComponent->SetRotation(mTransform.GetRotation());
 		mComponent->SetScale(mTransform.GetScale());
