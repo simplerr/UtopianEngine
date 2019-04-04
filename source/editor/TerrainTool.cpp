@@ -52,7 +52,6 @@ namespace Utopian
 
    void TerrainTool::Update()
    {
-		RenderUi();
 		glm::vec3 cameraPos = gRenderer().GetMainCamera()->GetPosition();
 		static glm::vec3 intersection = glm::vec3(0.0);
 
@@ -89,42 +88,40 @@ namespace Utopian
 
    void TerrainTool::RenderUi()
    {
-	   // Display Actor creation list
-	   Vk::UIOverlay::BeginWindow("Terrain tool", glm::vec2(1500.0f, 1050.0f), 200.0f);
-
-	   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
-	   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);
-
-	   if (ImGui::ImageButton(textureIdentifiers.heightTool, ImVec2(64, 64)))
+	   if (ImGui::CollapsingHeader("Terrain tool", ImGuiTreeNodeFlags_DefaultOpen))
 	   {
-		   brushSettings.mode = BrushSettings::Mode::HEIGHT;
+		   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
+		   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);
+
+		   if (ImGui::ImageButton(textureIdentifiers.heightTool, ImVec2(64, 64)))
+		   {
+			   brushSettings.mode = BrushSettings::Mode::HEIGHT;
+		   }
+
+		   ImGui::SameLine();
+
+		   if (ImGui::ImageButton(textureIdentifiers.grass, ImVec2(64, 64)))
+		   {
+			   brushSettings.mode = BrushSettings::Mode::BLEND;
+			   brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
+		   }
+
+		   ImGui::SameLine();
+
+		   if (ImGui::ImageButton(textureIdentifiers.rock, ImVec2(64, 64)))
+		   {
+			   brushSettings.mode = BrushSettings::Mode::BLEND;
+			   brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
+		   }
+
+		   ImGui::SameLine();
+
+		   if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
+		   {
+			   brushSettings.mode = BrushSettings::Mode::BLEND;
+			   brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
+		   }
 	   }
-
-	   ImGui::SameLine();
-
-	   if (ImGui::ImageButton(textureIdentifiers.grass, ImVec2(64, 64)))
-	   {
-		   brushSettings.mode = BrushSettings::Mode::BLEND;
-		   brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
-	   }
-
-	   ImGui::SameLine();
-
-	   if (ImGui::ImageButton(textureIdentifiers.rock, ImVec2(64, 64)))
-	   {
-		   brushSettings.mode = BrushSettings::Mode::BLEND;
-		   brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
-	   }
-
-	   ImGui::SameLine();
-
-	   if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
-	   {
-		   brushSettings.mode = BrushSettings::Mode::BLEND;
-		   brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
-	   }
-
-	   Vk::UIOverlay::EndWindow();
    }
 
 	void TerrainTool::EffectRecompiledCallback(std::string name)

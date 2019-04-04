@@ -7,6 +7,7 @@ namespace Utopian
 	class CTransform;
 	class CRenderable;
 	class CLight;
+	class CRigidBody;
 
 	class ComponentInspector
 	{
@@ -54,5 +55,15 @@ namespace Utopian
 		CLight* mLight;
 		Utopian::LightData mLightData;
 		int mType;
+	};
+
+	class RigidBodyInspector : public ComponentInspector
+	{
+	public:
+		RigidBodyInspector(CRigidBody* rigidBody);
+
+		virtual void UpdateUi() override;
+	private:
+		CRigidBody* mRigidBody;
 	};
 }

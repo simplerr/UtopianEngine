@@ -19,6 +19,7 @@
 #include "editor/FoliageTool.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
+#include "core/Physics.h"
 #include <random>
 
 namespace Utopian
@@ -153,9 +154,50 @@ namespace Utopian
 		}
 	}
 
+	void Editor::RenderActorCreationUi()
+	{
+		// Display Actor creation list
+		if (ImGui::CollapsingHeader("Create actor"))
+		{
+			ImGui::Text("Models:");
+			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
+
+			if (ImGui::Button("Save scene"))
+				ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
+
+			if (ImGui::Button("Clear scene"))
+				World::Instance().RemoveActors();
+
+			if (ImGui::Button("Reload foliage"))
+			{
+				World::Instance().RemoveActors();
+				World::Instance().LoadScene();
+			}
+
+			if (ImGui::Button("Reload scene"))
+			{
+				World::Instance().RemoveActors();
+				World::Instance().LoadScene();
+			}
+		}
+	}
+
 	void Editor::UpdateUi()
 	{
 		mActorInspector->UpdateUi();
+
+		// UI containing settings, terrain and foliage tools
+		Vk::UIOverlay::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
+
+		bool physicsEnabled = gPhysics().IsEnabled();
+		ImGui::Checkbox("Simulate physics", &physicsEnabled);
+		gPhysics().EnableSimulation(physicsEnabled);
+
+		mTerrainTool->RenderUi();
+		mFoliageTool->RenderUi();
+		RenderActorCreationUi();
+
+		Vk::UIOverlay::EndWindow();
 
 		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
 
@@ -167,32 +209,6 @@ namespace Utopian
 		if (ImGui::Button("Recompile all shaders"))
 		{
 			Vk::gEffectManager().RecompileAllShaders();
-		}
-
-		Vk::UIOverlay::EndWindow();
-
-		// Display Actor creation list
-		Vk::UIOverlay::BeginWindow("Actor list", glm::vec2(1500, 700), 400.0f);
-
-		ImGui::Text("Models:");
-		ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
-
-		if (ImGui::Button("Save scene"))
-			ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
-
-		if (ImGui::Button("Clear scene"))
-			World::Instance().RemoveActors();
-
-		if (ImGui::Button("Reload foliage"))
-		{
-			World::Instance().RemoveActors();
-			World::Instance().LoadScene();
-		}
-
-		if (ImGui::Button("Reload scene"))
-		{
-			World::Instance().RemoveActors();
-			World::Instance().LoadScene();
 		}
 
 		Vk::UIOverlay::EndWindow();

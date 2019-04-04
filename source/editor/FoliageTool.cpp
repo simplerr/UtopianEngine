@@ -58,8 +58,6 @@ namespace Utopian
 
 	void FoliageTool::Update()
 	{
-		RenderUi();
-
 		if (mBrushSettings->mode == BrushSettings::Mode::VEGETATION)
 		{
 			if (gInput().KeyPressed(VK_LBUTTON) || gInput().KeyDown(VK_LBUTTON))
@@ -112,47 +110,45 @@ namespace Utopian
 
 	void FoliageTool::RenderUi()
 	{
-		Vk::UIOverlay::BeginWindow("Foliage tool", glm::vec2(1500.0f, 1350.0f), 300.0f);
-
-		ImGui::SliderFloat("Frequency", &mVegetationSettings.frequency, 1.0f, 1000.0f);
-		ImGui::Checkbox("Continuous", &mVegetationSettings.continuous);
-		ImGui::Checkbox("Random rotation", &mVegetationSettings.randomRotation);
-		ImGui::Checkbox("Random scale", &mVegetationSettings.randomScale);
-		ImGui::Checkbox("Restricted deletion", &mVegetationSettings.restrictedDeletion);
-
-		if (mVegetationSettings.randomScale)
+		if (ImGui::CollapsingHeader("Foliage tool", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::SliderFloat("Min scale", &mVegetationSettings.minScale, 0.0f, 20.0f);
-			ImGui::SliderFloat("Max scale", &mVegetationSettings.maxScale, 0.0f, 20.0f);
-		}
-		else
-		{
-			ImGui::SliderFloat("Scale", &mVegetationSettings.minScale, 0.0f, 20.0f);
-		}
+			ImGui::SliderFloat("Frequency", &mVegetationSettings.frequency, 1.0f, 1000.0f);
+			ImGui::Checkbox("Continuous", &mVegetationSettings.continuous);
+			ImGui::Checkbox("Random rotation", &mVegetationSettings.randomRotation);
+			ImGui::Checkbox("Random scale", &mVegetationSettings.randomScale);
+			ImGui::Checkbox("Restricted deletion", &mVegetationSettings.restrictedDeletion);
 
-		// Display preview buttons for a select couple of assets
-		for (uint32_t i = 0; i < mUiAssets.size(); i++)
-		{
-			if (ImGui::ImageButton(mUiAssets[i].previewTextureId, ImVec2(64, 64)))
+			if (mVegetationSettings.randomScale)
 			{
-				mSelectedAsset = mUiAssets[i].assetId;
-				mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+				ImGui::SliderFloat("Min scale", &mVegetationSettings.minScale, 0.0f, 20.0f);
+				ImGui::SliderFloat("Max scale", &mVegetationSettings.maxScale, 0.0f, 20.0f);
+			}
+			else
+			{
+				ImGui::SliderFloat("Scale", &mVegetationSettings.minScale, 0.0f, 20.0f);
 			}
 
-			if ((i % 3 != 0 || i == 0) && i != mUiAssets.size() - 1)
-				ImGui::SameLine();
+			// Display preview buttons for a select couple of assets
+			for (uint32_t i = 0; i < mUiAssets.size(); i++)
+			{
+				if (ImGui::ImageButton(mUiAssets[i].previewTextureId, ImVec2(64, 64)))
+				{
+					mSelectedAsset = mUiAssets[i].assetId;
+					mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+				}
+
+				if ((i % 3 != 0 || i == 0) && i != mUiAssets.size() - 1)
+					ImGui::SameLine();
+			}
+
+			// Listbox containing all assets that can be placed
+			// Todo: Some of them are broken
+			if (ImGui::CollapsingHeader("All available assets"))
+			{
+				if (ImGui::ListBox("", &mSelectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
+					mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+			}
 		}
-
-		// Listbox containing all assets that can be placed
-		// Todo: Some of them are broken
-		if (ImGui::CollapsingHeader("All available assets"))
-		{
-			if (ImGui::ListBox("", &mSelectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
-				mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
-		}
-
-
-		Vk::UIOverlay::EndWindow();
 	}
 
 	void FoliageTool::AddAssetToUi(uint32_t assetId, std::string previewPath)

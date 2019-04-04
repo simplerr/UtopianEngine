@@ -36,6 +36,7 @@ namespace Utopian
 		bool IsActorSelected();
 		void UnselectActor();
 		void OnActorSelected(Actor* actor);
+		void RenderActorCreationUi();
 
 		void AddPaths();
 

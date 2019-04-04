@@ -19,7 +19,42 @@ namespace Utopian
 
 		mDynamicsWorld->setGravity(btVector3(mGravity.x, mGravity.y, mGravity.z));
 
+		mEnabled = true;
+
 		// Add ground shape for experimentation
+		AddGroundShape();
+	}
+
+	Physics::~Physics()
+	{
+		delete mDynamicsWorld;
+		delete mConstraintSolver;
+		delete mDispatcher;
+		delete mCollisionConfiguration;
+		delete mBroadphase;
+	}
+
+	void Physics::Update()
+	{
+		// Update elapsed time
+		auto now = std::chrono::high_resolution_clock::now();
+		double deltaTime = std::chrono::duration<double, std::milli>(now - mLastFrameTime).count();
+		deltaTime /= 1000.0f; // To seconds
+		mLastFrameTime = now;
+
+		if (IsEnabled())
+		{
+			mDynamicsWorld->stepSimulation(deltaTime, 5);
+		}
+	}
+
+	void Physics::EnableSimulation(bool enable)
+	{
+		mEnabled = enable;
+	}
+
+	void Physics::AddGroundShape()
+	{
 		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(5000.), btScalar(500.), btScalar(5000.)));
 
 		btTransform groundTransform;
@@ -44,26 +79,6 @@ namespace Utopian
 		mDynamicsWorld->addRigidBody(body);
 	}
 
-	Physics::~Physics()
-	{
-		delete mDynamicsWorld;
-		delete mConstraintSolver;
-		delete mDispatcher;
-		delete mCollisionConfiguration;
-		delete mBroadphase;
-	}
-
-	void Physics::Update()
-	{
-		// Update elapsed time
-		auto now = std::chrono::high_resolution_clock::now();
-		double deltaTime = std::chrono::duration<double, std::milli>(now - mLastFrameTime).count();
-		deltaTime /= 1000.0f; // To seconds
-		mLastFrameTime = now;
-
-		mDynamicsWorld->stepSimulation(deltaTime, 5);
-	}
-
 	void Physics::Draw()
 	{
 
@@ -72,5 +87,10 @@ namespace Utopian
 	btDiscreteDynamicsWorld* Physics::GetDynamicsWorld() const
 	{
 		return mDynamicsWorld;
+	}
+
+	bool Physics::IsEnabled() const
+	{
+		return mEnabled;
 	}
 }

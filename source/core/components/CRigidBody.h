@@ -27,9 +27,23 @@ namespace Utopian
 		void OnDestroyed() override;
 		void PostInit() override;
 
+		void Activate();
+		void Deactivate();
+		bool IsActiveted();
+
 		void SetPosition(const glm::vec3& position);
 		void SetRotation(const glm::vec3& rotation);
 		void SetQuaternion(const glm::quat& quaternion);
+
+		float GetMass() const;
+		float GetFriction() const;
+		float GetRollingFriction() const;
+		float GetRestitution() const;
+
+		void SetMass(float mass);
+		void SetFriction(float friction);
+		void SetRollingFriction(float rollingFriction);
+		void SetRestitution(float restitution);
 
 		const Transform& GetTransform() const;
 
@@ -52,7 +66,7 @@ namespace Utopian
 
 		float mMass;
 		float mFriction;
-		float mFrictionRolling;
+		float mRollingFriction;
 		float mRestitution;
 	};
 

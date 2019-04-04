@@ -3,6 +3,7 @@
 #include "core/components/CLight.h"
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
+#include "core/components/CRigidBody.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
 #include "vulkan/UIOverlay.h"
@@ -73,6 +74,12 @@ namespace Utopian
 		CRenderable* renderable = mActor->GetComponent<CRenderable>();
 		if (renderable != nullptr) {
 			RenderableInspector* inspector = new RenderableInspector(renderable);
+			mComponentInspectors.push_back(inspector);
+		}
+
+		CRigidBody* rigidBody = mActor->GetComponent<CRigidBody>();
+		if (renderable != nullptr) {
+			RigidBodyInspector* inspector = new RigidBodyInspector(rigidBody);
 			mComponentInspectors.push_back(inspector);
 		}
 	}

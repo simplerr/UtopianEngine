@@ -47,7 +47,7 @@ namespace Utopian
 
 		mMass = 1.0f;
 		mFriction = 0.5f;
-		mFrictionRolling = 0.0f;
+		mRollingFriction = 0.0f;
 		mRestitution = 0.0f;
 	}
 
@@ -83,7 +83,7 @@ namespace Utopian
 		btRigidBody::btRigidBodyConstructionInfo constructionInfo(mMass, motionState, mCollisionShape, localInertia);
 		constructionInfo.m_mass = mMass;
 		constructionInfo.m_friction = mFriction;
-		constructionInfo.m_rollingFriction = mFrictionRolling;
+		constructionInfo.m_rollingFriction = mRollingFriction;
 		constructionInfo.m_restitution = mRestitution;
 
 		mRigidBody = new btRigidBody(constructionInfo);
@@ -96,6 +96,22 @@ namespace Utopian
 
 		// Add to physics simulation
 		gPhysics().GetDynamicsWorld()->addRigidBody(mRigidBody);
+	}
+
+	void CRigidBody::Activate()
+	{
+		mRigidBody->activate();
+	}
+
+	void CRigidBody::Deactivate()
+	{
+		// Seems like this will activate the rigid body again on collision
+		mRigidBody->setActivationState(WANTS_DEACTIVATION);
+	}
+	
+	bool CRigidBody::IsActiveted()
+	{
+		return mRigidBody->isActive();
 	}
 
 	void CRigidBody::SetPosition(const glm::vec3& position)
@@ -126,5 +142,56 @@ namespace Utopian
 		luaObject.SetNumber("empty", 0.0f);
 
 		return luaObject;
+	}
+
+	float CRigidBody::GetMass() const
+	{
+		return mMass;
+	}
+
+	float CRigidBody::GetFriction() const
+	{
+		return mFriction;
+	}
+
+	float CRigidBody::GetRollingFriction() const
+	{
+		return mRollingFriction;
+	}
+
+	float CRigidBody::GetRestitution() const
+	{
+		return mRestitution;
+	}
+
+	void CRigidBody::SetMass(float mass)
+	{
+		mMass = mass;
+
+		// Need to recalculate inertia when modifying mass
+		btVector3 localInertia(0, 0, 0);
+		BoundingBox aabb = mRenderable->GetBoundingBox();
+		btBoxShape collisionShape = btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
+		mCollisionShape->calculateLocalInertia(mMass, localInertia);
+
+		mRigidBody->setMassProps(mass, localInertia);
+	}
+
+	void CRigidBody::SetFriction(float friction)
+	{
+		mFriction = friction;
+		mRigidBody->setFriction(friction);
+	}
+
+	void CRigidBody::SetRollingFriction(float rollingFriction)
+	{
+		mRollingFriction = rollingFriction;
+		mRigidBody->setRollingFriction(rollingFriction);
+	}
+
+	void CRigidBody::SetRestitution(float restitution)
+	{
+		mRestitution = restitution;
+		mRigidBody->setRestitution(restitution);
 	}
 }

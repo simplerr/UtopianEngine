@@ -19,8 +19,14 @@ namespace Utopian
 
 		void Update();
 		void Draw();
+		void EnableSimulation(bool enable);
+
+		bool IsEnabled() const;
 
 		btDiscreteDynamicsWorld* GetDynamicsWorld() const;
+
+	private:
+		void AddGroundShape();
 
 	private:
 		btBroadphaseInterface* mBroadphase;
@@ -30,6 +36,7 @@ namespace Utopian
 		btDiscreteDynamicsWorld* mDynamicsWorld;
 
 		const glm::vec3 mGravity = glm::vec3(0, -982., 0);
+		bool mEnabled;
 		// Note: This should be handled by the Timer component.
 		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 
 		// called at the same frequency as UIOverlay::Update.
