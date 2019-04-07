@@ -27,10 +27,6 @@ namespace Utopian
 		void OnDestroyed() override;
 		void PostInit() override;
 
-		void Activate();
-		void Deactivate();
-		bool IsActiveted();
-
 		void SetPosition(const glm::vec3& position);
 		void SetRotation(const glm::vec3& rotation);
 		void SetQuaternion(const glm::quat& quaternion);
@@ -39,11 +35,14 @@ namespace Utopian
 		float GetFriction() const;
 		float GetRollingFriction() const;
 		float GetRestitution() const;
+		bool IsKinematic() const;
+		bool IsActive() const;
 
 		void SetMass(float mass);
 		void SetFriction(float friction);
 		void SetRollingFriction(float rollingFriction);
 		void SetRestitution(float restitution);
+		void SetKinematic(bool isKinematic);
 
 		const Transform& GetTransform() const;
 
@@ -59,6 +58,10 @@ namespace Utopian
 		}
 
 	private:
+		void AddToWorld();
+		void RemoveFromWorld();
+		void UpdateKinematicFlag();
+	private:
 		CTransform* mTransform;
 		CRenderable* mRenderable;
 		btRigidBody* mRigidBody;
@@ -68,6 +71,7 @@ namespace Utopian
 		float mFriction;
 		float mRollingFriction;
 		float mRestitution;
+		bool mIsKinematic;
 	};
 
 	class MotionState : public btMotionState

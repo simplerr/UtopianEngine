@@ -44,6 +44,8 @@ namespace Utopian
 		mFriction = 0.5f;
 		mRollingFriction = 0.0f;
 		mRestitution = 0.0f;
+		mIsKinematic = false;
+		mRigidBody = nullptr;
 	}
 
 	CRigidBody::~CRigidBody()
@@ -61,12 +63,20 @@ namespace Utopian
 
 	void CRigidBody::OnDestroyed()
 	{
+		RemoveFromWorld();
 	}
 
 	void CRigidBody::PostInit()
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();
 		mRenderable = GetParent()->GetComponent<CRenderable>();
+
+		AddToWorld();
+	}
+
+	void CRigidBody::AddToWorld()
+	{
+		RemoveFromWorld();
 
 		MotionState* motionState = new MotionState(this);
 
@@ -91,20 +101,43 @@ namespace Utopian
 
 		// Add to physics simulation
 		gPhysics().GetDynamicsWorld()->addRigidBody(mRigidBody);
+
+		UpdateKinematicFlag();
 	}
 
-	void CRigidBody::Activate()
+	void CRigidBody::RemoveFromWorld()
 	{
-		mRigidBody->activate();
+		if (mRigidBody == nullptr)
+			return;
+
+		gPhysics().GetDynamicsWorld()->removeRigidBody(mRigidBody);
+
+		delete mRigidBody->getMotionState();
+		delete mRigidBody;
+
+		mRigidBody = nullptr;
 	}
 
-	void CRigidBody::Deactivate()
+	void CRigidBody::UpdateKinematicFlag()
 	{
-		// Seems like this will activate the rigid body again on collision
-		mRigidBody->setActivationState(WANTS_DEACTIVATION);
+		uint32_t flags = mRigidBody->getCollisionFlags();
+
+		if (IsKinematic())
+		{
+			flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+			mRigidBody->forceActivationState(DISABLE_DEACTIVATION);
+		}
+		else
+		{
+			flags &= btCollisionObject::CF_KINEMATIC_OBJECT;
+			// Todo: Correct?
+			//mRigidBody->forceActivationState(ISLAND_SLEEPING);
+		}
+
+		mRigidBody->setCollisionFlags(flags);
 	}
-	
-	bool CRigidBody::IsActiveted()
+
+	bool CRigidBody::IsActive() const
 	{
 		return mRigidBody->isActive();
 	}
@@ -159,6 +192,11 @@ namespace Utopian
 		return mRestitution;
 	}
 
+	bool CRigidBody::IsKinematic() const
+	{
+		return mIsKinematic;
+	}
+
 	void CRigidBody::SetMass(float mass)
 	{
 		mMass = mass;
@@ -188,5 +226,15 @@ namespace Utopian
 	{
 		mRestitution = restitution;
 		mRigidBody->setRestitution(restitution);
+	}
+
+	void CRigidBody::SetKinematic(bool isKinematic)
+	{
+		if (mIsKinematic == isKinematic)
+			return;
+
+		mIsKinematic = isKinematic;
+
+		AddToWorld();
 	}
 }

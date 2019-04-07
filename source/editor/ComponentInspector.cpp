@@ -185,20 +185,17 @@ namespace Utopian
 			float friction = mRigidBody->GetFriction();
 			float rollingFriction = mRigidBody->GetRollingFriction();
 			float restitution = mRigidBody->GetRestitution();
-			bool isActivated = mRigidBody->IsActiveted();
+			bool isActive = mRigidBody->IsActive();
+			bool isKinematic = mRigidBody->IsKinematic();
 
-			ImGui::Checkbox("Activated", &isActivated);
-			ImGui::SliderFloat("Mass", &mass, 0.1f, 100.0f);
+			ImGui::Checkbox("Activated", &isActive);
+			ImGui::Checkbox("Kinematic", &isKinematic);
+			ImGui::SliderFloat("Mass", &mass, 0.0f, 100.0f);
 			ImGui::SliderFloat("Friction", &friction, 0.01f, 10.0f);
 			ImGui::SliderFloat("Rolling friction", &rollingFriction, 0.01f, 10.0f);
 			ImGui::SliderFloat("Restitution", &restitution, 0.05f, 1.0f);
 
-			//  Todo
-			/*if (isActivated)
-				mRigidBody->Activate();
-			else
-				mRigidBody->Deactivate();*/
-
+			mRigidBody->SetKinematic(isKinematic);
 			mRigidBody->SetMass(mass);
 			mRigidBody->SetFriction(friction);
 			mRigidBody->SetRollingFriction(rollingFriction);
