@@ -34,13 +34,15 @@ namespace Utopian
 		luaObject.SetNumber("pos_y", GetPosition().y);
 		luaObject.SetNumber("pos_z", GetPosition().z);
 
-		luaObject.SetNumber("rotation_x", GetRotation().x);
-		luaObject.SetNumber("rotation_y", GetRotation().y);
-		luaObject.SetNumber("rotation_z", GetRotation().z);
-
 		luaObject.SetNumber("scale_x", GetScale().x);
 		luaObject.SetNumber("scale_y", GetScale().y);
 		luaObject.SetNumber("scale_z", GetScale().z);
+
+		glm::quat orientation = GetOrientation();
+		luaObject.SetNumber("orientation_x", orientation.x);
+		luaObject.SetNumber("orientation_y", orientation.y);
+		luaObject.SetNumber("orientation_z", orientation.z);
+		luaObject.SetNumber("orientation_w", orientation.w);
 
 		return luaObject;
 	}
@@ -55,9 +57,9 @@ namespace Utopian
 		mTransform.SetPosition(position);
 	}
 
-	void CTransform::SetRotation(const glm::vec3& rotation)
+	void CTransform::SetRotation(const glm::vec3& eulerRotation)
 	{
-		mTransform.SetRotation(rotation);
+		mTransform.SetRotation(eulerRotation);
 	}
 
 	void CTransform::SetScale(const glm::vec3& scale)
@@ -65,9 +67,9 @@ namespace Utopian
 		mTransform.SetScale(scale);
 	}
 
-	void CTransform::SetQuaternion(const glm::quat& quaternion)
+	void CTransform::SetOrientation(const glm::quat& orientation)
 	{
-		mTransform.SetQuaternion(quaternion);
+		mTransform.SetOrientation(orientation);
 	}
 
 	void CTransform::AddTranslation(const glm::vec3& translation)
@@ -75,19 +77,9 @@ namespace Utopian
 		mTransform.AddTranslation(translation);
 	}
 
-	void CTransform::AddRotation(float x, float y, float z)
+	void CTransform::AddRotation(const glm::vec3& eulerRotation, bool local)
 	{
-		mTransform.AddRotation(x, y, z);
-	}
-	
-	void CTransform::AddRotation(const glm::vec3& rotation)
-	{
-		mTransform.AddRotation(rotation);
-	}
-
-	void CTransform::AddScale(float x, float y, float z)
-	{
-		mTransform.AddScale(x, y, z);
+		mTransform.AddRotation(eulerRotation, local);
 	}
 
 	void CTransform::AddScale(const glm::vec3& scale)
@@ -105,11 +97,6 @@ namespace Utopian
 		return mTransform.GetPosition();
 	}
 
-	const glm::vec3& CTransform::GetRotation() const
-	{
-		return mTransform.GetRotation();
-	}
-
 	const glm::vec3& CTransform::GetScale() const
 	{
 		return mTransform.GetScale();
@@ -125,8 +112,8 @@ namespace Utopian
 		return mTransform.GetWorldInverseTransposeMatrix();
 	}
 
-	const glm::quat& CTransform::GetQuaternion() const
+	const glm::quat& CTransform::GetOrientation() const
 	{
-		return mTransform.GetQuaternion();
+		return mTransform.GetOrientation();
 	}
 }

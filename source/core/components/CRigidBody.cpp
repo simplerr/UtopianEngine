@@ -20,21 +20,16 @@ namespace Utopian
 	{
 		// Todo: This needs to be called by the application in some way
 		glm::vec3 position = mRigidBody->GetTransform().GetPosition();
-		glm::vec3 rotation = mRigidBody->GetTransform().GetRotation();
-		glm::quat quaternion = glm::quat(glm::radians(rotation));
-
-		quaternion = quaternion * quaternion;
+		glm::quat orientation = mRigidBody->GetTransform().GetOrientation();
 
 		worldTrans.setOrigin(ToBulletVec3(position));
-		worldTrans.setRotation(ToBulletQuaternion(quaternion));
+		worldTrans.setRotation(ToBulletQuaternion(orientation));
 	}
 
 	void MotionState::setWorldTransform(const btTransform& worldTrans)
 	{
 		glm::vec3 position = ToVec3(worldTrans.getOrigin());
 		glm::quat quaternion = ToQuaternion(worldTrans.getRotation());
-		glm::vec3 rotation = glm::eulerAngles(quaternion);
-		//glm::mat4 rotationMatrix = glm::mat4_cast(quaternion);
 
 		mRigidBody->SetPosition(position);
 		mRigidBody->SetQuaternion(quaternion);
@@ -126,7 +121,7 @@ namespace Utopian
 
 	void CRigidBody::SetQuaternion(const glm::quat& quaternion)
 	{
-		mTransform->SetQuaternion(quaternion);
+		mTransform->SetOrientation(quaternion);
 	}
 
 	const Utopian::Transform& CRigidBody::GetTransform() const

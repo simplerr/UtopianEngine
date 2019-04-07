@@ -104,7 +104,6 @@ namespace Utopian
 			{
 				BoundingBox boundingBox = renderable->GetBoundingBox();
 				glm::vec3 pos = renderable->GetTransform().GetPosition();
-				glm::vec3 rotation = renderable->GetTransform().GetRotation();
 				glm::vec3 translation = glm::vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight() / 2, pos.z);
 				glm::mat4 world = glm::translate(glm::mat4(), translation);
 				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));

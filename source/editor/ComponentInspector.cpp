@@ -43,16 +43,7 @@ namespace Utopian
 			ImGui::InputFloat("Z", &rotate.z, 0.15);
 			ImGui::PopItemWidth();
 
-			glm::quat orientationDelta = glm::angleAxis(rotate.x, glm::vec3(1.0f, 0.0f, 0.0f));
-			orientationDelta = orientationDelta * glm::angleAxis(rotate.y, glm::vec3(0.0f, 1.0f, 0.0f));
-			orientationDelta = orientationDelta * glm::angleAxis(rotate.z, glm::vec3(0.0f, 0.0f, 1.0f));
-
-			if (localRotate)
-				mComponent->SetQuaternion(mComponent->GetQuaternion() * orientationDelta);
-			else
-				mComponent->SetQuaternion(orientationDelta * mComponent->GetQuaternion());
-
-			mComponent->SetRotation(mTransform.GetRotation());
+			mComponent->AddRotation(rotate, localRotate);
 			mComponent->SetScale(mTransform.GetScale());
 		}
 	}

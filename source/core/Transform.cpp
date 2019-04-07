@@ -4,6 +4,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include "Transform.h"
 
 namespace Utopian
@@ -32,9 +33,9 @@ namespace Utopian
 		RebuildWorldMatrix();
 	}
 
-	void Transform::SetRotation(const glm::vec3& rotation)
+	void Transform::SetRotation(const glm::vec3& eulerRotation)
 	{
-		mRotation = rotation;
+		SetOrientation(OrientationFromEuler(eulerRotation));
 		RebuildWorldMatrix();
 	}
 
@@ -44,9 +45,10 @@ namespace Utopian
 		RebuildWorldMatrix();
 	}
 
-	void Transform::SetQuaternion(const glm::quat& quaternion)
+	void Transform::SetOrientation(const glm::quat& quaternion)
 	{
-		mQuaternion = quaternion;
+		mOrientation = quaternion;
+		RebuildWorldMatrix();
 	}
 
 	void Transform::AddTranslation(const glm::vec3& translation)
@@ -54,21 +56,15 @@ namespace Utopian
 		mPosition += translation;
 	}
 
-	void Transform::AddRotation(float x, float y, float z)
+	void Transform::AddRotation(const glm::vec3& eulerRotation, bool local)
 	{
-		mRotation += glm::vec3(x, y, z);
-		RebuildWorldMatrix();
-	}
-	
-	void Transform::AddRotation(const glm::vec3& rotation)
-	{
-		mRotation += rotation;
-		RebuildWorldMatrix();
-	}
+		glm::quat orientationDelta = OrientationFromEuler(eulerRotation);
 
-	void Transform::AddScale(float x, float y, float z)
-	{
-		mScale += glm::vec3(x, y, z);
+		if (local)
+			mOrientation = mOrientation * orientationDelta;
+		else
+			mOrientation = orientationDelta * mOrientation;
+
 		RebuildWorldMatrix();
 	}
 
@@ -81,11 +77,6 @@ namespace Utopian
 	const glm::vec3& Transform::GetPosition() const
 	{
 		return mPosition;
-	}
-
-	const glm::vec3& Transform::GetRotation() const
-	{
-		return mRotation;
 	}
 
 	const glm::vec3& Transform::GetScale() const
@@ -103,30 +94,28 @@ namespace Utopian
 		return glm::inverseTranspose(mWorld);
 	}
 
-	const glm::quat& Transform::GetQuaternion() const
+	const glm::quat& Transform::GetOrientation() const
 	{
-		return mQuaternion;
+		return mOrientation;
 	}
 
 	void Transform::RebuildWorldMatrix()
 	{
-		glm::mat4 world;
-
-		//world = glm::translate(world, mPosition);
-		//world = glm::rotate(world, glm::radians(mRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		//world = glm::rotate(world, glm::radians(mRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		//world = glm::rotate(world, glm::radians(mRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-		//world = glm::scale(world, mScale);
-
 		glm::mat4 translation = glm::translate(glm::mat4(), mPosition);
-		//glm::mat4 rotation = glm::rotate(glm::mat4(), glm::radians(mRotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		//rotation = glm::rotate(rotation, glm::radians(mRotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		//rotation = glm::rotate(rotation, glm::radians(mRotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-		glm::mat4 rotation = glm::mat4_cast(mQuaternion);
+		glm::mat4 rotation = glm::mat4_cast(mOrientation);
 		glm::mat4 scale = glm::scale(glm::mat4(), mScale);
-
-		world = translation * rotation * scale;
+		glm::mat4 world = translation * rotation * scale;
 
 		mWorld = world;
 	}
+
+	glm::quat Transform::OrientationFromEuler(const glm::vec3& eulerRotation)
+	{
+		glm::quat orientation = glm::angleAxis(eulerRotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+		orientation = orientation * glm::angleAxis(eulerRotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+		orientation = orientation * glm::angleAxis(eulerRotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		return orientation;
+	}
+
 }

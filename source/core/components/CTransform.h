@@ -21,24 +21,20 @@ namespace Utopian
 
 		void SetTransform(const Transform& transform);
 		void SetPosition(const glm::vec3& position);
-		void SetRotation(const glm::vec3& rotation);
+		void SetRotation(const glm::vec3& eulerRotation);
 		void SetScale(const glm::vec3& scale);
-		void SetQuaternion(const glm::quat& quaternion);
+		void SetOrientation(const glm::quat& orientation);
 
 		void AddTranslation(const glm::vec3& translation);
-
-		void AddRotation(float x, float y, float z);
-		void AddRotation(const glm::vec3& rotation);
-		void AddScale(float x, float y, float z);
+		void AddRotation(const glm::vec3& eulerRotation, bool local = false);
 		void AddScale(const glm::vec3& scale);
 
 		const Transform& GetTransform() const;
 		const glm::vec3& GetPosition() const;
-		const glm::vec3& GetRotation() const;
 		const glm::vec3& GetScale() const;
 		const glm::mat4& GetWorldMatrix() const;
 		const glm::mat4& GetWorldInverseTransposeMatrix() const;
-		const glm::quat& GetQuaternion() const;
+		const glm::quat& GetOrientation() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {

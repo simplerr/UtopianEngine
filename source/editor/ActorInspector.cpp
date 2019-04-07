@@ -78,7 +78,7 @@ namespace Utopian
 		}
 
 		CRigidBody* rigidBody = mActor->GetComponent<CRigidBody>();
-		if (renderable != nullptr) {
+		if (rigidBody != nullptr) {
 			RigidBodyInspector* inspector = new RigidBodyInspector(rigidBody);
 			mComponentInspectors.push_back(inspector);
 		}

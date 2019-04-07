@@ -157,7 +157,7 @@ namespace Utopian
 	void Editor::RenderActorCreationUi()
 	{
 		// Display Actor creation list
-		if (ImGui::CollapsingHeader("Create actor"))
+		if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text("Models:");
 			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());

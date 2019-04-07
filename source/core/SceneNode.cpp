@@ -68,11 +68,6 @@ namespace Utopian
 		return mTransform.GetPosition();
 	}
 
-	const glm::vec3& SceneNode::GetRotation() const
-	{
-		return mTransform.GetRotation();
-	}
-
 	const glm::vec3& SceneNode::GetScale() const
 	{
 		return mTransform.GetScale();

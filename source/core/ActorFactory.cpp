@@ -44,11 +44,14 @@ namespace Utopian
 
 				if (name == "CTransform") {
 					glm::vec3 position(componentData["pos_x"].ToNumber(), componentData["pos_y"].ToNumber(), componentData["pos_z"].ToNumber());
-					glm::vec3 rotation(componentData["rotation_x"].ToNumber(), componentData["rotation_y"].ToNumber(), componentData["rotation_z"].ToNumber());
 					glm::vec3 scale(componentData["scale_x"].ToNumber(), componentData["scale_y"].ToNumber(), componentData["scale_z"].ToNumber());
+					glm::quat orientation = glm::quat(componentData["orientation_w"].ToNumber(),
+													  componentData["orientation_x"].ToNumber(),
+													  componentData["orientation_y"].ToNumber(),
+													  componentData["orientation_z"].ToNumber());
 
 					CTransform* transform = actor->AddComponent<CTransform>(position);
-					transform->SetRotation(rotation);
+					transform->SetOrientation(orientation);
 					transform->SetScale(scale);
 				}
 				else if (name == "CLight") {
