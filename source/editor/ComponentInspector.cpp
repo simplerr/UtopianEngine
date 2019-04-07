@@ -188,7 +188,7 @@ namespace Utopian
 			bool isActive = mRigidBody->IsActive();
 			bool isKinematic = mRigidBody->IsKinematic();
 
-			ImGui::Checkbox("Activated", &isActive);
+			ImGui::Checkbox("Active", &isActive);
 			ImGui::Checkbox("Kinematic", &isKinematic);
 			ImGui::SliderFloat("Mass", &mass, 0.0f, 100.0f);
 			ImGui::SliderFloat("Friction", &friction, 0.01f, 10.0f);

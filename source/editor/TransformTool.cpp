@@ -8,6 +8,7 @@
 #include <glm/gtx/intersect.hpp>
 #include "core/components/Actor.h"
 #include "core/components/CTransform.h"
+#include "core/components/CRigidBody.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/ModelLoader.h"
@@ -164,6 +165,12 @@ void TransformTool::UpdatePosition(glm::vec3 delta)
 	if (mSelectedActor != nullptr) {
 		Utopian::CTransform* transform = mSelectedActor->GetComponent<Utopian::CTransform>();
 		transform->AddTranslation(delta);
+
+		// If the actor has a rigid body set it to kinematic
+		Utopian::CRigidBody* rigidBody = mSelectedActor->GetComponent<Utopian::CRigidBody>();
+
+		if (rigidBody != nullptr)
+			rigidBody->SetKinematic(true);
 	}
 
 	mAxisX->SetPosition(mAxisX->GetPosition() + delta);
