@@ -124,6 +124,7 @@
     <ClCompile Include="source\editor\TerrainTool.cpp" />
     <ClCompile Include="source\editor\FoliageTool.cpp" />
     <ClCompile Include="source\Game.cpp" />
+    <ClCompile Include="source\Im3dRenderer.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\core\legacy\MarchingCubes.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="source\editor\TerrainTool.h" />
     <ClInclude Include="source\editor\FoliageTool.h" />
     <ClInclude Include="source\Game.h" />
+    <ClInclude Include="source\Im3dRenderer.h" />
     <ClInclude Include="source\utility\Common.h" />
     <ClInclude Include="source\utility\Exception.h" />
     <ClInclude Include="source\Input.h" />

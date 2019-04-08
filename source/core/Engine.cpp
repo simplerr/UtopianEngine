@@ -17,6 +17,7 @@
 #include "Input.h"
 #include "vulkan/VulkanApp.h"
 #include "imgui/imgui.h"
+#include "Im3dRenderer.h"
 
 namespace Utopian
 {
@@ -24,6 +25,8 @@ namespace Utopian
 		: mVulkanApp(vulkanApp)
 	{
 		Vk::Debug::ConsolePrint("Starting engine modules...");
+
+		mIm3dRenderer = new Im3dRenderer(glm::vec2(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
 
 		StartModules();
 
@@ -98,6 +101,7 @@ namespace Utopian
 	void Engine::Update()
 	{
 		mVulkanApp->GetUiOverlay()->NewFrame();
+		mIm3dRenderer->NewFrame();
 
 		World::Instance().Update();
 		Renderer::Instance().Update();
@@ -109,6 +113,7 @@ namespace Utopian
 		mUpdateCallback();
 
 		mVulkanApp->GetUiOverlay()->Render();
+		mIm3dRenderer->EndFrame();
 	}
 
 	void Engine::Render()

@@ -14,7 +14,6 @@
 #include "VertexDescription.h"
 #include "ShaderBuffer.h"
 
-
 namespace Utopian::Vk
 {
 	// Todo: Move from here
@@ -97,5 +96,6 @@ namespace Utopian::Vk
 		std::vector<CommandBuffer*>		mSecondaryCommandBuffers;
 		glm::vec4						mClearColor;
 		UIOverlay*						mUiOverlay = nullptr;
+
 	};
 }	// VulkanLib namespace

@@ -550,4 +550,14 @@ namespace Utopian
 	{
 		return mVulkanApp->GetUiOverlay();
 	}
+
+	uint32_t Renderer::GetWindowWidth() const
+	{
+		return mVulkanApp->GetWindowWidth();
+	}
+
+	uint32_t Renderer::GetWindowHeight() const
+	{
+		return mVulkanApp->GetWindowHeight();
+	}
 }
