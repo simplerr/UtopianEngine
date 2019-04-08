@@ -18,7 +18,6 @@ namespace Utopian
 
 	void MotionState::getWorldTransform(btTransform& worldTrans) const
 	{
-		// Todo: This needs to be called by the application in some way
 		glm::vec3 position = mRigidBody->GetTransform().GetPosition();
 		glm::quat orientation = mRigidBody->GetTransform().GetOrientation();
 
@@ -80,13 +79,18 @@ namespace Utopian
 
 		MotionState* motionState = new MotionState(this);
 
+		// Zero mass when kinematic
+		float mass = mMass;
+		if (IsKinematic())
+			mass = 0.0f;
+
 		btVector3 localInertia(0, 0, 0);
 		BoundingBox aabb = mRenderable->GetBoundingBox();
 		mCollisionShape = new btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
-		mCollisionShape->calculateLocalInertia(mMass, localInertia);
+		mCollisionShape->calculateLocalInertia(mass, localInertia);
 
-		btRigidBody::btRigidBodyConstructionInfo constructionInfo(mMass, motionState, mCollisionShape, localInertia);
-		constructionInfo.m_mass = mMass;
+		btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, mCollisionShape, localInertia);
+		constructionInfo.m_mass = mass;
 		constructionInfo.m_friction = mFriction;
 		constructionInfo.m_rollingFriction = mRollingFriction;
 		constructionInfo.m_restitution = mRestitution;
@@ -125,13 +129,12 @@ namespace Utopian
 		if (IsKinematic())
 		{
 			flags |= btCollisionObject::CF_KINEMATIC_OBJECT;
+
 			mRigidBody->forceActivationState(DISABLE_DEACTIVATION);
 		}
 		else
 		{
 			flags &= btCollisionObject::CF_KINEMATIC_OBJECT;
-			// Todo: Correct?
-			//mRigidBody->forceActivationState(ISLAND_SLEEPING);
 		}
 
 		mRigidBody->setCollisionFlags(flags);
@@ -199,15 +202,17 @@ namespace Utopian
 
 	void CRigidBody::SetMass(float mass)
 	{
+		if (mMass == mass)
+			return;
+
 		mMass = mass;
 
-		// Need to recalculate inertia when modifying mass
-		btVector3 localInertia(0, 0, 0);
-		BoundingBox aabb = mRenderable->GetBoundingBox();
-		btBoxShape collisionShape = btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
-		mCollisionShape->calculateLocalInertia(mMass, localInertia);
+		// If the body is kinematic the mass needs to be 0
+		// The newly assigned mass will become active when the body becomes dynamic again
+		if (IsKinematic())
+			return;
 
-		mRigidBody->setMassProps(mass, localInertia);
+		AddToWorld();
 	}
 
 	void CRigidBody::SetFriction(float friction)

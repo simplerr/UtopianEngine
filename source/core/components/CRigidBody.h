@@ -80,9 +80,11 @@ namespace Utopian
 		MotionState(CRigidBody* rigidBody);
 
 		// Engine -> Bullet
+		// For dynamic bodies its called once and for kinematic bodies its called every frame
 		void getWorldTransform(btTransform& worldTrans) const override;
 
 		// Bullet -> Engine
+		// Called every frame
 		void setWorldTransform(const btTransform& worldTrans) override;
 
 	private:
