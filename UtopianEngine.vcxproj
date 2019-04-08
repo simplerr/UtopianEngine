@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="external\im3d\im3d.cpp" />
     <ClCompile Include="external\imgui\imgui.cpp" />
     <ClCompile Include="external\imgui\imgui_draw.cpp" />
     <ClCompile Include="source\core\ActorFactory.cpp" />
@@ -204,6 +205,9 @@
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="external\im3d\im3d.h" />
+    <ClInclude Include="external\im3d\im3d_config.h" />
+    <ClInclude Include="external\im3d\im3d_math.h" />
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
     <ClInclude Include="source\core\ActorFactory.h" />
@@ -382,6 +386,8 @@
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />
     <None Include="docs\system_requirements.md" />
+    <None Include="external\im3d\LICENSE" />
+    <None Include="external\im3d\README.md" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

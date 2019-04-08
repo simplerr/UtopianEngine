@@ -495,6 +495,12 @@
     <ClCompile Include="source\core\Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="external\im3d\im3d.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Im3dRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -914,6 +920,18 @@
     <ClInclude Include="source\core\BulletHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="external\im3d\im3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\im3d\im3d_config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\im3d\im3d_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Im3dRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">
@@ -1026,6 +1044,8 @@
     <None Include="data\shaders\blur\generate-spirv.bat">
       <Filter>Source Files\vulkan\effects\blur\shader</Filter>
     </None>
+    <None Include="external\im3d\LICENSE" />
+    <None Include="external\im3d\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\todo.md">
