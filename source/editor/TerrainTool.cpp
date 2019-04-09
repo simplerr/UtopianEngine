@@ -4,7 +4,7 @@
 #include "vulkan/Effect.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/Texture2.h"
 #include "core/renderer/Renderer.h"
 #include "core/renderer/RendererUtility.h"
@@ -38,11 +38,11 @@ namespace Utopian
 
 		heightToolTexture = std::make_shared<Vk::Texture2D>("data/textures/height-tool.ktx", mDevice);
 
-		Vk::UIOverlay* uiOverlay = gRenderer().GetUiOverlay();
-		textureIdentifiers.grass = uiOverlay->AddTexture(mTerrain->GetMaterial("grass").diffuse->view, mTerrain->GetMaterial("grass").diffuse->sampler);
-		textureIdentifiers.rock = uiOverlay->AddTexture(mTerrain->GetMaterial("rock").diffuse->view, mTerrain->GetMaterial("rock").diffuse->sampler);
-		textureIdentifiers.dirt = uiOverlay->AddTexture(mTerrain->GetMaterial("dirt").diffuse->view, mTerrain->GetMaterial("dirt").diffuse->sampler);
-		textureIdentifiers.heightTool = uiOverlay->AddTexture(heightToolTexture->view);
+		Vk::ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
+		textureIdentifiers.grass = imGuiRenderer->AddTexture(mTerrain->GetMaterial("grass").diffuse->view, mTerrain->GetMaterial("grass").diffuse->sampler);
+		textureIdentifiers.rock = imGuiRenderer->AddTexture(mTerrain->GetMaterial("rock").diffuse->view, mTerrain->GetMaterial("rock").diffuse->sampler);
+		textureIdentifiers.dirt = imGuiRenderer->AddTexture(mTerrain->GetMaterial("dirt").diffuse->view, mTerrain->GetMaterial("dirt").diffuse->sampler);
+		textureIdentifiers.heightTool = imGuiRenderer->AddTexture(heightToolTexture->view);
    }
 
    TerrainTool::~TerrainTool()

@@ -167,7 +167,7 @@
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
     <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
     <ClCompile Include="source\vulkan\RenderTarget.cpp" />
-    <ClCompile Include="source\vulkan\ScreenQuadUi.cpp" />
+    <ClCompile Include="source\ScreenQuadRenderer.cpp" />
     <ClCompile Include="source\vulkan\PhongEffect.cpp" />
     <ClCompile Include="source\vulkan\SkyboxEffect.cpp" />
     <ClCompile Include="source\vulkan\SSAOEffect.cpp" />
@@ -200,7 +200,7 @@
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
     <ClCompile Include="source\vulkan\VulkanApp.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
-    <ClCompile Include="source\vulkan\UIOverlay.cpp" />
+    <ClCompile Include="source\ImGuiRenderer.cpp" />
     <ClCompile Include="source\vulkan\WaterEffect.cpp" />
     <ClCompile Include="source\WaterRenderer.cpp" />
     <ClCompile Include="source\Window.cpp" />
@@ -304,7 +304,7 @@
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
     <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\RenderTarget.h" />
-    <ClInclude Include="source\vulkan\ScreenQuadUi.h" />
+    <ClInclude Include="source\ScreenQuadRenderer.h" />
     <ClInclude Include="source\vulkan\PhongEffect.h" />
     <ClInclude Include="source\vulkan\SkyboxEffect.h" />
     <ClInclude Include="source\vulkan\SSAOEffect.h" />
@@ -344,7 +344,7 @@
     <ClInclude Include="source\vulkan\VulkanBase.h" />
     <ClInclude Include="source\vulkan\VulkanInclude.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
-    <ClInclude Include="source\vulkan\UIOverlay.h" />
+    <ClInclude Include="source\ImGuiRenderer.h" />
     <ClInclude Include="source\vulkan\CubeMapTexture.h" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
     <ClInclude Include="source\WaterVulkanApp.h" />

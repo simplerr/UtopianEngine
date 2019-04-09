@@ -79,7 +79,7 @@ namespace Utopian::Vk
 		void UpdateImgui();
 		void ToggleUi();
 
-		UIOverlay* GetUiOverlay();
+		ImGuiRenderer* GetUiOverlay();
 
 		void SetClearColor(glm::vec4 color);
 		glm::vec4 GetClearColor();
@@ -95,7 +95,7 @@ namespace Utopian::Vk
 		CommandBuffer*					mPrimaryCommandBuffer;
 		std::vector<CommandBuffer*>		mSecondaryCommandBuffers;
 		glm::vec4						mClearColor;
-		UIOverlay*						mUiOverlay = nullptr;
+		ImGuiRenderer*						mImGuiRenderer = nullptr;
 
 	};
 }	// VulkanLib namespace

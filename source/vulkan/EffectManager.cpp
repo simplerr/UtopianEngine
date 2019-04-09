@@ -2,7 +2,6 @@
 #include "vulkan/Effect.h"
 #include "vulkan/Debug.h"
 #include "imgui/imgui.h"
-#include "vulkan/UIOverlay.h"
 
 namespace Utopian::Vk
 {

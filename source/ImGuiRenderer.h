@@ -21,11 +21,11 @@ namespace Utopian::Vk
 	class Texture;
 
 
-	class UIOverlay 
+	class ImGuiRenderer 
 	{
 	public:
-		UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp);
-		~UIOverlay();
+		ImGuiRenderer(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp);
+		~ImGuiRenderer();
 
 		void Update();
 		void NewFrame();

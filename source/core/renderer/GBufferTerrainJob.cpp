@@ -3,10 +3,10 @@
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/ScreenQuadUi.h"
+#include "ScreenQuadRenderer.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/Texture2.h"
 #include "vulkan/handles/QueryPool.h"
@@ -146,13 +146,13 @@ namespace Utopian
 	void GBufferTerrainJob::Update()
 	{
 		// Display Actor creation list
-		Vk::UIOverlay::BeginWindow("Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
+		Vk::ImGuiRenderer::BeginWindow("Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
 
-		Vk::UIOverlay::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
-		Vk::UIOverlay::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
-		Vk::UIOverlay::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
-		Vk::UIOverlay::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+		Vk::ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
+		Vk::ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
+		Vk::ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
+		Vk::ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
 
-		Vk::UIOverlay::EndWindow();
+		Vk::ImGuiRenderer::EndWindow();
 	}
 }

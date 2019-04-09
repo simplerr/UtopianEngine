@@ -11,12 +11,12 @@
 #include "vulkan/StaticModel.h"
 #include "core/renderer/Light.h"
 #include "WaterRenderer.h"
-#include "vulkan/ScreenQuadUi.h"
+#include "ScreenQuadRenderer.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "core/Terrain.h"
 #include "core/AssetLoader.h"
 #include "core/renderer/GBufferJob.h"
@@ -29,7 +29,7 @@
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
 #include "core/ScriptExports.h"
-#include "vulkan/ScreenQuadUi.h"
+#include "ScreenQuadRenderer.h"
 #include "vulkan/Debug.h"
 #include "utility/math/Helpers.h"
 
@@ -89,7 +89,7 @@ namespace Utopian
 	{
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured
-		Vk::UIOverlay::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
+		Vk::ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
 		static bool debugQuads = true;
 
 		//ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
@@ -140,22 +140,22 @@ namespace Utopian
 
 		gScreenQuadUi().SetVisible(0, debugQuads);
 
-		Vk::UIOverlay::EndWindow();
+		Vk::ImGuiRenderer::EndWindow();
 
-		Vk::UIOverlay::BeginWindow("Utopian Engine (alpha)", glm::vec2(10, 10), 350.0f);
+		Vk::ImGuiRenderer::BeginWindow("Utopian Engine (alpha)", glm::vec2(10, 10), 350.0f);
 
 		glm::vec3 pos = mMainCamera->GetPosition();
 		glm::vec3 dir = mMainCamera->GetDirection();
 
-		Vk::UIOverlay::TextV("Time: %.2f", Timer::Instance().GetTime());
-		Vk::UIOverlay::TextV("FPS: %u", Timer::Instance().GetFPS());
-		Vk::UIOverlay::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-		Vk::UIOverlay::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
-		Vk::UIOverlay::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
-		Vk::UIOverlay::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow));
-		Vk::UIOverlay::TextV("Any window focused: %d", ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
+		Vk::ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
+		Vk::ImGuiRenderer::TextV("FPS: %u", Timer::Instance().GetFPS());
+		Vk::ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+		Vk::ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
+		Vk::ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
+		Vk::ImGuiRenderer::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow));
+		Vk::ImGuiRenderer::TextV("Any window focused: %d", ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 
-		Vk::UIOverlay::EndWindow();
+		Vk::ImGuiRenderer::EndWindow();
 	}
 
 	/*
@@ -546,7 +546,7 @@ namespace Utopian
 		return mDevice;
 	}
 
-	Vk::UIOverlay* Renderer::GetUiOverlay()
+	Vk::ImGuiRenderer* Renderer::GetUiOverlay()
 	{
 		return mVulkanApp->GetUiOverlay();
 	}

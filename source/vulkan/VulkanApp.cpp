@@ -23,9 +23,9 @@
 #include "handles/FrameBuffers.h"
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "utility/Utility.h"
-#include "ScreenQuadUi.h"
+#include "ScreenQuadRenderer.h"
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
@@ -59,7 +59,7 @@ namespace Utopian::Vk
 
 	void VulkanApp::PostInitPrepare()
 	{
-		mUiOverlay = new UIOverlay(GetWindowWidth(), GetWindowHeight(), this);
+		mImGuiRenderer = new ImGuiRenderer(GetWindowWidth(), GetWindowHeight(), this);
 	}
 
 	void VulkanApp::SetClearColor(glm::vec4 color)
@@ -147,16 +147,16 @@ namespace Utopian::Vk
 
 	void VulkanApp::UpdateImgui()
 	{
-		mUiOverlay->Update();
+		mImGuiRenderer->Update();
 	}
 
 	void VulkanApp::ToggleUi()
 	{
-		mUiOverlay->ToggleVisible();
+		mImGuiRenderer->ToggleVisible();
 	}
 	
-	UIOverlay* VulkanApp::GetUiOverlay()
+	ImGuiRenderer* VulkanApp::GetUiOverlay()
 	{
-		return mUiOverlay;
+		return mImGuiRenderer;
 	}
 }	// VulkanLib namespace

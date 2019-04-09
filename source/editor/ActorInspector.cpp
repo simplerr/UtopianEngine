@@ -6,7 +6,7 @@
 #include "core/components/CRigidBody.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 
 namespace Utopian
 {
@@ -23,7 +23,7 @@ namespace Utopian
 	{
 		if (mActor != nullptr)
 		{
-			Vk::UIOverlay::BeginWindow("Inspector", glm::vec2(1500, 10), 300.0f);
+			Vk::ImGuiRenderer::BeginWindow("Inspector", glm::vec2(1500, 10), 300.0f);
 
 			// General actor information
 			std::string name = mActor->GetName();
@@ -43,7 +43,7 @@ namespace Utopian
 				inspector->UpdateUi();
 			}
 
-			Vk::UIOverlay::EndWindow();
+			Vk::ImGuiRenderer::EndWindow();
 		}
 	}
 

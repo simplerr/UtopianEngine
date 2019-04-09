@@ -10,7 +10,7 @@
 #include "core/components/CBloomLight.h"
 #include "core/components/CRandomPaths.h"
 #include "core/components/CRigidBody.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
 #include "core/legacy/BaseTerrain.h"
@@ -24,8 +24,8 @@
 
 namespace Utopian
 {
-	Editor::Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, const SharedPtr<Terrain>& terrain)
-		: mUiOverlay(uiOverlay), mCamera(camera), mWorld(world), mTerrain(terrain)
+	Editor::Editor(Vk::ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain)
+		: mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
 		mActorInspector = new ActorInspector();
@@ -144,7 +144,7 @@ namespace Utopian
 		// Hide/show UI
 		if (gInput().KeyPressed('H'))
 		{
-			mUiOverlay->ToggleVisible();
+			mImGuiRenderer->ToggleVisible();
 		}
 
 		// Recompile shaders
@@ -187,7 +187,7 @@ namespace Utopian
 		mActorInspector->UpdateUi();
 
 		// UI containing settings, terrain and foliage tools
-		Vk::UIOverlay::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
+		Vk::ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
 
 		bool physicsEnabled = gPhysics().IsEnabled();
 		ImGui::Checkbox("Simulate physics", &physicsEnabled);
@@ -197,9 +197,9 @@ namespace Utopian
 		mFoliageTool->RenderUi();
 		RenderActorCreationUi();
 
-		Vk::UIOverlay::EndWindow();
+		Vk::ImGuiRenderer::EndWindow();
 
-		Vk::UIOverlay::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
+		Vk::ImGuiRenderer::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
 
 		if (ImGui::Button("Recompile modified shaders"))
 		{
@@ -211,7 +211,7 @@ namespace Utopian
 			Vk::gEffectManager().RecompileAllShaders();
 		}
 
-		Vk::UIOverlay::EndWindow();
+		Vk::ImGuiRenderer::EndWindow();
 	}
 
 	void Editor::Draw()

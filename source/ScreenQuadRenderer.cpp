@@ -1,5 +1,5 @@
 #include <vector>
-#include "vulkan/ScreenQuadUi.h"
+#include "ScreenQuadRenderer.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/EffectManager.h"
@@ -10,12 +10,12 @@
 
 namespace Utopian
 {
-	ScreenQuadUi& gScreenQuadUi()
+	ScreenQuadRenderer& gScreenQuadUi()
 	{
-		return ScreenQuadUi::Instance();
+		return ScreenQuadRenderer::Instance();
 	}
 
-	ScreenQuadUi::ScreenQuadUi(Vk::VulkanApp* vulkanApp)
+	ScreenQuadRenderer::ScreenQuadRenderer(Vk::VulkanApp* vulkanApp)
 	{
 		mVulkanApp = vulkanApp;
 
@@ -36,7 +36,7 @@ namespace Utopian
 		CreateQuadBuffers();
 	}
 
-	void ScreenQuadUi::CreateQuadBuffers()
+	void ScreenQuadRenderer::CreateQuadBuffers()
 	{
 		std::vector<Vk::ScreenQuadVertex> vertices =
 		{
@@ -53,7 +53,7 @@ namespace Utopian
 		mScreenQuad.indexBuffer = new Utopian::Vk::Buffer(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
-	void ScreenQuadUi::Render(Vk::VulkanApp* vulkanApp)
+	void ScreenQuadRenderer::Render(Vk::VulkanApp* vulkanApp)
 	{
 		mCommandBuffer->Begin(vulkanApp->GetRenderPass(), vulkanApp->GetCurrentFrameBuffer());
 		mCommandBuffer->CmdSetViewPort(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight());
@@ -92,7 +92,7 @@ namespace Utopian
 		mCommandBuffer->End();
 	}
 
-	SharedPtr<ScreenQuad> ScreenQuadUi::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
+	SharedPtr<ScreenQuad> ScreenQuadRenderer::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Image* image, Utopian::Vk::Sampler* sampler, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
@@ -104,7 +104,7 @@ namespace Utopian
 		return textureQuad;
 	}
 
-	SharedPtr<ScreenQuad> ScreenQuadUi::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer)
+	SharedPtr<ScreenQuad> ScreenQuadRenderer::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, VkImageView imageView, Utopian::Vk::Sampler* sampler, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
@@ -116,7 +116,7 @@ namespace Utopian
 		return textureQuad;
 	}
 
-	SharedPtr<ScreenQuad> ScreenQuadUi::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
+	SharedPtr<ScreenQuad> ScreenQuadRenderer::AddQuad(uint32_t left, uint32_t top, uint32_t width, uint32_t height, Utopian::Vk::Texture* texture, uint32_t layer)
 	{
 		SharedPtr<ScreenQuad> textureQuad = std::make_shared<ScreenQuad>(left, top, width, height, layer);
 
@@ -128,7 +128,7 @@ namespace Utopian
 		return textureQuad;
 	}
 
-	void ScreenQuadUi::ToggleVisible(uint32_t layer)
+	void ScreenQuadRenderer::ToggleVisible(uint32_t layer)
 	{
 		for (int i = 0; i < mQuadList.size(); i++)
 		{
@@ -137,7 +137,7 @@ namespace Utopian
 		}
 	}
 
-	void ScreenQuadUi::SetVisible(uint32_t layer, bool visible)
+	void ScreenQuadRenderer::SetVisible(uint32_t layer, bool visible)
 	{
 		for (int i = 0; i < mQuadList.size(); i++)
 		{

@@ -11,8 +11,8 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
-#include "vulkan/ScreenQuadUi.h"
-#include "vulkan/UIOverlay.h"
+#include "ScreenQuadRenderer.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/Debug.h"
 #include "Input.h"
 #include "vulkan/VulkanApp.h"
@@ -49,7 +49,7 @@ namespace Utopian
 		Vk::ShaderFactory::Start(mVulkanApp->GetDevice());
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
-		ScreenQuadUi::Start(mVulkanApp.get());
+		ScreenQuadRenderer::Start(mVulkanApp.get());
 
 		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 

@@ -7,7 +7,7 @@
 */
 
 #include <algorithm>
-#include "UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Texture.h"
 #include "vulkan/VulkanApp.h"
@@ -25,7 +25,7 @@
 
 namespace Utopian::Vk 
 {
-	UIOverlay::UIOverlay(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp)
+	ImGuiRenderer::ImGuiRenderer(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp)
 		: mVulkanApp(vulkanApp)
 	{
 		// Color scheme
@@ -55,17 +55,17 @@ namespace Utopian::Vk
 		mLastFrameTime = std::chrono::high_resolution_clock::now();
 		mDeltaTime = 0.0;
 
-		gInput().RegisterUiCallback(&UIOverlay::IsMouseInsideUi, this);
+		gInput().RegisterUiCallback(&ImGuiRenderer::IsMouseInsideUi, this);
 	}
 
 	/** Free up all Vulkan resources acquired by the UI overlay */
-	UIOverlay::~UIOverlay()
+	ImGuiRenderer::~ImGuiRenderer()
 	{
 		
 	}
 
 	/** Prepare all vulkan resources required to render the UI overlay */
-	void UIOverlay::PrepareResources()
+	void ImGuiRenderer::PrepareResources()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -88,7 +88,7 @@ namespace Utopian::Vk
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 	}
 
-	void UIOverlay::UpdateCommandBuffers()
+	void ImGuiRenderer::UpdateCommandBuffers()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -136,7 +136,7 @@ namespace Utopian::Vk
 	}
 
 	/** Update vertex and index buffer containing the imGui elements when required */
-	void UIOverlay::Update()
+	void ImGuiRenderer::Update()
 	{
 		ImDrawData* imDrawData = ImGui::GetDrawData();
 		bool updateCmdBuffers = false;
@@ -194,7 +194,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	ImTextureID UIOverlay::AddTexture(VkImageView imageView, const VkSampler sampler, VkImageLayout imageLayout)
+	ImTextureID ImGuiRenderer::AddTexture(VkImageView imageView, const VkSampler sampler, VkImageLayout imageLayout)
 	{
 		VkDescriptorSet descriptorSet;
 
@@ -224,7 +224,7 @@ namespace Utopian::Vk
 		return (ImTextureID)descriptorSet;
 	}
 
-	void UIOverlay::NewFrame()
+	void ImGuiRenderer::NewFrame()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
@@ -244,24 +244,24 @@ namespace Utopian::Vk
 		ImGui::NewFrame();
 	}
 
-	void UIOverlay::Render()
+	void ImGuiRenderer::Render()
 	{
 		ImGui::Render();
 	}
 
-	void UIOverlay::Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers)
+	void ImGuiRenderer::Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2((float)(width), (float)(height));
 		UpdateCommandBuffers();
 	}
 
-	Utopian::Vk::CommandBuffer* UIOverlay::GetCommandBuffer() const
+	Utopian::Vk::CommandBuffer* ImGuiRenderer::GetCommandBuffer() const
 	{
 		return mCommandBuffer;
 	}
 
-	void UIOverlay::TextV(const char* format, ...)
+	void ImGuiRenderer::TextV(const char* format, ...)
 	{
 		va_list args;
 		va_start(args, format);
@@ -269,7 +269,7 @@ namespace Utopian::Vk
 		va_end(args);
 	}
 	
-	void UIOverlay::BeginWindow(std::string label, glm::vec2 position, float itemWidth)
+	void ImGuiRenderer::BeginWindow(std::string label, glm::vec2 position, float itemWidth)
 	{
 		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 		ImGui::SetNextWindowPos(ImVec2(position.x, position.y), ImGuiCond_FirstUseEver);
@@ -278,19 +278,19 @@ namespace Utopian::Vk
 		ImGui::PushItemWidth(itemWidth);
 	}
 
-	void UIOverlay::EndWindow()
+	void ImGuiRenderer::EndWindow()
 	{
 		ImGui::PopItemWidth();
 		ImGui::End();
 		//ImGui::PopStyleVar();
 	}
 	
-	void UIOverlay::ToggleVisible()
+	void ImGuiRenderer::ToggleVisible()
 	{
 		mCommandBuffer->ToggleActive();
 	}
 
-	bool UIOverlay::IsMouseInsideUi()
+	bool ImGuiRenderer::IsMouseInsideUi()
 	{
 		return (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) || ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 	}

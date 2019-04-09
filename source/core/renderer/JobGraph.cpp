@@ -14,7 +14,7 @@
 #include "core/renderer/BloomJob.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/VulkanApp.h"
 
 namespace Utopian
@@ -51,11 +51,11 @@ namespace Utopian
 		AddJob(fxaaJob);
 
 		/* Add debug render targets */
-		Vk::UIOverlay* uiOverlay = vulkanApp->GetUiOverlay();
-		mDebugDescriptorSets.position = uiOverlay->AddTexture(mGBuffer.positionImage->GetView());
-		mDebugDescriptorSets.normal = uiOverlay->AddTexture(mGBuffer.normalImage->GetView());
-		mDebugDescriptorSets.normalView = uiOverlay->AddTexture(mGBuffer.normalViewImage->GetView());
-		mDebugDescriptorSets.albedo = uiOverlay->AddTexture(mGBuffer.albedoImage->GetView());
+		Vk::ImGuiRenderer* imGuiRenderer = vulkanApp->GetUiOverlay();
+		mDebugDescriptorSets.position = imGuiRenderer->AddTexture(mGBuffer.positionImage->GetView());
+		mDebugDescriptorSets.normal = imGuiRenderer->AddTexture(mGBuffer.normalImage->GetView());
+		mDebugDescriptorSets.normalView = imGuiRenderer->AddTexture(mGBuffer.normalViewImage->GetView());
+		mDebugDescriptorSets.albedo = imGuiRenderer->AddTexture(mGBuffer.albedoImage->GetView());
 	}
 
 	JobGraph::~JobGraph()
@@ -79,7 +79,7 @@ namespace Utopian
 		}
 
 		// Display Actor creation list
-		Vk::UIOverlay::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
+		Vk::ImGuiRenderer::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
 
 		ImVec2 textureSize = ImVec2(256, 256);
 		ImGui::BeginGroup();
@@ -106,7 +106,7 @@ namespace Utopian
 		ImGui::Image(mDebugDescriptorSets.albedo, textureSize);
 		ImGui::EndGroup();
 
-		Vk::UIOverlay::EndWindow();
+		Vk::ImGuiRenderer::EndWindow();
 	}
 
 	void JobGraph::AddJob(BaseJob* job)

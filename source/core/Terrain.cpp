@@ -8,7 +8,7 @@
 #include "vulkan/Effect.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/StaticModel.h"
-#include "vulkan/ScreenQuadUi.h"
+#include "ScreenQuadRenderer.h"
 #include "vulkan/Mesh.h"
 #include "vulkan/Texture2.h"
 #include "core/renderer/Renderer.h"

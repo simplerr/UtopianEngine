@@ -1,6 +1,6 @@
 #include "editor/FoliageTool.h"
 #include "editor/TerrainTool.h"
-#include "vulkan/UIOverlay.h"
+#include "ImGuiRenderer.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/Debug.h"
 #include "core/renderer/Renderer.h"

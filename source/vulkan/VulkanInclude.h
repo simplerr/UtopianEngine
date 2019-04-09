@@ -49,7 +49,7 @@ namespace Utopian::Vk
 	class PipelineInterface;
 	class VulkanApp;
 	class RenderTarget;
-	class ScreenQuadUi;
+	class ScreenQuadRenderer;
 	class ShaderBuffer;
 	class ShaderFactory;
 	class StaticModel;
@@ -61,7 +61,7 @@ namespace Utopian::Vk
 	class VulkanBase;
 	class EffectLegacy;
 	class Shader;
-	class UIOverlay;
+	class ImGuiRenderer;
 	class ScreenQuad;
 	class BasicRenderTarget;
 	class CubeMapTexture;

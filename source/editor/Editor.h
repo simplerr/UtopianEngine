@@ -24,7 +24,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(Vk::UIOverlay* uiOverlay, Camera* camera, World* world, const SharedPtr<Terrain>& terrain);
+		Editor(Vk::ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain);
 		~Editor();
 
 		void Update();
@@ -43,7 +43,7 @@ namespace Utopian
 		World* mWorld;
 		SharedPtr<Terrain> mTerrain;
 		Camera* mCamera;
-		Vk::UIOverlay* mUiOverlay;
+		Vk::ImGuiRenderer* mImGuiRenderer;
 		ActorInspector* mActorInspector;
 		SharedPtr<TransformTool> mTransformTool;
 		SharedPtr<TerrainTool> mTerrainTool;

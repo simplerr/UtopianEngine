@@ -33,7 +33,7 @@ namespace Utopian
 		Utopian::Vk::DescriptorSet* descriptorSet;
 	};
 
-	class ScreenQuadUi : public Module<ScreenQuadUi>
+	class ScreenQuadRenderer : public Module<ScreenQuadRenderer>
 	{
 		struct PushConstantBlock
 		{
@@ -41,7 +41,7 @@ namespace Utopian
 		};
 
 	public:
-		ScreenQuadUi(Vk::VulkanApp* vulkanApp);
+		ScreenQuadRenderer(Vk::VulkanApp* vulkanApp);
 
 		void Render(Vk::VulkanApp* vulkanApp);
 		void ToggleVisible(uint32_t layer);
@@ -68,5 +68,5 @@ namespace Utopian
 		const uint32_t NUM_MAX_LAYERS = 3u;
 	};
 
-	ScreenQuadUi& gScreenQuadUi();
+	ScreenQuadRenderer& gScreenQuadUi();
 }

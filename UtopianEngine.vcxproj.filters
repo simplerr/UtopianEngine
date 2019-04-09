@@ -264,9 +264,6 @@
     <ClCompile Include="source\vulkan\ImguiEffect.cpp">
       <Filter>Source Files\vulkan\effects\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\UIOverlay.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\editor\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -411,9 +408,6 @@
     <ClCompile Include="source\core\renderer\SkyboxJob.cpp">
       <Filter>Source Files\scene\jobs</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\ScreenQuadUi.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\renderer\RendererUtility.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
@@ -500,6 +494,12 @@
     </ClCompile>
     <ClCompile Include="source\Im3dRenderer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ScreenQuadRenderer.cpp">
+      <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ImGuiRenderer.cpp">
+      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -640,9 +640,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\ImguiEffect.h">
       <Filter>Source Files\vulkan\effects\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\UIOverlay.h">
-      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\editor\Editor.h">
       <Filter>Header Files</Filter>
@@ -821,9 +818,6 @@
     <ClInclude Include="source\core\renderer\RenderSettings.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\ScreenQuadUi.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\renderer\RendererUtility.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
@@ -931,6 +925,12 @@
     </ClInclude>
     <ClInclude Include="source\Im3dRenderer.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ScreenQuadRenderer.h">
+      <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ImGuiRenderer.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
