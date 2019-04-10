@@ -20,7 +20,6 @@ namespace Utopian
 
 	void CRenderable::Update()
 	{
-
 	}
 
 	void CRenderable::OnCreated()

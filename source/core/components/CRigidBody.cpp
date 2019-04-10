@@ -5,6 +5,7 @@
 #include "core/Physics.h"
 #include "core/BulletHelpers.h"
 #include "imgui/imgui.h"
+#include "im3d/im3d.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "btBulletDynamicsCommon.h"
 #include <glm/gtc/quaternion.hpp>
@@ -53,6 +54,8 @@ namespace Utopian
 
 	void CRigidBody::Update()
 	{
+		glm::vec3 position = GetTransform().GetPosition();
+		Im3d::DrawAlignedBox(position, position + glm::vec3(200.0f));
 	}
 
 	void CRigidBody::OnCreated()

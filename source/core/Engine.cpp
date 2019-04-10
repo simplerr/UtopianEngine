@@ -26,9 +26,9 @@ namespace Utopian
 	{
 		Vk::Debug::ConsolePrint("Starting engine modules...");
 
-		mIm3dRenderer = new Im3dRenderer(glm::vec2(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-
 		StartModules();
+
+		mIm3dRenderer = new Im3dRenderer(vulkanApp.get(), glm::vec2(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
 
 		Vk::Debug::ConsolePrint("Engine modules ready");
 	}
@@ -131,6 +131,8 @@ namespace Utopian
 
 			// Call the applications Render() function
 			mRenderCallback();
+
+			mIm3dRenderer->Render();
 
 			// Present to screen
 			mVulkanApp->Render();
