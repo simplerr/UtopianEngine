@@ -23,11 +23,8 @@ namespace Utopian
 		createInfo.vertexShaderPath = "data/shaders/im3d/im3d.vert";
 		//createInfo.geometryShaderPath = "data/shaders/im3d/im3d.geom";
 		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d.frag";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
-		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-		mEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+
+		mViewProjectionBlock.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		// Need to override vertex input description from shader since there is some special
 		// treatment of U32 -> vec4 in Im3d
@@ -35,12 +32,36 @@ namespace Utopian
 		mVertexDescription->AddBinding(BINDING_0, sizeof(Im3d::VertexData), VK_VERTEX_INPUT_RATE_VERTEX);
 		mVertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());
 		mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());
-		mEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
 
-		mEffect->CreatePipeline();
+		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
+		mLinesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+		mLinesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
+		mLinesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		mLinesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+		mLinesEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mPointsEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
+		mPointsEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+		mPointsEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		mPointsEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
+		mPointsEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		mPointsEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+		mPointsEffect->CreatePipeline();
+
+		mTrianglesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
+		mTrianglesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		mTrianglesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		mTrianglesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
+		mTrianglesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		mTrianglesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+		mTrianglesEffect->CreatePipeline();
+
+		mLinesEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mPointsEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mTrianglesEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+
+		mVertexCount = 0;
 	}
 
 	Im3dRenderer::~Im3dRenderer()
@@ -80,6 +101,18 @@ namespace Utopian
 	{
 		// Testing
 		Im3d::DrawAlignedBox(glm::vec3(0.0f), glm::vec3(500.0f));
+		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 1.0f, Im3d::Color_Green);
+		Im3d::DrawPoint(glm::vec3(0.0f, 500.0f, 0.0f), 20.0f, Im3d::Color_Red);
+		Im3d::DrawCapsule(glm::vec3(0.0f), glm::vec3(0.0f, 1000.0f, 0.0f), 100.0f);
+		Im3d::DrawPrism(Im3d::Vec3(500.0f, 0.0f, 0.0f), Im3d::Vec3(500.0f, 500.0f, 0.0f), 100, 10);
+		Im3d::DrawQuad(glm::vec3(-500.0f, 0.0f, 0.0f), Im3d::Vec3(0.0f, 1.0f, 0.0f), 300.0f);
+		Im3d::DrawQuadFilled(glm::vec3(-1000.0f, 0.0f, 0.0f), Im3d::Vec3(0.0f, 1.0f, 0.0f), 300.0f);
+
+		Im3d::BeginTriangles();
+		Im3d::Vertex(-100.0f, 0.0f, -100.0f, Im3d::Color_Red);
+		Im3d::Vertex(0.0f, 200.0f, -100.0f, Im3d::Color_Green);
+		Im3d::Vertex(100.0f, 0.0f, -100.0f, Im3d::Color_Blue);
+		Im3d::End();
 
 		Im3d::EndFrame();
 
@@ -90,32 +123,45 @@ namespace Utopian
 	{
 		Im3d::AppData& appData = Im3d::GetAppData();
 
+		uint32_t totalNumVertices = GetTotalNumVertices();
+
+		if ((mVertexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mVertexCount < totalNumVertices))
+		{
+			VkDeviceSize vertexBufferSize = totalNumVertices * sizeof(Im3d::VertexData);
+
+			mVertexBuffer.UnmapMemory();
+			// Todo
+			//gRenderer().QueueDestroy(Q)
+			//mVertexBuffer.Destroy();
+			mVertexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
+			mVertexCount = totalNumVertices;
+			mVertexBuffer.MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedVertices);
+			//updateCmdBuffers = true;
+		}
+
+		Im3d::VertexData* vertexDst = mMappedVertices;
+
 		for (uint32_t i = 0; i < Im3d::GetDrawListCount(); i++)
 		{
 			const Im3d::DrawList& drawList = Im3d::GetDrawLists()[i];
 
-			VkDeviceSize vertexBufferSize =  drawList.m_vertexCount * sizeof(Im3d::VertexData);
-
-			// Update buffers only if vertex or index count has been changed compared to current buffer size
-			if ((mVertexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mVertexCount != drawList.m_vertexCount))
-			{
-				mVertexBuffer.UnmapMemory();
-				// Todo
-				//gRenderer().QueueDestroy(Q)
-				//mVertexBuffer.Destroy();
-				mVertexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
-				mVertexCount = drawList.m_vertexCount;
-				mVertexBuffer.MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedVertices);
-				//updateCmdBuffers = true;
-			}
-
-			memcpy(mMappedVertices, drawList.m_vertexData, vertexBufferSize);
-
-			mVertexBuffer.Flush();
-
-			volatile int a = 1;
+			memcpy(vertexDst, drawList.m_vertexData, drawList.m_vertexCount * sizeof(Im3d::VertexData));
+			vertexDst += drawList.m_vertexCount;
 		}
 
+		mVertexBuffer.Flush();
+	}
+
+	uint32_t Im3dRenderer::GetTotalNumVertices()
+	{
+		uint32_t numVertices = 0;
+		for (uint32_t i = 0; i < Im3d::GetDrawListCount(); i++)
+		{
+			const Im3d::DrawList& drawList = Im3d::GetDrawLists()[i];
+			numVertices += drawList.m_vertexCount;
+		}
+
+		return numVertices;
 	}
 
 	void Im3dRenderer::Render()
@@ -127,21 +173,34 @@ namespace Utopian
 		mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 		mCommandBuffer->CmdSetViewPort(mViewportSize.x, mViewportSize.y);
 		mCommandBuffer->CmdSetScissor(mViewportSize.x, mViewportSize.y);
-		mCommandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-
 		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mVertexBuffer);
-		mCommandBuffer->CmdBindDescriptorSets(mEffect);
-		mCommandBuffer->CmdDraw(mVertexCount, 1, 0, 0);
 
-
-		mCommandBuffer->End();
-		//Im3d::AppData& appData = Im3d::GetAppData();
-
-		/*for (uint32_t i = 0; i < Im3d::GetDrawListCount(); i++)
+		uint32_t vertexOffset = 0;
+		for (uint32_t i = 0; i < Im3d::GetDrawListCount(); i++)
 		{
 			const Im3d::DrawList& drawList = Im3d::GetDrawLists()[i];
 
-			volatile int a = 1;
-		}*/
+			if (drawList.m_primType == Im3d::DrawPrimitive_Lines)
+			{
+				mCommandBuffer->CmdBindDescriptorSets(mLinesEffect);
+				mCommandBuffer->CmdBindPipeline(mLinesEffect->GetPipeline());
+			}
+			else if (drawList.m_primType == Im3d::DrawPrimitive_Points)
+			{
+				mCommandBuffer->CmdBindDescriptorSets(mPointsEffect);
+				mCommandBuffer->CmdBindPipeline(mPointsEffect->GetPipeline());
+			}
+			else if (drawList.m_primType == Im3d::DrawPrimitive_Triangles)
+			{
+				mCommandBuffer->CmdBindDescriptorSets(mTrianglesEffect);
+				mCommandBuffer->CmdBindPipeline(mTrianglesEffect->GetPipeline());
+			}
+
+			mCommandBuffer->CmdDraw(drawList.m_vertexCount, 1, vertexOffset, 0);
+
+			vertexOffset += drawList.m_vertexCount;
+		}
+
+		mCommandBuffer->End();
 	}
 }

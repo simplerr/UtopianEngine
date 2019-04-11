@@ -24,15 +24,21 @@ namespace Utopian
 
 	private:
 		void UploadVertexData();
+		uint32_t GetTotalNumVertices();
 	private:
 		Vk::VulkanApp* mVulkanApp;
 		Vk::CommandBuffer* mCommandBuffer;
-		SharedPtr<Vk::Effect> mEffect;
 		ViewProjection mViewProjectionBlock;
-		Vk::Buffer mVertexBuffer;
 		Im3d::VertexData* mMappedVertices;
 		SharedPtr<Vk::VertexDescription> mVertexDescription;
 		glm::vec2 mViewportSize;
+
+		// Contains all vertices created by Im3d, when rendering offsets are used in this buffer.
+		Vk::Buffer mVertexBuffer;
+
+		SharedPtr<Vk::Effect> mLinesEffect;
+		SharedPtr<Vk::Effect> mPointsEffect;
+		SharedPtr<Vk::Effect> mTrianglesEffect;
 
 		// Temp
 		uint32_t mVertexCount;

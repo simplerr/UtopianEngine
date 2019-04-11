@@ -56,6 +56,7 @@ namespace Utopian
 	{
 		glm::vec3 position = GetTransform().GetPosition();
 		Im3d::DrawAlignedBox(position, position + glm::vec3(200.0f));
+		Im3d::DrawPoint(position, 20.0f, Im3d::Color_Red);
 	}
 
 	void CRigidBody::OnCreated()

@@ -10,6 +10,7 @@ layout (location = 1) out vec4 OutColor;
 out gl_PerVertex 
 {
 	vec4 gl_Position;   
+	float gl_PointSize;
 };
 
 layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
@@ -23,4 +24,5 @@ void main()
 	OutColor = InColor;
     OutSize = InPositionSize.w;
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * vec4(InPositionSize.xyz, 1.0);
+	gl_PointSize = InPositionSize.w;
 }
