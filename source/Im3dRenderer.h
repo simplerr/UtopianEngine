@@ -15,6 +15,10 @@ namespace Utopian
 			UNIFORM_PARAM(glm::mat4, view)
 		UNIFORM_BLOCK_END()
 
+		UNIFORM_BLOCK_BEGIN(ViewportBlock)
+			UNIFORM_PARAM(glm::vec2, viewport)
+		UNIFORM_BLOCK_END()
+
 		Im3dRenderer(Vk::VulkanApp* vulkanApp, glm::vec2 viewportSize);
 		~Im3dRenderer();
 
@@ -28,7 +32,6 @@ namespace Utopian
 	private:
 		Vk::VulkanApp* mVulkanApp;
 		Vk::CommandBuffer* mCommandBuffer;
-		ViewProjection mViewProjectionBlock;
 		Im3d::VertexData* mMappedVertices;
 		SharedPtr<Vk::VertexDescription> mVertexDescription;
 		glm::vec2 mViewportSize;
@@ -39,6 +42,9 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mLinesEffect;
 		SharedPtr<Vk::Effect> mPointsEffect;
 		SharedPtr<Vk::Effect> mTrianglesEffect;
+
+		ViewProjection mViewProjectionBlock;
+		ViewportBlock mViewportBlock;
 
 		// Temp
 		uint32_t mVertexCount;

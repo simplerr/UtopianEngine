@@ -1,5 +1,6 @@
 #include "Im3dRenderer.h"
 #include "core/renderer/Renderer.h"
+#include "core/renderer/RendererUtility.h"
 #include "Camera.h"
 #include "Input.h"
 #include "im3d/im3d.h"
@@ -21,10 +22,9 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo createInfo;
 		createInfo.vertexShaderPath = "data/shaders/im3d/im3d.vert";
-		//createInfo.geometryShaderPath = "data/shaders/im3d/im3d.geom";
-		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d.frag";
 
 		mViewProjectionBlock.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mViewportBlock.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		// Need to override vertex input description from shader since there is some special
 		// treatment of U32 -> vec4 in Im3d
@@ -33,33 +33,42 @@ namespace Utopian
 		mVertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());
 		mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());
 
-		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
-		mLinesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-		mLinesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-		mLinesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-		mLinesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
-		mLinesEffect->CreatePipeline();
-
+		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_points.frag";
 		mPointsEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
 		mPointsEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 		mPointsEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mPointsEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
 		mPointsEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
 		mPointsEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+		gRendererUtility().SetAlphaBlending(mPointsEffect->GetPipeline());
 		mPointsEffect->CreatePipeline();
 
+		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_triangles.frag";
 		mTrianglesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
 		mTrianglesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		mTrianglesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mTrianglesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
 		mTrianglesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
 		mTrianglesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+		gRendererUtility().SetAlphaBlending(mTrianglesEffect->GetPipeline());
 		mTrianglesEffect->CreatePipeline();
+
+		createInfo.geometryShaderPath = "data/shaders/im3d/im3d.geom";
+		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_lines.frag";
+		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), createInfo);
+		mLinesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+		mLinesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
+		mLinesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		mLinesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+		gRendererUtility().SetAlphaBlending(mLinesEffect->GetPipeline());
+		mLinesEffect->CreatePipeline();
 
 		mLinesEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
 		mPointsEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
 		mTrianglesEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+
+		mLinesEffect->BindUniformBuffer("UBO_viewport", &mViewportBlock);
 
 		mVertexCount = 0;
 	}
@@ -100,10 +109,11 @@ namespace Utopian
 	void Im3dRenderer::EndFrame()
 	{
 		// Testing
+		Im3d::SetSize(3.0f);
 		Im3d::DrawAlignedBox(glm::vec3(0.0f), glm::vec3(500.0f));
-		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 1.0f, Im3d::Color_Green);
+		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 5.0f, Im3d::Color_Green);
 		Im3d::DrawPoint(glm::vec3(0.0f, 500.0f, 0.0f), 20.0f, Im3d::Color_Red);
-		Im3d::DrawCapsule(glm::vec3(0.0f), glm::vec3(0.0f, 1000.0f, 0.0f), 100.0f);
+		Im3d::DrawCapsule(glm::vec3(0.0f), glm::vec3(0.0f, 1000.0f, 0.0f), 100.0f, 20);
 		Im3d::DrawPrism(Im3d::Vec3(500.0f, 0.0f, 0.0f), Im3d::Vec3(500.0f, 500.0f, 0.0f), 100, 10);
 		Im3d::DrawQuad(glm::vec3(-500.0f, 0.0f, 0.0f), Im3d::Vec3(0.0f, 1.0f, 0.0f), 300.0f);
 		Im3d::DrawQuadFilled(glm::vec3(-1000.0f, 0.0f, 0.0f), Im3d::Vec3(0.0f, 1.0f, 0.0f), 300.0f);
@@ -169,6 +179,10 @@ namespace Utopian
 		mViewProjectionBlock.data.view = gRenderer().GetMainCamera()->GetView();
 		mViewProjectionBlock.data.projection = gRenderer().GetMainCamera()->GetProjection();
 		mViewProjectionBlock.UpdateMemory();
+
+		mViewportBlock.data.viewport.x = mViewportSize.x;
+		mViewportBlock.data.viewport.y = mViewportSize.y;
+		mViewportBlock.UpdateMemory();
 
 		mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 		mCommandBuffer->CmdSetViewPort(mViewportSize.x, mViewportSize.y);
