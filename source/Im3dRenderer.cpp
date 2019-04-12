@@ -90,8 +90,7 @@ namespace Utopian
 		appData.m_cursorRayOrigin = camera->GetPickingRay().origin;
 		appData.m_cursorRayDirection = camera->GetPickingRay().direction;
 		appData.m_projOrtho = false;
-		// Needed for constant screen space size gizmos
-		//appData.m_projScaleY = 
+		appData.m_projScaleY = tanf(glm::radians(camera->GetFov()) * 0.5f) * 2.0f;
 		appData.m_viewportSize = mViewportSize;
 		appData.m_snapTranslation = 0.0f;
 		appData.m_snapRotation = 0.0f;
@@ -109,6 +108,10 @@ namespace Utopian
 	void Im3dRenderer::EndFrame()
 	{
 		// Testing
+		Im3d::SetSize(1.0f);
+		glm::mat4 transform = glm::mat4();
+		Im3d::Gizmo("TransformGizmo", Im3d::Mat4(transform));
+
 		Im3d::SetSize(3.0f);
 		Im3d::DrawAlignedBox(glm::vec3(0.0f), glm::vec3(500.0f));
 		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 5.0f, Im3d::Color_Green);
