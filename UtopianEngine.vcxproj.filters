@@ -486,9 +486,6 @@
     <ClCompile Include="source\core\components\CRigidBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\core\Physics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="external\im3d\im3d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -500,6 +497,12 @@
     </ClCompile>
     <ClCompile Include="source\ImGuiRenderer.cpp">
       <Filter>Source Files\vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\physics\Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\physics\PhysicsDebugDraw.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -908,12 +911,6 @@
     <ClInclude Include="source\core\components\CRigidBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\Physics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\BulletHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="external\im3d\im3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -931,6 +928,15 @@
     </ClInclude>
     <ClInclude Include="source\ImGuiRenderer.h">
       <Filter>Source Files\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\physics\Physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\physics\BulletHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\physics\PhysicsDebugDraw.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

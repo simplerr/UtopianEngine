@@ -1,4 +1,5 @@
-#include "core/Physics.h"
+#include "core/physics/Physics.h"
+#include "core/physics/PhysicsDebugDraw.h"
 #include "btBulletDynamicsCommon.h"
 
 namespace Utopian
@@ -19,6 +20,9 @@ namespace Utopian
 
 		mDynamicsWorld->setGravity(btVector3(mGravity.x, mGravity.y, mGravity.z));
 
+		mDebugDrawer = new PhysicsDebugDraw();
+		mDynamicsWorld->setDebugDrawer(mDebugDrawer);
+
 		mEnabled = true;
 
 		// Add ground shape for experimentation
@@ -32,6 +36,7 @@ namespace Utopian
 		delete mDispatcher;
 		delete mCollisionConfiguration;
 		delete mBroadphase;
+		delete mDebugDrawer;
 	}
 
 	void Physics::Update()
@@ -46,11 +51,21 @@ namespace Utopian
 		{
 			mDynamicsWorld->stepSimulation(deltaTime, 5);
 		}
+
+		if (IsDebugDrawEnabled())
+		{
+			mDynamicsWorld->debugDrawWorld();
+		}
 	}
 
 	void Physics::EnableSimulation(bool enable)
 	{
 		mEnabled = enable;
+	}
+
+	void Physics::EnableDebugDraw(bool enable)
+	{
+		mDebugDrawEnabled = enable;
 	}
 
 	void Physics::AddGroundShape()
@@ -92,5 +107,10 @@ namespace Utopian
 	bool Physics::IsEnabled() const
 	{
 		return mEnabled;
+	}
+	
+	bool Physics::IsDebugDrawEnabled() const
+	{
+		return mDebugDrawEnabled;
 	}
 }

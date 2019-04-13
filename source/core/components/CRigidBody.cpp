@@ -2,8 +2,8 @@
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
 #include "core/components/Actor.h"
-#include "core/Physics.h"
-#include "core/BulletHelpers.h"
+#include "core/physics/Physics.h"
+#include "core/physics/BulletHelpers.h"
 #include "imgui/imgui.h"
 #include "im3d/im3d.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
@@ -54,10 +54,10 @@ namespace Utopian
 
 	void CRigidBody::Update()
 	{
-		glm::vec3 position = GetTransform().GetPosition();
-		BoundingBox aabb = mRenderable->GetBoundingBox();
-		Im3d::DrawAlignedBox(aabb.GetMin(), aabb.GetMax());
-		Im3d::DrawPoint(position, 20.0f, Im3d::Color_Red);
+		//glm::vec3 position = GetTransform().GetPosition();
+		//BoundingBox aabb = mRenderable->GetBoundingBox();
+		//Im3d::DrawAlignedBox(aabb.GetMin(), aabb.GetMax());
+		//Im3d::DrawPoint(position, 20.0f, Im3d::Color_Red);
 	}
 
 	void CRigidBody::OnCreated()

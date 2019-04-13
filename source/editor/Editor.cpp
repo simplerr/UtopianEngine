@@ -19,7 +19,7 @@
 #include "editor/FoliageTool.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
-#include "core/Physics.h"
+#include "core/physics/Physics.h"
 #include <random>
 
 namespace Utopian
@@ -190,8 +190,11 @@ namespace Utopian
 		Vk::ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
 
 		bool physicsEnabled = gPhysics().IsEnabled();
+		bool debugDrawEnabled = gPhysics().IsDebugDrawEnabled();
 		ImGui::Checkbox("Simulate physics", &physicsEnabled);
+		ImGui::Checkbox("Physics debug draw", &debugDrawEnabled);
 		gPhysics().EnableSimulation(physicsEnabled);
+		gPhysics().EnableDebugDraw(debugDrawEnabled);
 
 		mTerrainTool->RenderUi();
 		mFoliageTool->RenderUi();

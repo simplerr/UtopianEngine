@@ -1,6 +1,6 @@
 #include "core/Engine.h"
 #include "core/World.h"
-#include "core/Physics.h"
+#include "core/physics/Physics.h"
 #include "core/renderer/Renderer.h"
 #include "core/LuaManager.h"
 #include "core/ScriptExports.h"
