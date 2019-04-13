@@ -62,6 +62,7 @@ namespace Utopian
 		SharedPtr<Terrain> terrain;
 		std::vector<SharedPtr<InstanceGroup>> instanceGroups;
 		std::array<Cascade, SHADOW_MAP_CASCADE_COUNT> cascades;
+		SharedPtr<Vk::Buffer> im3dVertices;
 
 		// The light that will cast shadows
 		// Currently assumes that there only is one directional light in the scene

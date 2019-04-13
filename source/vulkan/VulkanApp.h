@@ -80,9 +80,6 @@ namespace Utopian::Vk
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-		void UpdateImgui();
-		void ToggleUi();
-
 		ImGuiRenderer* GetUiOverlay();
 
 		void SetImguiRenderer(ImGuiRenderer* imguiRenderer);
@@ -100,6 +97,5 @@ namespace Utopian::Vk
 		CommandBuffer*					mPrimaryCommandBuffer;
 		std::vector<CommandBuffer*>		mSecondaryCommandBuffers;
 		glm::vec4						mClearColor;
-		ImGuiRenderer*					mImGuiRenderer = nullptr;
 	};
 }	// VulkanLib namespace

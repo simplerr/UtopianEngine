@@ -23,7 +23,6 @@
 #include "handles/FrameBuffers.h"
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
-#include "ImGuiRenderer.h"
 #include "utility/Utility.h"
 #include "ScreenQuadRenderer.h"
 
@@ -55,11 +54,6 @@ namespace Utopian::Vk
 		VulkanBase::Prepare();
 
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-	}
-
-	void VulkanApp::SetImguiRenderer(ImGuiRenderer* imguiRenderer)
-	{
-		mImGuiRenderer = imguiRenderer;
 	}
 
 	void VulkanApp::SetClearColor(glm::vec4 color)
@@ -118,8 +112,6 @@ namespace Utopian::Vk
 
 	void VulkanApp::Render()
 	{
-		UpdateImgui();
-
 		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
 		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
@@ -143,20 +135,5 @@ namespace Utopian::Vk
 
 		// Default message handling
 		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
-	}
-
-	void VulkanApp::UpdateImgui()
-	{
-		mImGuiRenderer->Update();
-	}
-
-	void VulkanApp::ToggleUi()
-	{
-		mImGuiRenderer->ToggleVisible();
-	}
-	
-	ImGuiRenderer* VulkanApp::GetUiOverlay()
-	{
-		return mImGuiRenderer;
 	}
 }	// VulkanLib namespace

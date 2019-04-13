@@ -12,6 +12,8 @@
 #include "core/renderer/FXAAJob.h"
 #include "core/renderer/TonemapJob.h"
 #include "core/renderer/BloomJob.h"
+#include "core/renderer/Im3dJob.h"
+#include "core/renderer/Renderer.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
 #include "ImGuiRenderer.h"
@@ -43,6 +45,7 @@ namespace Utopian
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new DebugJob(device, width, height));
+		AddJob(new Im3dJob(device, width, height));
 		AddJob(new BloomJob(device, width, height));
 		AddJob(new TonemapJob(device, width, height));
 
@@ -51,7 +54,7 @@ namespace Utopian
 		AddJob(fxaaJob);
 
 		/* Add debug render targets */
-		ImGuiRenderer* imGuiRenderer = vulkanApp->GetUiOverlay();
+		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
 		mDebugDescriptorSets.position = imGuiRenderer->AddTexture(mGBuffer.positionImage->GetView());
 		mDebugDescriptorSets.normal = imGuiRenderer->AddTexture(mGBuffer.normalImage->GetView());
 		mDebugDescriptorSets.normalView = imGuiRenderer->AddTexture(mGBuffer.normalViewImage->GetView());

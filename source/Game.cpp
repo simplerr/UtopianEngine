@@ -11,6 +11,7 @@
 #include "core/renderer/Renderer.h"
 #include "editor/Editor.h"
 #include "core/Engine.h"
+#include "core/renderer/Renderer.h"
 
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
@@ -34,10 +35,10 @@ Game::Game(Utopian::Window* window)
 	InitScene();
 
 	// Note: Needs to be called after a camera have been added to the scene
-	mEditor = std::make_shared<Utopian::Editor>(mVulkanApp->GetUiOverlay(),
-															  Utopian::gRenderer().GetMainCamera(),
-															  &Utopian::World::Instance(),
-															  Utopian::Renderer::Instance().GetTerrain());
+	mEditor = std::make_shared<Utopian::Editor>(Utopian::gRenderer().GetUiOverlay(),
+												Utopian::gRenderer().GetMainCamera(),
+												&Utopian::World::Instance(),
+												Utopian::Renderer::Instance().GetTerrain());
 
 	mWindow->SetTitle(mAppName);
 }

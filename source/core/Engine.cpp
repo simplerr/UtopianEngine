@@ -56,11 +56,6 @@ namespace Utopian
 		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
 		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
 
-		// Todo: Figure out where these belong
-		mIm3dRenderer = new Im3dRenderer(mVulkanApp.get(), glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
-		mImGuiRenderer = new ImGuiRenderer(mVulkanApp.get(), mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
-		mVulkanApp->SetImguiRenderer(mImGuiRenderer);
-
 		RendererUtility::Start();
 		Renderer::Start(mVulkanApp.get());
 		Physics::Start();
@@ -101,8 +96,7 @@ namespace Utopian
 
 	void Engine::Update()
 	{
-		mVulkanApp->GetUiOverlay()->NewFrame();
-		mIm3dRenderer->NewFrame();
+		gRenderer().NewUiFrame();
 
 		World::Instance().Update();
 		Renderer::Instance().Update();
@@ -113,8 +107,7 @@ namespace Utopian
 		// Call the applications Update() function
 		mUpdateCallback();
 
-		mVulkanApp->GetUiOverlay()->Render();
-		mIm3dRenderer->EndFrame();
+		gRenderer().EndUiFrame();
 	}
 
 	void Engine::Render()
@@ -128,12 +121,9 @@ namespace Utopian
 			mVulkanApp->PrepareFrame();
 
 			gRenderer().Render();
-			gScreenQuadUi().Render(mVulkanApp.get());
 
 			// Call the applications Render() function
 			mRenderCallback();
-
-			mIm3dRenderer->Render();
 
 			// Present to screen
 			mVulkanApp->Render();

@@ -8,7 +8,6 @@ namespace Utopian
 	class FXAAJob : public BaseJob
 	{
 	public:
-
 		UNIFORM_BLOCK_BEGIN(FXAASettingsBlock)
 			UNIFORM_PARAM(int, enabled)
 			UNIFORM_PARAM(int, debug)

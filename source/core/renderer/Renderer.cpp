@@ -17,6 +17,7 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "ImGuiRenderer.h"
+#include "Im3dRenderer.h"
 #include "core/Terrain.h"
 #include "core/AssetLoader.h"
 #include "core/renderer/GBufferJob.h"
@@ -49,8 +50,6 @@ namespace Utopian
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
 
-		
-
 		// Default rendering settings
 		mRenderingSettings.deferredPipeline = true;
 		mRenderingSettings.fogColor = glm::vec4(0.426f, 0.440f, 0.532f, 1.0f);
@@ -58,6 +57,10 @@ namespace Utopian
 		mRenderingSettings.fogDistance = 18000.0f;
 
 		mSceneInfo.directionalLight = nullptr;
+
+		// Todo: Figure out where these belong
+		mIm3dRenderer = new Im3dRenderer(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
+		mImGuiRenderer = new ImGuiRenderer(mVulkanApp, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 	}
 
 	Renderer::~Renderer()
@@ -253,15 +256,32 @@ namespace Utopian
 
 	void Renderer::Render()
 	{
+		// Deferred pipeline
 		if (mRenderingSettings.deferredPipeline == true)
 		{
-			/* Deferred rendering pipeline */
 			mSceneInfo.viewMatrix = mMainCamera->GetView();
 			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
 			mSceneInfo.eyePos = mMainCamera->GetPosition();
+			mSceneInfo.im3dVertices = mIm3dRenderer->GetVertexBuffer();
 
 			mJobGraph->Render(mSceneInfo, mRenderingSettings);
 		}
+
+		// Render the UI elements
+		gScreenQuadUi().Render(mVulkanApp);
+		gRenderer().GetUiOverlay()->Update();
+	}
+
+	void Renderer::NewUiFrame()
+	{
+		mImGuiRenderer->NewFrame();
+		mIm3dRenderer->NewFrame();
+	}
+
+	void Renderer::EndUiFrame()
+	{
+		mImGuiRenderer->Render();
+		mIm3dRenderer->EndFrame();
 	}
 
 	void Renderer::AddRenderable(Renderable* renderable)
@@ -548,7 +568,7 @@ namespace Utopian
 
 	ImGuiRenderer* Renderer::GetUiOverlay()
 	{
-		return mVulkanApp->GetUiOverlay();
+		return mImGuiRenderer;
 	}
 
 	uint32_t Renderer::GetWindowWidth() const

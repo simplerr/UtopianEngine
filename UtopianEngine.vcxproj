@@ -105,6 +105,7 @@
     <ClCompile Include="source\core\renderer\FXAAJob.cpp" />
     <ClCompile Include="source\core\renderer\GBufferJob.cpp" />
     <ClCompile Include="source\core\renderer\GrassJob.cpp" />
+    <ClCompile Include="source\core\renderer\Im3dJob.cpp" />
     <ClCompile Include="source\core\renderer\JobGraph.cpp" />
     <ClCompile Include="source\core\renderer\RendererUtility.cpp" />
     <ClCompile Include="source\core\renderer\ShadowJob.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="source\core\renderer\GBufferJob.h" />
     <ClInclude Include="source\core\renderer\GrassJob.h" />
     <ClInclude Include="source\core\renderer\BaseJob.h" />
+    <ClInclude Include="source\core\renderer\Im3dJob.h" />
     <ClInclude Include="source\core\renderer\JobGraph.h" />
     <ClInclude Include="source\core\renderer\RendererUtility.h" />
     <ClInclude Include="source\core\renderer\RenderSettings.h" />

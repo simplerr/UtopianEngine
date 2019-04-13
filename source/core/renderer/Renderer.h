@@ -13,6 +13,9 @@
 
 namespace Utopian
 {
+	class ImGuiRenderer;
+	class Im3dRenderer;
+
 	/**
 	 * The scene renderer that manages and renders all the nodes in the scene.
 	 * Rendering is performed by executing all the jobs in the JobGraph.
@@ -28,6 +31,12 @@ namespace Utopian
 
 		/** Executes the job graph to render the scene. */
 		void Render();
+
+		/** New frame of ImGui and Im3d */
+		void NewUiFrame();
+
+		/** End if frame for ImGui and Im3d */
+		void EndUiFrame();
 
 		/** Initialization that needs to be performed after actors are added to the scene.*/
 		void PostWorldInit();
@@ -104,6 +113,11 @@ namespace Utopian
 		Camera* mMainCamera;
 		uint32_t mNextNodeId;
 		std::vector<SharedPtr<Vk::Buffer>> mBuffersToFree;
+
+		// Where does this belong?
+	public:
+		Im3dRenderer* mIm3dRenderer = nullptr;
+		ImGuiRenderer* mImGuiRenderer = nullptr;
 	};
 
 	Renderer& gRenderer();

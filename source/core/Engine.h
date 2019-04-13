@@ -59,10 +59,6 @@ namespace Utopian
 		SharedPtr<Vk::VulkanApp> mVulkanApp;
 		std::function<void()> mUpdateCallback;
 		std::function<void()> mRenderCallback;
-
-		// Where does this belong?
-		Im3dRenderer* mIm3dRenderer = nullptr;
-		ImGuiRenderer* mImGuiRenderer = nullptr;
 	};
 
 	/** Returns an instance to the Engine module. */

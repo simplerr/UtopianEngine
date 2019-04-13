@@ -25,6 +25,7 @@ void main()
 	OutColor = InColor.abgr; // Swizzle for correct endianess
 	OutEdgeDistance = 0.0f; // Unused, calculated in GS
 
-	gl_Position = per_frame_vs.projection * per_frame_vs.view * vec4(InPositionSize.xyz, 1.0);
+	vec3 pos = -InPositionSize.xyz; // Todo: Note the -1
+	gl_Position = per_frame_vs.projection * per_frame_vs.view * vec4(pos, 1.0);
 	gl_PointSize = InPositionSize.w;
 }

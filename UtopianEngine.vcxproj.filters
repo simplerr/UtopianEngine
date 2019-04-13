@@ -504,6 +504,9 @@
     <ClCompile Include="source\core\physics\PhysicsDebugDraw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\renderer\Im3dJob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -936,6 +939,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\core\physics\PhysicsDebugDraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\Im3dJob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
