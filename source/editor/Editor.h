@@ -13,6 +13,7 @@ namespace Utopian
 	class TransformTool;
 	class TerrainTool;
 	class FoliageTool;
+	class ImGuiRenderer;
 
 	enum ActorTemplate
 	{
@@ -24,7 +25,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(Vk::ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain);
+		Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain);
 		~Editor();
 
 		void Update();
@@ -43,7 +44,7 @@ namespace Utopian
 		World* mWorld;
 		SharedPtr<Terrain> mTerrain;
 		Camera* mCamera;
-		Vk::ImGuiRenderer* mImGuiRenderer;
+		ImGuiRenderer* mImGuiRenderer;
 		ActorInspector* mActorInspector;
 		SharedPtr<TransformTool> mTransformTool;
 		SharedPtr<TerrainTool> mTerrainTool;

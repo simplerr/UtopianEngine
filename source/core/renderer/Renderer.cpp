@@ -89,7 +89,7 @@ namespace Utopian
 	{
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured
-		Vk::ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
+		ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
 		static bool debugQuads = true;
 
 		//ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
@@ -140,22 +140,22 @@ namespace Utopian
 
 		gScreenQuadUi().SetVisible(0, debugQuads);
 
-		Vk::ImGuiRenderer::EndWindow();
+		ImGuiRenderer::EndWindow();
 
-		Vk::ImGuiRenderer::BeginWindow("Utopian Engine (alpha)", glm::vec2(10, 10), 350.0f);
+		ImGuiRenderer::BeginWindow("Utopian Engine (alpha)", glm::vec2(10, 10), 350.0f);
 
 		glm::vec3 pos = mMainCamera->GetPosition();
 		glm::vec3 dir = mMainCamera->GetDirection();
 
-		Vk::ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
-		Vk::ImGuiRenderer::TextV("FPS: %u", Timer::Instance().GetFPS());
-		Vk::ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-		Vk::ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
-		Vk::ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
-		Vk::ImGuiRenderer::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow));
-		Vk::ImGuiRenderer::TextV("Any window focused: %d", ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
+		ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
+		ImGuiRenderer::TextV("FPS: %u", Timer::Instance().GetFPS());
+		ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+		ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
+		ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
+		ImGuiRenderer::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow));
+		ImGuiRenderer::TextV("Any window focused: %d", ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 
-		Vk::ImGuiRenderer::EndWindow();
+		ImGuiRenderer::EndWindow();
 	}
 
 	/*
@@ -546,7 +546,7 @@ namespace Utopian
 		return mDevice;
 	}
 
-	Vk::ImGuiRenderer* Renderer::GetUiOverlay()
+	ImGuiRenderer* Renderer::GetUiOverlay()
 	{
 		return mVulkanApp->GetUiOverlay();
 	}

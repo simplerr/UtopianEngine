@@ -24,7 +24,7 @@
 
 namespace Utopian
 {
-	Editor::Editor(Vk::ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain)
+	Editor::Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain)
 		: mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
@@ -187,7 +187,7 @@ namespace Utopian
 		mActorInspector->UpdateUi();
 
 		// UI containing settings, terrain and foliage tools
-		Vk::ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
+		ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
 
 		bool physicsEnabled = gPhysics().IsEnabled();
 		bool debugDrawEnabled = gPhysics().IsDebugDrawEnabled();
@@ -200,9 +200,9 @@ namespace Utopian
 		mFoliageTool->RenderUi();
 		RenderActorCreationUi();
 
-		Vk::ImGuiRenderer::EndWindow();
+		ImGuiRenderer::EndWindow();
 
-		Vk::ImGuiRenderer::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
+		ImGuiRenderer::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
 
 		if (ImGui::Button("Recompile modified shaders"))
 		{
@@ -214,7 +214,7 @@ namespace Utopian
 			Vk::gEffectManager().RecompileAllShaders();
 		}
 
-		Vk::ImGuiRenderer::EndWindow();
+		ImGuiRenderer::EndWindow();
 	}
 
 	void Editor::Draw()

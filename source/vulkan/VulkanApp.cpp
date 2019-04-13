@@ -57,9 +57,9 @@ namespace Utopian::Vk
 		mPrimaryCommandBuffer = new CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
-	void VulkanApp::PostInitPrepare()
+	void VulkanApp::SetImguiRenderer(ImGuiRenderer* imguiRenderer)
 	{
-		mImGuiRenderer = new ImGuiRenderer(GetWindowWidth(), GetWindowHeight(), this);
+		mImGuiRenderer = imguiRenderer;
 	}
 
 	void VulkanApp::SetClearColor(glm::vec4 color)

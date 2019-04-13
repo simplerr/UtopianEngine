@@ -28,8 +28,6 @@ namespace Utopian
 
 		StartModules();
 
-		mIm3dRenderer = new Im3dRenderer(vulkanApp.get(), glm::vec2(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight()));
-
 		Vk::Debug::ConsolePrint("Engine modules ready");
 	}
 	
@@ -58,7 +56,10 @@ namespace Utopian
 		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
 		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
 
-		mVulkanApp->PostInitPrepare();
+		// Todo: Figure out where these belong
+		mIm3dRenderer = new Im3dRenderer(mVulkanApp.get(), glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
+		mImGuiRenderer = new ImGuiRenderer(mVulkanApp.get(), mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mVulkanApp->SetImguiRenderer(mImGuiRenderer);
 
 		RendererUtility::Start();
 		Renderer::Start(mVulkanApp.get());

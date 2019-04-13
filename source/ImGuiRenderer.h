@@ -16,7 +16,7 @@
 #include "vulkan/ImguiEffect.h"
 #include "vulkan/handles/Buffer.h"
 
-namespace Utopian::Vk 
+namespace Utopian
 {
 	class Texture;
 
@@ -24,7 +24,7 @@ namespace Utopian::Vk
 	class ImGuiRenderer 
 	{
 	public:
-		ImGuiRenderer(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp);
+		ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height);
 		~ImGuiRenderer();
 
 		void Update();
@@ -53,7 +53,7 @@ namespace Utopian::Vk
 		Utopian::Vk::Buffer mVertexBuffer;
 		Utopian::Vk::Buffer mIndexBuffer;
 		SharedPtr<Vk::ImguiEffect> mImguiEffect;
-		SharedPtr<DescriptorPool> mTextureDescriptorPool;
+		SharedPtr<Vk::DescriptorPool> mTextureDescriptorPool;
 		SharedPtr<Vk::Sampler> mSampler;
 		Utopian::Vk::Texture* mTexture;
 

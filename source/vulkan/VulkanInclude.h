@@ -61,7 +61,6 @@ namespace Utopian::Vk
 	class VulkanBase;
 	class EffectLegacy;
 	class Shader;
-	class ImGuiRenderer;
 	class ScreenQuad;
 	class BasicRenderTarget;
 	class CubeMapTexture;

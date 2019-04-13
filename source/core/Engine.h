@@ -7,10 +7,8 @@
 namespace Utopian
 {
 	class Im3dRenderer;
+	class ImGuiRenderer;
 
-	/** 
-		
-	 */
 	class Engine : public Module<Engine>
 	{
 	public:
@@ -20,7 +18,7 @@ namespace Utopian
 		/** Executes the main loop and calls Engine::Tick() every frame. */
 		void Run();
 
-		/** Hanldes Win32 messages and forwards them to needed modules. */
+		/** Handles Win32 messages and forwards them to needed modules. */
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 		/** Registers a callback function to be called in Engine::Update(). */
@@ -64,6 +62,7 @@ namespace Utopian
 
 		// Where does this belong?
 		Im3dRenderer* mIm3dRenderer = nullptr;
+		ImGuiRenderer* mImGuiRenderer = nullptr;
 	};
 
 	/** Returns an instance to the Engine module. */

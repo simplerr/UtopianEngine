@@ -83,7 +83,7 @@ namespace Utopian
 		// Note: Todo: This is called from Terrain when the heightmap changes
 		void UpdateInstanceAltitudes();
 
-		Vk::ImGuiRenderer* GetUiOverlay();
+		ImGuiRenderer* GetUiOverlay();
 
 		uint32_t GetWindowWidth() const;
 		uint32_t GetWindowHeight() const;

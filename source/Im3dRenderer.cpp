@@ -108,18 +108,20 @@ namespace Utopian
 	void Im3dRenderer::EndFrame()
 	{
 		// Testing
+		Im3d::PushLayerId(5);
 		Im3d::SetSize(1.0f);
 		glm::mat4 transform = glm::mat4();
 		Im3d::Gizmo("TransformGizmo", Im3d::Mat4(transform));
 
 		Im3d::SetSize(3.0f);
 		Im3d::DrawAlignedBox(glm::vec3(0.0f), glm::vec3(500.0f));
+		Im3d::PopLayerId();
+		Im3d::PushLayerId(10);
 		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 5.0f, Im3d::Color_Green);
 		Im3d::DrawPoint(glm::vec3(0.0f, 500.0f, 0.0f), 20.0f, Im3d::Color_Red);
 		Im3d::DrawCapsule(glm::vec3(0.0f), glm::vec3(0.0f, 1000.0f, 0.0f), 100.0f, 20);
 		Im3d::DrawPrism(Im3d::Vec3(500.0f, 0.0f, 0.0f), Im3d::Vec3(500.0f, 500.0f, 0.0f), 100, 10);
-		Im3d::DrawQuad(glm::vec3(-500.0f, 0.0f, 0.0f), Im3d::Vec3(0.0f, 1.0f, 0.0f), 300.0f);
-		Im3d::DrawQuadFilled(glm::vec3(-1000.0f, 0.0f, 0.0f), Im3d::Vec3(0.0f, 1.0f, 0.0f), 300.0f);
+		Im3d::PopLayerId();
 
 		Im3d::BeginTriangles();
 		Im3d::Vertex(-100.0f, 0.0f, -100.0f, Im3d::Color_Red);

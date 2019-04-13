@@ -51,7 +51,7 @@ namespace Utopian
 		AddJob(fxaaJob);
 
 		/* Add debug render targets */
-		Vk::ImGuiRenderer* imGuiRenderer = vulkanApp->GetUiOverlay();
+		ImGuiRenderer* imGuiRenderer = vulkanApp->GetUiOverlay();
 		mDebugDescriptorSets.position = imGuiRenderer->AddTexture(mGBuffer.positionImage->GetView());
 		mDebugDescriptorSets.normal = imGuiRenderer->AddTexture(mGBuffer.normalImage->GetView());
 		mDebugDescriptorSets.normalView = imGuiRenderer->AddTexture(mGBuffer.normalViewImage->GetView());
@@ -79,7 +79,7 @@ namespace Utopian
 		}
 
 		// Display Actor creation list
-		Vk::ImGuiRenderer::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
+		ImGuiRenderer::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
 
 		ImVec2 textureSize = ImVec2(256, 256);
 		ImGui::BeginGroup();
@@ -106,7 +106,7 @@ namespace Utopian
 		ImGui::Image(mDebugDescriptorSets.albedo, textureSize);
 		ImGui::EndGroup();
 
-		Vk::ImGuiRenderer::EndWindow();
+		ImGuiRenderer::EndWindow();
 	}
 
 	void JobGraph::AddJob(BaseJob* job)

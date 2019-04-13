@@ -23,7 +23,7 @@ namespace Utopian
 	{
 		if (mActor != nullptr)
 		{
-			Vk::ImGuiRenderer::BeginWindow("Inspector", glm::vec2(1500, 10), 300.0f);
+			ImGuiRenderer::BeginWindow("Inspector", glm::vec2(1500, 10), 300.0f);
 
 			// General actor information
 			std::string name = mActor->GetName();
@@ -43,7 +43,7 @@ namespace Utopian
 				inspector->UpdateUi();
 			}
 
-			Vk::ImGuiRenderer::EndWindow();
+			ImGuiRenderer::EndWindow();
 		}
 	}
 

@@ -23,9 +23,9 @@
 #include "vulkan/Debug.h"
 #include "Input.h"
 
-namespace Utopian::Vk 
+namespace Utopian
 {
-	ImGuiRenderer::ImGuiRenderer(uint32_t width, uint32_t height, Utopian::Vk::VulkanApp* vulkanApp)
+	ImGuiRenderer::ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height)
 		: mVulkanApp(vulkanApp)
 	{
 		// Color scheme
@@ -44,7 +44,7 @@ namespace Utopian::Vk
 		io.DisplaySize = ImVec2(width, height);
 		io.FontGlobalScale = mScale;
 
-		mTextureDescriptorPool = std::make_shared<DescriptorPool>(vulkanApp->GetDevice());
+		mTextureDescriptorPool = std::make_shared<Vk::DescriptorPool>(vulkanApp->GetDevice());
 		mTextureDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 50);
 		mTextureDescriptorPool->Create();
 
@@ -79,7 +79,7 @@ namespace Utopian::Vk
 		// Note: Must be performed before Init()
 		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass());
 
-		mTexture = gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
+		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
 		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->imageView);
@@ -103,7 +103,7 @@ namespace Utopian::Vk
 		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer.GetVkBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
 		// UI scale and translate via push constants
-		ImguiEffect::PushConstantBlock pushConstBlock;
+		Vk::ImguiEffect::PushConstantBlock pushConstBlock;
 		pushConstBlock.scale = glm::vec2(2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y);
 		pushConstBlock.translate = glm::vec2(-1.0f);
 		mCommandBuffer->CmdPushConstants(mImguiEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConstBlock), &pushConstBlock);
@@ -205,7 +205,7 @@ namespace Utopian::Vk
 		alloc_info.descriptorSetCount = 1;
 		VkDescriptorSetLayout descriptorSetLayout = mImguiEffect->GetPipelineInterface()->GetDescriptorSetLayout(0)->GetVkHandle();
 		alloc_info.pSetLayouts = &descriptorSetLayout;
-		Debug::ErrorCheck(vkAllocateDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), &alloc_info, &descriptorSet));
+		Vk::Debug::ErrorCheck(vkAllocateDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), &alloc_info, &descriptorSet));
 
 		// Update the Descriptor Set:
 		VkDescriptorImageInfo desc_image[1] = {};

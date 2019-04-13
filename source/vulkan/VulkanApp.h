@@ -14,6 +14,11 @@
 #include "VertexDescription.h"
 #include "ShaderBuffer.h"
 
+namespace Utopian
+{
+	class ImGuiRenderer;
+}
+
 namespace Utopian::Vk
 {
 	// Todo: Move from here
@@ -60,7 +65,6 @@ namespace Utopian::Vk
 		~VulkanApp();
 
 		void Prepare();
-		void PostInitPrepare();
 
 		/**
 		 * Adds a secondary command buffer that will be executed by
@@ -81,6 +85,7 @@ namespace Utopian::Vk
 
 		ImGuiRenderer* GetUiOverlay();
 
+		void SetImguiRenderer(ImGuiRenderer* imguiRenderer);
 		void SetClearColor(glm::vec4 color);
 		glm::vec4 GetClearColor();
 
@@ -95,7 +100,6 @@ namespace Utopian::Vk
 		CommandBuffer*					mPrimaryCommandBuffer;
 		std::vector<CommandBuffer*>		mSecondaryCommandBuffers;
 		glm::vec4						mClearColor;
-		ImGuiRenderer*						mImGuiRenderer = nullptr;
-
+		ImGuiRenderer*					mImGuiRenderer = nullptr;
 	};
 }	// VulkanLib namespace
