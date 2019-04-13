@@ -21,10 +21,8 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> renderTarget;
 
 		SharedPtr<Vk::Effect> colorEffect;
-		SharedPtr<Vk::Effect> colorEffectWireframe;
 		SharedPtr<Vk::Effect> normalEffect;
 	private:
-		Vk::StaticModel* mCubeModel;
 		ViewProjection viewProjectionBlock;
 	};
 }

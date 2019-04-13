@@ -30,12 +30,6 @@ namespace Utopian
 		colorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 		colorEffect->CreatePipeline();
 
-		colorEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
-		colorEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		colorEffectWireframe->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		colorEffectWireframe->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-		colorEffectWireframe->CreatePipeline();
-
 		shaderCreateInfo.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
 		shaderCreateInfo.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
@@ -45,10 +39,7 @@ namespace Utopian
 		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		colorEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
-		colorEffectWireframe->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
 		normalEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
-
-		mCubeModel = Vk::gModelLoader().LoadDebugBoxLines();
 	}
 
 	void DebugJob::Render(const JobInput& jobInput)
@@ -98,24 +89,6 @@ namespace Utopian
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 				}
-			}
-
-			if (renderable->HasRenderFlags(RENDER_FLAG_BOUNDING_BOX))
-			{
-				BoundingBox boundingBox = renderable->GetBoundingBox();
-				glm::vec3 pos = renderable->GetTransform().GetPosition();
-				glm::vec3 translation = glm::vec3(pos.x, boundingBox.GetMin().y + boundingBox.GetHeight() / 2, pos.z);
-				glm::mat4 world = glm::translate(glm::mat4(), translation);
-				world = glm::scale(world, glm::vec3(boundingBox.GetWidth(), boundingBox.GetHeight(), boundingBox.GetDepth()));
-
-				Vk::PushConstantBlock pushConsts(world);
-
-				commandBuffer->CmdBindPipeline(colorEffectWireframe->GetPipeline());
-				commandBuffer->CmdBindDescriptorSets(colorEffectWireframe);
-				commandBuffer->CmdPushConstants(colorEffectWireframe->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
-				commandBuffer->CmdBindVertexBuffer(0, 1, mCubeModel->mMeshes[0]->GetVertxBuffer());
-				commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
 			}
 		}
 

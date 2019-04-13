@@ -55,7 +55,8 @@ namespace Utopian
 	void CRigidBody::Update()
 	{
 		glm::vec3 position = GetTransform().GetPosition();
-		Im3d::DrawAlignedBox(position, position + glm::vec3(200.0f));
+		BoundingBox aabb = mRenderable->GetBoundingBox();
+		Im3d::DrawAlignedBox(aabb.GetMin(), aabb.GetMax());
 		Im3d::DrawPoint(position, 20.0f, Im3d::Color_Red);
 	}
 

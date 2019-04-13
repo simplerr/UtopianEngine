@@ -4,6 +4,7 @@
 #include "core/components/CTransform.h"
 #include "core/World.h"
 #include "vulkan/ModelLoader.h"
+#include "im3d/im3d.h"
 
 namespace Utopian
 {
@@ -20,6 +21,13 @@ namespace Utopian
 
 	void CRenderable::Update()
 	{
+		if (HasRenderFlags(RENDER_FLAG_BOUNDING_BOX))
+		{
+			glm::vec3 position = mInternal->GetTransform().GetPosition();
+			BoundingBox aabb = GetBoundingBox();
+			Im3d::DrawAlignedBox(aabb.GetMin(), aabb.GetMax());
+			Im3d::DrawPoint(position, 10.0f, Im3d::Color_Green);
+		}
 	}
 
 	void CRenderable::OnCreated()
@@ -38,6 +46,7 @@ namespace Utopian
 
 	void CRenderable::PostInit()
 	{
+
 	}
 
 	LuaPlus::LuaObject CRenderable::GetLuaObject()
