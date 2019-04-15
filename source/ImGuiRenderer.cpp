@@ -136,7 +136,7 @@ namespace Utopian
 	}
 
 	/** Update vertex and index buffer containing the imGui elements when required */
-	void ImGuiRenderer::Update()
+	void ImGuiRenderer::Render()
 	{
 		ImDrawData* imDrawData = ImGui::GetDrawData();
 		bool updateCmdBuffers = false;
@@ -244,7 +244,7 @@ namespace Utopian
 		ImGui::NewFrame();
 	}
 
-	void ImGuiRenderer::Render()
+	void ImGuiRenderer::EndFrame()
 	{
 		ImGui::Render();
 	}

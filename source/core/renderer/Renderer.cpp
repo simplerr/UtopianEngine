@@ -256,6 +256,10 @@ namespace Utopian
 
 	void Renderer::Render()
 	{
+		// Note: This had to be done here due to the different periodicity of Update() and Render().
+		// This should be corrected.
+		mIm3dRenderer->UploadVertexData();
+
 		// Deferred pipeline
 		if (mRenderingSettings.deferredPipeline == true)
 		{
@@ -267,9 +271,8 @@ namespace Utopian
 			mJobGraph->Render(mSceneInfo, mRenderingSettings);
 		}
 
-		// Render the UI elements
+		mImGuiRenderer->Render();
 		gScreenQuadUi().Render(mVulkanApp);
-		gRenderer().GetUiOverlay()->Update();
 	}
 
 	void Renderer::NewUiFrame()
@@ -280,7 +283,7 @@ namespace Utopian
 
 	void Renderer::EndUiFrame()
 	{
-		mImGuiRenderer->Render();
+		mImGuiRenderer->EndFrame();
 		mIm3dRenderer->EndFrame();
 	}
 

@@ -27,16 +27,13 @@ namespace Utopian
 		ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height);
 		~ImGuiRenderer();
 
-		void Update();
-		void NewFrame();
+		/** Uploads the ImGui generated vertex and index buffers to the GPU. Also records to a secondary command buffer. */
 		void Render();
+		void NewFrame();
+		void EndFrame();
 		void Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers);
-
 		void PrepareResources();
-		void UpdateCommandBuffers();
-
 		bool IsMouseInsideUi();
-
 		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
@@ -46,6 +43,9 @@ namespace Utopian
 		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth);
 		static void EndWindow();
 		void ToggleVisible();
+
+	private:
+		void UpdateCommandBuffers();
 
 	private:
 		Utopian::Vk::VulkanApp* mVulkanApp;

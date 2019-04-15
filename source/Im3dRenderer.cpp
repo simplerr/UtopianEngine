@@ -61,30 +61,16 @@ namespace Utopian
 	void Im3dRenderer::EndFrame()
 	{
 		// Testing
-		Im3d::PushLayerId(5);
+		//Im3d::PushLayerId(5);
 		Im3d::SetSize(1.0f);
 		glm::mat4 transform = glm::mat4();
 		Im3d::Gizmo("TransformGizmo", Im3d::Mat4(transform));
 
 		Im3d::SetSize(3.0f);
-		Im3d::DrawAlignedBox(glm::vec3(0.0f), glm::vec3(500.0f));
-		Im3d::PopLayerId();
-		Im3d::PushLayerId(10);
 		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 5.0f, Im3d::Color_Green);
 		Im3d::DrawPoint(glm::vec3(0.0f, 500.0f, 0.0f), 20.0f, Im3d::Color_Red);
-		Im3d::DrawCapsule(glm::vec3(0.0f), glm::vec3(0.0f, 1000.0f, 0.0f), 100.0f, 20);
-		Im3d::DrawPrism(Im3d::Vec3(500.0f, 0.0f, 0.0f), Im3d::Vec3(500.0f, 500.0f, 0.0f), 100, 10);
-		Im3d::PopLayerId();
-
-		Im3d::BeginTriangles();
-		Im3d::Vertex(-100.0f, 0.0f, -100.0f, Im3d::Color_Red);
-		Im3d::Vertex(0.0f, 200.0f, -100.0f, Im3d::Color_Green);
-		Im3d::Vertex(100.0f, 0.0f, -100.0f, Im3d::Color_Blue);
-		Im3d::End();
 
 		Im3d::EndFrame();
-
-		UploadVertexData();
 	}
 
 	void Im3dRenderer::UploadVertexData()
@@ -98,13 +84,12 @@ namespace Utopian
 			VkDeviceSize vertexBufferSize = totalNumVertices * sizeof(Im3d::VertexData);
 
 			mVertexBuffer->UnmapMemory();
-			// Todo
-			//gRenderer().QueueDestroy(Q)
-			//mVertexBuffer.Destroy();
+			gRenderer().QueueDestroy(mVertexBuffer);
+			mVertexBuffer = std::make_shared<Vk::Buffer>();
+
 			mVertexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
 			mVertexCount = totalNumVertices;
 			mVertexBuffer->MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedVertices);
-			//updateCmdBuffers = true;
 		}
 
 		Im3d::VertexData* vertexDst = mMappedVertices;
