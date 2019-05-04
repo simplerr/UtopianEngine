@@ -12,6 +12,7 @@
 #include "vulkan/Mesh.h"
 #include "vulkan/Texture2.h"
 #include "core/renderer/Renderer.h"
+#include "core/physics/Physics.h"
 #include "Input.h"
 #include "Camera.h"
 
@@ -35,10 +36,17 @@ namespace Utopian
 		AddMaterial("grass", "data/textures/ground/grass_diffuse.ktx", "data/textures/ground/grass_normal.ktx", "data/textures/ground/grass_displacement.ktx");
 		AddMaterial("rock", "data/textures/ground/rock_diffuse.ktx", "data/textures/ground/rock_normal.ktx", "data/textures/ground/rock_displacement.ktx");
 		AddMaterial("dirt", "data/textures/ground/dirt_diffuse.ktx", "data/textures/ground/dirt_normal.ktx", "data/textures/ground/dirt_displacement.ktx");
+
+		// Add heightmap to physics world
+		gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
 	}
 
 	void Terrain::Update()
 	{
+		// Experimentation
+		if (gInput().KeyPressed('U'))
+			gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
+
 		//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
 
 		/*Vk::UIOverlay::TextV("Terrain cam pos: %.4f, %.4f", TransformToUv(cameraPos.x, 0).x, TransformToUv(0, cameraPos.z).y);

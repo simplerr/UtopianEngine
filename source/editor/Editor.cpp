@@ -79,6 +79,7 @@ namespace Utopian
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
 			glm::vec3 pos = intersection + glm::vec3(0, 50.0f, 0);
+			pos.y = -900;
 			CTransform* transform = actor->AddComponent<CTransform>(pos);
 			CRenderable* renderable = actor->AddComponent<CRenderable>();
 

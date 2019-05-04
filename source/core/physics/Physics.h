@@ -8,6 +8,7 @@ class btCollisionDispatcher;
 class btConstraintSolver;
 class btDefaultCollisionConfiguration;
 class btDiscreteDynamicsWorld;
+class btRigidBody;
 
 namespace Utopian
 {
@@ -23,6 +24,8 @@ namespace Utopian
 		void Draw();
 		void EnableSimulation(bool enable);
 		void EnableDebugDraw(bool enable);
+
+		void SetHeightmap(const float* heightmap, const uint32_t size, float scale, float terrainSize);
 
 		bool IsEnabled() const;
 		bool IsDebugDrawEnabled() const;
@@ -40,9 +43,12 @@ namespace Utopian
 		btDiscreteDynamicsWorld* mDynamicsWorld;
 		PhysicsDebugDraw* mDebugDrawer;
 
+		btRigidBody* mTerrainBody;
+
 		const glm::vec3 mGravity = glm::vec3(0, -982., 0);
 		bool mEnabled;
 		bool mDebugDrawEnabled;
+		double* mHeightmapCopy;
 
 		// Note: This should be handled by the Timer component.
 		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 

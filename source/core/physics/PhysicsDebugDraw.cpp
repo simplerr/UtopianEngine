@@ -10,6 +10,7 @@ namespace Utopian
 	PhysicsDebugDraw::PhysicsDebugDraw()
 	{
 		mDebugMode = DBG_DrawWireframe | DBG_DrawContactPoints | DBG_DrawConstraints | DBG_DrawConstraintLimits | DBG_DrawNormals | DBG_DrawFrames;
+		mDebugMode = DBG_DrawAabb; // Others don't work when having a btHeightfieldTerrainShape
 	}
 
 	PhysicsDebugDraw::~PhysicsDebugDraw()
