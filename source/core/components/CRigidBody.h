@@ -16,6 +16,12 @@ namespace Utopian
 	class CTransform;
 	class CRenderable;
 
+	enum CollisionShapeType
+	{
+		BOX,
+		SPHERE
+	};
+
 	class CRigidBody : public Component
 	{
 	public:
@@ -44,6 +50,9 @@ namespace Utopian
 		void SetRestitution(float restitution);
 		void SetKinematic(bool isKinematic);
 
+		// Todo: Should also recreate the btCollisionShape
+		void SetCollisionShapeType(CollisionShapeType collisonShapeType);
+
 		const Transform& GetTransform() const;
 
 		LuaPlus::LuaObject GetLuaObject() override;
@@ -66,6 +75,7 @@ namespace Utopian
 		CRenderable* mRenderable;
 		btRigidBody* mRigidBody;
 		btCollisionShape* mCollisionShape;
+		CollisionShapeType mCollisionShapeType;
 
 		float mMass;
 		float mFriction;

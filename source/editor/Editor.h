@@ -19,7 +19,9 @@ namespace Utopian
 	{
 		STATIC_MODEL,
 		STATIC_POINT_LIGHT,
-		MOVING_POINT_LIGHT
+		RIGID_BOX,
+		RIGID_SPHERE,
+		RIGID_SPHERE_LIGHT
 	};
 
 	class Editor

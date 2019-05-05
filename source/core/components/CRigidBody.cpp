@@ -40,6 +40,7 @@ namespace Utopian
 	{
 		SetName("CRigidBody");
 
+		mCollisionShapeType = CollisionShapeType::BOX;
 		mMass = 1.0f;
 		mFriction = 0.5f;
 		mRollingFriction = 0.0f;
@@ -91,7 +92,12 @@ namespace Utopian
 
 		btVector3 localInertia(0, 0, 0);
 		BoundingBox aabb = mRenderable->GetBoundingBox();
-		mCollisionShape = new btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
+
+		if (mCollisionShapeType == CollisionShapeType::BOX)
+			mCollisionShape = new btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
+		else
+			mCollisionShape = new btSphereShape(aabb.GetWidth() / 2.0f);
+
 		mCollisionShape->calculateLocalInertia(mass, localInertia);
 
 		btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, mCollisionShape, localInertia);
@@ -246,5 +252,10 @@ namespace Utopian
 		mIsKinematic = isKinematic;
 
 		AddToWorld();
+	}
+
+	void CRigidBody::SetCollisionShapeType(CollisionShapeType collisonShapeType)
+	{
+		mCollisionShapeType = collisonShapeType;
 	}
 }

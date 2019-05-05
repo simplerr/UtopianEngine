@@ -31,7 +31,7 @@ namespace Utopian
 
 	void PhysicsDebugDraw::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
 	{
-		distance = 10.0f; // Harcoded since the supplied distance is extremely small
+		distance = 10.0f; // Hardcoded since the supplied distance is extremely small
 		const btVector3& from = PointOnB;
 		btVector3 to = PointOnB + normalOnB * distance;
 		drawLine(from, to, color);
@@ -39,7 +39,7 @@ namespace Utopian
 
 	void PhysicsDebugDraw::drawTransform(const btTransform& transform, btScalar orthoLen)
 	{
-		orthoLen = 10.0f; // Harcoded since the supplied orthoLen is extremely small
+		orthoLen = 10.0f; // Hardcoded since the supplied orthoLen is extremely small
 		btVector3 start = transform.getOrigin();
 		drawLine(start, start + transform.getBasis() * btVector3(orthoLen, 0, 0), btVector3(btScalar(1.), btScalar(0.3), btScalar(0.3)));
 		drawLine(start, start + transform.getBasis() * btVector3(0, orthoLen, 0), btVector3(btScalar(0.3), btScalar(1.), btScalar(0.3)));

@@ -35,9 +35,9 @@ namespace Utopian
 		mFoliageTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
 
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
-		AddActorCreation("Moving point light", ActorTemplate::MOVING_POINT_LIGHT);
+		AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
 
-		mSelectedModel = 16;
+		mSelectedModel = 2; // Sphere
 
 		AddPaths();
 	}
@@ -79,19 +79,20 @@ namespace Utopian
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
 			glm::vec3 pos = intersection + glm::vec3(0, 50.0f, 0);
-			pos.y = -900;
 			CTransform* transform = actor->AddComponent<CTransform>(pos);
 			CRenderable* renderable = actor->AddComponent<CRenderable>();
 
+			/*
+			 * These are just some example templates for creating actors
+			 * It will be extended so that new actor templates can be 
+			 * configured completly in Lua and show up in the editor.
+			 */
 			if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
 			{
 				// Models from adventure_village needs to be scaled and rotated
 				transform->SetScale(glm::vec3(50));
+				// Todo: Broken after quaternion implementation
 				//transform->SetRotation(glm::vec3(180, 0, 0));
-
-				// Temporary physics testing:
-				transform->AddTranslation(glm::vec3(0.0f, 200.0f, 0.0f));
-				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
 			}
@@ -108,27 +109,54 @@ namespace Utopian
 				std::mt19937 mt(rd());
 				std::uniform_real_distribution<double> dist(0.0, 1.0);
 				glm::vec4 color = glm::vec4(dist(mt), dist(mt), dist(mt), 0.0f);
-				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f); // White for now
+				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 				light->SetMaterial(color);
-				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4)); // Set brightness
+				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
 			}
-			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::MOVING_POINT_LIGHT)
+			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
 			{
-				renderable->LoadModel("data/models/teapot.obj");
+				transform->SetScale(glm::vec3(50));
+
+				// Temporary physics testing:
+				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
+				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+				rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
+
+				renderable->LoadModel(mModelPaths[mSelectedModel]);
+			}
+			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE)
+			{
+				transform->SetScale(glm::vec3(20));
+
+				// Temporary physics testing:
+				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
+				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+				rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
+				renderable->LoadModel(mModelPaths[mSelectedModel]);
+			}
+			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE_LIGHT)
+			{
+				transform->SetScale(glm::vec3(20));
+
+				// Temporary physics testing:
+				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
+				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+				rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
+				renderable->LoadModel("data/models/sphere_lowres.obj");
 				renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
 
+				// Copy paste from static light
 				CLight* light = actor->AddComponent<CLight>();
 				CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
-				CRandomPaths* randomPaths = actor->AddComponent<CRandomPaths>(mTerrain);
 
 				// Set random light color
 				std::random_device rd;
 				std::mt19937 mt(rd());
 				std::uniform_real_distribution<double> dist(0.0, 1.0);
 				glm::vec4 color = glm::vec4(dist(mt), dist(mt), dist(mt), 0.0f);
-				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f); // White for now
+				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 				light->SetMaterial(color);
-				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4)); // Set brightness
+				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
 			}
 
 			World::Instance().SynchronizeNodeTransforms();
@@ -262,8 +290,10 @@ namespace Utopian
 	void Editor::AddPaths()
 	{
 		// Add paths to models that can be loaded
-		AddActorCreation("data/models/adventure_village/Barrel.obj");
-		AddActorCreation("data/models/adventure_village/Barrel_1.obj");
+		AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);
+		AddActorCreation("data/models/adventure_village/CrateLong.obj", ActorTemplate::RIGID_BOX);
+		AddActorCreation("data/models/adventure_village/Barrel.obj", ActorTemplate::RIGID_BOX);
+		AddActorCreation("data/models/adventure_village/Barrel_1.obj", ActorTemplate::RIGID_BOX);
 		AddActorCreation("data/models/adventure_village/CellarEntrance.obj");
 		AddActorCreation("data/models/adventure_village/CellarEntrance_1.obj");
 		AddActorCreation("data/models/adventure_village/Chimney1.obj");
@@ -276,7 +306,6 @@ namespace Utopian
 		AddActorCreation("data/models/adventure_village/Chimney4_1.obj");
 		AddActorCreation("data/models/adventure_village/ChimneyBase.obj");
 		AddActorCreation("data/models/adventure_village/ChimneyBase_1.obj");
-		AddActorCreation("data/models/adventure_village/CrateLong.obj");
 		AddActorCreation("data/models/adventure_village/CrateLong_1.obj");
 		AddActorCreation("data/models/adventure_village/CrateLongB.obj");
 		AddActorCreation("data/models/adventure_village/CrateLongB_1.obj");

@@ -29,7 +29,7 @@ namespace Utopian
 		mTerrainBody = nullptr;
 
 		mEnabled = true;
-		mDebugDrawEnabled = true;
+		mDebugDrawEnabled = false;
 
 		// Add ground shape for experimentation
 		//AddGroundShape();
