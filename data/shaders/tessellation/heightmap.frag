@@ -11,4 +11,5 @@ void main()
 {
     float height = fbm(InTex * 4);
     OutFragColor = vec4(vec3(height), 1);
+    //OutFragColor = vec4(vec3(0), 1);
 }

@@ -38,6 +38,7 @@ namespace Utopian
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
 		void SetVisible(bool visible);
+		void SetPushFoliage(bool push);
 		void SetRenderFlags(uint32_t renderFlags);
 		void AppendRenderFlags(uint32_t renderFlags);
 
@@ -46,6 +47,7 @@ namespace Utopian
 		const glm::vec4 GetColor() const;
 		const Utopian::Vk::Mat GetMaterial() const;
 		const bool IsVisible() const;
+		const bool IsPushingFoliage() const;
 		const uint32_t GetRenderFlags() const;
 		glm::vec2 GetTextureTiling() const;
 
@@ -58,5 +60,6 @@ namespace Utopian
 		glm::vec2 mTextureTileFactor;
 		uint32_t mRenderFlags;
 		bool mVisible;
+		bool mPushFoliage;
 	};
 }

@@ -126,13 +126,19 @@ namespace Utopian
 			}
 			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE)
 			{
-				transform->SetScale(glm::vec3(20));
+				std::random_device rd;
+				std::mt19937 mt(rd());
+				std::uniform_real_distribution<double> dist(20.0, 20.0);
+				float scale = dist(mt);
+
+				transform->SetScale(glm::vec3(scale));
 
 				// Temporary physics testing:
 				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
 				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 				rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
+				renderable->SetPushFoliage(true);
 			}
 			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE_LIGHT)
 			{
@@ -143,6 +149,7 @@ namespace Utopian
 				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 				rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
 				renderable->LoadModel("data/models/sphere_lowres.obj");
+				renderable->SetPushFoliage(true);
 				renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
 
 				// Copy paste from static light

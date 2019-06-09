@@ -21,7 +21,7 @@ namespace Utopian
 		mLastAddTimestamp = std::chrono::high_resolution_clock::now();
 		mVegetationSettings.continuous = true;
 		mVegetationSettings.restrictedDeletion = true;
-		mVegetationSettings.frequency = 10.0f;
+		mVegetationSettings.frequency = 1000.0f;
 		mVegetationSettings.assetId = 147;
 		mVegetationSettings.randomRotation = true;
 		mVegetationSettings.randomScale = true;

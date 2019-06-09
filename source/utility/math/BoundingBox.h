@@ -25,6 +25,7 @@ namespace Utopian
 		float GetWidth() const;
 		float GetHeight() const;
 		float GetDepth() const;
+		float GetRadius() const;
 		glm::vec3 GetMin() const;
 		glm::vec3 GetMax() const;
 

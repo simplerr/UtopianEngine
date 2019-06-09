@@ -99,6 +99,11 @@ namespace Utopian
 		mInternal->SetMaterial(material);
 	}
 
+	void CRenderable::SetPushFoliage(bool push)
+	{
+		mInternal->SetPushFoliage(push);
+	}
+
 	void CRenderable::SetRenderFlags(uint32_t renderFlags)
 	{
 		mInternal->SetRenderFlags(renderFlags);
@@ -142,6 +147,11 @@ namespace Utopian
 	const bool CRenderable::HasRenderFlags(uint32_t renderFlags) const
 	{
 		return mInternal->HasRenderFlags(renderFlags);
+	}
+
+	const bool CRenderable::IsPushingFoliage() const
+	{
+		return mInternal->IsPushingFoliage();
 	}
 
 	glm::vec4 CRenderable::GetColor() const

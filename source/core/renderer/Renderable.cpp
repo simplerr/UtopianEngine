@@ -14,6 +14,7 @@ namespace Utopian
 		SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		SetMaterial(Vk::Mat(Vk::EffectType::PHONG, Vk::PhongEffect::NORMAL));
 		SetVisible(true);
+		SetPushFoliage(false);
 	}
 
 	Renderable::~Renderable()
@@ -80,6 +81,11 @@ namespace Utopian
 		mVisible = visible;
 	}
 
+	void Renderable::SetPushFoliage(bool push)
+	{
+		mPushFoliage = push;
+	}
+
 	void Renderable::SetRenderFlags(uint32_t renderFlags)
 	{
 		mRenderFlags = renderFlags;
@@ -116,6 +122,11 @@ namespace Utopian
 	const bool Renderable::IsVisible() const
 	{
 		return mVisible;
+	}
+
+	const bool Renderable::IsPushingFoliage() const
+	{
+		return mPushFoliage;
 	}
 
 	const uint32_t Renderable::GetRenderFlags() const

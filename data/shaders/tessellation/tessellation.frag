@@ -131,7 +131,6 @@ void main()
         if (ubo_brush.mode == 2)    // Vegetation
             OutAlbedo = vec4(0.0f, 0.0f, 1.0f, 1.0f);
     }
-
     // Debugging:
     //bumpNormal = bumpNormal.rbg;
     //OutColor = vec4(bumpNormal, 1.0);

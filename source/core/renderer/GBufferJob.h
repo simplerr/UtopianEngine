@@ -5,6 +5,46 @@
 
 namespace Utopian
 {
+	#define NUM_MAX_SPHERES 64
+	struct SphereInfo
+	{
+		glm::vec3 position;
+		float radius;
+	};
+
+	class SphereUniformBuffer : public Utopian::Vk::ShaderBuffer
+	{
+	public:
+		virtual void UpdateMemory()
+		{
+			uint8_t* mapped;
+			uint32_t dataOffset = 0;
+			uint32_t dataSize = sizeof(constants);
+			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
+			memcpy(mapped, &constants.numSpheres, dataSize);
+			mBuffer->UnmapMemory();
+
+			dataOffset += dataSize;
+			dataSize = spheres.size() * sizeof(SphereInfo);
+			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
+			memcpy(mapped, spheres.data(), dataSize);
+			mBuffer->UnmapMemory();
+		}
+
+		virtual int GetSize()
+		{
+			return (NUM_MAX_SPHERES) * sizeof(Utopian::SphereInfo) + sizeof(constants);
+		}
+
+		struct {
+			float numSpheres;
+			glm::vec3 padding;
+		} constants;
+
+		// Note: Todo:
+		std::array<Utopian::SphereInfo, NUM_MAX_SPHERES> spheres;
+	};
+
 	class GBufferJob : public BaseJob
 	{
 	public:
@@ -22,6 +62,12 @@ namespace Utopian
 			UNIFORM_PARAM(float, terrainSize)
 			UNIFORM_PARAM(float, strength)
 			UNIFORM_PARAM(float, frequency)
+		UNIFORM_BLOCK_END()
+
+		UNIFORM_BLOCK_BEGIN(FoliageSpheresBlock)
+			UNIFORM_PARAM(float, numSpheres)
+			UNIFORM_PARAM(glm::vec3, padding)
+			UNIFORM_PARAM(SphereInfo, spheres[NUM_MAX_SPHERES])
 		UNIFORM_BLOCK_END()
 
 		struct InstancePushConstantBlock
@@ -48,6 +94,7 @@ namespace Utopian
 	private:
 		GBufferViewProjection viewProjectionBlock;
 		SettingsBlock settingsBlock;
+		SphereUniformBuffer foliageSpheresBlock;
 
 		// Animated instancing
 		AnimationParametersBlock animationParametersBlock;

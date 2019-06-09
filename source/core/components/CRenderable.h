@@ -33,12 +33,14 @@ namespace Utopian
 		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);
+		void SetPushFoliage(bool push);
 
 		// Render flag settings
 		void SetRenderFlags(uint32_t renderFlags);
 		void AppendRenderFlags(uint32_t renderFlags);
 		uint32_t GetRenderFlags() const;
 		const bool HasRenderFlags(uint32_t renderFlags) const;
+		const bool IsPushingFoliage() const;
 
 		// Todo: Remove
 		void EnableBoundingBox();

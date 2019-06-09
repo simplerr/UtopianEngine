@@ -10,6 +10,12 @@ layout (location = 5) in vec3 InBitangentL;
 // Instancing input
 layout (location = 6) in mat4 InInstanceWorld;
 
+struct Sphere
+{
+	vec3 position;
+	float radius;
+};
+
 layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
 {
 	// Camera 
@@ -26,6 +32,13 @@ layout (std140, set = 0, binding = 2) uniform UBO_animationParameters
 } animationParameters_ubo;
 
 layout (set = 0, binding = 3) uniform sampler2D windmapSampler;
+
+layout (std140, set = 0, binding = 4) uniform UBO_sphereList 
+{
+	float numSpheres;
+	vec3 padding;
+	Sphere spheres[64];
+} sphereList_ubo;
 
 layout (push_constant) uniform PushConstants {
 	float modelHeight;
@@ -72,7 +85,7 @@ void main()
 	uv = fract(uv * 400 + time / animationParameters_ubo.frequency);
 	vec3 windDir = texture(windmapSampler, uv).xyz;
 	windDir = windDir * 2 - 1.0f; // To [-1, 1] range
-	localPos.xyz += (localPos.y / modelHeight) * (localPos.y / modelHeight) * windDir * animationParameters_ubo.strength;
+	//localPos.xyz += (localPos.y / modelHeight) * (localPos.y / modelHeight) * windDir * animationParameters_ubo.strength;
 
 	OutColor = vec4(1.0);
 	OutNormalW  = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
@@ -80,6 +93,24 @@ void main()
 	OutNormalV = normalMatrix * InNormalL;
 	OutTex = InTex;
 	OutTextureTiling = vec2(1.0, 1.0);
+
+	// Bend vegetation from collision spheres
+	for(int i = 0; i < sphereList_ubo.numSpheres; i++)
+	{
+		vec3 spherePos = -sphereList_ubo.spheres[i].position;
+		float radius = sphereList_ubo.spheres[i].radius * 1.5;
+		spherePos.y -= sphereList_ubo.spheres[i].radius;
+		float distToCenter = distance(spherePos, OutPosW.xyz);
+		vec3 dir = normalize(OutPosW.xyz - spherePos);
+		dir.yz *= -1; // Note: * -1, Unclear
+		float heightFactor = (localPos.y / modelHeight) * (localPos.y / modelHeight);
+
+		if (distance(spherePos, OutPosW.xyz) < radius)
+		{
+			localPos.xyz -= heightFactor * dir * (1 - distToCenter / radius) * 15.0f;
+			localPos.y = max(localPos.y, 10.0f); // The foliage needs to be above the ground
+		}
+	}
 
 	gl_Position = per_frame_vs.projection * per_frame_vs.view * InInstanceWorld * vec4(localPos, 1.0);
 }

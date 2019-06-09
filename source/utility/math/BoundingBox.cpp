@@ -147,6 +147,11 @@ namespace Utopian
 		return mMax.z - mMin.z;
 	}
 
+	float BoundingBox::GetRadius() const
+	{
+		return glm::max(GetWidth(), glm::max(GetHeight(), GetDepth())) / 2.0f;
+	}
+
 	glm::vec3 BoundingBox::GetMin() const {
 		return mMin;
 	}

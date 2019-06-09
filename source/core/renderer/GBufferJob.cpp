@@ -3,6 +3,7 @@
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Queue.h"
+#include "Camera.h"
 
 namespace Utopian
 {
@@ -72,6 +73,9 @@ namespace Utopian
 		mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
 
+		foliageSpheresBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_sphereList", &foliageSpheresBlock);
+
 		animationParametersBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", &animationParametersBlock);
 
@@ -95,6 +99,23 @@ namespace Utopian
 		animationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
 		animationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
 		animationParametersBlock.UpdateMemory();
+		
+		// Collect renderables that should affect the vegetation
+		uint32_t nextSphereIndex = 0;
+		for (auto& renderable : jobInput.sceneInfo.renderables)
+		{
+			if (renderable->IsPushingFoliage())
+			{
+				foliageSpheresBlock.spheres[nextSphereIndex].position = renderable->GetPosition();
+				foliageSpheresBlock.spheres[nextSphereIndex].radius = renderable->GetBoundingBox().GetRadius();
+				foliageSpheresBlock.constants.padding = glm::vec3(13.37);
+				nextSphereIndex++;
+			}
+		}
+
+		foliageSpheresBlock.constants.numSpheres = nextSphereIndex;
+		if (foliageSpheresBlock.constants.numSpheres > 0)
+			foliageSpheresBlock.UpdateMemory();
 
 		renderTarget->Begin("G-buffer pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
