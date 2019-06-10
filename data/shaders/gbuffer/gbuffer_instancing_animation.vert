@@ -29,6 +29,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_animationParameters
 	float terrainSize; // Used to calculate windmap UV coordinate
 	float strength;
 	float frequency;
+	int enabled;
 } animationParameters_ubo;
 
 layout (set = 0, binding = 3) uniform sampler2D windmapSampler;
@@ -78,21 +79,24 @@ void main()
 	OutTBN = mat3(T, B, N);
 	OutPosW = (InInstanceWorld * vec4(localPos, 1.0)).xyz;
 
-	// Wind animation
-	float modelHeight = pushConstants.modelHeight;
-	float time = animationParameters_ubo.time;
-	vec2 uv = transformToUv(vec2(OutPosW.x, OutPosW.z));
-	uv = fract(uv * 400 + time / animationParameters_ubo.frequency);
-	vec3 windDir = texture(windmapSampler, uv).xyz;
-	windDir = windDir * 2 - 1.0f; // To [-1, 1] range
-	//localPos.xyz += (localPos.y / modelHeight) * (localPos.y / modelHeight) * windDir * animationParameters_ubo.strength;
-
 	OutColor = vec4(1.0);
 	OutNormalW  = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
 	mat3 normalMatrix = transpose(inverse(mat3(per_frame_vs.view * InInstanceWorld)));
 	OutNormalV = normalMatrix * InNormalL;
 	OutTex = InTex;
 	OutTextureTiling = vec2(1.0, 1.0);
+
+	// Wind animation
+	float modelHeight = pushConstants.modelHeight;
+	if (animationParameters_ubo.enabled == 1)
+	{
+		float time = animationParameters_ubo.time;
+		vec2 uv = transformToUv(vec2(OutPosW.x, OutPosW.z));
+		uv = fract(uv * 400 + time / animationParameters_ubo.frequency);
+		vec3 windDir = texture(windmapSampler, uv).xyz;
+		windDir = windDir * 2 - 1.0f; // To [-1, 1] range
+		localPos.xyz += (localPos.y / modelHeight) * (localPos.y / modelHeight) * windDir * animationParameters_ubo.strength;
+	}
 
 	// Bend vegetation from collision spheres
 	for(int i = 0; i < sphereList_ubo.numSpheres; i++)

@@ -62,6 +62,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, terrainSize)
 			UNIFORM_PARAM(float, strength)
 			UNIFORM_PARAM(float, frequency)
+			UNIFORM_PARAM(int, enabled)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(FoliageSpheresBlock)

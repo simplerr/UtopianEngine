@@ -98,6 +98,7 @@ namespace Utopian
 		animationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
 		animationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
 		animationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
+		animationParametersBlock.data.enabled = jobInput.renderingSettings.windEnabled;
 		animationParametersBlock.UpdateMemory();
 		
 		// Collect renderables that should affect the vegetation

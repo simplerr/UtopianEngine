@@ -36,5 +36,6 @@ namespace Utopian
 		float bloomThreshold = 1.5f;
 		float windStrength = 5.0f;
 		float windFrequency = 10000.0f;
+		bool windEnabled = true;
 	};
 }
