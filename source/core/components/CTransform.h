@@ -13,6 +13,7 @@ namespace Utopian
 	{
 	public:
 		CTransform(Actor* parent, const glm::vec3& position);
+		CTransform(Actor* parent);
 		~CTransform();
 
 		void PostInit() override;

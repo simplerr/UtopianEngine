@@ -171,6 +171,18 @@ namespace Utopian
 		mTransform->SetOrientation(quaternion);
 	}
 
+	void CRigidBody::ApplyCentralImpulse(const glm::vec3 impulse)
+	{
+		mRigidBody->activate(true);
+		mRigidBody->applyCentralImpulse(ToBulletVec3(impulse));
+	}
+
+	void CRigidBody::ApplyCentralForce(const glm::vec3 force)
+	{
+		mRigidBody->activate(true);
+		mRigidBody->applyCentralForce(ToBulletVec3(force));
+	}
+
 	const Utopian::Transform& CRigidBody::GetTransform() const
 	{
 		return mTransform->GetTransform();

@@ -17,6 +17,15 @@ namespace Utopian
 		SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	}
 
+	CTransform::CTransform(Actor* parent)
+		: Component(parent)
+	{
+		SetName("CTransform");
+		SetPosition(glm::vec3(0, 0, 0));
+		SetRotation(glm::vec3(0, 0, 0));
+		SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+	}
+
 	CTransform::~CTransform()
 	{
 	}

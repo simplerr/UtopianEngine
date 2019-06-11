@@ -36,6 +36,8 @@ namespace Utopian
 		void SetPosition(const glm::vec3& position);
 		void SetRotation(const glm::vec3& rotation);
 		void SetQuaternion(const glm::quat& quaternion);
+		void ApplyCentralImpulse(const glm::vec3 impulse);
+		void ApplyCentralForce(const glm::vec3 force);
 
 		float GetMass() const;
 		float GetFriction() const;

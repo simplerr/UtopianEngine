@@ -73,12 +73,26 @@ namespace Utopian
 		// Add new actor to scene
 		if (gInput().KeyPressed('C'))
 		{
-			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
-			glm::vec3 intersection  = mTerrain->GetIntersectPoint(ray);
-
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
-			glm::vec3 pos = intersection + glm::vec3(0, 50.0f, 0);
+			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+
+			// Shoot rigid bodies but place static objects
+			// Todo: Refactor
+			glm::vec3 pos;
+			if (mTemplateTypes[mSelectedModel] == RIGID_BOX ||
+				mTemplateTypes[mSelectedModel] == RIGID_SPHERE ||
+				mTemplateTypes[mSelectedModel] == RIGID_SPHERE_LIGHT)
+			{
+				float offset = 50.0f;
+				pos = gRenderer().GetMainCamera()->GetPosition() + offset * gRenderer().GetMainCamera()->GetDirection();
+			}
+			else
+			{
+				glm::vec3 intersection = mTerrain->GetIntersectPoint(ray);
+				pos = intersection + glm::vec3(0, 50.0f, 0);
+			}
+
 			CTransform* transform = actor->AddComponent<CTransform>(pos);
 			CRenderable* renderable = actor->AddComponent<CRenderable>();
 
@@ -118,7 +132,6 @@ namespace Utopian
 				transform->SetScale(glm::vec3(50));
 
 				// Temporary physics testing:
-				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
 				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 				rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
 
@@ -134,7 +147,6 @@ namespace Utopian
 				transform->SetScale(glm::vec3(scale));
 
 				// Temporary physics testing:
-				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
 				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 				rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
@@ -145,7 +157,6 @@ namespace Utopian
 				transform->SetScale(glm::vec3(20));
 
 				// Temporary physics testing:
-				transform->AddTranslation(glm::vec3(0.0f, 500.0f, 0.0f));
 				CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 				rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
 				renderable->LoadModel("data/models/sphere_lowres.obj");
@@ -168,6 +179,15 @@ namespace Utopian
 
 			World::Instance().SynchronizeNodeTransforms();
 			actor->PostInit();
+
+			// Shoot rigid bodies but place static objects
+			// Todo: Improve this
+			CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
+			if (rigidBody != nullptr)
+			{
+				const float impulse = 1000.0f;
+				rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
+			}
 		}
 
 		// Remove actor from scene
