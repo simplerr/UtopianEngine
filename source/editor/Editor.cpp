@@ -14,7 +14,6 @@
 #include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
 #include "core/legacy/BaseTerrain.h"
-#include "editor/TransformTool.h"
 #include "editor/TerrainTool.h"
 #include "editor/FoliageTool.h"
 #include "core/ActorFactory.h"
@@ -31,7 +30,6 @@ namespace Utopian
 	{
 		mSelectedActor = nullptr;
 		mActorInspector = new ActorInspector();
-		mTransformTool = std::make_shared<TransformTool>(mTerrain, camera);
 		mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
 		mFoliageTool = std::make_shared<FoliageTool>(terrain, gRenderer().GetDevice());
 		mFoliageTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
@@ -54,7 +52,6 @@ namespace Utopian
 
 	void Editor::Update()
 	{
-		mTransformTool->Update(&gInput(), 0); // Note: Hack
 		mTerrainTool->Update();
 		mFoliageTool->Update();
 
@@ -306,7 +303,6 @@ namespace Utopian
 	void Editor::UnselectActor()
 	{
 		mSelectedActor = nullptr;
-		mTransformTool->SetActor(nullptr);
 		mActorInspector->SetActor(nullptr);
 	}
 
@@ -326,7 +322,6 @@ namespace Utopian
 
 		// Create inspector UI
 		mActorInspector->SetActor(mSelectedActor);
-		mTransformTool->SetActor(mSelectedActor);
 	}
 
 	void Editor::AddPaths()

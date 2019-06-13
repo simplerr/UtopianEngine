@@ -10,7 +10,6 @@ namespace Utopian
 	class Actor;
 	class ActorInspector;
 	class Terrain;
-	class TransformTool;
 	class TerrainTool;
 	class FoliageTool;
 	class ImGuiRenderer;
@@ -48,7 +47,6 @@ namespace Utopian
 		Camera* mCamera;
 		ImGuiRenderer* mImGuiRenderer;
 		ActorInspector* mActorInspector;
-		SharedPtr<TransformTool> mTransformTool;
 		SharedPtr<TerrainTool> mTerrainTool;
 		SharedPtr<FoliageTool> mFoliageTool;
 		Actor* mSelectedActor;
