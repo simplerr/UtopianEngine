@@ -50,6 +50,7 @@ namespace Utopian
 		appData.m_snapScale = 0.0f;
 
 		bool ctrlDown = gInput().KeyDown(VK_LCONTROL);
+		appData.m_keyDown[Im3d::Mouse_Left] = gInput().KeyDown(VK_LBUTTON);
 		appData.m_keyDown[Im3d::Key_L] = ctrlDown && gInput().KeyPressed('L');
 		appData.m_keyDown[Im3d::Key_T] = ctrlDown && gInput().KeyPressed('T');
 		appData.m_keyDown[Im3d::Key_R] = ctrlDown && gInput().KeyPressed('R');
@@ -63,8 +64,6 @@ namespace Utopian
 		// Testing
 		//Im3d::PushLayerId(5);
 		Im3d::SetSize(1.0f);
-		glm::mat4 transform = glm::mat4();
-		Im3d::Gizmo("TransformGizmo", Im3d::Mat4(transform));
 
 		Im3d::SetSize(3.0f);
 		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 5.0f, Im3d::Color_Green);

@@ -30,7 +30,7 @@ namespace Utopian
 		void AddRotation(const glm::vec3& eulerRotation, bool local = false);
 		void AddScale(const glm::vec3& scale);
 
-		const Transform& GetTransform() const;
+		Transform& GetTransform();
 		const glm::vec3& GetPosition() const;
 		const glm::vec3& GetScale() const;
 		const glm::mat4& GetWorldMatrix() const;

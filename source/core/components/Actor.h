@@ -30,7 +30,7 @@ namespace Utopian
 		bool IsAlive() const;
 
 		BoundingBox GetBoundingBox() const;
-		const Transform& GetTransform() const;
+		Transform& GetTransform();
 
 		/*
 		 * Component management functions

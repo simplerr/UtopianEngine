@@ -20,6 +20,8 @@
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
 #include "core/physics/Physics.h"
+#include "utility/math/Helpers.h"
+#include "im3d/im3d.h"
 #include <random>
 
 namespace Utopian
@@ -57,6 +59,19 @@ namespace Utopian
 		mFoliageTool->Update();
 
 		UpdateUi();
+
+		// Gizmo
+		if (IsActorSelected())
+		{
+			Transform& transform = mSelectedActor->GetTransform();
+			Im3d::Mat4 im3dTransform = Im3d::Mat4(transform.GetWorldMatrix());
+			if (Im3d::Gizmo("TransformGizmo", im3dTransform))
+			{
+				transform.SetPosition(im3dTransform.getTranslation());
+				transform.SetScale(im3dTransform.getScale());
+				transform.SetOrientation(Math::GetQuaternion(im3dTransform));
+			}
+		}
 
 		// Was an Entity selected?
 		if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))

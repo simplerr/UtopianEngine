@@ -63,7 +63,7 @@ namespace Utopian
 		return boundingBox;
 	}
 
-	const Transform& Actor::GetTransform() const
+	Transform& Actor::GetTransform()
 	{
 		CTransform* transform = GetComponent<CTransform>();
 

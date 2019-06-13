@@ -96,7 +96,7 @@ namespace Utopian
 		mTransform.AddScale(scale);
 	}
 
-	const Utopian::Transform& CTransform::GetTransform() const
+	Utopian::Transform& CTransform::GetTransform()
 	{
 		return mTransform;
 	}
