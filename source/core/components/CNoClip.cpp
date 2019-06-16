@@ -41,7 +41,7 @@ namespace Utopian
 		}
 
 		// Todo: Mousewheel broken
-		if (gInput().KeyDown(VK_SPACE))
+		if (gInput().KeyDown(VK_MBUTTON))
 		{
 			float deltaYaw = gInput().MouseDx() * mSensitivity;
 			float deltaPitch = gInput().MouseDy() * mSensitivity;

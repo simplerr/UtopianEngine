@@ -6,7 +6,7 @@
 #include "core/renderer/Renderer.h"
 #include "core/AssetLoader.h"
 #include "utility/Timer.h"
-#include "utility/Random.h"
+#include "utility/math/Helpers.h"
 #include "utility/Utility.h"
 #include "Input.h"
 #include "Camera.h"
@@ -73,8 +73,8 @@ namespace Utopian
 				// If continuous mode randomize the position within brush area
 				if (mVegetationSettings.continuous)
 				{
-					float r = radius * glm::sqrt(GetRandomFloat(0.0f, 1.0f));
-					float theta = GetRandomFloat(0.0f, 1.0f) * 2 * glm::pi<float>();
+					float r = radius * glm::sqrt(Math::GetRandom(0.0f, 1.0f));
+					float theta = Math::GetRandom(0.0f, 1.0f) * 2 * glm::pi<float>();
 					position += glm::vec3(r * glm::cos(theta), 0.0f, r * sin(theta));
 				}
 
@@ -169,12 +169,12 @@ namespace Utopian
 		float rotationY = 0.0f;
 
 		if (mVegetationSettings.randomScale)
-			scale = GetRandomFloat(mVegetationSettings.minScale, mVegetationSettings.maxScale);
+			scale = Math::GetRandom(mVegetationSettings.minScale, mVegetationSettings.maxScale);
 		else
 			scale = mVegetationSettings.minScale;
 
 		if (mVegetationSettings.randomRotation)
-			rotationY = GetRandomFloat(0.0f, 360.0f);
+			rotationY = Math::GetRandom(0.0f, 360.0f);
 
 		gRenderer().AddInstancedAsset(assetId, position, glm::vec3(180.0f, rotationY, 0.0f), glm::vec3(scale), animated, castShadows);
 		gRenderer().BuildAllInstances();

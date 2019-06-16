@@ -14,4 +14,13 @@ namespace Utopian::Math
 
 	// Sets the translation in a transformation matrix
 	glm::mat4 SetTranslation(glm::mat4 world, glm::vec3 translation);
+
+	// Returns a random float
+	float GetRandom(float min, float max);
+
+	// Returns a random integer
+	int32_t GetRandom(int32_t min, int32_t max);
+
+	// Returns a random vec3
+	glm::vec3 GetRandomVec3(float min, float max);
 }

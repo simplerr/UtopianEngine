@@ -79,9 +79,9 @@ namespace Utopian
 
 		/*const uint32_t size = 440;
 		const uint32_t height = 1260;
-		gScreenQuadUi().AddQuad(300 + 20, height - (size + 310), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + size + 20, height - (size + 310), size, size, normalImage.get(), normalRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + 2 * size + 20, height - (size + 310), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());*/
+		gScreenQuadUi().AddQuad(300 + 20, height - (size), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + size + 20, height - (size), size, size, normalImage.get(), normalRenderTarget->GetSampler());
+		gScreenQuadUi().AddQuad(300 + 2 * size + 20, height - (size), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());*/
 	}
 
 	void Terrain::EffectRecomiledCallback(std::string name)

@@ -2,6 +2,7 @@
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/GBufferTerrainJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "utility/math/Helpers.h"
 #include <random>
 
 namespace Utopian
@@ -56,17 +57,15 @@ namespace Utopian
 	void SSAOJob::CreateKernelSamples()
 	{
 		// Kernel samples
-		std::uniform_real_distribution<float> randomFloats(0.0, 1.0); // random floats between 0.0 - 1.0
-		std::default_random_engine generator;
 		for (unsigned int i = 0; i < 64; ++i)
 		{
 			glm::vec3 sample(
-				randomFloats(generator) * 2.0 - 1.0,
-				randomFloats(generator) * 2.0 - 1.0,
-				randomFloats(generator)
+				Math::GetRandom(0.0f, 1.0f) * 2.0 - 1.0,
+				Math::GetRandom(0.0f, 1.0f) * 2.0 - 1.0,
+				Math::GetRandom(0.0f, 1.0f)
 			);
 			sample = glm::normalize(sample);
-			sample *= randomFloats(generator);
+			sample *= Math::GetRandom(0.0f, 1.0f);
 
 			effect->cameraBlock.data.samples[i] = glm::vec4(sample, 0);
 		}

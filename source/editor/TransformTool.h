@@ -25,6 +25,7 @@ namespace Utopian
 	class Terrain;
 
 	//! The tool that move objects around.
+	// Note: This is replaced by the Im3d Gizmo and not used any more
 	class TransformTool
 	{
 	public:

@@ -33,8 +33,8 @@ namespace Utopian
 		brushSettings.mode = BrushSettings::Mode::BLEND;
 		brushSettings.operation = BrushSettings::Operation::ADD;
 		brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
-		brushSettings.strength = 240.0f;
-		brushSettings.radius = 500.0f;
+		brushSettings.strength = 250.0f;
+		brushSettings.radius = 1500.0f;
 
 		heightToolTexture = std::make_shared<Vk::Texture2D>("data/textures/height-tool.ktx", mDevice);
 

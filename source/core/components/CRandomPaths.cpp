@@ -3,7 +3,7 @@
 #include "core/components/Actor.h"
 #include "core/Terrain.h"
 #include "imgui/imgui.h"
-#include "utility/Random.h"
+#include "utility/math/Helpers.h"
 #include <random>
 
 namespace Utopian
@@ -39,7 +39,7 @@ namespace Utopian
 	{
 		float range = mTerrain->GetTerrainSize();
 
-		glm::vec2 target = glm::vec2(GetRandomFloat(-range / 2.0f, range / 2.0f));
+		glm::vec2 target = glm::vec2(Math::GetRandom(-range / 2.0f, range / 2.0f));
 		return target;
 	}
 

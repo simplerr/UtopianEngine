@@ -151,7 +151,6 @@
     <ClCompile Include="source\core\Transform.cpp" />
     <ClCompile Include="source\core\legacy\MarchingCubesTerrain.cpp" />
     <ClCompile Include="source\utility\math\Helpers.cpp" />
-    <ClCompile Include="source\utility\Random.cpp" />
     <ClCompile Include="source\utility\Timer.cpp" />
     <ClCompile Include="source\utility\math\BoundingBox.cpp" />
     <ClCompile Include="source\utility\math\Sphere.cpp" />
@@ -288,7 +287,6 @@
     <ClInclude Include="source\core\SceneNode.h" />
     <ClInclude Include="source\core\Transform.h" />
     <ClInclude Include="source\core\legacy\MarchingCubesTerrain.h" />
-    <ClInclude Include="source\utility\Random.h" />
     <ClInclude Include="source\utility\Timer.h" />
     <ClInclude Include="source\utility\math\BoundingBox.h" />
     <ClInclude Include="source\utility\math\Ray.h" />

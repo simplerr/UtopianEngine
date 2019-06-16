@@ -83,7 +83,7 @@ namespace Utopian
 		}
 
 		// Add new actor to scene
-		if (gInput().KeyPressed('C'))
+		if (gInput().KeyPressed(VK_SPACE))
 		{
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
@@ -130,12 +130,7 @@ namespace Utopian
 				CLight* light = actor->AddComponent<CLight>();
 				CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
 
-				// Set random light color
-				std::random_device rd;
-				std::mt19937 mt(rd());
-				std::uniform_real_distribution<double> dist(0.0, 1.0);
-				glm::vec4 color = glm::vec4(dist(mt), dist(mt), dist(mt), 0.0f);
-				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+				glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
 				light->SetMaterial(color);
 				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
 			}
@@ -151,10 +146,7 @@ namespace Utopian
 			}
 			else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE)
 			{
-				std::random_device rd;
-				std::mt19937 mt(rd());
-				std::uniform_real_distribution<double> dist(20.0, 20.0);
-				float scale = dist(mt);
+				float scale = Math::GetRandom(20.0, 20.0f);
 
 				transform->SetScale(glm::vec3(scale));
 
@@ -179,12 +171,7 @@ namespace Utopian
 				CLight* light = actor->AddComponent<CLight>();
 				CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
 
-				// Set random light color
-				std::random_device rd;
-				std::mt19937 mt(rd());
-				std::uniform_real_distribution<double> dist(0.0, 1.0);
-				glm::vec4 color = glm::vec4(dist(mt), dist(mt), dist(mt), 0.0f);
-				color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+				glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
 				light->SetMaterial(color);
 				renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
 			}
