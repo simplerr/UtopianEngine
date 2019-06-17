@@ -15,6 +15,7 @@
 #include "core/physics/Physics.h"
 #include "Input.h"
 #include "Camera.h"
+#include "ImGuiRenderer.h"
 
 namespace Utopian
 {
@@ -53,6 +54,28 @@ namespace Utopian
 		Vk::UIOverlay::TextV("Height: %.2f", height);
 		Vk::UIOverlay::TextV("Intersection: %.2f, %.2f, %.2f", intersection.x, intersection.y, intersection.z);
 		Vk::UIOverlay::TextV("Brush pos: %.4f, %.4f", brushPos.x, brushPos.y);*/
+		// Display Actor creation list
+		ImGuiRenderer::BeginWindow("Terrain debug", glm::vec2(300.0f, 10.0f), 400.0f);
+
+		ImVec2 textureSize = ImVec2(256, 256);
+		ImGui::BeginGroup();
+		ImGui::Text("Heightmap");
+		ImGui::Image(mDebugDescriptorSets.heightmap, textureSize);
+		ImGui::EndGroup();
+
+		ImGui::SameLine();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Normal map");
+		ImGui::Image(mDebugDescriptorSets.normalmap, textureSize);
+		ImGui::EndGroup();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Blend map");
+		ImGui::Image(mDebugDescriptorSets.blendmap, textureSize);
+		ImGui::EndGroup();
+
+		ImGuiRenderer::EndWindow();
 	}
 
 	void Terrain::AddMaterial(std::string name, std::string diffuse, std::string normal, std::string displacement)
@@ -77,11 +100,11 @@ namespace Utopian
 		// Testing
 		RetrieveHeightmap();
 
-		/*const uint32_t size = 440;
-		const uint32_t height = 1260;
-		gScreenQuadUi().AddQuad(300 + 20, height - (size), size, size, heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + size + 20, height - (size), size, size, normalImage.get(), normalRenderTarget->GetSampler());
-		gScreenQuadUi().AddQuad(300 + 2 * size + 20, height - (size), size, size, blendmapImage.get(), blendmapRenderTarget->GetSampler());*/
+		// Add debug render targets
+		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
+		mDebugDescriptorSets.heightmap = imGuiRenderer->AddTexture(heightmapImage->GetView(), VK_NULL_HANDLE, heightmapImage->GetFinalLayout());
+		mDebugDescriptorSets.normalmap = imGuiRenderer->AddTexture(normalImage->GetView(), VK_NULL_HANDLE, normalImage->GetFinalLayout());
+		mDebugDescriptorSets.blendmap = imGuiRenderer->AddTexture(blendmapImage->GetView(), VK_NULL_HANDLE, blendmapImage->GetFinalLayout());
 	}
 
 	void Terrain::EffectRecomiledCallback(std::string name)

@@ -6,6 +6,7 @@
 #include "vulkan/handles/Texture.h"
 #include "utility/Common.h"
 #include "utility/math/Ray.h"
+#include "imgui\imgui.h"
 
 namespace Utopian
 {
@@ -19,6 +20,13 @@ namespace Utopian
 	class Terrain
 	{
 	public:
+		struct TerrainDebugDescriptorSets
+		{
+			ImTextureID heightmap;
+			ImTextureID normalmap;
+			ImTextureID blendmap;
+		};
+
 		UNIFORM_BLOCK_BEGIN(BrushBlock)
 			UNIFORM_PARAM(glm::vec2, brushPos)
 			UNIFORM_PARAM(float, radius)
@@ -101,5 +109,6 @@ namespace Utopian
 		std::map<std::string, TerrainMaterial> mMaterials;
 
 		SharedPtr<Vk::Sampler> sampler;
+		TerrainDebugDescriptorSets mDebugDescriptorSets;
 	};
 }
