@@ -76,6 +76,7 @@ namespace Utopian
 					float r = radius * glm::sqrt(Math::GetRandom(0.0f, 1.0f));
 					float theta = Math::GetRandom(0.0f, 1.0f) * 2 * glm::pi<float>();
 					position += glm::vec3(r * glm::cos(theta), 0.0f, r * sin(theta));
+					position.y = -mTerrain->GetHeight(-position.x, -position.z);
 				}
 
 				if (gInput().KeyPressed(VK_LBUTTON))
@@ -90,7 +91,7 @@ namespace Utopian
 				}
 			}
 
-			if (gInput().KeyDown(VK_RBUTTON))
+			if (gInput().KeyPressed(VK_RBUTTON) || gInput().KeyDown(VK_RBUTTON))
 			{
 				float radius = mBrushSettings->radius;
 

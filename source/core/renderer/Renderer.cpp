@@ -156,7 +156,7 @@ namespace Utopian
 		ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 		ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
 		ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
-		ImGuiRenderer::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow));
+		ImGuiRenderer::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem));
 		ImGuiRenderer::TextV("Any window focused: %d", ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 
 		ImGuiRenderer::EndWindow();

@@ -292,6 +292,6 @@ namespace Utopian
 
 	bool ImGuiRenderer::IsMouseInsideUi()
 	{
-		return (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow) || ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
+		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 	}
 }
