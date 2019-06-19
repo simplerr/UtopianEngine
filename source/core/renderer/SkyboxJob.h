@@ -14,11 +14,10 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::CubeMapTexture> skybox;
-		SharedPtr<Vk::RenderTarget> renderTarget;
-
-		SharedPtr<Vk::SkyboxEffect> effect;
 	private:
+		SharedPtr<Vk::CubeMapTexture> mSkybox;
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::SkyboxEffect> mEffect;
 		Vk::StaticModel* mCubeModel;
 	};
 }

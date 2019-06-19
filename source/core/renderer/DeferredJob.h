@@ -16,8 +16,8 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;
-		SharedPtr<Vk::Sampler> depthSampler;
-		SharedPtr<Vk::DeferredEffect> effect;
 	private:
+		SharedPtr<Vk::Sampler> mDepthSampler;
+		SharedPtr<Vk::DeferredEffect> mEffect;
 	};
 }

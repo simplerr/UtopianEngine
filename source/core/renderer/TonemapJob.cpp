@@ -12,23 +12,23 @@ namespace Utopian
 	{
 		outputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-		renderTarget->AddWriteOnlyColorAttachment(outputImage);
-		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();
+		mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
+		mRenderTarget->AddWriteOnlyColorAttachment(outputImage);
+		mRenderTarget->SetClearColor(1, 1, 1, 1);
+		mRenderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/tonemap.frag";
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
-		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		effect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		effect->CreatePipeline();
+		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mEffect->CreatePipeline();
 
-		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		effect->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mSettingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
 	}
 
 	TonemapJob::~TonemapJob()
@@ -40,29 +40,29 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 		BloomJob* bloomJob = static_cast<BloomJob*>(jobs[JobGraph::BLOOM_INDEX]);
 
-		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
-		sampler->createInfo.anisotropyEnable = VK_FALSE;
-		sampler->Create();
+		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		mSampler->createInfo.anisotropyEnable = VK_FALSE;
+		mSampler->Create();
 
-		effect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), sampler.get());
-		effect->BindCombinedImage("bloomSampler", bloomJob->outputImage.get(), sampler.get());
+		mEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), mSampler.get());
+		mEffect->BindCombinedImage("bloomSampler", bloomJob->outputImage.get(), mSampler.get());
 	}
 
 	void TonemapJob::Render(const JobInput& jobInput)
 	{
-		settingsBlock.data.tonemapping = jobInput.renderingSettings.tonemapping;
-		settingsBlock.data.exposure = jobInput.renderingSettings.exposure;
-		settingsBlock.UpdateMemory();
+		mSettingsBlock.data.tonemapping = jobInput.renderingSettings.tonemapping;
+		mSettingsBlock.data.exposure = jobInput.renderingSettings.exposure;
+		mSettingsBlock.UpdateMemory();
 
-		renderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(effect);
+		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mEffect);
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
+		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

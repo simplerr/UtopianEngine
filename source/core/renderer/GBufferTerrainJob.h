@@ -37,22 +37,19 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 		void Update() override;
 
-		SharedPtr<Vk::Image> image;
-		SharedPtr<Vk::Image> depthImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
-
 	private:
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
-		SharedPtr<Vk::Sampler> sampler;
-		ViewProjection viewProjectionBlock;
-		SettingsBlock settingsBlock;
-		Terrain::BrushBlock brushBlock;
+		SharedPtr<Vk::Sampler> mSampler;
+		ViewProjection mViewProjectionBlock;
+		SettingsBlock mSettingsBlock;
+		Terrain::BrushBlock mBrushBlock;
 		SharedPtr<Terrain> mTerrain;
 
-		Vk::TextureArray diffuseArray;
-		Vk::TextureArray normalArray;
-		Vk::TextureArray displacementArray;
+		Vk::TextureArray mDiffuseTextureArray;
+		Vk::TextureArray mNormalTextureArray;
+		Vk::TextureArray mDisplacementTextureArray;
 	};
 }

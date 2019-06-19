@@ -51,66 +51,66 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
-		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
 
-		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
 
-		brushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mBrushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_brush", mTerrain->GetBrushBlock().get());
 
 		TerrainMaterial material = mTerrain->GetMaterial("grass");
-		diffuseArray.AddTexture(material.diffuse);
-		normalArray.AddTexture(material.normal);
-		displacementArray.AddTexture(material.displacement);
+		mDiffuseTextureArray.AddTexture(material.diffuse);
+		mNormalTextureArray.AddTexture(material.normal);
+		mDisplacementTextureArray.AddTexture(material.displacement);
 
 		material = mTerrain->GetMaterial("rock");
-		diffuseArray.AddTexture(material.diffuse);
-		normalArray.AddTexture(material.normal);
-		displacementArray.AddTexture(material.displacement);
+		mDiffuseTextureArray.AddTexture(material.diffuse);
+		mNormalTextureArray.AddTexture(material.normal);
+		mDisplacementTextureArray.AddTexture(material.displacement);
 
 		material = mTerrain->GetMaterial("dirt");
-		diffuseArray.AddTexture(material.diffuse);
-		normalArray.AddTexture(material.normal);
-		displacementArray.AddTexture(material.displacement);
+		mDiffuseTextureArray.AddTexture(material.diffuse);
+		mNormalTextureArray.AddTexture(material.normal);
+		mDisplacementTextureArray.AddTexture(material.displacement);
 
-		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
-		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler->Create();
+		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		mSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		mSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		mSampler->Create();
 
 		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", mTerrain->GetHeightmapImage().get(), sampler.get());
-		mEffect->BindCombinedImage("samplerNormalmap", mTerrain->GetNormalmapImage().get(), sampler.get());
-		mEffect->BindCombinedImage("samplerBlendmap", mTerrain->GetBlendmapImage().get(), sampler.get());
+		mEffect->BindCombinedImage("samplerHeightmap", mTerrain->GetHeightmapImage().get(), mSampler.get());
+		mEffect->BindCombinedImage("samplerNormalmap", mTerrain->GetNormalmapImage().get(), mSampler.get());
+		mEffect->BindCombinedImage("samplerBlendmap", mTerrain->GetBlendmapImage().get(), mSampler.get());
 
-		mEffect->BindCombinedImage("samplerDiffuse", &diffuseArray);
-		mEffect->BindCombinedImage("samplerNormal", &normalArray);
-		mEffect->BindCombinedImage("samplerDisplacement", &displacementArray);
+		mEffect->BindCombinedImage("samplerDiffuse", &mDiffuseTextureArray);
+		mEffect->BindCombinedImage("samplerNormal", &mNormalTextureArray);
+		mEffect->BindCombinedImage("samplerDisplacement", &mDisplacementTextureArray);
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 	}
 
 	void GBufferTerrainJob::Render(const JobInput& jobInput)
 	{
-		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.data.time = gTimer().GetTime();
+		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		mViewProjectionBlock.data.time = gTimer().GetTime();
 
 		const Frustum& frustum = gRenderer().GetMainCamera()->GetFrustum();
-		memcpy(viewProjectionBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
+		memcpy(mViewProjectionBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
 
-		viewProjectionBlock.UpdateMemory();
+		mViewProjectionBlock.UpdateMemory();
 
-		settingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
-		settingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
-		settingsBlock.data.edgeSize = 200.0f;
-		settingsBlock.data.amplitude = jobInput.sceneInfo.terrain->GetAmplitudeScaling();
-		settingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
-		settingsBlock.data.bumpmapAmplitude = jobInput.renderingSettings.terrainBumpmapAmplitude;
-		settingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
-		settingsBlock.UpdateMemory();
+		mSettingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
+		mSettingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
+		mSettingsBlock.data.edgeSize = 200.0f;
+		mSettingsBlock.data.amplitude = jobInput.sceneInfo.terrain->GetAmplitudeScaling();
+		mSettingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
+		mSettingsBlock.data.bumpmapAmplitude = jobInput.renderingSettings.terrainBumpmapAmplitude;
+		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
+		mSettingsBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

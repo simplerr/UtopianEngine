@@ -21,30 +21,30 @@ namespace Utopian
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		renderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		renderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		renderTarget->AddReadWriteColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
-		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();
+		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+		mRenderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
+		mRenderTarget->SetClearColor(1, 1, 1, 1);
+		mRenderTarget->Create();
 
 		// Todo: Implement a better way for multiple pipelines in the same Effect
-		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, renderTarget->GetRenderPass());
-		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, renderTarget->GetRenderPass());
+		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, mRenderTarget->GetRenderPass());
+		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, mRenderTarget->GetRenderPass());
 		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
 
-		mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
 
-		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		mGBufferEffectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mInstancedAnimationEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
@@ -63,21 +63,21 @@ namespace Utopian
 		mInstancedAnimationEffect->CreatePipeline();
 		mGBufferEffectWireframe->CreatePipeline();
 
-		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
-		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
 
-		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mGBufferEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
-		mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", &settingsBlock);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
-		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mGBufferEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &mSettingsBlock);
 
-		foliageSpheresBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_sphereList", &foliageSpheresBlock);
+		mFoliageSpheresBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_sphereList", &mFoliageSpheresBlock);
 
-		animationParametersBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", &animationParametersBlock);
+		mAnimationParametersBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", &mAnimationParametersBlock);
 
 		mWindmapTexture = Vk::gTextureLoader().LoadTexture("data/textures/windmap.jpg");
 		mInstancedAnimationEffect->BindCombinedImage("windmapSampler", mWindmapTexture->GetTextureDescriptorInfo());
@@ -87,19 +87,19 @@ namespace Utopian
 	{
 		mGBufferEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		mGBufferEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
-		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.UpdateMemory();
+		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		mViewProjectionBlock.UpdateMemory();
 
-		settingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
-		settingsBlock.UpdateMemory();
+		mSettingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
+		mSettingsBlock.UpdateMemory();
 
-		animationParametersBlock.data.time = gTimer().GetTime();
-		animationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
-		animationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
-		animationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
-		animationParametersBlock.data.enabled = jobInput.renderingSettings.windEnabled;
-		animationParametersBlock.UpdateMemory();
+		mAnimationParametersBlock.data.time = gTimer().GetTime();
+		mAnimationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
+		mAnimationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
+		mAnimationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
+		mAnimationParametersBlock.data.enabled = jobInput.renderingSettings.windEnabled;
+		mAnimationParametersBlock.UpdateMemory();
 		
 		// Collect renderables that should affect the vegetation
 		uint32_t nextSphereIndex = 0;
@@ -107,19 +107,19 @@ namespace Utopian
 		{
 			if (renderable->IsPushingFoliage())
 			{
-				foliageSpheresBlock.spheres[nextSphereIndex].position = renderable->GetPosition();
-				foliageSpheresBlock.spheres[nextSphereIndex].radius = renderable->GetBoundingBox().GetRadius();
-				foliageSpheresBlock.constants.padding = glm::vec3(13.37);
+				mFoliageSpheresBlock.spheres[nextSphereIndex].position = renderable->GetPosition();
+				mFoliageSpheresBlock.spheres[nextSphereIndex].radius = renderable->GetBoundingBox().GetRadius();
+				mFoliageSpheresBlock.constants.padding = glm::vec3(13.37);
 				nextSphereIndex++;
 			}
 		}
 
-		foliageSpheresBlock.constants.numSpheres = nextSphereIndex;
-		if (foliageSpheresBlock.constants.numSpheres > 0)
-			foliageSpheresBlock.UpdateMemory();
+		mFoliageSpheresBlock.constants.numSpheres = nextSphereIndex;
+		if (mFoliageSpheresBlock.constants.numSpheres > 0)
+			mFoliageSpheresBlock.UpdateMemory();
 
-		renderTarget->Begin("G-buffer pass");
-		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		mRenderTarget->Begin("G-buffer pass");
+		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		/* Render instanced assets */
 		for (uint32_t i = 0; i < jobInput.sceneInfo.instanceGroups.size(); i++)
@@ -198,6 +198,6 @@ namespace Utopian
 		
 		Vk::DebugMarker::EndRegion(commandBuffer->GetVkHandle());
 
-		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
+		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

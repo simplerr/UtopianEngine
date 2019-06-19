@@ -19,15 +19,15 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::RenderTarget> radialBlurRenderTarget;
-		SharedPtr<Vk::Effect> radialBlurEffect;
 	private:
-		RadialBlurParameters radialBlurParameters;
+		SharedPtr<Vk::RenderTarget> mRadialBlurRenderTarget;
+		SharedPtr<Vk::Effect> mRadialBlurEffect;
+		RadialBlurParameters mRadialBlurParameters;
 
 		// Todo: Note: This should not be here
 		Vk::StaticModel* mSkydomeModel;
-		float sunAzimuth;
-		glm::vec3 sunDir;
-		const float skydomeScale = 1000.0f;
+		float mSunAzimuth;
+		glm::vec3 mSunDir;
+		const float mSkydomeScale = 1000.0f;
 	};
 }

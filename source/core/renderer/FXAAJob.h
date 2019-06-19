@@ -20,11 +20,11 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::Image> fxaaImage;
-		SharedPtr<Vk::RenderTarget> renderTarget;
 	private:
-		SharedPtr<Vk::Effect> effect;
-		SharedPtr<Vk::Sampler> sampler;
-		FXAASettingsBlock settingsBlock;
+		SharedPtr<Vk::Image> mFXXAImage;
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::Effect> mEffect;
+		SharedPtr<Vk::Sampler> mSampler;
+		FXAASettingsBlock mSettingsBlock;
 	};
 }

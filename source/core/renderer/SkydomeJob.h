@@ -29,14 +29,13 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::RenderTarget> renderTarget;
-
-		SharedPtr<Vk::Effect> effect;
 		SharedPtr<Vk::Image> sunImage;
 	private:
-		ViewProjection viewProjectionBlock;
-		ParameterBlock parameterBlock;
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::Effect> mEffect;
+		ViewProjection mViewProjectionBlock;
+		ParameterBlock mParameterBlock;
 		Vk::StaticModel* mSkydomeModel;
-		float sunAzimuth;
+		float mSunAzimuth;
 	};
 }

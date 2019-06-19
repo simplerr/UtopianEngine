@@ -17,7 +17,7 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		effect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(device, renderTarget->GetRenderPass());
+		mEffect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(device, renderTarget->GetRenderPass());
 	}
 
 	SSAOJob::~SSAOJob()
@@ -28,7 +28,7 @@ namespace Utopian
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
-		effect->BindGBuffer(gbuffer.positionImage.get(),
+		mEffect->BindGBuffer(gbuffer.positionImage.get(),
 			gbuffer.normalViewImage.get(),
 			gbuffer.albedoImage.get(),
 			gbufferTerrainJob->renderTarget->GetSampler());
@@ -38,16 +38,16 @@ namespace Utopian
 
 	void SSAOJob::Render(const JobInput& jobInput)
 	{
-		effect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		effect->SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
+		mEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
+		mEffect->SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
 
 		renderTarget->Begin("SSAO pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		if (IsEnabled())
 		{
-			commandBuffer->CmdBindPipeline(effect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSets(effect);
+			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(mEffect);
 			gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		}
 
@@ -67,9 +67,9 @@ namespace Utopian
 			sample = glm::normalize(sample);
 			sample *= Math::GetRandom(0.0f, 1.0f);
 
-			effect->cameraBlock.data.samples[i] = glm::vec4(sample, 0);
+			mEffect->cameraBlock.data.samples[i] = glm::vec4(sample, 0);
 		}
 
-		effect->UpdateMemory();
+		mEffect->UpdateMemory();
 	}
 }

@@ -21,17 +21,17 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
-		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();
+		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
+		mRenderTarget->SetClearColor(1, 1, 1, 1);
+		mRenderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/grass/grass.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/grass/grass.frag";
 
-		effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
 
@@ -40,31 +40,31 @@ namespace Utopian
 		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 1 : Color
 		vertexDescription->AddAttribute(BINDING_0, Vk::S32Attribute());		// Location 2 : InTexId
 
-		effect->GetPipeline()->OverrideVertexInput(vertexDescription);
-		effect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		effect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+		mEffect->GetPipeline()->OverrideVertexInput(vertexDescription);
+		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
 
 		// Enable blending using alpha channel
-		gRendererUtility().SetAlphaBlending(effect->GetPipeline());
+		gRendererUtility().SetAlphaBlending(mEffect->GetPipeline());
 
-		effect->CreatePipeline();
+		mEffect->CreatePipeline();
 
-		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		effect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
 
 		// Need clamp to edge when using transparent textures to not get artifacts at the top
-		sampler = std::make_shared<Vk::Sampler>(mDevice, false);
-		sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		sampler->Create();
+		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		mSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		mSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+		mSampler->Create();
 
 		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
 		Vk::Texture* texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
 		Vk::TextureArray textureArray;
-		textureArray.AddTexture(texture->imageView, sampler.get());
-		textureArray.AddTexture(texture2->imageView, sampler.get());
+		textureArray.AddTexture(texture->imageView, mSampler.get());
+		textureArray.AddTexture(texture2->imageView, mSampler.get());
 
-		effect->BindCombinedImage("textureSampler", &textureArray);
+		mEffect->BindCombinedImage("textureSampler", &textureArray);
 
 		SetWaitSemaphore(deferredJob->GetCompletedSemahore());
 	}

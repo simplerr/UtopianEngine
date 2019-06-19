@@ -36,14 +36,14 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::RenderTarget> renderTarget;
 		SharedPtr<Vk::Image> depthColorImage;
-		SharedPtr<Vk::Image> depthImage;
 
-		SharedPtr<Vk::Effect> effect;
-		SharedPtr<Vk::Effect> effectInstanced;
-		CascadeTransforms cascadeTransforms;
 	private:
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::Image> mDepthImage;
+		SharedPtr<Vk::Effect> mEffect;
+		SharedPtr<Vk::Effect> mEffectInstanced;
+		CascadeTransforms mCascadeTransforms;
 		const uint32_t SHADOWMAP_DIMENSION = 4096;
 		std::vector<SharedPtr<Vk::FrameBuffers>> mFrameBuffers;
 	};

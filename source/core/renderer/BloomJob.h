@@ -32,16 +32,16 @@ namespace Utopian
 		void RenderExtractPass(const JobInput& jobInput);
 		void RenderBlurPass(const JobInput& jobInput);
 	private:
-		SharedPtr<Vk::Effect> extractEffect;
-		SharedPtr<Vk::RenderTarget> extractRenderTarget;
-		SharedPtr<Vk::Image> brightColorsImage;
+		SharedPtr<Vk::Effect> mExtractEffect;
+		SharedPtr<Vk::RenderTarget> mExtractRenderTarget;
+		SharedPtr<Vk::Image> mBrightColorsImage;
 
-		SharedPtr<Vk::Effect> blurEffect;
-		SharedPtr<Vk::RenderTarget> blurRenderTarget;
+		SharedPtr<Vk::Effect> mBlurEffect;
+		SharedPtr<Vk::RenderTarget> mBlurRenderTarget;
 
-		SharedPtr<Vk::Sampler> sampler;
-		SharedPtr<Vk::Semaphore> waitExtractPassSemaphore;
-		ExtractSettings extractSettings;
-		BlurSettings blurSettings;
+		SharedPtr<Vk::Sampler> mSampler;
+		SharedPtr<Vk::Semaphore> mWaitExtractPassSemaphore;
+		ExtractSettings mExtractSettings;
+		BlurSettings mBlurSettings;
 	};
 }

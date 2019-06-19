@@ -14,7 +14,7 @@ namespace Utopian
 		InitExtractPass();
 		InitBlurPass();
 
-		waitExtractPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
+		mWaitExtractPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
 	}
 
 	BloomJob::~BloomJob()
@@ -23,25 +23,25 @@ namespace Utopian
 
 	void BloomJob::InitExtractPass()
 	{
-		brightColorsImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO, VK_FORMAT_R16G16B16A16_SFLOAT);
+		mBrightColorsImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		extractRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO);
-		extractRenderTarget->AddWriteOnlyColorAttachment(brightColorsImage);
-		extractRenderTarget->SetClearColor(1, 1, 1, 1);
-		extractRenderTarget->Create();
+		mExtractRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO);
+		mExtractRenderTarget->AddWriteOnlyColorAttachment(mBrightColorsImage);
+		mExtractRenderTarget->SetClearColor(1, 1, 1, 1);
+		mExtractRenderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/bloom_extract.frag";
-		extractEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, extractRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mExtractEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mExtractRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
-		extractEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		extractEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		extractEffect->CreatePipeline();
+		mExtractEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mExtractEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mExtractEffect->CreatePipeline();
 
-		extractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		extractEffect->BindUniformBuffer("UBO_settings", &extractSettings);
+		mExtractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mExtractEffect->BindUniformBuffer("UBO_settings", &mExtractSettings);
 
 		//const uint32_t size = 240;
 		//gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (size + 10), size, size, brightColorsImage.get(), extractRenderTarget->GetSampler());
@@ -51,24 +51,24 @@ namespace Utopian
 	{
 		outputImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-		blurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO);
-		blurRenderTarget->AddWriteOnlyColorAttachment(outputImage);
-		blurRenderTarget->SetClearColor(1, 1, 1, 1);
-		blurRenderTarget->Create();
+		mBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO);
+		mBlurRenderTarget->AddWriteOnlyColorAttachment(outputImage);
+		mBlurRenderTarget->SetClearColor(1, 1, 1, 1);
+		mBlurRenderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/bloom_blur.frag";
-		blurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blurRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
-		blurEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		blurEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		blurEffect->CreatePipeline();
+		mBlurEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mBlurEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mBlurEffect->CreatePipeline();
 
-		blurSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		blurEffect->BindUniformBuffer("UBO_settings", &blurSettings);
-		blurEffect->BindCombinedImage("hdrSampler", brightColorsImage.get(), blurRenderTarget->GetSampler());
+		mBlurSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mBlurEffect->BindUniformBuffer("UBO_settings", &mBlurSettings);
+		mBlurEffect->BindCombinedImage("hdrSampler", mBrightColorsImage.get(), mBlurRenderTarget->GetSampler());
 
 		/*const uint32_t size = 240;
 		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, outputImage.get(), blurRenderTarget->GetSampler());*/
@@ -78,41 +78,41 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		extractEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), extractRenderTarget->GetSampler());
+		mExtractEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), mExtractRenderTarget->GetSampler());
 	}
 
 	void BloomJob::RenderExtractPass(const JobInput& jobInput)
 	{
-		extractSettings.data.threshold = jobInput.renderingSettings.bloomThreshold;
-		extractSettings.UpdateMemory();
+		mExtractSettings.data.threshold = jobInput.renderingSettings.bloomThreshold;
+		mExtractSettings.UpdateMemory();
 
-		extractRenderTarget->Begin("Bloom extract pass");
-		Vk::CommandBuffer* commandBuffer = extractRenderTarget->GetCommandBuffer();
+		mExtractRenderTarget->Begin("Bloom extract pass");
+		Vk::CommandBuffer* commandBuffer = mExtractRenderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(extractEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(extractEffect);
+		commandBuffer->CmdBindPipeline(mExtractEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mExtractEffect);
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		extractRenderTarget->End(GetWaitSemahore(), waitExtractPassSemaphore);
+		mExtractRenderTarget->End(GetWaitSemahore(), mWaitExtractPassSemaphore);
 	}
 	
 	void BloomJob::RenderBlurPass(const JobInput& jobInput)
 	{
-		blurSettings.data.size = 5;// = jobInput.renderingSettings.bloomThreshold;
-		blurSettings.UpdateMemory();
+		mBlurSettings.data.size = 5;// = jobInput.renderingSettings.bloomThreshold;
+		mBlurSettings.UpdateMemory();
 
-		blurRenderTarget->Begin("Bloom blur pass");
-		Vk::CommandBuffer* commandBuffer = blurRenderTarget->GetCommandBuffer();
+		mBlurRenderTarget->Begin("Bloom blur pass");
+		Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(blurEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(blurEffect);
+		commandBuffer->CmdBindPipeline(mBlurEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mBlurEffect);
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-		blurRenderTarget->End(waitExtractPassSemaphore, GetCompletedSemahore());
+		mBlurRenderTarget->End(mWaitExtractPassSemaphore, GetCompletedSemahore());
 	}
 
 	void BloomJob::Render(const JobInput& jobInput)

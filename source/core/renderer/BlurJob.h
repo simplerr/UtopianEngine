@@ -15,9 +15,8 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::Image> blurImage;
-		SharedPtr<Vk::RenderTarget> renderTarget;
-
-		SharedPtr<Vk::BlurEffect> effect;
 	private:
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::BlurEffect> mEffect;
 	};
 }

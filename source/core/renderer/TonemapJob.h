@@ -21,10 +21,10 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 
 		SharedPtr<Vk::Image> outputImage;
-		SharedPtr<Vk::RenderTarget> renderTarget;
 	private:
-		SharedPtr<Vk::Effect> effect;
-		SharedPtr<Vk::Sampler> sampler;
-		TonemapSettingsBlock settingsBlock;
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::Effect> mEffect;
+		SharedPtr<Vk::Sampler> mSampler;
+		TonemapSettingsBlock mSettingsBlock;
 	};
 }

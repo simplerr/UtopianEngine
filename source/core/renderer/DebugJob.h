@@ -18,11 +18,10 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::RenderTarget> renderTarget;
-
-		SharedPtr<Vk::Effect> colorEffect;
-		SharedPtr<Vk::Effect> normalEffect;
 	private:
-		ViewProjection viewProjectionBlock;
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
+		SharedPtr<Vk::Effect> mColorEffect;
+		SharedPtr<Vk::Effect> mNormalEffect;
+		ViewProjection mViewProjectionBlock;
 	};
 }

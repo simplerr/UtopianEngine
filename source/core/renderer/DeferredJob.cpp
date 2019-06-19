@@ -11,18 +11,18 @@ namespace Utopian
 		: BaseJob(device, width, height)
 	{
 		renderTarget = std::make_shared<Vk::BasicRenderTarget>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
-		effect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(device, renderTarget->GetRenderPass());
+		mEffect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(device, renderTarget->GetRenderPass());
 
 		//mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
-		depthSampler = std::make_shared<Vk::Sampler>(device, false);
-		depthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropy filter causes artifacts at the edge between cascades
-		depthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-		depthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-		depthSampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-		depthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
-		depthSampler->Create();
+		mDepthSampler = std::make_shared<Vk::Sampler>(device, false);
+		mDepthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropy filter causes artifacts at the edge between cascades
+		mDepthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		mDepthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		mDepthSampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		mDepthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+		mDepthSampler->Create();
 	}
 
 	DeferredJob::~DeferredJob()
@@ -33,33 +33,33 @@ namespace Utopian
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
-		effect->BindImages(gbuffer.positionImage.get(),
+		mEffect->BindImages(gbuffer.positionImage.get(),
 			gbuffer.normalImage.get(),
 			gbuffer.albedoImage.get(),
 			blurJob->blurImage.get(),
 			gbufferTerrainJob->renderTarget->GetSampler());
 
 		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
-		effect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), depthSampler.get());
+		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), mDepthSampler.get());
 	}
 
 	void DeferredJob::Render(const JobInput& jobInput)
 	{
-		effect->SetSettingsData(jobInput.renderingSettings);
-		effect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		effect->SetLightArray(jobInput.sceneInfo.lights);
+		mEffect->SetSettingsData(jobInput.renderingSettings);
+		mEffect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
+		mEffect->SetLightArray(jobInput.sceneInfo.lights);
 
 		// Note: Todo: Temporary
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
-			effect->cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
-			effect->cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
+			mEffect->cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
+			mEffect->cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
 		}
 
 		// Note: This should probably be moved. We need the fragment position in view space
 		// when comparing it's Z value to find out which shadow map cascade it should sample from.
-		effect->cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
-		effect->cascade_ubo.UpdateMemory();
+		mEffect->cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+		mEffect->cascade_ubo.UpdateMemory();
 
 		// End of temporary
 
@@ -67,8 +67,8 @@ namespace Utopian
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(effect);
+		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mEffect);
 
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 

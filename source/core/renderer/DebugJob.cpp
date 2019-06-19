@@ -18,38 +18,38 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		//renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
-		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();
+		mRenderTarget->SetClearColor(1, 1, 1, 1);
+		mRenderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/color/color.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/color/color.frag";
-		colorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
-		colorEffect->CreatePipeline();
+		mColorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mColorEffect->CreatePipeline();
 
 		shaderCreateInfo.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
 		shaderCreateInfo.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
-		normalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
-		normalEffect->CreatePipeline();
+		mNormalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mNormalEffect->CreatePipeline();
 
-		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		colorEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
-		normalEffect->BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		mColorEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mNormalEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
 	}
 
 	void DebugJob::Render(const JobInput& jobInput)
 	{
-		viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.UpdateMemory();
+		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		mViewProjectionBlock.UpdateMemory();
 
-		renderTarget->Begin("Debug pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
-		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		mRenderTarget->Begin("Debug pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
+		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		/* Render all renderables */
 		for (auto& renderable : jobInput.sceneInfo.renderables)
@@ -66,9 +66,9 @@ namespace Utopian
 					// Push the world matrix constant
 					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
 
-					commandBuffer->CmdBindPipeline(colorEffect->GetPipeline());
-					commandBuffer->CmdBindDescriptorSets(colorEffect);
-					commandBuffer->CmdPushConstants(colorEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdBindPipeline(mColorEffect->GetPipeline());
+					commandBuffer->CmdBindDescriptorSets(mColorEffect);
+					commandBuffer->CmdPushConstants(mColorEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
@@ -82,9 +82,9 @@ namespace Utopian
 					// Push the world matrix constant
 					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
 
-					commandBuffer->CmdBindPipeline(normalEffect->GetPipeline());
-					commandBuffer->CmdBindDescriptorSets(normalEffect);
-					commandBuffer->CmdPushConstants(normalEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+					commandBuffer->CmdBindPipeline(mNormalEffect->GetPipeline());
+					commandBuffer->CmdBindDescriptorSets(mNormalEffect);
+					commandBuffer->CmdPushConstants(mNormalEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
@@ -92,6 +92,6 @@ namespace Utopian
 			}
 		}
 
-		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
+		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

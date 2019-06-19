@@ -18,11 +18,11 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
-		renderTarget->SetClearColor(1, 1, 1, 1);
-		renderTarget->Create();
+		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
+		mRenderTarget->SetClearColor(1, 1, 1, 1);
+		mRenderTarget->Create();
 
 		Vk::ShaderCreateInfo createInfo;
 		createInfo.vertexShaderPath = "data/shaders/im3d/im3d.vert";
@@ -38,7 +38,7 @@ namespace Utopian
 		mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());
 
 		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_points.frag";
-		mPointsEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), createInfo);
+		mPointsEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
 		mPointsEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
 		mPointsEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mPointsEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
@@ -48,7 +48,7 @@ namespace Utopian
 		mPointsEffect->CreatePipeline();
 
 		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_triangles.frag";
-		mTrianglesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), createInfo);
+		mTrianglesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
 		mTrianglesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		mTrianglesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mTrianglesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
@@ -59,7 +59,7 @@ namespace Utopian
 
 		createInfo.geometryShaderPath = "data/shaders/im3d/im3d.geom";
 		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_lines.frag";
-		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), createInfo);
+		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
 		mLinesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 		mLinesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
 		mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
@@ -85,9 +85,9 @@ namespace Utopian
 		mViewportBlock.data.viewport.y = mHeight;
 		mViewportBlock.UpdateMemory();
 
-		renderTarget->Begin("Im3d pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		mRenderTarget->Begin("Im3d pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 
-		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		commandBuffer->CmdBindVertexBuffer(0, 1, jobInput.sceneInfo.im3dVertices.get());
 
@@ -117,6 +117,6 @@ namespace Utopian
 			vertexOffset += drawList.m_vertexCount;
 		}
 
-		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
+		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}
 }

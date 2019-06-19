@@ -22,10 +22,8 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::Image> blurImage;
-		SharedPtr<Vk::RenderTarget> renderTarget;
-
 	private:
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::Effect> mLinesEffect;
 		SharedPtr<Vk::Effect> mPointsEffect;
 		SharedPtr<Vk::Effect> mTrianglesEffect;

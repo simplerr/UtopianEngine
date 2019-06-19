@@ -16,9 +16,9 @@ namespace Utopian
 
 		SharedPtr<Vk::Image> ssaoImage;
 		SharedPtr<Vk::RenderTarget> renderTarget;
-
-		SharedPtr<Vk::SSAOEffect> effect;
 	private:
 		void CreateKernelSamples();
+
+		SharedPtr<Vk::SSAOEffect> mEffect;
 	};
 }

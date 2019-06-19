@@ -86,19 +86,19 @@ namespace Utopian
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
 
-		SharedPtr<Vk::RenderTarget> renderTarget;
-
+	private:
+		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
 		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
 		SharedPtr<Vk::Effect> mInstancedAnimationEffect;
 		SharedPtr<Vk::Effect> mGBufferEffectInstanced;
-	private:
-		GBufferViewProjection viewProjectionBlock;
-		SettingsBlock settingsBlock;
-		SphereUniformBuffer foliageSpheresBlock;
+
+		GBufferViewProjection mViewProjectionBlock;
+		SettingsBlock mSettingsBlock;
+		SphereUniformBuffer mFoliageSpheresBlock;
 
 		// Animated instancing
-		AnimationParametersBlock animationParametersBlock;
+		AnimationParametersBlock mAnimationParametersBlock;
 		Vk::Texture* mWindmapTexture;
 	};
 }
