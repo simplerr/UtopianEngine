@@ -237,6 +237,28 @@ namespace Utopian
 		}
 	}
 
+	void Editor::RenderActorSelectionUi()
+	{
+		// Display Actor creation list
+		if (ImGui::CollapsingHeader("Actors", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
+			std::vector<const char*> actorNames;
+
+			for (auto actor : actors)
+			{
+				std::string name = actor->GetName();
+				actorNames.push_back(strdup(name.c_str()));
+			}
+
+			int selectedActorIndex = 0;
+			if (ImGui::ListBox("Actors:", &selectedActorIndex, actorNames.data(), actorNames.size()))
+			{
+				OnActorSelected(actors[selectedActorIndex].get());
+			}
+		}
+	}
+
 	void Editor::UpdateUi()
 	{
 		mActorInspector->UpdateUi();
@@ -254,6 +276,7 @@ namespace Utopian
 		mTerrainTool->RenderUi();
 		mFoliageTool->RenderUi();
 		RenderActorCreationUi();
+		RenderActorSelectionUi();
 
 		ImGuiRenderer::EndWindow();
 

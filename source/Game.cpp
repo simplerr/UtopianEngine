@@ -12,6 +12,9 @@
 #include "editor/Editor.h"
 #include "core/Engine.h"
 #include "core/renderer/Renderer.h"
+#include "core/components/Actor.h"
+#include "core/components/CCatmullSpline.h"
+#include "core/components/CTransform.h"
 
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
@@ -49,7 +52,9 @@ Game::~Game()
 
 void Game::InitScene()
 {
-
+	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("TestActor");
+	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
+	Utopian::CCatmullSpline* spline = actor->AddComponent<Utopian::CCatmullSpline>();
 }
 
 void Game::Update()
