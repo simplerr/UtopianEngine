@@ -9,6 +9,7 @@
 #include "core/components/CNoClip.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CBloomLight.h"
+#include "core/components/CCatmullSpline.h"
 #include "vulkan/Debug.h"
 
 namespace Utopian
@@ -84,6 +85,20 @@ namespace Utopian
 				else if (name == "CNoClip") {
 					float speed = componentData["speed"].ToNumber();
 					CNoClip* noclip = actor->AddComponent<CNoClip>(speed);
+
+					// Testing
+					Utopian::CCatmullSpline* spline = actor->AddComponent<Utopian::CCatmullSpline>();
+
+					float y = -1300.0f;
+					spline->AddControlPoint(glm::vec3(0.0f, y, 0.0f));
+					spline->AddControlPoint(glm::vec3(0.0f, y + 200, 500.0f));
+					spline->AddControlPoint(glm::vec3(500.0f, y, 200.0f));
+					spline->AddControlPoint(glm::vec3(500.0f, y + 100, 0.0f));
+
+					spline->AddControlPoint(glm::vec3(1000.0f, y, 0.0f));
+					spline->AddControlPoint(glm::vec3(500.0f, y + 200, 500.0f));
+					spline->AddControlPoint(glm::vec3(0.0f, y + 200, 500.0f));
+					spline->AddControlPoint(glm::vec3(500.0f, y + 100, -300.0f));
 				}
 				else if (name == "CPlayerControl") {
 					CPlayerControl* playerControl = actor->AddComponent<CPlayerControl>();

@@ -4,6 +4,7 @@
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CRigidBody.h"
+#include "core/components/CCatmullSpline.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
 #include "ImGuiRenderer.h"
@@ -80,6 +81,12 @@ namespace Utopian
 		CRigidBody* rigidBody = mActor->GetComponent<CRigidBody>();
 		if (rigidBody != nullptr) {
 			RigidBodyInspector* inspector = new RigidBodyInspector(rigidBody);
+			mComponentInspectors.push_back(inspector);
+		}
+
+		CCatmullSpline* catmullSpline = mActor->GetComponent<CCatmullSpline>();
+		if (catmullSpline != nullptr) {
+			CatmullSplineInspector* inspector = new CatmullSplineInspector(catmullSpline);
 			mComponentInspectors.push_back(inspector);
 		}
 	}

@@ -54,7 +54,6 @@ void Game::InitScene()
 {
 	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("TestActor");
 	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
-	Utopian::CCatmullSpline* spline = actor->AddComponent<Utopian::CCatmullSpline>();
 }
 
 void Game::Update()

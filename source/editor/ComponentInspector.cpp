@@ -5,6 +5,7 @@
 #include "core/components/CLight.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CRigidBody.h"
+#include "core/components/CCatmullSpline.h"
 #include "core/components/Actor.h"
 #include <glm/gtc/quaternion.hpp>
 
@@ -185,10 +186,8 @@ namespace Utopian
 			float friction = mRigidBody->GetFriction();
 			float rollingFriction = mRigidBody->GetRollingFriction();
 			float restitution = mRigidBody->GetRestitution();
-			bool isActive = mRigidBody->IsActive();
 			bool isKinematic = mRigidBody->IsKinematic();
 
-			ImGui::Checkbox("Active", &isActive);
 			ImGui::Checkbox("Kinematic", &isKinematic);
 			ImGui::SliderFloat("Mass", &mass, 0.0f, 100.0f);
 			ImGui::SliderFloat("Friction", &friction, 0.01f, 10.0f);
@@ -200,6 +199,26 @@ namespace Utopian
 			mRigidBody->SetFriction(friction);
 			mRigidBody->SetRollingFriction(rollingFriction);
 			mRigidBody->SetRestitution(restitution);
+		}
+	}
+
+	CatmullSplineInspector::CatmullSplineInspector(CCatmullSpline* catmullSpline)
+	{
+		mCatmullSpline = catmullSpline;
+	}
+
+	void CatmullSplineInspector::UpdateUi()
+	{
+		if (ImGui::CollapsingHeader("Catmull spline", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			bool isActive = mCatmullSpline->IsActive();
+			float timePerSegment = mCatmullSpline->GetTimePerSegment();
+
+			ImGui::SliderFloat("Time per segment", &timePerSegment, 200.0f, 10000.0f);
+			ImGui::Checkbox("Active", &isActive);
+
+			mCatmullSpline->SetActive(isActive);
+			mCatmullSpline->SetTimePerSegment(timePerSegment);
 		}
 	}
 }

@@ -8,6 +8,7 @@ namespace Utopian
 	class CRenderable;
 	class CLight;
 	class CRigidBody;
+	class CCatmullSpline;
 
 	class ComponentInspector
 	{
@@ -65,5 +66,15 @@ namespace Utopian
 		virtual void UpdateUi() override;
 	private:
 		CRigidBody* mRigidBody;
+	};
+
+	class CatmullSplineInspector : public ComponentInspector
+	{
+	public:
+		CatmullSplineInspector(CCatmullSpline* catmullSpline);
+
+		virtual void UpdateUi() override;
+	private:
+		CCatmullSpline* mCatmullSpline;
 	};
 }
