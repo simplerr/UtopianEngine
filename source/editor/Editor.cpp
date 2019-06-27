@@ -58,7 +58,8 @@ namespace Utopian
 		UpdateUi();
 
 		// Gizmo
-		if (IsActorSelected())
+		// Only move actors with renderables for now
+		if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
 		{
 			Transform& transform = mSelectedActor->GetTransform();
 			Im3d::Mat4 im3dTransform = Im3d::Mat4(transform.GetWorldMatrix());
@@ -256,6 +257,9 @@ namespace Utopian
 			{
 				OnActorSelected(actors[selectedActorIndex].get());
 			}
+
+			for (uint32_t i = 0; i < actorNames.size(); i++)
+				delete actorNames[i];
 		}
 	}
 
@@ -321,7 +325,8 @@ namespace Utopian
 		if (IsActorSelected())
 		{
 			auto renderable = mSelectedActor->GetComponent<CRenderable>();
-			renderable->DisableBoundingBox();
+			if (renderable != nullptr)
+				renderable->DisableBoundingBox();
 		}
 
 		mSelectedActor = actor;

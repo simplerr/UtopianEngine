@@ -1,6 +1,7 @@
 #pragma once
 #include "core/components/Component.h"
 #include <vector>
+#include <string>
 
 namespace Utopian
 {
@@ -10,7 +11,7 @@ namespace Utopian
 	class CCatmullSpline : public Component
 	{
 	public:
-		CCatmullSpline(Actor* parent);
+		CCatmullSpline(Actor* parent, std::string filename);
 		~CCatmullSpline();
 
 		void Update() override;
@@ -18,13 +19,25 @@ namespace Utopian
 		void OnDestroyed() override;
 		void PostInit() override;
 
+		//! Adds a control point continuing the last segment
+		void AddControlPoint();
+
+		//! Adds a control point at a fixed position
 		void AddControlPoint(glm::vec3 controlPoint);
+
+		//! Removes the last control point
+		void RemoveLastControlPoint();
+
+		void SaveControlPoints();
 
 		glm::vec3 GetPosition(float time) const;
 		float GetTimePerSegment() const;
 		bool IsActive() const;
+		bool IsDrawingDebug() const;
+		std::string GetFilename() const;
 
 		void SetActive(bool active);
+		void SetDrawDebug(bool drawDebug);
 		void SetTimePerSegment(float timePerSegment);
 
 		LuaPlus::LuaObject GetLuaObject() override;
@@ -38,13 +51,17 @@ namespace Utopian
 			return GetStaticType();
 		}
 
-	private:
 		float GetTotalTime() const;
 
 	private:
+		void DrawDebug(float time);
+		void LoadControlPoints(std::string filename);
+	private:
 		std::vector<glm::vec3> mControlPoints;
-		float mTimePerSegment; // Seconds
+		std::string mFilename;
+		float mTimePerSegment; // Milliseconds
 		bool mActive;
+		bool mDrawDebug;
 		CTransform* mTransform;
 		CCamera* mCamera;
 	};

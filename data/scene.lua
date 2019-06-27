@@ -42,465 +42,6 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 5699.7802734375,
-				pos_y = -3457.7639160156,
-				pos_z = 6499.5068359375,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 3647.4638671875,
-				pos_y = -3809.4289550781,
-				pos_z = 5623.4975585938,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 8019.388671875,
-				pos_y = -3472.7424316406,
-				pos_z = 6358.8999023438,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 6549.7045898438,
-				pos_y = -3232.1533203125,
-				pos_z = 6959.3779296875,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 6574.7866210938,
-				pos_y = -3125.6010742188,
-				pos_z = 7153.51171875,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 3619.3806152344,
-				pos_y = -3490.0998535156,
-				pos_z = -4387.5991210938,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 4553.2490234375,
-				pos_y = -3067.0766601563,
-				pos_z = -7831.3427734375,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 4360.5654296875,
-				pos_y = -3164.310546875,
-				pos_z = -7784.470703125,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 3268.0126953125,
-				pos_y = -3768.6252441406,
-				pos_z = -5435.7065429688,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 7.0000000960135e-06,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				dir_x = 0.61400002241135,
-				dir_y = -0.10000000149012,
-				dir_z = 0,
-				intensity_x = 0,
-				intensity_y = 1,
-				intensity_z = 0,
-				range = 10000,
-				spot = 4,
-				type = 1,
-			},
-			CRenderable = 
-			{
-				color_a = 2.4000000953674,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/teapot.obj",
-				render_flags = 2,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
 				pos_x = 3462.0146484375,
 				pos_y = -3892.6774902344,
 				pos_z = -6409.1967773438,
@@ -1456,43 +997,6 @@ actor_list =
 	},
 	
 	{
-		actor_name = "Camera",
-		components = 
-		{
-			CCamera = 
-			{
-				far_plane = 51200,
-				fov = 60,
-				look_at_x = -400,
-				look_at_y = 50,
-				look_at_z = 0,
-				near_plane = 1,
-			},
-			CNoClip = 
-			{
-				speed = 1,
-			},
-			CPlayerControl = 
-			{
-				empty = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 335.54864501953,
-				pos_y = -829.28192138672,
-				pos_z = 425.69436645508,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
 		actor_name = "EditorActor",
 		components = 
 		{
@@ -1802,6 +1306,412 @@ actor_list =
 		actor_name = "EditorActor",
 		components = 
 		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.99999964237213,
+				orientation_x = -1.0788438231657e-07,
+				orientation_y = -0.00082851410843432,
+				orientation_z = 2.8801915519239e-08,
+				pos_x = -412.93743896484,
+				pos_y = 17.49489402771,
+				pos_z = 334.30383300781,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.70676457881927,
+				orientation_x = -0.022003937512636,
+				orientation_y = 0.022005379199982,
+				orientation_z = -0.70676404237747,
+				pos_x = -340.67208862305,
+				pos_y = 35.704563140869,
+				pos_z = 337.0793762207,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -4.0762841990727e-09,
+				orientation_x = -0.13442155718803,
+				orientation_y = -6.2720509674818e-08,
+				orientation_z = 0.99092423915863,
+				pos_x = -238.00543212891,
+				pos_y = 17.494899749756,
+				pos_z = 343.11825561523,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.99957704544067,
+				orientation_x = -1.5130103747651e-07,
+				orientation_y = 0.029082087799907,
+				orientation_z = 2.7914909423998e-06,
+				pos_x = -6595.4584960938,
+				pos_y = 17.92271232605,
+				pos_z = 531.79034423828,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.9983081817627,
+				orientation_x = -6.2368926023737e-08,
+				orientation_y = -0.058144900947809,
+				orientation_z = -3.420606731197e-08,
+				pos_x = -24.735620498657,
+				pos_y = 17.94104385376,
+				pos_z = -117.23233795166,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.99867808818817,
+				orientation_x = 1.439144803328e-08,
+				orientation_y = 0.051401007920504,
+				orientation_z = -3.1047692194974e-10,
+				pos_x = -725.67687988281,
+				pos_y = 17.940687179565,
+				pos_z = 24.237142562866,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -1.1650023452603e-06,
+				orientation_x = 0.99872004985809,
+				orientation_y = 4.3850826614289e-07,
+				orientation_z = -0.050579488277435,
+				pos_x = -1260.7043457031,
+				pos_y = 17.940217971802,
+				pos_z = 615.66680908203,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/sphere_lowres.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -0.12486017495394,
+				orientation_x = -0.68551677465439,
+				orientation_y = -0.10688102990389,
+				orientation_z = 0.70926237106323,
+				pos_x = 938.81494140625,
+				pos_y = -382710.3125,
+				pos_z = 2153.7243652344,
+				scale_x = 20,
+				scale_y = 20,
+				scale_z = 20,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.71577787399292,
+				orientation_x = 0.46204090118408,
+				orientation_y = 0.18162254989147,
+				orientation_z = -0.49111449718475,
+				pos_x = -6311.3232421875,
+				pos_y = -295926.9375,
+				pos_z = -652.46630859375,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.21273282170296,
+				orientation_x = 0.3632700741291,
+				orientation_y = 0.69443655014038,
+				orientation_z = -0.58355587720871,
+				pos_x = -2117.1765136719,
+				pos_y = -1585.6578369141,
+				pos_z = -608.19201660156,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.67648810148239,
+				orientation_x = 0.035710543394089,
+				orientation_y = -0.73004770278931,
+				orientation_z = -0.090105004608631,
+				pos_x = -1988.0026855469,
+				pos_y = -1625.5158691406,
+				pos_z = -490.26239013672,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.11593981832266,
+				orientation_x = 0.79112678766251,
+				orientation_y = -0.53074032068253,
+				orientation_z = -0.28105345368385,
+				pos_x = -742.53088378906,
+				pos_y = -60046.9453125,
+				pos_z = -937.7744140625,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -0.13871118426323,
+				orientation_x = 0.3599366247654,
+				orientation_y = 0.59026873111725,
+				orientation_z = 0.70907521247864,
+				pos_x = -2341.4868164063,
+				pos_y = -32736.7265625,
+				pos_z = 220.70973205566,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.99114668369293,
+				orientation_x = 0.10240684449673,
+				orientation_y = 0.083731159567833,
+				orientation_z = -0.01140804681927,
+				pos_x = -1940.9937744141,
+				pos_y = -1595.7288818359,
+				pos_z = -663.68200683594,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
 			CBloomLight = 
 			{
 				empty = 0,
@@ -1839,9 +1749,29 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 2853.2397460938,
-				pos_y = -1790.3544921875,
-				pos_z = -543.47857666016,
+				pos_x = 3619.3806152344,
+				pos_y = -3490.0998535156,
+				pos_z = -4387.5991210938,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "TestActor",
+		components = 
+		{
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
@@ -1890,9 +1820,29 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 2485.5490722656,
-				pos_y = -1841.5811767578,
-				pos_z = -636.31329345703,
+				pos_x = 4553.2490234375,
+				pos_y = -3067.0766601563,
+				pos_z = -7831.3427734375,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "TestActor",
+		components = 
+		{
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
@@ -1941,12 +1891,127 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 2588.0541992188,
-				pos_y = -1835.2479248047,
-				pos_z = 280.09768676758,
+				pos_x = 4360.5654296875,
+				pos_y = -3164.310546875,
+				pos_z = -7784.470703125,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "TestActor",
+		components = 
+		{
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Camera",
+		components = 
+		{
+			CCamera = 
+			{
+				far_plane = 51200,
+				fov = 60,
+				look_at_x = -400,
+				look_at_y = 50,
+				look_at_z = 0,
+				near_plane = 1,
+			},
+			CCatmullSpline = 
+			{
+				filename = "data/camera_spline.txt",
+				time_per_segment = 268.53100585938,
+			},
+			CNoClip = 
+			{
+				speed = 1,
+			},
+			CPlayerControl = 
+			{
+				empty = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 840.55065917969,
+				pos_y = 367.86102294922,
+				pos_z = -1918.1878662109,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "TestActor",
+		components = 
+		{
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 0,
+				pos_y = 0,
+				pos_z = 0,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/sphere_lowres.obj",
+				render_flags = 1,
+			},
+			CRigidBody = 
+			{
+				empty = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.79634964466095,
+				orientation_x = -0.23003460466862,
+				orientation_y = -0.21442613005638,
+				orientation_z = 0.51665538549423,
+				pos_x = -2257.8276367188,
+				pos_y = -3962.9724121094,
+				pos_z = 12311.2734375,
+				scale_x = 20,
+				scale_y = 20,
+				scale_z = 20,
 			},
 		},
 	}, 
@@ -1992,9 +2057,9 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 3491.6174316406,
-				pos_y = -1715.7331542969,
-				pos_z = -881.16784667969,
+				pos_x = 3268.0126953125,
+				pos_y = -3768.6252441406,
+				pos_z = -5435.7065429688,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,

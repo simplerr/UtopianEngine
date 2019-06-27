@@ -212,12 +212,31 @@ namespace Utopian
 		if (ImGui::CollapsingHeader("Catmull spline", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			bool isActive = mCatmullSpline->IsActive();
+			bool isDrawingDebug = mCatmullSpline->IsDrawingDebug();
 			float timePerSegment = mCatmullSpline->GetTimePerSegment();
 
+			ImGui::Text(mCatmullSpline->GetFilename().c_str());
 			ImGui::SliderFloat("Time per segment", &timePerSegment, 200.0f, 10000.0f);
 			ImGui::Checkbox("Active", &isActive);
+			ImGui::Checkbox("Draw debug", &isDrawingDebug);
+
+			if (ImGui::Button("Add control point"))
+			{
+				mCatmullSpline->AddControlPoint();
+			}
+
+			if (ImGui::Button("Remove control point"))
+			{
+				mCatmullSpline->RemoveLastControlPoint();
+			}
+
+			if (ImGui::Button("Save to file"))
+			{
+				mCatmullSpline->SaveControlPoints();
+			}
 
 			mCatmullSpline->SetActive(isActive);
+			mCatmullSpline->SetDrawDebug(isDrawingDebug);
 			mCatmullSpline->SetTimePerSegment(timePerSegment);
 		}
 	}
