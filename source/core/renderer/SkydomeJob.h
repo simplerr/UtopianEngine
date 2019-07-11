@@ -20,6 +20,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, azimuth)
 			UNIFORM_PARAM(float, time)
 			UNIFORM_PARAM(float, sunSpeed)
+			UNIFORM_PARAM(glm::vec3, eyePos)
 			UNIFORM_PARAM(int, onlySun)
 		UNIFORM_BLOCK_END()
 

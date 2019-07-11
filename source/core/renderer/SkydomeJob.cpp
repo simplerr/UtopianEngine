@@ -47,6 +47,9 @@ namespace Utopian
 		mEffect->BindUniformBuffer("UBO_parameters", &mParameterBlock);
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+
+		const uint32_t size = 240;
+		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void SkydomeJob::Render(const JobInput& jobInput)
@@ -76,6 +79,7 @@ namespace Utopian
 		mParameterBlock.data.azimuth = mSunAzimuth;
 		mParameterBlock.data.time = Timer::Instance().GetTime();
 		mParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
+		mParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
 		mParameterBlock.data.onlySun = false;
 		mParameterBlock.UpdateMemory();
 
