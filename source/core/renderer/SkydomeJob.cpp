@@ -48,8 +48,8 @@ namespace Utopian
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 
-		const uint32_t size = 240;
-		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());
+		// const uint32_t size = 240;
+		// gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void SkydomeJob::Render(const JobInput& jobInput)

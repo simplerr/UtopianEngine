@@ -31,8 +31,12 @@ layout (set = 0, binding = 1) uniform UBO_parameters
 const vec3 zenithColor = vec3(0.1f, 0.4f, 1.f);
 const vec3 horizonColor = vec3(0.34f, 0.54f, 0.88f);
 
-const vec3 sunColor = vec3(.6f, .35f, 0.2f);
-const float sunSize = 0.10;
+const vec3 sunColor = vec3(0.6f, 0.35f, 0.2f);
+
+const vec3 cloudColor = vec3(0.85f);
+
+#define CLOUD_QUALITY 7
+#define CLOUD_SPEED 10000.0f
 
 /*
  * From https://www.shadertoy.com/view/4slGD4
@@ -41,8 +45,6 @@ const float sunSize = 0.10;
 #define HASHSCALE1 .1031
 #define HASHSCALE3 vec3(.1031, .1030, .0973)
 #define HASHSCALE4 vec4(1031, .1030, .0973, .1099)
-#define CLOUD_QUALITY 7
-#define CLOUD_SPEED 5000.0f
 
 vec2 add = vec2(1.0, 0.0);
 
@@ -85,7 +87,7 @@ float FractalNoise(in vec2 xy)
 	return f;
 }
 
-vec3 GetClouds(in vec3 skyColor, in vec3 cloudColor, in vec3 rd)
+float GetCloudFactor(in vec3 rd)
 {
 	//if (rd.y < 0.01) return sky;
 	vec3 cameraPos = ubo_parameters.eyePos;
@@ -94,19 +96,21 @@ vec3 GetClouds(in vec3 skyColor, in vec3 cloudColor, in vec3 rd)
 	rd.xz *= v;
 	rd.xz += cameraPos.xz;
 	rd.xz *= .010;
-	float f = (FractalNoise(rd.xz + ubo_parameters.time / CLOUD_SPEED) - 0.55) * 5.0;
+	float cloudDensity = max(sin(ubo_parameters.time / 5000.0f) * 5.0, 2.0f);
+	float cloudOffset = ubo_parameters.time / CLOUD_SPEED;
+	float f = (FractalNoise(rd.xz + cloudOffset) - 0.55) * cloudDensity;
 
 	// Uses the ray's y component for horizon fade of fixed colour clouds...
-	vec3 finalColor = mix(skyColor, cloudColor, clamp(f * rd.y - 0.1, 0.0, 1.0));
+	float cloudFactor = clamp(f * rd.y - 0.1, 0.0, 1.0);
 
-	return finalColor;
+	return cloudFactor;
 }
 
 void main() 
 {
 	float radius = 1.0f;
 	float inclination = ubo_parameters.inclination;
-	float azimuth = ubo_parameters.azimuth;// * 0.00001;
+	float azimuth = ubo_parameters.azimuth;
 
 	vec3 unitPos = normalize(InPosL);
 
@@ -121,13 +125,15 @@ void main()
 					   radius * cos(inclination),
 					   radius * sin(inclination) * sin(azimuth));
 
-	float sun = 10 * pow(max(dot(sunPos, unitPos), 0.0), 500.0);
+	float sun = 10 * pow(max(dot(sunPos, unitPos), 0.0), 1200.0);
 
-	// Todo: Remove duplicate calls to GetClouds()
-	float sunCloudMask = GetClouds(vec3(0.0f), vec3(1.0f), unitPos).x;
-	sun *= (1.0f - sunCloudMask);
+	// Clouds blocking the sun
+	float cloudFactor = GetCloudFactor(unitPos);
+	sun *= (1.0f - cloudFactor);
 
-	vec3 cloudColor = vec3(0.85f);
-	OutFragColor = vec4(GetClouds(skyColor, cloudColor, unitPos), 1.0f);
+	skyColor += sun * sunColor;
+	skyColor = mix(skyColor, cloudColor, cloudFactor);
+
+	OutFragColor = vec4(skyColor, 1.0f);
 	OutSun = vec4(sun * sunColor, 1.0);
 }
