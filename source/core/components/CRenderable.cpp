@@ -84,6 +84,11 @@ namespace Utopian
 		mInternal->SetTexture(texture);
 	}
 
+	void CRenderable::SetSpecularTexture(Vk::Texture* texture)
+	{
+		mInternal->SetSpecularTexture(texture);
+	}
+
 	void CRenderable::SetTileFactor(glm::vec2 tileFactor)
 	{
 		mInternal->SetTileFactor(tileFactor);

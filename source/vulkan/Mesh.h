@@ -13,6 +13,7 @@
 #include "utility/Common.h"
 
 #define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
+#define DEFAULT_SPECULAR_MAP_TEXTURE "data/textures/default_specular_map.png"
 
 namespace Utopian::Vk
 {
@@ -30,9 +31,10 @@ namespace Utopian::Vk
 		void BuildBuffers(Device* device);
 		void BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>);
 
-		void LoadTextures(std::string diffusePath, std::string normalPath = DEFAULT_NORMAL_MAP_TEXTURE);
+		void LoadTextures(std::string diffusePath, std::string normalPath = DEFAULT_NORMAL_MAP_TEXTURE, std::string specularPath = DEFAULT_SPECULAR_MAP_TEXTURE);
 
 		void SetTexture(Texture* texture);
+		void SetSpecularTexture(Texture* texture);
 		VkDescriptorSet GetTextureDescriptorSet();
 
 		BoundingBox GetBoundingBox();
@@ -62,6 +64,7 @@ namespace Utopian::Vk
 		Device* mDevice;
 		Texture* mDiffuseTexture;
 		Texture* mNormalTexture;
+		Texture* mSpecularTexture;
 
 		BoundingBox mBoundingBox;
 

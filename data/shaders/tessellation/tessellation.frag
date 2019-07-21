@@ -94,7 +94,7 @@ void main()
 
     vec3 lightDir = vec3(0.5, 1, 1);
     float diffuse = max(0.1, dot(bumpNormal, normalize(lightDir)) * 1.2); 
-    vec4 color = vec4(finalDiffuse, 1.0);
+    vec4 color = vec4(finalDiffuse, 0.0);
 
     // Apply wireframe
     // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/

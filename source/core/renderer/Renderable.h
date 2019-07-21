@@ -34,6 +34,7 @@ namespace Utopian
 
 		void SetModel(Utopian::Vk::StaticModel* model);
 		void SetTexture(Vk::Texture* texture);
+		void SetSpecularTexture(Vk::Texture* texture);
 		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
 		void SetMaterial(Utopian::Vk::Mat material);

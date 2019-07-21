@@ -15,6 +15,7 @@
 #include "core/components/Actor.h"
 #include "core/components/CCatmullSpline.h"
 #include "core/components/CTransform.h"
+#include "core/components/CRenderable.h"
 
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
@@ -54,6 +55,8 @@ void Game::InitScene()
 {
 	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("TestActor");
 	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
+	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+	renderable->LoadModel("data/models/adventure_village/CrateLong.obj");
 }
 
 void Game::Update()

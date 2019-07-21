@@ -96,7 +96,7 @@ float GetCloudFactor(in vec3 rd)
 	rd.xz *= v;
 	rd.xz += cameraPos.xz;
 	rd.xz *= .010;
-	float cloudDensity = max(sin(ubo_parameters.time / 5000.0f) * 5.0, 2.0f);
+	float cloudDensity = max(sin(ubo_parameters.time / 5000.0f) * 5.0, 5.0f);
 	float cloudOffset = ubo_parameters.time / CLOUD_SPEED;
 	float f = (FractalNoise(rd.xz + cloudOffset) - 0.55) * cloudDensity;
 

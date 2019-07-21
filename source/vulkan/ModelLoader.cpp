@@ -26,6 +26,7 @@ namespace Utopian::Vk
 		mMeshTexturesDescriptorSetLayout = std::make_shared<DescriptorSetLayout>(device);
 		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
 		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
+		mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
 		mMeshTexturesDescriptorSetLayout->Create();
 
 		mMeshTexturesDescriptorPool = std::make_shared<DescriptorPool>(device);
@@ -119,13 +120,7 @@ namespace Utopian::Vk
 				aiMaterial* material = scene->mMaterials[assimpMesh->mMaterialIndex];
 				int numTextures = material->GetTextureCount(aiTextureType_DIFFUSE);
 				int numNormalMaps = material->GetTextureCount(aiTextureType_NORMALS);
-				std::vector<int> numTexturesList;
-
-				for (uint32_t i = 0; i < 0xC; i++)
-				{
-					int numTextures = material->GetTextureCount((aiTextureType)i);
-					numTexturesList.push_back(numTextures);
-				}
+				int numSpecularMaps = material->GetTextureCount(aiTextureType_SPECULAR);
 
 				std::string texturePath = PLACEHOLDER_TEXTURE_PATH;
 				if (numTextures > 0)
@@ -176,6 +171,19 @@ namespace Utopian::Vk
 				}
 
 				mesh->LoadTextures(texturePath);
+
+				if (numSpecularMaps > 0)
+				{
+					aiString texPath;
+					material->GetTexture(aiTextureType_SPECULAR, 0, &texPath);
+					FindValidPath(&texPath, filename);
+					texturePath = texPath.C_Str();
+					Texture* texture = gTextureLoader().LoadTexture(texturePath);
+
+					if (texture != nullptr)
+						mesh->SetSpecularTexture(texture);
+				}
+
 				mesh->BuildBuffers(mDevice);		// Build the models buffers here
 				model->AddMesh(mesh);
 			}

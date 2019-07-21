@@ -19,6 +19,7 @@ layout (location = 3) out vec4 outNormalV;
 
 layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
+layout (set = 1, binding = 2) uniform sampler2D specularSampler;
 
 layout (std140, set = 0, binding = 1) uniform UBO_settings 
 {
@@ -37,6 +38,7 @@ float linearDepth(float depth)
 void main() 
 {
 	vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
+	vec4 specular = texture(specularSampler, InTex * InTextureTiling);
 
 	if (diffuse.a < 0.01f)
 		discard;
@@ -62,7 +64,7 @@ void main()
 	}
 
 	outNormal.y *= -1.0f;
-	outAlbedo = vec4(diffuse);
+	outAlbedo = vec4(diffuse.rgb, specular.r);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
 	//outAlbedo = vec4(InTex.x, InTex.y, 0, 1);
 }

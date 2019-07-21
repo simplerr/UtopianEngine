@@ -86,6 +86,7 @@ void main()
 	vec3 position = texture(positionSampler, InTex).xyz;
 	vec3 normal = texture(normalSampler, InTex).rgb;
 	vec3 albedo = texture(albedoSampler, InTex).rgb;
+	float specularIntensity = texture(albedoSampler, InTex).a;
 
 	// Todo: Note: the + sign is due to the fragment world position is negated for some reason
 	// this is a left over from an old problem
@@ -123,6 +124,9 @@ void main()
 	float ssao = texture(ssaoSampler, InTex).r;
 
 	OutFragColor = litColor * ssao;
+
+	if (specularIntensity > 0.0)
+		OutFragColor.rgb = vec3(1, 0, 0);
 
 	if (settings_ubo.cascadeColorDebug == 1)
 	{

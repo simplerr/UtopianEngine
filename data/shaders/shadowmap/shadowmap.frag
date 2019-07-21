@@ -9,6 +9,7 @@ const float FAR_PLANE = 10000.0f; //todo: specialization const
 
 layout (set = 1, binding = 0) uniform sampler2D texSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
+layout (set = 1, binding = 2) uniform sampler2D specularSampler;
 
 float linearDepth(float depth)
 {
@@ -22,6 +23,7 @@ void main()
 
 	// Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
 	vec4 hack = texture(normalSampler, InTex);
+	vec4 hack2 = texture(specularSampler, InTex);
 
 	if (color.a < 0.01f)
 		discard;

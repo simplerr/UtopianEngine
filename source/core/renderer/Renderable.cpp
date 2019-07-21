@@ -61,6 +61,11 @@ namespace Utopian
 		mModel->mMeshes[0]->SetTexture(texture);
 	}
 
+	void Renderable::SetSpecularTexture(Vk::Texture* texture)
+	{
+		mModel->mMeshes[0]->SetTexture(texture);
+	}
+
 	void Renderable::SetTileFactor(glm::vec2 tileFactor)
 	{
 		mTextureTileFactor = tileFactor;

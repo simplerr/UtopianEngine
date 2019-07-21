@@ -18,6 +18,7 @@ namespace Utopian::Vk
 		mDevice = device;
 		mDiffuseTexture = nullptr;
 		mNormalTexture = nullptr;
+		mSpecularTexture = nullptr;
 	}
 	
 	Mesh::~Mesh()
@@ -88,6 +89,12 @@ namespace Utopian::Vk
 		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
 	}
 
+	void Mesh::SetSpecularTexture(Texture* texture)
+	{
+		mSpecularTexture = texture;
+		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
+	}
+
 	VkDescriptorSet Mesh::GetTextureDescriptorSet()
 	{
 		return mTextureDescriptorSet->GetVkHandle();
@@ -98,6 +105,7 @@ namespace Utopian::Vk
 		mTextureDescriptorSet = std::make_shared<DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
 		mTextureDescriptorSet->BindCombinedImage(0, mDiffuseTexture->GetTextureDescriptorInfo());
 		mTextureDescriptorSet->BindCombinedImage(1, mNormalTexture->GetTextureDescriptorInfo());
+		mTextureDescriptorSet->BindCombinedImage(2, mSpecularTexture->GetTextureDescriptorInfo());
 		mTextureDescriptorSet->UpdateDescriptorSets();
 	}
 
@@ -121,10 +129,11 @@ namespace Utopian::Vk
 		return mIndexBuffer.get();
 	}
 
-	void Mesh::LoadTextures(std::string diffusePath, std::string normalPath)
+	void Mesh::LoadTextures(std::string diffusePath, std::string normalPath, std::string specularPath)
 	{
 		mDiffuseTexture = gTextureLoader().LoadTexture(diffusePath);
 		mNormalTexture = gTextureLoader().LoadTexture(normalPath);
+		mSpecularTexture = gTextureLoader().LoadTexture(specularPath);
 		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
 	}
 }

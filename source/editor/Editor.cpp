@@ -342,6 +342,7 @@ namespace Utopian
 	void Editor::AddPaths()
 	{
 		// Add paths to models that can be loaded
+		AddActorCreation("data/models/adventure_village/CrateLong_reflective.obj");
 		AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);
 		AddActorCreation("data/models/adventure_village/CrateLong.obj", ActorTemplate::RIGID_BOX);
 		AddActorCreation("data/models/adventure_village/Barrel.obj", ActorTemplate::RIGID_BOX);

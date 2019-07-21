@@ -203,6 +203,7 @@ namespace Utopian
 		std::string model;
 		std::string diffuseTexture;
 		std::string normalMap;
+		std::string specularMap;
 	};
 
 	class AssetLoader : public Module<AssetLoader>
