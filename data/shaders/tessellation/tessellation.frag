@@ -14,11 +14,12 @@ layout (location = 4) in vec3 InBarycentric;
 layout (location = 0) out vec4 OutPosition;
 layout (location = 1) out vec4 OutNormal;
 layout (location = 2) out vec4 OutAlbedo;
+layout (location = 3) out vec4 OutSpecular;
 
 // Output normals in view space so that the SSAO pass can use them.
 // Should be reworked so that you don't have to use two separate textures
 // for normals in world space vs view space.
-layout (location = 3) out vec4 OutNormalV;
+layout (location = 4) out vec4 OutNormalV;
 
 layout (std140, set = 0, binding = 8) uniform UBO_brush 
 {
@@ -94,7 +95,7 @@ void main()
 
     vec3 lightDir = vec3(0.5, 1, 1);
     float diffuse = max(0.1, dot(bumpNormal, normalize(lightDir)) * 1.2); 
-    vec4 color = vec4(finalDiffuse, 0.0);
+    vec4 color = vec4(finalDiffuse, 1.0);
 
     // Apply wireframe
     // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
@@ -112,6 +113,7 @@ void main()
     // GBuffer
     OutPosition = vec4(InPosW, 1.0);
     OutAlbedo = color;
+    OutSpecular = vec4(0.0f, 0.0f, 0.0f, 1.0f);
     bumpNormal.xz *= -1; // To make the normals align with the rest of the world
     OutNormal = vec4(bumpNormal, 1.0);
 
@@ -131,6 +133,7 @@ void main()
         if (ubo_brush.mode == 2)    // Vegetation
             OutAlbedo = vec4(0.0f, 0.0f, 1.0f, 1.0f);
     }
+
     // Debugging:
     //bumpNormal = bumpNormal.rbg;
     //OutColor = vec4(bumpNormal, 1.0);

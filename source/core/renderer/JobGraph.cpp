@@ -13,6 +13,7 @@
 #include "core/renderer/TonemapJob.h"
 #include "core/renderer/BloomJob.h"
 #include "core/renderer/Im3dJob.h"
+#include "core/renderer/SSRJob.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
@@ -28,6 +29,7 @@ namespace Utopian
 		mGBuffer.normalImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.normalViewImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		mGBuffer.albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		mGBuffer.specularImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
 
 		/* Add jobs */
@@ -44,6 +46,7 @@ namespace Utopian
 		//AddJob(new SkyboxJob(renderer, width, height));
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
+		AddJob(new SSRJob(device, width, height));
 		AddJob(new DebugJob(device, width, height));
 		AddJob(new Im3dJob(device, width, height));
 		AddJob(new BloomJob(device, width, height));
@@ -59,6 +62,7 @@ namespace Utopian
 		mDebugDescriptorSets.normal = imGuiRenderer->AddTexture(mGBuffer.normalImage->GetView());
 		mDebugDescriptorSets.normalView = imGuiRenderer->AddTexture(mGBuffer.normalViewImage->GetView());
 		mDebugDescriptorSets.albedo = imGuiRenderer->AddTexture(mGBuffer.albedoImage->GetView());
+		mDebugDescriptorSets.specular = imGuiRenderer->AddTexture(mGBuffer.specularImage->GetView());
 	}
 
 	JobGraph::~JobGraph()
@@ -107,6 +111,11 @@ namespace Utopian
 		ImGui::BeginGroup();
 		ImGui::Text("Albedo");
 		ImGui::Image(mDebugDescriptorSets.albedo, textureSize);
+		ImGui::EndGroup();
+
+		ImGui::BeginGroup();
+		ImGui::Text("Specular");
+		ImGui::Image(mDebugDescriptorSets.specular, textureSize);
 		ImGui::EndGroup();
 
 		ImGuiRenderer::EndWindow();

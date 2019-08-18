@@ -32,9 +32,10 @@ namespace Utopian
 		renderTarget->AddWriteOnlyColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		renderTarget->AddWriteOnlyColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		renderTarget->AddWriteOnlyColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		renderTarget->AddWriteOnlyColorAttachment(gbuffer.specularImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		renderTarget->AddWriteOnlyColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		renderTarget->AddWriteOnlyDepthAttachment(gbuffer.depthImage);
-		renderTarget->SetClearColor(1, 1, 1, 1);
+		renderTarget->SetClearColor(0, 0, 0, 1);
 		renderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;

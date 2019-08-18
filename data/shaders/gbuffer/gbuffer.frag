@@ -11,11 +11,12 @@ layout (location = 6) in mat3 InTBN;
 layout (location = 0) out vec4 outPosition;
 layout (location = 1) out vec4 outNormal;
 layout (location = 2) out vec4 outAlbedo;
+layout (location = 3) out vec4 outSpecular;
 
 // Output normals in view space so that the SSAO pass can use them.
 // Should be reworked so that you don't have to use two separate textures
 // for normals in world space vs view space.
-layout (location = 3) out vec4 outNormalV;
+layout (location = 4) out vec4 outNormalV;
 
 layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
@@ -64,7 +65,8 @@ void main()
 	}
 
 	outNormal.y *= -1.0f;
-	outAlbedo = vec4(diffuse.rgb, specular.r);
+	outAlbedo = diffuse;
+	outSpecular = specular;
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
 	//outAlbedo = vec4(InTex.x, InTex.y, 0, 1);
 }

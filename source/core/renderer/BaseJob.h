@@ -19,6 +19,7 @@ namespace Utopian
 		SharedPtr<Vk::Image> normalImage;
 		SharedPtr<Vk::Image> normalViewImage; // Normals in view space
 		SharedPtr<Vk::Image> albedoImage;
+		SharedPtr<Vk::Image> specularImage;
 		SharedPtr<Vk::Image> depthImage;
 	};
 

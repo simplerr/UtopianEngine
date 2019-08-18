@@ -25,9 +25,10 @@ namespace Utopian
 		mRenderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRenderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRenderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteColorAttachment(gbuffer.specularImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRenderTarget->AddReadWriteColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
-		mRenderTarget->SetClearColor(1, 1, 1, 1);
+		mRenderTarget->SetClearColor(0, 0, 0, 0);
 		mRenderTarget->Create();
 
 		// Todo: Implement a better way for multiple pipelines in the same Effect
