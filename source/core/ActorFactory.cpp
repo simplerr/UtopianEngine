@@ -108,8 +108,10 @@ namespace Utopian
 				else if (name == "CCatmullSpline") {
 					std::string filename = componentData["filename"].ToString();
 					float timePerSegment = componentData["time_per_segment"].ToNumber();
+					uint32_t drawDebug = componentData["draw_debug"].ToInteger();
 					CCatmullSpline* catmullSpline = actor->AddComponent<CCatmullSpline>(filename);
 					catmullSpline->SetTimePerSegment(timePerSegment);
+					catmullSpline->SetDrawDebug(drawDebug);
 				}
 			}
 

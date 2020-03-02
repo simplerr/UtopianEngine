@@ -123,6 +123,7 @@ namespace Utopian
 
 		luaObject.SetString("filename", GetFilename().c_str());
 		luaObject.SetNumber("time_per_segment", GetTimePerSegment());
+		luaObject.SetNumber("draw_debug", IsDrawingDebug());
 
 		return luaObject;
 	}

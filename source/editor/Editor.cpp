@@ -84,7 +84,7 @@ namespace Utopian
 		}
 
 		// Add new actor to scene
-		if (gInput().KeyPressed(VK_SPACE))
+		if (gInput().KeyPressed('C'))
 		{
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
