@@ -31,12 +31,15 @@ namespace Utopian
 
 		LRESULT HandleMessages(UINT msg, WPARAM wParam, LPARAM lParam);
 
-		/** Registers a callback function which returns true if the mouse cursor is inside the UI. */
-		template<class ...Args>
-		void RegisterUiCallback(Args &&...args)
-		{
-			mIsMouseInsideUiCallback = std::bind(std::forward<Args>(args)...);
-		}
+		/** Registers a callback which returns true if the mouse cursor is inside the UI. */
+		void RegisterMouseInsideUiCallback(std::function<bool(void)> callback);
+
+		/** Registers a callback which is used for retrieving key down events. */
+		void RegisterKeydownCallback(std::function<void(char)> callback);
+
+		/** Registers a callback which returns true if the UI want to capture keyboard input. */
+		void RegisterUiCaptureCallback(std::function<bool(void)> callback);
+
 	private:
 		unsigned char mLastKeyState[256];
 		unsigned char mKeyState[256];
@@ -45,7 +48,9 @@ namespace Utopian
 		glm::vec2 mMouseDelta;
 		float mMouseWheelDelta;
 
-		std::function<bool()> mIsMouseInsideUiCallback;
+		std::function<bool(void)> mIsMouseInsideUiCallback;
+		std::function<void(char)> mKeydownCallback;
+		std::function<bool(void)> mIsUiCapturingKeyboardCallback;
 	};
 
 	Input& gInput();

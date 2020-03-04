@@ -33,7 +33,9 @@ namespace Utopian
 		void EndFrame();
 		void Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers);
 		void PrepareResources();
-		bool IsMouseInsideUi();
+		static bool IsMouseInsideUi();
+		static bool IsKeyboardCapture();
+		static void KeydownCallback(char key);
 		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;

@@ -55,7 +55,9 @@ namespace Utopian
 		mLastFrameTime = std::chrono::high_resolution_clock::now();
 		mDeltaTime = 0.0;
 
-		gInput().RegisterUiCallback(&ImGuiRenderer::IsMouseInsideUi, this);
+		gInput().RegisterMouseInsideUiCallback(&ImGuiRenderer::IsMouseInsideUi);
+		gInput().RegisterKeydownCallback(&ImGuiRenderer::KeydownCallback);
+		gInput().RegisterUiCaptureCallback(&ImGuiRenderer::IsKeyboardCapture);
 	}
 
 	/** Free up all Vulkan resources acquired by the UI overlay */
@@ -240,7 +242,6 @@ namespace Utopian
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
 		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON, false);
 		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON, false);
-
 		ImGui::NewFrame();
 	}
 
@@ -293,5 +294,17 @@ namespace Utopian
 	bool ImGuiRenderer::IsMouseInsideUi()
 	{
 		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+	}
+	
+	bool ImGuiRenderer::IsKeyboardCapture()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		return io.WantCaptureKeyboard;
+	}
+
+	void ImGuiRenderer::KeydownCallback(char key)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		io.AddInputCharacter(key);
 	}
 }

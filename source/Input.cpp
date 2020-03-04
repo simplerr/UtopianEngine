@@ -88,6 +88,8 @@ namespace Utopian
 		case WM_MOUSEWHEEL:
 			mMouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam);
 			break;
+		case WM_KEYDOWN:
+			mKeydownCallback(wParam);
 		}
 
 		return 0;
@@ -115,6 +117,11 @@ namespace Utopian
 				keyPressed = false;
 			}
 		}
+		// If keyboard input is captured by the UI then don't return true.
+		else if (mIsUiCapturingKeyboardCallback())
+		{
+			keyPressed = false;
+		}
 
 		return keyPressed;
 	}
@@ -138,6 +145,11 @@ namespace Utopian
 				keyDown = false;
 			}
 		}
+		// If keyboard input is captured by the UI then don't return true.
+		else if (mIsUiCapturingKeyboardCallback())
+		{
+			keyDown = false;
+		}
 
 		return keyDown;
 	}
@@ -160,6 +172,11 @@ namespace Utopian
 			{
 				keyReleased = false;
 			}
+		}
+		// If keyboard input is captured by the UI then don't return true.
+		else if (mIsUiCapturingKeyboardCallback())
+		{
+			keyReleased = false;
 		}
 
 		return keyReleased;
@@ -206,5 +223,20 @@ namespace Utopian
 
 	void Input::Poll()
 	{
+	}
+
+	void Input::RegisterMouseInsideUiCallback(std::function<bool(void)> callback)
+	{
+		mIsMouseInsideUiCallback = callback;
+	}
+
+	void Input::RegisterKeydownCallback(std::function<void(char)> callback)
+	{
+		mKeydownCallback = callback;
+	}
+
+	void Input::RegisterUiCaptureCallback(std::function<bool(void)> callback)
+	{
+		mIsUiCapturingKeyboardCallback = callback;
 	}
 }
