@@ -48,6 +48,7 @@ namespace Utopian
 
 	private:
 		void UpdateCommandBuffers();
+		void ResetKeyStates();
 
 	private:
 		Utopian::Vk::VulkanApp* mVulkanApp;

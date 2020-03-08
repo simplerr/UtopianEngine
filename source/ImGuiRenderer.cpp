@@ -251,10 +251,7 @@ namespace Utopian
 	void ImGuiRenderer::EndFrame()
 	{
 		ImGui::Render();
-
-		ImGuiIO& io = ImGui::GetIO();
-		for (uint32_t i = 0; i < 512; i++)
-			io.KeysDown[i] = false;
+		ResetKeyStates();
 	}
 
 	void ImGuiRenderer::Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers)
@@ -314,5 +311,12 @@ namespace Utopian
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddInputCharacter(key);
 		io.KeysDown[key] = true;
+	}
+
+	void ImGuiRenderer::ResetKeyStates()
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		for (uint32_t i = 0; i < 512; i++)
+			io.KeysDown[i] = false;
 	}
 }

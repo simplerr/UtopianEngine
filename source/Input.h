@@ -41,6 +41,8 @@ namespace Utopian
 		void RegisterUiCaptureCallback(std::function<bool(void)> callback);
 
 	private:
+		bool IsLetter(char key);
+	private:
 		unsigned char mLastKeyState[256];
 		unsigned char mKeyState[256];
 

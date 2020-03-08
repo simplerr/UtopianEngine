@@ -89,7 +89,18 @@ namespace Utopian
 			mMouseWheelDelta += GET_WHEEL_DELTA_WPARAM(wParam);
 			break;
 		case WM_KEYDOWN:
-			mKeydownCallback(wParam);
+		{
+			char key = wParam;
+			if (IsLetter(wParam))
+			{
+				// Change to non captial letter
+				if (!KeyDown(VK_SHIFT, false))
+					key += 32;
+			}
+
+			mKeydownCallback(key);
+			break;
+		}
 		}
 
 		return 0;
@@ -118,7 +129,7 @@ namespace Utopian
 			}
 		}
 		// If keyboard input is captured by the UI then don't return true.
-		else if (mIsUiCapturingKeyboardCallback())
+		else if (excludeUi && mIsUiCapturingKeyboardCallback())
 		{
 			keyPressed = false;
 		}
@@ -146,7 +157,7 @@ namespace Utopian
 			}
 		}
 		// If keyboard input is captured by the UI then don't return true.
-		else if (mIsUiCapturingKeyboardCallback())
+		else if (excludeUi && mIsUiCapturingKeyboardCallback())
 		{
 			keyDown = false;
 		}
@@ -174,7 +185,7 @@ namespace Utopian
 			}
 		}
 		// If keyboard input is captured by the UI then don't return true.
-		else if (mIsUiCapturingKeyboardCallback())
+		else if (excludeUi && mIsUiCapturingKeyboardCallback())
 		{
 			keyReleased = false;
 		}
@@ -238,5 +249,10 @@ namespace Utopian
 	void Input::RegisterUiCaptureCallback(std::function<bool(void)> callback)
 	{
 		mIsUiCapturingKeyboardCallback = callback;
+	}
+
+	bool Input::IsLetter(char key)
+	{
+		return (key >= 65 && key <= 90);
 	}
 }
