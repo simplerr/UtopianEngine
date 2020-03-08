@@ -20,5 +20,6 @@ namespace Utopian
 		void ClearInspectors();
 		std::vector<ComponentInspector*> mComponentInspectors;
 		Actor* mActor;
+		char mActorName[256];
 	};
 }

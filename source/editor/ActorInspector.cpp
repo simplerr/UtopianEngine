@@ -28,15 +28,12 @@ namespace Utopian
 
 			// General actor information
 			std::string name = mActor->GetName();
-			if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+			if (ImGui::CollapsingHeader(mActor->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				// static int component = 1;
-				// ImGui::Combo("Component", &component, "Light\0Renderable\0\0");
-
-				// if (ImGui::Button("Add"))
-				// { 
-				// 	uint32_t a = component;
-				// }
+                if (ImGui::InputText("Name:", mActorName, IM_ARRAYSIZE(mActorName), ImGuiInputTextFlags_EnterReturnsTrue))
+				{
+					mActor->SetName(mActorName);
+				}
 			}
 
 			for (auto& inspector : mComponentInspectors)
@@ -51,6 +48,7 @@ namespace Utopian
 	void ActorInspector::SetActor(Utopian::Actor* actor)
 	{
 		mActor = actor;
+		strcpy(mActorName, actor->GetName().c_str());
 
 		ClearInspectors();
 
