@@ -44,6 +44,9 @@ namespace Utopian
 		io.DisplaySize = ImVec2(width, height);
 		io.FontGlobalScale = mScale;
 
+		io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
+		io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
+
 		mTextureDescriptorPool = std::make_shared<Vk::DescriptorPool>(vulkanApp->GetDevice());
 		mTextureDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 50);
 		mTextureDescriptorPool->Create();
@@ -248,6 +251,10 @@ namespace Utopian
 	void ImGuiRenderer::EndFrame()
 	{
 		ImGui::Render();
+
+		ImGuiIO& io = ImGui::GetIO();
+		for (uint32_t i = 0; i < 512; i++)
+			io.KeysDown[i] = false;
 	}
 
 	void ImGuiRenderer::Resize(uint32_t width, uint32_t height, std::vector<VkFramebuffer> framebuffers)
@@ -306,5 +313,6 @@ namespace Utopian
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.AddInputCharacter(key);
+		io.KeysDown[key] = true;
 	}
 }
