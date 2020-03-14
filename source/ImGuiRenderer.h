@@ -37,6 +37,7 @@ namespace Utopian
 		static bool IsKeyboardCapture();
 		static void KeydownCallback(char key);
 		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void FreeTexture(ImTextureID textureId);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
 
@@ -45,6 +46,10 @@ namespace Utopian
 		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth);
 		static void EndWindow();
 		void ToggleVisible();
+
+		// Frees UI textures.
+		// Needs to be called when the textures are not in an active command buffer
+		void GarbageCollect();
 
 	private:
 		void UpdateCommandBuffers();
@@ -73,5 +78,7 @@ namespace Utopian
 		// called at the same frequency as UIOverlay::Update.
 		std::chrono::high_resolution_clock::time_point mLastFrameTime;
 		double mDeltaTime;
+
+		std::vector<VkDescriptorSet> mTextureDescriptorsToFree;
 	};
 }

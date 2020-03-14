@@ -490,6 +490,7 @@ namespace Utopian
 
 	void Renderer::GarbageCollect()
 	{
+		mImGuiRenderer->GarbageCollect();
 		if (mBuffersToFree.size() > 0)
 		{
 			mBuffersToFree.clear();

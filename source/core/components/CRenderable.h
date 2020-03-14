@@ -61,6 +61,8 @@ namespace Utopian
 		glm::vec2 GetTextureTiling() const;
 		glm::vec4 GetColor() const;
 
+		SharedPtr<Renderable> GetInternal();
+
 	private:
 		SharedPtr<Renderable> mInternal;
 		std::string mPath;

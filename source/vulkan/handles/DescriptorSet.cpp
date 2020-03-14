@@ -215,6 +215,7 @@ namespace Utopian::Vk
 			createInfo.maxSets = maxSets;
 			createInfo.poolSizeCount = mDescriptorSizes.size();
 			createInfo.pPoolSizes = mDescriptorSizes.data();
+			createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
 			Debug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
 		}

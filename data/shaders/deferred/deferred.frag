@@ -125,9 +125,6 @@ void main()
 
 	OutFragColor = litColor * ssao;
 
-	if (specularIntensity > 0.0)
-		OutFragColor.rgb = vec3(1, 0, 0);
-
 	if (settings_ubo.cascadeColorDebug == 1)
 	{
 		switch(cascadeIndex) {

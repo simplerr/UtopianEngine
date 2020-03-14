@@ -1,6 +1,9 @@
 #pragma once
 #include "core/Transform.h"
 #include "LightData.h"
+#include "imgui/imgui.h"
+#include <string>
+#include <vector>
 
 namespace Utopian
 {
@@ -14,6 +17,7 @@ namespace Utopian
 	{
 	public:
 		ComponentInspector();
+		virtual ~ComponentInspector();
 
 		virtual void UpdateUi() = 0;
 	private:
@@ -33,7 +37,19 @@ namespace Utopian
 	class RenderableInspector : public ComponentInspector
 	{
 	public:
+		struct TextureInfo
+		{
+			TextureInfo(ImTextureID id, std::string _path) {
+				textureId = id;
+				path = _path;
+			}
+
+			ImTextureID textureId;
+			std::string path;
+		};
+
 		RenderableInspector(CRenderable* renderable);
+		~RenderableInspector();
 
 		virtual void UpdateUi() override;
 	private:
@@ -44,6 +60,9 @@ namespace Utopian
 		bool mBoundingBox;
 		bool mDebugNormals;
 		bool mWireframe;
+
+		// For ImGui debug drawing
+		std::vector<TextureInfo> textureInfos;
 	};
 
 	class LightInspector : public ComponentInspector

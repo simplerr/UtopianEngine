@@ -163,4 +163,9 @@ namespace Utopian
 	{
 		return mInternal->GetColor();
 	}
+
+	SharedPtr<Renderable> CRenderable::GetInternal()
+	{
+		return mInternal;
+	}
 }

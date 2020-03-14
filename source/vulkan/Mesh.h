@@ -44,6 +44,13 @@ namespace Utopian::Vk
 		Buffer* GetVertxBuffer();
 		Buffer* GetIndexBuffer();
 
+		Texture* GetDiffuseTexture();
+		Texture* GetNormalTexture();
+		Texture* GetSpecularTexture();
+
+		// Note: Do not call this every run iteration
+		std::vector<Texture*> GetTextures();
+
 		std::vector<Vertex> vertexVector;
 		std::vector<unsigned int> indexVector;
 	private:

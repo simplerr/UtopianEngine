@@ -129,6 +129,31 @@ namespace Utopian::Vk
 		return mIndexBuffer.get();
 	}
 
+	Texture* Mesh::GetDiffuseTexture()
+	{
+		 return mDiffuseTexture; 
+	}
+
+	Texture* Mesh::GetNormalTexture()
+	{
+		return mNormalTexture;
+	}
+
+	Texture* Mesh::GetSpecularTexture()
+	{
+		return mSpecularTexture;
+	};
+
+	std::vector<Texture*> Mesh::GetTextures()
+	{
+		std::vector<Texture*> textures;
+		textures.push_back(mDiffuseTexture);
+		textures.push_back(mNormalTexture);
+		textures.push_back(mSpecularTexture);
+
+		return textures;
+	}
+
 	void Mesh::LoadTextures(std::string diffusePath, std::string normalPath, std::string specularPath)
 	{
 		mDiffuseTexture = gTextureLoader().LoadTexture(diffusePath);

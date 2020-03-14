@@ -8,11 +8,19 @@
 #include "core/components/CCatmullSpline.h"
 #include "core/components/Actor.h"
 #include <glm/gtc/quaternion.hpp>
+#include "vulkan/StaticModel.h"
+#include "vulkan/handles/Texture.h"
+#include "core/renderer/Renderer.h"
 
 namespace Utopian
 {
 	ComponentInspector::ComponentInspector()
 	{
+	}
+
+	ComponentInspector::~ComponentInspector()
+	{
+
 	}
 
 	TransformInspector::TransformInspector(CTransform* transform)
@@ -58,6 +66,28 @@ namespace Utopian
 		mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
 		mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 		mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
+
+		std::vector<Vk::Mesh*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
+
+		for (auto& mesh : meshes)
+		{
+			std::vector<Vk::Texture*> textures = mesh->GetTextures();
+
+			for (auto& texture : textures)
+			{
+				textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddTexture(texture->imageView), texture->GetPath()));
+			}
+		}
+	}
+
+	RenderableInspector::~RenderableInspector()
+	{
+		for (auto& textureInfo : textureInfos)
+		{
+			gRenderer().GetUiOverlay()->FreeTexture(textureInfo.textureId);
+		}
+
+		textureInfos.clear();
 	}
 
 	void RenderableInspector::UpdateUi()
@@ -137,6 +167,18 @@ namespace Utopian
 			ImGui::SliderInt("Tiling", &mTextureTiling.x, 1, 200);
 
 			mRenderable->SetTileFactor(glm::vec2(mTextureTiling.x, mTextureTiling.y));
+
+			if (ImGui::CollapsingHeader("Meshes", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				for (auto& textureInfo : textureInfos)
+				{
+					ImGui::Text(textureInfo.path.c_str());
+					if (ImGui::ImageButton(textureInfo.textureId, ImVec2(64, 64)))
+					{
+						// Nothing
+					}
+				}
+			}
 		}
 	}
 

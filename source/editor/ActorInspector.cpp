@@ -18,6 +18,10 @@ namespace Utopian
 
 	ActorInspector::~ActorInspector()
 	{
+		for (uint32_t i = 0; i < mComponentInspectors.size(); i++)
+		{
+			delete mComponentInspectors[i];
+		}
 	}
 
 	void ActorInspector::UpdateUi()
@@ -48,12 +52,14 @@ namespace Utopian
 	void ActorInspector::SetActor(Utopian::Actor* actor)
 	{
 		mActor = actor;
-		strcpy(mActorName, actor->GetName().c_str());
 
 		ClearInspectors();
 
 		if (mActor != nullptr)
+		{
+			strcpy(mActorName, actor->GetName().c_str());
 			AddInspectors();
+		}
 	}
 
 	void ActorInspector::AddInspectors()

@@ -55,8 +55,6 @@ namespace Utopian
 		mTerrainTool->Update();
 		mFoliageTool->Update();
 
-		UpdateUi();
-
 		// Gizmo
 		// Only move actors with renderables for now
 		if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
@@ -194,7 +192,7 @@ namespace Utopian
 		if (gInput().KeyPressed(VK_DELETE) && mSelectedActor != nullptr)
 		{
 			mSelectedActor->SetAlive(false);
-			UnselectActor();
+			OnActorSelected(nullptr);
 		}
 
 		// Hide/show UI
@@ -208,6 +206,10 @@ namespace Utopian
 		{
 			Vk::gEffectManager().RecompileModifiedShaders();
 		}
+
+		// The UI needs to be updated after updating the selected actor since otherwise
+		// the texture descriptor set for the UI can be freed when still being used in a command buffer.
+		UpdateUi();
 	}
 
 	void Editor::RenderActorCreationUi()
@@ -314,14 +316,9 @@ namespace Utopian
 		return mSelectedActor != nullptr;
 	}
 
-	void Editor::UnselectActor()
-	{
-		mSelectedActor = nullptr;
-		mActorInspector->SetActor(nullptr);
-	}
-
 	void Editor::OnActorSelected(Actor* actor)
 	{
+		// Todo: Remove?
 		if (IsActorSelected())
 		{
 			auto renderable = mSelectedActor->GetComponent<CRenderable>();
@@ -332,7 +329,7 @@ namespace Utopian
 		mSelectedActor = actor;
 
 		// Enable bounding box rendering
-		auto renderable = mSelectedActor->GetComponent<CRenderable>();
+		//auto renderable = mSelectedActor->GetComponent<CRenderable>();
 		//renderable->EnableBoundingBox();
 
 		// Create inspector UI

@@ -48,7 +48,7 @@ namespace Utopian
 		io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
 
 		mTextureDescriptorPool = std::make_shared<Vk::DescriptorPool>(vulkanApp->GetDevice());
-		mTextureDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 50);
+		mTextureDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 128);
 		mTextureDescriptorPool->Create();
 
 		mSampler = std::make_shared<Vk::Sampler>(vulkanApp->GetDevice());
@@ -229,6 +229,12 @@ namespace Utopian
 		return (ImTextureID)descriptorSet;
 	}
 
+	void ImGuiRenderer::FreeTexture(ImTextureID textureId)
+	{
+		VkDescriptorSet descriptorSet = (VkDescriptorSet)textureId;
+		mTextureDescriptorsToFree.push_back(descriptorSet);
+	}
+
 	void ImGuiRenderer::NewFrame()
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -318,5 +324,15 @@ namespace Utopian
 		ImGuiIO& io = ImGui::GetIO();
 		for (uint32_t i = 0; i < 512; i++)
 			io.KeysDown[i] = false;
+	}
+
+	void ImGuiRenderer::GarbageCollect()
+	{
+		// Clear garbage collected textures
+		if (mTextureDescriptorsToFree.size() > 0)
+		{
+			vkFreeDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), mTextureDescriptorPool->GetVkHandle(), mTextureDescriptorsToFree.size(), mTextureDescriptorsToFree.data());
+			mTextureDescriptorsToFree.clear();
+		}
 	}
 }
