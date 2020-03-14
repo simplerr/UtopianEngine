@@ -11,6 +11,7 @@
 #include "vulkan/StaticModel.h"
 #include "vulkan/handles/Texture.h"
 #include "core/renderer/Renderer.h"
+#include <algorithm>
 
 namespace Utopian
 {
@@ -68,15 +69,27 @@ namespace Utopian
 		mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
 
 		std::vector<Vk::Mesh*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
+		std::vector<Vk::Texture*> allTextures;
 
 		for (auto& mesh : meshes)
 		{
 			std::vector<Vk::Texture*> textures = mesh->GetTextures();
+			allTextures.insert(std::end(allTextures), std::begin(textures), std::end(textures));
+		}
 
-			for (auto& texture : textures)
-			{
-				textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddTexture(texture->imageView), texture->GetPath()));
-			}
+		std::sort(allTextures.begin(), allTextures.end(), [](Vk::Texture* textureA, Vk::Texture* textureB) {
+			return textureA->GetPath() < textureB->GetPath();
+		});
+
+		auto iter = std::unique(allTextures.begin(), allTextures.end(), [](Vk::Texture* textureA, Vk::Texture* textureB) {
+			return textureA->GetPath() == textureB->GetPath();
+		});
+
+		allTextures.erase(iter, allTextures.end());
+
+		for (auto& texture : allTextures)
+		{
+			textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddTexture(texture->imageView), texture->GetPath()));
 		}
 	}
 
