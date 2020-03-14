@@ -23,6 +23,8 @@
 #include "vulkan/Debug.h"
 #include "Input.h"
 
+#define MOUSE_WHEEL_SCALING 150.0f
+
 namespace Utopian
 {
 	ImGuiRenderer::ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height)
@@ -251,6 +253,7 @@ namespace Utopian
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
 		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON, false);
 		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON, false);
+		io.MouseWheel = gInput().MouseDz() / MOUSE_WHEEL_SCALING;
 		ImGui::NewFrame();
 	}
 
