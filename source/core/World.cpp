@@ -27,9 +27,9 @@ namespace Utopian
 		// Removes the Actor and all of it's components
 	}
 
-	Actor* World::RayIntersection(const Ray& ray)
+	SharedPtr<Actor> World::RayIntersection(const Ray& ray)
 	{
-		Actor* selectedActor = nullptr;
+		SharedPtr<Actor> selectedActor = nullptr;
 
 		float minDistance = FLT_MAX;
 		for (auto& actor : mActors)
@@ -41,7 +41,7 @@ namespace Utopian
 				float distance = FLT_MAX;
 				if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)
 				{
-					selectedActor = actor.get();
+					selectedActor = actor;
 				}
 			}
 		}
@@ -52,6 +52,17 @@ namespace Utopian
 	std::vector<SharedPtr<Actor>>& World::GetActors()
 	{
 		return mActors;
+	}
+
+	uint32_t World::GetActorIndex(SharedPtr<Actor> actor)
+	{
+		for (uint32_t index = 0; index < mActors.size(); index++)
+		{
+			if (actor == mActors[index])
+				return index;
+		}
+
+		assert(0 && "Actor not found");
 	}
 
 	void World::BindNode(const SharedPtr<SceneNode>& node, Actor* actor)

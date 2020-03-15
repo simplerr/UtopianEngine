@@ -29,6 +29,7 @@ namespace Utopian
 		: mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;
+		mSelectedActorIndex = 0u;
 		mActorInspector = new ActorInspector();
 		mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
 		mFoliageTool = std::make_shared<FoliageTool>(terrain, gRenderer().GetDevice());
@@ -74,10 +75,11 @@ namespace Utopian
 		{
 			Ray ray = mCamera->GetPickingRay();
 
-			Actor* selectedActor = mWorld->RayIntersection(ray);
-			if (selectedActor != nullptr && selectedActor != mSelectedActor)
+			SharedPtr<Actor> selectedActor = mWorld->RayIntersection(ray);
+			if (selectedActor != nullptr && selectedActor.get() != mSelectedActor)
 			{
-				OnActorSelected(selectedActor);
+				mSelectedActorIndex = mWorld->GetActorIndex(selectedActor);
+				OnActorSelected(selectedActor.get());
 			}
 		}
 
@@ -254,10 +256,9 @@ namespace Utopian
 				actorNames.push_back(strdup(name.c_str()));
 			}
 
-			int selectedActorIndex = 0;
-			if (ImGui::ListBox("Actors:", &selectedActorIndex, actorNames.data(), actorNames.size()))
+			if (ImGui::ListBox("Actors:", &mSelectedActorIndex, actorNames.data(), actorNames.size()))
 			{
-				OnActorSelected(actors[selectedActorIndex].get());
+				OnActorSelected(actors[mSelectedActorIndex].get());
 			}
 
 			for (uint32_t i = 0; i < actorNames.size(); i++)
@@ -267,8 +268,6 @@ namespace Utopian
 
 	void Editor::UpdateUi()
 	{
-		mActorInspector->UpdateUi();
-
 		// UI containing settings, terrain and foliage tools
 		ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
 
@@ -285,6 +284,11 @@ namespace Utopian
 		RenderActorSelectionUi();
 
 		ImGuiRenderer::EndWindow();
+
+		// Needs to be called after RenderActorSelectionUi() otherwhise the UI textures
+		// will be in use in the ImGuiRenderer command queue.
+		// Todo: Fix. Issue #91.
+		mActorInspector->UpdateUi();
 
 		ImGuiRenderer::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
 

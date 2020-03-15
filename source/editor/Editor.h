@@ -50,6 +50,7 @@ namespace Utopian
 		SharedPtr<TerrainTool> mTerrainTool;
 		SharedPtr<FoliageTool> mFoliageTool;
 		Actor* mSelectedActor;
+		int mSelectedActorIndex = 0;
 
 		std::vector<const char*> mModelPaths;
 

@@ -42,8 +42,9 @@ namespace Utopian
 		void RemoveActors();
 		void LoadScene();
 
-		Actor* RayIntersection(const Ray& ray);
+		SharedPtr<Actor> RayIntersection(const Ray& ray);
 		std::vector<SharedPtr<Actor>>& GetActors();
+		uint32_t GetActorIndex(SharedPtr<Actor> actor);
 
 		/* The bound SceneNodes transform will be synchronized with the Sceneactor in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* actor);
