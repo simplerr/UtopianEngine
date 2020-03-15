@@ -181,7 +181,7 @@ namespace Utopian
 
 			mRenderable->SetTileFactor(glm::vec2(mTextureTiling.x, mTextureTiling.y));
 
-			if (ImGui::CollapsingHeader("Meshes", ImGuiTreeNodeFlags_DefaultOpen))
+			if (ImGui::CollapsingHeader("Textures"))
 			{
 				for (auto& textureInfo : textureInfos)
 				{

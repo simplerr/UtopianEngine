@@ -53,10 +53,10 @@ Game::~Game()
 
 void Game::InitScene()
 {
-	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("TestActor from Game");
-	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
-	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
-	renderable->LoadModel("data/models/adventure_village/CrateLong.obj");
+	// SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Sponza");
+	// Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
+	// Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+	// renderable->LoadModel("data/models/sponza/sponza.obj");
 }
 
 void Game::Update()
