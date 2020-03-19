@@ -113,6 +113,7 @@
     <ClCompile Include="source\core\renderer\SkyboxJob.cpp" />
     <ClCompile Include="source\core\renderer\SkydomeJob.cpp" />
     <ClCompile Include="source\core\renderer\SSAOJob.cpp" />
+    <ClCompile Include="source\core\renderer\SSRJob.cpp" />
     <ClCompile Include="source\core\renderer\SunShaftJob.cpp" />
     <ClCompile Include="source\core\renderer\GBufferTerrainJob.cpp" />
     <ClCompile Include="source\core\renderer\TonemapJob.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="source\core\renderer\SkyboxJob.h" />
     <ClInclude Include="source\core\renderer\SkydomeJob.h" />
     <ClInclude Include="source\core\renderer\SSAOJob.h" />
+    <ClInclude Include="source\core\renderer\SSRJob.h" />
     <ClInclude Include="source\core\renderer\SunShaftJob.h" />
     <ClInclude Include="source\core\renderer\GBufferTerrainJob.h" />
     <ClInclude Include="source\core\renderer\TonemapJob.h" />

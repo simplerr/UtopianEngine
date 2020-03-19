@@ -35,6 +35,7 @@ namespace Utopian
 			//GRASS_INDEX,
 			SKYBOX_INDEX,
 			SUN_SHAFT_INDEX,
+			SSR_INDEX,
 			DEBUG_INDEX,
 			IM3D_INDEX,
 			BLOOM_INDEX,
