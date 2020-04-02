@@ -168,7 +168,7 @@ namespace Utopian
 		transform->AddRotation(glm::vec3(180.0f, 0, 0));
 
 		auto renderable = actor->AddComponent<CRenderable>();
-		renderable->LoadModel("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Tree Stump/Models/Tree_Stump_01.FBX");
+		renderable->LoadModel("data/NatureManufacture/Meadow Environment Dynamic Nature/Tree Stump/Models/Tree_Stump_01.FBX");
 
 		// Grass assets
 		for (uint32_t assetId = 0; assetId < GrassAsset::NUM_GRASS_ASSETS; assetId++)

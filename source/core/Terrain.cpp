@@ -281,7 +281,6 @@ namespace Utopian
 			}
 		}
 
-		mesh->LoadTextures("data/textures/ground/grass2.tga");
 		mesh->BuildBuffers(mDevice);
 		mQuadModel->AddMesh(mesh);
 	}

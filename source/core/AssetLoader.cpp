@@ -198,18 +198,18 @@ namespace Utopian
 	{
 		Asset asset = FindAsset(assetId);
 
-		std::string fullModelPath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.model;
+		std::string fullModelPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.model;
 
 		Vk::StaticModel* model = Vk::gModelLoader().LoadModel(fullModelPath);
 
 		// Some assets are not properly storing texture paths so we need to set them manually
 		if (asset.diffuseTexture != "-")
 		{
-			std::string fullDiffusePath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.diffuseTexture;
+			std::string fullDiffusePath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.diffuseTexture;
 			std::string fullNormalPath = DEFAULT_NORMAL_MAP_TEXTURE;
 
 			if (asset.normalMap != "-")
-				fullNormalPath = "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/" + asset.normalMap;
+				fullNormalPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.normalMap;
 
 			Vk::Texture* diffuseTexture = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
 			Vk::Texture* normalMap = Vk::gTextureLoader().LoadTexture(fullDiffusePath);

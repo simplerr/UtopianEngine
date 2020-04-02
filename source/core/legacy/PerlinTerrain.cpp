@@ -145,11 +145,11 @@ namespace Utopian
 			mesh->vertexVector[mesh->indexVector[i+2]].Bitangent = bitangent;
 		}
 
-		/*mesh->SetTexturePath("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga");
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");*/
+		/*mesh->SetTexturePath("data/NatureManufacture/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga");
+		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture("data/NatureManufacture/Meadow Environment Dynamic Nature/Ground/T_ground_meadow_grass_01_A_SM.tga");*/
 		mesh->LoadTextures("data/textures/ground/grass2.tga");
-		//mesh->LoadTextures("data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga", "data/NatureManufacture Assets/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_N.png");
+		//mesh->LoadTextures("data/NatureManufacture/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_A_SM.tga", "data/NatureManufacture/Meadow Environment Dynamic Nature/Ground/T_forest_ground_grass_01_N.png");
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
