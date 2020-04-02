@@ -12,7 +12,11 @@ namespace Utopian
 		UNIFORM_BLOCK_BEGIN(SSRUniforms)
 			UNIFORM_PARAM(glm::mat4, view)
 			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_BLOCK_END()
+		UNIFORM_BLOCK_END()
+
+		UNIFORM_BLOCK_BEGIN(BlurSettingsBlock)
+			UNIFORM_PARAM(int, blurRange)
+		UNIFORM_BLOCK_END()
 
 			SSRJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SSRJob();
@@ -21,20 +25,26 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 
 	private:
-		void InitFirstPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
-		void InitSecondPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
+		void InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
+		void InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
+		void InitCombinePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
 
-		void RenderFirstPass(const JobInput& jobInput);
-		void RenderSecondPass(const JobInput& jobInput);
+		void RenderTracePass(const JobInput& jobInput);
+		void RenderBlurPass(const JobInput& jobInput);
+		void RenderCombinePass(const JobInput& jobInput);
 
 		// Two pass effect
-		SharedPtr<Vk::Effect> mCalculateSSREffect;
+		SharedPtr<Vk::Effect> mTraceSSREffect;
+		SharedPtr<Vk::Effect> mBlurSSREffect;
 		SharedPtr<Vk::Effect> mApplySSREffect;
-		SharedPtr<Vk::Semaphore> mFirstPassSemaphore;
+		SharedPtr<Vk::Semaphore> mTracePassSemaphore;
+		SharedPtr<Vk::Semaphore> mBlurPassSemaphore;
 
-		SharedPtr<Vk::RenderTarget> mCalculateRenderTarget;
+		SharedPtr<Vk::RenderTarget> mTraceRenderTarget;
+		SharedPtr<Vk::RenderTarget> mBlurRenderTarget;
 		SharedPtr<Vk::RenderTarget> mApplyRenderTarget;
 		SharedPtr<Vk::Image> ssrImage;
+		SharedPtr<Vk::Image> ssrBlurImage;
 		SSRUniforms mUniformBlock;
 	};
 }
