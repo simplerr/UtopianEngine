@@ -41,9 +41,9 @@ namespace Utopian::Vk
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 
-	void RenderTarget::AddReadWriteDepthAttachment(const SharedPtr<Image>& image)
+	void RenderTarget::AddReadWriteDepthAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
 	{
-		mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE);
+		mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, finalImageLayout, initialImageLayout);
 		mFrameBuffer->AddAttachmentImage(image.get());
 	}
 

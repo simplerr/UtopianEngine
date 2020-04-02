@@ -46,7 +46,9 @@ namespace Utopian::Vk
 
 		void AddDepthAttachment(VkFormat format,
 								VkAttachmentLoadOp loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE);
+								VkAttachmentStoreOp storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+								VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+								VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 		uint32_t GetNumColorAttachments() const;
 

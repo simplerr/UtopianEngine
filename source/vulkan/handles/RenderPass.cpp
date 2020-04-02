@@ -98,7 +98,7 @@ namespace Utopian::Vk
 		attachments.push_back(attachment);
 	}
 
-	void RenderPass::AddDepthAttachment(VkFormat format, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+	void RenderPass::AddDepthAttachment(VkFormat format, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
 	{
 		VkAttachmentReference depthReference = {};
 		depthReference.attachment = attachments.size();
@@ -115,11 +115,11 @@ namespace Utopian::Vk
 		attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 
 		if (loadOp == VK_ATTACHMENT_LOAD_OP_LOAD)
-			attachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			attachment.initialLayout = initialImageLayout;
 		else
 			attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		attachment.finalLayout = finalImageLayout; // This is the layout the attachment will be transitioned to, e.g VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL and VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 
 		attachments.push_back(attachment);
 	}
