@@ -108,6 +108,7 @@ namespace Utopian
 		ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
 		ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
 		ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
+		ImGui::Checkbox("SSR", &mRenderingSettings.ssrEnabled);
 		ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
 		ImGui::Checkbox("FXAA", &mRenderingSettings.fxaaEnabled);
 		ImGui::Checkbox("FXAA debug", &mRenderingSettings.fxaaDebug);
@@ -139,6 +140,7 @@ namespace Utopian
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
+		mJobGraph->EnableJob(JobGraph::JobIndex::SSR_INDEX, mRenderingSettings.ssrEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
 
