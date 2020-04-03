@@ -38,11 +38,11 @@ namespace Utopian
 		renderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/tessellation/tessellation.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/tessellation.frag";
-		shaderCreateInfo.tescShaderPath = "data/shaders/tessellation/tessellation.tesc";
-		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/tessellation.tese";
-		shaderCreateInfo.geometryShaderPath = "data/shaders/tessellation/tessellation.geom";
+		shaderCreateInfo.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
+		shaderCreateInfo.tescShaderPath = "data/shaders/tessellation/terrain.tesc";
+		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/terrain.tese";
+		shaderCreateInfo.geometryShaderPath = "data/shaders/tessellation/terrain.geom";
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
 
 		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;

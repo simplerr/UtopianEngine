@@ -522,8 +522,7 @@ void main()
    vec4 specular = texture(specularSampler, InTex);
    float reflectiveness = specular.a;
 
-   //if (reflectiveness == 0.0)
-   if (specular.r < 0.4f || normal.y < 0.7f)
+   if (reflectiveness < 0.4f || normal.y < 0.7f)
    {
       OutFragColor = vec4(0.0);
       return;

@@ -155,7 +155,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/heightmap.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/heightmap.frag";
 		mHeightmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
@@ -175,7 +175,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/normalmap.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/normalmap.frag";
 		mNormalmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, normalRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
@@ -198,7 +198,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/blendmap.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/blendmap.frag";
 		mBlendmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order

@@ -141,7 +141,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/blendmap_brush.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/blendmap_brush.frag";
 		mBlendmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
@@ -161,7 +161,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/heightmap_brush.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/heightmap_brush.frag";
 		mHeightmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
 
 		// Vertices generated in fullscreen.vert are in clockwise order
