@@ -1,7 +1,9 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
-layout (set = 0, binding = 1) uniform UBO_parameters 
+// Note: 8 because this is used together with ssr_vkdf.glsl
+// which occupies bindng 0-5 for G-buffer textures
+layout (set = 0, binding = 8) uniform UBO_parameters 
 {
 	float sphereRadius;
 	float inclination;
@@ -131,6 +133,10 @@ SkyOutput GetSkyColor(vec3 direction)
 
 	skyColor += sun * sunColor;
 	skyColor = mix(skyColor, cloudColor, cloudFactor);
+
+	// Debug
+	// if (unitPos.y < 0.5 && unitPos.x < 0.5 && unitPos.y > 0.0 && unitPos.x > 0.0)
+	// 	skyColor.r = 1.0f;
 
 	skyOutput.skyColor = vec4(skyColor, 1.0f);
 	skyOutput.sunColor = vec4(sun * sunColor, 1.0);

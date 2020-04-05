@@ -194,6 +194,7 @@ namespace Utopian::Vk
 		}
 		else {
 			// Loading of model failed
+			Vk::Debug::ConsolePrint(filename);
 			assert(scene);
 		}
 

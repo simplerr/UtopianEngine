@@ -14,6 +14,7 @@
 #include "core/renderer/BloomJob.h"
 #include "core/renderer/Im3dJob.h"
 #include "core/renderer/SSRJob.h"
+#include "core/renderer/WaterJob.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
@@ -46,6 +47,7 @@ namespace Utopian
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new SSRJob(device, width, height));
+		AddJob(new WaterJob(device, width, height));
 		AddJob(new DebugJob(device, width, height));
 		AddJob(new Im3dJob(device, width, height));
 		AddJob(new BloomJob(device, width, height));
@@ -65,6 +67,7 @@ namespace Utopian
 
 	JobGraph::~JobGraph()
 	{
+		// Todo: Delete jobs...
 	}
 
 	void JobGraph::Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings)

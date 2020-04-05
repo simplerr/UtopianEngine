@@ -23,7 +23,7 @@ namespace Utopian
 
 		// Note: Todo: Probably don't need to be the native window size
 		mRadialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		mRadialBlurRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage());
+		mRadialBlurRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRadialBlurRenderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;

@@ -41,7 +41,9 @@ namespace Utopian::Vk
 		void AddReadWriteDepthAttachment(const SharedPtr<Image>& image,
 										 VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 										 VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-		void AddWriteOnlyDepthAttachment(const SharedPtr<Image>& image);
+		void AddWriteOnlyDepthAttachment(const SharedPtr<Image>& image,
+										 VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+										 VkImageLayout initialImageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 		// Some images can have multiple views (array layers > 1) so in those cases
 		// you must provide the exact VkImageView

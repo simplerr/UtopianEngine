@@ -1,5 +1,4 @@
 #include "core/renderer/GBufferTerrainJob.h"
-#include "core/renderer/SunShaftJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
@@ -11,7 +10,6 @@
 #include "vulkan/Texture2.h"
 #include "vulkan/handles/QueryPool.h"
 #include "Camera.h"
-#include "Input.h"
 #include <random>
 
 namespace Utopian
@@ -112,7 +110,7 @@ namespace Utopian
 		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		mSettingsBlock.UpdateMemory();
 
-		renderTarget->BeginCommandBuffer("Tessellation pass");
+		renderTarget->BeginCommandBuffer("Terrain Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		mQueryPool->Reset(commandBuffer);
@@ -146,7 +144,7 @@ namespace Utopian
 	void GBufferTerrainJob::Update()
 	{
 		// Display Actor creation list
-		ImGuiRenderer::BeginWindow("Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
+		ImGuiRenderer::BeginWindow("Terrain Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
 
 		ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
 		ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
