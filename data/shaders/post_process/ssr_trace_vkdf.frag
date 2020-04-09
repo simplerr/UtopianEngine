@@ -30,4 +30,5 @@ void main()
    vec4 reflectionColor = retrieveReflectionColor(worldPosition, viewNormal, InTex, reflectiveness);
 
    OutFragColor = vec4(reflectionColor.rgb, 1.0f);
+   //OutFragColor.rgb = vec3(InTex, 0);
 }

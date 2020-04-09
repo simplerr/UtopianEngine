@@ -35,9 +35,13 @@ namespace Utopian
 		testImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		//renderTarget->AddWriteOnlyColorAttachment(testImage);
-		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		renderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		renderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		renderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		renderTarget->AddReadWriteColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		renderTarget->AddWriteOnlyColorAttachment(testImage);
+		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		renderTarget->Create();
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
@@ -63,21 +67,10 @@ namespace Utopian
 		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
 
-        mSSRUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO", &mSSRUniformBlock);
-
-        // Note: Todo: Copy from SSRJob.cpp
-		mEffect->BindCombinedImage("lightSampler", originalDiffuseImage.get(), renderTarget->GetSampler());
-		mEffect->BindCombinedImage("normalViewSampler", gbuffer.normalViewImage.get(), renderTarget->GetSampler());
-		mEffect->BindCombinedImage("depthSampler", originalDepthImage.get(), renderTarget->GetSampler());
-		mEffect->BindCombinedImage("specularSampler", gbuffer.albedoImage.get(), renderTarget->GetSampler());
-		mEffect->BindCombinedImage("normalWorldSampler", gbuffer.normalImage.get(), renderTarget->GetSampler());
-		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), renderTarget->GetSampler());
-
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 
-		//const uint32_t size = 640;
-		//gScreenQuadUi().AddQuad(100, 100, size, size, testImage.get(), renderTarget->GetSampler());
+		// const uint32_t size = 640;
+		// gScreenQuadUi().AddQuad(100 + 640, 100, size, size, testImage.get(), renderTarget->GetSampler());
 	}
 
     void WaterJob::InitCopyPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -155,11 +148,6 @@ namespace Utopian
 		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
 		mSkyParameterBlock.data.onlySun = false;
 		mSkyParameterBlock.UpdateMemory();
-
-        // Todo: Remove
-        mSSRUniformBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mSSRUniformBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mSSRUniformBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Water Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

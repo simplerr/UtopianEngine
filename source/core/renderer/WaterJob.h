@@ -74,7 +74,6 @@ namespace Utopian
         // Todo: Likely needs to sample from the deferred job output texture, as well as writing to it.
         // Create a copy?
         SharedPtr<Vk::Image> testImage;
-		SSRUniforms mSSRUniformBlock; // Remove
 
         // Copy pass
         // Is BlitImage better to use?

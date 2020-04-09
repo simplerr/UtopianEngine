@@ -46,8 +46,8 @@ namespace Utopian
 		//AddJob(new SkyboxJob(renderer, width, height));
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
-		AddJob(new SSRJob(device, width, height));
 		AddJob(new WaterJob(device, width, height));
+		AddJob(new SSRJob(device, width, height));
 		AddJob(new DebugJob(device, width, height));
 		AddJob(new Im3dJob(device, width, height));
 		AddJob(new BloomJob(device, width, height));
