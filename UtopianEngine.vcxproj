@@ -103,6 +103,7 @@
     <ClCompile Include="source\core\renderer\BlurJob.cpp" />
     <ClCompile Include="source\core\renderer\DebugJob.cpp" />
     <ClCompile Include="source\core\renderer\DeferredJob.cpp" />
+    <ClCompile Include="source\core\renderer\FresnelJob.cpp" />
     <ClCompile Include="source\core\renderer\FXAAJob.cpp" />
     <ClCompile Include="source\core\renderer\GBufferJob.cpp" />
     <ClCompile Include="source\core\renderer\GrassJob.cpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="source\core\renderer\CommonJobIncludes.h" />
     <ClInclude Include="source\core\renderer\DebugJob.h" />
     <ClInclude Include="source\core\renderer\DeferredJob.h" />
+    <ClInclude Include="source\core\renderer\FresnelJob.h" />
     <ClInclude Include="source\core\renderer\FXAAJob.h" />
     <ClInclude Include="source\core\renderer\GBufferJob.h" />
     <ClInclude Include="source\core\renderer\GrassJob.h" />

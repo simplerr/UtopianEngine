@@ -19,7 +19,6 @@ namespace Utopian
 	{
 		InitTracePass(jobs, gbuffer);
 		InitBlurPass(jobs, gbuffer);
-		InitCombinePass(jobs, gbuffer);
 	}
 
 	void SSRJob::InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -87,36 +86,10 @@ namespace Utopian
 		// gScreenQuadUi().AddQuad(100 + 700, 100, size, size, ssrBlurImage.get(), mBlurRenderTarget->GetSampler());
 	}
 
-	void SSRJob::InitCombinePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
-	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-
-		mApplyRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		mApplyRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		mApplyRenderTarget->Create();
-
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/ssr_apply.frag";
-
-		mApplySSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mApplyRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mApplySSREffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mApplySSREffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		// Enable additive blending
-		gRendererUtility().SetAdditiveBlending(mApplySSREffect->GetPipeline());
-		mApplySSREffect->CreatePipeline();
-
-		mApplySSREffect->BindCombinedImage("reflectionSampler", ssrBlurImage.get(), mApplyRenderTarget->GetSampler());
-	}
-
 	void SSRJob::Render(const JobInput& jobInput)
 	{
 		RenderTracePass(jobInput);
 		RenderBlurPass(jobInput);
-		RenderCombinePass(jobInput);
 	}
 
 	void SSRJob::RenderTracePass(const JobInput& jobInput)
@@ -150,21 +123,6 @@ namespace Utopian
 			gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		}
 
-		mBlurRenderTarget->End(mTracePassSemaphore, mBlurPassSemaphore);
-	}
-
-	void SSRJob::RenderCombinePass(const JobInput& jobInput)
-	{
-		mApplyRenderTarget->Begin("SSR combine pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = mApplyRenderTarget->GetCommandBuffer();
-
-		if (IsEnabled())
-		{
-			commandBuffer->CmdBindPipeline(mApplySSREffect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSets(mApplySSREffect);
-			gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		}
-
-		mApplyRenderTarget->End(mBlurPassSemaphore, GetCompletedSemahore());
+		mBlurRenderTarget->End(mTracePassSemaphore, GetCompletedSemahore());
 	}
 }
