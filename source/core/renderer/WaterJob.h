@@ -55,9 +55,6 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 		void Update() override;
 
-        void InitCopyPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
-		void RenderCopyPass(const JobInput& jobInput);
-
 		SharedPtr<Vk::RenderTarget> renderTarget;
 	private:
         // Note: Todo: Duplicate from Terrain.h
@@ -74,13 +71,5 @@ namespace Utopian
         // Todo: Likely needs to sample from the deferred job output texture, as well as writing to it.
         // Create a copy?
         SharedPtr<Vk::Image> testImage;
-
-        // Copy pass
-        // Is BlitImage better to use?
-        SharedPtr<Vk::Image> originalDiffuseImage;
-        SharedPtr<Vk::Image> originalDepthImage;
-		SharedPtr<Vk::Effect> mCopyEffect;
-		SharedPtr<Vk::RenderTarget> mCopyRenderTarget;
-		SharedPtr<Vk::Semaphore> mCopyPassSemaphore;
 	};
 }

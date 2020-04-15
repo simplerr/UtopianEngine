@@ -28,8 +28,6 @@ namespace Utopian
 
 	void WaterJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-        InitCopyPass(jobs, gbuffer);
-
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
 		testImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
@@ -73,54 +71,8 @@ namespace Utopian
 		// gScreenQuadUi().AddQuad(100 + 640, 100, size, size, testImage.get(), renderTarget->GetSampler());
 	}
 
-    void WaterJob::InitCopyPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
-    {
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-
-		originalDiffuseImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
-		originalDepthImage = std::make_shared<Vk::ImageDepth>(mDevice, mWidth, mHeight, VK_FORMAT_D32_SFLOAT_S8_UINT);
-
-		mCopyRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		mCopyRenderTarget->AddWriteOnlyColorAttachment(originalDiffuseImage);
-		mCopyRenderTarget->AddWriteOnlyDepthAttachment(originalDepthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-		mCopyRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		mCopyRenderTarget->Create();
-
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/gbuffer_copy.frag";
-
-		mCopyEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mCopyRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mCopyEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mCopyEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		mCopyEffect->CreatePipeline();
-
-		mCopyEffect->BindCombinedImage("lightSampler", deferredJob->renderTarget->GetColorImage().get(), mCopyRenderTarget->GetSampler());
-		mCopyEffect->BindCombinedImage("depthSampler", gbuffer.depthImage.get(), mCopyRenderTarget->GetSampler());
-    }
-
-	void WaterJob::RenderCopyPass(const JobInput& jobInput)
-    {
-		mCopyRenderTarget->Begin("Water copy pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = mCopyRenderTarget->GetCommandBuffer();
-
-		if (IsEnabled())
-		{
-			commandBuffer->CmdBindPipeline(mCopyEffect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSets(mCopyEffect);
-			gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		}
-
-		mCopyRenderTarget->End(GetWaitSemahore(), mCopyPassSemaphore);
-    }
-
 	void WaterJob::Render(const JobInput& jobInput)
 	{
-        RenderCopyPass(jobInput);
-
 		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		mViewProjectionBlock.data.time = gTimer().GetTime();
@@ -174,7 +126,7 @@ namespace Utopian
 			mQueryPool->End(commandBuffer);
 		}
 
-		renderTarget->End(mCopyPassSemaphore, GetCompletedSemahore());
+		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 
 		mQueryPool->RetreiveResults();
 	}
