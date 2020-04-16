@@ -138,6 +138,7 @@ namespace Utopian
 		ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 25.0f);
 		ImGui::SliderFloat("Wind frequency", &mRenderingSettings.windFrequency, 0.0f, 30000.0f);
 		ImGui::Checkbox("Wind enabled", &mRenderingSettings.windEnabled);
+		ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -10000.0f, 10000.0f);
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);

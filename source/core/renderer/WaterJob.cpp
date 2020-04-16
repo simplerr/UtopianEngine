@@ -12,13 +12,14 @@
 #include "Camera.h"
 #include "Input.h"
 #include <random>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian
 {
 	WaterJob::WaterJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-        mWaterMesh = GeneratePatches(128.0, 64);
+        mWaterMesh = GeneratePatches(128.0f, 512);
 	}
 
 	WaterJob::~WaterJob()
@@ -112,7 +113,7 @@ namespace Utopian
 		{
 			mQueryPool->Begin(commandBuffer);
 
-			glm::mat4 world = glm::mat4();
+			glm::mat4 world = glm::translate(glm::mat4(), glm::vec3(0.0f, jobInput.renderingSettings.waterLevel, 0.0f));
 			Vk::PushConstantBlock pushConsts(world);
 			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 

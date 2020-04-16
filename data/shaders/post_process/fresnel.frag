@@ -16,6 +16,7 @@ void main()
     vec3 refractionColor = texture(refractionSampler, InTex).rgb;
 
     vec3 finalColor = mix(reflectionColor, refractionColor, 0.5f);
+    finalColor = refractionColor;
 
     //OutFragColor = vec4(reflectionColor / 2.0f, 1.0f);
     OutFragColor = vec4(finalColor / 2.0f, 1.0f);

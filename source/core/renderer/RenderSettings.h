@@ -39,5 +39,6 @@ namespace Utopian
 		float windStrength = 5.0f;
 		float windFrequency = 10000.0f;
 		bool windEnabled = true;
+		float waterLevel = 0.0f;
 	};
 }

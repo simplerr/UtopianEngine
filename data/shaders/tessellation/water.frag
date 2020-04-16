@@ -37,13 +37,6 @@ void main()
     SkyOutput testOutput = GetSkyColor(reflection);
     color = testOutput.skyColor;
 
-    // Testing transparency
-    // vec3 transparentColor = texture(lightSampler, uv).rgb;
-    // vec3 combinedColor = mix(color.rgb, transparentColor, 0.5f);
-    // OutFragColor = vec4(combinedColor, 1.0f);
-    //return;
-    // End test
-
     vec3 worldPosition = InPosW;
     mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
     vec3 normal = InNormalL;
