@@ -16,7 +16,16 @@ layout (location = 1) out vec4 OutPosition;
 layout (location = 2) out vec4 OutNormal;
 layout (location = 3) out vec4 OutAlbedo;
 layout (location = 4) out vec4 OutNormalView;
-layout (location = 5) out vec4 OutTestColor;
+layout (location = 5) out vec2 OutDistortion;
+
+layout (set = 0, binding = 1) uniform UBO_waterParameters
+{
+    float time;
+} ubo_waterParameters;
+
+layout (set = 0, binding = 0) uniform sampler2D dudvTexture;
+
+const float distortionStrength = 1;//0.02f;
 
 void main() 
 {
@@ -64,5 +73,14 @@ void main()
     OutNormalView = vec4(viewNormal, 1.0f);
     OutAlbedo = vec4(0.0f, 0.0f, 1.0f, reflectivity);
     OutPosition = vec4(worldPosition, 1.0f);
-    OutTestColor = OutFragColor;
+
+    // Distortion calculation
+    const float textureScaling = 10.0f;
+    const float timeScaling = 0.00001f;
+    vec2 texCoord = InTex * textureScaling;
+    float offset = ubo_waterParameters.time * timeScaling;
+    vec2 distortion1 = (texture(dudvTexture, vec2(texCoord.x + offset, texCoord.y)).rg * 2.0f - 1.0f) * distortionStrength;
+    vec2 distortion2 = (texture(dudvTexture, vec2(-texCoord.x + offset, texCoord.y + offset)).rg * 2.0f - 1.0f) * distortionStrength;
+    vec2 totalDistortion = distortion1 + distortion2;
+    OutDistortion = totalDistortion;
 }

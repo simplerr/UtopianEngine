@@ -31,7 +31,7 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		testImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
+		distortionImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16_SFLOAT);
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -39,7 +39,7 @@ namespace Utopian
 		renderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		renderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		renderTarget->AddReadWriteColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		renderTarget->AddWriteOnlyColorAttachment(testImage);
+		renderTarget->AddWriteOnlyColorAttachment(distortionImage);
 		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		renderTarget->Create();
 
@@ -66,10 +66,16 @@ namespace Utopian
 		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
 
+		mWaterParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_waterParameters", &mWaterParameterBlock);
+
+		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
+		mEffect->BindCombinedImage("dudvTexture", mDuDvTexture->GetTextureDescriptorInfo());
+
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 
-		// const uint32_t size = 640;
-		// gScreenQuadUi().AddQuad(100 + 640, 100, size, size, testImage.get(), renderTarget->GetSampler());
+		const uint32_t size = 640;
+		gScreenQuadUi().AddQuad(100 + 640, 100, size, size, distortionImage.get(), renderTarget->GetSampler());
 	}
 
 	void WaterJob::Render(const JobInput& jobInput)
@@ -101,6 +107,9 @@ namespace Utopian
 		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
 		mSkyParameterBlock.data.onlySun = false;
 		mSkyParameterBlock.UpdateMemory();
+
+		mWaterParameterBlock.data.time = Timer::Instance().GetTime();
+		mWaterParameterBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Water Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();

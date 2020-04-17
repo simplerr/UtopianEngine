@@ -54,8 +54,8 @@ namespace Utopian
 		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO", &mUniformBlock);
 
-		const uint32_t size = 640;
-		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
+		// const uint32_t size = 640;
+		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)

@@ -42,10 +42,8 @@ namespace Utopian
 			UNIFORM_PARAM(int, onlySun)
 		UNIFORM_BLOCK_END()
 
-        // Note: Todo: Needed by ssr_vkdf.glsl. Duplicates information in ViewProjection.
-        UNIFORM_BLOCK_BEGIN(SSRUniforms)
-			UNIFORM_PARAM(glm::mat4, view)
-			UNIFORM_PARAM(glm::mat4, projection)
+        UNIFORM_BLOCK_BEGIN(WaterParameterBlock)
+			UNIFORM_PARAM(float, time)
 		UNIFORM_BLOCK_END()
 
 		WaterJob(Vk::Device* device, uint32_t width, uint32_t height);
@@ -56,6 +54,7 @@ namespace Utopian
 		void Update() override;
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
+        SharedPtr<Vk::Image> distortionImage;
 	private:
         // Note: Todo: Duplicate from Terrain.h
         Vk::Mesh* GeneratePatches(float cellSize, int numCells);
@@ -66,10 +65,8 @@ namespace Utopian
 		ViewProjection mViewProjectionBlock;
 		SettingsBlock mSettingsBlock;
 		SkyParameterBlock mSkyParameterBlock;
+		WaterParameterBlock mWaterParameterBlock;
         Vk::Mesh* mWaterMesh;
-
-        // Todo: Likely needs to sample from the deferred job output texture, as well as writing to it.
-        // Create a copy?
-        SharedPtr<Vk::Image> testImage;
+		Vk::Texture* mDuDvTexture;
 	};
 }

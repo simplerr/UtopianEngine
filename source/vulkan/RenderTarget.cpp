@@ -21,7 +21,7 @@ namespace Utopian::Vk
 		mFrameBuffer = new FrameBuffers(device);
 		mSampler = std::make_shared<Sampler>(device);
 		
-		SetClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+		SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
 	RenderTarget::~RenderTarget()

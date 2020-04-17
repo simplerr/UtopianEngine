@@ -2,6 +2,7 @@
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/SSRJob.h"
+#include "core/renderer/WaterJob.h"
 #include "core/renderer/OpaqueCopyJob.h"
 
 namespace Utopian
@@ -20,6 +21,7 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 		SSRJob* ssrJob = static_cast<SSRJob*>(jobs[JobGraph::SSR_INDEX]);
 		OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
+		WaterJob* waterJob = static_cast<WaterJob*>(jobs[JobGraph::WATER_INDEX]);
 
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -40,6 +42,7 @@ namespace Utopian
 
 		mEffect->BindCombinedImage("reflectionSampler", ssrJob->ssrBlurImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("refractionSampler", opaqueCopyJob->opaqueLitImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("distortionSampler", waterJob->distortionImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void FresnelJob::Render(const JobInput& jobInput)
