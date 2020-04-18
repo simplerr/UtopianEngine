@@ -3,7 +3,6 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "shared_water.glsl"
-#include "../common/sky_color.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -25,7 +24,7 @@ layout (set = 0, binding = 1) uniform UBO_waterParameters
 
 layout (set = 0, binding = 0) uniform sampler2D dudvTexture;
 
-const float distortionStrength = 1;//0.02f;
+const float distortionStrength = 0.02f;
 
 void main() 
 {
@@ -35,16 +34,11 @@ void main()
     vec2 uv = ndc / 2 + 0.5f;
 
     // Blue water for now
-    vec4 color = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+    vec4 color = vec4(0.0f, 0.1f, 0.3f, 1.0f);
 
     // Todo: Note: the + sign is due to the fragment world position is negated for some reason
 	// this is a left over from an old problem
 	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW);
-
-    vec3 reflection = reflect(toEyeW, vec3(0, 1, 0));
-    reflection.y *= -1; // Note: -1
-    SkyOutput testOutput = GetSkyColor(reflection);
-    color = testOutput.skyColor;
 
     vec3 worldPosition = InPosW;
     mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));

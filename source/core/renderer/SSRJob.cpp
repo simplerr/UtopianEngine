@@ -54,8 +54,11 @@ namespace Utopian
 		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO", &mUniformBlock);
 
-		// const uint32_t size = 640;
-		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
+		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mTraceSSREffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
+
+		const uint32_t size = 640;
+		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -97,6 +100,15 @@ namespace Utopian
 		mUniformBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		mUniformBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		mUniformBlock.UpdateMemory();
+
+        // Note: Todo: Move to common location
+		mSkyParameterBlock.data.inclination = 0.7853981850f;
+		mSkyParameterBlock.data.azimuth = 0.0f;
+		mSkyParameterBlock.data.time = Timer::Instance().GetTime();
+		mSkyParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
+		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
+		mSkyParameterBlock.data.onlySun = false;
+		mSkyParameterBlock.UpdateMemory();
 
 		mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mTraceRenderTarget->GetCommandBuffer();

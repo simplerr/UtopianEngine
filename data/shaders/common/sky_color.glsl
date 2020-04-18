@@ -5,12 +5,12 @@
 // which occupies bindng 0-5 for G-buffer textures
 layout (set = 0, binding = 8) uniform UBO_parameters 
 {
+	vec3 eyePos;
 	float sphereRadius;
 	float inclination;
 	float azimuth;
 	float time;
 	float sunSpeed;
-	vec3 eyePos;
 
 	// Used by the sun shaft job to create the radial blur effect
 	int onlySun;
@@ -84,6 +84,7 @@ float GetCloudFactor(in vec3 rd)
 {
 	//if (rd.y < 0.01) return sky;
 	vec3 cameraPos = ubo_parameters.eyePos;
+	cameraPos = vec3(0.0f); // Note: todo
 
 	float v = (200.0 - cameraPos.y) / rd.y;
 	rd.xz *= v;

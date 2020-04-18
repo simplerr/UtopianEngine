@@ -63,9 +63,6 @@ namespace Utopian
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
 
-		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
-
 		mWaterParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_waterParameters", &mWaterParameterBlock);
 
@@ -74,8 +71,8 @@ namespace Utopian
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 
-		const uint32_t size = 640;
-		gScreenQuadUi().AddQuad(100 + 640, 100, size, size, distortionImage.get(), renderTarget->GetSampler());
+		// const uint32_t size = 640;
+		// gScreenQuadUi().AddQuad(100 + 640, 100, size, size, distortionImage.get(), renderTarget->GetSampler());
 	}
 
 	void WaterJob::Render(const JobInput& jobInput)
@@ -98,15 +95,6 @@ namespace Utopian
 		mSettingsBlock.data.bumpmapAmplitude = jobInput.renderingSettings.terrainBumpmapAmplitude;
 		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		mSettingsBlock.UpdateMemory();
-
-        // Note: Todo: Move to common location
-		mSkyParameterBlock.data.inclination = 0.7853981850f;
-		mSkyParameterBlock.data.azimuth = 0.0f;
-		mSkyParameterBlock.data.time = Timer::Instance().GetTime();
-		mSkyParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
-		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
-		mSkyParameterBlock.data.onlySun = false;
-		mSkyParameterBlock.UpdateMemory();
 
 		mWaterParameterBlock.data.time = Timer::Instance().GetTime();
 		mWaterParameterBlock.UpdateMemory();

@@ -15,12 +15,12 @@ namespace Utopian
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(ParameterBlock)
+			UNIFORM_PARAM(glm::vec3, eyePos)
 			UNIFORM_PARAM(float, sphereRadius)
 			UNIFORM_PARAM(float, inclination)
 			UNIFORM_PARAM(float, azimuth)
 			UNIFORM_PARAM(float, time)
 			UNIFORM_PARAM(float, sunSpeed)
-			UNIFORM_PARAM(glm::vec3, eyePos)
 			UNIFORM_PARAM(int, onlySun)
 		UNIFORM_BLOCK_END()
 

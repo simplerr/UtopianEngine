@@ -18,7 +18,18 @@ namespace Utopian
 			UNIFORM_PARAM(int, blurRange)
 		UNIFORM_BLOCK_END()
 
-			SSRJob(Vk::Device* device, uint32_t width, uint32_t height);
+		// Note: Todo: This should be shared with SkydomeJob
+        UNIFORM_BLOCK_BEGIN(SkyParameterBlock)
+			UNIFORM_PARAM(glm::vec3, eyePos)
+			UNIFORM_PARAM(float, sphereRadius)
+			UNIFORM_PARAM(float, inclination)
+			UNIFORM_PARAM(float, azimuth)
+			UNIFORM_PARAM(float, time)
+			UNIFORM_PARAM(float, sunSpeed)
+			UNIFORM_PARAM(int, onlySun)
+		UNIFORM_BLOCK_END()
+
+		SSRJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SSRJob();
 
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
@@ -43,5 +54,6 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> mBlurRenderTarget;
 		SharedPtr<Vk::Image> ssrImage;
 		SSRUniforms mUniformBlock;
+		SkyParameterBlock mSkyParameterBlock;
 	};
 }

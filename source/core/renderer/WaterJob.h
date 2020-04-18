@@ -31,17 +31,6 @@ namespace Utopian
 			UNIFORM_PARAM(int, wireframe)
 		UNIFORM_BLOCK_END()
 
-        // Note: Todo: This should be shared with SkydomeJob
-        UNIFORM_BLOCK_BEGIN(SkyParameterBlock)
-			UNIFORM_PARAM(float, sphereRadius)
-			UNIFORM_PARAM(float, inclination)
-			UNIFORM_PARAM(float, azimuth)
-			UNIFORM_PARAM(float, time)
-			UNIFORM_PARAM(float, sunSpeed)
-			UNIFORM_PARAM(glm::vec3, eyePos)
-			UNIFORM_PARAM(int, onlySun)
-		UNIFORM_BLOCK_END()
-
         UNIFORM_BLOCK_BEGIN(WaterParameterBlock)
 			UNIFORM_PARAM(float, time)
 		UNIFORM_BLOCK_END()
@@ -64,7 +53,6 @@ namespace Utopian
 		SharedPtr<Vk::Sampler> mSampler;
 		ViewProjection mViewProjectionBlock;
 		SettingsBlock mSettingsBlock;
-		SkyParameterBlock mSkyParameterBlock;
 		WaterParameterBlock mWaterParameterBlock;
         Vk::Mesh* mWaterMesh;
 		Vk::Texture* mDuDvTexture;

@@ -4,6 +4,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "ssr_vkdf.glsl"
+#include "../common/sky_color.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -27,8 +28,23 @@ void main()
 
    vec3 worldPosition = texture(positionSampler, InTex).xyz;
    vec3 viewNormal = normalize(texture(normalViewSampler, InTex).xyz * 2.0f - 1.0f);
-   vec4 reflectionColor = retrieveReflectionColor(worldPosition, viewNormal, InTex, reflectiveness);
+   bool ssrFound = false;
+   vec4 reflectionColor = retrieveReflectionColor(worldPosition, viewNormal, InTex, reflectiveness, ssrFound);
 
-   OutFragColor = vec4(reflectionColor.rgb, 1.0f);
-   //OutFragColor.rgb = vec3(InTex, 0);
+   // No SSR reflection found, sample the skydome as a fallback method
+   if (!ssrFound)
+   {
+      vec3 toEyeW = normalize(ubo_parameters.eyePos + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
+      vec3 worldNormal = normalize(texture(normalWorldSampler, InTex).xyz);
+
+      vec3 reflection = reflect(toEyeW, worldNormal);
+      reflection.y *= -1; // Note: -1
+      SkyOutput testOutput = GetSkyColor(reflection);
+      OutFragColor = testOutput.skyColor;
+      //OutFragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+   }
+   else
+   {
+      OutFragColor = vec4(reflectionColor.rgb, 1.0f);
+   }
 }

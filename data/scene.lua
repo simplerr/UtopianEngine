@@ -2,86 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "Directional light",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 0,
-				color_b = 0.88532823324203,
-				color_g = 0.93212097883224,
-				color_r = 0.9367088675499,
-				dir_x = 0.70710676908493,
-				dir_y = 0.70710676908493,
-				dir_z = -0,
-				intensity_x = 0.34900000691414,
-				intensity_y = 0.84300005435944,
-				intensity_z = 0,
-				range = 100000,
-				spot = 4,
-				type = 0,
-			},
-			CRenderable = 
-			{
-				color_a = 8.6999998092651,
-				color_b = 0.88532823324203,
-				color_g = 0.93212097883224,
-				color_r = 0.9367088675499,
-				path = "data/models/teapot.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = -0.019197400659323,
-				orientation_x = 0.99981570243835,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = -348.98825073242,
-				pos_y = -1462.2564697266,
-				pos_z = 687.95874023438,
-				scale_x = 1.2000000476837,
-				scale_y = 1.2000000476837,
-				scale_z = 1.2000000476837,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/CrateLong_reflective.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 750.86083984375,
-				pos_y = 59.161010742188,
-				pos_z = -219.58293151855,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
 		actor_name = "Sponza",
 		components = 
 		{
@@ -172,9 +92,9 @@ actor_list =
 				orientation_x = -0.29552018642426,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 236.3876953125,
-				pos_y = 421.77536010742,
-				pos_z = -122.07766723633,
+				pos_x = 2893.1303710938,
+				pos_y = 52.674766540527,
+				pos_z = 7613.6596679688,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
@@ -412,8 +332,8 @@ actor_list =
 				scale_z = 50,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "EditorActor",
 		components = 
@@ -436,6 +356,115 @@ actor_list =
 				pos_x = 844.65533447266,
 				pos_y = 14.064889907837,
 				pos_z = -95.484016418457,
+				scale_x = 50,
+				scale_y = 50,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/HouseBricksNormal.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.0081617720425129,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0.99996668100357,
+				pos_x = 362.09655761719,
+				pos_y = -46.722961425781,
+				pos_z = 3425.4753417969,
+				scale_x = 49.999591827393,
+				scale_y = 49.999591827393,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "Directional light",
+		components = 
+		{
+			CBloomLight = 
+			{
+				empty = 0,
+			},
+			CLight = 
+			{
+				att_x = 0.20000000298023,
+				att_y = 0.0013999999500811,
+				att_z = 0,
+				color_b = 0.88532823324203,
+				color_g = 0.93212097883224,
+				color_r = 0.9367088675499,
+				dir_x = 0.70710676908493,
+				dir_y = 0.70710676908493,
+				dir_z = -0,
+				intensity_x = 0.34900000691414,
+				intensity_y = 0.84300005435944,
+				intensity_z = 0,
+				range = 100000,
+				spot = 4,
+				type = 0,
+			},
+			CRenderable = 
+			{
+				color_a = 8.6999998092651,
+				color_b = 0.88532823324203,
+				color_g = 0.93212097883224,
+				color_r = 0.9367088675499,
+				path = "data/models/teapot.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -0.019197400659323,
+				orientation_x = 0.99981570243835,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -348.98825073242,
+				pos_y = -1462.2564697266,
+				pos_z = 687.95874023438,
+				scale_x = 1.2000000476837,
+				scale_y = 1.2000000476837,
+				scale_z = 1.2000000476837,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateLong_reflective.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 750.86083984375,
+				pos_y = 59.161010742188,
+				pos_z = -219.58293151855,
 				scale_x = 50,
 				scale_y = 50,
 				scale_z = 50,

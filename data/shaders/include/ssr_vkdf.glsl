@@ -508,7 +508,7 @@ get_reflection_position(vec3 ss_refl_dir, vec3 ss_p_min, out vec3 ss_p_out)
    return false;
 }
 
-vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float reflectiveness)
+vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float reflectiveness, out bool ssrFound)
 {
    vec3 eye_position = (ubo.view * vec4(worldPosition, 1.0f)).xyz;
    vec3 eye_viewdir = normalize(eye_position);
@@ -551,6 +551,7 @@ vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float
    vec3 ss_p_start = ss_frag_pos;
    if (!get_reflection_position(ss_refl_dir, ss_p_start, ss_p)) {
       /* Debug output color should have already been set */
+      ssrFound = false;
       return OutputColor;
    }
 
@@ -559,6 +560,7 @@ vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float
    float refl_dist = length(ss_p - ss_p_start);
    if (refl_dist > MAX_REFLECTION_DISTANCE) {
       OutputColor = FAIL_COLOR_REFLECTION_DIST;
+      ssrFound = false;
       return OutputColor;
    } else if (refl_dist > ATT_REFLECTION_DISTANCE_START) {
       const float att_range =
@@ -588,6 +590,7 @@ vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float
    float dp_normal_refl_dir = dot(eye_refl_dir, eye_p_normal);
    if (dp_normal_refl_dir > MAX_DOT_REFLECTION_NORMAL) {
       OutputColor = FAIL_COLOR_REFLECTION_DIR;
+      ssrFound = false;
       return OutputColor;
    } else if (dp_normal_refl_dir > ATT_DOT_REFLECTION_NORMAL_START) {
       const float att_range =
@@ -600,5 +603,6 @@ vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float
    vec3 outputColor = texture(lightSampler, ss_p.xy).rgb;
    outputColor.rgb *= reflectiveness * att_cam * att_uv * att_refl_angle * att_refl_dist;
 
+   ssrFound = true;
    return vec4(outputColor, 1.0f);
 }
