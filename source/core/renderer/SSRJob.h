@@ -29,6 +29,10 @@ namespace Utopian
 			UNIFORM_PARAM(int, onlySun)
 		UNIFORM_BLOCK_END()
 
+		UNIFORM_BLOCK_BEGIN(ReflectionSettingsBlock)
+			UNIFORM_PARAM(int, ssrEnabled)
+		UNIFORM_BLOCK_END()
+
 		SSRJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SSRJob();
 
@@ -55,5 +59,6 @@ namespace Utopian
 		SharedPtr<Vk::Image> ssrImage;
 		SSRUniforms mUniformBlock;
 		SkyParameterBlock mSkyParameterBlock;
+		ReflectionSettingsBlock mReflectionSettingsBlock;
 	};
 }

@@ -57,6 +57,9 @@ namespace Utopian
 		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
 
+		mReflectionSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mTraceSSREffect->BindUniformBuffer("UBO_settings", &mReflectionSettingsBlock);
+
 		const uint32_t size = 640;
 		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
@@ -109,16 +112,16 @@ namespace Utopian
 		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
 		mSkyParameterBlock.data.onlySun = false;
 		mSkyParameterBlock.UpdateMemory();
+		
+		mReflectionSettingsBlock.data.ssrEnabled = jobInput.renderingSettings.ssrEnabled;
+		mReflectionSettingsBlock.UpdateMemory();
 
 		mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mTraceRenderTarget->GetCommandBuffer();
 
-		if (IsEnabled())
-		{
-			commandBuffer->CmdBindPipeline(mTraceSSREffect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSets(mTraceSSREffect);
-			gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		}
+		commandBuffer->CmdBindPipeline(mTraceSSREffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mTraceSSREffect);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
 		mTraceRenderTarget->End(GetWaitSemahore(), mTracePassSemaphore);
 	}
@@ -128,12 +131,9 @@ namespace Utopian
 		mBlurRenderTarget->Begin("SSR blur pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
 
-		if (IsEnabled())
-		{
-			commandBuffer->CmdBindPipeline(mBlurSSREffect->GetPipeline());
-			commandBuffer->CmdBindDescriptorSets(mBlurSSREffect);
-			gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		}
+		commandBuffer->CmdBindPipeline(mBlurSSREffect->GetPipeline());
+		commandBuffer->CmdBindDescriptorSets(mBlurSSREffect);
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
 		mBlurRenderTarget->End(mTracePassSemaphore, GetCompletedSemahore());
 	}

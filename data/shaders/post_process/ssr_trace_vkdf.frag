@@ -10,6 +10,11 @@ layout (location = 0) in vec2 InTex;
 
 layout (location = 0) out vec4 OutFragColor;
 
+layout (std140, set = 0, binding = 9) uniform UBO_settings 
+{
+	int ssrEnabled;
+} settings_ubo;
+
 void main()
 {
    /* Use all inputs so they don't get optimized away */
@@ -31,8 +36,8 @@ void main()
    bool ssrFound = false;
    vec4 reflectionColor = retrieveReflectionColor(worldPosition, viewNormal, InTex, reflectiveness, ssrFound);
 
-   // No SSR reflection found, sample the skydome as a fallback method
-   if (!ssrFound)
+   // No SSR reflection found or disabled, sample the skydome as a fallback method
+   if (settings_ubo.ssrEnabled != 1 || !ssrFound)
    {
       vec3 toEyeW = normalize(ubo_parameters.eyePos + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
       vec3 worldNormal = normalize(texture(normalWorldSampler, InTex).xyz);
