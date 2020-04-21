@@ -40,13 +40,21 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
+		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_parameters", &mUniformBlock);
+
 		mEffect->BindCombinedImage("reflectionSampler", ssrJob->ssrBlurImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("refractionSampler", opaqueCopyJob->opaqueLitImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("distortionSampler", waterJob->distortionImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("normalSampler", gbuffer.normalImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void FresnelJob::Render(const JobInput& jobInput)
 	{
+		mUniformBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
+		mUniformBlock.UpdateMemory();
+
 		mRenderTarget->Begin("Fresnel pass", glm::vec4(0.5, 1.0, 0.5, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
