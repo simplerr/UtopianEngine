@@ -27,7 +27,7 @@ layout (set = 0, binding = 2) uniform sampler2D dudvSampler;
 layout (set = 0, binding = 3) uniform sampler2D normalSampler;
 layout (set = 0, binding = 4) uniform sampler2D depthSampler;
 
-const float distortionStrength = 0.02f;
+const float distortionStrength = 0.05f;
 
 const float NEAR_PLANE = 10.0f; //todo: specialization const
 const float FAR_PLANE = 256000.0f; //todo: specialization const 
@@ -51,7 +51,7 @@ void main()
     vec2 uv = ndc / 2 + 0.5f;
 
     // Blue water for now
-    vec4 color = vec4(0.0f, 0.1f, 0.3f, 1.0f);
+    vec4 color = vec4(0.0f, 0.1f, 0.4f, 1.0f);
 
     // Todo: Note: the + sign is due to the fragment world position is negated for some reason
 	// this is a left over from an old problem
@@ -91,8 +91,8 @@ void main()
     // vec2 totalDistortion = distortion1 + distortion2;
 
     // Calculate distorted texture coordinates for normals and reflection/refraction distortion
-    const float textureScaling = 90.0f;
-    const float timeScaling = 0.00001f;
+    const float textureScaling = 50.0f;
+    const float timeScaling = 0.00003f;
     vec2 texCoord = InTex * textureScaling;
     float offset = ubo_waterParameters.time * timeScaling;
     vec2 distortedTexCoords = texture(dudvSampler, vec2(texCoord.x + offset, texCoord.y)).rg * 0.1f;
@@ -102,7 +102,9 @@ void main()
     vec4 normalMapColor = texture(normalSampler, distortedTexCoords);
     normal = vec3(normalMapColor.r * 2.0f - 1.0f, normalMapColor.b, normalMapColor.g * 2.0f - 1.0f);
     normal = normalize(normal);
-    OutNormal = vec4(normal, 1.0f);
+    // Note: Outputting this normal means that the normal in the SSR shader is not (0,1,0) so
+    // the reflection texture itself will be distorted, meaning that the distortin in fresnel.frag is "done twice"
+    //OutNormal = vec4(normal, 1.0f);
 
     Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
