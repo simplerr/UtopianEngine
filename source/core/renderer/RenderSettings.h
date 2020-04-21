@@ -17,7 +17,7 @@ namespace Utopian
 		bool shadowsEnabled = true;
 		bool normalMapping = true;
 		bool ssaoEnabled = false;
-		bool ssrEnabled = true;
+		bool ssrEnabled = false;
 		bool waterEnabled = true;
 		bool fxaaEnabled = true;
 		bool fxaaDebug = false;

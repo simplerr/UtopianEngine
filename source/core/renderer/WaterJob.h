@@ -3,6 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/handles/Texture.h"
 #include "core/renderer/JobGraph.h"
+#include "core/CommonBuffers.h"
 #include <glm/glm.hpp>
 #include <string>
 
@@ -56,5 +57,7 @@ namespace Utopian
 		WaterParameterBlock mWaterParameterBlock;
         Vk::Mesh* mWaterMesh;
 		Vk::Texture* mDuDvTexture;
+		Vk::Texture* mNormalTexture;
+		LightUniformBuffer mLightBlock;
 	};
 }

@@ -1,5 +1,6 @@
 #include "core/renderer/WaterJob.h"
 #include "core/renderer/DeferredJob.h"
+#include "core/renderer/OpaqueCopyJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
@@ -30,6 +31,7 @@ namespace Utopian
 	void WaterJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
+		OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
 
 		distortionImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16_SFLOAT);
 
@@ -66,8 +68,14 @@ namespace Utopian
 		mWaterParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_waterParameters", &mWaterParameterBlock);
 
+		mLightBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_lights", &mLightBlock);
+
 		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
-		mEffect->BindCombinedImage("dudvTexture", mDuDvTexture->GetTextureDescriptorInfo());
+		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
+		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("normalSampler", mNormalTexture->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), renderTarget->GetSampler());
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 
@@ -98,6 +106,16 @@ namespace Utopian
 
 		mWaterParameterBlock.data.time = Timer::Instance().GetTime();
 		mWaterParameterBlock.UpdateMemory();
+
+		// Upload lights to shader. Todo: Duplicate of SetLightArray() in DeferredEffect.cpp
+		mLightBlock.lights.clear();
+		for (auto& light : jobInput.sceneInfo.lights)
+		{
+			mLightBlock.lights.push_back(light->GetLightData());
+		}
+
+		mLightBlock.constants.numLights = mLightBlock.lights.size();
+		mLightBlock.UpdateMemory();
 
 		renderTarget->BeginCommandBuffer("Water Tessellation pass");
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
