@@ -38,12 +38,13 @@ void main()
     float refractivity = dot(toEyeW, normal);
 
     vec2 distortion = texture(distortionSampler, InTex).rg;
+    //distortion = vec2(0.0f);
     vec3 reflectionColor = texture(reflectionSampler, InTex + distortion).rgb;
     vec3 refractionColor = texture(refractionSampler, InTex + distortion).rgb;
 
     vec3 finalColor = mix(reflectionColor, refractionColor, refractivity);//0.2f);
 
-    //OutFragColor = vec4(reflectionColor / 2.0f, 1.0f);
     OutFragColor = vec4(finalColor / 2.0f, 1.0f);
+    OutFragColor = vec4(finalColor / 1.0f, 1.0f);
     //OutFragColor = vec4(distortion, 0, 1);
 }

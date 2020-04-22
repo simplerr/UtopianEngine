@@ -28,7 +28,8 @@ layout (set = 0, binding = 2) uniform sampler2D dudvSampler;
 layout (set = 0, binding = 3) uniform sampler2D normalSampler;
 layout (set = 0, binding = 5) uniform sampler2D depthSampler; // Binding 4 is cascades_ubo in calculate_shadow.glsl
 
-const float distortionStrength = 0.05f;
+const float distortionStrength = 0.02f;
+const vec3 waterColor = vec3(0.0f, 0.1f, 0.4f);
 
 // Todo: Move to common file
 float eye_z_from_depth(float depth, mat4 Proj)
@@ -53,11 +54,11 @@ void main()
     OutNormal = vec4(InNormalL, 1.0f); // Missing world transform?
     viewNormal = normalize(viewNormal) * 0.5 + 0.5;
     OutNormalView = vec4(viewNormal, 1.0f);
-    OutAlbedo = vec4(0.0f, 0.0f, 1.0f, reflectivity);
+    OutAlbedo = vec4(waterColor, reflectivity);
     OutPosition = vec4(worldPosition, 1.0f);
 
     // Calculate distorted texture coordinates for normals and reflection/refraction distortion
-    const float textureScaling = 50.0f;
+    const float textureScaling = 90.0f;
     const float timeScaling = 0.00003f;
     vec2 texCoord = InTex * textureScaling;
     float offset = ubo_waterParameters.time * timeScaling;
@@ -82,7 +83,6 @@ void main()
 	material.specular = vec4(1.0f, 1.0f, 1.f, 1.0f); 
 
 	vec4 litColor;
-    vec3 waterColor = vec3(0.0f, 0.1f, 0.4f);
 	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW); // Todo: Move to common file
 	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(waterColor, 1.0f), shadow, litColor);
     OutFragColor = litColor;
@@ -94,11 +94,25 @@ void main()
     float waterDepth = depthToWater - depthToTerrain;
     const float shorelineDepth = 100.0f;
     if (waterDepth < shorelineDepth)
+    {
         OutFragColor = vec4(0.7f);
+    }
 
-    // Output distorting used in fresnel.frag
+    // Output distortion used in fresnel.frag
     vec2 outputDistortion = (texture(dudvSampler, distortedTexCoords).rg * 2.0f - 1.0f) * distortionStrength;
+    float sampleDepth = texture(depthSampler, uv + outputDistortion).r;
+    if (sampleDepth < gl_FragCoord.z)
+    {
+        outputDistortion = vec2(0.0f);
+    }
+
     OutDistortion = outputDistortion;
+
+    depthToWater *= -1;
+    const float distortionRange = 2500.0f;
+    float distanceFadeFactor = smoothstep(1.0f, 0.0f, (depthToWater - distortionRange) / distortionRange);
+    OutDistortion *= distanceFadeFactor;
+    OutAlbedo = vec4(vec3(distanceFadeFactor), 1.0f);
 
     // Apply wireframe
     // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/

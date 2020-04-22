@@ -27,7 +27,7 @@ void main()
 
    if (reflectiveness < 0.4f || normal.y < 0.7f)
    {
-      OutFragColor = vec4(0.0);
+      OutFragColor = vec4(0.0f);
       return;
    }
 
