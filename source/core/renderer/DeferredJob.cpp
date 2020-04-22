@@ -59,6 +59,8 @@ namespace Utopian
 		// Note: This should probably be moved. We need the fragment position in view space
 		// when comparing it's Z value to find out which shadow map cascade it should sample from.
 		mEffect->cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+		mEffect->cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
+		mEffect->cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
 		mEffect->cascade_ubo.UpdateMemory();
 
 		// End of temporary

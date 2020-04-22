@@ -59,5 +59,7 @@ namespace Utopian
 		Vk::Texture* mDuDvTexture;
 		Vk::Texture* mNormalTexture;
 		LightUniformBuffer mLightBlock;
+		CascadeBlock mCascadeBlock;
+		SharedPtr<Vk::Sampler> mShadowSampler;
 	};
 }

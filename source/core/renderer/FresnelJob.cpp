@@ -48,6 +48,7 @@ namespace Utopian
 		mEffect->BindCombinedImage("distortionSampler", waterJob->distortionImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("normalSampler", gbuffer.normalImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("albedoSampler", gbuffer.albedoImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void FresnelJob::Render(const JobInput& jobInput)

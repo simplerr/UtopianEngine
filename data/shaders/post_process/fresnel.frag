@@ -12,14 +12,23 @@ layout (set = 0, binding = 1) uniform sampler2D refractionSampler;
 layout (set = 0, binding = 3) uniform sampler2D distortionSampler;
 layout (set = 0, binding = 4) uniform sampler2D positionSampler;
 layout (set = 0, binding = 5) uniform sampler2D normalSampler;
+layout (set = 0, binding = 6) uniform sampler2D albedoSampler;
 
-layout (set = 0, binding = 6) uniform UBO_parameters
+layout (set = 0, binding = 7) uniform UBO_parameters
 {
     vec4 ubo_parameters;
 } ubo_parameters;
 
 void main() 
 {
+    float reflectivity = texture(albedoSampler, InTex).a;
+
+    if (reflectivity == 0.0f)
+    {
+        OutFragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        return;
+    }
+
     vec3 position = texture(positionSampler, InTex).xyz;
     vec3 normal = texture(normalSampler, InTex).xyz;
 
@@ -35,6 +44,6 @@ void main()
     vec3 finalColor = mix(reflectionColor, refractionColor, refractivity);//0.2f);
 
     //OutFragColor = vec4(reflectionColor / 2.0f, 1.0f);
-    OutFragColor = vec4(finalColor / 1.0f, 1.0f);
+    OutFragColor = vec4(finalColor / 2.0f, 1.0f);
     //OutFragColor = vec4(distortion, 0, 1);
 }

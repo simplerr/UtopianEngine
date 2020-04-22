@@ -3,8 +3,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "phong_lighting.glsl"
-
-#define SHADOW_MAP_CASCADE_COUNT 4
+#include "calculate_shadow.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -14,7 +13,6 @@ layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
-layout (set = 1, binding = 4) uniform sampler2DArray shadowSampler;
 
 layout (std140, set = 0, binding = 0) uniform UBO_eyePos
 {
@@ -29,58 +27,10 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	float padding;
 	float fogStart;
 	float fogDistance;
-	int shadowsEnabled;
 	int ssaoEnabled;
-	int shadowSampleSize;
 	int cascadeColorDebug;
 } settings_ubo;
 
-layout (std140, set = 0, binding = 4) uniform UBO_cascades
-{
-	vec4 cascadeSplits;
-	mat4 cascadeViewProjMat[4];
-	mat4 cameraViewMat;
-} cascades_ubo;
-
-float calculateShadow(vec3 position, vec3 normal, uint cascadeIndex)
-{
-	vec4 lightSpacePosition = cascades_ubo.cascadeViewProjMat[cascadeIndex] * vec4(position, 1.0f);
-	vec4 projCoordinate = lightSpacePosition / lightSpacePosition.w; // Perspective divide 
-	projCoordinate.xy = projCoordinate.xy * 0.5f + 0.5f;
-
-	// Note: Todo: Assumes that the directional light is at index 0 
-	vec3 lightDir = normalize(light_ubo.lights[0].dir);
-
-	float shadow = 0.0f;
-	vec2 texelSize = 1.0 / textureSize(shadowSampler, 0).xy;
-	int count = 0;
-	int range = settings_ubo.shadowSampleSize;
-	for (int x = -range; x <= range; x++)
-	{
-		for (int y = -range; y <= range; y++)
-		{
-			// If fragment depth is outside frustum do no shadowing
-			if (projCoordinate.z <= 1.0f && projCoordinate.z > -1.0f)
-			{
-				vec2 offset = vec2(x, y) * texelSize;
-				float closestDepth = texture(shadowSampler, vec3(projCoordinate.xy + offset, cascadeIndex)).r;
-				float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.00000065); 
-				bias = 0.0005; // This seems to fix shadow acne for now
-				shadow += ((projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f);
-			}
-			else
-			{
-				shadow += 1.0f;
-			}
-
-			count++;
-		}
-	}
-
-	shadow /= (count);
-
-	return shadow;
-}
 void main() 
 {
 	vec3 position = texture(positionSampler, InTex).xyz;
@@ -92,19 +42,10 @@ void main()
 	// this is a left over from an old problem
 	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
 
-	// Get cascade index for the current fragment's view position
-	vec3 viewPosition = (cascades_ubo.cameraViewMat * vec4(position, 1.0f)).xyz;
-	uint cascadeIndex = 0;
-	for(uint i = 0; i < SHADOW_MAP_CASCADE_COUNT - 1; ++i) {
-		if(viewPosition.z < cascades_ubo.cascadeSplits[i]) {	
-			cascadeIndex = i + 1;
-		}
-	}
-
 	// Calculate shadow factor
-	float shadow = 1.0f;
-	if (settings_ubo.shadowsEnabled == 1)
-		shadow = calculateShadow(position, normal, cascadeIndex);
+	// Note: Assume directional light at index 0
+	uint cascadeIndex = 0;
+	float shadow = calculateShadow(position, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 

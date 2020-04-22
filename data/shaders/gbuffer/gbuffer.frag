@@ -64,7 +64,11 @@ void main()
 	}
 
 	outNormal.y *= -1.0f;
-	outAlbedo = vec4(diffuse.rgb, specular.r);
+	// Note: Todo: the specular texture is not used right now due to fresnel.frag
+	// being applied to every fragment with specular != 0.0f causing opaque objects 
+	// to be treated incorrectly. The fix is to output "reflectivity map" texture.
+	outAlbedo = vec4(diffuse.rgb, 0.0f);
+	//outAlbedo = vec4(diffuse.rgb, specular.r);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
 	//outAlbedo = vec4(InTex.x, InTex.y, 0, 1);
 }

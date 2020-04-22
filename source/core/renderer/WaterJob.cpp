@@ -1,6 +1,7 @@
 #include "core/renderer/WaterJob.h"
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/OpaqueCopyJob.h"
+#include "core/renderer/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
@@ -21,6 +22,16 @@ namespace Utopian
 		: BaseJob(device, width, height)
 	{
         mWaterMesh = GeneratePatches(128.0f, 512);
+
+		// Create sampler that returns 1.0 when sampling outside the depth image
+		// Note: Duplicate from DeferredJob
+		mShadowSampler = std::make_shared<Vk::Sampler>(device, false);
+		mShadowSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropy filter causes artifacts at the edge between cascades
+		mShadowSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		mShadowSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		mShadowSampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+		mShadowSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+		mShadowSampler->Create();
 	}
 
 	WaterJob::~WaterJob()
@@ -32,6 +43,7 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 		OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
+		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 
 		distortionImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16_SFLOAT);
 
@@ -71,11 +83,15 @@ namespace Utopian
 		mLightBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_lights", &mLightBlock);
 
+		mCascadeBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_cascades", &mCascadeBlock);
+
 		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
 		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
 		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("normalSampler", mNormalTexture->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), renderTarget->GetSampler());
+		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), mShadowSampler.get());
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 
@@ -106,6 +122,21 @@ namespace Utopian
 
 		mWaterParameterBlock.data.time = Timer::Instance().GetTime();
 		mWaterParameterBlock.UpdateMemory();
+
+		// Note: Todo: Temporary
+		// Note: Duplicate from DeferredJob.cpp
+		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+		{
+			mCascadeBlock.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
+			mCascadeBlock.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
+		}
+
+		// Note: This should probably be moved. We need the fragment position in view space
+		// when comparing it's Z value to find out which shadow map cascade it should sample from.
+		mCascadeBlock.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+		mCascadeBlock.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
+		mCascadeBlock.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
+		mCascadeBlock.UpdateMemory();
 
 		// Upload lights to shader. Todo: Duplicate of SetLightArray() in DeferredEffect.cpp
 		mLightBlock.lights.clear();

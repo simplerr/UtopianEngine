@@ -99,8 +99,15 @@ namespace Utopian
 			float fogDistance;
 			int shadowsEnabled;
 			int ssaoEnabled;
-			int shadowSampleSize;
 			int cascadeColorDebug;
 		} data;
 	};
+
+	UNIFORM_BLOCK_BEGIN(CascadeBlock)
+		UNIFORM_PARAM(float, cascadeSplits[4])
+		UNIFORM_PARAM(glm::mat4, cascadeViewProjMat[4])
+		UNIFORM_PARAM(glm::mat4, cameraViewMat)
+		UNIFORM_PARAM(int, shadowSampleSize)
+		UNIFORM_PARAM(int, shadowsEnabled)
+	UNIFORM_BLOCK_END()
 }

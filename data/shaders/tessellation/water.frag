@@ -4,6 +4,7 @@
 
 #include "shared_water.glsl"
 #include "phong_lighting.glsl"
+#include "calculate_shadow.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -25,19 +26,11 @@ layout (set = 0, binding = 0) uniform UBO_waterParameters
 
 layout (set = 0, binding = 2) uniform sampler2D dudvSampler;
 layout (set = 0, binding = 3) uniform sampler2D normalSampler;
-layout (set = 0, binding = 4) uniform sampler2D depthSampler;
+layout (set = 0, binding = 5) uniform sampler2D depthSampler; // Binding 4 is cascades_ubo in calculate_shadow.glsl
 
 const float distortionStrength = 0.05f;
 
-const float NEAR_PLANE = 10.0f; //todo: specialization const
-const float FAR_PLANE = 256000.0f; //todo: specialization const 
-
-float linearDepth(float depth)
-{
-	float z = depth * 2.0f - 1.0f; 
-	return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));	
-}
-
+// Todo: Move to common file
 float eye_z_from_depth(float depth, mat4 Proj)
 {
    return -Proj[3][2] / (Proj[2][2] + depth);
@@ -50,45 +43,18 @@ void main()
     vec2 ndc = clipSpace.xy / clipSpace.w;
     vec2 uv = ndc / 2 + 0.5f;
 
-    // Blue water for now
-    vec4 color = vec4(0.0f, 0.1f, 0.4f, 1.0f);
-
-    // Todo: Note: the + sign is due to the fragment world position is negated for some reason
-	// this is a left over from an old problem
-	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW);
-
     vec3 worldPosition = InPosW;
     mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
     vec3 normal = InNormalL;
     normal.y *= -1; // Should this be here? Similar result without it
 	vec3 viewNormal = normalMatrix * normal;
 
-    // Apply wireframe
-    // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
-    if (ubo_settings.wireframe == 1)
-    {
-        vec3 d = fwidth(InBarycentric);
-        vec3 a3 = smoothstep(vec3(0.0), d * 0.8, InBarycentric);
-        float edgeFactor = min(min(a3.x, a3.y), a3.z);
-        color.rgb = mix(vec3(1.0), color.rgb, edgeFactor);
-
-        // Simple method but agly aliasing:
-        // if(any(lessThan(InBarycentric, vec3(0.02))))
-    }
-
     float reflectivity = 1.0f;
-    OutFragColor = color;
-    OutNormal = vec4(InNormalL, 1.0f); // Missing world transform
-    // Use: here?
+    OutNormal = vec4(InNormalL, 1.0f); // Missing world transform?
     viewNormal = normalize(viewNormal) * 0.5 + 0.5;
     OutNormalView = vec4(viewNormal, 1.0f);
     OutAlbedo = vec4(0.0f, 0.0f, 1.0f, reflectivity);
     OutPosition = vec4(worldPosition, 1.0f);
-
-    // Distortion calculation
-    // vec2 distortion1 = (texture(dudvSampler, vec2(texCoord.x + offset, texCoord.y)).rg * 2.0f - 1.0f) * distortionStrength;
-    // vec2 distortion2 = (texture(dudvSampler, vec2(-texCoord.x + offset, texCoord.y + offset)).rg * 2.0f - 1.0f) * distortionStrength;
-    // vec2 totalDistortion = distortion1 + distortion2;
 
     // Calculate distorted texture coordinates for normals and reflection/refraction distortion
     const float textureScaling = 50.0f;
@@ -106,16 +72,20 @@ void main()
     // the reflection texture itself will be distorted, meaning that the distortin in fresnel.frag is "done twice"
     //OutNormal = vec4(normal, 1.0f);
 
+    // Calculate shadow factor, assumes directional light at index 0
+	uint cascadeIndex = 0;
+	float shadow = calculateShadow(worldPosition, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
+
     Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 	material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 	material.specular = vec4(1.0f, 1.0f, 1.f, 1.0f); 
 
-    float shadow = 1.0f;
 	vec4 litColor;
-	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(color.rgb, 1.0f), shadow, litColor);
+    vec3 waterColor = vec3(0.0f, 0.1f, 0.4f);
+	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW); // Todo: Move to common file
+	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(waterColor, 1.0f), shadow, litColor);
     OutFragColor = litColor;
-    OutAlbedo = litColor;
 
     // Shoreline
     float depth = texture(depthSampler, uv).r;
@@ -129,4 +99,17 @@ void main()
     // Output distorting used in fresnel.frag
     vec2 outputDistortion = (texture(dudvSampler, distortedTexCoords).rg * 2.0f - 1.0f) * distortionStrength;
     OutDistortion = outputDistortion;
+
+    // Apply wireframe
+    // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
+    if (ubo_settings.wireframe == 1)
+    {
+        vec3 d = fwidth(InBarycentric);
+        vec3 a3 = smoothstep(vec3(0.0), d * 0.8, InBarycentric);
+        float edgeFactor = min(min(a3.x, a3.y), a3.z);
+        OutFragColor.rgb = mix(vec3(1.0), OutFragColor.rgb, edgeFactor);
+
+        // Simple method but agly aliasing:
+        // if(any(lessThan(InBarycentric, vec3(0.02))))
+    }
 }
