@@ -27,6 +27,8 @@
 
 namespace Utopian
 {
+	bool ImGuiRenderer::mImguiVisible = true;
+
 	ImGuiRenderer::ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height)
 		: mVulkanApp(vulkanApp)
 	{
@@ -254,6 +256,15 @@ namespace Utopian
 		io.MouseDown[0] = gInput().KeyDown(VK_LBUTTON, false);
 		io.MouseDown[1] = gInput().KeyDown(VK_RBUTTON, false);
 		io.MouseWheel = gInput().MouseDz() / MOUSE_WHEEL_SCALING;
+
+		// No mouse input if Imgui is not visible
+		if (!mImguiVisible)
+		{
+			io.MouseDown[0] = false;
+			io.MouseDown[1] = false;
+			io.MouseWheel = 0.0f;
+		}
+
 		ImGui::NewFrame();
 	}
 
@@ -301,12 +312,13 @@ namespace Utopian
 	
 	void ImGuiRenderer::ToggleVisible()
 	{
-		mCommandBuffer->ToggleActive();
+		mImguiVisible = !mImguiVisible;
+		mCommandBuffer->SetActive(mImguiVisible);
 	}
 
 	bool ImGuiRenderer::IsMouseInsideUi()
 	{
-		return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+		return mImguiVisible && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
 	}
 	
 	bool ImGuiRenderer::IsKeyboardCapture()

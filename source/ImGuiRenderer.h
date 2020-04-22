@@ -80,5 +80,7 @@ namespace Utopian
 		double mDeltaTime;
 
 		std::vector<VkDescriptorSet> mTextureDescriptorsToFree;
+
+		static bool mImguiVisible;
 	};
 }

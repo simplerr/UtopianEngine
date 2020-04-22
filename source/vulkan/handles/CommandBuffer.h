@@ -52,6 +52,7 @@ namespace Utopian::Vk
 
 		bool IsActive();
 		void ToggleActive();
+		void SetActive(bool active);
 	
 	private:
 		bool mActive;

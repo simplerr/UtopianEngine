@@ -269,4 +269,9 @@ namespace Utopian::Vk
 	{
 		mActive = !mActive;
 	}
+
+	void CommandBuffer::SetActive(bool active)
+	{
+		mActive = active;
+	}
 }
