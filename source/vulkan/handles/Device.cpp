@@ -17,6 +17,7 @@ namespace Utopian::Vk
 		mEnabledFeatures.tessellationShader = VK_TRUE;
 		mEnabledFeatures.pipelineStatisticsQuery = VK_TRUE;
 		mEnabledFeatures.occlusionQueryPrecise = VK_TRUE;
+		mEnabledFeatures.independentBlend = VK_TRUE;
 
 		RetrievePhysical(instance);
 		RetrieveSupportedExtensions();

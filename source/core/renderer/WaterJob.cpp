@@ -69,6 +69,8 @@ namespace Utopian
 		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
 		mEffect->GetPipeline()->AddTessellationState(4);
 
+		gRendererUtility().SetAlphaBlending(mEffect->GetPipeline());
+
 		mEffect->CreatePipeline();
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -88,8 +90,10 @@ namespace Utopian
 
 		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
 		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
+		mFoamMaskTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_foam.png");
 		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("normalSampler", mNormalTexture->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("foamMaskSampler", mFoamMaskTexture->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), renderTarget->GetSampler());
 		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), mShadowSampler.get());
 
