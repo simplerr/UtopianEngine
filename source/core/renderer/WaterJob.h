@@ -33,7 +33,14 @@ namespace Utopian
 		UNIFORM_BLOCK_END()
 
         UNIFORM_BLOCK_BEGIN(WaterParameterBlock)
+    		UNIFORM_PARAM(glm::vec3, waterColor)
 			UNIFORM_PARAM(float, time)
+    		UNIFORM_PARAM(glm::vec3, foamColor)
+			UNIFORM_PARAM(float, waveSpeed)
+			UNIFORM_PARAM(float, foamSpeed)
+			UNIFORM_PARAM(float, distortionStrength)
+			UNIFORM_PARAM(float, shorelineDepth)
+			UNIFORM_PARAM(float, waveFrequency)
 		UNIFORM_BLOCK_END()
 
 		WaterJob(Vk::Device* device, uint32_t width, uint32_t height);

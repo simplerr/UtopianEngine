@@ -21,7 +21,14 @@ layout (location = 5) out vec2 OutDistortion;
 
 layout (set = 0, binding = 0) uniform UBO_waterParameters
 {
+    vec3 waterColor;
     float time;
+    vec3 foamColor;
+    float waveSpeed;
+    float foamSpeed;
+    float distortionStrength;
+    float shorelineDepth;
+    float waveFrequnecy; // Scaling used when sampling distortion texture
 } ubo_waterParameters;
 
 layout (set = 0, binding = 2) uniform sampler2D dudvSampler;
@@ -29,8 +36,7 @@ layout (set = 0, binding = 3) uniform sampler2D normalSampler;
 layout (set = 0, binding = 5) uniform sampler2D depthSampler; // Binding 4 is cascades_ubo in calculate_shadow.glsl
 layout (set = 0, binding = 8) uniform sampler2D foamMaskSampler; // Binding 4 is cascades_ubo in calculate_shadow.glsl
 
-const float distortionStrength = 0.02f;
-const vec3 waterColor = vec3(0.0f, 0.1f, 0.4f);
+// Further scaled with waveSpeed and foamSpeed
 const float timeScaling = 0.00003f;
 
 // Todo: Move to common file
@@ -45,7 +51,7 @@ vec4 calculateFoam(float waterDepth)
     vec4 resultColor = vec4(vec3(0.0f), 1.0f);
 
     /* Shoreline */
-    float timeOffset = ubo_waterParameters.time * timeScaling * 4.0f;
+    float timeOffset = ubo_waterParameters.time * timeScaling * ubo_waterParameters.foamSpeed;
     vec2 scaledprojectedUV = InTex * 950.0f;
     float channelA = texture(foamMaskSampler, scaledprojectedUV - vec2(timeOffset, cos(InTex.x))).r;
     float channelB = texture(foamMaskSampler, scaledprojectedUV * 0.5 + vec2(sin(InTex.y), timeOffset)).b;
@@ -54,7 +60,7 @@ vec4 calculateFoam(float waterDepth)
     mask = pow(mask, 2);
     mask = clamp(mask, 0.0f, 1.0f);
 
-    const float shorelineDepth = 150.0f;
+    float shorelineDepth = ubo_waterParameters.shorelineDepth;
 
     float leading = 1.0f;
     const float leadingEdgeFalloff = 0.2;
@@ -79,11 +85,15 @@ vec4 calculateFoam(float waterDepth)
 
 vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthToWater)
 {
-    vec2 distortion = (texture(dudvSampler, distortedTexCoords).rg * 2.0f - 1.0f) * distortionStrength;
+    vec2 distortion = (texture(dudvSampler, distortedTexCoords).rg * 2.0f - 1.0f) * ubo_waterParameters.distortionStrength;
     float sampleDepth = texture(depthSampler, projectedUV + distortion).r;
+
+    // If sample point is infront of water set zero distortion, see https://mtnphil.wordpress.com/2012/09/23/water-shader-part-3-deferred-rendering/.
     if (sampleDepth < gl_FragCoord.z)
         distortion = vec2(0.0f);
 
+    // Reduce the distortion in relation to distance. Distortion in long distances causes sampling
+    // outside of the reflection image in fresnel.frag, and the effect is mostly noticable in close range anyways.
     depthToWater *= -1;
     const float distortionRange = 2500.0f;
     float distanceFadeFactor = smoothstep(1.0f, 0.0f, (depthToWater - distortionRange) / distortionRange);
@@ -105,7 +115,7 @@ void main()
     OutNormal = vec4(InNormalL, 1.0f); // Missing world transform?
     viewNormal = normalize(viewNormal) * 0.5 + 0.5;
     OutNormalView = vec4(viewNormal, 1.0f);
-    OutAlbedo = vec4(waterColor, reflectivity);
+    OutAlbedo = vec4(ubo_waterParameters.waterColor, reflectivity);
     OutPosition = vec4(worldPosition, 1.0f);
 
     /* Project texture coordinates */
@@ -115,8 +125,8 @@ void main()
 
     /* Calculate distorted texture coordinates for normals and reflection/refraction distortion */
     const float textureScaling = 90.0f;
-    vec2 texCoord = InTex * textureScaling;
-    float offset = ubo_waterParameters.time * timeScaling;
+    vec2 texCoord = InTex * ubo_waterParameters.waveFrequnecy;
+    float offset = ubo_waterParameters.time * timeScaling * ubo_waterParameters.waveSpeed;
     vec2 distortedTexCoords = texture(dudvSampler, vec2(texCoord.x + offset, texCoord.y)).rg * 0.1f;
     distortedTexCoords = texCoord + vec2(distortedTexCoords.x, distortedTexCoords.y + offset);
 
@@ -140,7 +150,7 @@ void main()
 
 	vec4 litColor;
 	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW); // Todo: Move to common file
-	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(waterColor, 1.0f), shadow, litColor);
+	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(ubo_waterParameters.waterColor, 1.0f), shadow, litColor);
     OutFragColor = litColor;
     OutFragColor.a = 1;
 

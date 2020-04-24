@@ -93,52 +93,80 @@ namespace Utopian
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured
 		ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
-		static bool debugQuads = true;
 
-		//ImGui::Checkbox("Deferred pipeline", &mRenderingSettings.deferredPipeline);
-		ImGui::Checkbox("Debug quads", &debugQuads);
-		ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
-		ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
-		ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
+		if (ImGui::CollapsingHeader("Features"))
+		{
+			ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
+			ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
+			ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
+			ImGui::Checkbox("SSR", &mRenderingSettings.ssrEnabled);
+			ImGui::Checkbox("Water", &mRenderingSettings.waterEnabled);
+			ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
+			ImGui::Checkbox("FXAA", &mRenderingSettings.fxaaEnabled);
+			ImGui::Checkbox("FXAA debug", &mRenderingSettings.fxaaDebug);
+			ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
+			ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
+			ImGui::Checkbox("Wind enabled", &mRenderingSettings.windEnabled);
+
+			static bool debugQuads = true;
+			ImGui::Checkbox("Debug quads", &debugQuads);
+			gScreenQuadUi().SetVisible(0, debugQuads);
+		}
+
+		if (ImGui::CollapsingHeader("Fog settings"))
+		{
+			ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
+			ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 100000.0f);
+			ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 100000.0f);
+		}
+
 		//ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
 		//ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
 		//ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
 		//ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
 		//ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
-		ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
-		ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
-		ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
-		ImGui::Checkbox("SSR", &mRenderingSettings.ssrEnabled);
-		ImGui::Checkbox("Water", &mRenderingSettings.waterEnabled);
-		ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
-		ImGui::Checkbox("FXAA", &mRenderingSettings.fxaaEnabled);
-		ImGui::Checkbox("FXAA debug", &mRenderingSettings.fxaaDebug);
-		ImGui::SliderFloat("FXAA threshold", &mRenderingSettings.fxaaThreshold, 0.0f, 1.5f);
-		ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
-		ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
-		ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
-		ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
-		//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
-		ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
-		ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
 
-		float amplitudeScaling = mSceneInfo.terrain->GetAmplitudeScaling();
-		if (ImGui::SliderFloat("Terrain amplitude", &amplitudeScaling, 50.0f, 12000.0f))
+		if (ImGui::CollapsingHeader("Mixed settings"))
 		{
-			mSceneInfo.terrain->SetAmplitudeScaling(amplitudeScaling);
-			//UpdateInstanceAltitudes(); Can't do this because the buffer is in use by a command buffer
+			ImGui::SliderFloat("FXAA threshold", &mRenderingSettings.fxaaThreshold, 0.0f, 1.5f);
+			ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
+			ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
+			ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
+			//ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
+			ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
+			ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);
+			ImGui::Combo("Tonemapping", &mRenderingSettings.tonemapping, "Reinhard\0Uncharted 2\0Exposure\0None\0");
+			ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
+			ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 25.0f);
+			ImGui::SliderFloat("Wind frequency", &mRenderingSettings.windFrequency, 0.0f, 30000.0f);
 		}
 
-		ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 600.0f);
-		ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 1.0f, 50.0f);
-		ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
-		ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);
-		ImGui::Combo("Tonemapping", &mRenderingSettings.tonemapping, "Reinhard\0Uncharted 2\0Exposure\0None\0");
-		ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
-		ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 25.0f);
-		ImGui::SliderFloat("Wind frequency", &mRenderingSettings.windFrequency, 0.0f, 30000.0f);
-		ImGui::Checkbox("Wind enabled", &mRenderingSettings.windEnabled);
-		ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -10000.0f, 10000.0f);
+		if (ImGui::CollapsingHeader("Terrain settings"))
+		{
+			ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
+
+			float amplitudeScaling = mSceneInfo.terrain->GetAmplitudeScaling();
+			if (ImGui::SliderFloat("Terrain amplitude", &amplitudeScaling, 50.0f, 12000.0f))
+			{
+				mSceneInfo.terrain->SetAmplitudeScaling(amplitudeScaling);
+				//UpdateInstanceAltitudes(); Can't do this because the buffer is in use by a command buffer
+			}
+
+			ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 600.0f);
+			ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 1.0f, 50.0f);
+		}
+
+		if (ImGui::CollapsingHeader("Water settings", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -10000.0f, 10000.0f);
+			ImGui::ColorEdit3("Water color", &mRenderingSettings.waterColor.x);
+			ImGui::ColorEdit3("Foam color", &mRenderingSettings.foamColor.x);
+			ImGui::SliderFloat("Wave speed", &mRenderingSettings.waveSpeed, 0.1f, 10.0f);
+			ImGui::SliderFloat("Foam speed", &mRenderingSettings.foamSpeed, 0.1f, 10.0f);
+			ImGui::SliderFloat("Distortion strength", &mRenderingSettings.waterDistortionStrength, 0.005f, 0.1f);
+			ImGui::SliderFloat("Shoreline depth", &mRenderingSettings.shorelineDepth, 0.0f, 1000.0f);
+			ImGui::SliderFloat("Wave frequency", &mRenderingSettings.waveFrequency, 0.0f, 1000.0f);
+		}
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
@@ -146,8 +174,6 @@ namespace Utopian
 		mJobGraph->EnableJob(JobGraph::JobIndex::WATER_INDEX, mRenderingSettings.waterEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
-
-		gScreenQuadUi().SetVisible(0, debugQuads);
 
 		ImGuiRenderer::EndWindow();
 

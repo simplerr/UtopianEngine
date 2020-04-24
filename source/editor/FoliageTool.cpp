@@ -111,7 +111,7 @@ namespace Utopian
 
 	void FoliageTool::RenderUi()
 	{
-		if (ImGui::CollapsingHeader("Foliage tool", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Foliage tool"))
 		{
 			ImGui::SliderFloat("Frequency", &mVegetationSettings.frequency, 1.0f, 1000.0f);
 			ImGui::Checkbox("Continuous", &mVegetationSettings.continuous);

@@ -125,6 +125,13 @@ namespace Utopian
 		mSettingsBlock.UpdateMemory();
 
 		mWaterParameterBlock.data.time = Timer::Instance().GetTime();
+		mWaterParameterBlock.data.waterColor = jobInput.renderingSettings.waterColor;
+		mWaterParameterBlock.data.foamColor = jobInput.renderingSettings.foamColor;
+		mWaterParameterBlock.data.waveSpeed = jobInput.renderingSettings.waveSpeed;
+		mWaterParameterBlock.data.foamSpeed = jobInput.renderingSettings.foamSpeed;
+		mWaterParameterBlock.data.distortionStrength = jobInput.renderingSettings.waterDistortionStrength;
+		mWaterParameterBlock.data.shorelineDepth = jobInput.renderingSettings.shorelineDepth;
+		mWaterParameterBlock.data.waveFrequency = jobInput.renderingSettings.waveFrequency;
 		mWaterParameterBlock.UpdateMemory();
 
 		// Note: Todo: Temporary

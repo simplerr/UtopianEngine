@@ -39,6 +39,14 @@ namespace Utopian
 		float windStrength = 5.0f;
 		float windFrequency = 10000.0f;
 		bool windEnabled = true;
+		// Water
 		float waterLevel = 0.0f;
+		glm::vec3 waterColor = glm::vec3(0.0f, 0.1f, 0.4f);
+		glm::vec3 foamColor = glm::vec3(0.9f);
+		float waveSpeed = 1.0f;
+		float foamSpeed = 4.0f;
+		float waterDistortionStrength = 0.02f;
+		float shorelineDepth = 150.0f;
+		float waveFrequency = 90.0f;
 	};
 }

@@ -245,7 +245,7 @@ namespace Utopian
 	void Editor::RenderActorSelectionUi()
 	{
 		// Display Actor creation list
-		if (ImGui::CollapsingHeader("Actors", ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Actors in scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
 			std::vector<const char*> actorNames;
@@ -256,7 +256,7 @@ namespace Utopian
 				actorNames.push_back(strdup(name.c_str()));
 			}
 
-			if (ImGui::ListBox("Actors:", &mSelectedActorIndex, actorNames.data(), actorNames.size()))
+			if (ImGui::ListBox("Actors", &mSelectedActorIndex, actorNames.data(), actorNames.size()))
 			{
 				OnActorSelected(actors[mSelectedActorIndex].get());
 			}
