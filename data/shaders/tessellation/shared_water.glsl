@@ -23,6 +23,9 @@ layout (std140, set = 0, binding = 7) uniform UBO_settings
 float getHeight(vec2 texCoord)
 {
     float height = 0.0f;
+    float timeFactor = 0.001;
+    height = 200 * sin(ubo_camera.time * timeFactor + texCoord.y * 100.0f);
+    //height += 800 * sin(ubo_camera.time * timeFactor * 0 + texCoord.x * 100.0f);
 
     return height;
 }

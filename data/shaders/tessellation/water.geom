@@ -48,10 +48,14 @@ void main()
 
     vec3[3] corners = vec3[](vec3(1, 0, 0), vec3(0, 1, 0), vec3(0, 0, 1));
 
+    vec3 edgeA = InPosW[1] - InPosW[0];
+    vec3 edgeB = InPosW[2] - InPosW[0];
+    OutNormalL = normalize(cross(edgeA, edgeB));
+
     for (int i = 0; i < gl_in.length(); i++)
     {
         gl_Position = gl_in[i].gl_Position;
-        OutNormalL = InNormalL[i];
+        //OutNormalL = InNormalL[i];
         OutTex = InTex[i];
         OutPosW = InPosW[i];
         OutTangent = tangent;

@@ -3,6 +3,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "shared.glsl"
+#include "math.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -31,27 +32,6 @@ layout (std140, set = 0, binding = 8) uniform UBO_brush
 
 layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[3];
 layout (set = 0, binding = 5) uniform sampler2D samplerNormal[3];
-
-// Calculates the TBN matrix.
-// From http://www.thetenthplanet.de/archives/1180
-mat3 cotangent_frame(vec3 N, vec3 p, vec2 uv)
-{
-    // Get edge vectors of the pixel triangle
-    vec3 dp1 = dFdx(p);
-    vec3 dp2 = dFdy(p);
-    vec2 duv1 = dFdx(uv);
-    vec2 duv2 = dFdy(uv);
- 
-    // Solve the linear system
-    vec3 dp2perp = cross(dp2, N);
-    vec3 dp1perp = cross(N, dp1);
-    vec3 T = dp2perp * duv1.x + dp1perp * duv2.x;
-    vec3 B = dp2perp * duv1.y + dp1perp * duv2.y;
- 
-    // Construct a scale-invariant frame 
-    float invmax = inversesqrt(max(dot(T,T), dot(B,B)));
-    return mat3(T * invmax, B * invmax, N);
-}
 
 void main() 
 {

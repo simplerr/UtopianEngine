@@ -5,6 +5,7 @@
 #include "shared_water.glsl"
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"
+#include "math.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -106,15 +107,20 @@ vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthT
 void main() 
 {
     vec3 worldPosition = InPosW;
-    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
-    vec3 normal = InNormalL;
-    normal.y *= -1; // Should this be here? Similar result without it
-	vec3 viewNormal = normalMatrix * normal;
 
-    float reflectivity = 1.0f;
-    OutNormal = vec4(InNormalL, 1.0f); // Missing world transform?
+    // Note: Use planar normal output to SSR job
+    vec3 normal = InNormalL;
+    normal = vec3(0.0f, 1.0f, 0.0f);
+    OutNormal = vec4(normal, 1.0f);
+
+    /* View normal output */
+    normal.y *= -1; // Note: Y needs to be negated for the view normal calculation
+    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
+	vec3 viewNormal = normalMatrix * normal;
     viewNormal = normalize(viewNormal) * 0.5 + 0.5;
     OutNormalView = vec4(viewNormal, 1.0f);
+
+    float reflectivity = 1.0f;
     OutAlbedo = vec4(ubo_waterParameters.waterColor, reflectivity);
     OutPosition = vec4(worldPosition, 1.0f);
 
@@ -131,9 +137,12 @@ void main()
     distortedTexCoords = texCoord + vec2(distortedTexCoords.x, distortedTexCoords.y + offset);
 
     /* Normal */
+    mat3 TBN = cotangent_frame(InNormalL, InPosW, InTex);
     vec4 normalMapColor = texture(normalSampler, distortedTexCoords);
     normal = vec3(normalMapColor.r * 2.0f - 1.0f, normalMapColor.b, normalMapColor.g * 2.0f - 1.0f);
     normal = normalize(normal);
+    normal = normalize(TBN * normal);
+    OutAlbedo.xyz = normal;
     // Note: Outputting this normal means that the normal in the SSR shader is not (0,1,0) so
     // the reflection texture itself will be distorted, meaning that the distortin in fresnel.frag is "done twice"
     //OutNormal = vec4(normal, 1.0f);
