@@ -45,6 +45,6 @@ void main()
     vec3 finalColor = mix(reflectionColor, refractionColor, refractivity);//0.2f);
 
     OutFragColor = vec4(finalColor / 2.0f, 1.0f);
-    OutFragColor = vec4(finalColor / 2.0f, 1.0f);
+    OutFragColor = vec4(finalColor / 1.0f, 1.0f);
     //OutFragColor = vec4(distortion, 0, 1);
 }

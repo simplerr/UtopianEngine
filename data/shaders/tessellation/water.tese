@@ -35,15 +35,14 @@ void main()
 	vec4 pos2 = mix(gl_in[3].gl_Position, gl_in[2].gl_Position, gl_TessCoord.x);
 	vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
-	// Displace large details
-    pos.y = getHeight(OutTex);
+	pos.xyz = calculateWavePosition(pos.xz, ubo_camera.time, OutNormalL);
 
     float textureScaling = ubo_settings.textureScaling;
 
     float finalDisplacement = 0.0f;
 
 	// Displace small details from displacement map along normal
-	vec3 normal = normalize(getNormal(OutTex));
+	vec3 normal = normalize(OutNormalL);
 	float amplitude = ubo_settings.bumpmapAmplitude;
 	pos.xyz -= normal * finalDisplacement * amplitude;
 

@@ -1,4 +1,4 @@
-/** Contains descriptors shared between multiple shader stages. */
+#include "gerstner.glsl"
 
 layout (std140, set = 0, binding = 6) uniform UBO_viewProjection 
 {
@@ -20,19 +20,11 @@ layout (std140, set = 0, binding = 7) uniform UBO_settings
     int wireframe;
 } ubo_settings;
 
-float getHeight(vec2 texCoord)
+ 
+vec3 calculateWavePosition(vec2 pos, float time, inout vec3 normal)
 {
-    float height = 0.0f;
-    float timeFactor = 0.001;
-    height = 200 * sin(ubo_camera.time * timeFactor + texCoord.y * 100.0f);
-    //height += 800 * sin(ubo_camera.time * timeFactor * 0 + texCoord.x * 100.0f);
-
-    return height;
-}
-
-vec3 getNormal(vec2 texCoord)
-{
-    vec3 normal = vec3(0, 1, 0);
-
-    return normal;
+    float timeFactor = 0.002;
+	vec3 wavePosition = gerstner_wave(pos, time * timeFactor, normal).xyz;
+    
+    return wavePosition;
 }

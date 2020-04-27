@@ -28,7 +28,7 @@ void main()
     // Need to displace the Y coordinate here so that the tessellation factor
     // calculation in the .tesc shader works as expected. Otherwise all vertices will
     // have y=0.0.
-    gl_Position.y = getHeight(OutTex);
+	gl_Position.xyz = calculateWavePosition(gl_Position.xz, ubo_camera.time, OutNormalL);
 
 	// Note: workaround to avoid glslang to optimize unused inputs
 	vec3 temp = InColor;
