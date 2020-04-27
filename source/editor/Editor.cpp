@@ -83,6 +83,31 @@ namespace Utopian
 			}
 		}
 
+		// Copy selected actor, only static models are copied properly
+		if (gInput().KeyPressed('C') && gInput().KeyDown(VK_LCONTROL))
+		{
+			if (mSelectedActor != nullptr)
+			{
+				SharedPtr<Actor> newActor = Actor::Create("CopiedActor");
+
+				Transform originalTransform = mSelectedActor->GetTransform();
+				glm::vec3 pos = originalTransform.GetPosition();
+				glm::quat orientation = originalTransform.GetOrientation();
+				glm::vec3 scale = originalTransform.GetScale();
+
+				CTransform* transform = newActor->AddComponent<CTransform>(pos);
+				transform->SetOrientation(orientation);
+				transform->SetScale(scale);
+
+				std::string originalPath = mSelectedActor->GetComponent<CRenderable>()->GetPath();
+				CRenderable* renderable = newActor->AddComponent<CRenderable>();
+				renderable->LoadModel(originalPath);
+
+				mSelectedActorIndex = mWorld->GetActorIndex(newActor);
+				OnActorSelected(newActor.get());
+			}
+		}
+
 		// Add new actor to scene
 		if (gInput().KeyPressed('C'))
 		{
