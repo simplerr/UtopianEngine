@@ -25,19 +25,13 @@ void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec
 	// Add ambient term.
 	ambient = material.ambient * light.material.ambient * light.intensity.x;	
 
-	// Add diffuse and specular term, provided the surface is in 
-	// the line of site of the light.
-	float diffuseFactor = dot(lightVec, normal);
+	float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
-	// Flatten to avoid dynamic branching.
-	if(diffuseFactor > 0.0f)
-	{
-		vec3 v = reflect(lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);	// [TODO] Should use the models material reflection value instead
-					
-		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
-	}
+	vec3 v = reflect(lightVec, normal);
+	float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+				
+	diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+	spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
 }
 
 //! Computes the colors for a point light.
@@ -72,17 +66,13 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 	// Add diffuse and specular term, provided the surface is in 
 	// the line of site of the light.
 
-	float diffuseFactor = dot(lightVec, normal);
+	float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
-	// Flatten to avoid dynamic branching.
-	if(diffuseFactor > 0.0f)
-	{
-		vec3 v         = reflect(-lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);
+	vec3 v         = reflect(-lightVec, normal);
+	float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
 
-		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
-	}
+	diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+	spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
 
 	// Attenuate
 	// See http://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation for good constant values
@@ -125,17 +115,13 @@ void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, 
 	// Add diffuse and specular term, provided the surface is in 
 	// the line of site of the light.
 
-	float diffuseFactor = dot(lightVec, normal);
+	float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
-	// Flatten to avoid dynamic branching.
-	if(diffuseFactor > 0.0f)
-	{
-		vec3 v         = reflect(-lightVec, normal);
-		float specFactor = pow(max(dot(v, toEye), 0.0f), light.material.specular.w);
-					
-		diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-		spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
-	}
+	vec3 v         = reflect(-lightVec, normal);
+	float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+				
+	diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+	spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
 	
 	// Scale by spotlight factor and attenuate.
 	float spot = pow(max(dot(lightVec, normalize(light.dir)), 0.0f), light.spot);
