@@ -30,10 +30,11 @@ layout (set = 0, binding = 0) uniform UBO_waterParameters
     float distortionStrength;
     float shorelineDepth;
     float waveFrequnecy; // Scaling used when sampling distortion texture
+    float waterSpecularity;
 } ubo_waterParameters;
 
-layout (set = 0, binding = 2) uniform sampler2D dudvSampler;
-layout (set = 0, binding = 3) uniform sampler2D normalSampler;
+layout (set = 0, binding = 2) uniform sampler2D normalSampler1;
+layout (set = 0, binding = 3) uniform sampler2D normalSampler2;
 layout (set = 0, binding = 5) uniform sampler2D depthSampler; // Binding 4 is cascades_ubo in calculate_shadow.glsl
 layout (set = 0, binding = 8) uniform sampler2D foamMaskSampler; // Binding 4 is cascades_ubo in calculate_shadow.glsl
 
@@ -84,9 +85,8 @@ vec4 calculateFoam(float waterDepth)
     return resultColor;
 }
 
-vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthToWater)
+vec2 calculateDistortion(vec2 projectedUV, vec2 distortion, float depthToWater)
 {
-    vec2 distortion = (texture(dudvSampler, distortedTexCoords).rg * 2.0f - 1.0f) * ubo_waterParameters.distortionStrength;
     float sampleDepth = texture(depthSampler, projectedUV + distortion).r;
 
     // If sample point is infront of water set zero distortion, see https://mtnphil.wordpress.com/2012/09/23/water-shader-part-3-deferred-rendering/.
@@ -99,7 +99,6 @@ vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthT
     const float distortionRange = 2500.0f;
     float distanceFadeFactor = smoothstep(1.0f, 0.0f, (depthToWater - distortionRange) / distortionRange);
     distortion *= distanceFadeFactor;
-    //OutAlbedo = vec4(vec3(distanceFadeFactor), 1.0f);
 
     return distortion;
 }
@@ -129,37 +128,36 @@ void main()
     vec2 ndc = clipSpace.xy / clipSpace.w;
     vec2 projectedUV = ndc / 2 + 0.5f;
 
-    /* Calculate distorted texture coordinates for normals and reflection/refraction distortion */
-    const float textureScaling = 90.0f;
-    vec2 texCoord = InTex * ubo_waterParameters.waveFrequnecy;
-    float offset = ubo_waterParameters.time * timeScaling * ubo_waterParameters.waveSpeed;
-    vec2 distortedTexCoords = texture(dudvSampler, vec2(texCoord.x + offset, texCoord.y)).rg * 0.1f;
-    distortedTexCoords = texCoord + vec2(distortedTexCoords.x, distortedTexCoords.y + offset);
-
     /* Normal */
+    vec2 texCoord = InTex * ubo_waterParameters.waveFrequnecy;
+    vec4 normalMapScroll = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    vec2 normalMapCoords1 = texCoord + ubo_waterParameters.time * timeScaling * ubo_waterParameters.waveSpeed * normalMapScroll.xy; 
+    vec2 normalMapCoords2 = texCoord + ubo_waterParameters.time * timeScaling * ubo_waterParameters.waveSpeed * normalMapScroll.zw; 
+    vec3 normalMap1 = texture(normalSampler1, normalMapCoords1).xyz * 2.0f - 1.0f;
+    vec3 normalMap2 = texture(normalSampler2, normalMapCoords2).xyz * 2.0f - 1.0f;
+
     mat3 TBN = cotangent_frame(InNormalL, InPosW, InTex);
-    vec4 normalMapColor = texture(normalSampler, distortedTexCoords);
-    normal = vec3(normalMapColor.r * 2.0f - 1.0f, normalMapColor.b, normalMapColor.g * 2.0f - 1.0f);
-    normal = normalize(normal);
-    normal = normalize(TBN * normal);
-    OutAlbedo.xyz = normal;
+    vec3 finalNormal = normalize(TBN * normalMap1);
+    finalNormal += normalize(TBN * normalMap2);
+    finalNormal = normalize(finalNormal);
+    OutAlbedo.xyz = finalNormal;
     // Note: Outputting this normal means that the normal in the SSR shader is not (0,1,0) so
     // the reflection texture itself will be distorted, meaning that the distortin in fresnel.frag is "done twice"
     //OutNormal = vec4(normal, 1.0f);
 
     /* Shadows */
 	uint cascadeIndex = 0;
-	float shadow = calculateShadow(worldPosition, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
+	float shadow = calculateShadow(worldPosition, finalNormal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
     /* Phong lighting */
     Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 	material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-	material.specular = vec4(1.0f, 1.0f, 1.f, 1.0f); 
+	material.specular = vec4(1.0f, 1.0f, 1.f, ubo_waterParameters.waterSpecularity); 
 
 	vec4 litColor;
 	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW); // Todo: Move to common file
-	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(ubo_waterParameters.waterColor, 1.0f), shadow, litColor);
+	ApplyLighting(material, worldPosition, finalNormal, toEyeW, vec4(ubo_waterParameters.waterColor, 1.0f), shadow, litColor);
     OutFragColor = litColor;
     OutFragColor.a = 1;
 
@@ -175,7 +173,8 @@ void main()
     OutFragColor.a = foamColor.a;
 
     /* Output distortion used in fresnel.frag */
-    OutDistortion = calculateDistortion(projectedUV, distortedTexCoords, depthToWater);
+    vec2 distortedTexCoord = ((finalNormal.xz + finalNormal.xy) * 0.5f) * ubo_waterParameters.distortionStrength;
+    OutDistortion = calculateDistortion(projectedUV, distortedTexCoord, depthToWater);
 
     /* Apply wireframe */
     // Reference: http://codeflow.org/entries/2012/aug/02/easy-wireframe-display-with-barycentric-coordinates/
@@ -189,4 +188,7 @@ void main()
         // Simple method but agly aliasing:
         // if(any(lessThan(InBarycentric, vec3(0.02))))
     }
+
+    // OutFragColor.rgb += specularFactor;
+    OutAlbedo.xyz = finalNormal;
 }

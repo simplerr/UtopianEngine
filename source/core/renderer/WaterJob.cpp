@@ -88,11 +88,11 @@ namespace Utopian
 		mCascadeBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_cascades", &mCascadeBlock);
 
-		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
-		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
+		mNormalTexture1 = Vk::gTextureLoader().LoadTexture("data/textures/water_normal_1.png");
+		mNormalTexture2 = Vk::gTextureLoader().LoadTexture("data/textures/water_normal_2.png");
 		mFoamMaskTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_foam.png");
-		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture->GetTextureDescriptorInfo());
-		mEffect->BindCombinedImage("normalSampler", mNormalTexture->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("normalSampler1", mNormalTexture1->GetTextureDescriptorInfo());
+		mEffect->BindCombinedImage("normalSampler2", mNormalTexture2->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("foamMaskSampler", mFoamMaskTexture->GetTextureDescriptorInfo());
 		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), renderTarget->GetSampler());
 		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), mShadowSampler.get());
@@ -132,6 +132,7 @@ namespace Utopian
 		mWaterParameterBlock.data.distortionStrength = jobInput.renderingSettings.waterDistortionStrength;
 		mWaterParameterBlock.data.shorelineDepth = jobInput.renderingSettings.shorelineDepth;
 		mWaterParameterBlock.data.waveFrequency = jobInput.renderingSettings.waveFrequency;
+		mWaterParameterBlock.data.waterSpecularity = jobInput.renderingSettings.waterSpecularity;
 		mWaterParameterBlock.UpdateMemory();
 
 		// Note: Todo: Temporary

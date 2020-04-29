@@ -41,6 +41,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, distortionStrength)
 			UNIFORM_PARAM(float, shorelineDepth)
 			UNIFORM_PARAM(float, waveFrequency)
+			UNIFORM_PARAM(float, waterSpecularity)
 		UNIFORM_BLOCK_END()
 
 		WaterJob(Vk::Device* device, uint32_t width, uint32_t height);
@@ -63,8 +64,8 @@ namespace Utopian
 		SettingsBlock mSettingsBlock;
 		WaterParameterBlock mWaterParameterBlock;
         Vk::Mesh* mWaterMesh;
-		Vk::Texture* mDuDvTexture;
-		Vk::Texture* mNormalTexture;
+		Vk::Texture* mNormalTexture1;
+		Vk::Texture* mNormalTexture2;
 		Vk::Texture* mFoamMaskTexture;
 		LightUniformBuffer mLightBlock;
 		CascadeBlock mCascadeBlock;

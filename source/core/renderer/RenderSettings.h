@@ -27,7 +27,7 @@ namespace Utopian
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;
 		float sunSpeed = 0.0f;
-		float sunInclination = 45.0f;
+		float sunInclination = 75.0f;
 		float sunAzimuth = 0.0f;
 		float tessellationFactor = 2.8f;
 		float terrainTextureScaling = 200.0;
@@ -48,5 +48,6 @@ namespace Utopian
 		float waterDistortionStrength = 0.02f;
 		float shorelineDepth = 150.0f;
 		float waveFrequency = 90.0f;
+		float waterSpecularity = 32.0f;
 	};
 }
