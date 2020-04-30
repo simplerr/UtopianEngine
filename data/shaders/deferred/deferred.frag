@@ -50,7 +50,7 @@ void main()
 	Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 	material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-	material.specular = vec4(1.0f, 1.0f, 1.0f, 1024.0f); 
+	material.specular = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 
 	vec4 litColor;
 	ApplyLighting(material, position, normal, toEyeW, vec4(albedo, 1.0f), shadow, litColor);
