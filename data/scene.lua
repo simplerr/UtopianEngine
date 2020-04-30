@@ -2,35 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "Sponza",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/sponza/sponza.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = -0.0042035197839141,
-				orientation_x = 0.99999117851257,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 0,
-				pos_y = 0,
-				pos_z = -112.08429718018,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	},
-	
-	{
 		actor_name = "EditorActor",
 		components = 
 		{
@@ -92,9 +63,9 @@ actor_list =
 				orientation_x = -0.29552018642426,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 2893.1303710938,
-				pos_y = 52.674766540527,
-				pos_z = 7613.6596679688,
+				pos_x = -2423.3444824219,
+				pos_y = 94.795013427734,
+				pos_z = -11657.248046875,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
@@ -121,9 +92,9 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0.99524229764938,
-				pos_x = 117.19053649902,
-				pos_y = -6.1823120117188,
-				pos_z = -130.04898071289,
+				pos_x = -852.06671142578,
+				pos_y = -5.2020568847656,
+				pos_z = -172.39079284668,
 				scale_x = 14.499996185303,
 				scale_y = 8.4000005722046,
 				scale_z = 15.5,
@@ -373,20 +344,20 @@ actor_list =
 				color_b = 1,
 				color_g = 1,
 				color_r = 1,
-				path = "data/models/adventure_village/HouseBricksNormal.obj",
+				path = "data/models/adventure_village/CrateLong_reflective.obj",
 				render_flags = 1,
 			},
 			CTransform = 
 			{
-				orientation_w = 0.0081617720425129,
+				orientation_w = 1,
 				orientation_x = 0,
 				orientation_y = 0,
-				orientation_z = 0.99996668100357,
-				pos_x = 362.09655761719,
-				pos_y = -46.722961425781,
-				pos_z = 3425.4753417969,
-				scale_x = 49.999591827393,
-				scale_y = 49.999591827393,
+				orientation_z = 0,
+				pos_x = -210.16265869141,
+				pos_y = -27.19372177124,
+				pos_z = -8383.841796875,
+				scale_x = 50,
+				scale_y = 50,
 				scale_z = 50,
 			},
 		},
@@ -408,12 +379,12 @@ actor_list =
 				color_b = 0.88532823324203,
 				color_g = 0.93212097883224,
 				color_r = 0.9367088675499,
-				dir_x = 0.70710676908493,
-				dir_y = 0.70710676908493,
+				dir_x = 0.99614125490189,
+				dir_y = 0.087764166295528,
 				dir_z = -0,
 				intensity_x = 0.34900000691414,
 				intensity_y = 0.84300005435944,
-				intensity_z = 0,
+				intensity_z = 0.58300000429153,
 				range = 100000,
 				spot = 4,
 				type = 0,
@@ -441,8 +412,8 @@ actor_list =
 				scale_z = 1.2000000476837,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "EditorActor",
 		components = 
@@ -468,6 +439,93 @@ actor_list =
 				scale_x = 50,
 				scale_y = 50,
 				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/HouseStuccoNormal.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.021875938400626,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0.99976068735123,
+				pos_x = -3749.7946777344,
+				pos_y = 6.9959869384766,
+				pos_z = -12729.326171875,
+				scale_x = 50.000045776367,
+				scale_y = 50.000045776367,
+				scale_z = 50,
+			},
+		},
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/Tree.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.016851646825671,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0.99985802173615,
+				pos_x = -3103.6623535156,
+				pos_y = -19.551410675049,
+				pos_z = -11507.270507813,
+				scale_x = 49.999900817871,
+				scale_y = 49.999900817871,
+				scale_z = 50,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "Sponza",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/sponza/sponza.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -0.0042035197839141,
+				orientation_x = 0.99999117851257,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -1079.0122070313,
+				pos_y = -14.67700958252,
+				pos_z = -8788.6650390625,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
 	},
