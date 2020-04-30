@@ -41,6 +41,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, distortionStrength)
 			UNIFORM_PARAM(float, shorelineDepth)
 			UNIFORM_PARAM(float, waveFrequency)
+			UNIFORM_PARAM(float, waterSpecularity)
 		UNIFORM_BLOCK_END()
 
 		WaterJob(Vk::Device* device, uint32_t width, uint32_t height);

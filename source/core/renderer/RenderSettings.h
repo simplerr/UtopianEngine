@@ -48,5 +48,6 @@ namespace Utopian
 		float waterDistortionStrength = 0.02f;
 		float shorelineDepth = 150.0f;
 		float waveFrequency = 90.0f;
+		float waterSpecularity = 128.0f;
 	};
 }

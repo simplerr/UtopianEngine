@@ -15,9 +15,9 @@ layout (location = 4) in vec3 InBarycentric;
 
 layout (location = 0) out vec4 OutFragColor;
 layout (location = 1) out vec4 OutPosition;
-layout (location = 2) out vec4 OutNormal;
+layout (location = 2) out vec4 OutNormalSSR;
 layout (location = 3) out vec4 OutAlbedo;
-layout (location = 4) out vec4 OutNormalView;
+layout (location = 4) out vec4 OutNormalViewSSR;
 layout (location = 5) out vec2 OutDistortion;
 
 layout (set = 0, binding = 0) uniform UBO_waterParameters
@@ -30,6 +30,7 @@ layout (set = 0, binding = 0) uniform UBO_waterParameters
     float distortionStrength;
     float shorelineDepth;
     float waveFrequnecy; // Scaling used when sampling distortion texture
+    float waterSpecularity;
 } ubo_waterParameters;
 
 layout (set = 0, binding = 2) uniform sampler2D dudvSampler;
@@ -106,23 +107,9 @@ vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthT
 
 void main() 
 {
-    vec3 worldPosition = InPosW;
-
-    // Note: Use planar normal output to SSR job
-    vec3 normal = InNormalL;
-    normal = vec3(0.0f, 1.0f, 0.0f);
-    OutNormal = vec4(normal, 1.0f);
-
-    /* View normal output */
-    normal.y *= -1; // Note: Y needs to be negated for the view normal calculation
-    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
-	vec3 viewNormal = normalMatrix * normal;
-    viewNormal = normalize(viewNormal) * 0.5 + 0.5;
-    OutNormalView = vec4(viewNormal, 1.0f);
-
     float reflectivity = 1.0f;
     OutAlbedo = vec4(ubo_waterParameters.waterColor, reflectivity);
-    OutPosition = vec4(worldPosition, 1.0f);
+    OutPosition = vec4(InPosW, 1.0f);
 
     /* Project texture coordinates */
     vec4 clipSpace = ubo_camera.projection * ubo_camera.view * vec4(InPosW.xyz, 1.0f);
@@ -138,28 +125,28 @@ void main()
 
     /* Normal */
     mat3 TBN = cotangent_frame(InNormalL, InPosW, InTex);
-    vec4 normalMapColor = texture(normalSampler, distortedTexCoords);
-    normal = vec3(normalMapColor.r * 2.0f - 1.0f, normalMapColor.b, normalMapColor.g * 2.0f - 1.0f);
-    normal = normalize(normal);
-    normal = normalize(TBN * normal);
-    OutAlbedo.xyz = normal;
+    vec3 finalNormal = texture(normalSampler, distortedTexCoords).rgb * 2.0f - 1.0f;
+    finalNormal = normalize(finalNormal);
+    finalNormal = normalize(TBN * finalNormal);
+    //normal = mix(normal, InNormalL, clamp((ubo_camera.eyePos + InPosW) / 2000.0f, 0.0f, 1.0f));
+    OutAlbedo.xyz = finalNormal;
     // Note: Outputting this normal means that the normal in the SSR shader is not (0,1,0) so
     // the reflection texture itself will be distorted, meaning that the distortin in fresnel.frag is "done twice"
     //OutNormal = vec4(normal, 1.0f);
 
     /* Shadows */
 	uint cascadeIndex = 0;
-	float shadow = calculateShadow(worldPosition, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
+	float shadow = calculateShadow(InPosW, finalNormal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
     /* Phong lighting */
     Material material;
 	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 	material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-	material.specular = vec4(1.0f, 1.0f, 1.f, 1.0f); 
+	material.specular = vec4(1.0f, 1.0f, 1.f, ubo_waterParameters.waterSpecularity); 
 
 	vec4 litColor;
 	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW); // Todo: Move to common file
-	ApplyLighting(material, worldPosition, normal, toEyeW, vec4(ubo_waterParameters.waterColor, 1.0f), shadow, litColor);
+	ApplyLighting(material, InPosW, finalNormal, toEyeW, vec4(ubo_waterParameters.waterColor, 1.0f), shadow, litColor);
     OutFragColor = litColor;
     OutFragColor.a = 1;
 
@@ -189,4 +176,16 @@ void main()
         // Simple method but agly aliasing:
         // if(any(lessThan(InBarycentric, vec3(0.02))))
     }
+
+    /* Normal output to SSR job, planar normal for now */
+    vec3 normalSSR = InNormalL;
+    normalSSR = vec3(0.0f, 1.0f, 0.0f);
+    OutNormalSSR = vec4(normalSSR, 1.0f);
+
+    /* View normal output to SSR job */
+    normalSSR.y *= -1; // Note: Y needs to be negated for the view normal calculation
+    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
+	vec3 viewNormalSSR = normalMatrix * normalSSR;
+    viewNormalSSR = normalize(viewNormalSSR) * 0.5 + 0.5;
+    OutNormalViewSSR = vec4(viewNormalSSR, 1.0f);
 }

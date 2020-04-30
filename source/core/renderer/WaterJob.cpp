@@ -132,6 +132,7 @@ namespace Utopian
 		mWaterParameterBlock.data.distortionStrength = jobInput.renderingSettings.waterDistortionStrength;
 		mWaterParameterBlock.data.shorelineDepth = jobInput.renderingSettings.shorelineDepth;
 		mWaterParameterBlock.data.waveFrequency = jobInput.renderingSettings.waveFrequency;
+		mWaterParameterBlock.data.waterSpecularity = jobInput.renderingSettings.waterSpecularity;
 		mWaterParameterBlock.UpdateMemory();
 
 		// Note: Todo: Temporary
