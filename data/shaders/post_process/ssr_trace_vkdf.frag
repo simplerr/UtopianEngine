@@ -13,6 +13,7 @@ layout (location = 0) out vec4 OutFragColor;
 layout (std140, set = 0, binding = 9) uniform UBO_settings 
 {
 	int ssrEnabled;
+   int skyboxReflections;
 } settings_ubo;
 
 void main()
@@ -25,7 +26,7 @@ void main()
    vec4 specular = texture(specularSampler, InTex);
    float reflectiveness = specular.a;
 
-   if (reflectiveness < 0.4f || normal.y < 0.7f)
+   if (reflectiveness < 0.4f || normal.y < 0.9f)
    {
       OutFragColor = vec4(0.0f);
       return;
@@ -36,8 +37,9 @@ void main()
    bool ssrFound = false;
    vec4 reflectionColor = retrieveReflectionColor(worldPosition, viewNormal, InTex, reflectiveness, ssrFound);
 
-   // No SSR reflection found or disabled, sample the skydome as a fallback method
-   if (settings_ubo.ssrEnabled != 1 || !ssrFound)
+   if ((settings_ubo.skyboxReflections == 1) &&
+       ((settings_ubo.ssrEnabled == 1 && !ssrFound) ||
+       (settings_ubo.ssrEnabled == 0)))
    {
       vec3 toEyeW = normalize(ubo_parameters.eyePos + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
       vec3 worldNormal = normalize(texture(normalWorldSampler, InTex).xyz);
@@ -48,8 +50,12 @@ void main()
       OutFragColor = testOutput.skyColor;
       //OutFragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
    }
-   else
+   else if (settings_ubo.ssrEnabled == 1 && ssrFound)
    {
       OutFragColor = vec4(reflectionColor.rgb, 1.0f);
+   }
+   else 
+   {
+      OutFragColor = vec4(0.0f);
    }
 }

@@ -60,8 +60,8 @@ namespace Utopian
 		mReflectionSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO_settings", &mReflectionSettingsBlock);
 
-		// const uint32_t size = 640;
-		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
+		const uint32_t size = 640;
+		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -114,6 +114,7 @@ namespace Utopian
 		mSkyParameterBlock.UpdateMemory();
 		
 		mReflectionSettingsBlock.data.ssrEnabled = jobInput.renderingSettings.ssrEnabled;
+		mReflectionSettingsBlock.data.skyboxReflections = jobInput.renderingSettings.skyboxReflections;
 		mReflectionSettingsBlock.UpdateMemory();
 
 		mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.0, 1.0, 0.0, 1.0));

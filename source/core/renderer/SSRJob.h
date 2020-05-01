@@ -31,6 +31,7 @@ namespace Utopian
 
 		UNIFORM_BLOCK_BEGIN(ReflectionSettingsBlock)
 			UNIFORM_PARAM(int, ssrEnabled)
+			UNIFORM_PARAM(int, skyboxReflections)
 		UNIFORM_BLOCK_END()
 
 		SSRJob(Vk::Device* device, uint32_t width, uint32_t height);
