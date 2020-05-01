@@ -24,9 +24,10 @@ void main()
    /* Bail out if this fragment is not reflective */
    vec3 normal = texture(normalWorldSampler, InTex).rgb;
    vec4 specular = texture(specularSampler, InTex);
-   float reflectiveness = specular.a;
+   float reflectiveness = specular.r;
 
-   if (reflectiveness < 0.4f || normal.y < 0.9f)
+   // Only reflect ground planes for now
+   if (reflectiveness == 0.0f || normal.y < 0.9f)
    {
       OutFragColor = vec4(0.0f);
       return;

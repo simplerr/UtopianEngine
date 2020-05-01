@@ -1,4 +1,7 @@
 #version 450
+#extension GL_GOOGLE_include_directive : enable
+
+#include "material_types.glsl"
 
 layout (location = 0) in vec4 InColor;
 layout (location = 1) in vec3 InPosW;
@@ -16,6 +19,7 @@ layout (location = 2) out vec4 outAlbedo;
 // Should be reworked so that you don't have to use two separate textures
 // for normals in world space vs view space.
 layout (location = 3) out vec4 outNormalV;
+layout (location = 4) out vec4 outSpecular;
 
 layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
@@ -64,11 +68,7 @@ void main()
 	}
 
 	outNormal.y *= -1.0f;
-	// Note: Todo: the specular texture is not used right now due to fresnel.frag
-	// being applied to every fragment with specular != 0.0f causing opaque objects 
-	// to be treated incorrectly. The fix is to output "reflectivity map" texture.
-	outAlbedo = vec4(diffuse.rgb, 0.0f);
-	//outAlbedo = vec4(diffuse.rgb, specular.r);
+	outAlbedo = vec4(diffuse.rgb, 1.0f);
 	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
-	//outAlbedo = vec4(InTex.x, InTex.y, 0, 1);
+	outSpecular = vec4(specular.r, MATERIAL_TYPE_OBJECT, 0, 0);
 }

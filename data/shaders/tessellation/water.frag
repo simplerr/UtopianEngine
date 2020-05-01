@@ -6,6 +6,7 @@
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"
 #include "math.glsl"
+#include "material_types.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -19,6 +20,7 @@ layout (location = 2) out vec4 OutNormalSSR;
 layout (location = 3) out vec4 OutAlbedo;
 layout (location = 4) out vec4 OutNormalViewSSR;
 layout (location = 5) out vec2 OutDistortion;
+layout (location = 6) out vec4 OutSpecular;
 
 layout (set = 0, binding = 0) uniform UBO_waterParameters
 {
@@ -107,8 +109,7 @@ vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthT
 
 void main() 
 {
-    float reflectivity = 1.0f;
-    OutAlbedo = vec4(ubo_waterParameters.waterColor, reflectivity);
+    OutAlbedo = vec4(ubo_waterParameters.waterColor, 1.0f);
     OutPosition = vec4(InPosW, 1.0f);
 
     /* Project texture coordinates */
@@ -188,4 +189,7 @@ void main()
 	vec3 viewNormalSSR = normalMatrix * normalSSR;
     viewNormalSSR = normalize(viewNormalSSR) * 0.5 + 0.5;
     OutNormalViewSSR = vec4(viewNormalSSR, 1.0f);
+
+    float reflectivity = 1.0f;
+    OutSpecular = vec4(reflectivity, MATERIAL_TYPE_WATER, 0.0f, 0.0f);
 }

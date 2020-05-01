@@ -33,6 +33,7 @@ namespace Utopian
 		mGBuffer.normalViewImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
 		mGBuffer.albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 		mGBuffer.depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		mGBuffer.specularImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
 
 		/* Add jobs */
 		GBufferTerrainJob* gbufferTerrainJob = new GBufferTerrainJob(device, terrain, width, height);

@@ -1,5 +1,8 @@
 #version 450
 
+#include "material_types.glsl"
+#extension GL_GOOGLE_include_directive : enable
+
 layout (location = 0) in vec3 InColor;
 layout (location = 1) in vec3 InPosW;
 layout (location = 2) in vec3 InNormalW;
@@ -16,6 +19,7 @@ layout (location = 2) out vec4 outAlbedo;
 // Should be reworked so that you don't have to use two separate textures
 // for normals in world space vs view space.
 layout (location = 3) out vec4 outNormalV;
+layout (location = 4) out vec4 outSpecular;
 
 layout (set = 1, binding = 0) uniform sampler2D textureSampler[3];
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
@@ -86,4 +90,6 @@ void main()
 
 	if (InColor != vec3(1.0f))
 		outAlbedo = vec4(InColor, 1.0f);
+
+	outSpecular = vec4(0.0f, MATERIAL_TYPE_WATER, 0.0f, 0.0f);
 }

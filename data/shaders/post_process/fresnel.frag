@@ -13,15 +13,18 @@ layout (set = 0, binding = 3) uniform sampler2D distortionSampler;
 layout (set = 0, binding = 4) uniform sampler2D positionSampler;
 layout (set = 0, binding = 5) uniform sampler2D normalSampler;
 layout (set = 0, binding = 6) uniform sampler2D albedoSampler;
+layout (set = 0, binding = 7) uniform sampler2D specularSampler;
 
-layout (set = 0, binding = 7) uniform UBO_parameters
+layout (set = 0, binding = 8) uniform UBO_parameters
 {
     vec4 ubo_parameters;
 } ubo_parameters;
 
 void main() 
 {
-    float reflectivity = texture(albedoSampler, InTex).a;
+    vec4 albedo = texture(albedoSampler, InTex);
+    vec4 specular = texture(specularSampler, InTex);
+    float reflectivity = specular.r;
 
     if (reflectivity == 0.0f)
     {
@@ -44,7 +47,16 @@ void main()
 
     vec3 finalColor = mix(reflectionColor, refractionColor, refractivity);//0.2f);
 
-    OutFragColor = vec4(finalColor / 2.0f, 1.0f);
-    OutFragColor = vec4(finalColor / 1.0f, 1.0f);
+    // Note: Todo: not finalColor
+    OutFragColor = vec4(reflectionColor / 1.0f, 1.0f);
+
+    uint type = uint(texture(specularSampler, InTex).g);
+    // if (type == 0u)
+    //     OutFragColor = vec4(1,0,0,1);
+    // else if (type == 1u)
+    //     OutFragColor = vec4(0,1,0,1);
+    // else if (type == 2u)
+    //     OutFragColor = vec4(0,0,1,1);
+    
     //OutFragColor = vec4(distortion, 0, 1);
 }

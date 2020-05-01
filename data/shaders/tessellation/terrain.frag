@@ -4,6 +4,7 @@
 
 #include "shared.glsl"
 #include "math.glsl"
+#include "material_types.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -15,6 +16,7 @@ layout (location = 4) in vec3 InBarycentric;
 layout (location = 0) out vec4 OutPosition;
 layout (location = 1) out vec4 OutNormal;
 layout (location = 2) out vec4 OutAlbedo;
+layout (location = 4) out vec4 OutSpecular;
 
 // Output normals in view space so that the SSAO pass can use them.
 // Should be reworked so that you don't have to use two separate textures
@@ -117,4 +119,6 @@ void main()
     //OutColor = vec4(getNormal(InTex), 1.0);
     //OutColor = blend;
     //OutColor = vec4(InTex.x, InTex.y, 0, 1);
+
+	OutSpecular = vec4(0.0f, MATERIAL_TYPE_TERRAIN, 0.0f, 0.0f);
 }

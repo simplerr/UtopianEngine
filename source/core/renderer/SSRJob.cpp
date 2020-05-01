@@ -45,11 +45,11 @@ namespace Utopian
 		mTraceSSREffect->CreatePipeline();
 
 		mTraceSSREffect->BindCombinedImage("lightSampler", deferredJob->renderTarget->GetColorImage().get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("specularSampler", gbuffer.albedoImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("normalViewSampler", gbuffer.normalViewImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("normalWorldSampler", gbuffer.normalImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("depthSampler", gbuffer.depthImage.get(), mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("specularSampler", gbuffer.specularImage.get(), mTraceRenderTarget->GetSampler());
 
 		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO", &mUniformBlock);

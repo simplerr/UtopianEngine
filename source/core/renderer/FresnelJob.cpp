@@ -49,6 +49,7 @@ namespace Utopian
 		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("normalSampler", gbuffer.normalImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("albedoSampler", gbuffer.albedoImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("specularSampler", gbuffer.specularImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void FresnelJob::Render(const JobInput& jobInput)
