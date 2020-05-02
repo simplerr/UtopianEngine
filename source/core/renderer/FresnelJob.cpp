@@ -48,13 +48,13 @@ namespace Utopian
 		mEffect->BindCombinedImage("distortionSampler", waterJob->distortionImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("normalSampler", gbuffer.normalImage.get(), mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("albedoSampler", gbuffer.albedoImage.get(), mRenderTarget->GetSampler());
 		mEffect->BindCombinedImage("specularSampler", gbuffer.specularImage.get(), mRenderTarget->GetSampler());
 	}
 
 	void FresnelJob::Render(const JobInput& jobInput)
 	{
 		mUniformBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
+		mUniformBlock.data.transparency = jobInput.renderingSettings.waterTransparency;
 		mUniformBlock.UpdateMemory();
 
 		mRenderTarget->Begin("Fresnel pass", glm::vec4(0.5, 1.0, 0.5, 1.0));
