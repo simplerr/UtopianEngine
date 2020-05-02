@@ -51,5 +51,6 @@ namespace Utopian
 		float waveFrequency = 90.0f;
 		float waterSpecularity = 128.0f;
 		float waterTransparency = 0.0f;
+		float underwaterViewDistance = 1000.0f;
 	};
 }

@@ -169,6 +169,7 @@ namespace Utopian
 			ImGui::SliderFloat("Wave frequency", &mRenderingSettings.waveFrequency, 0.0f, 1000.0f);
 			ImGui::SliderFloat("Water specularity", &mRenderingSettings.waterSpecularity, 1.0f, 1024.0f);
 			ImGui::SliderFloat("Water transparency", &mRenderingSettings.waterTransparency, 0.0f, 1.0f);
+			ImGui::SliderFloat("Underwater view distance", &mRenderingSettings.underwaterViewDistance, 0.0f, 5000.0f);
 		}
 
 		mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);

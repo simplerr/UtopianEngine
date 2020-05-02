@@ -191,5 +191,5 @@ void main()
     OutNormalViewSSR = vec4(viewNormalSSR, 1.0f);
 
     float reflectivity = 1.0f;
-    OutSpecular = vec4(reflectivity, MATERIAL_TYPE_WATER, 0.0f, 0.0f);
+    OutSpecular = vec4(reflectivity, MATERIAL_TYPE_WATER, waterDepth, 0.0f);
 }

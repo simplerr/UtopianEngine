@@ -17,10 +17,10 @@ namespace Utopian
 	{
 		SharedPtr<Vk::Image> positionImage;
 		SharedPtr<Vk::Image> normalImage;
-		SharedPtr<Vk::Image> normalViewImage; // Normals in view space
+		SharedPtr<Vk::Image> normalViewImage;
 		SharedPtr<Vk::Image> albedoImage;
 		SharedPtr<Vk::Image> depthImage;
-		SharedPtr<Vk::Image> specularImage;
+		SharedPtr<Vk::Image> specularImage; // R = specularity, G = material type, B = water depth, A = undefined
 	};
 
 	

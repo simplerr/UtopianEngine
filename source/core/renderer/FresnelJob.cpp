@@ -55,6 +55,7 @@ namespace Utopian
 	{
 		mUniformBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
 		mUniformBlock.data.transparency = jobInput.renderingSettings.waterTransparency;
+		mUniformBlock.data.underwaterViewDistance = jobInput.renderingSettings.underwaterViewDistance;
 		mUniformBlock.UpdateMemory();
 
 		mRenderTarget->Begin("Fresnel pass", glm::vec4(0.5, 1.0, 0.5, 1.0));

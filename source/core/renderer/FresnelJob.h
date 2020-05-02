@@ -10,6 +10,7 @@ namespace Utopian
 		UNIFORM_BLOCK_BEGIN(FresnelUniforms)
 			UNIFORM_PARAM(glm::vec4, eyePos)
 			UNIFORM_PARAM(float, transparency)
+			UNIFORM_PARAM(float, underwaterViewDistance)
 		UNIFORM_BLOCK_END()
 
 		FresnelJob(Vk::Device* device, uint32_t width, uint32_t height);
