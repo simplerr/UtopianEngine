@@ -27,7 +27,6 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	float padding;
 	float fogStart;
 	float fogDistance;
-	int ssaoEnabled;
 	int cascadeColorDebug;
 } settings_ubo;
 

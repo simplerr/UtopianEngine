@@ -82,7 +82,6 @@ namespace Utopian::Vk
 		settings_ubo.data.fogStart = renderingSettings.fogStart;
 		settings_ubo.data.fogDistance = renderingSettings.fogDistance;
 		settings_ubo.data.cascadeColorDebug = renderingSettings.cascadeColorDebug;
-		settings_ubo.data.ssaoEnabled = renderingSettings.ssaoEnabled;
 		settings_ubo.UpdateMemory();
 	}
 }
