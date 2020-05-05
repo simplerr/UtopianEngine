@@ -62,8 +62,8 @@ namespace Utopian
 		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
 		mLinesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
 		mLinesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-		mLinesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+		// mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
+		// mLinesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
 		mLinesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
 		gRendererUtility().SetAlphaBlending(mLinesEffect->GetPipeline());
 		mLinesEffect->CreatePipeline();

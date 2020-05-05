@@ -52,4 +52,5 @@ void main()
 
 	OutThickness.x = backfaceDepth;
 	OutThickness.y = depthDelta;
+	OutThickness.x = gl_FragCoord.z;
 }

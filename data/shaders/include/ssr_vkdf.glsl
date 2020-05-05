@@ -513,6 +513,8 @@ vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float
    vec3 eye_position = (ubo.view * vec4(worldPosition, 1.0f)).xyz;
    vec3 eye_viewdir = normalize(eye_position);
    vec3 eye_refl_dir = reflect(eye_viewdir, viewNormal);
+   ssrFound = true;
+   return vec4(eye_refl_dir, 1.0f);
 
    /* Compute reflection vector */
    // vec3 normalView = normalize(texture(normalViewSampler, InTex).xyz * 2.0f - 1.0f);
@@ -604,5 +606,6 @@ vec4 retrieveReflectionColor(vec3 worldPosition, vec3 viewNormal, vec2 uv, float
    outputColor.rgb *= reflectiveness * att_cam * att_uv * att_refl_angle * att_refl_dist;
 
    ssrFound = true;
+   return vec4(eye_refl_dir, 1.0f);
    return vec4(outputColor, 1.0f);
 }

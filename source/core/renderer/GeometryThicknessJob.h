@@ -25,6 +25,6 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		ViewProjection mViewProjectionBlock;
 
-		const float DEFAULT_THICKNESS = 500.0f;
+		const float DEFAULT_THICKNESS = 1.0f;
 	};
 }

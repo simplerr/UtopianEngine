@@ -3,7 +3,7 @@
 
 // Note: 8 because this is used together with ssr_vkdf.glsl
 // which occupies bindng 0-5 for G-buffer textures
-layout (set = 0, binding = 8) uniform UBO_parameters 
+layout (set = 0, binding = 9) uniform UBO_parameters 
 {
 	vec3 eyePos;
 	float sphereRadius;

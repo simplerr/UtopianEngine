@@ -13,6 +13,8 @@ namespace Utopian
 
 		UNIFORM_BLOCK_BEGIN(OutputBuffer)
 			UNIFORM_PARAM(glm::vec4, pixelValue)
+			UNIFORM_PARAM(glm::vec4, pixelValue2)
+			UNIFORM_PARAM(glm::vec4, pixelValue3)
 		UNIFORM_BLOCK_END()
 
 		PixelDebugJob(Vk::Device* device, uint32_t width, uint32_t height);

@@ -34,19 +34,48 @@ namespace Utopian
 			UNIFORM_PARAM(int, skyboxReflections)
 		UNIFORM_BLOCK_END()
 
+
+		// Kode80
+		UNIFORM_BLOCK_BEGIN(Kode80SettingsBlock)
+			UNIFORM_PARAM(glm::mat4, _CameraProjectionMatrix)        // projection matrix that maps to screen pixels (not NDC)
+			UNIFORM_PARAM(glm::mat4, _CameraInverseProjectionMatrix) // inverse projection matrix (NDC to camera space)
+			UNIFORM_PARAM(glm::mat4, _NormalMatrix)
+			UNIFORM_PARAM(glm::mat4, viewMatrix)
+			UNIFORM_PARAM(glm::vec2, _RenderBufferSize)
+			UNIFORM_PARAM(glm::vec2, _OneDividedByRenderBufferSize)  // Optimization: removes 2 divisions every itteration
+			UNIFORM_PARAM(float, _Iterations)                        // maximum ray iterations
+			UNIFORM_PARAM(float, _BinarySearchIterations)            // maximum binary search refinement iterations
+			UNIFORM_PARAM(float, _PixelZSize)                        // Z size in camera space of a pixel in the depth buffer
+			UNIFORM_PARAM(float, _PixelStride)                       // number of pixels per ray step close to camera
+			UNIFORM_PARAM(float, _PixelStrideZCuttoff)               // ray origin Z at this distance will have a pixel stride of 1.0
+			UNIFORM_PARAM(float, _MaxRayDistance)                    // maximum distance of a ray
+			UNIFORM_PARAM(float, _ScreenEdgeFadeStart)               // distance to screen edge that ray hits will start to fade (0.0 -> 1.0)
+			UNIFORM_PARAM(float, _EyeFadeStart)                      // ray direction's Z that ray hits will start to fade (0.0 -> 1.0)
+			UNIFORM_PARAM(float, _EyeFadeEnd)                        // ray direction's Z that ray hits will be cut (0.0 -> 1.0)
+		UNIFORM_BLOCK_END()
+  
 		SSRJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SSRJob();
 
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
 		void Render(const JobInput& jobInput) override;
+		void Update() override;
 
 		SharedPtr<Vk::Image> ssrBlurImage;
+		SharedPtr<Vk::Image> ssrImage;
+
+		// Debug images
+		SharedPtr<Vk::Image> rayOriginImage;
+		SharedPtr<Vk::Image> rayEndImage;
+		SharedPtr<Vk::Image> miscDebugImage;
 
 	private:
 		void InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
+		void InitTracePassKode80(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
 		void InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
 
 		void RenderTracePass(const JobInput& jobInput);
+		void RenderTracePassKode80(const JobInput& jobInput);
 		void RenderBlurPass(const JobInput& jobInput);
 
 		// Two pass effect
@@ -57,9 +86,11 @@ namespace Utopian
 
 		SharedPtr<Vk::RenderTarget> mTraceRenderTarget;
 		SharedPtr<Vk::RenderTarget> mBlurRenderTarget;
-		SharedPtr<Vk::Image> ssrImage;
 		SSRUniforms mUniformBlock;
 		SkyParameterBlock mSkyParameterBlock;
 		ReflectionSettingsBlock mReflectionSettingsBlock;
+
+		// Kode80
+		Kode80SettingsBlock mKode80SettingsBlock;
 	};
 }
