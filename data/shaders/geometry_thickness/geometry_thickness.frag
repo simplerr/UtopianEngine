@@ -6,7 +6,7 @@
 layout (location = 0) in vec3 InPosW;
 layout (location = 1) in vec2 InTex;
 
-layout (location = 0) out float OutThickness;
+layout (location = 0) out vec2 OutThickness;
 
 const float NEAR_PLANE = 10.0f;
 const float FAR_PLANE = 256000.0f;
@@ -50,5 +50,6 @@ void main()
 	float backfaceDepth = -eye_z_from_depth(gl_FragCoord.z, per_frame_vs.projection);
 	float depthDelta = backfaceDepth - frontfaceDepth;
 
-	OutThickness = depthDelta;
+	OutThickness.x = backfaceDepth;
+	OutThickness.y = depthDelta;
 }

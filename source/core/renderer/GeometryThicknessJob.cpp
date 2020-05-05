@@ -16,7 +16,7 @@ namespace Utopian
 
 	void GeometryThicknessJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		geometryThicknessImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R32_SFLOAT);
+		geometryThicknessImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R32G32_SFLOAT);
 
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		mRenderTarget->AddWriteOnlyColorAttachment(geometryThicknessImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
