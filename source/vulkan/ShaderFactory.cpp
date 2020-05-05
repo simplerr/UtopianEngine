@@ -422,7 +422,13 @@ namespace Utopian::Vk
 			{
 				if (qualifier.storage == glslang::EvqBuffer)	// SSBO
 				{
-					// Todo
+					UniformBlockDesc desc;
+					desc.size = program.getUniformBlockSize(i); // todo: / 4
+					desc.set = qualifier.layoutSet;
+					desc.binding = qualifier.layoutBinding;
+					desc.name = name;
+					reflection.storageBuffers[desc.name] = desc;
+					reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
 				}
 				else if (qualifier.storage == glslang::EvqUniform)
 				{

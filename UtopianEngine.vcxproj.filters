@@ -522,6 +522,9 @@
     <ClCompile Include="source\core\renderer\FresnelJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\core\renderer\PixelDebugJob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -969,6 +972,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\core\renderer\FresnelJob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\renderer\PixelDebugJob.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

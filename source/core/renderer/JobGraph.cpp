@@ -17,6 +17,7 @@
 #include "core/renderer/WaterJob.h"
 #include "core/renderer/OpaqueCopyJob.h"
 #include "core/renderer/FresnelJob.h"
+#include "core/renderer/PixelDebugJob.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
@@ -57,6 +58,7 @@ namespace Utopian
 		AddJob(new Im3dJob(device, width, height));
 		AddJob(new BloomJob(device, width, height));
 		AddJob(new TonemapJob(device, width, height));
+		AddJob(new PixelDebugJob(device, width, height));
 
 		FXAAJob* fxaaJob = new FXAAJob(device, width, height);
 		vulkanApp->SetJobGraphWaitSemaphore(fxaaJob->GetCompletedSemahore());

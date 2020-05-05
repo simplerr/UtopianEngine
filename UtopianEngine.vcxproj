@@ -110,6 +110,7 @@
     <ClCompile Include="source\core\renderer\Im3dJob.cpp" />
     <ClCompile Include="source\core\renderer\JobGraph.cpp" />
     <ClCompile Include="source\core\renderer\OpaqueCopyJob.cpp" />
+    <ClCompile Include="source\core\renderer\PixelDebugJob.cpp" />
     <ClCompile Include="source\core\renderer\RendererUtility.cpp" />
     <ClCompile Include="source\core\renderer\ShadowJob.cpp" />
     <ClCompile Include="source\core\renderer\SkyboxJob.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="source\core\renderer\Im3dJob.h" />
     <ClInclude Include="source\core\renderer\JobGraph.h" />
     <ClInclude Include="source\core\renderer\OpaqueCopyJob.h" />
+    <ClInclude Include="source\core\renderer\PixelDebugJob.h" />
     <ClInclude Include="source\core\renderer\RendererUtility.h" />
     <ClInclude Include="source\core\renderer\RenderSettings.h" />
     <ClInclude Include="source\core\renderer\SceneInfo.h" />

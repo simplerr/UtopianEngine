@@ -18,6 +18,7 @@ namespace Utopian::Vk
 		mEnabledFeatures.pipelineStatisticsQuery = VK_TRUE;
 		mEnabledFeatures.occlusionQueryPrecise = VK_TRUE;
 		mEnabledFeatures.independentBlend = VK_TRUE;
+		mEnabledFeatures.fragmentStoresAndAtomics = VK_TRUE;
 
 		RetrievePhysical(instance);
 		RetrieveSupportedExtensions();

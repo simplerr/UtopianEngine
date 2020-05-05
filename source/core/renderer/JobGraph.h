@@ -43,6 +43,7 @@ namespace Utopian
 			IM3D_INDEX,
 			BLOOM_INDEX,
 			TONEMAP_INDEX,
+			PIXEL_DEBUG_INDEX,
 			FXAA_INDEX
 		};
 

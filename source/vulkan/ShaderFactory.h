@@ -62,6 +62,7 @@ namespace Utopian::Vk
 	struct ShaderReflection
 	{
 		std::map<std::string, UniformBlockDesc> uniformBlocks;
+		std::map<std::string, UniformBlockDesc> storageBuffers;
 		std::map<std::string, UniformVariableDesc> combinedSamplers;
 		std::map<std::string, PushConstantDesc> pushConstants;
 		SharedPtr<VertexDescription> vertexDescription;

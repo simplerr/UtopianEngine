@@ -82,6 +82,13 @@ namespace Utopian::Vk
 				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1);
 			}
 
+			// Storage buffers
+			for (auto& iter : shader->compiledShaders[i]->reflection.storageBuffers)
+			{
+				mPipelineInterface->AddStorageBuffer(iter.second.set, iter.second.binding, VK_SHADER_STAGE_ALL);
+				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1);
+			}
+
 			// Combined image samplers
 			for (auto& iter : shader->compiledShaders[i]->reflection.combinedSamplers)
 			{
