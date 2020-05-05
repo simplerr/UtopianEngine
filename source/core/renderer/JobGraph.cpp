@@ -17,6 +17,7 @@
 #include "core/renderer/WaterJob.h"
 #include "core/renderer/OpaqueCopyJob.h"
 #include "core/renderer/FresnelJob.h"
+#include "core/renderer/GeometryThicknessJob.h"
 #include "core/renderer/PixelDebugJob.h"
 #include "core/renderer/Renderer.h"
 #include "vulkan/handles/Device.h"
@@ -51,6 +52,7 @@ namespace Utopian
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new OpaqueCopyJob(device, width, height));
+		AddJob(new GeometryThicknessJob(device, width, height));
 		AddJob(new WaterJob(device, width, height));
 		AddJob(new SSRJob(device, width, height));
 		AddJob(new FresnelJob(device, width, height));

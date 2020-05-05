@@ -99,6 +99,7 @@
     <ClCompile Include="source\core\LuaManager.cpp" />
     <ClCompile Include="source\core\physics\PhysicsDebugDraw.cpp" />
     <ClCompile Include="source\core\physics\Physics.cpp" />
+    <ClCompile Include="source\core\renderer\GeometryThicknessJob.cpp" />
     <ClCompile Include="source\core\renderer\BloomJob.cpp" />
     <ClCompile Include="source\core\renderer\BlurJob.cpp" />
     <ClCompile Include="source\core\renderer\DebugJob.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="source\core\Engine.h" />
     <ClInclude Include="source\core\LuaManager.h" />
     <ClInclude Include="source\core\physics\Physics.h" />
+    <ClInclude Include="source\core\renderer\GeometryThicknessJob.h" />
     <ClInclude Include="source\core\renderer\BloomJob.h" />
     <ClInclude Include="source\core\renderer\BlurJob.h" />
     <ClInclude Include="source\core\renderer\CommonJobIncludes.h" />
