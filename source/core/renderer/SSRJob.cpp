@@ -28,6 +28,7 @@ namespace Utopian
 	void SSRJob::InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
+		OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
 
 		ssrImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
 
@@ -53,6 +54,7 @@ namespace Utopian
 		mTraceSSREffect->BindCombinedImage("normalWorldSampler", gbuffer.normalImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("depthSampler", gbuffer.depthImage.get(), mTraceRenderTarget->GetSampler());
+		//mTraceSSREffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("specularSampler", gbuffer.specularImage.get(), mTraceRenderTarget->GetSampler());
 
 		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -85,7 +87,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/ssr_kode80.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/ssr.frag";
 
 		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), shaderCreateInfo);
 
@@ -107,8 +109,8 @@ namespace Utopian
 		mTraceSSREffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mTraceRenderTarget->GetSampler());
 		mTraceSSREffect->BindCombinedImage("normalSampler", gbuffer.normalImage.get(), mTraceRenderTarget->GetSampler());
 
-		mKode80SettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mTraceSSREffect->BindUniformBuffer("UBO_ssrSettings", &mKode80SettingsBlock);
+		mSSRSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mTraceSSREffect->BindUniformBuffer("UBO_ssrSettings", &mSSRSettingsBlock);
 
 		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
@@ -116,15 +118,15 @@ namespace Utopian
 		const uint32_t size = 640;
 		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 
-		mKode80SettingsBlock.data._Iterations = 300;
-		mKode80SettingsBlock.data._BinarySearchIterations = 1;
-		mKode80SettingsBlock.data._PixelZSize = 0.0f;            
-		mKode80SettingsBlock.data._PixelStride = 1;           
-		mKode80SettingsBlock.data._PixelStrideZCuttoff = 100.0f;   
-		mKode80SettingsBlock.data._MaxRayDistance = 10000.0f;        
-		mKode80SettingsBlock.data._ScreenEdgeFadeStart = 0.75f;   
-		mKode80SettingsBlock.data._EyeFadeStart = 0.0f;          
-		mKode80SettingsBlock.data._EyeFadeEnd = 1.0f;            
+		mSSRSettingsBlock.data._Iterations = 420;
+		mSSRSettingsBlock.data._BinarySearchIterations = 1;
+		mSSRSettingsBlock.data._PixelZSize = 0.0f;            
+		mSSRSettingsBlock.data._PixelStride = 1;           
+		mSSRSettingsBlock.data._PixelStrideZCuttoff = 100.0f;   
+		mSSRSettingsBlock.data._MaxRayDistance = 130000.0f;        
+		mSSRSettingsBlock.data._ScreenEdgeFadeStart = 0.75f;   
+		mSSRSettingsBlock.data._EyeFadeStart = 0.0f;          
+		mSSRSettingsBlock.data._EyeFadeEnd = 1.0f;            
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -193,13 +195,13 @@ namespace Utopian
 
 	void SSRJob::RenderTracePassKode80(const JobInput& jobInput)
 	{
-		mKode80SettingsBlock.data._CameraProjectionMatrix = jobInput.sceneInfo.projectionMatrix;
-		mKode80SettingsBlock.data._CameraInverseProjectionMatrix = glm::inverse(glm::mat3(jobInput.sceneInfo.projectionMatrix));
-		mKode80SettingsBlock.data._NormalMatrix = glm::transpose(glm::inverse(glm::mat3(jobInput.sceneInfo.viewMatrix)));
-		mKode80SettingsBlock.data._RenderBufferSize = glm::vec2(mWidth, mHeight);
-		mKode80SettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight); 
-		mKode80SettingsBlock.data.viewMatrix = jobInput.sceneInfo.viewMatrix;
-		mKode80SettingsBlock.UpdateMemory();
+		mSSRSettingsBlock.data._CameraProjectionMatrix = jobInput.sceneInfo.projectionMatrix;
+		mSSRSettingsBlock.data._CameraInverseProjectionMatrix = glm::inverse(glm::mat3(jobInput.sceneInfo.projectionMatrix));
+		mSSRSettingsBlock.data._NormalMatrix = glm::transpose(glm::inverse(glm::mat3(jobInput.sceneInfo.viewMatrix)));
+		mSSRSettingsBlock.data._RenderBufferSize = glm::vec2(mWidth, mHeight);
+		mSSRSettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight); 
+		mSSRSettingsBlock.data._ViewMatrix = jobInput.sceneInfo.viewMatrix;
+		mSSRSettingsBlock.UpdateMemory();
 
 		// Note: Todo: Move to common location
 		mSkyParameterBlock.data.inclination = 0.7853981850f;
@@ -235,15 +237,15 @@ namespace Utopian
 	void SSRJob::Update()
 	{
 		ImGuiRenderer::BeginWindow("SSR settings", glm::vec2(500.0f, 10.0f), 400.0f);
-		ImGui::SliderFloat("_Iterations: ", &mKode80SettingsBlock.data._Iterations, 1, 1000);
-		ImGui::SliderFloat("_BinarySearchIterations", &mKode80SettingsBlock.data._BinarySearchIterations, 1, 32);
-		ImGui::SliderFloat("_PixelZSize: ", &mKode80SettingsBlock.data._PixelZSize, 0.0f, 2.0f);
-		ImGui::SliderFloat("_PixelStride: ", &mKode80SettingsBlock.data._PixelStride, 1.0f, 64.0f);
-		ImGui::SliderFloat("_PixelStrideZCuttoff: ", &mKode80SettingsBlock.data._PixelStrideZCuttoff, 0.0f, 200.0f);
-		ImGui::SliderFloat("_MaxRayDistance: ", &mKode80SettingsBlock.data._MaxRayDistance, 0.0f, 400000.0f);
-		ImGui::SliderFloat("_ScreenEdgeFadeStart: ", &mKode80SettingsBlock.data._ScreenEdgeFadeStart, 0.0f, 1.0f);
-		ImGui::SliderFloat("_EyeFadeStart: ", &mKode80SettingsBlock.data._EyeFadeStart, 0.0f, 1.0f);
-		ImGui::SliderFloat("_EyeFadeEnd: ", &mKode80SettingsBlock.data._EyeFadeEnd, 0.0f, 1.0f);
+		ImGui::SliderFloat("_Iterations: ", &mSSRSettingsBlock.data._Iterations, 1, 1000);
+		ImGui::SliderFloat("_BinarySearchIterations", &mSSRSettingsBlock.data._BinarySearchIterations, 1, 32);
+		ImGui::SliderFloat("_PixelZSize: ", &mSSRSettingsBlock.data._PixelZSize, 0.0f, 2.0f);
+		ImGui::SliderFloat("_PixelStride: ", &mSSRSettingsBlock.data._PixelStride, 1.0f, 64.0f);
+		ImGui::SliderFloat("_PixelStrideZCuttoff: ", &mSSRSettingsBlock.data._PixelStrideZCuttoff, 0.0f, 200.0f);
+		ImGui::SliderFloat("_MaxRayDistance: ", &mSSRSettingsBlock.data._MaxRayDistance, 0.0f, 400000.0f);
+		ImGui::SliderFloat("_ScreenEdgeFadeStart: ", &mSSRSettingsBlock.data._ScreenEdgeFadeStart, 0.0f, 1.0f);
+		ImGui::SliderFloat("_EyeFadeStart: ", &mSSRSettingsBlock.data._EyeFadeStart, 0.0f, 1.0f);
+		ImGui::SliderFloat("_EyeFadeEnd: ", &mSSRSettingsBlock.data._EyeFadeEnd, 0.0f, 1.0f);
 		ImGuiRenderer::EndWindow();
 	}
 }

@@ -47,9 +47,9 @@ namespace Utopian
 
 		// Update this to the image to read pixel values from
 		SSRJob* ssrJob = static_cast<SSRJob*>(jobs[JobGraph::SSR_INDEX]);
-		mEffect->BindCombinedImage("debugSampler", ssrJob->rayOriginImage.get(), mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("debugSampler2", ssrJob->rayEndImage.get(), mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("debugSampler3", ssrJob->miscDebugImage.get(), mRenderTarget->GetSampler());
+		//mEffect->BindCombinedImage("debugSampler", ssrJob->rayOriginImage.get(), mRenderTarget->GetSampler());
+		//mEffect->BindCombinedImage("debugSampler2", ssrJob->rayEndImage.get(), mRenderTarget->GetSampler());
+		//mEffect->BindCombinedImage("debugSampler3", ssrJob->miscDebugImage.get(), mRenderTarget->GetSampler());
 
 		glm::vec2 mousePos = gInput().GetMousePosition();
 		mMouseInputBlock.data.mousePosUV = glm::vec2(mousePos.x / mWidth, mousePos.y / mHeight);
@@ -68,19 +68,22 @@ namespace Utopian
 		mRenderTarget->Begin("Pixel debug pass", glm::vec4(0.5, 1.0, 0.3, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
-		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mEffect);
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		if (IsEnabled())
+		{
+			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(mEffect);
+			gRendererUtility().DrawFullscreenQuad(commandBuffer);
+
+			// Retrieve pixel value
+			glm::vec4* mapped;
+			mOutputBuffer.MapMemory(0, 3 * sizeof(glm::vec4), 0, (void**)& mapped);
+			mOutputBuffer.data.pixelValue = mapped[0];
+			mOutputBuffer.data.pixelValue2 = mapped[1];
+			mOutputBuffer.data.pixelValue3 = mapped[2];
+			mOutputBuffer.UnmapMemory();
+		}
 
 		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
-
-		// Retrieve pixel value
-		glm::vec4* mapped;
-		mOutputBuffer.MapMemory(0, 3 * sizeof(glm::vec4), 0, (void**)&mapped);
-		mOutputBuffer.data.pixelValue = mapped[0];
-		mOutputBuffer.data.pixelValue2 = mapped[1];
-		mOutputBuffer.data.pixelValue3 = mapped[2];
-		mOutputBuffer.UnmapMemory();
 	}
 
 	void PixelDebugJob::Update()

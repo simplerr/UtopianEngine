@@ -27,6 +27,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "../common/sky_color.glsl"
+#include "material_types.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -39,7 +40,7 @@ layout (set = 0, binding = 0) uniform sampler2D _MainTex;
 layout (set = 0, binding = 1) uniform sampler2D _CameraDepthTexture;
 layout (set = 0, binding = 2) uniform sampler2D _BackFaceDepthTex;
 
-layout (set = 0, binding = 4) uniform sampler2D _CameraGBufferTexture1;	// Specular color (RGB), roughness (A)
+layout (set = 0, binding = 4) uniform sampler2D _CameraGBufferTexture1;	// R = specularity, G = material type, B = water depth, A = undefined
 layout (set = 0, binding = 5) uniform sampler2D _CameraGBufferTexture2;	// World space normal (RGB), unused (A)
 layout (set = 0, binding = 6) uniform sampler2D positionSampler;
 layout (set = 0, binding = 7) uniform sampler2D normalSampler;
@@ -49,7 +50,7 @@ layout(std140, set = 0, binding = 8) uniform UBO_ssrSettings
    mat4 _CameraProjectionMatrix;             // projection matrix that maps to screen pixels (not NDC)
    mat4 _CameraInverseProjectionMatrix;      // inverse projection matrix (NDC to camera space)
    mat4 _NormalMatrix;
-   mat4 viewMatrix;
+   mat4 _ViewMatrix;
    vec2 _RenderBufferSize;
    vec2 _OneDividedByRenderBufferSize;       // Optimization: removes 2 divisions every itteration
    float _Iterations;                        // maximum ray iterations
@@ -287,22 +288,22 @@ float calculateAlphaForIntersection(bool intersect,
 void main()
 {
    vec3 worldNormal = texture(normalSampler, InTex).rgb;
-   vec4 specRoughPixel = texture(_CameraGBufferTexture1, InTex);
-   float specularStrength = specRoughPixel.r;
+   vec4 specular = texture(_CameraGBufferTexture1, InTex);
+   float reflectiveness = specular.r;
 
    // Only reflect ground planes for now
-   if (specularStrength == 0.0f || worldNormal.y < 0.2f)
+   if (reflectiveness == 0.0f || worldNormal.y < 0.99f)
       discard;
 
    float decodedDepth = Linear01Depth(texture(_CameraDepthTexture, InTex).r);
 
    vec3 worldPosition = texture(positionSampler, InTex).xyz;
-   vec3 viewPosition = (ubo_settings.viewMatrix * vec4(worldPosition, 1.0f)).xyz;
+   vec3 viewPosition = (ubo_settings._ViewMatrix * vec4(worldPosition, 1.0f)).xyz;
 
    // Note: Already in view space
    // Transfering the normal to view space at this stage should remove the wobble effect when moving the camera
    vec3 decodedNormal = (texture(_CameraGBufferTexture2, InTex)).rgb * 2.0 - 1.0;
-   //mat3 normalMatrix = transpose(inverse(mat3(ubo_settings.viewMatrix)));
+   //mat3 normalMatrix = transpose(inverse(mat3(ubo_settings._ViewMatrix)));
    //decodedNormal = mat3(ubo_settings._NormalMatrix) * decodedNormal;
    //decodedNormal = normalMatrix * decodedNormal;
 
@@ -318,23 +319,23 @@ void main()
    float jitter = mod(c, 1.0);
 
    bool intersect = traceScreenSpaceRay(vsRayOrigin, vsRayDirection, jitter, hitPixel, hitPoint, iterationCount);
-   float alpha = calculateAlphaForIntersection(intersect, iterationCount, specularStrength, hitPixel, hitPoint, vsRayOrigin, vsRayDirection);
+   float alpha = calculateAlphaForIntersection(intersect, iterationCount, reflectiveness, hitPixel, hitPoint, vsRayOrigin, vsRayDirection);
 
-   // Comment out the line below to get faked specular,
-   // in no way physically correct but will tint based
-   // on spec. Physically correct handling of spec is coming...
-   specRoughPixel = vec4(1.0, 1.0, 1.0, 1.0);
+   vec4 fallbackColor = vec4(0.0f);
+   uint materialType = uint(specular.g);
+   if (materialType == MATERIAL_TYPE_WATER)
+   {
+      // Sky sphere color
+      vec3 toEyeW = normalize(ubo_parameters.eyePos + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
+      vec3 reflection = reflect(toEyeW, worldNormal);
+      reflection.y *= -1; // Note: -1
+      SkyOutput skyColor = GetSkyColor(reflection);
+      fallbackColor = skyColor.skyColor;
+   }
 
-   // Sky sphere color
-   vec3 toEyeW = normalize(ubo_parameters.eyePos + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
-   vec3 reflection = reflect(toEyeW, worldNormal);
-   reflection.y *= -1; // Note: -1
-   SkyOutput skyColor = GetSkyColor(reflection);
-   //skyColor.skyColor = vec4(1,0,0,0);
+   vec4 reflectionColor = vec4((texture(_MainTex, hitPixel)).rgb, alpha);
 
-   vec4 reflectionColor = vec4((texture(_MainTex, hitPixel)).rgb * specRoughPixel.rgb, alpha);
-
-   reflectionColor = mix(skyColor.skyColor, reflectionColor, alpha);
+   reflectionColor = mix(fallbackColor, reflectionColor, alpha);
 
    OutFragColor = reflectionColor;
 }

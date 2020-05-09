@@ -50,7 +50,6 @@ void main()
 	float backfaceDepth = -eye_z_from_depth(gl_FragCoord.z, per_frame_vs.projection);
 	float depthDelta = backfaceDepth - frontfaceDepth;
 
-	OutThickness.x = backfaceDepth;
 	OutThickness.y = depthDelta;
 	OutThickness.x = gl_FragCoord.z;
 }

@@ -72,6 +72,8 @@ namespace Utopian
 		mDebugDescriptorSets.normal = imGuiRenderer->AddTexture(mGBuffer.normalImage->GetView());
 		mDebugDescriptorSets.normalView = imGuiRenderer->AddTexture(mGBuffer.normalViewImage->GetView());
 		mDebugDescriptorSets.albedo = imGuiRenderer->AddTexture(mGBuffer.albedoImage->GetView());
+
+		EnableJob(JobGraph::JobIndex::PIXEL_DEBUG_INDEX, false);
 	}
 
 	JobGraph::~JobGraph()

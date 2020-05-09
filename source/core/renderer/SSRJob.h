@@ -34,13 +34,11 @@ namespace Utopian
 			UNIFORM_PARAM(int, skyboxReflections)
 		UNIFORM_BLOCK_END()
 
-
-		// Kode80
-		UNIFORM_BLOCK_BEGIN(Kode80SettingsBlock)
+		UNIFORM_BLOCK_BEGIN(SSRSettingsBlock)
 			UNIFORM_PARAM(glm::mat4, _CameraProjectionMatrix)        // projection matrix that maps to screen pixels (not NDC)
 			UNIFORM_PARAM(glm::mat4, _CameraInverseProjectionMatrix) // inverse projection matrix (NDC to camera space)
 			UNIFORM_PARAM(glm::mat4, _NormalMatrix)
-			UNIFORM_PARAM(glm::mat4, viewMatrix)
+			UNIFORM_PARAM(glm::mat4, _ViewMatrix)
 			UNIFORM_PARAM(glm::vec2, _RenderBufferSize)
 			UNIFORM_PARAM(glm::vec2, _OneDividedByRenderBufferSize)  // Optimization: removes 2 divisions every itteration
 			UNIFORM_PARAM(float, _Iterations)                        // maximum ray iterations
@@ -90,7 +88,6 @@ namespace Utopian
 		SkyParameterBlock mSkyParameterBlock;
 		ReflectionSettingsBlock mReflectionSettingsBlock;
 
-		// Kode80
-		Kode80SettingsBlock mKode80SettingsBlock;
+		SSRSettingsBlock mSSRSettingsBlock;
 	};
 }
