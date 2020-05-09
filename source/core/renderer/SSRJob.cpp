@@ -20,57 +20,11 @@ namespace Utopian
 
 	void SSRJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		//InitTracePass(jobs, gbuffer);
-		InitTracePassKode80(jobs, gbuffer);
+		InitTracePass(jobs, gbuffer);
 		InitBlurPass(jobs, gbuffer);
 	}
 
 	void SSRJob::InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
-	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-		OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
-
-		ssrImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
-
-		mTraceRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		mTraceRenderTarget->AddWriteOnlyColorAttachment(ssrImage);
-		mTraceRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		mTraceRenderTarget->Create();
-
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/ssr_trace_vkdf.frag";
-
-		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mTraceSSREffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mTraceSSREffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		mTraceSSREffect->CreatePipeline();
-
-		mTraceSSREffect->BindCombinedImage("lightSampler", deferredJob->renderTarget->GetColorImage().get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("normalViewSampler", gbuffer.normalViewImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("normalWorldSampler", gbuffer.normalImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("depthSampler", gbuffer.depthImage.get(), mTraceRenderTarget->GetSampler());
-		//mTraceSSREffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("specularSampler", gbuffer.specularImage.get(), mTraceRenderTarget->GetSampler());
-
-		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mTraceSSREffect->BindUniformBuffer("UBO", &mUniformBlock);
-
-		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mTraceSSREffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
-
-		mReflectionSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mTraceSSREffect->BindUniformBuffer("UBO_settings", &mReflectionSettingsBlock);
-
-		// const uint32_t size = 640;
-		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
-	}
-
-	void SSRJob::InitTracePassKode80(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		ssrImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
 		rayOriginImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT);
@@ -87,7 +41,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/ssr.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
 
 		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), shaderCreateInfo);
 
@@ -115,9 +69,6 @@ namespace Utopian
 		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO_parameters", &mSkyParameterBlock);
 
-		const uint32_t size = 640;
-		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
-
 		mSSRSettingsBlock.data._Iterations = 420;
 		mSSRSettingsBlock.data._BinarySearchIterations = 1;
 		mSSRSettingsBlock.data._PixelZSize = 0.0f;            
@@ -127,6 +78,9 @@ namespace Utopian
 		mSSRSettingsBlock.data._ScreenEdgeFadeStart = 0.75f;   
 		mSSRSettingsBlock.data._EyeFadeStart = 0.0f;          
 		mSSRSettingsBlock.data._EyeFadeEnd = 1.0f;            
+
+		// const uint32_t size = 640;
+		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -142,7 +96,7 @@ namespace Utopian
 
 		Vk::ShaderCreateInfo shaderCreateInfo;
 		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/ssr_blur.frag";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssr/ssr_blur.frag";
 
 		mBlurSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), shaderCreateInfo);
 
@@ -159,41 +113,11 @@ namespace Utopian
 
 	void SSRJob::Render(const JobInput& jobInput)
 	{
-		//RenderTracePass(jobInput);
-		RenderTracePassKode80(jobInput);
+		RenderTracePass(jobInput);
 		RenderBlurPass(jobInput);
 	}
 
 	void SSRJob::RenderTracePass(const JobInput& jobInput)
-	{
-		mUniformBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mUniformBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mUniformBlock.UpdateMemory();
-
-        // Note: Todo: Move to common location
-		mSkyParameterBlock.data.inclination = 0.7853981850f;
-		mSkyParameterBlock.data.azimuth = 0.0f;
-		mSkyParameterBlock.data.time = Timer::Instance().GetTime();
-		mSkyParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
-		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
-		mSkyParameterBlock.data.onlySun = false;
-		mSkyParameterBlock.UpdateMemory();
-		
-		mReflectionSettingsBlock.data.ssrEnabled = jobInput.renderingSettings.ssrEnabled;
-		mReflectionSettingsBlock.data.skyboxReflections = jobInput.renderingSettings.skyboxReflections;
-		mReflectionSettingsBlock.UpdateMemory();
-
-		mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = mTraceRenderTarget->GetCommandBuffer();
-
-		commandBuffer->CmdBindPipeline(mTraceSSREffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mTraceSSREffect);
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-
-		mTraceRenderTarget->End(GetWaitSemahore(), mTracePassSemaphore);
-	}
-
-	void SSRJob::RenderTracePassKode80(const JobInput& jobInput)
 	{
 		mSSRSettingsBlock.data._CameraProjectionMatrix = jobInput.sceneInfo.projectionMatrix;
 		mSSRSettingsBlock.data._CameraInverseProjectionMatrix = glm::inverse(glm::mat3(jobInput.sceneInfo.projectionMatrix));

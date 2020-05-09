@@ -8,12 +8,6 @@ namespace Utopian
 	class SSRJob : public BaseJob
 	{
 	public:
-
-		UNIFORM_BLOCK_BEGIN(SSRUniforms)
-			UNIFORM_PARAM(glm::mat4, view)
-			UNIFORM_PARAM(glm::mat4, projection)
-		UNIFORM_BLOCK_END()
-
 		UNIFORM_BLOCK_BEGIN(BlurSettingsBlock)
 			UNIFORM_PARAM(int, blurRange)
 		UNIFORM_BLOCK_END()
@@ -27,11 +21,6 @@ namespace Utopian
 			UNIFORM_PARAM(float, time)
 			UNIFORM_PARAM(float, sunSpeed)
 			UNIFORM_PARAM(int, onlySun)
-		UNIFORM_BLOCK_END()
-
-		UNIFORM_BLOCK_BEGIN(ReflectionSettingsBlock)
-			UNIFORM_PARAM(int, ssrEnabled)
-			UNIFORM_PARAM(int, skyboxReflections)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SSRSettingsBlock)
@@ -69,11 +58,9 @@ namespace Utopian
 
 	private:
 		void InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
-		void InitTracePassKode80(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
 		void InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer);
 
 		void RenderTracePass(const JobInput& jobInput);
-		void RenderTracePassKode80(const JobInput& jobInput);
 		void RenderBlurPass(const JobInput& jobInput);
 
 		// Two pass effect
@@ -84,10 +71,8 @@ namespace Utopian
 
 		SharedPtr<Vk::RenderTarget> mTraceRenderTarget;
 		SharedPtr<Vk::RenderTarget> mBlurRenderTarget;
-		SSRUniforms mUniformBlock;
-		SkyParameterBlock mSkyParameterBlock;
-		ReflectionSettingsBlock mReflectionSettingsBlock;
 
+		SkyParameterBlock mSkyParameterBlock;
 		SSRSettingsBlock mSSRSettingsBlock;
 	};
 }
