@@ -78,9 +78,10 @@ namespace Utopian
 		mSSRSettingsBlock.data._ScreenEdgeFadeStart = 0.75f;   
 		mSSRSettingsBlock.data._EyeFadeStart = 0.0f;          
 		mSSRSettingsBlock.data._EyeFadeEnd = 1.0f;            
+		mSSRSettingsBlock.data._GeometryThickness = 20.0f;            
 
-		// const uint32_t size = 640;
-		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
+		const uint32_t size = 640;
+		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -108,7 +109,7 @@ namespace Utopian
 		mBlurSSREffect->BindCombinedImage("samplerSSAO", ssrImage.get(), mTraceRenderTarget->GetSampler());
 
 		// const uint32_t size = 640;
-		// gScreenQuadUi().AddQuad(100 + 700, 100, size, size, ssrBlurImage.get(), mBlurRenderTarget->GetSampler());
+		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrBlurImage.get(), mBlurRenderTarget->GetSampler());
 	}
 
 	void SSRJob::Render(const JobInput& jobInput)
@@ -171,6 +172,7 @@ namespace Utopian
 		ImGui::SliderFloat("_ScreenEdgeFadeStart: ", &mSSRSettingsBlock.data._ScreenEdgeFadeStart, 0.0f, 1.0f);
 		ImGui::SliderFloat("_EyeFadeStart: ", &mSSRSettingsBlock.data._EyeFadeStart, 0.0f, 1.0f);
 		ImGui::SliderFloat("_EyeFadeEnd: ", &mSSRSettingsBlock.data._EyeFadeEnd, 0.0f, 1.0f);
+		ImGui::SliderFloat("_GeometryThickness: ", &mSSRSettingsBlock.data._GeometryThickness, 0.1f, 100.0f);
 		ImGuiRenderer::EndWindow();
 	}
 }

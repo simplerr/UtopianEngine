@@ -62,8 +62,13 @@ layout(std140, set = 0, binding = 8) uniform UBO_ssrSettings
    float _ScreenEdgeFadeStart;               // distance to screen edge that ray hits will start to fade (0.0 -> 1.0)
    float _EyeFadeStart;                      // ray direction's Z that ray hits will start to fade (0.0 -> 1.0)
    float _EyeFadeEnd;                        // ray direction's Z that ray hits will be cut (0.0 -> 1.0)
-   int _SSREnabled;
+   float _GeometryThickness;                 // the Z thickness of geometry when not calculating thickness from backface depth job
+   int _SSREnabled;                          // sample skydome if SSR is disabled
 } ubo_settings;
+
+// Calculating the thickness from the backface depth job does not work properly,
+// This gives good enough results in most cases
+#define USE_CONSTANT_THICKNESS
 
 #define NEAR 1.0f
 #define FAR 51200.0f
@@ -74,7 +79,7 @@ const vec4 _ProjectionParams = vec4(1.0f, NEAR, FAR, 1.0f / FAR);
 // Z buffer to linear 0..1 depth
 float Linear01Depth(float z)
 {
-    // Values used to linearize the Z buffer
+   // Values used to linearize the Z buffer
 	// (http://www.humus.name/temp/Linearize%20depth.txt)
 	// x = 1-far/near
 	// y = far/near
@@ -104,7 +109,11 @@ bool rayIntersectsDepthBF(float zA, float zB, vec2 uv)
    float cameraZ = Linear01Depth(textureLod(_CameraDepthTexture, uv, 0).r) * -FAR;
    float backZ = Linear01Depth(textureLod(_BackFaceDepthTex, uv, 0).r) * -FAR;
 
+#ifdef USE_CONSTANT_THICKNESS
+   return zB <= cameraZ && zA >= cameraZ - ubo_settings._GeometryThickness;
+#else
    return zB <= cameraZ && zA >= backZ - ubo_settings._PixelZSize;
+#endif
 }
 
 float distanceSquared(vec2 a, vec2 b) { a -= b; return dot(a, a); }
