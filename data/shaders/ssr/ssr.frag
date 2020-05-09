@@ -62,6 +62,7 @@ layout(std140, set = 0, binding = 8) uniform UBO_ssrSettings
    float _ScreenEdgeFadeStart;               // distance to screen edge that ray hits will start to fade (0.0 -> 1.0)
    float _EyeFadeStart;                      // ray direction's Z that ray hits will start to fade (0.0 -> 1.0)
    float _EyeFadeEnd;                        // ray direction's Z that ray hits will be cut (0.0 -> 1.0)
+   int _SSREnabled;
 } ubo_settings;
 
 #define NEAR 1.0f
@@ -318,8 +319,14 @@ void main()
    float c = (uv2.x + uv2.y) * 0.25;
    float jitter = mod(c, 1.0);
 
-   bool intersect = traceScreenSpaceRay(vsRayOrigin, vsRayDirection, jitter, hitPixel, hitPoint, iterationCount);
-   float alpha = calculateAlphaForIntersection(intersect, iterationCount, reflectiveness, hitPixel, hitPoint, vsRayOrigin, vsRayDirection);
+   vec4 reflectionColor = vec4(0.0f);
+   float alpha = 0.0f;
+   if (ubo_settings._SSREnabled == 1)
+   {
+      bool intersect = traceScreenSpaceRay(vsRayOrigin, vsRayDirection, jitter, hitPixel, hitPoint, iterationCount);
+      alpha = calculateAlphaForIntersection(intersect, iterationCount, reflectiveness, hitPixel, hitPoint, vsRayOrigin, vsRayDirection);
+      reflectionColor = vec4((texture(_MainTex, hitPixel)).rgb, alpha);
+   }
 
    vec4 fallbackColor = vec4(0.0f);
    uint materialType = uint(specular.g);
@@ -332,8 +339,6 @@ void main()
       SkyOutput skyColor = GetSkyColor(reflection);
       fallbackColor = skyColor.skyColor;
    }
-
-   vec4 reflectionColor = vec4((texture(_MainTex, hitPixel)).rgb, alpha);
 
    reflectionColor = mix(fallbackColor, reflectionColor, alpha);
 

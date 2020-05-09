@@ -39,6 +39,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, _ScreenEdgeFadeStart)               // distance to screen edge that ray hits will start to fade (0.0 -> 1.0)
 			UNIFORM_PARAM(float, _EyeFadeStart)                      // ray direction's Z that ray hits will start to fade (0.0 -> 1.0)
 			UNIFORM_PARAM(float, _EyeFadeEnd)                        // ray direction's Z that ray hits will be cut (0.0 -> 1.0)
+			UNIFORM_PARAM(int, _SSREnabled)
 		UNIFORM_BLOCK_END()
   
 		SSRJob(Vk::Device* device, uint32_t width, uint32_t height);

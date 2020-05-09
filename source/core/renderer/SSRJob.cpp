@@ -125,6 +125,7 @@ namespace Utopian
 		mSSRSettingsBlock.data._RenderBufferSize = glm::vec2(mWidth, mHeight);
 		mSSRSettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight); 
 		mSSRSettingsBlock.data._ViewMatrix = jobInput.sceneInfo.viewMatrix;
+		mSSRSettingsBlock.data._SSREnabled = jobInput.renderingSettings.ssrEnabled;
 		mSSRSettingsBlock.UpdateMemory();
 
 		// Note: Todo: Move to common location
