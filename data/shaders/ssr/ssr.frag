@@ -40,8 +40,8 @@ layout (set = 0, binding = 0) uniform sampler2D _MainTex;
 layout (set = 0, binding = 1) uniform sampler2D _CameraDepthTexture;
 layout (set = 0, binding = 2) uniform sampler2D _BackFaceDepthTex;
 
-layout (set = 0, binding = 4) uniform sampler2D _CameraGBufferTexture1;	// R = specularity, G = material type, B = water depth, A = undefined
-layout (set = 0, binding = 5) uniform sampler2D _CameraGBufferTexture2;	// World space normal (RGB), unused (A)
+layout (set = 0, binding = 4) uniform sampler2D _CameraGBufferTexture1; // R = specularity, G = material type, B = water depth, A = undefined
+layout (set = 0, binding = 5) uniform sampler2D _CameraGBufferTexture2; // World space normal (RGB), unused (A)
 layout (set = 0, binding = 6) uniform sampler2D positionSampler;
 layout (set = 0, binding = 7) uniform sampler2D normalSampler;
 
@@ -80,18 +80,18 @@ const vec4 _ProjectionParams = vec4(1.0f, NEAR, FAR, 1.0f / FAR);
 float Linear01Depth(float z)
 {
    // Values used to linearize the Z buffer
-	// (http://www.humus.name/temp/Linearize%20depth.txt)
-	// x = 1-far/near
-	// y = far/near
-	// z = x/far
-	// w = y/far
-	vec4 _ZBufferParams;
-    _ZBufferParams.x = 1 - (FAR / NEAR);
-    _ZBufferParams.y = (FAR / NEAR);
-    _ZBufferParams.z = (_ZBufferParams.x / FAR);
-    _ZBufferParams.w = (_ZBufferParams.y / FAR);
+   // (http://www.humus.name/temp/Linearize%20depth.txt)
+   // x = 1-far/near
+   // y = far/near
+   // z = x/far
+   // w = y/far
+   vec4 _ZBufferParams;
+   _ZBufferParams.x = 1 - (FAR / NEAR);
+   _ZBufferParams.y = (FAR / NEAR);
+   _ZBufferParams.z = (_ZBufferParams.x / FAR);
+   _ZBufferParams.w = (_ZBufferParams.y / FAR);
 
-	return 1.0 / (_ZBufferParams.x * z + _ZBufferParams.y);
+   return 1.0 / (_ZBufferParams.x * z + _ZBufferParams.y);
 }
 
 void swapIfBigger(inout float aa, inout float bb)
@@ -310,12 +310,11 @@ void main()
    vec3 worldPosition = texture(positionSampler, InTex).xyz;
    vec3 viewPosition = (ubo_settings._ViewMatrix * vec4(worldPosition, 1.0f)).xyz;
 
-   // Note: Already in view space
+   // Note: Use hard coded normal for now to remove the wobble when rotating the camera 
    // Transfering the normal to view space at this stage should remove the wobble effect when moving the camera
    vec3 decodedNormal = (texture(_CameraGBufferTexture2, InTex)).rgb * 2.0 - 1.0;
-   //mat3 normalMatrix = transpose(inverse(mat3(ubo_settings._ViewMatrix)));
-   //decodedNormal = mat3(ubo_settings._NormalMatrix) * decodedNormal;
-   //decodedNormal = normalMatrix * decodedNormal;
+   decodedNormal = vec3(0.0f, 1.0f, 0.0f);
+   decodedNormal = mat3(ubo_settings._NormalMatrix) * decodedNormal;
 
    vec3 vsRayOrigin = viewPosition;
    vec3 vsRayDirection = normalize(reflect(normalize(vsRayOrigin), normalize(decodedNormal)));
