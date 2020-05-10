@@ -4,9 +4,12 @@
 #include <map>
 #include "vulkan/VulkanInclude.h"
 #include "../external/assimp/assimp/Importer.hpp"
+#include "../external/assimp/assimp/material.h"
 #include "vulkan/Vertex.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
+
+class aiMaterial;
 
 namespace Utopian::Vk
 {
@@ -34,6 +37,7 @@ namespace Utopian::Vk
 		SharedPtr<DescriptorSetLayout> GetMeshTextureDescriptorSetLayout();
 		SharedPtr<DescriptorPool> GetMeshTextureDescriptorPool();
 	private:
+		std::string GetPath(aiMaterial* material, aiTextureType textureType, std::string filename);
 		int FindValidPath(aiString* texturePath, std::string modelPath);
 		bool TryLongerPath(char* szTemp, aiString* p_szString);
 		std::map<std::string, StaticModel*> mModelMap;

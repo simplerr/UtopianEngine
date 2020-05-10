@@ -44,7 +44,8 @@ float calculateShadow(vec3 position, vec3 normal, vec3 lightDir, out uint cascad
 				float closestDepth = texture(shadowSampler, vec3(projCoordinate.xy + offset, cascadeIndex)).r;
 				float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.00000065); 
 				bias = 0.0005; // This seems to fix shadow acne for now
-				shadow += ((projCoordinate.z - bias) > closestDepth ? 0.0f : 1.0f);
+				const float shadowFactor = 0.3f; // To have some diffuse and specular ligthing in the shadows as well
+				shadow += ((projCoordinate.z - bias) > closestDepth ? shadowFactor : 1.0f);
 			}
 			else
 			{

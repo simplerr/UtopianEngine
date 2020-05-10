@@ -120,45 +120,50 @@ namespace Utopian::Vk
 				aiMaterial* material = scene->mMaterials[assimpMesh->mMaterialIndex];
 				int numTextures = material->GetTextureCount(aiTextureType_DIFFUSE);
 				int numNormalMaps = material->GetTextureCount(aiTextureType_NORMALS);
+				int numHeightMaps = material->GetTextureCount(aiTextureType_HEIGHT);
 				int numSpecularMaps = material->GetTextureCount(aiTextureType_SPECULAR);
 
-				std::string texturePath = PLACEHOLDER_TEXTURE_PATH;
+				std::string diffuseTexturePath = PLACEHOLDER_TEXTURE_PATH;
+				std::string normalTexturePath = DEFAULT_NORMAL_MAP_TEXTURE;
+				std::string specularTexturePath = DEFAULT_SPECULAR_MAP_TEXTURE;
+
+				/* Diffuse texture */
 				if (numTextures > 0)
 				{
 					aiString texPath;
 					material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath);
 					FindValidPath(&texPath, filename);
-					texturePath = texPath.C_Str();
-					Texture* texture = gTextureLoader().LoadTexture(texturePath);
+					diffuseTexturePath = texPath.C_Str();
+					Texture* texture = gTextureLoader().LoadTexture(diffuseTexturePath);
 
 					// Workaround for Unity assets
-					// Note: Instead of calling LoadTexture() something similar to FindFile(texturePath) could be used
+					// Note: Instead of calling LoadTexture() something similar to FindFile(diffuseTexturePath) could be used
 					if (texture == nullptr)
 					{
-						uint32_t idx = texturePath.rfind("\\");
-						std::string textureName = texturePath.substr(idx+1);
+						uint32_t idx = diffuseTexturePath.rfind("\\");
+						std::string textureName = diffuseTexturePath.substr(idx+1);
 						idx = filename.rfind("/");
-						texturePath = filename.substr(0, idx) + "/Textures/" + textureName;
+						diffuseTexturePath = filename.substr(0, idx) + "/Textures/" + textureName;
 
-						texture = gTextureLoader().LoadTexture(texturePath);
+						texture = gTextureLoader().LoadTexture(diffuseTexturePath);
 
 						// Try removing _H from the filename
 						if (texture == nullptr)
 						{
-							idx = texturePath.rfind("_H.tga");
+							idx = diffuseTexturePath.rfind("_H.tga");
 							if (idx != std::string::npos)
 							{
-								texturePath = texturePath.substr(0, idx) + ".tga";
-								texture = gTextureLoader().LoadTexture(texturePath);
+								diffuseTexturePath = diffuseTexturePath.substr(0, idx) + ".tga";
+								texture = gTextureLoader().LoadTexture(diffuseTexturePath);
 							}
 
 							if (texture == nullptr)
 							{
-								idx = texturePath.rfind("_H.png");
+								idx = diffuseTexturePath.rfind("_H.png");
 								if (idx != std::string::npos)
 								{
-									texturePath = texturePath.substr(0, idx) + ".png";
-									texture = gTextureLoader().LoadTexture(texturePath);
+									diffuseTexturePath = diffuseTexturePath.substr(0, idx) + ".png";
+									texture = gTextureLoader().LoadTexture(diffuseTexturePath);
 								}
 							}
 						}
@@ -170,21 +175,28 @@ namespace Utopian::Vk
 					}
 				}
 
-				mesh->LoadTextures(texturePath);
-
-				if (numSpecularMaps > 0)
+				/* Normal texture */
+				if (numNormalMaps > 0)
 				{
-					aiString texPath;
-					material->GetTexture(aiTextureType_SPECULAR, 0, &texPath);
-					FindValidPath(&texPath, filename);
-					texturePath = texPath.C_Str();
-					Texture* texture = gTextureLoader().LoadTexture(texturePath);
-
-					if (texture != nullptr)
-						mesh->SetSpecularTexture(texture);
+					normalTexturePath = GetPath(material, aiTextureType_NORMALS, filename);
 				}
 
-				mesh->BuildBuffers(mDevice);		// Build the models buffers here
+				/* Heightmap texture, in some formats this is the same as the normal map */
+				if (numHeightMaps > 0)
+				{
+					assert(numNormalMaps == 0);
+					normalTexturePath = GetPath(material, aiTextureType_HEIGHT, filename);
+				}
+
+				/* Specular texture */
+				if (numSpecularMaps > 0)
+				{
+					specularTexturePath = GetPath(material, aiTextureType_SPECULAR, filename);
+				}
+
+
+				mesh->LoadTextures(diffuseTexturePath, normalTexturePath, specularTexturePath);
+				mesh->BuildBuffers(mDevice);
 				model->AddMesh(mesh);
 			}
 
@@ -504,6 +516,18 @@ namespace Utopian::Vk
 		model->Init(mDevice);
 		mModelMap["debug_box_triangles"] = model;
 		return model;
+	}
+
+	std::string ModelLoader::GetPath(aiMaterial* material, aiTextureType textureType, std::string filename)
+	{
+		std::string path;
+
+		aiString texPath;
+		material->GetTexture(textureType, 0, &texPath);
+		FindValidPath(&texPath, filename);
+		path = texPath.C_Str();
+
+		return path;
 	}
 
 	// From /assimp/assimp/tools/assimp_view/Material.cpp
