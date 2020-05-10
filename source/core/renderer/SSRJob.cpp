@@ -80,8 +80,8 @@ namespace Utopian
 		mSSRSettingsBlock.data._EyeFadeEnd = 1.0f;
 		mSSRSettingsBlock.data._GeometryThickness = 20.0f;
 
-		const uint32_t size = 640;
-		gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
+		// const uint32_t size = 640;
+		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());
 	}
 
 	void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)

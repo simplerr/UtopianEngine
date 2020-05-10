@@ -334,6 +334,10 @@ void main()
       bool intersect = traceScreenSpaceRay(vsRayOrigin, vsRayDirection, jitter, hitPixel, hitPoint, iterationCount);
       alpha = calculateAlphaForIntersection(intersect, iterationCount, reflectiveness, hitPixel, hitPoint, vsRayOrigin, vsRayDirection);
       reflectionColor = vec4((texture(_MainTex, hitPixel)).rgb, alpha);
+
+      // Bug: Some samples have large negative values, see Issue #95.
+      // Clamping the color to 0-1 removes the artifacts for now.
+      reflectionColor.rgb = clamp(reflectionColor.rgb, vec3(0.0f), vec3(1.0f));
    }
 
    vec4 fallbackColor = vec4(0.0f);
