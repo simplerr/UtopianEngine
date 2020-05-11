@@ -186,6 +186,7 @@ namespace Utopian
 		glm::vec3 pos = mMainCamera->GetPosition();
 		glm::vec3 dir = mMainCamera->GetDirection();
 
+		ImGuiRenderer::TextV(std::string("Vulkan " + GetDevice()->GetVulkanVersion().version).c_str());
 		ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
 		ImGuiRenderer::TextV("FPS: %u", Timer::Instance().GetFPS());
 		ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);

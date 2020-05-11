@@ -58,6 +58,12 @@ namespace Utopian::Vk
 
 		// Assume that there only is 1 GPU
 		mPhysicalDevice = physicalDevices[0];
+
+		vkGetPhysicalDeviceProperties(mPhysicalDevice, &mPhysicalDeviceProperties);
+
+		mVulkanVersion = VulkanVersion(mPhysicalDeviceProperties.apiVersion);
+
+		Debug::ConsolePrint("Retrieved physical supporting Vulkan " + mVulkanVersion.version);
 	}
 
 	void Device::RetrieveQueueFamilyProperites()
@@ -86,10 +92,6 @@ namespace Utopian::Vk
 
 	void Device::CreateLogical(bool enableValidation)
 	{
-		// This is not used right now, but GPU vendor and model can be retrieved
-		//VkPhysicalDeviceProperties physicalDeviceProperties;
-		//vkGetPhysicalDeviceProperties(physicalDevice, &physicalDeviceProperties);
-
 		// Some implementations use vkGetPhysicalDeviceQueueFamilyProperties and uses the result to find out
 		// the first queue that support graphic operations (queueFlags & VK_QUEUE_GRAPHICS_BIT)
 		// Here I simply set queueInfo.queueFamilyIndex = 0 and (hope) it works
@@ -202,5 +204,24 @@ namespace Utopian::Vk
 	CommandPool* Device::GetCommandPool() const
 	{
 		return mCommandPool;
+	}
+
+	VulkanVersion Device::GetVulkanVersion() const
+	{
+		return mVulkanVersion;
+	}
+
+	VulkanVersion::VulkanVersion()
+	{
+
+	}
+
+	VulkanVersion::VulkanVersion(uint32_t apiVersion)
+	{
+		major = VK_VERSION_MAJOR(apiVersion);
+		minor = VK_VERSION_MINOR(apiVersion);
+		patch = VK_VERSION_PATCH(apiVersion);
+
+		version = std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch);
 	}
 }

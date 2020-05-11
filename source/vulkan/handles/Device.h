@@ -7,6 +7,17 @@
 
 namespace Utopian::Vk
 {
+	struct VulkanVersion
+	{
+		VulkanVersion();
+		VulkanVersion(uint32_t apiVersion);
+
+		uint32_t major;
+		uint32_t minor;
+		uint32_t patch;
+		std::string version;
+	};
+
 	/** Wrapper for the Vulkan device. */
 	class Device
 	{
@@ -30,6 +41,7 @@ namespace Utopian::Vk
 		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex) const;
 		bool IsDebugMarkersEnabled() const;
 		uint32_t GetQueueFamilyIndex(VkQueueFlagBits queueFlags) const;
+		VulkanVersion GetVulkanVersion() const;
 
 	private:
 		void RetrievePhysical(Instance* instance);
@@ -41,10 +53,12 @@ namespace Utopian::Vk
 	private:
 		VkPhysicalDevice mPhysicalDevice = VK_NULL_HANDLE;
 		VkDevice mDevice = VK_NULL_HANDLE;
+		VkPhysicalDeviceProperties mPhysicalDeviceProperties;
 		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
 		VkPhysicalDeviceFeatures mEnabledFeatures {};
 		std::vector<std::string> mSupportedExtensions;
 		std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
+		VulkanVersion mVulkanVersion;
 
 		CommandPool* mCommandPool = nullptr;
 		Queue* mQueue = nullptr;
