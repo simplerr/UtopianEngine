@@ -129,7 +129,7 @@ namespace Utopian::Vk
 
 		if (enableValidation)
 		{
-			deviceInfo.enabledLayerCount = Debug::validation_layers.size();	// Debug validation layers
+			deviceInfo.enabledLayerCount = Debug::validation_layers.size();
 			deviceInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
 

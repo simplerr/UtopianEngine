@@ -37,7 +37,7 @@ namespace Utopian::Vk
 
 		if (enableValidation)
 		{
-			createInfo.enabledLayerCount = Debug::validation_layers.size();	// Debug validation layers
+			createInfo.enabledLayerCount = Debug::validation_layers.size();
 			createInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
 

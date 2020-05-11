@@ -40,8 +40,8 @@ namespace Utopian::Vk
 			debugCallbackCreateInfo.pfnCallback = &VulkanDebugCallback;
 			debugCallbackCreateInfo.pUserData = nullptr;
 
-			// Add all standard validation layers http://gpuopen.com/using-the-vulkan-validation-layers/
-			validation_layers.push_back("VK_LAYER_LUNARG_standard_validation");
+			// Add validation layer https://vulkan.lunarg.com/doc/sdk/1.2.135.0/windows/layer_configuration.html
+			validation_layers.push_back("VK_LAYER_KHRONOS_validation");
 		}
 
 		void InitDebug(Instance* instance)

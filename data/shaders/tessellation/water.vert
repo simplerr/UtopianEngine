@@ -14,11 +14,6 @@ layout (location = 5) in vec3 InBitangentL;
 layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 
-out gl_PerVertex 
-{
-	vec4 gl_Position;
-};
-
 void main() 
 {
 	OutNormalL = InNormalL;

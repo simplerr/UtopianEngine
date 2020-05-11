@@ -12,11 +12,6 @@ layout (location = 5) in vec3 InBitangentL;
 
 layout (location = 0) out vec3 outNormal;
 
-out gl_PerVertex
-{
-	vec4 gl_Position;
-};
-
 void main(void)
 {
 	// Note: workaround to avoid glslang to optimize unused inputs
