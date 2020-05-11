@@ -63,7 +63,7 @@ namespace Utopian::Vk
 
 		mVulkanVersion = VulkanVersion(mPhysicalDeviceProperties.apiVersion);
 
-		Debug::ConsolePrint("Retrieved physical supporting Vulkan " + mVulkanVersion.version);
+		Debug::ConsolePrint("Retrieved physical device supporting Vulkan " + mVulkanVersion.version);
 	}
 
 	void Device::RetrieveQueueFamilyProperites()
