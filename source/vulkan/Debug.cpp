@@ -18,6 +18,8 @@ namespace Utopian::Vk
 		std::vector<const char*> validation_layers;
 		VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo = {};
 		VkDebugReportCallbackEXT msgCallback = nullptr;
+		std::vector<VkValidationFeatureEnableEXT> enabledValidationFeatures;
+		VkValidationFeaturesEXT validationFeatures = {};
 		bool performanceWarnings = true;
 		std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
@@ -39,6 +41,17 @@ namespace Utopian::Vk
 
 			debugCallbackCreateInfo.pfnCallback = &VulkanDebugCallback;
 			debugCallbackCreateInfo.pUserData = nullptr;
+
+			enabledValidationFeatures.push_back(VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT);
+
+#ifdef ENABLE_GPU_VALIDATION
+			enabledValidationFeatures.push_back(VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT);
+#endif
+
+			validationFeatures.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
+			validationFeatures.enabledValidationFeatureCount = enabledValidationFeatures.size();
+			validationFeatures.pEnabledValidationFeatures = enabledValidationFeatures.data();
+			debugCallbackCreateInfo.pNext = &validationFeatures;
 
 			// Add validation layer https://vulkan.lunarg.com/doc/sdk/1.2.135.0/windows/layer_configuration.html
 			validation_layers.push_back("VK_LAYER_KHRONOS_validation");

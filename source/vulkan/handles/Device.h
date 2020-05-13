@@ -56,6 +56,7 @@ namespace Utopian::Vk
 		VkPhysicalDeviceProperties mPhysicalDeviceProperties;
 		VkPhysicalDeviceMemoryProperties mDeviceMemoryProperties;
 		VkPhysicalDeviceFeatures mEnabledFeatures {};
+		VkPhysicalDeviceFeatures mAvailableFeatures;
 		std::vector<std::string> mSupportedExtensions;
 		std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
 		VulkanVersion mVulkanVersion;

@@ -19,13 +19,16 @@ namespace Utopian::Vk
 		mEnabledFeatures.occlusionQueryPrecise = VK_TRUE;
 		mEnabledFeatures.independentBlend = VK_TRUE;
 		mEnabledFeatures.fragmentStoresAndAtomics = VK_TRUE;
+		mEnabledFeatures.vertexPipelineStoresAndAtomics = VK_TRUE;
 
 		RetrievePhysical(instance);
 		RetrieveSupportedExtensions();
 		RetrieveQueueFamilyProperites();
-		CreateLogical(enableValidation);
 
+		vkGetPhysicalDeviceFeatures(mPhysicalDevice, &mAvailableFeatures);
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
+
+		CreateLogical(enableValidation);
 
 		uint32_t queueFamilyIndex = GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 		mCommandPool = new CommandPool(this, queueFamilyIndex);
