@@ -79,12 +79,12 @@ namespace Utopian
 		mInternal->SetModel(model);
 	}
 
-	void CRenderable::SetTexture(Vk::Texture* texture)
+	void CRenderable::SetTexture(SharedPtr<Vk::Texture> texture)
 	{
 		mInternal->SetTexture(texture);
 	}
 
-	void CRenderable::SetSpecularTexture(Vk::Texture* texture)
+	void CRenderable::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
 	{
 		mInternal->SetSpecularTexture(texture);
 	}

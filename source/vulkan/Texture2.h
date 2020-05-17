@@ -19,11 +19,9 @@ namespace Utopian::Vk
 {
 	class Texture2 {
 	public:
-		Device* device;
-		VkDescriptorImageInfo descriptor;
-
 		SharedPtr<Vk::Image> image;
 		SharedPtr<Vk::Sampler> sampler;
+		VkDescriptorImageInfo descriptor;
 
 		void UpdateDescriptor();
 	protected:

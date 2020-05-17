@@ -71,7 +71,7 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> blendmapBrushRenderTarget;
 		SharedPtr<Terrain::BrushBlock> brushBlock; // Note: Todo: This is retrieved from Terrain
 		BrushSettings brushSettings;
-		SharedPtr<Vk::Texture2D> heightToolTexture;
+		SharedPtr<Vk::Texture> heightToolTexture;
 
 		struct TextureIdentifiers
 		{

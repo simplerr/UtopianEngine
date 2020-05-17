@@ -3,12 +3,15 @@
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/handles/Sampler.h"
 #include "TextureLoader.h"
 #include "Debug.h"
 #include "vulkan/handles/Device.h"
+#include "vulkan/handles/Image.h"
+#include "utility/Utility.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
-//#include <gli/gli.hpp>
+#include <gli/gli.hpp>
 #include <gli/type.hpp>
 
 namespace Utopian::Vk
@@ -21,10 +24,6 @@ namespace Utopian::Vk
 
 	TextureLoader::~TextureLoader()
 	{
-		for (auto& texture : mTextureMap)
-		{
-			delete texture.second;
-		}
 	}
 
 	TextureLoader& gTextureLoader()
@@ -32,313 +31,197 @@ namespace Utopian::Vk
 		return TextureLoader::Instance();
 	}
 
-	Texture* TextureLoader::LoadTexture(std::string filename)
+	SharedPtr<Texture> TextureLoader::LoadTexture(std::string path)
 	{
-		// Check if the model already is loaded
-		if (mTextureMap.find(filename) != mTextureMap.end())
-			return mTextureMap[filename];
+		// Check if the model is loaded already
+		if (mTextureMap.find(path) != mTextureMap.end())
+			return mTextureMap[path];
 
-		int texWidth, texHeight, texChannels;
+		std::string extension = GetFileExtension(path);
+
+		SharedPtr<Texture> texture;
+		if (extension == ".ktx" || extension == ".dds")
+		{
+			texture = LoadTextureGLI(path);
+		}
+		else
+		{
+			texture = LoadTextureSTB(path);
+		}
+
+		return texture;
+	}
+	
+	SharedPtr<Texture> TextureLoader::LoadTextureGLI(std::string path)
+	{
+		// These might be needed as parameters
+		VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT;
+		VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
+
+		gli::texture2d tex2D(gli::load(path.c_str()));
+
+		assert(!tex2D.empty());
+
+		uint32_t width = static_cast<uint32_t>(tex2D[0].extent().x);
+		uint32_t height = static_cast<uint32_t>(tex2D[0].extent().y);
+		uint32_t numMipLevels = static_cast<uint32_t>(tex2D.levels());
+
+		BUFFER_CREATE_INFO bufferDesc;
+		bufferDesc.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		bufferDesc.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		bufferDesc.data = tex2D.data();
+		bufferDesc.size = tex2D.size();
+		Buffer stagingBuffer = Buffer(bufferDesc, mDevice);
+
+		IMAGE_CREATE_INFO imageDesc;
+		imageDesc.width = width;
+		imageDesc.height = height;
+		imageDesc.format = format;
+		imageDesc.usage = imageUsageFlags | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		imageDesc.mipLevels = numMipLevels;
+		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
+
+		// Setup buffer copy regions for each mip level
+		std::vector<VkBufferImageCopy> copyRegions;
+		uint32_t offset = 0;
+
+		for (uint32_t i = 0; i < numMipLevels; i++)
+		{
+			VkBufferImageCopy bufferCopyRegion = {};
+			bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			bufferCopyRegion.imageSubresource.mipLevel = i;
+			bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
+			bufferCopyRegion.imageSubresource.layerCount = 1;
+			bufferCopyRegion.imageExtent.width = static_cast<uint32_t>(tex2D[i].extent().x);
+			bufferCopyRegion.imageExtent.height = static_cast<uint32_t>(tex2D[i].extent().y);;
+			bufferCopyRegion.imageExtent.depth = 1;
+			bufferCopyRegion.bufferOffset = offset;
+
+			copyRegions.push_back(bufferCopyRegion);
+			offset += static_cast<uint32_t>(tex2D[i].size());
+		}
+
+		CommandBuffer cmdBuffer = CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+		// Transfer image to a valid layout
+		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+		stagingBuffer.Copy(&cmdBuffer, image.get(), copyRegions);
+
+		// Transfer back to final layouts
+		image->LayoutTransition(mDevice, cmdBuffer, imageLayout);
+
+		cmdBuffer.Flush();
+
+		// Create the sampler
+		SharedPtr<Sampler> sampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		sampler->createInfo.minLod = 0.0f;
+		sampler->createInfo.maxLod = (float)numMipLevels;
+		sampler->createInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+		sampler->Create();
+
+		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
+		texture->image = image;
+		texture->sampler = sampler;
+
+		return texture;
+	}
+
+	SharedPtr<Texture> TextureLoader::LoadTextureSTB(std::string path)
+	{
+		int width, height, texChannels;
 		uint32_t pixelSize = sizeof(uint32_t);
-		stbi_uc* pixels = stbi_load(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-		VkDeviceSize imageSize = texWidth * texHeight * pixelSize;
+		stbi_uc* pixels = stbi_load(path.c_str(), &width, &height, &texChannels, STBI_rgb_alpha);
+		VkDeviceSize imageSize = width * height * pixelSize;
 
 		if (!pixels) {
 			return nullptr;
 		}
 
-		// This is only used to get the image layout for the correct padding
-		VkImage stagingImage = VK_NULL_HANDLE;
-		VkDeviceMemory stagingMemory = VK_NULL_HANDLE;
+		// Temporary image used to retrieve the subresource layout needed for correct copying of image data
+		IMAGE_CREATE_INFO imageDesc;
+		imageDesc.width = width;
+		imageDesc.height = height;
+		imageDesc.tiling = VK_IMAGE_TILING_LINEAR;
+		imageDesc.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		Image temporaryImage = Image(imageDesc, mDevice);
 
-		CreateImage(texWidth,
-					  texHeight,
-					  1,
-					  VK_FORMAT_R8G8B8A8_UNORM,														// VkFormat
-					  VK_IMAGE_TILING_LINEAR,														// VkImageTiling
-					  VK_IMAGE_USAGE_TRANSFER_SRC_BIT,												// VkImageUsageFlags
-					  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,	// VkMemoryPropertyFlags
-					  &stagingImage,																// VkImage
-					  &stagingMemory);																// VkDeviceMemory
-
-		// Copy the pixels from the loaded image to device memory
-		VkImageSubresource subresource = {};
-		subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-
-		VkSubresourceLayout stagingImageLayout;
-		vkGetImageSubresourceLayout(mDevice->GetVkDevice(), stagingImage, &subresource, &stagingImageLayout);
+		VkSubresourceLayout imageLayout = temporaryImage.GetSubresourceLayout(mDevice);
 
 		uint32_t* data = new uint32_t[imageSize];
 
-		if (stagingImageLayout.rowPitch == texWidth * pixelSize) {
+		if (imageLayout.rowPitch == width * pixelSize) {
 			memcpy(data, pixels, (size_t)imageSize);
 		}
 		else {
 			uint8_t* dataBytes = reinterpret_cast<uint8_t*>(data);
 
-			for (int y = 0; y < texHeight; y++) {
-				memcpy(&dataBytes[y * stagingImageLayout.rowPitch], &pixels[y * texWidth * pixelSize], texWidth * pixelSize);
+			for (int y = 0; y < height; y++) {
+				memcpy(&dataBytes[y * imageLayout.rowPitch], &pixels[y * width * pixelSize], height * pixelSize);
 			}
 		}
 
-		Texture* texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
+		SharedPtr<Texture> texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, width, height, 1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
 
-		mTextureMap[filename] = texture;
-		texture->SetPath(filename);
+		mTextureMap[path] = texture;
+		texture->SetPath(path);
 
-		vkDestroyImage(mDevice->GetVkDevice(), stagingImage, nullptr);
-		vkFreeMemory(mDevice->GetVkDevice(), stagingMemory, nullptr);
 		stbi_image_free(pixels);
 		delete[] data;
 
 		return texture;
 	}
 
-	Texture* TextureLoader::LoadCubeMap(std::string filename)
+	SharedPtr<Texture> TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask)
 	{
-		return nullptr;
-	}
-
-	Texture* TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask)
-	{
-		VkDevice device =  mDevice->GetVkDevice();	
+		VkDevice device = mDevice->GetVkDevice();
 		VkDeviceSize imageSize = width * height * depth * pixelSize; // NOTE: Assumes each pixel is stored as U8
 
-		Texture* texture = new Texture(mDevice);
-
-		// Create the staging image and device memory
-		VkImage stagingImage = VK_NULL_HANDLE;
-		VkDeviceMemory stagingMemory = VK_NULL_HANDLE;
-
-		CreateImage(width,
-					  height,
-					  depth,
-					  format,																		// VkFormat
-					  VK_IMAGE_TILING_LINEAR,														// VkImageTiling
-					  VK_IMAGE_USAGE_TRANSFER_SRC_BIT,												// VkImageUsageFlags
-					  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,	// VkMemoryPropertyFlags
-					  &stagingImage,																// VkImage
-					  &stagingMemory);																// VkDeviceMemory
-
-
-		// Copy the pixels from the loaded image to device memory
-		VkImageSubresource subresource = {};
-		subresource.aspectMask = aspectMask;
-		subresource.mipLevel = 0;
-		subresource.arrayLayer = 0;
-
-		VkSubresourceLayout stagingImageLayout;
-		vkGetImageSubresourceLayout(device, stagingImage, &subresource, &stagingImageLayout);
+		// Create staging image and fill it with data
+		IMAGE_CREATE_INFO imageDesc;
+		imageDesc.width = width;
+		imageDesc.height = height;
+		imageDesc.depth = depth;
+		imageDesc.format = format;
+		imageDesc.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		imageDesc.tiling = VK_IMAGE_TILING_LINEAR;
+		imageDesc.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+	 	Image stagingImage = Image(imageDesc, mDevice);
 
 		if (data != nullptr)
-		{
-			uint8_t* mappedMemory;
-			Debug::ErrorCheck(vkMapMemory(device, stagingMemory, 0, imageSize, 0, (void **)&mappedMemory));
-			// Size of the font texture is WIDTH * HEIGHT * 1 byte (only one channel)
-			memcpy(mappedMemory, data, imageSize);
-			vkUnmapMemory(device, stagingMemory);
-		}
+			stagingImage.UpdateMemory(data, imageSize);
 
 		// Create the final image
-		CreateImage(width,
-					  height,
-					  depth,
-					  format,																		// VkFormat
-					  VK_IMAGE_TILING_OPTIMAL,														// VkImageTiling
-					  VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,					// VkImageUsageFlags
-					  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,											// VkMemoryPropertyFlags
-					  &texture->image,																// VkImage
-					  &texture->deviceMemory);														// VkDeviceMemory
+		imageDesc.tiling = VK_IMAGE_TILING_OPTIMAL;
+		imageDesc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		imageDesc.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
 
-		TransitionImageLayout(stagingImage, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, aspectMask);
-		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_PREINITIALIZED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, aspectMask);
+		CommandBuffer cmdBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-		CopyImage(stagingImage, texture->image, aspectMask, width, height, depth);
+		// Prepare images for copying
+		stagingImage.LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-		TransitionImageLayout(texture->image, format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, aspectMask);
+		stagingImage.Copy(&cmdBuffer, image.get());
 
-		// Create the image view
-		CreateImageView(texture->image, format, &texture->imageView, depth, aspectMask);
+		// Transition to final layout
+		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+		cmdBuffer.Flush();
 
 		// Create the sampler
-		// NOTE: should be VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE when rendering text overlay
-		CreateImageSampler(&texture->sampler);
+		SharedPtr<Sampler> sampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		sampler->createInfo.minLod = 0.0f;
+		sampler->createInfo.maxLod = 1.0f;
+		sampler->createInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+		sampler->Create();
 
-		// Create the descriptor set for the texture
-		//texture->CreateDescriptorSet(mVulkanApp->GetDevice(), layout, pool);
-		//texture->CreateDescriptorSet(mVulkanApp->GetDevice(), mVulkanApp->GetTextureDescriptorSetLayout(), mVulkanApp->GetDescriptorPool());
-
-		vkDestroyImage(device, stagingImage, nullptr);
-		vkFreeMemory(device, stagingMemory, nullptr);
+		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
+		texture->image = image;
+		texture->sampler = sampler;
 
 		return texture;
-	}
-
-	void TextureLoader::CreateImage(uint32_t width, uint32_t height, uint32_t depth, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage* image, VkDeviceMemory* imageMemory)
-	{
-		VkDevice device =  mDevice->GetVkDevice();
-
-		// Create info for the image that will be used for staging
-		VkImageCreateInfo imageInfo = {};
-		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType = (depth == 1 ? VK_IMAGE_TYPE_2D : VK_IMAGE_TYPE_3D);
-		imageInfo.extent.width = width;
-		imageInfo.extent.height = height;
-		imageInfo.extent.depth = depth;
-		imageInfo.mipLevels = 1;
-		imageInfo.arrayLayers = 1;
-		imageInfo.format = format;
-		imageInfo.tiling = tiling;
-		imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
-		imageInfo.usage = usage;
-		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-
-		Debug::ErrorCheck(vkCreateImage(device, &imageInfo, nullptr, image));
-
-		VkMemoryRequirements memRequirements;
-		vkGetImageMemoryRequirements(device, *image, &memRequirements);
-
-		VkMemoryAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
-		mDevice->GetMemoryType(memRequirements.memoryTypeBits, properties, &allocInfo.memoryTypeIndex);
-
-		Debug::ErrorCheck(vkAllocateMemory(device, &allocInfo, nullptr, imageMemory));
-		Debug::ErrorCheck(vkBindImageMemory(device, *image, *imageMemory, 0));
-	}
-
-	void TextureLoader::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlagBits aspectMask)
-	{
-		CommandBuffer commandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-
-		VkImageMemoryBarrier barrier = {};
-		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		barrier.oldLayout = oldLayout;
-		barrier.newLayout = newLayout;
-		barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		barrier.image = image;
-		barrier.subresourceRange.aspectMask = aspectMask;
-		barrier.subresourceRange.baseMipLevel = 0;
-		barrier.subresourceRange.levelCount = 1;
-		barrier.subresourceRange.baseArrayLayer = 0;
-		barrier.subresourceRange.layerCount = 1;
-
-		VkPipelineStageFlags srcStageMask;
-		VkPipelineStageFlags dstStageMask;
-
-		if (oldLayout == VK_IMAGE_LAYOUT_PREINITIALIZED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		}
-		else if (oldLayout == VK_IMAGE_LAYOUT_PREINITIALIZED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		}
-		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-			srcStageMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		}
-		else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-			srcStageMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		}
-		else {
-			throw std::invalid_argument("unsupported layout transition!");
-		}
-		// Extend this with more image layout transitions
-
-		vkCmdPipelineBarrier(
-			commandBuffer.GetVkHandle(),
-			//VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-			srcStageMask, dstStageMask,
-			0,
-			0, nullptr,
-			0, nullptr,
-			1, &barrier
-		);
-
-		commandBuffer.Flush();
-	}
-
-	void TextureLoader::CopyImage(VkImage srcImage, VkImage dstImage, VkImageAspectFlagBits aspectMask, uint32_t width, uint32_t height, uint32_t depth)
-	{
-		CommandBuffer commandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-
-		VkImageSubresourceLayers subResource = {};
-		subResource.aspectMask = aspectMask;
-		subResource.baseArrayLayer = 0;
-		subResource.mipLevel = 0;
-		subResource.layerCount = 1;
-
-		VkImageCopy region = {};
-		region.srcSubresource = subResource;
-		region.dstSubresource = subResource;
-		region.srcOffset = { 0, 0, 0 };
-		region.dstOffset = { 0, 0, 0 };
-		region.extent.width = width;
-		region.extent.height = height;
-		region.extent.depth = depth;
-
-		// [NOTE] It's also possible to use vkCmdCopyBufferToImage() instead
-		vkCmdCopyImage(
-			commandBuffer.GetVkHandle(),
-			srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			1, &region
-		);
-
-		commandBuffer.Flush();
-	}
-
-	void TextureLoader::CreateImageView(VkImage image, VkFormat format, VkImageView* imageView, uint32_t depth, VkImageAspectFlagBits aspectMask)
-	{
-		VkImageViewCreateInfo viewInfo = {};
-		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewInfo.image = image;
-		viewInfo.viewType = (depth == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_3D);
-		viewInfo.format = format;
-		viewInfo.subresourceRange.aspectMask = aspectMask;
-		viewInfo.subresourceRange.baseMipLevel = 0;
-		viewInfo.subresourceRange.levelCount = 1;
-		viewInfo.subresourceRange.baseArrayLayer = 0;
-		viewInfo.subresourceRange.layerCount = 1;
-		viewInfo.components = {
-			VK_COMPONENT_SWIZZLE_R,
-			VK_COMPONENT_SWIZZLE_G,
-			VK_COMPONENT_SWIZZLE_B,
-			VK_COMPONENT_SWIZZLE_A
-		};
-
-		Debug::ErrorCheck(vkCreateImageView(mDevice->GetVkDevice(), &viewInfo, nullptr, imageView));
-	}
-
-	void TextureLoader::CreateImageSampler(VkSampler* sampler)
-	{
-		VkSamplerCreateInfo samplerInfo = {};
-		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = VK_FILTER_LINEAR;
-		samplerInfo.minFilter = VK_FILTER_LINEAR;
-		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.anisotropyEnable = VK_TRUE;
-		samplerInfo.maxAnisotropy = 16;
-		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-		samplerInfo.unnormalizedCoordinates = VK_FALSE;
-		samplerInfo.compareEnable = VK_FALSE;
-		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;	// VK_COMPARE_OP_NEVER in Sascha Willems code
-		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-
-		Debug::ErrorCheck(vkCreateSampler(mDevice->GetVkDevice(), &samplerInfo, nullptr, sampler));
 	}
 }

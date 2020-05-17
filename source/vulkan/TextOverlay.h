@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "vulkan/VulkanInclude.h"
+#include "utility/Common.h"
 
 #include "../../external/stb/stb_font_consolas_24_latin1.inl"
 
@@ -60,7 +61,7 @@ namespace Utopian::Vk
 		CommandBuffer* mCommandBuffer;
 		RenderPass* mRenderPass;
 		PipelineLegacy* mPipeline;
-		Texture* mTexture;
+		SharedPtr<Texture> mTexture;
 		PipelineLayout* mPipelineLayout;
 		VertexDescription* mVertexDescription;
 		Buffer* mVertexBuffer;

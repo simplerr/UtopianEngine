@@ -37,7 +37,6 @@ namespace Utopian::Vk
 
 		assert(!tex2D.empty());
 
-		this->device = device;
 		mWidth = static_cast<uint32_t>(tex2D[0].extent().x);
 		mHeight = static_cast<uint32_t>(tex2D[0].extent().y);
 		mNumMipLevels = static_cast<uint32_t>(tex2D.levels());
@@ -89,7 +88,7 @@ namespace Utopian::Vk
 
 		cmdBuffer.Flush();
 
-		// Create a defaultsampler
+		// Create a default sampler
 		sampler = std::make_shared<Vk::Sampler>(device, false);
 		sampler->createInfo.minLod = 0.0f;
 		sampler->createInfo.maxLod = (float)mNumMipLevels;
@@ -98,4 +97,6 @@ namespace Utopian::Vk
 
 		UpdateDescriptor();
 	}
+
+	
 }

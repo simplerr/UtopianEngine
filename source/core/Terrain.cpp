@@ -7,6 +7,7 @@
 #include "vulkan/RenderTarget.h"
 #include "vulkan/Effect.h"
 #include "vulkan/EffectManager.h"
+#include "vulkan/TextureLoader.h"
 #include "vulkan/StaticModel.h"
 #include "ScreenQuadRenderer.h"
 #include "vulkan/Mesh.h"
@@ -81,9 +82,9 @@ namespace Utopian
 	void Terrain::AddMaterial(std::string name, std::string diffuse, std::string normal, std::string displacement)
 	{
 		TerrainMaterial material;
-		material.diffuse = std::make_shared<Vk::Texture2D>(diffuse, mDevice);
-		material.normal = std::make_shared<Vk::Texture2D>(normal, mDevice);
-		material.displacement = std::make_shared<Vk::Texture2D>(displacement, mDevice);
+		material.diffuse = Vk::gTextureLoader().LoadTexture(diffuse);
+		material.normal = Vk::gTextureLoader().LoadTexture(normal);
+		material.displacement = Vk::gTextureLoader().LoadTexture(displacement);
 		mMaterials[name] = material;
 	}
 

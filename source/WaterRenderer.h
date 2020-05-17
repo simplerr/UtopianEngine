@@ -35,7 +35,7 @@ namespace Utopian
 		Vk::WaterEffect mWaterEffect;
 		Vk::BasicRenderTarget* mReflectionRenderTarget;
 		Vk::BasicRenderTarget* mRefractionRenderTarget;
-		Vk::Texture* dudvTexture;
+		SharedPtr<Vk::Texture> dudvTexture;
 		Vk::StaticModel* mGridModel;
 		std::vector<Water> mWaterList;
 

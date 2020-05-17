@@ -38,4 +38,19 @@ namespace Utopian
 
 		return path;
 	}
+	
+	std::string GetFileExtension(std::string filename)
+	{
+		std::string::size_type index = filename.rfind('.');
+
+		if(index != std::string::npos)
+		{
+			std::string extension = filename.substr(index);
+			return extension;
+		}
+		else
+		{
+			assert(0);// No extension found
+		}
+	}
 }

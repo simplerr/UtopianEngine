@@ -56,12 +56,12 @@ namespace Utopian
 		mModel = model;
 	}
 
-	void Renderable::SetTexture(Vk::Texture* texture)
+	void Renderable::SetTexture(SharedPtr<Vk::Texture> texture)
 	{
 		mModel->mMeshes[0]->SetTexture(texture);
 	}
 
-	void Renderable::SetSpecularTexture(Vk::Texture* texture)
+	void Renderable::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
 	{
 		mModel->mMeshes[0]->SetTexture(texture);
 	}

@@ -33,8 +33,8 @@ namespace Utopian::Vk
 
 		void LoadTextures(std::string diffusePath, std::string normalPath = DEFAULT_NORMAL_MAP_TEXTURE, std::string specularPath = DEFAULT_SPECULAR_MAP_TEXTURE);
 
-		void SetTexture(Texture* texture);
-		void SetSpecularTexture(Texture* texture);
+		void SetTexture(SharedPtr<Vk::Texture> texture);
+		void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
 		VkDescriptorSet GetTextureDescriptorSet();
 
 		BoundingBox GetBoundingBox();
@@ -69,9 +69,9 @@ namespace Utopian::Vk
 		SharedPtr<DescriptorSet> mTextureDescriptorSet;
 
 		Device* mDevice;
-		Texture* mDiffuseTexture;
-		Texture* mNormalTexture;
-		Texture* mSpecularTexture;
+		SharedPtr<Texture> mDiffuseTexture;
+		SharedPtr<Texture> mNormalTexture;
+		SharedPtr<Texture> mSpecularTexture;
 
 		BoundingBox mBoundingBox;
 

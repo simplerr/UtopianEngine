@@ -37,7 +37,7 @@ namespace Utopian
 		static bool IsKeyboardCapture();
 		static void KeydownCallback(char key);
 		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		ImTextureID AddTexture(const Vk::Texture2D& texture, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		ImTextureID AddTexture(const Vk::Texture& texture, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		void FreeTexture(ImTextureID textureId);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
@@ -64,7 +64,7 @@ namespace Utopian
 		SharedPtr<Vk::ImguiEffect> mImguiEffect;
 		SharedPtr<Vk::DescriptorPool> mTextureDescriptorPool;
 		SharedPtr<Vk::Sampler> mSampler;
-		Utopian::Vk::Texture* mTexture;
+		SharedPtr<Vk::Texture> mTexture;
 
 		ImDrawVert* mMappedVertices;
 		ImDrawIdx* mMappedIndices;

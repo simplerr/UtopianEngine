@@ -5,6 +5,7 @@
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"
+#include "utility/Common.h"
 
 namespace Utopian::Vk
 {
@@ -85,9 +86,9 @@ namespace Utopian::Vk
 
 		/* Shader descriptors */
 		UniformBuffer ubo;
-		Utopian::Vk::Texture* edgeTableTex;
-		Utopian::Vk::Texture* triangleTableTex;
-		Utopian::Vk::Texture* texture3d;
+		SharedPtr<Utopian::Vk::Texture> edgeTableTex;
+		SharedPtr<Utopian::Vk::Texture> triangleTableTex;
+		SharedPtr<Utopian::Vk::Texture> texture3d;
 		DescriptorSet* mDescriptorSet0; // set = 0 in GLSL
 		DescriptorSet* mDescriptorSet1; // set = 1 in GLSL
 

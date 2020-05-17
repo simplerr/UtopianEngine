@@ -30,16 +30,17 @@ namespace Utopian::Vk
 	{
 		mWidth = createInfo.width;
 		mHeight = createInfo.height;
+		mDepth = createInfo.depth;
 		mFormat = createInfo.format;
 		mFinalImageLayout = createInfo.finalImageLayout;
 		mNumMipLevels = createInfo.mipLevels;
-		mCurrentLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		mCurrentLayout = createInfo.initialLayout;
 
 		VkImageCreateInfo imageCreateInfo = {};
 		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageCreateInfo.format = createInfo.format;
 		imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageCreateInfo.extent = { createInfo.width, createInfo.height, 1 };
+		imageCreateInfo.extent = { createInfo.width, createInfo.height, createInfo.depth };
 		imageCreateInfo.mipLevels = createInfo.mipLevels;
 		imageCreateInfo.arrayLayers = createInfo.arrayLayers;
 		imageCreateInfo.tiling = createInfo.tiling;
@@ -144,6 +145,12 @@ namespace Utopian::Vk
 			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
 			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
+		else if (mCurrentLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
+			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
 		else if (mCurrentLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
 			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
 			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -179,9 +186,54 @@ namespace Utopian::Vk
 		mCurrentLayout = newLayout;
 	}
 
+	void Image::Copy(CommandBuffer* commandBuffer, Image* destination)
+	{
+		VkImageSubresourceLayers subResource = {};
+		subResource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subResource.baseArrayLayer = 0;
+		subResource.mipLevel = 0;
+		subResource.layerCount = 1;
+
+		VkImageCopy region = {};
+		region.srcSubresource = subResource;
+		region.dstSubresource = subResource;
+		region.srcOffset = { 0, 0, 0 };
+		region.dstOffset = { 0, 0, 0 };
+		region.extent.width = mWidth;
+		region.extent.height = mHeight;
+		region.extent.depth = mDepth;
+
+		vkCmdCopyImage(
+			commandBuffer->GetVkHandle(),
+			GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			destination->GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			1, &region
+		);
+	}
+
 	void Image::SetFinalLayout(VkImageLayout finalLayout)
 	{
 		mFinalImageLayout = finalLayout;
+	}
+
+	void Image::UpdateMemory(void* data, VkDeviceSize size)
+	{
+		assert(data);
+
+		void *mapped;
+		MapMemory(0, size, 0, &mapped);
+		memcpy(mapped, data, size);
+		UnmapMemory();
+	}
+
+	void Image::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
+	{
+		Debug::ErrorCheck(vkMapMemory(GetDevice()->GetVkDevice(), mDeviceMemory, offset, size, flags, data));
+	}
+
+	void Image::UnmapMemory()
+	{
+		vkUnmapMemory(GetDevice()->GetVkDevice(), mDeviceMemory);
 	}
 
 	VkImageView Image::GetView() const
@@ -222,6 +274,17 @@ namespace Utopian::Vk
 	uint32_t Image::GetHeight() const
 	{
 		return mHeight;
+	}
+
+	VkSubresourceLayout Image::GetSubresourceLayout(Device* device) const
+	{
+		VkImageSubresource subresource = {};
+		subresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+		VkSubresourceLayout subresourceLayout;
+		vkGetImageSubresourceLayout(GetVkDevice(), GetVkHandle(), &subresource, &subresourceLayout);
+
+		return subresourceLayout;
 	}
 
 	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)

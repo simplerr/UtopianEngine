@@ -83,13 +83,13 @@ namespace Utopian::Vk
 
 	}
 
-	void Mesh::SetTexture(Texture* texture)
+	void Mesh::SetTexture(SharedPtr<Vk::Texture> texture)
 	{
 		mDiffuseTexture = texture;
 		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
 	}
 
-	void Mesh::SetSpecularTexture(Texture* texture)
+	void Mesh::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
 	{
 		mSpecularTexture = texture;
 		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
@@ -131,25 +131,25 @@ namespace Utopian::Vk
 
 	Texture* Mesh::GetDiffuseTexture()
 	{
-		 return mDiffuseTexture; 
+		 return mDiffuseTexture.get(); 
 	}
 
 	Texture* Mesh::GetNormalTexture()
 	{
-		return mNormalTexture;
+		return mNormalTexture.get();
 	}
 
 	Texture* Mesh::GetSpecularTexture()
 	{
-		return mSpecularTexture;
+		return mSpecularTexture.get();
 	};
 
 	std::vector<Texture*> Mesh::GetTextures()
 	{
 		std::vector<Texture*> textures;
-		textures.push_back(mDiffuseTexture);
-		textures.push_back(mNormalTexture);
-		textures.push_back(mSpecularTexture);
+		textures.push_back(mDiffuseTexture.get());
+		textures.push_back(mNormalTexture.get());
+		textures.push_back(mSpecularTexture.get());
 
 		return textures;
 	}

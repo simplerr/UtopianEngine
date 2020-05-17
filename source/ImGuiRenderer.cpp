@@ -92,7 +92,7 @@ namespace Utopian
 		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
-		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->imageView);
+		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->image->GetView());
 
 		mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
@@ -204,7 +204,7 @@ namespace Utopian
 		}
 	}
 
-	ImTextureID ImGuiRenderer::AddTexture(const Vk::Texture2D& texture, VkImageLayout imageLayout)
+	ImTextureID ImGuiRenderer::AddTexture(const Vk::Texture& texture, VkImageLayout imageLayout)
 	{
 		return AddTexture(texture.image->GetView(), texture.sampler->GetVkHandle(), texture.image->GetFinalLayout());
 	}

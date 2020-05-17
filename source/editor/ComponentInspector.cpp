@@ -10,6 +10,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include "vulkan/StaticModel.h"
 #include "vulkan/handles/Texture.h"
+#include "vulkan/handles/Image.h"
 #include "core/renderer/Renderer.h"
 #include <algorithm>
 
@@ -89,7 +90,7 @@ namespace Utopian
 
 		for (auto& texture : allTextures)
 		{
-			textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddTexture(texture->imageView), texture->GetPath()));
+			textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddTexture(texture->image->GetView()), texture->GetPath()));
 		}
 	}
 

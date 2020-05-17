@@ -134,7 +134,7 @@ namespace Utopian::Vk
 					material->GetTexture(aiTextureType_DIFFUSE, 0, &texPath);
 					FindValidPath(&texPath, filename);
 					diffuseTexturePath = texPath.C_Str();
-					Texture* texture = gTextureLoader().LoadTexture(diffuseTexturePath);
+					SharedPtr<Texture> texture = gTextureLoader().LoadTexture(diffuseTexturePath);
 
 					// Workaround for Unity assets
 					// Note: Instead of calling LoadTexture() something similar to FindFile(diffuseTexturePath) could be used

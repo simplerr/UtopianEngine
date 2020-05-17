@@ -5,7 +5,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
 #include "ImGuiRenderer.h"
-#include "vulkan/Texture2.h"
+#include "vulkan/TextureLoader.h"
 #include "core/renderer/Renderer.h"
 #include "core/renderer/RendererUtility.h"
 #include "core/Terrain.h"
@@ -36,7 +36,7 @@ namespace Utopian
 		brushSettings.strength = 250.0f;
 		brushSettings.radius = 1500.0f;
 
-		heightToolTexture = std::make_shared<Vk::Texture2D>("data/textures/height-tool.ktx", mDevice);
+		heightToolTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.ktx");
 
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
 		textureIdentifiers.grass = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("grass").diffuse);

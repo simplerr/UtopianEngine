@@ -85,7 +85,6 @@ namespace Utopian::Vk
 		delete mRenderPass;
 		delete mPipelineLayout;
 		delete mPipeline;
-		delete mTexture;
 	}
 
 	// Map buffer 

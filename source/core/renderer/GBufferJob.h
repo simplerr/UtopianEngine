@@ -99,6 +99,6 @@ namespace Utopian
 
 		// Animated instancing
 		AnimationParametersBlock mAnimationParametersBlock;
-		Vk::Texture* mWindmapTexture;
+		SharedPtr<Vk::Texture> mWindmapTexture;
 	};
 }

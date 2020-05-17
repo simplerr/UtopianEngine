@@ -3,6 +3,8 @@
 #include "ImGuiRenderer.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/Debug.h"
+#include "vulkan/handles/Image.h"
+#include "vulkan/handles/Sampler.h"
 #include "core/renderer/Renderer.h"
 #include "core/AssetLoader.h"
 #include "utility/Timer.h"
@@ -154,8 +156,8 @@ namespace Utopian
 
 	void FoliageTool::AddAssetToUi(uint32_t assetId, std::string previewPath)
 	{
-		Vk::Texture* texture = Vk::gTextureLoader().LoadTexture(previewPath);
-		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddTexture(texture->imageView, texture->sampler);;
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(previewPath);
+		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddTexture(texture->image->GetView(), texture->sampler->GetVkHandle());
 
 		UiAsset uiAsset;
 		uiAsset.assetId = assetId;

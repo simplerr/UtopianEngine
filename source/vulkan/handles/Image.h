@@ -10,11 +10,13 @@ namespace Utopian::Vk
 	{
 		uint32_t width = 1;
 		uint32_t height = 1;
+		uint32_t depth = 1;
 		VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
 		VkImageTiling tiling = VK_IMAGE_TILING_OPTIMAL;
 		VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT;
 		VkMemoryPropertyFlags properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 		VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
+		VkImageLayout initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		uint32_t arrayLayers = 1;
 		uint32_t mipLevels = 1;
@@ -39,7 +41,12 @@ namespace Utopian::Vk
 		void CreateView(VkImageViewCreateInfo viewCreateInfo);
 
 		void LayoutTransition(Device* device, const CommandBuffer& commandBuffer, VkImageLayout newLayout);
+		void Copy(CommandBuffer* commandBuffer, Image* destination);
 		void SetFinalLayout(VkImageLayout finalLayout);
+
+		void MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data);
+		void UnmapMemory();
+		void UpdateMemory(void* data, VkDeviceSize size);
 
 		VkImageView GetView() const;
 		VkImageView GetLayerView(uint32_t layer) const;
@@ -48,6 +55,7 @@ namespace Utopian::Vk
 		VkDeviceMemory GetDeviceMemory() const;
 		uint32_t GetWidth() const;
 		uint32_t GetHeight() const;
+		VkSubresourceLayout GetSubresourceLayout(Device* device) const;
 	protected:
 		void CreateInternal(const IMAGE_CREATE_INFO& createInfo, Device* device);
 
@@ -67,6 +75,7 @@ namespace Utopian::Vk
 		VkFormat mFormat;
 		uint32_t mWidth;
 		uint32_t mHeight;
+		uint32_t mDepth;
 		uint32_t mNumMipLevels;
 	};
 

@@ -8,6 +8,7 @@
 #include "vulkan/handles/Texture.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/PipelineLayout.h"
+#include "vulkan/Texture2.h"
 #include "Effect.h"
 
 namespace Utopian::Vk

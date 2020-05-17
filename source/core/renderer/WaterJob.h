@@ -64,9 +64,9 @@ namespace Utopian
 		SettingsBlock mSettingsBlock;
 		WaterParameterBlock mWaterParameterBlock;
         Vk::Mesh* mWaterMesh;
-		Vk::Texture* mDuDvTexture;
-		Vk::Texture* mNormalTexture;
-		Vk::Texture* mFoamMaskTexture;
+		SharedPtr<Vk::Texture> mDuDvTexture;
+		SharedPtr<Vk::Texture> mNormalTexture;
+		SharedPtr<Vk::Texture> mFoamMaskTexture;
 		LightUniformBuffer mLightBlock;
 		CascadeBlock mCascadeBlock;
 		SharedPtr<Vk::Sampler> mShadowSampler;

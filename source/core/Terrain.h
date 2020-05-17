@@ -12,9 +12,9 @@ namespace Utopian
 {
 	struct TerrainMaterial
 	{
-		SharedPtr<Vk::Texture2D> diffuse;
-		SharedPtr<Vk::Texture2D> normal;
-		SharedPtr<Vk::Texture2D> displacement;
+		SharedPtr<Vk::Texture> diffuse;
+		SharedPtr<Vk::Texture> normal;
+		SharedPtr<Vk::Texture> displacement;
 	};
 
 	class Terrain

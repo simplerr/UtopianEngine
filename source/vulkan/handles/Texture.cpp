@@ -5,6 +5,37 @@
 
 namespace Utopian::Vk
 {
+	
+
+	Texture::Texture(Device* device)
+	{
+		mDevice = device;
+	}
+
+	Texture::~Texture()
+	{
+	}
+
+	VkDescriptorImageInfo* Texture::GetTextureDescriptorInfo()
+	{
+		texDescriptor = {};
+		texDescriptor.sampler = sampler->GetVkHandle();
+		texDescriptor.imageView = image->GetView();;
+		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		return &texDescriptor;
+	}
+
+	void Texture::SetPath(std::string path)
+	{
+		mPath = path;
+	}
+
+	std::string Texture::GetPath()
+	{
+		return mPath;
+	}
+
 	TextureArray::TextureArray()
 	{
 
@@ -30,7 +61,7 @@ namespace Utopian::Vk
 		mImageInfos.push_back(imageInfo);
 	}
 
-	void TextureArray::AddTexture(const SharedPtr<Vk::Texture2D>& texture)
+	void TextureArray::AddTexture(const SharedPtr<Vk::Texture>& texture)
 	{
 		VkDescriptorImageInfo imageInfo;
 		imageInfo.sampler = texture->sampler->GetVkHandle();
@@ -48,38 +79,5 @@ namespace Utopian::Vk
 	uint32_t TextureArray::GetNumImages()
 	{
 		return mImageInfos.size();
-	}
-
-	Texture::Texture(Device* device)
-	{
-		mDevice = device;
-	}
-
-	Texture::~Texture()
-	{
-		vkDestroyImageView(mDevice->GetVkDevice(), imageView, nullptr);
-		vkDestroyImage(mDevice->GetVkDevice(), image, nullptr);
-		vkDestroySampler(mDevice->GetVkDevice(), sampler, nullptr);
-		vkFreeMemory(mDevice->GetVkDevice(), deviceMemory, nullptr);
-	}
-
-	VkDescriptorImageInfo* Texture::GetTextureDescriptorInfo()
-	{
-		texDescriptor = {};
-		texDescriptor.sampler = sampler;
-		texDescriptor.imageView = imageView;
-		texDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		return &texDescriptor;
-	}
-
-	void Texture::SetPath(std::string path)
-	{
-		mPath = path;
-	}
-
-	std::string Texture::GetPath()
-	{
-		return mPath;
 	}
 }
