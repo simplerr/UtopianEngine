@@ -205,6 +205,7 @@
     <ClCompile Include="source\vulkan\ShaderFactory.cpp" />
     <ClCompile Include="source\vulkan\StaticModel.cpp" />
     <ClCompile Include="source\vulkan\TextOverlay.cpp" />
+    <ClCompile Include="source\vulkan\Texture2.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
     <ClCompile Include="source\vulkan\VulkanApp.cpp" />

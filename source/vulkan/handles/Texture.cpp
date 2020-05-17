@@ -33,8 +33,8 @@ namespace Utopian::Vk
 	void TextureArray::AddTexture(const SharedPtr<Vk::Texture2D>& texture)
 	{
 		VkDescriptorImageInfo imageInfo;
-		imageInfo.sampler = texture->sampler;
-		imageInfo.imageView = texture->view;
+		imageInfo.sampler = texture->sampler->GetVkHandle();
+		imageInfo.imageView = texture->image->GetView();
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		mImageInfos.push_back(imageInfo);

@@ -1,11 +1,18 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Device.h"
+#include "vulkan/handles/CommandBuffer.h"
+#include "vulkan/handles/Image.h"
 #include "vulkan/Debug.h"
 
 namespace Utopian::Vk
 {
 	Buffer::Buffer()
 	{
+	}
+
+	Buffer::Buffer(const BUFFER_CREATE_INFO& createInfo, Device* device)
+	{
+		Create(device, createInfo.usageFlags, createInfo.memoryPropertyFlags, createInfo.size, createInfo.data);
 	}
 
 	Buffer::Buffer(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
@@ -35,6 +42,7 @@ namespace Utopian::Vk
 		bufferCreateInfo.usage = usageFlags;
 		bufferCreateInfo.size = size;
 		bufferCreateInfo.flags = 0;
+		bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 		VkDevice vkDevice = mDevice->GetVkDevice();
 		Debug::ErrorCheck(vkCreateBuffer(vkDevice, &bufferCreateInfo, nullptr, &mBuffer));
@@ -42,7 +50,6 @@ namespace Utopian::Vk
 		vkGetBufferMemoryRequirements(vkDevice, mBuffer, &memReqs);
 		memAllocInfo.allocationSize = memReqs.size;
 		mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &memAllocInfo.memoryTypeIndex);
-		memAllocInfo.memoryTypeIndex = 1; // Note: Todo: Workaround
 		Debug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
 
 		if (data != nullptr)
@@ -95,6 +102,19 @@ namespace Utopian::Vk
 		mappedRange.offset = offset;
 		mappedRange.size = size;
 		return vkFlushMappedMemoryRanges(mDevice->GetVkDevice(), 1, &mappedRange);
+	}
+
+	void Buffer::Copy(CommandBuffer* commandBuffer, Image* destination, const std::vector<VkBufferImageCopy>& regions)
+	{
+		// Copy mip levels from staging buffer
+		vkCmdCopyBufferToImage(
+			commandBuffer->GetVkHandle(),
+			GetVkBuffer(),
+			destination->GetVkHandle(),
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			static_cast<uint32_t>(regions.size()),
+			regions.data()
+		);
 	}
 
 	VkBuffer Buffer::GetVkBuffer()

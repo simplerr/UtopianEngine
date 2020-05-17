@@ -39,10 +39,10 @@ namespace Utopian
 		heightToolTexture = std::make_shared<Vk::Texture2D>("data/textures/height-tool.ktx", mDevice);
 
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
-		textureIdentifiers.grass = imGuiRenderer->AddTexture(mTerrain->GetMaterial("grass").diffuse->view, mTerrain->GetMaterial("grass").diffuse->sampler);
-		textureIdentifiers.rock = imGuiRenderer->AddTexture(mTerrain->GetMaterial("rock").diffuse->view, mTerrain->GetMaterial("rock").diffuse->sampler);
-		textureIdentifiers.dirt = imGuiRenderer->AddTexture(mTerrain->GetMaterial("dirt").diffuse->view, mTerrain->GetMaterial("dirt").diffuse->sampler);
-		textureIdentifiers.heightTool = imGuiRenderer->AddTexture(heightToolTexture->view);
+		textureIdentifiers.grass = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("grass").diffuse);
+		textureIdentifiers.rock = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("rock").diffuse);
+		textureIdentifiers.dirt = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("dirt").diffuse);
+		textureIdentifiers.heightTool = imGuiRenderer->AddTexture(*heightToolTexture);
    }
 
    TerrainTool::~TerrainTool()

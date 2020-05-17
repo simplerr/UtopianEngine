@@ -91,7 +91,15 @@ namespace Utopian
 
 	SharedPtr<Vk::Image> RendererUtility::CopyImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, const CopyImageInfo& info)
 	{
-		SharedPtr<Vk::Image> dstImage = std::make_shared<Vk::Image>(device, info.width, info.height, info.format, info.tiling, info.usage, info.memoryProperties);
+		Vk::IMAGE_CREATE_INFO createInfo;
+		createInfo.width = info.width;
+		createInfo.height = info.height;
+		createInfo.format = info.format;
+		createInfo.usage = info.usage;
+		createInfo.properties = info.memoryProperties;
+		createInfo.tiling = info.tiling;
+		SharedPtr<Vk::Image> dstImage = std::make_shared<Vk::Image>(createInfo, device);
+		//SharedPtr<Vk::Image> dstImage = std::make_shared<Vk::Image>(device, info.width, info.height, info.format, info.tiling, info.usage, info.memoryProperties);
 		dstImage->SetFinalLayout(info.finalImageLayout);
 
 		VkFormatProperties formatProps;

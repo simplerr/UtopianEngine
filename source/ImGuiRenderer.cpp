@@ -21,6 +21,7 @@
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/Debug.h"
+#include "vulkan/Texture2.h"
 #include "Input.h"
 
 #define MOUSE_WHEEL_SCALING 150.0f
@@ -201,6 +202,11 @@ namespace Utopian
 		if (alwaysUpdate || updateCmdBuffers) {
 			UpdateCommandBuffers();
 		}
+	}
+
+	ImTextureID ImGuiRenderer::AddTexture(const Vk::Texture2D& texture, VkImageLayout imageLayout)
+	{
+		return AddTexture(texture.image->GetView(), texture.sampler->GetVkHandle(), texture.image->GetFinalLayout());
 	}
 
 	ImTextureID ImGuiRenderer::AddTexture(VkImageView imageView, const VkSampler sampler, VkImageLayout imageLayout)

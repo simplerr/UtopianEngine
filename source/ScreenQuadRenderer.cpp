@@ -46,11 +46,11 @@ namespace Utopian
 			{ glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f) }
 		};
 
-		mScreenQuad.vertexBuffer = new Utopian::Vk::Buffer(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertices.size() * sizeof(Vk::ScreenQuadVertex), vertices.data());
+		mScreenQuad.vertexBuffer = new Utopian::Vk::Buffer(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertices.size() * sizeof(Vk::ScreenQuadVertex), vertices.data());
 
 		std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
-		mScreenQuad.indexBuffer = new Utopian::Vk::Buffer(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indices.size() * sizeof(uint32_t), indices.data());
+		mScreenQuad.indexBuffer = new Utopian::Vk::Buffer(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indices.size() * sizeof(uint32_t), indices.data());
 	}
 
 	void ScreenQuadRenderer::Render(Vk::VulkanApp* vulkanApp)

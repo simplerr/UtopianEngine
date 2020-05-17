@@ -50,12 +50,19 @@ namespace Utopian::Vk
 	{
 		SetupSwapchain();
 
-		mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
-								  mDepthFormat,
-								  VK_IMAGE_TILING_OPTIMAL,
-								  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
-								  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-								  VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
+		IMAGE_CREATE_INFO createInfo;
+		createInfo.width = GetWindowWidth();
+		createInfo.height = GetWindowHeight();
+		createInfo.format = mDepthFormat;
+		createInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		createInfo.aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+		mDepthStencil = new Image(createInfo, mDevice);
+		//mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
+		//						  mDepthFormat,
+		//						  VK_IMAGE_TILING_OPTIMAL,
+		//						  VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+		//						  VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+		//						  VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT);
 		
 		mRenderPass = new RenderPass(mDevice, mColorFormat, mDepthFormat, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 		mFrameBuffers = new FrameBuffers(mDevice, mRenderPass, mDepthStencil, &mSwapChain, GetWindowWidth(), GetWindowHeight());

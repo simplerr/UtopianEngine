@@ -1,13 +1,24 @@
 #pragma once
 
 #include "vulkan/VulkanInclude.h"
+#include <vector>
 
 namespace Utopian::Vk
 {
+	struct BUFFER_CREATE_INFO
+	{
+		VkBufferUsageFlags usageFlags;
+		VkMemoryPropertyFlags memoryPropertyFlags;
+		VkDeviceSize size;
+		void* data;
+	};
+
 	class Buffer
 	{
 	public:
 		Buffer();
+		Buffer(const BUFFER_CREATE_INFO& createInfo, Device* device);
+
 		Buffer(Device* device,
 		 	   VkBufferUsageFlags usageFlags,
 			   VkMemoryPropertyFlags memoryPropertyFlags,
@@ -28,6 +39,8 @@ namespace Utopian::Vk
 		void UpdateMemory(void* data, VkDeviceSize size);
 
 		VkResult Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+
+		void Copy(CommandBuffer* commandBuffer, Image* destination, const std::vector<VkBufferImageCopy>& regions);
 
 		VkBuffer GetVkBuffer();
 		VkDeviceMemory GetVkMemory();

@@ -19,7 +19,7 @@
 namespace Utopian
 {
 	class Texture;
-
+	class Texture2;
 
 	class ImGuiRenderer 
 	{
@@ -37,6 +37,7 @@ namespace Utopian
 		static bool IsKeyboardCapture();
 		static void KeydownCallback(char key);
 		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		ImTextureID AddTexture(const Vk::Texture2D& texture, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		void FreeTexture(ImTextureID textureId);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;
