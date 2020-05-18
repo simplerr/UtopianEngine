@@ -36,8 +36,7 @@ namespace Utopian
 		static bool IsMouseInsideUi();
 		static bool IsKeyboardCapture();
 		static void KeydownCallback(char key);
-		ImTextureID AddTexture(VkImageView imageView, const VkSampler = VK_NULL_HANDLE, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		ImTextureID AddTexture(const Vk::Texture& texture, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		ImTextureID AddImage(const Vk::Image& image);
 		void FreeTexture(ImTextureID textureId);
 
 		Utopian::Vk::CommandBuffer* GetCommandBuffer() const;

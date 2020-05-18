@@ -39,10 +39,10 @@ namespace Utopian
 		heightToolTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.ktx");
 
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
-		textureIdentifiers.grass = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("grass").diffuse);
-		textureIdentifiers.rock = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("rock").diffuse);
-		textureIdentifiers.dirt = imGuiRenderer->AddTexture(*mTerrain->GetMaterial("dirt").diffuse);
-		textureIdentifiers.heightTool = imGuiRenderer->AddTexture(*heightToolTexture);
+		textureIdentifiers.grass = imGuiRenderer->AddImage(*mTerrain->GetMaterial("grass").diffuse->GetImage());
+		textureIdentifiers.rock = imGuiRenderer->AddImage(*mTerrain->GetMaterial("rock").diffuse->GetImage());
+		textureIdentifiers.dirt = imGuiRenderer->AddImage(*mTerrain->GetMaterial("dirt").diffuse->GetImage());
+		textureIdentifiers.heightTool = imGuiRenderer->AddImage(*heightToolTexture->GetImage());
    }
 
    TerrainTool::~TerrainTool()

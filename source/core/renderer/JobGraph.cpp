@@ -68,10 +68,10 @@ namespace Utopian
 
 		/* Add debug render targets */
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
-		mDebugDescriptorSets.position = imGuiRenderer->AddTexture(mGBuffer.positionImage->GetView());
-		mDebugDescriptorSets.normal = imGuiRenderer->AddTexture(mGBuffer.normalImage->GetView());
-		mDebugDescriptorSets.normalView = imGuiRenderer->AddTexture(mGBuffer.normalViewImage->GetView());
-		mDebugDescriptorSets.albedo = imGuiRenderer->AddTexture(mGBuffer.albedoImage->GetView());
+		mDebugDescriptorSets.position = imGuiRenderer->AddImage(*mGBuffer.positionImage);
+		mDebugDescriptorSets.normal = imGuiRenderer->AddImage(*mGBuffer.normalImage);
+		mDebugDescriptorSets.normalView = imGuiRenderer->AddImage(*mGBuffer.normalViewImage);
+		mDebugDescriptorSets.albedo = imGuiRenderer->AddImage(*mGBuffer.albedoImage);
 
 		EnableJob(JobGraph::JobIndex::PIXEL_DEBUG_INDEX, false);
 	}

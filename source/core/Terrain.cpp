@@ -103,9 +103,9 @@ namespace Utopian
 
 		// Add debug render targets
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
-		mDebugDescriptorSets.heightmap = imGuiRenderer->AddTexture(heightmapImage->GetView(), VK_NULL_HANDLE, heightmapImage->GetFinalLayout());
-		mDebugDescriptorSets.normalmap = imGuiRenderer->AddTexture(normalImage->GetView(), VK_NULL_HANDLE, normalImage->GetFinalLayout());
-		mDebugDescriptorSets.blendmap = imGuiRenderer->AddTexture(blendmapImage->GetView(), VK_NULL_HANDLE, blendmapImage->GetFinalLayout());
+		mDebugDescriptorSets.heightmap = imGuiRenderer->AddImage(*heightmapImage);
+		mDebugDescriptorSets.normalmap = imGuiRenderer->AddImage(*normalImage);
+		mDebugDescriptorSets.blendmap = imGuiRenderer->AddImage(*blendmapImage);
 	}
 
 	void Terrain::EffectRecomiledCallback(std::string name)

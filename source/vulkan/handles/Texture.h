@@ -15,16 +15,20 @@ namespace Utopian::Vk
 		void CreateDescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 		VkDescriptorImageInfo* GetTextureDescriptorInfo();
 
+		Image* GetImage();
+		Sampler* GetSampler();
+
 		void SetPath(std::string path);
 		std::string GetPath();
 
-		SharedPtr<Vk::Image> image;
-		SharedPtr<Vk::Sampler> sampler;
-		//VkSampler sampler;
 	private:
+		SharedPtr<Vk::Image> mImage;
+		SharedPtr<Vk::Sampler> mSampler;
 		Device* mDevice;
 		VkDescriptorImageInfo texDescriptor;
 		std::string mPath;
+
+		friend class TextureLoader;
 	};
 
 	/*

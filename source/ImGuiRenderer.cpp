@@ -92,7 +92,7 @@ namespace Utopian
 		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
 
-		io.Fonts->TexID = (ImTextureID)AddTexture(mTexture->image->GetView());
+		io.Fonts->TexID = (ImTextureID)AddImage(*mTexture->GetImage());
 
 		mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
@@ -203,13 +203,8 @@ namespace Utopian
 			UpdateCommandBuffers();
 		}
 	}
-
-	ImTextureID ImGuiRenderer::AddTexture(const Vk::Texture& texture, VkImageLayout imageLayout)
-	{
-		return AddTexture(texture.image->GetView(), texture.sampler->GetVkHandle(), texture.image->GetFinalLayout());
-	}
-
-	ImTextureID ImGuiRenderer::AddTexture(VkImageView imageView, const VkSampler sampler, VkImageLayout imageLayout)
+	
+	ImTextureID ImGuiRenderer::AddImage(const Vk::Image& image)
 	{
 		VkDescriptorSet descriptorSet;
 
@@ -224,9 +219,9 @@ namespace Utopian
 
 		// Update the Descriptor Set:
 		VkDescriptorImageInfo desc_image[1] = {};
-		desc_image[0].sampler = (sampler == VK_NULL_HANDLE ? mSampler->GetVkHandle() : sampler);
-		desc_image[0].imageView = imageView;
-		desc_image[0].imageLayout = imageLayout;
+		desc_image[0].sampler = mSampler->GetVkHandle();
+		desc_image[0].imageView = image.GetView();
+		desc_image[0].imageLayout = image.GetFinalLayout();
 
 		VkWriteDescriptorSet write_desc[1] = {};
 		write_desc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

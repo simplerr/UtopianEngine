@@ -61,8 +61,8 @@ namespace Utopian
 		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
 		SharedPtr<Vk::Texture> texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
 		Vk::TextureArray textureArray;
-		textureArray.AddTexture(texture->image->GetView(), mSampler.get());
-		textureArray.AddTexture(texture2->image->GetView(), mSampler.get());
+		textureArray.AddTexture(texture);
+		textureArray.AddTexture(texture2);
 
 		mEffect->BindCombinedImage("textureSampler", &textureArray);
 

@@ -122,8 +122,8 @@ namespace Utopian::Vk
 		sampler->Create();
 
 		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
-		texture->image = image;
-		texture->sampler = sampler;
+		texture->mImage = image;
+		texture->mSampler = sampler;
 
 		return texture;
 	}
@@ -219,8 +219,8 @@ namespace Utopian::Vk
 		sampler->Create();
 
 		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
-		texture->image = image;
-		texture->sampler = sampler;
+		texture->mImage = image;
+		texture->mSampler = sampler;
 
 		return texture;
 	}

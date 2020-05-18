@@ -157,7 +157,7 @@ namespace Utopian
 	void FoliageTool::AddAssetToUi(uint32_t assetId, std::string previewPath)
 	{
 		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(previewPath);
-		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddTexture(texture->image->GetView(), texture->sampler->GetVkHandle());
+		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddImage(*texture->GetImage());
 
 		UiAsset uiAsset;
 		uiAsset.assetId = assetId;
