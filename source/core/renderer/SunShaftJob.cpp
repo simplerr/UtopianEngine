@@ -42,7 +42,7 @@ namespace Utopian
 
 		mRadialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mRadialBlurEffect->BindUniformBuffer("UBO_parameters", &mRadialBlurParameters);
-		mRadialBlurEffect->BindCombinedImage("sunSampler", skydomeJob->sunImage.get(), mRadialBlurRenderTarget->GetSampler());
+		mRadialBlurEffect->BindCombinedImage("sunSampler", skydomeJob->sunImage, mRadialBlurRenderTarget->GetSampler());
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 	}

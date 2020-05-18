@@ -92,11 +92,11 @@ namespace Utopian
 		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
 		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
 		mFoamMaskTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_foam.png");
-		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture->GetTextureDescriptorInfo());
-		mEffect->BindCombinedImage("normalSampler", mNormalTexture->GetTextureDescriptorInfo());
-		mEffect->BindCombinedImage("foamMaskSampler", mFoamMaskTexture->GetTextureDescriptorInfo());
-		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage.get(), renderTarget->GetSampler());
-		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), mShadowSampler.get());
+		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture);
+		mEffect->BindCombinedImage("normalSampler", mNormalTexture);
+		mEffect->BindCombinedImage("foamMaskSampler", mFoamMaskTexture);
+		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage, renderTarget->GetSampler());
+		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage, mShadowSampler.get());
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 

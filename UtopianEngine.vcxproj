@@ -186,7 +186,7 @@
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
     <ClCompile Include="source\vulkan\handles\EffectLegacy.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline2.cpp" />
-    <ClCompile Include="source\vulkan\handles\Texture.cpp" />
+    <ClCompile Include="source\vulkan\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandPool.cpp" />
@@ -205,7 +205,6 @@
     <ClCompile Include="source\vulkan\ShaderFactory.cpp" />
     <ClCompile Include="source\vulkan\StaticModel.cpp" />
     <ClCompile Include="source\vulkan\TextOverlay.cpp" />
-    <ClCompile Include="source\vulkan\Texture2.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
     <ClCompile Include="source\vulkan\VulkanApp.cpp" />
@@ -332,7 +331,7 @@
     <ClInclude Include="source\vulkan\handles\ComputePipeline.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline2.h" />
-    <ClInclude Include="source\vulkan\handles\Texture.h" />
+    <ClInclude Include="source\vulkan\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h" />
     <ClInclude Include="source\vulkan\handles\CommandPool.h" />
@@ -352,7 +351,6 @@
     <ClInclude Include="source\vulkan\ShaderFactory.h" />
     <ClInclude Include="source\vulkan\StaticModel.h" />
     <ClInclude Include="source\vulkan\TextOverlay.h" />
-    <ClInclude Include="source\vulkan\Texture2.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\ShaderBuffer.h" />
     <ClInclude Include="source\vulkan\Utilities.h" />
@@ -381,6 +379,7 @@
     <None Include="data\shaders\geometry\base.frag" />
     <None Include="data\shaders\geometry\base.vert" />
     <None Include="data\shaders\geometry\normaldebug.geom" />
+    <None Include="data\shaders\im3d\im3d.geom" />
     <None Include="data\shaders\imgui\uioverlay.frag" />
     <None Include="data\shaders\imgui\uioverlay.vert" />
     <None Include="data\shaders\marching_cubes\marching_cubes.comp" />

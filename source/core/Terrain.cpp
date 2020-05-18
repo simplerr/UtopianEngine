@@ -11,7 +11,6 @@
 #include "vulkan/StaticModel.h"
 #include "ScreenQuadRenderer.h"
 #include "vulkan/Mesh.h"
-#include "vulkan/Texture2.h"
 #include "core/renderer/Renderer.h"
 #include "core/physics/Physics.h"
 #include "Input.h"
@@ -184,7 +183,7 @@ namespace Utopian
 		mNormalmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		mNormalmapEffect->CreatePipeline();
 
-		mNormalmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
+		mNormalmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage, heightmapRenderTarget->GetSampler());
 	}
 
 	void Terrain::SetupBlendmapEffect()
@@ -210,8 +209,8 @@ namespace Utopian
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 
-		mBlendmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage.get(), heightmapRenderTarget->GetSampler());
-		mBlendmapEffect->BindCombinedImage("samplerNormalmap", normalImage.get(), heightmapRenderTarget->GetSampler());
+		mBlendmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage, heightmapRenderTarget->GetSampler());
+		mBlendmapEffect->BindCombinedImage("samplerNormalmap", normalImage, heightmapRenderTarget->GetSampler());
 		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
 	}
 

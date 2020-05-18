@@ -14,7 +14,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Queue.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "utility/PerlinNoise.h"
 #include "Camera.h"

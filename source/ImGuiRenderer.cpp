@@ -9,7 +9,7 @@
 #include <algorithm>
 #include "ImGuiRenderer.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -19,9 +19,9 @@
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Sampler.h"
+#include "vulkan/handles/Image.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/Debug.h"
-#include "vulkan/Texture2.h"
 #include "Input.h"
 
 #define MOUSE_WHEEL_SCALING 150.0f
@@ -90,7 +90,7 @@ namespace Utopian
 		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass());
 
 		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
-		mImguiEffect->BindCombinedImage("fontSampler", mTexture->GetTextureDescriptorInfo());
+		mImguiEffect->BindCombinedImage("fontSampler", mTexture);
 
 		io.Fonts->TexID = (ImTextureID)AddImage(*mTexture->GetImage());
 

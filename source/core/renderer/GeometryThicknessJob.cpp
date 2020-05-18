@@ -33,7 +33,7 @@ namespace Utopian
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
-		mEffect->BindCombinedImage("depthSampler", gbuffer.depthImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("depthSampler", gbuffer.depthImage, mRenderTarget->GetSampler());
 
 		// const uint32_t size = 640;
 		// gScreenQuadUi().AddQuad(10, mHeight - (size + 10), size, size, geometryThicknessImage.get(), mRenderTarget->GetSampler());

@@ -4,7 +4,7 @@
 #include "vulkan/StaticModel.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/Vertex.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/Debug.h"
 #include "core/ScriptExports.h"

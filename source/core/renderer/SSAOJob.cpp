@@ -28,10 +28,11 @@ namespace Utopian
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
-		mEffect->BindGBuffer(gbuffer.positionImage.get(),
-			gbuffer.normalViewImage.get(),
-			gbuffer.albedoImage.get(),
-			gbufferTerrainJob->renderTarget->GetSampler());
+
+		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
+		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage, sampler);
+		mEffect->BindCombinedImage("normalSampler", gbuffer.normalViewImage, sampler);
+		mEffect->BindCombinedImage("albedoSampler", gbuffer.albedoImage, sampler);
 
 		CreateKernelSamples();
 	}

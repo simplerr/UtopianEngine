@@ -213,9 +213,6 @@
     <ClCompile Include="source\vulkan\TextOverlay.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\Texture.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\Buffer.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
@@ -528,8 +525,8 @@
     <ClCompile Include="source\core\renderer\PixelDebugJob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\Texture2.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\vulkan\Texture.cpp">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -610,9 +607,6 @@
     </ClInclude>
     <ClInclude Include="source\vulkan\TextOverlay.h">
       <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\handles\Texture.h">
-      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Buffer.h">
       <Filter>Source Files\vulkan\handles</Filter>
@@ -926,9 +920,6 @@
     <ClInclude Include="source\core\components\CRandomPaths.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\Texture2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\editor\FoliageTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -985,6 +976,9 @@
     </ClInclude>
     <ClInclude Include="source\core\renderer\PixelDebugJob.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\Texture.h">
+      <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1100,6 +1094,7 @@
     </None>
     <None Include="external\im3d\LICENSE" />
     <None Include="external\im3d\README.md" />
+    <None Include="data\shaders\im3d\im3d.geom" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\todo.md">

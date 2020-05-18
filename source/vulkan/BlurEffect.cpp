@@ -3,7 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/VulkanApp.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -35,11 +35,6 @@ namespace Utopian::Vk
 	void BlurEffect::UpdateMemory()
 	{
 		settingsBlock.UpdateMemory();
-	}
-
-	void BlurEffect::BindSSAOOutput(Image* ssaoImage, Sampler* sampler)
-	{
-		BindCombinedImage("samplerSSAO", ssaoImage, sampler);
 	}
 	
 	void BlurEffect::SetSettings(int blurRange)

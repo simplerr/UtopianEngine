@@ -33,14 +33,15 @@ namespace Utopian
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
-		mEffect->BindImages(gbuffer.positionImage.get(),
-			gbuffer.normalImage.get(),
-			gbuffer.albedoImage.get(),
-			blurJob->blurImage.get(),
-			gbufferTerrainJob->renderTarget->GetSampler());
+
+		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
+		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage, sampler);
+		mEffect->BindCombinedImage("normalSampler", gbuffer.normalImage, sampler);
+		mEffect->BindCombinedImage("albedoSampler", gbuffer.albedoImage, sampler);
+		mEffect->BindCombinedImage("ssaoSampler", blurJob->blurImage, sampler);
 
 		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
-		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage.get(), mDepthSampler.get());
+		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage, mDepthSampler.get());
 	}
 
 	void DeferredJob::Render(const JobInput& jobInput)

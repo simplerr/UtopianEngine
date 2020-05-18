@@ -3,7 +3,7 @@
 #include <array>
 #include "vulkan/VulkanInclude.h"
 #include "vulkan/ShaderBuffer.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "utility/Common.h"
 #include "utility/math/Ray.h"
 #include "imgui\imgui.h"

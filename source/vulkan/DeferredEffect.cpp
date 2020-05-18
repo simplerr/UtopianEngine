@@ -3,7 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/VulkanApp.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -52,14 +52,6 @@ namespace Utopian::Vk
 	{
 		eyeBlock.data.eyePos = glm::vec4(eyePos, 1.0f);
 		eyeBlock.UpdateMemory();
-	}
-
-	void DeferredEffect::BindImages(Image* positionImage, Image* normalImage, Image* albedoImage, Image* ssaoImage, Sampler* sampler)
-	{
-		BindCombinedImage("positionSampler", positionImage, sampler);
-		BindCombinedImage("normalSampler", normalImage, sampler);
-		BindCombinedImage("albedoSampler", albedoImage, sampler);
-		BindCombinedImage("ssaoSampler", ssaoImage, sampler);
 	}
 
 	void DeferredEffect::SetLightArray(const std::vector<Light*>& lights)

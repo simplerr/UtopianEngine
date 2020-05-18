@@ -55,13 +55,13 @@ namespace Utopian
 		GeometryThicknessJob* geometryThicknessJob = static_cast<GeometryThicknessJob*>(jobs[JobGraph::GEOMETRY_THICKNESS_INDEX]);
 		OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
 
-		mTraceSSREffect->BindCombinedImage("_MainTex", deferredJob->renderTarget->GetColorImage().get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("_CameraDepthTexture", opaqueCopyJob->opaqueDepthImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("_BackFaceDepthTex", geometryThicknessJob->geometryThicknessImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("_CameraGBufferTexture1", gbuffer.specularImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("_CameraGBufferTexture2", gbuffer.normalViewImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("positionSampler", gbuffer.positionImage.get(), mTraceRenderTarget->GetSampler());
-		mTraceSSREffect->BindCombinedImage("normalSampler", gbuffer.normalImage.get(), mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("_MainTex", deferredJob->renderTarget->GetColorImage(), mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("_CameraDepthTexture", opaqueCopyJob->opaqueDepthImage, mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("_BackFaceDepthTex", geometryThicknessJob->geometryThicknessImage, mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("_CameraGBufferTexture1", gbuffer.specularImage, mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("_CameraGBufferTexture2", gbuffer.normalViewImage, mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("positionSampler", gbuffer.positionImage, mTraceRenderTarget->GetSampler());
+		mTraceSSREffect->BindCombinedImage("normalSampler", gbuffer.normalImage, mTraceRenderTarget->GetSampler());
 
 		mSSRSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO_ssrSettings", &mSSRSettingsBlock);
@@ -106,7 +106,7 @@ namespace Utopian
 		mBlurSSREffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 		mBlurSSREffect->CreatePipeline();
-		mBlurSSREffect->BindCombinedImage("samplerSSAO", ssrImage.get(), mTraceRenderTarget->GetSampler());
+		mBlurSSREffect->BindCombinedImage("samplerSSAO", ssrImage, mTraceRenderTarget->GetSampler());
 
 		// const uint32_t size = 640;
 		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrBlurImage.get(), mBlurRenderTarget->GetSampler());

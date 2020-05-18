@@ -1,6 +1,6 @@
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Sampler.h"
@@ -124,6 +124,8 @@ namespace Utopian::Vk
 		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
 		texture->mImage = image;
 		texture->mSampler = sampler;
+		texture->mWidth = width;
+		texture->mHeight = height;
 
 		return texture;
 	}
@@ -221,6 +223,8 @@ namespace Utopian::Vk
 		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
 		texture->mImage = image;
 		texture->mSampler = sampler;
+		texture->mWidth = width;
+		texture->mHeight = height;
 
 		return texture;
 	}

@@ -7,7 +7,6 @@
 #include "vulkan/TextureLoader.h"
 #include "ScreenQuadRenderer.h"
 #include "vulkan/Vertex.h"
-#include "vulkan/Texture2.h"
 #include "vulkan/handles/QueryPool.h"
 #include "Camera.h"
 #include <random>
@@ -80,9 +79,9 @@ namespace Utopian
 		mSampler->Create();
 
 		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", mTerrain->GetHeightmapImage().get(), mSampler.get());
-		mEffect->BindCombinedImage("samplerNormalmap", mTerrain->GetNormalmapImage().get(), mSampler.get());
-		mEffect->BindCombinedImage("samplerBlendmap", mTerrain->GetBlendmapImage().get(), mSampler.get());
+		mEffect->BindCombinedImage("samplerHeightmap", mTerrain->GetHeightmapImage(), mSampler.get());
+		mEffect->BindCombinedImage("samplerNormalmap", mTerrain->GetNormalmapImage(), mSampler.get());
+		mEffect->BindCombinedImage("samplerBlendmap", mTerrain->GetBlendmapImage(), mSampler.get());
 
 		mEffect->BindCombinedImage("samplerDiffuse", &mDiffuseTextureArray);
 		mEffect->BindCombinedImage("samplerNormal", &mNormalTextureArray);

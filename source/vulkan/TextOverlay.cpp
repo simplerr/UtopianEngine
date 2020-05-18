@@ -6,7 +6,7 @@
 #include "vulkan/VulkanApp.h"
 #include "vulkan/Debug.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"

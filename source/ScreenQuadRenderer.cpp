@@ -3,7 +3,7 @@
 #include "vulkan/VulkanApp.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/EffectManager.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"

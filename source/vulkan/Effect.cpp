@@ -5,10 +5,9 @@
 #include "vulkan/VertexDescription.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/CommandBuffer.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/PipelineLayout.h"
-#include "vulkan/Texture2.h"
 #include "Effect.h"
 
 namespace Utopian::Vk
@@ -128,23 +127,25 @@ namespace Utopian::Vk
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
+	void Effect::BindCombinedImage(std::string name, const SharedPtr<Texture>& texture)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
-		descriptorSet.BindCombinedImage(name, imageInfo, descriptorCount);
+		descriptorSet.BindCombinedImage(name, texture->GetTextureDescriptorInfo(), 1u);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindCombinedImage(std::string name, Image* image, Sampler* sampler)
+	void Effect::BindCombinedImage(std::string name, const SharedPtr<Image>& image, Sampler* sampler)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
-		descriptorSet.BindCombinedImage(name, image, sampler);
+		descriptorSet.BindCombinedImage(name, image.get(), sampler);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
 	void Effect::BindCombinedImage(std::string name, TextureArray* textureArray)
 	{
-		BindCombinedImage(name, textureArray->GetImageInfo(), textureArray->GetNumImages());
+		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+		descriptorSet.BindCombinedImage(name, textureArray->GetImageInfo(), textureArray->GetNumImages());
+		descriptorSet.UpdateDescriptorSets();
 	}
 
 	void Effect::BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock)

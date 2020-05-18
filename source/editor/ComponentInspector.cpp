@@ -9,7 +9,7 @@
 #include "core/components/Actor.h"
 #include <glm/gtc/quaternion.hpp>
 #include "vulkan/StaticModel.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/Image.h"
 #include "core/renderer/Renderer.h"
 #include <algorithm>

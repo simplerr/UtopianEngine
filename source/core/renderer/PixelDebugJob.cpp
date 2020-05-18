@@ -47,9 +47,9 @@ namespace Utopian
 
 		// Update this to the image to read pixel values from
 		SSRJob* ssrJob = static_cast<SSRJob*>(jobs[JobGraph::SSR_INDEX]);
-		//mEffect->BindCombinedImage("debugSampler", ssrJob->rayOriginImage.get(), mRenderTarget->GetSampler());
-		//mEffect->BindCombinedImage("debugSampler2", ssrJob->rayEndImage.get(), mRenderTarget->GetSampler());
-		//mEffect->BindCombinedImage("debugSampler3", ssrJob->miscDebugImage.get(), mRenderTarget->GetSampler());
+		//mEffect->BindCombinedImage("debugSampler", ssrJob->rayOriginImage, mRenderTarget->GetSampler());
+		//mEffect->BindCombinedImage("debugSampler2", ssrJob->rayEndImage, mRenderTarget->GetSampler());
+		//mEffect->BindCombinedImage("debugSampler3", ssrJob->miscDebugImage, mRenderTarget->GetSampler());
 
 		glm::vec2 mousePos = gInput().GetMousePosition();
 		mMouseInputBlock.data.mousePosUV = glm::vec2(mousePos.x / mWidth, mousePos.y / mHeight);

@@ -22,7 +22,7 @@ namespace Utopian::Vk
 	{
 	public:
 		Device* device;
-		Image* image;
+		SharedPtr<Image> image;
 		// VkImage image;
 		// VkImageView view;
 		// VkDeviceMemory deviceMemory;
@@ -46,8 +46,6 @@ namespace Utopian::Vk
 		/** @brief Release all Vulkan resources held by this texture */
 		void Destroy()
 		{
-			delete image;
-
 			if (sampler)
 			{
 				vkDestroySampler(device->GetVkDevice(), sampler, nullptr);
@@ -115,7 +113,7 @@ namespace Utopian::Vk
 			viewCreateInfo.subresourceRange.layerCount = 6;
 			viewCreateInfo.subresourceRange.levelCount = mipLevels;
 
-			image = new Image(device);
+			image = std::make_shared<Image>(device);
 			image->CreateImage(imageCreateInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 			image->CreateView(viewCreateInfo);
 
@@ -155,7 +153,7 @@ namespace Utopian::Vk
 			Utilities::TransitionImageLayout(device, copyQueue, image->GetVkHandle(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, subresourceRange);
 
 			// Copy the cube map faces from the staging buffer to the optimal tiled image
-			Utilities::CopyBufferToImage(device, copyQueue, &stagingBuffer, image, bufferCopyRegions.size(), bufferCopyRegions.data());
+			Utilities::CopyBufferToImage(device, copyQueue, &stagingBuffer, image.get(), bufferCopyRegions.size(), bufferCopyRegions.data());
 
 			// Change texture image layout to shader read after all faces have been copied
 			Utilities::TransitionImageLayout(device, copyQueue, image->GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, imageLayout, subresourceRange);

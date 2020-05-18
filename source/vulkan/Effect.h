@@ -26,7 +26,7 @@ namespace Utopian::Vk
 		void RecompileShader();
 
 		/**
-		 * This must explictly be called. Reason being that the constructor sets default values and to make
+		 * This must explicitly be called. Reason being that the constructor sets default values and to make
 		 * modifications to the pipeline they must be made between before calling this function.
 		 */
 		void CreatePipeline();
@@ -39,8 +39,8 @@ namespace Utopian::Vk
 		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
 		void BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock);
-		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
-		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
+		void BindCombinedImage(std::string name, const SharedPtr<Texture>& texture);
+		void BindCombinedImage(std::string name, const SharedPtr<Image>& image, Sampler* sampler);
 		void BindCombinedImage(std::string name, TextureArray* textureArray);
 
 		/** 

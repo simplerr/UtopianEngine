@@ -10,7 +10,7 @@
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/Effect.h"

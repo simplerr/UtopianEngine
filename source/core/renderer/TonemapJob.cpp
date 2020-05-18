@@ -44,8 +44,8 @@ namespace Utopian
 		mSampler->createInfo.anisotropyEnable = VK_FALSE;
 		mSampler->Create();
 
-		mEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage().get(), mSampler.get());
-		mEffect->BindCombinedImage("bloomSampler", bloomJob->outputImage.get(), mSampler.get());
+		mEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage(), mSampler.get());
+		mEffect->BindCombinedImage("bloomSampler", bloomJob->outputImage, mSampler.get());
 	}
 
 	void TonemapJob::Render(const JobInput& jobInput)

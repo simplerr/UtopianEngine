@@ -38,8 +38,8 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
-		mEffect->BindCombinedImage("lightSampler", deferredJob->renderTarget->GetColorImage().get(), mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("depthSampler", gbuffer.depthImage.get(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("lightSampler", deferredJob->renderTarget->GetColorImage(), mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("depthSampler", gbuffer.depthImage, mRenderTarget->GetSampler());
 	}
 
 	void OpaqueCopyJob::Render(const JobInput& jobInput)

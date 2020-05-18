@@ -81,7 +81,7 @@ namespace Utopian
 		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", &mAnimationParametersBlock);
 
 		mWindmapTexture = Vk::gTextureLoader().LoadTexture("data/textures/windmap.jpg");
-		mInstancedAnimationEffect->BindCombinedImage("windmapSampler", mWindmapTexture->GetTextureDescriptorInfo());
+		mInstancedAnimationEffect->BindCombinedImage("windmapSampler", mWindmapTexture);
 	}
 
 	void GBufferJob::Render(const JobInput& jobInput)

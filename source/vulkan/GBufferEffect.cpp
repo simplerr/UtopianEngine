@@ -3,7 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/VulkanApp.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/ComputePipeline.h"

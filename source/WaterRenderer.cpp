@@ -3,7 +3,7 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/StaticModel.h"
-#include "vulkan/Handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/Handles/CommandBuffer.h"
 #include "vulkan/Handles/DescriptorSet.h"
 #include "vulkan/Handles/Image.h"

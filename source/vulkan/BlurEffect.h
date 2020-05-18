@@ -26,8 +26,6 @@ UNIFORM_BLOCK_END()
 	public:
 		BlurEffect(Device* device, RenderPass* renderPass);
 
-		// Note: the normal image contains normals in view space
-		void BindSSAOOutput(Image* ssaoImage, Sampler* sampler);
 		void SetSettings(int blurRange);
 
 		virtual void UpdateMemory();

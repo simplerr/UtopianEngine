@@ -45,7 +45,7 @@ namespace Utopian
 		mSampler->createInfo.anisotropyEnable = VK_FALSE;
 		mSampler->Create();
 
-		mEffect->BindCombinedImage("textureSampler", tonemapJob->outputImage.get(), mSampler.get());
+		mEffect->BindCombinedImage("textureSampler", tonemapJob->outputImage, mSampler.get());
 	}
 
 	void FXAAJob::Render(const JobInput& jobInput)

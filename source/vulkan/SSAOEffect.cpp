@@ -3,7 +3,7 @@
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/VulkanApp.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/Effect.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -44,13 +44,6 @@ namespace Utopian::Vk
 	{
 		cameraBlock.UpdateMemory();
 		settingsBlock.UpdateMemory();
-	}
-
-	void SSAOEffect::BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler)
-	{
-		BindCombinedImage("positionSampler", positionImage, sampler);
-		BindCombinedImage("normalSampler", normalViewImage, sampler);
-		BindCombinedImage("albedoSampler", albedoImage, sampler);
 	}
 	
 	void SSAOEffect::SetCameraData(glm::mat4 view, glm::mat4 projection, glm::vec4 eyePos)

@@ -52,9 +52,6 @@ UNIFORM_BLOCK_END()
 		void SetCameraData(glm::mat4 view, glm::mat4 projection, glm::vec4 eyePos);
 		void SetSettings(float radius, float bias);
 
-		// Note: the normal image contains normals in view space
-		void BindGBuffer(Image* positionImage, Image* normalViewImage, Image* albedoImage, Sampler* sampler);
-
 		virtual void UpdateMemory();
 
 		Utopian::Vk::Texture* noiseTexture;

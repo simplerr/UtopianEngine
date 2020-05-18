@@ -7,7 +7,7 @@
 #include "vulkan/Debug.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ModelLoader.h"
-#include "vulkan/handles/Texture.h"
+#include "vulkan/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "Mesh.h"
 
