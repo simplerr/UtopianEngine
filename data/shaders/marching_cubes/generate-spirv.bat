@@ -1,1 +1,0 @@
-glslangvalidator -V marching_cubes.comp -o marching_cubes.comp.spv

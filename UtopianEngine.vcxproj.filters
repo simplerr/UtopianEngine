@@ -1089,12 +1089,65 @@
     <None Include="data\shaders\blur\blur.vert">
       <Filter>Source Files\vulkan\effects\blur\shader</Filter>
     </None>
-    <None Include="data\shaders\blur\generate-spirv.bat">
-      <Filter>Source Files\vulkan\effects\blur\shader</Filter>
-    </None>
     <None Include="external\im3d\LICENSE" />
     <None Include="external\im3d\README.md" />
     <None Include="data\shaders\im3d\im3d.geom" />
+    <None Include="data\shaders\common\fullscreen.vert" />
+    <None Include="data\shaders\common\sky_color.glsl" />
+    <None Include="data\shaders\fxaa\fxaa.frag" />
+    <None Include="data\shaders\gbuffer\gbuffer.frag" />
+    <None Include="data\shaders\gbuffer\gbuffer.vert" />
+    <None Include="data\shaders\gbuffer\gbuffer_instancing.vert" />
+    <None Include="data\shaders\gbuffer\gbuffer_instancing_animation.vert" />
+    <None Include="data\shaders\gbuffer\gbuffer_terrain.frag" />
+    <None Include="data\shaders\im3d\im3d.vert" />
+    <None Include="data\shaders\im3d\im3d_lines.frag" />
+    <None Include="data\shaders\im3d\im3d_points.frag" />
+    <None Include="data\shaders\im3d\im3d_triangles.frag" />
+    <None Include="data\shaders\include\calculate_shadow.glsl" />
+    <None Include="data\shaders\include\common_types.glsl" />
+    <None Include="data\shaders\include\gerstner.glsl" />
+    <None Include="data\shaders\include\material_types.glsl" />
+    <None Include="data\shaders\include\math.glsl" />
+    <None Include="data\shaders\include\noise.glsl" />
+    <None Include="data\shaders\include\phong_lighting.glsl" />
+    <None Include="data\shaders\normal_debug\normal_debug.frag" />
+    <None Include="data\shaders\normal_debug\normal_debug.geom" />
+    <None Include="data\shaders\normal_debug\normal_debug.vert" />
+    <None Include="data\shaders\pixel_debug\pixel_debug.frag" />
+    <None Include="data\shaders\post_process\bloom_blur.frag" />
+    <None Include="data\shaders\post_process\bloom_extract.frag" />
+    <None Include="data\shaders\post_process\fresnel.frag" />
+    <None Include="data\shaders\post_process\gbuffer_copy.frag" />
+    <None Include="data\shaders\post_process\tonemap.frag" />
+    <None Include="data\shaders\shadowmap\shadowmap.frag" />
+    <None Include="data\shaders\shadowmap\shadowmap.vert" />
+    <None Include="data\shaders\shadowmap\shadowmap_instancing.vert" />
+    <None Include="data\shaders\skybox\skybox.frag" />
+    <None Include="data\shaders\skybox\skybox.vert" />
+    <None Include="data\shaders\skydome\skydome.frag" />
+    <None Include="data\shaders\skydome\skydome.vert" />
+    <None Include="data\shaders\ssr\ssr.frag" />
+    <None Include="data\shaders\ssr\ssr_blur.frag" />
+    <None Include="data\shaders\sun_shafts\sun_shafts.frag" />
+    <None Include="data\shaders\sun_shafts\sun_shafts.vert" />
+    <None Include="data\shaders\terrain_creation\blendmap.frag" />
+    <None Include="data\shaders\terrain_creation\blendmap_brush.frag" />
+    <None Include="data\shaders\terrain_creation\heightmap.frag" />
+    <None Include="data\shaders\terrain_creation\heightmap_brush.frag" />
+    <None Include="data\shaders\terrain_creation\normalmap.frag" />
+    <None Include="data\shaders\tessellation\shared.glsl" />
+    <None Include="data\shaders\tessellation\shared_water.glsl" />
+    <None Include="data\shaders\tessellation\terrain.frag" />
+    <None Include="data\shaders\tessellation\terrain.geom" />
+    <None Include="data\shaders\tessellation\terrain.tesc" />
+    <None Include="data\shaders\tessellation\terrain.tese" />
+    <None Include="data\shaders\tessellation\terrain.vert" />
+    <None Include="data\shaders\tessellation\water.frag" />
+    <None Include="data\shaders\tessellation\water.geom" />
+    <None Include="data\shaders\tessellation\water.tesc" />
+    <None Include="data\shaders\tessellation\water.tese" />
+    <None Include="data\shaders\tessellation\water.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="docs\todo.md">
