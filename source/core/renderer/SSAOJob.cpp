@@ -30,9 +30,9 @@ namespace Utopian
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
 
 		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
-		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage, sampler);
-		mEffect->BindCombinedImage("normalSampler", gbuffer.normalViewImage, sampler);
-		mEffect->BindCombinedImage("albedoSampler", gbuffer.albedoImage, sampler);
+		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *sampler);
+		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalViewImage, *sampler);
+		mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *sampler);
 
 		CreateKernelSamples();
 	}

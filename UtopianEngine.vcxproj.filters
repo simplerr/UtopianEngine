@@ -785,9 +785,6 @@
     <ClInclude Include="source\core\ActorFactory.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\CubeMapTexture.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\SkyboxEffect.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
@@ -864,9 +861,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\Debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\QueryPool.h">

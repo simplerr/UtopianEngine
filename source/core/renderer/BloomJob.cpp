@@ -41,7 +41,7 @@ namespace Utopian
 		mExtractEffect->CreatePipeline();
 
 		mExtractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mExtractEffect->BindUniformBuffer("UBO_settings", &mExtractSettings);
+		mExtractEffect->BindUniformBuffer("UBO_settings", mExtractSettings);
 
 		//const uint32_t size = 240;
 		//gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (size + 10), size, size, brightColorsImage.get(), extractRenderTarget->GetSampler());
@@ -67,8 +67,8 @@ namespace Utopian
 		mBlurEffect->CreatePipeline();
 
 		mBlurSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mBlurEffect->BindUniformBuffer("UBO_settings", &mBlurSettings);
-		mBlurEffect->BindCombinedImage("hdrSampler", mBrightColorsImage, mBlurRenderTarget->GetSampler());
+		mBlurEffect->BindUniformBuffer("UBO_settings", mBlurSettings);
+		mBlurEffect->BindCombinedImage("hdrSampler", *mBrightColorsImage, *mBlurRenderTarget->GetSampler());
 
 		/*const uint32_t size = 240;
 		gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, outputImage.get(), blurRenderTarget->GetSampler());*/
@@ -78,7 +78,7 @@ namespace Utopian
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		mExtractEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage(), mExtractRenderTarget->GetSampler());
+		mExtractEffect->BindCombinedImage("hdrSampler", *deferredJob->renderTarget->GetColorImage(), *mExtractRenderTarget->GetSampler());
 	}
 
 	void BloomJob::RenderExtractPass(const JobInput& jobInput)

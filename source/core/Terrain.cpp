@@ -183,7 +183,7 @@ namespace Utopian
 		mNormalmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		mNormalmapEffect->CreatePipeline();
 
-		mNormalmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage, heightmapRenderTarget->GetSampler());
+		mNormalmapEffect->BindCombinedImage("samplerHeightmap", *heightmapImage, *heightmapRenderTarget->GetSampler());
 	}
 
 	void Terrain::SetupBlendmapEffect()
@@ -207,11 +207,11 @@ namespace Utopian
 		mBlendmapEffect->CreatePipeline();
 
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mBlendmapEffect->BindUniformBuffer("UBO_settings", settingsBlock);
 
-		mBlendmapEffect->BindCombinedImage("samplerHeightmap", heightmapImage, heightmapRenderTarget->GetSampler());
-		mBlendmapEffect->BindCombinedImage("samplerNormalmap", normalImage, heightmapRenderTarget->GetSampler());
-		mBlendmapEffect->BindUniformBuffer("UBO_settings", &settingsBlock);
+		mBlendmapEffect->BindCombinedImage("samplerHeightmap", *heightmapImage, *heightmapRenderTarget->GetSampler());
+		mBlendmapEffect->BindCombinedImage("samplerNormalmap", *normalImage, *heightmapRenderTarget->GetSampler());
+		mBlendmapEffect->BindUniformBuffer("UBO_settings", settingsBlock);
 	}
 
 	void Terrain::RenderHeightmap()

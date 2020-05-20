@@ -15,7 +15,7 @@ namespace Utopian
 		void Render(const JobInput& jobInput) override;
 
 	private:
-		SharedPtr<Vk::CubeMapTexture> mSkybox;
+		SharedPtr<Vk::Texture> mSkybox;
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::SkyboxEffect> mEffect;
 		Vk::StaticModel* mCubeModel;

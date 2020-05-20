@@ -14,13 +14,8 @@ namespace Utopian::Vk
 	{
 	}
 
-	VkDescriptorImageInfo* Texture::GetTextureDescriptorInfo()
+	const VkDescriptorImageInfo* Texture::GetDescriptor() const
 	{
-		mDescriptor = {};
-		mDescriptor.sampler = mSampler->GetVkHandle();
-		mDescriptor.imageView = mImage->GetView();
-		mDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
 		return &mDescriptor;
 	}
 
@@ -59,6 +54,13 @@ namespace Utopian::Vk
 		return mNumMipLevels;
 	}
 
+	void Texture::UpdateDescriptor()
+	{
+		mDescriptor.sampler = mSampler->GetVkHandle();
+		mDescriptor.imageView = mImage->GetView();
+		mDescriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	}
+
 	TextureArray::TextureArray()
 	{
 
@@ -74,7 +76,7 @@ namespace Utopian::Vk
 		mImageInfos.push_back(imageInfo);
 	}
 
-	VkDescriptorImageInfo* TextureArray::GetImageInfo()
+	const VkDescriptorImageInfo* TextureArray::GetDescriptor() const
 	{
 		return mImageInfos.data();
 	}

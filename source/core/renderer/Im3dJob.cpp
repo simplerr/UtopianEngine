@@ -68,11 +68,11 @@ namespace Utopian
 		gRendererUtility().SetAlphaBlending(mLinesEffect->GetPipeline());
 		mLinesEffect->CreatePipeline();
 
-		mLinesEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
-		mPointsEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
-		mTrianglesEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mLinesEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mPointsEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mTrianglesEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 
-		mLinesEffect->BindUniformBuffer("UBO_viewport", &mViewportBlock);
+		mLinesEffect->BindUniformBuffer("UBO_viewport", mViewportBlock);
 	}
 
 	void Im3dJob::Render(const JobInput& jobInput)

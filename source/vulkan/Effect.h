@@ -22,7 +22,7 @@ namespace Utopian::Vk
 		Effect(Device* device, RenderPass* renderPass);
 		Effect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo);
 
-		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipelie. */
+		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipeline. */
 		void RecompileShader();
 
 		/**
@@ -36,12 +36,12 @@ namespace Utopian::Vk
 		 * @note the name must match the name in the GLSL shader.
 		 * @note uses the internal shader reflection to perform name -> set ID mapping.
 		 */
-		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
-		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
-		void BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock);
-		void BindCombinedImage(std::string name, const SharedPtr<Texture>& texture);
-		void BindCombinedImage(std::string name, const SharedPtr<Image>& image, Sampler* sampler);
-		void BindCombinedImage(std::string name, TextureArray* textureArray);
+		void BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo);
+		void BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo);
+		void BindUniformBuffer(std::string name, const ShaderBuffer& shaderBlock);
+		void BindCombinedImage(std::string name, const Texture& texture);
+		void BindCombinedImage(std::string name, const Image& image, const Sampler& sampler);
+		void BindCombinedImage(std::string name, const TextureArray& textureArray);
 
 		/** 
 		 * Returns a descriptor set by index.
@@ -55,11 +55,11 @@ namespace Utopian::Vk
 		Pipeline* GetPipeline();
 
 		const VkDescriptorSet* GetDescriptorSets() const;
-		uint32_t GetNumDescriptorSets() const;
-		PipelineInterface* GetPipelineInterface();
-		SharedPtr<Shader> GetShader() const;
-		std::string GetVertexShaderPath() const;
 		ShaderCreateInfo GetShaderCreateInfo() const;
+		std::string GetVertexShaderPath() const;
+		uint32_t GetNumDescriptorSets() const;
+		SharedPtr<Shader> GetShader() const;
+		PipelineInterface* GetPipelineInterface();
 	protected:
 		void SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo);
 

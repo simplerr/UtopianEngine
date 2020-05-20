@@ -25,21 +25,21 @@ namespace Utopian::Vk
 		void UpdateDescriptorSets();
 
 		/** Functions for binding different types of descriptors by ID. */
-		void BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
-		void BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
-		void BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
-		void BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler);
-		void BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void BindUniformBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo);
+		void BindStorageBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo);
+		void BindCombinedImage(uint32_t binding, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
+		void BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler);
+		void BindCombinedImage(uint32_t binding, VkImageView imageView, VkSampler sampler, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		/**
 		 * Functions for binding different types of descriptors by their name. 
 		 * @note the name argument must match the name in the GLSL shader.
 		 */
-		void BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
-		void BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo);
-		void BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
-		void BindCombinedImage(std::string name, Image* image, Sampler* sampler);
-		void BindCombinedImage(std::string name, VkImageView, Sampler* sampler);
+		void BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo);
+		void BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo);
+		void BindCombinedImage(std::string name, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
+		void BindCombinedImage(std::string name, const Image& image, const Sampler& sampler);
+		void BindCombinedImage(std::string name, VkImageView imageView, VkSampler sampler);
 
 		VkDescriptorSet GetVkHandle() const;
 
@@ -47,11 +47,11 @@ namespace Utopian::Vk
 		void Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 
 	private:
-		Device* mDevice;
-		DescriptorSetLayout* mSetLayout;
 		std::vector<VkWriteDescriptorSet> mWriteDescriptorSets;
 		std::map<int, VkDescriptorImageInfo> mImageInfoMap;
 		VkDescriptorSet mDescriptorSet = VK_NULL_HANDLE;
+		DescriptorSetLayout* mSetLayout;
+		Device* mDevice;
 
 		/**
 		 * The shader that this descriptor set was created from.

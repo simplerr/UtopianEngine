@@ -43,7 +43,7 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &mDescriptorSet));
 	}
 
-	void DescriptorSet::BindUniformBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
+	void DescriptorSet::BindUniformBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
 	{
 		bool existing = false;
 		for (int i = 0; i < mWriteDescriptorSets.size(); i++)
@@ -69,7 +69,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	void DescriptorSet::BindStorageBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
+	void DescriptorSet::BindStorageBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
 	{
 		bool existing = false;
 		for (int i = 0; i < mWriteDescriptorSets.size(); i++)
@@ -95,7 +95,7 @@ namespace Utopian::Vk
 		}
 	}
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
+	void DescriptorSet::BindCombinedImage(uint32_t binding, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
 	{
 		VkWriteDescriptorSet writeDescriptorSet = {};
 		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -108,7 +108,7 @@ namespace Utopian::Vk
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, Sampler* sampler, VkImageLayout imageLayout)
+	void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, VkSampler sampler, VkImageLayout imageLayout)
 	{
 		/* Check if the VkDescriptorImageInfo already is added to the map.
 		Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
@@ -117,13 +117,13 @@ namespace Utopian::Vk
 		*/
 		if (mImageInfoMap.find(binding) != mImageInfoMap.end())
 		{
-			mImageInfoMap[binding].sampler = sampler->GetVkHandle();
+			mImageInfoMap[binding].sampler = sampler;
 			mImageInfoMap[binding].imageView = imageView;
 		}
 		else
 		{
 			VkDescriptorImageInfo imageInfo = {};
-			imageInfo.sampler = sampler->GetVkHandle();
+			imageInfo.sampler = sampler;
 			imageInfo.imageView = imageView;
 			imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 
@@ -141,36 +141,37 @@ namespace Utopian::Vk
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, Image* image, Sampler* sampler)
+	void DescriptorSet::BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler)
 	{
-		BindCombinedImage(binding, image->GetView(), sampler, image->GetFinalLayout());
+		// Todo
+		BindCombinedImage(binding, image.GetView(), sampler.GetVkHandle(), image.GetFinalLayout());
 	}
 
-	void DescriptorSet::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
+	void DescriptorSet::BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
 	{
 		assert(mShader != nullptr);
 		BindUniformBuffer(mShader->NameToBinding(name), bufferInfo);
 	}
 
-	void DescriptorSet::BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
+	void DescriptorSet::BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
 	{
 		assert(mShader != nullptr);
 		BindStorageBuffer(mShader->NameToBinding(name), bufferInfo);
 	}
 
-	void DescriptorSet::BindCombinedImage(std::string name, VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
+	void DescriptorSet::BindCombinedImage(std::string name, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
 	{
 		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), imageInfo, descriptorCount);
 	}
 
-	void DescriptorSet::BindCombinedImage(std::string name, Image* image, Sampler* sampler)
+	void DescriptorSet::BindCombinedImage(std::string name, const Image& image, const Sampler& sampler)
 	{
 		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), image, sampler);
 	}
 
-	void DescriptorSet::BindCombinedImage(std::string name, VkImageView imageView, Sampler* sampler)
+	void DescriptorSet::BindCombinedImage(std::string name, VkImageView imageView, VkSampler sampler)
 	{
 		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), imageView, sampler);

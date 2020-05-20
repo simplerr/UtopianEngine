@@ -28,7 +28,7 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mSettingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
 	}
 
 	TonemapJob::~TonemapJob()
@@ -44,8 +44,8 @@ namespace Utopian
 		mSampler->createInfo.anisotropyEnable = VK_FALSE;
 		mSampler->Create();
 
-		mEffect->BindCombinedImage("hdrSampler", deferredJob->renderTarget->GetColorImage(), mSampler.get());
-		mEffect->BindCombinedImage("bloomSampler", bloomJob->outputImage, mSampler.get());
+		mEffect->BindCombinedImage("hdrSampler", *deferredJob->renderTarget->GetColorImage(), *mSampler);
+		mEffect->BindCombinedImage("bloomSampler", *bloomJob->outputImage, *mSampler);
 	}
 
 	void TonemapJob::Render(const JobInput& jobInput)

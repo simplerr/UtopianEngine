@@ -2,7 +2,7 @@
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
-#include "vulkan/CubeMapTexture.h"
+#include "vulkan/TextureLoader.h"
 
 namespace Utopian
 {
@@ -20,16 +20,15 @@ namespace Utopian
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 		mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
 		mRenderTarget->SetClearColor(1, 1, 1, 1);
 		mRenderTarget->Create();
 
-		mSkybox = std::make_shared<Vk::CubeMapTexture>();
-		mSkybox->LoadFromFile("data/textures/cubemap_space.ktx", VK_FORMAT_R8G8B8A8_UNORM, mDevice, mDevice->GetQueue());
+		mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx");
 
 		mEffect = Vk::gEffectManager().AddEffect<Vk::SkyboxEffect>(mDevice, mRenderTarget->GetRenderPass());
-		mEffect->BindCombinedImage("samplerCubeMap", mSkybox->image, mRenderTarget->GetSampler()); // skybox->sampler);
+		mEffect->BindCombinedImage("samplerCubeMap", *mSkybox);
 
 		mCubeModel = Vk::gModelLoader().LoadDebugBoxTriangles();
 	}

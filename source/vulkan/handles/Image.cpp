@@ -34,6 +34,7 @@ namespace Utopian::Vk
 		mFormat = createInfo.format;
 		mFinalImageLayout = createInfo.finalImageLayout;
 		mNumMipLevels = createInfo.mipLevels;
+		mLayerCount = createInfo.arrayLayers;
 		mCurrentLayout = createInfo.initialLayout;
 
 		VkImageCreateInfo imageCreateInfo = {};
@@ -48,6 +49,7 @@ namespace Utopian::Vk
 		imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageCreateInfo.initialLayout = mCurrentLayout;
+		imageCreateInfo.flags = createInfo.flags;
 
 		CreateImage(imageCreateInfo, createInfo.properties);
 
@@ -62,6 +64,9 @@ namespace Utopian::Vk
 		viewCreateInfo.subresourceRange.levelCount = createInfo.mipLevels;
 		viewCreateInfo.subresourceRange.baseArrayLayer = 0;
 		viewCreateInfo.subresourceRange.layerCount = createInfo.arrayLayers;
+
+		if (createInfo.flags == VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT)
+			viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
 
 		CreateView(viewCreateInfo);
 
@@ -119,7 +124,7 @@ namespace Utopian::Vk
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		subresourceRange.baseMipLevel = 0;
 		subresourceRange.levelCount = mNumMipLevels;
-		subresourceRange.layerCount = 1;
+		subresourceRange.layerCount = mLayerCount;
 
 		VkImageMemoryBarrier barrier = {};
 		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;

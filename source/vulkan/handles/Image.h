@@ -18,6 +18,7 @@ namespace Utopian::Vk
 		VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
 		VkImageLayout initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		VkImageLayout finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		VkImageCreateFlags flags = 0u;
 		uint32_t arrayLayers = 1;
 		uint32_t mipLevels = 1;
 	};
@@ -33,12 +34,6 @@ namespace Utopian::Vk
 
 		~Image();
 
-		/**
-		 * These exist so that it's possible to create images and view with non standard create infos
-		 * For example used by CubeMapTexture.
-		 */
-		void CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties);
-		void CreateView(VkImageViewCreateInfo viewCreateInfo);
 
 		void LayoutTransition(Device* device, const CommandBuffer& commandBuffer, VkImageLayout newLayout);
 		void Copy(CommandBuffer* commandBuffer, Image* destination);
@@ -58,6 +53,8 @@ namespace Utopian::Vk
 		VkSubresourceLayout GetSubresourceLayout(Device* device) const;
 	protected:
 		void CreateInternal(const IMAGE_CREATE_INFO& createInfo, Device* device);
+		void CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties);
+		void CreateView(VkImageViewCreateInfo viewCreateInfo);
 
 	private:
 		/** If the image has multiple layers this contains the view to each one of them. */
@@ -77,6 +74,7 @@ namespace Utopian::Vk
 		uint32_t mHeight;
 		uint32_t mDepth;
 		uint32_t mNumMipLevels;
+		uint32_t mLayerCount;
 	};
 
 	/** An image with flags corresponding to a color image. */

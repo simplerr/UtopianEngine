@@ -41,14 +41,14 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_parameters", &mUniformBlock);
+		mEffect->BindUniformBuffer("UBO_parameters", mUniformBlock);
 
-		mEffect->BindCombinedImage("reflectionSampler", ssrJob->ssrBlurImage, mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("refractionSampler", opaqueCopyJob->opaqueLitImage, mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("distortionSampler", waterJob->distortionImage, mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("positionSampler", gbuffer.positionImage, mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("normalSampler", gbuffer.normalImage, mRenderTarget->GetSampler());
-		mEffect->BindCombinedImage("specularSampler", gbuffer.specularImage, mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("reflectionSampler", *ssrJob->ssrBlurImage, *mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("refractionSampler", *opaqueCopyJob->opaqueLitImage, *mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("distortionSampler", *waterJob->distortionImage, *mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mRenderTarget->GetSampler());
+		mEffect->BindCombinedImage("specularSampler", *gbuffer.specularImage, *mRenderTarget->GetSampler());
 	}
 
 	void FresnelJob::Render(const JobInput& jobInput)

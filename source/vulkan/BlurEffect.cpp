@@ -29,7 +29,7 @@ namespace Utopian::Vk
 		CreatePipeline();
 
 		settingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-		BindUniformBuffer("UBO_settings", &settingsBlock);
+		BindUniformBuffer("UBO_settings", settingsBlock);
 	}
 
 	void BlurEffect::UpdateMemory()

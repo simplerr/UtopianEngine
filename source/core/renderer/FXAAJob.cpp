@@ -28,7 +28,7 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mSettingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
 
 		gScreenQuadUi().AddQuad(0u, 0u, width, height, mFXXAImage.get(), mRenderTarget->GetSampler(), 1u);
 	}
@@ -45,7 +45,7 @@ namespace Utopian
 		mSampler->createInfo.anisotropyEnable = VK_FALSE;
 		mSampler->Create();
 
-		mEffect->BindCombinedImage("textureSampler", tonemapJob->outputImage, mSampler.get());
+		mEffect->BindCombinedImage("textureSampler", *tonemapJob->outputImage, *mSampler);
 	}
 
 	void FXAAJob::Render(const JobInput& jobInput)

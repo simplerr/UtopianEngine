@@ -28,9 +28,9 @@ namespace Utopian
 		dudvTexture = textureLoader->LoadTexture("data/textures/water_dudv.png");
 
 		mWaterEffect.mDescriptorSet0->BindUniformBuffer(0, mWaterEffect.per_frame_vs.GetDescriptor());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, mReflectionRenderTarget->GetColorImage().get(), mReflectionRenderTarget->GetSampler());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, mRefractionRenderTarget->GetColorImage().get(), mRefractionRenderTarget->GetSampler());
-		mWaterEffect.mDescriptorSet0->BindCombinedImage(3, dudvTexture->GetTextureDescriptorInfo());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(1, *mReflectionRenderTarget->GetColorImage().get(), *mReflectionRenderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(2, *mRefractionRenderTarget->GetColorImage().get(), *mRefractionRenderTarget->GetSampler());
+		mWaterEffect.mDescriptorSet0->BindCombinedImage(3, dudvTexture->GetDescriptor());
 		mWaterEffect.mDescriptorSet0->UpdateDescriptorSets();
 	}
 

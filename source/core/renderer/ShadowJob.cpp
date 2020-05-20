@@ -53,8 +53,8 @@ namespace Utopian
 		mEffectInstanced->CreatePipeline();
 
 		mCascadeTransforms.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_cascadeTransforms", &mCascadeTransforms);
-		mEffectInstanced->BindUniformBuffer("UBO_cascadeTransforms", &mCascadeTransforms);
+		mEffect->BindUniformBuffer("UBO_cascadeTransforms", mCascadeTransforms);
+		mEffectInstanced->BindUniformBuffer("UBO_cascadeTransforms", mCascadeTransforms);
 
 		const uint32_t size = 240;
 		/*gScreenQuadUi().AddQuad(4 * (size + 10) + 10, height - (size + 10), size, size, depthColorImage->GetLayerView(0), renderTarget->GetSampler());

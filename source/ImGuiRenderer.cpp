@@ -90,7 +90,7 @@ namespace Utopian
 		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass());
 
 		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
-		mImguiEffect->BindCombinedImage("fontSampler", mTexture);
+		mImguiEffect->BindCombinedImage("fontSampler", *mTexture);
 
 		io.Fonts->TexID = (ImTextureID)AddImage(*mTexture->GetImage());
 

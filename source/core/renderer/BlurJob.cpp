@@ -28,7 +28,7 @@ namespace Utopian
 	{
 		SSAOJob* ssaoJob = static_cast<SSAOJob*>(jobs[JobGraph::SSAO_INDEX]);
 
-		mEffect->BindCombinedImage("samplerSSAO", ssaoJob->ssaoImage, ssaoJob->renderTarget->GetSampler());
+		mEffect->BindCombinedImage("samplerSSAO", *ssaoJob->ssaoImage, *ssaoJob->renderTarget->GetSampler());
 	}
 
 	void BlurJob::Render(const JobInput& jobInput)

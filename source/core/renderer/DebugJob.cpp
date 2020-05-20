@@ -38,8 +38,8 @@ namespace Utopian
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		mColorEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
-		mNormalEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mColorEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mNormalEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 	}
 
 	void DebugJob::Render(const JobInput& jobInput)

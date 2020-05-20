@@ -74,7 +74,7 @@ namespace Utopian::Vk
 		mImageInfos.push_back(imageInfo);
 	}
 
-	VkDescriptorImageInfo* TextureArray::GetImageInfo()
+	VkDescriptorImageInfo* TextureArray::GetDescriptor()
 	{
 		return mImageInfos.data();
 	}

@@ -57,9 +57,9 @@ namespace Utopian::Vk
 
 		DescriptorSetLayout* setLayout0 = mPipelineInterface->GetDescriptorSetLayout(SET_0);
 		mDescriptorSet0 = new Utopian::Vk::DescriptorSet(device, setLayout0, mDescriptorPool);
-		mDescriptorSet0->BindCombinedImage(BINDING_0, edgeTableTex->GetTextureDescriptorInfo());
-		mDescriptorSet0->BindCombinedImage(BINDING_1, triangleTableTex->GetTextureDescriptorInfo());
-		mDescriptorSet0->BindCombinedImage(BINDING_2, texture3d->GetTextureDescriptorInfo());
+		mDescriptorSet0->BindCombinedImage(BINDING_0, edgeTableTex->GetDescriptor());
+		mDescriptorSet0->BindCombinedImage(BINDING_1, triangleTableTex->GetDescriptor());
+		mDescriptorSet0->BindCombinedImage(BINDING_2, texture3d->GetDescriptor());
 		mDescriptorSet0->BindUniformBuffer(BINDING_3, ubo.GetDescriptor());
 		mDescriptorSet0->BindStorageBuffer(BINDING_4, mCounterSSBO.GetDescriptor());
 		mDescriptorSet0->UpdateDescriptorSets();

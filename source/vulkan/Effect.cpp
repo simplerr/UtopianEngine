@@ -113,44 +113,44 @@ namespace Utopian::Vk
 		}
 	}
 
-	void Effect::BindUniformBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
+	void Effect::BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
 		descriptorSet.BindUniformBuffer(name, bufferInfo);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindStorageBuffer(std::string name, VkDescriptorBufferInfo* bufferInfo)
+	void Effect::BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
 		descriptorSet.BindStorageBuffer(name, bufferInfo);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindCombinedImage(std::string name, const SharedPtr<Texture>& texture)
+	void Effect::BindUniformBuffer(std::string name, const ShaderBuffer& shaderBlock)
+	{
+		BindUniformBuffer(name, shaderBlock.GetDescriptor());
+	}
+
+	void Effect::BindCombinedImage(std::string name, const Texture& texture)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
-		descriptorSet.BindCombinedImage(name, texture->GetTextureDescriptorInfo(), 1u);
+		descriptorSet.BindCombinedImage(name, texture.GetDescriptor(), 1u);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindCombinedImage(std::string name, const SharedPtr<Image>& image, Sampler* sampler)
+	void Effect::BindCombinedImage(std::string name, const Image& image, const Sampler& sampler)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
-		descriptorSet.BindCombinedImage(name, image.get(), sampler);
+		descriptorSet.BindCombinedImage(name, image, sampler);
 		descriptorSet.UpdateDescriptorSets();
 	}
 
-	void Effect::BindCombinedImage(std::string name, TextureArray* textureArray)
+	void Effect::BindCombinedImage(std::string name, const TextureArray& textureArray)
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
-		descriptorSet.BindCombinedImage(name, textureArray->GetImageInfo(), textureArray->GetNumImages());
+		descriptorSet.BindCombinedImage(name, textureArray.GetDescriptor(), textureArray.GetNumImages());
 		descriptorSet.UpdateDescriptorSets();
-	}
-
-	void Effect::BindUniformBuffer(std::string name, ShaderBuffer* shaderBlock)
-	{
-		BindUniformBuffer(name, shaderBlock->GetDescriptor());
 	}
 
 	const DescriptorSet& Effect::GetDescriptorSet(uint32_t set) const

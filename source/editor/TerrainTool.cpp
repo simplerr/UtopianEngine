@@ -149,7 +149,7 @@ namespace Utopian
 		mBlendmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 		mBlendmapBrushEffect->CreatePipeline();
 
-		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", brushBlock.get());
+		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", *brushBlock);
 	}
 
 	void TerrainTool::SetupHeightmapBrushEffect()
@@ -172,7 +172,7 @@ namespace Utopian
 
 		mHeightmapBrushEffect->CreatePipeline();
 
-		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", brushBlock.get());
+		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", *brushBlock);
 	}
 
 	void TerrainTool::UpdateBrushUniform()

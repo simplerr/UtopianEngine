@@ -5,6 +5,7 @@
 #include "core/renderer/ShadowJob.h"
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GrassJob.h"
+#include "core/renderer/SkyboxJob.h"
 #include "core/renderer/SkydomeJob.h"
 #include "core/renderer/SunShaftJob.h"
 #include "core/renderer/DebugJob.h"
@@ -48,7 +49,7 @@ namespace Utopian
 		AddJob(new ShadowJob(device, width, height));
 		AddJob(new DeferredJob(device, width, height));
 		//AddJob(new GrassJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
-		//AddJob(new SkyboxJob(renderer, width, height));
+		//AddJob(new SkyboxJob(device, width, height));
 		AddJob(new SkydomeJob(device, width, height));
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new OpaqueCopyJob(device, width, height));

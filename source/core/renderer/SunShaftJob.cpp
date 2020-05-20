@@ -19,7 +19,7 @@ namespace Utopian
 	void SunShaftJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[JobGraph::SKYBOX_INDEX]);
+		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[JobGraph::SKYDOME_INDEX]);
 
 		// Note: Todo: Probably don't need to be the native window size
 		mRadialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -41,8 +41,8 @@ namespace Utopian
 		mRadialBlurEffect->CreatePipeline();
 
 		mRadialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mRadialBlurEffect->BindUniformBuffer("UBO_parameters", &mRadialBlurParameters);
-		mRadialBlurEffect->BindCombinedImage("sunSampler", skydomeJob->sunImage, mRadialBlurRenderTarget->GetSampler());
+		mRadialBlurEffect->BindUniformBuffer("UBO_parameters", mRadialBlurParameters);
+		mRadialBlurEffect->BindCombinedImage("sunSampler", *skydomeJob->sunImage, *mRadialBlurRenderTarget->GetSampler());
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 	}

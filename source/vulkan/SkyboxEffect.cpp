@@ -19,7 +19,7 @@ namespace Utopian::Vk
 
 		CreatePipeline();
 
-		BindUniformBuffer("UBO_viewProjection", &viewProjectionBlock);
+		BindUniformBuffer("UBO_viewProjection", viewProjectionBlock);
 	}
 
 	void SkyboxEffect::SetCameraData(glm::mat4 view, glm::mat4 projection)

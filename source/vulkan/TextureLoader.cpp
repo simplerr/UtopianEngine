@@ -49,6 +49,9 @@ namespace Utopian::Vk
 			texture = LoadTextureSTB(path);
 		}
 
+		if (texture != nullptr)
+			texture->UpdateDescriptor();
+
 		return texture;
 	}
 	
@@ -83,7 +86,7 @@ namespace Utopian::Vk
 		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
 
 		// Setup buffer copy regions for each mip level
-		std::vector<VkBufferImageCopy> copyRegions;
+		std::vector<VkBufferImageCopy> bufferCopyRegions;
 		uint32_t offset = 0;
 
 		for (uint32_t i = 0; i < numMipLevels; i++)
@@ -98,7 +101,7 @@ namespace Utopian::Vk
 			bufferCopyRegion.imageExtent.depth = 1;
 			bufferCopyRegion.bufferOffset = offset;
 
-			copyRegions.push_back(bufferCopyRegion);
+			bufferCopyRegions.push_back(bufferCopyRegion);
 			offset += static_cast<uint32_t>(tex2D[i].size());
 		}
 
@@ -107,7 +110,7 @@ namespace Utopian::Vk
 		// Transfer image to a valid layout
 		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-		stagingBuffer.Copy(&cmdBuffer, image.get(), copyRegions);
+		stagingBuffer.Copy(&cmdBuffer, image.get(), bufferCopyRegions);
 
 		// Transfer back to final layouts
 		image->LayoutTransition(mDevice, cmdBuffer, imageLayout);
@@ -225,6 +228,93 @@ namespace Utopian::Vk
 		texture->mSampler = sampler;
 		texture->mWidth = width;
 		texture->mHeight = height;
+		texture->UpdateDescriptor();
+
+		return texture;
+	}
+
+	SharedPtr<Texture> TextureLoader::LoadCubemapTexture(std::string path)
+	{
+		// These might be needed as parameters
+		VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT;
+		VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
+
+		gli::texture_cube texCube(gli::load(path));
+
+		assert(!texCube.empty());
+
+		uint32_t width = static_cast<uint32_t>(texCube.extent().x);
+		uint32_t height = static_cast<uint32_t>(texCube.extent().y);
+		uint32_t numMipLevels = static_cast<uint32_t>(texCube.levels());
+
+		BUFFER_CREATE_INFO bufferDesc;
+		bufferDesc.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		bufferDesc.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		bufferDesc.data = texCube.data();
+		bufferDesc.size = texCube.size();
+		Buffer stagingBuffer = Buffer(bufferDesc, mDevice);
+
+		IMAGE_CREATE_INFO imageDesc;
+		imageDesc.width = width;
+		imageDesc.height = height;
+		imageDesc.format = format;
+		imageDesc.usage = imageUsageFlags | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		imageDesc.mipLevels = numMipLevels;
+		imageDesc.arrayLayers = 6; // Cube faces count as array layers in Vulkan
+		imageDesc.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT; // This flag is required for cube map images
+		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
+
+		// Setup buffer copy regions for each face including all of it's miplevels
+		std::vector<VkBufferImageCopy> bufferCopyRegions;
+		size_t offset = 0;
+
+		for (uint32_t face = 0; face < 6; face++)
+		{
+			for (uint32_t level = 0; level < numMipLevels; level++)
+			{
+				VkBufferImageCopy bufferCopyRegion = {};
+				bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				bufferCopyRegion.imageSubresource.mipLevel = level;
+				bufferCopyRegion.imageSubresource.baseArrayLayer = face;
+				bufferCopyRegion.imageSubresource.layerCount = 1;
+				bufferCopyRegion.imageExtent.width = static_cast<uint32_t>(texCube[face][level].extent().x);
+				bufferCopyRegion.imageExtent.height = static_cast<uint32_t>(texCube[face][level].extent().y);
+				bufferCopyRegion.imageExtent.depth = 1;
+				bufferCopyRegion.bufferOffset = offset;
+
+				bufferCopyRegions.push_back(bufferCopyRegion);
+
+				// Increase offset into staging buffer for next level / face
+				offset += texCube[face][level].size();
+			}
+		}
+
+		CommandBuffer cmdBuffer = CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+		// Transfer image to a valid layout
+		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+		stagingBuffer.Copy(&cmdBuffer, image.get(), bufferCopyRegions);
+
+		// Transfer back to final layouts
+		image->LayoutTransition(mDevice, cmdBuffer, imageLayout);
+
+		cmdBuffer.Flush();
+
+		// Create the sampler
+		SharedPtr<Sampler> sampler = std::make_shared<Vk::Sampler>(mDevice, false);
+		sampler->createInfo.minLod = 0.0f;
+		sampler->createInfo.maxLod = (float)numMipLevels;
+		sampler->createInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+		sampler->Create();
+
+		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
+		texture->mImage = image;
+		texture->mSampler = sampler;
+		texture->mWidth = width;
+		texture->mHeight = height;
+		texture->UpdateDescriptor();
 
 		return texture;
 	}

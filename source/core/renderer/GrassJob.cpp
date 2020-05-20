@@ -50,7 +50,7 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 
 		// Need clamp to edge when using transparent textures to not get artifacts at the top
 		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
@@ -64,7 +64,7 @@ namespace Utopian
 		textureArray.AddTexture(texture);
 		textureArray.AddTexture(texture2);
 
-		mEffect->BindCombinedImage("textureSampler", &textureArray);
+		mEffect->BindCombinedImage("textureSampler", textureArray);
 
 		SetWaitSemaphore(deferredJob->GetCompletedSemahore());
 	}

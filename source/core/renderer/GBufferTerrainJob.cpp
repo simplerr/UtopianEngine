@@ -50,13 +50,13 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
 
 		mBrushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_brush", mTerrain->GetBrushBlock().get());
+		mEffect->BindUniformBuffer("UBO_brush", *mTerrain->GetBrushBlock());
 
 		TerrainMaterial material = mTerrain->GetMaterial("grass");
 		mDiffuseTextureArray.AddTexture(material.diffuse);
@@ -79,13 +79,13 @@ namespace Utopian
 		mSampler->Create();
 
 		// Bind terrain height and normal maps
-		mEffect->BindCombinedImage("samplerHeightmap", mTerrain->GetHeightmapImage(), mSampler.get());
-		mEffect->BindCombinedImage("samplerNormalmap", mTerrain->GetNormalmapImage(), mSampler.get());
-		mEffect->BindCombinedImage("samplerBlendmap", mTerrain->GetBlendmapImage(), mSampler.get());
+		mEffect->BindCombinedImage("samplerHeightmap", *mTerrain->GetHeightmapImage(), *mSampler);
+		mEffect->BindCombinedImage("samplerNormalmap", *mTerrain->GetNormalmapImage(), *mSampler);
+		mEffect->BindCombinedImage("samplerBlendmap", *mTerrain->GetBlendmapImage(), *mSampler);
 
-		mEffect->BindCombinedImage("samplerDiffuse", &mDiffuseTextureArray);
-		mEffect->BindCombinedImage("samplerNormal", &mNormalTextureArray);
-		mEffect->BindCombinedImage("samplerDisplacement", &mDisplacementTextureArray);
+		mEffect->BindCombinedImage("samplerDiffuse", mDiffuseTextureArray);
+		mEffect->BindCombinedImage("samplerNormal", mNormalTextureArray);
+		mEffect->BindCombinedImage("samplerDisplacement", mDisplacementTextureArray);
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 	}

@@ -103,9 +103,9 @@ namespace Utopian::Vk
 	void Mesh::CreateDescriptorSets(SharedPtr<DescriptorSetLayout> descriptorSetLayout, SharedPtr<DescriptorPool> descriptorPool)
 	{
 		mTextureDescriptorSet = std::make_shared<DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
-		mTextureDescriptorSet->BindCombinedImage(0, mDiffuseTexture->GetTextureDescriptorInfo());
-		mTextureDescriptorSet->BindCombinedImage(1, mNormalTexture->GetTextureDescriptorInfo());
-		mTextureDescriptorSet->BindCombinedImage(2, mSpecularTexture->GetTextureDescriptorInfo());
+		mTextureDescriptorSet->BindCombinedImage(0, mDiffuseTexture->GetDescriptor());
+		mTextureDescriptorSet->BindCombinedImage(1, mNormalTexture->GetDescriptor());
+		mTextureDescriptorSet->BindCombinedImage(2, mSpecularTexture->GetDescriptor());
 		mTextureDescriptorSet->UpdateDescriptorSets();
 	}
 

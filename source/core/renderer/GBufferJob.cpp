@@ -65,23 +65,23 @@ namespace Utopian
 		mGBufferEffectWireframe->CreatePipeline();
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
-		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mGBufferEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
-		mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", &mSettingsBlock);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
-		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mGBufferEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
+		mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", mSettingsBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", mSettingsBlock);
 
 		mFoliageSpheresBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_sphereList", &mFoliageSpheresBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_sphereList", mFoliageSpheresBlock);
 
 		mAnimationParametersBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", &mAnimationParametersBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_animationParameters", mAnimationParametersBlock);
 
 		mWindmapTexture = Vk::gTextureLoader().LoadTexture("data/textures/windmap.jpg");
-		mInstancedAnimationEffect->BindCombinedImage("windmapSampler", mWindmapTexture);
+		mInstancedAnimationEffect->BindCombinedImage("windmapSampler", *mWindmapTexture);
 	}
 
 	void GBufferJob::Render(const JobInput& jobInput)

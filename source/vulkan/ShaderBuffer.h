@@ -53,7 +53,7 @@ namespace Utopian::Vk
 
 		virtual int GetSize() = 0;
 
-		VkDescriptorBufferInfo* GetDescriptor() { return &mDescriptor; }
+		const VkDescriptorBufferInfo* GetDescriptor() const { return &mDescriptor; }
 		Buffer* GetBuffer() { return mBuffer; }
 
 	protected:

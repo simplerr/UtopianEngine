@@ -353,7 +353,6 @@
     <ClInclude Include="source\vulkan\TextOverlay.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\ShaderBuffer.h" />
-    <ClInclude Include="source\vulkan\Utilities.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />
     <ClInclude Include="source\vulkan\VertexDescription.h" />
     <ClInclude Include="source\vulkan\VulkanApp.h" />
@@ -361,7 +360,6 @@
     <ClInclude Include="source\vulkan\VulkanInclude.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
     <ClInclude Include="source\ImGuiRenderer.h" />
-    <ClInclude Include="source\vulkan\CubeMapTexture.h" />
     <ClInclude Include="source\vulkan\WaterEffect.h" />
     <ClInclude Include="source\WaterVulkanApp.h" />
     <ClInclude Include="source\Window.h" />

@@ -75,28 +75,28 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", &mViewProjectionBlock);
+		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", &mSettingsBlock);
+		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
 
 		mWaterParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_waterParameters", &mWaterParameterBlock);
+		mEffect->BindUniformBuffer("UBO_waterParameters", mWaterParameterBlock);
 
 		mLightBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_lights", &mLightBlock);
+		mEffect->BindUniformBuffer("UBO_lights", mLightBlock);
 
 		mCascadeBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_cascades", &mCascadeBlock);
+		mEffect->BindUniformBuffer("UBO_cascades", mCascadeBlock);
 
 		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
 		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
 		mFoamMaskTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_foam.png");
-		mEffect->BindCombinedImage("dudvSampler", mDuDvTexture);
-		mEffect->BindCombinedImage("normalSampler", mNormalTexture);
-		mEffect->BindCombinedImage("foamMaskSampler", mFoamMaskTexture);
-		mEffect->BindCombinedImage("depthSampler", opaqueCopyJob->opaqueDepthImage, renderTarget->GetSampler());
-		mEffect->BindCombinedImage("shadowSampler", shadowJob->depthColorImage, mShadowSampler.get());
+		mEffect->BindCombinedImage("dudvSampler", *mDuDvTexture);
+		mEffect->BindCombinedImage("normalSampler", *mNormalTexture);
+		mEffect->BindCombinedImage("foamMaskSampler", *mFoamMaskTexture);
+		mEffect->BindCombinedImage("depthSampler", *opaqueCopyJob->opaqueDepthImage, *renderTarget->GetSampler());
+		mEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mShadowSampler);
 
 		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
 

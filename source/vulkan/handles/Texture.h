@@ -16,8 +16,6 @@ namespace Utopian::Vk
 		Texture(Device* device);
 		~Texture();
 
-		void UpdateDescriptor();
-
 		Image* GetImage();
 		Sampler* GetSampler();
 		std::string GetPath() const;
@@ -25,7 +23,7 @@ namespace Utopian::Vk
 		uint32_t GetHeight() const;
 		uint32_t GetNumMipLevels() const;
 
-		const VkDescriptorImageInfo* GetDescriptor() const;
+		VkDescriptorImageInfo* GetTextureDescriptorInfo();
 
 		void SetPath(std::string path);
 
@@ -54,7 +52,7 @@ namespace Utopian::Vk
 
 		void AddTexture(const SharedPtr<Vk::Texture>& texture);
 
-		const VkDescriptorImageInfo* GetDescriptor() const;
+		VkDescriptorImageInfo* GetDescriptor();
 		uint32_t GetNumImages() const;
 	private:
 		std::vector<VkDescriptorImageInfo> mImageInfos;
