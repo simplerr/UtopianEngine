@@ -11,12 +11,10 @@
 #include "TextureLoader.h"
 #include "vulkan/handles/Device.h"
 #include "ShaderFactory.h"
-#include "TextOverlay.h"
 #include "ModelLoader.h"
 #include "handles/DescriptorSet.h"
 #include "handles/CommandBuffer.h"
 #include "handles/CommandPool.h"
-#include "handles/PipelineLegacy.h"
 #include "handles/Fence.h"
 #include "handles/PipelineLayout.h"
 #include "handles/RenderPass.h"
@@ -128,7 +126,6 @@ namespace Utopian::Vk
 		case WM_KEYDOWN:
 			if (wParam == VK_SPACE)
 			{
-				//mTextOverlay->ToggleVisible();
 			}
 			break;
 		}

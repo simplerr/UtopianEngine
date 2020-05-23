@@ -99,11 +99,6 @@ namespace Utopian
 		mInternal->SetColor(color);
 	}
 
-	void CRenderable::SetMaterial(Utopian::Vk::Mat material)
-	{
-		mInternal->SetMaterial(material);
-	}
-
 	void CRenderable::SetPushFoliage(bool push)
 	{
 		mInternal->SetPushFoliage(push);

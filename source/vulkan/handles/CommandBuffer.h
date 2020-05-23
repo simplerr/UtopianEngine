@@ -29,18 +29,14 @@ namespace Utopian::Vk
 		void CmdSetViewPort(float width, float height);
 		void CmdSetScissor(uint32_t width, uint32_t height);
 		void CmdSetScissor(const VkRect2D& rect);
-		void CmdBindPipeline(PipelineLegacy* pipeline);
-		void CmdBindPipeline(Pipeline2* pipeline);
 		void CmdBindPipeline(ComputePipeline* pipeline);
 		void CmdBindPipeline(VkPipeline pipeline);
 		void CmdBindPipeline(const Pipeline* pipeline);
 		void CmdBindDescriptorSet(const PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);
-		void CmdBindDescriptorSet(const EffectLegacy* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdBindDescriptorSet(VkPipelineLayout pipelineLayout, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdBindDescriptorSet(const PipelineInterface* pipelineInterface, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet = 0);
 		void CmdBindDescriptorSets(const SharedPtr<Effect>& effect, uint32_t firstSet = 0, VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS);
 		void CmdPushConstants(const PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
-		void CmdPushConstants(const EffectLegacy* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
 		void CmdPushConstants(const PipelineInterface* pipelineInterface, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, const VkBuffer* buffers);
 		void CmdBindVertexBuffer(uint32_t firstBinding, uint32_t bindingCount, Buffer* buffer);

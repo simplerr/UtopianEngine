@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/MarchingCubesTerrainEffect.h"
-#include "vulkan/MarchingCubesEffect.h"
+#include "MarchingCubesEffect.h"
 
 /*
 	Steps for implementing the marching algorithm:
@@ -37,7 +37,6 @@ namespace Utopian::Vk
 	class Buffer;
 	class VulkanApp;
 	class Camera;
-	class PipelineLegacy;
 	class ComputePipeline;
 	class PipelineLayout;
 	class DescriptorSet;

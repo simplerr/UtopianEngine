@@ -177,12 +177,14 @@ void MarchingCubesTerrain::GenerateBlocks(float time)
 			// TODO: Use the firstSet parameter to only update the Block descriptor
 			VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.GetDescriptorSet0(),
 												  mMarchingCubesEffect.GetDescriptorSet1() };
-			commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
+			// NOTE: Needs to use new Effect 
+			//commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
 			// Push the world matrix constant
 			Utopian::Vk::PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->GetPosition()));
 
-			commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConsts), &pushConsts);
+			// NOTE: Needs to use new Effect 
+			//commandBuffer.CmdPushConstants(&mMarchingCubesEffect, VK_SHADER_STAGE_COMPUTE_BIT, sizeof(pushConsts), &pushConsts);
 			commandBuffer.CmdDispatch(32, 32, 32);
 			commandBuffer.Flush();
 
@@ -212,7 +214,8 @@ void MarchingCubesTerrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Uto
 
 				commandBuffer->CmdBindPipeline(mTerrainEffect.GetPipeline(0));
 				VkDescriptorSet descriptorSets[1] = { commonDescriptorSet->GetVkHandle() };
-				commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				// NOTE: Needs to use new Effect 
+				//commandBuffer->CmdBindDescriptorSet(&mTerrainEffect, 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
 				commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
@@ -226,7 +229,8 @@ void MarchingCubesTerrain::Render(Utopian::Vk::CommandBuffer* commandBuffer, Uto
 				pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
 				pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
 
-				commandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
+				// NOTE: Needs to use new Effect 
+				//commandBuffer->CmdPushConstants(&mTerrainEffect, VK_SHADER_STAGE_VERTEX_BIT, sizeof(pushConstantBlock), &pushConstantBlock);
 				commandBuffer->CmdDraw(block->GetNumVertices(), 1, 0, 0);
 			}
 		}

@@ -4,7 +4,6 @@
 #include "core/components/Component.h"
 #include "utility/Common.h"
 #include "vulkan/VulkanInclude.h"
-#include "vulkan/PhongEffect.h"
 
 namespace Utopian
 {
@@ -37,7 +36,6 @@ namespace Utopian
 		void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
 		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
-		void SetMaterial(Utopian::Vk::Mat material);
 		void SetVisible(bool visible);
 		void SetPushFoliage(bool push);
 		void SetRenderFlags(uint32_t renderFlags);
@@ -46,7 +44,6 @@ namespace Utopian
 		Utopian::Vk::StaticModel* GetModel();
 		const BoundingBox GetBoundingBox() const;
 		const glm::vec4 GetColor() const;
-		const Utopian::Vk::Mat GetMaterial() const;
 		const bool IsVisible() const;
 		const bool IsPushingFoliage() const;
 		const uint32_t GetRenderFlags() const;
@@ -56,7 +53,6 @@ namespace Utopian
 
 	private:
 		Utopian::Vk::StaticModel* mModel;
-		Utopian::Vk::Mat mMaterial;
 		glm::vec4 mColor;
 		glm::vec2 mTextureTileFactor;
 		uint32_t mRenderFlags;

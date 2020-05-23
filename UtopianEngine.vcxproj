@@ -123,10 +123,7 @@
     <ClCompile Include="source\core\renderer\TonemapJob.cpp" />
     <ClCompile Include="source\core\renderer\WaterJob.cpp" />
     <ClCompile Include="source\core\ScriptExports.cpp" />
-    <ClCompile Include="source\core\legacy\BaseTerrain.cpp" />
-    <ClCompile Include="source\core\legacy\Block.cpp" />
     <ClCompile Include="source\Camera.cpp" />
-    <ClCompile Include="source\core\legacy\PerlinTerrain.cpp" />
     <ClCompile Include="source\core\Terrain.cpp" />
     <ClCompile Include="source\editor\ActorInspector.cpp" />
     <ClCompile Include="source\editor\ComponentInspector.cpp" />
@@ -136,8 +133,6 @@
     <ClCompile Include="source\Im3dRenderer.cpp" />
     <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\core\legacy\MarchingCubes.cpp" />
-    <ClCompile Include="source\editor\TransformTool.cpp" />
     <ClCompile Include="source\core\components\CCamera.cpp" />
     <ClCompile Include="source\core\components\CNoClip.cpp" />
     <ClCompile Include="source\core\components\COrbit.cpp" />
@@ -156,7 +151,6 @@
     <ClCompile Include="source\core\World.cpp" />
     <ClCompile Include="source\core\SceneNode.cpp" />
     <ClCompile Include="source\core\Transform.cpp" />
-    <ClCompile Include="source\core\legacy\MarchingCubesTerrain.cpp" />
     <ClCompile Include="source\utility\math\Helpers.cpp" />
     <ClCompile Include="source\utility\Timer.cpp" />
     <ClCompile Include="source\utility\math\BoundingBox.cpp" />
@@ -174,18 +168,13 @@
     <ClCompile Include="source\vulkan\handles\QueryPool.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\ImguiEffect.cpp" />
-    <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp" />
     <ClCompile Include="source\vulkan\RenderTarget.cpp" />
     <ClCompile Include="source\ScreenQuadRenderer.cpp" />
-    <ClCompile Include="source\vulkan\PhongEffect.cpp" />
     <ClCompile Include="source\vulkan\SkyboxEffect.cpp" />
     <ClCompile Include="source\vulkan\SSAOEffect.cpp" />
-    <ClCompile Include="source\vulkan\MarchingCubesTerrainEffect.cpp" />
     <ClCompile Include="source\vulkan\handles\Buffer.cpp" />
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp" />
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp" />
-    <ClCompile Include="source\vulkan\handles\EffectLegacy.cpp" />
-    <ClCompile Include="source\vulkan\handles\Pipeline2.cpp" />
     <ClCompile Include="source\vulkan\Texture.cpp" />
     <ClCompile Include="source\vulkan\Mesh.cpp" />
     <ClCompile Include="source\vulkan\handles\CommandBuffer.cpp" />
@@ -195,7 +184,6 @@
     <ClCompile Include="source\vulkan\handles\FrameBuffers.cpp" />
     <ClCompile Include="source\vulkan\handles\Image.cpp" />
     <ClCompile Include="source\vulkan\handles\Instance.cpp" />
-    <ClCompile Include="source\vulkan\handles\PipelineLegacy.cpp" />
     <ClCompile Include="source\vulkan\handles\PipelineLayout.cpp" />
     <ClCompile Include="source\vulkan\handles\Queue.cpp" />
     <ClCompile Include="source\vulkan\handles\RenderPass.cpp" />
@@ -204,14 +192,11 @@
     <ClCompile Include="source\vulkan\PipelineInterface.cpp" />
     <ClCompile Include="source\vulkan\ShaderFactory.cpp" />
     <ClCompile Include="source\vulkan\StaticModel.cpp" />
-    <ClCompile Include="source\vulkan\TextOverlay.cpp" />
     <ClCompile Include="source\vulkan\TextureLoader.cpp" />
     <ClCompile Include="source\vulkan\ShaderBuffer.cpp" />
     <ClCompile Include="source\vulkan\VulkanApp.cpp" />
     <ClCompile Include="source\vulkan\VulkanBase.cpp" />
     <ClCompile Include="source\ImGuiRenderer.cpp" />
-    <ClCompile Include="source\vulkan\WaterEffect.cpp" />
-    <ClCompile Include="source\WaterRenderer.cpp" />
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -260,11 +245,8 @@
     <ClInclude Include="source\core\renderer\WaterJob.h" />
     <ClInclude Include="source\core\ScriptExports.h" />
     <ClInclude Include="source\core\Terrain.h" />
-    <ClInclude Include="source\core\legacy\BaseTerrain.h" />
-    <ClInclude Include="source\core\legacy\Block.h" />
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Colors.h" />
-    <ClInclude Include="source\core\legacy\PerlinTerrain.h" />
     <ClInclude Include="source\editor\ActorInspector.h" />
     <ClInclude Include="source\editor\ComponentInspector.h" />
     <ClInclude Include="source\editor\TerrainTool.h" />
@@ -275,8 +257,6 @@
     <ClInclude Include="source\utility\Exception.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\LightData.h" />
-    <ClInclude Include="source\core\legacy\MarchingCubes.h" />
-    <ClInclude Include="source\editor\TransformTool.h" />
     <ClInclude Include="source\utility\math\Frustum.h" />
     <ClInclude Include="source\utility\math\Helpers.h" />
     <ClInclude Include="source\utility\PerlinNoise.h" />
@@ -300,7 +280,6 @@
     <ClInclude Include="source\core\World.h" />
     <ClInclude Include="source\core\SceneNode.h" />
     <ClInclude Include="source\core\Transform.h" />
-    <ClInclude Include="source\core\legacy\MarchingCubesTerrain.h" />
     <ClInclude Include="source\utility\Timer.h" />
     <ClInclude Include="source\utility\math\BoundingBox.h" />
     <ClInclude Include="source\utility\math\Ray.h" />
@@ -319,18 +298,13 @@
     <ClInclude Include="source\vulkan\handles\QueryPool.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\ImguiEffect.h" />
-    <ClInclude Include="source\vulkan\MarchingCubesEffect.h" />
     <ClInclude Include="source\vulkan\RenderTarget.h" />
     <ClInclude Include="source\ScreenQuadRenderer.h" />
-    <ClInclude Include="source\vulkan\PhongEffect.h" />
     <ClInclude Include="source\vulkan\SkyboxEffect.h" />
     <ClInclude Include="source\vulkan\SSAOEffect.h" />
-    <ClInclude Include="source\vulkan\MarchingCubesTerrainEffect.h" />
-    <ClInclude Include="source\vulkan\EffectLegacy.h" />
     <ClInclude Include="source\vulkan\handles\Buffer.h" />
     <ClInclude Include="source\vulkan\handles\ComputePipeline.h" />
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h" />
-    <ClInclude Include="source\vulkan\handles\Pipeline2.h" />
     <ClInclude Include="source\vulkan\Texture.h" />
     <ClInclude Include="source\vulkan\Mesh.h" />
     <ClInclude Include="source\vulkan\handles\CommandBuffer.h" />
@@ -341,7 +315,6 @@
     <ClInclude Include="source\vulkan\handles\Handle.h" />
     <ClInclude Include="source\vulkan\handles\Image.h" />
     <ClInclude Include="source\vulkan\handles\Instance.h" />
-    <ClInclude Include="source\vulkan\handles\PipelineLegacy.h" />
     <ClInclude Include="source\vulkan\handles\PipelineLayout.h" />
     <ClInclude Include="source\vulkan\handles\Queue.h" />
     <ClInclude Include="source\vulkan\handles\RenderPass.h" />
@@ -350,7 +323,6 @@
     <ClInclude Include="source\vulkan\PipelineInterface.h" />
     <ClInclude Include="source\vulkan\ShaderFactory.h" />
     <ClInclude Include="source\vulkan\StaticModel.h" />
-    <ClInclude Include="source\vulkan\TextOverlay.h" />
     <ClInclude Include="source\vulkan\TextureLoader.h" />
     <ClInclude Include="source\vulkan\ShaderBuffer.h" />
     <ClInclude Include="source\vulkan\Vertex.h" />
@@ -360,8 +332,6 @@
     <ClInclude Include="source\vulkan\VulkanInclude.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
     <ClInclude Include="source\ImGuiRenderer.h" />
-    <ClInclude Include="source\vulkan\WaterEffect.h" />
-    <ClInclude Include="source\WaterVulkanApp.h" />
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -405,8 +375,6 @@
     <None Include="data\shaders\normal_debug\normal_debug.frag" />
     <None Include="data\shaders\normal_debug\normal_debug.geom" />
     <None Include="data\shaders\normal_debug\normal_debug.vert" />
-    <None Include="data\shaders\phong\phong.frag" />
-    <None Include="data\shaders\phong\phong.vert" />
     <None Include="data\shaders\pixel_debug\pixel_debug.frag" />
     <None Include="data\shaders\post_process\bloom_blur.frag" />
     <None Include="data\shaders\post_process\bloom_extract.frag" />
@@ -448,12 +416,6 @@
     <None Include="data\shaders\tessellation\water.tesc" />
     <None Include="data\shaders\tessellation\water.tese" />
     <None Include="data\shaders\tessellation\water.vert" />
-    <None Include="data\shaders\test\test.frag" />
-    <None Include="data\shaders\test\test.vert" />
-    <None Include="data\shaders\textoverlay\text.frag" />
-    <None Include="data\shaders\textoverlay\text.vert" />
-    <None Include="data\shaders\water\water.frag" />
-    <None Include="data\shaders\water\water.vert" />
     <None Include="docs\notes.md" />
     <None Include="docs\roadmap.md" />
     <None Include="docs\software_requirements.md" />

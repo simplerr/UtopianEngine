@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "vulkan/EffectLegacy.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/PipelineInterface.h"

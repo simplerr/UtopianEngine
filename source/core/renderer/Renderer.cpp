@@ -10,7 +10,6 @@
 #include "vulkan/Mesh.h"
 #include "vulkan/StaticModel.h"
 #include "core/renderer/Light.h"
-#include "WaterRenderer.h"
 #include "ScreenQuadRenderer.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/BasicRenderTarget.h"

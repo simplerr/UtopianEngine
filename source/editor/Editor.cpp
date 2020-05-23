@@ -13,7 +13,6 @@
 #include "ImGuiRenderer.h"
 #include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
-#include "core/legacy/BaseTerrain.h"
 #include "editor/TerrainTool.h"
 #include "editor/FoliageTool.h"
 #include "core/ActorFactory.h"

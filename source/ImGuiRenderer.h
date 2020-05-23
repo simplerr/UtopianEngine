@@ -19,7 +19,6 @@
 namespace Utopian
 {
 	class Texture;
-	class Texture2;
 
 	class ImGuiRenderer 
 	{

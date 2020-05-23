@@ -2,7 +2,6 @@
 #include "core/renderer/DeferredJob.h"
 #include "core/renderer/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
-#include "core/legacy/PerlinTerrain.h"
 #include "vulkan/ShaderFactory.h"
 
 namespace Utopian

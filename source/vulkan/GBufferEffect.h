@@ -12,7 +12,6 @@ namespace Utopian::Vk
 	class DescriptorSetLayout;
 	class DescriptorPool;
 	class DescriptorSet;
-	class Pipeline2;
 	class ComputePipeline;
 	class PipelineLayout;
 	class VertexDescription;

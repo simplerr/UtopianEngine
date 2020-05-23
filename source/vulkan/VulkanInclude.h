@@ -29,9 +29,7 @@ namespace Utopian::Vk
 	class FrameBuffers;
 	class Image;
 	class Instance;
-	class Pipeline2; // Todo: rename
 	class Effect;
-	class PipelineLegacy;
 	class PipelineLayout;
 	class Queue;
 	class RenderPass;
@@ -53,13 +51,11 @@ namespace Utopian::Vk
 	class ShaderBuffer;
 	class ShaderFactory;
 	class StaticModel;
-	class TextOverlay;
 	class TextureLoader;
 	struct Vertex;
 	class VertexAttribute;
 	class VertexDescription;
 	class VulkanBase;
-	class EffectLegacy;
 	class Shader;
 	class ScreenQuad;
 	class BasicRenderTarget;

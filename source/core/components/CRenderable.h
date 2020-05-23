@@ -33,7 +33,6 @@ namespace Utopian
 		void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
 		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
-		void SetMaterial(Utopian::Vk::Mat material);
 		void SetPushFoliage(bool push);
 
 		// Render flag settings

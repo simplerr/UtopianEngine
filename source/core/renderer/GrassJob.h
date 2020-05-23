@@ -7,6 +7,13 @@ namespace Utopian
 	class GrassJob : public BaseJob
 	{
 	public:
+		struct GrassInstance
+		{
+			glm::vec4 position;
+			glm::vec3 color;
+			int textureIndex;
+			//glm::vec3 scale;
+		};
 
 		UNIFORM_BLOCK_BEGIN(ViewProjection)
 			UNIFORM_PARAM(glm::mat4, projection)

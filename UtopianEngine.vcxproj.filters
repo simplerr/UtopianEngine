@@ -210,9 +210,6 @@
     <ClCompile Include="source\vulkan\handles\DescriptorSetLayout.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\TextOverlay.cpp">
-      <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\Buffer.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
@@ -222,29 +219,14 @@
     <ClCompile Include="source\vulkan\handles\ComputePipeline.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\Pipeline2.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\PipelineInterface.cpp">
       <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\MarchingCubesEffect.cpp">
-      <Filter>Source Files\vulkan\effects\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\PhongEffect.cpp">
-      <Filter>Source Files\vulkan\effects\phong</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\Sampler.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\RenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\WaterEffect.cpp">
-      <Filter>Source Files\vulkan\effects\water</Filter>
-    </ClCompile>
-    <ClCompile Include="source\WaterRenderer.cpp">
-      <Filter>Source Files\terrain</Filter>
     </ClCompile>
     <ClCompile Include="source\Input.cpp">
       <Filter>Source Files</Filter>
@@ -268,9 +250,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\editor\ComponentInspector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\editor\TransformTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\utility\math\BoundingBox.cpp">
@@ -348,14 +327,8 @@
     <ClCompile Include="source\vulkan\ShaderFactory.cpp">
       <Filter>Source Files\vulkan</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\handles\PipelineLegacy.cpp">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\handles\Pipeline.cpp">
       <Filter>Source Files\vulkan\handles</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\handles\EffectLegacy.cpp">
-      <Filter>Source Files\vulkan\effects</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\EffectManager.cpp">
       <Filter>Source Files\vulkan</Filter>
@@ -431,24 +404,6 @@
     </ClCompile>
     <ClCompile Include="source\vulkan\handles\QueryPool.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\MarchingCubesTerrainEffect.cpp">
-      <Filter>Source Files\vulkan\effects\terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\legacy\BaseTerrain.cpp">
-      <Filter>Source Files\terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\legacy\Block.cpp">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\legacy\MarchingCubes.cpp">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\legacy\MarchingCubesTerrain.cpp">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\legacy\PerlinTerrain.cpp">
-      <Filter>Source Files\terrain\heightmap</Filter>
     </ClCompile>
     <ClCompile Include="source\core\Terrain.cpp">
       <Filter>Source Files</Filter>
@@ -605,9 +560,6 @@
     <ClInclude Include="source\vulkan\handles\DescriptorSetLayout.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\TextOverlay.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\handles\Buffer.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
@@ -617,29 +569,14 @@
     <ClInclude Include="source\vulkan\handles\ComputePipeline.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\handles\Pipeline2.h">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\PipelineInterface.h">
       <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\MarchingCubesEffect.h">
-      <Filter>Source Files\vulkan\effects\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\PhongEffect.h">
-      <Filter>Source Files\vulkan\effects\phong</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\handles\Sampler.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\RenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\WaterEffect.h">
-      <Filter>Source Files\vulkan\effects\water</Filter>
-    </ClInclude>
-    <ClInclude Include="source\WaterVulkanApp.h">
-      <Filter>Source Files\terrain</Filter>
     </ClInclude>
     <ClInclude Include="source\Input.h">
       <Filter>Source Files</Filter>
@@ -673,9 +610,6 @@
     </ClInclude>
     <ClInclude Include="source\editor\ComponentInspector.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\editor\TransformTool.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\math\BoundingBox.h">
       <Filter>Header Files</Filter>
@@ -767,14 +701,8 @@
     <ClInclude Include="source\vulkan\ShaderFactory.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\handles\PipelineLegacy.h">
-      <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\handles\Pipeline.h">
       <Filter>Source Files\vulkan\handles</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\EffectLegacy.h">
-      <Filter>Source Files\vulkan\effects</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\EffectManager.h">
       <Filter>Source Files\vulkan</Filter>
@@ -869,26 +797,8 @@
     <ClInclude Include="source\utility\math\Frustum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\MarchingCubesTerrainEffect.h">
-      <Filter>Source Files\vulkan\effects\terrain</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\Terrain.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\legacy\BaseTerrain.h">
-      <Filter>Source Files\terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\legacy\Block.h">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\legacy\MarchingCubes.h">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\legacy\MarchingCubesTerrain.h">
-      <Filter>Source Files\terrain\marching_cubes</Filter>
-    </ClInclude>
-    <ClInclude Include="source\core\legacy\PerlinTerrain.h">
-      <Filter>Source Files\terrain\heightmap</Filter>
     </ClInclude>
     <ClInclude Include="source\editor\TerrainTool.h">
       <Filter>Header Files</Filter>
@@ -988,12 +898,6 @@
     <None Include="README.md">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="data\shaders\test\test.frag">
-      <Filter>Source Files\shaders\test</Filter>
-    </None>
-    <None Include="data\shaders\test\test.vert">
-      <Filter>Source Files\shaders\test</Filter>
-    </None>
     <None Include="docs\notes.md">
       <Filter>docs</Filter>
     </None>
@@ -1006,12 +910,6 @@
     <None Include="data\shaders\geometry\normaldebug.geom">
       <Filter>Source Files\shaders\geometry</Filter>
     </None>
-    <None Include="data\shaders\textoverlay\text.frag">
-      <Filter>Source Files\shaders\text</Filter>
-    </None>
-    <None Include="data\shaders\textoverlay\text.vert">
-      <Filter>Source Files\shaders\text</Filter>
-    </None>
     <None Include="data\shaders\terrain\terrain.frag">
       <Filter>Source Files\vulkan\effects\terrain\shader</Filter>
     </None>
@@ -1021,23 +919,11 @@
     <None Include="data\shaders\marching_cubes\marching_cubes.comp">
       <Filter>Source Files\vulkan\effects\marching_cubes\shader</Filter>
     </None>
-    <None Include="data\shaders\phong\phong.frag">
-      <Filter>Source Files\vulkan\effects\phong\shaders</Filter>
-    </None>
-    <None Include="data\shaders\phong\phong.vert">
-      <Filter>Source Files\vulkan\effects\phong\shaders</Filter>
-    </None>
     <None Include="data\shaders\screenquad\screenquad.frag">
       <Filter>Source Files\vulkan\effects\screenquad\shaders</Filter>
     </None>
     <None Include="data\shaders\screenquad\screenquad.vert">
       <Filter>Source Files\vulkan\effects\screenquad\shaders</Filter>
-    </None>
-    <None Include="data\shaders\water\water.frag">
-      <Filter>Source Files\vulkan\effects\water\shader</Filter>
-    </None>
-    <None Include="data\shaders\water\water.vert">
-      <Filter>Source Files\vulkan\effects\water\shader</Filter>
     </None>
     <None Include="data\shaders\normal_debug\base.frag">
       <Filter>Source Files\vulkan\effects\normal_debug\shaders</Filter>

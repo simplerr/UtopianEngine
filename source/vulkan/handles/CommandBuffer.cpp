@@ -1,7 +1,5 @@
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/handles/PipelineLegacy.h"
-#include "vulkan/handles/Pipeline2.h"
 #include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
@@ -9,7 +7,6 @@
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/Pipeline.h"
 #include "vulkan/Effect.h"
-#include "vulkan/EffectLegacy.h"
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "RenderPass.h"
@@ -145,16 +142,6 @@ namespace Utopian::Vk
 		vkCmdSetScissor(mHandle, 0, 1, &rect);
 	}
 
-	void CommandBuffer::CmdBindPipeline(PipelineLegacy* pipeline)
-	{
-		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
-	}
-
-	void CommandBuffer::CmdBindPipeline(Pipeline2* pipeline)
-	{
-		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
-	}
-
 	void CommandBuffer::CmdBindPipeline(ComputePipeline* pipeline)
 	{
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetVkHandle());
@@ -177,11 +164,6 @@ namespace Utopian::Vk
 	{
 		VkDescriptorSet descriptorSetVk = descriptorSet->GetVkHandle();
 		vkCmdBindDescriptorSets(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout->GetVkHandle(), 0, 1, &descriptorSetVk, 0, NULL);
-	}
-
-	void CommandBuffer::CmdBindDescriptorSet(const EffectLegacy* effect, uint32_t descriptorSetCount, VkDescriptorSet* descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
-	{
-		vkCmdBindDescriptorSets(mHandle, bindPoint, effect->GetPipelineLayout(), firstSet, descriptorSetCount, descriptorSets, 0, NULL);
 	}
 
 	void CommandBuffer::CmdBindDescriptorSet(VkPipelineLayout pipelineLayout, uint32_t descriptorSetCount, VkDescriptorSet * descriptorSets, VkPipelineBindPoint bindPoint, uint32_t firstSet)
@@ -210,11 +192,6 @@ namespace Utopian::Vk
 	void CommandBuffer::CmdPushConstants(const PipelineLayout* pipelineLayout, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
 	{
 		vkCmdPushConstants(mHandle, pipelineLayout->GetVkHandle(), shaderStageFlags, 0, size, data);
-	}
-
-	void CommandBuffer::CmdPushConstants(const EffectLegacy* effect, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)
-	{
-		vkCmdPushConstants(mHandle, effect->GetPipelineLayout(), shaderStageFlags, 0, size, data);
 	}
 
 	void CommandBuffer::CmdPushConstants(const PipelineInterface* pipelineInterface, VkShaderStageFlags shaderStageFlags, uint32_t size, const void* data)

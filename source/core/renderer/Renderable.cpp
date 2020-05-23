@@ -12,7 +12,6 @@ namespace Utopian
 		SetRenderFlags(RENDER_FLAG_DEFERRED);
 		SetTileFactor(glm::vec2(1.0f, 1.0f));
 		SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		SetMaterial(Vk::Mat(Vk::EffectType::PHONG, Vk::PhongEffect::NORMAL));
 		SetVisible(true);
 		SetPushFoliage(false);
 	}
@@ -76,11 +75,6 @@ namespace Utopian
 		mColor = color;
 	}
 
-	void Renderable::SetMaterial(Utopian::Vk::Mat material)
-	{
-		mMaterial = material;
-	}
-
 	void Renderable::SetVisible(bool visible)
 	{
 		mVisible = visible;
@@ -112,11 +106,6 @@ namespace Utopian
 	const glm::vec4 Renderable::GetColor() const
 	{
 		return mColor;
-	}
-
-	const Utopian::Vk::Mat Renderable::GetMaterial() const
-	{
-		return mMaterial;
 	}
 
 	glm::vec2 Renderable::GetTextureTiling() const
