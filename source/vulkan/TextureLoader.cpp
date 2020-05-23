@@ -108,12 +108,12 @@ namespace Utopian::Vk
 		CommandBuffer cmdBuffer = CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		// Transfer image to a valid layout
-		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		image->LayoutTransition(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 		stagingBuffer.Copy(&cmdBuffer, image.get(), bufferCopyRegions);
 
 		// Transfer back to final layouts
-		image->LayoutTransition(mDevice, cmdBuffer, imageLayout);
+		image->LayoutTransition(cmdBuffer, imageLayout);
 
 		cmdBuffer.Flush();
 
@@ -206,13 +206,13 @@ namespace Utopian::Vk
 		CommandBuffer cmdBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		// Prepare images for copying
-		stagingImage.LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		stagingImage.LayoutTransition(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+		image->LayoutTransition(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
-		stagingImage.Copy(&cmdBuffer, image.get());
+		stagingImage.Copy(cmdBuffer, image.get());
 
 		// Transition to final layout
-		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		image->LayoutTransition(cmdBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 		cmdBuffer.Flush();
 
@@ -293,12 +293,12 @@ namespace Utopian::Vk
 		CommandBuffer cmdBuffer = CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 		// Transfer image to a valid layout
-		image->LayoutTransition(mDevice, cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		image->LayoutTransition(cmdBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 		stagingBuffer.Copy(&cmdBuffer, image.get(), bufferCopyRegions);
 
 		// Transfer back to final layouts
-		image->LayoutTransition(mDevice, cmdBuffer, imageLayout);
+		image->LayoutTransition(cmdBuffer, imageLayout);
 
 		cmdBuffer.Flush();
 

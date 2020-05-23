@@ -118,7 +118,7 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(vkCreateImageView(GetVkDevice(), &viewCreateInfo, nullptr, &mImageView));
 	}
 
-	void Image::LayoutTransition(Device* device, const CommandBuffer& commandBuffer, VkImageLayout newLayout)
+	void Image::LayoutTransition(const CommandBuffer& commandBuffer, VkImageLayout newLayout)
 	{
 		VkImageSubresourceRange subresourceRange = {};
 		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -138,46 +138,57 @@ namespace Utopian::Vk
 		VkPipelineStageFlags srcStageMask;
 		VkPipelineStageFlags dstStageMask;
 
-		if (mCurrentLayout == VK_IMAGE_LAYOUT_PREINITIALIZED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+		if (mCurrentLayout == VK_IMAGE_LAYOUT_PREINITIALIZED ||
+			mCurrentLayout == VK_IMAGE_LAYOUT_UNDEFINED)
+		{
 			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
-		else if (mCurrentLayout == VK_IMAGE_LAYOUT_PREINITIALIZED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		}
-		else if (mCurrentLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		}
-		else if (mCurrentLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		}
-		else if (mCurrentLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+		else if (mCurrentLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		{
 			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-			srcStageMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			srcStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
-		else if (mCurrentLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
-			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-			srcStageMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		else if (mCurrentLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
+		{
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			srcStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
 		}
-		else {
+		else if (mCurrentLayout == VK_IMAGE_LAYOUT_GENERAL)
+		{
+			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
+		}
+		else
+		{
 			throw std::invalid_argument("Unsupported layout transition!");
 		}
-		// Extend this with more image layout transitions
+
+		if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL)
+		{
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
+		else if (newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+		{
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		}
+		else if (newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ||
+				 newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
+		{
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+		else if (newLayout == VK_IMAGE_LAYOUT_GENERAL)
+		{
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		}
+		else
+		{
+			throw std::invalid_argument("Unsupported layout transition!");
+		}
 
 		vkCmdPipelineBarrier(
 			commandBuffer.GetVkHandle(),
@@ -191,7 +202,7 @@ namespace Utopian::Vk
 		mCurrentLayout = newLayout;
 	}
 
-	void Image::Copy(CommandBuffer* commandBuffer, Image* destination)
+	void Image::Copy(const CommandBuffer& commandBuffer, Image* destination)
 	{
 		VkImageSubresourceLayers subResource = {};
 		subResource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -209,11 +220,39 @@ namespace Utopian::Vk
 		region.extent.depth = mDepth;
 
 		vkCmdCopyImage(
-			commandBuffer->GetVkHandle(),
+			commandBuffer.GetVkHandle(),
 			GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			destination->GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1, &region
 		);
+	}
+
+	void Image::Blit(const CommandBuffer& commandBuffer, Image* destination)
+	{
+		// Blit
+		VkOffset3D srcBlitSize;
+		srcBlitSize.x = GetWidth();
+		srcBlitSize.y = GetHeight();
+		srcBlitSize.z = 1;
+		VkOffset3D dstBlitSize;
+		dstBlitSize.x = destination->GetWidth();
+		dstBlitSize.y = destination->GetHeight();
+		dstBlitSize.z = 1;
+		VkImageBlit imageBlitRegion{};
+		imageBlitRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imageBlitRegion.srcSubresource.layerCount = 1;
+		imageBlitRegion.srcOffsets[1] = srcBlitSize;
+		imageBlitRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imageBlitRegion.dstSubresource.layerCount = 1;
+		imageBlitRegion.dstOffsets[1] = dstBlitSize;
+
+		vkCmdBlitImage(
+			commandBuffer.GetVkHandle(),
+			GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			destination->GetVkHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			1,
+			&imageBlitRegion,
+			VK_FILTER_NEAREST);
 	}
 
 	void Image::SetFinalLayout(VkImageLayout finalLayout)

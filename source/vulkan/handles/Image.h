@@ -35,8 +35,9 @@ namespace Utopian::Vk
 		~Image();
 
 
-		void LayoutTransition(Device* device, const CommandBuffer& commandBuffer, VkImageLayout newLayout);
-		void Copy(CommandBuffer* commandBuffer, Image* destination);
+		void LayoutTransition(const CommandBuffer& commandBuffer, VkImageLayout newLayout);
+		void Copy(const CommandBuffer& commandBuffer, Image* destination);
+		void Blit(const CommandBuffer& commandBuffer, Image* destination);
 		void SetFinalLayout(VkImageLayout finalLayout);
 
 		void MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data);
