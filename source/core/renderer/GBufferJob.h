@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/GBufferEffect.h"
+#include "vulkan/VulkanInclude.h"
 
 namespace Utopian
 {
@@ -88,8 +88,8 @@ namespace Utopian
 
 	private:
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
-		SharedPtr<Vk::GBufferEffect> mGBufferEffect;
-		SharedPtr<Vk::GBufferEffect> mGBufferEffectWireframe;
+		SharedPtr<Vk::Effect> mGBufferEffect;
+		SharedPtr<Vk::Effect> mGBufferEffectWireframe;
 		SharedPtr<Vk::Effect> mInstancedAnimationEffect;
 		SharedPtr<Vk::Effect> mGBufferEffectInstanced;
 

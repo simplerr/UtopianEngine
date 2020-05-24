@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/SSAOEffect.h"
+#include "vulkan/Effect.h"
 
 namespace Utopian
 {

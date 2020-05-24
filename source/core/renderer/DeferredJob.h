@@ -1,14 +1,18 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/DeferredEffect.h"
-#include "ScreenQuadRenderer.h"
+#include "vulkan/VulkanInclude.h"
+#include "core/CommonBuffers.h"
 
 namespace Utopian
 {
 	class DeferredJob : public BaseJob
 	{
 	public:
+		UNIFORM_BLOCK_BEGIN(DeferredEyePos)
+			UNIFORM_PARAM(glm::vec4, eyePos)
+		UNIFORM_BLOCK_END()
+
 		DeferredJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~DeferredJob();
 
@@ -18,6 +22,10 @@ namespace Utopian
 		SharedPtr<Vk::BasicRenderTarget> renderTarget;
 	private:
 		SharedPtr<Vk::Sampler> mDepthSampler;
-		SharedPtr<Vk::DeferredEffect> mEffect;
+		SharedPtr<Vk::Effect> mEffect;
+		DeferredEyePos eyeBlock;
+		LightUniformBuffer light_ubo;
+		SettingsUniformBuffer settings_ubo;
+		CascadeBlock cascade_ubo;
 	};
 }

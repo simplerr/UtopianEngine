@@ -31,12 +31,18 @@ namespace Utopian
 		mRenderTarget->SetClearColor(0, 0, 0, 1);
 		mRenderTarget->Create();
 
-		// Todo: Implement a better way for multiple pipelines in the same Effect
-		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, mRenderTarget->GetRenderPass());
-		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::GBufferEffect>(mDevice, mRenderTarget->GetRenderPass());
-		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-
 		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+
+		// Todo: Implement a better way for multiple pipelines in the same Effect
+		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mGBufferEffect->CreatePipeline();
+
+		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		mGBufferEffectWireframe->CreatePipeline();
+
 		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
 		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
 
@@ -62,11 +68,12 @@ namespace Utopian
 
 		mGBufferEffectInstanced->CreatePipeline();
 		mInstancedAnimationEffect->CreatePipeline();
-		mGBufferEffectWireframe->CreatePipeline();
 
 		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mGBufferEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mGBufferEffectWireframe->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
 
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
@@ -86,8 +93,6 @@ namespace Utopian
 
 	void GBufferJob::Render(const JobInput& jobInput)
 	{
-		mGBufferEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
-		mGBufferEffectWireframe->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix);
 		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
 		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		mViewProjectionBlock.UpdateMemory();

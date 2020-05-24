@@ -1,14 +1,12 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/BlurEffect.h"
 
 namespace Utopian
 {
 	class BloomJob : public BaseJob
 	{
 	public:
-
 		UNIFORM_BLOCK_BEGIN(ExtractSettings)
 			UNIFORM_PARAM(float, threshold)
 		UNIFORM_BLOCK_END()

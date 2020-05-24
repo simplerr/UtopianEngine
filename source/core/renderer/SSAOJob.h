@@ -1,13 +1,25 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/SSAOEffect.h"
+#include "vulkan/Effect.h"
 
 namespace Utopian
 {
 	class SSAOJob : public BaseJob
 	{
 	public:
+		UNIFORM_BLOCK_BEGIN(SSAOCameraBlock)
+			UNIFORM_PARAM(glm::mat4, projection)
+			UNIFORM_PARAM(glm::mat4, view)
+			UNIFORM_PARAM(glm::vec4, eyePos)
+			UNIFORM_PARAM(glm::vec4, samples[64]) // Todo: Move to it's own block so the rest can be reused
+		UNIFORM_BLOCK_END()
+
+		UNIFORM_BLOCK_BEGIN(SSAOSettingsBlock)
+			UNIFORM_PARAM(float, radius)
+			UNIFORM_PARAM(float, bias)
+		UNIFORM_BLOCK_END()
+
 		SSAOJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~SSAOJob();
 
@@ -19,6 +31,8 @@ namespace Utopian
 	private:
 		void CreateKernelSamples();
 
-		SharedPtr<Vk::SSAOEffect> mEffect;
+		SharedPtr<Vk::Effect> mEffect;
+		SSAOCameraBlock cameraBlock;
+		SSAOSettingsBlock settingsBlock;
 	};
 }

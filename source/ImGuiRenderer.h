@@ -13,8 +13,8 @@
 
 #include "imgui/imgui.h"
 #include "vulkan/VulkanInclude.h"
-#include "vulkan/ImguiEffect.h"
 #include "vulkan/handles/Buffer.h"
+#include "vulkan/Effect.h"
 
 namespace Utopian
 {
@@ -55,12 +55,18 @@ namespace Utopian
 		void ResetKeyStates();
 
 	private:
+		struct PushConstantBlock {
+			glm::vec2 scale;
+			glm::vec2 translate;
+		} pushConstBlock;
+
 		Utopian::Vk::VulkanApp* mVulkanApp;
 		Utopian::Vk::CommandBuffer* mCommandBuffer;
 		Utopian::Vk::Buffer mVertexBuffer;
 		Utopian::Vk::Buffer mIndexBuffer;
-		SharedPtr<Vk::ImguiEffect> mImguiEffect;
+		SharedPtr<Vk::Effect> mImguiEffect;
 		SharedPtr<Vk::DescriptorPool> mTextureDescriptorPool;
+		SharedPtr<Vk::VertexDescription> mVertexDescription;
 		SharedPtr<Vk::Sampler> mSampler;
 		SharedPtr<Vk::Texture> mTexture;
 

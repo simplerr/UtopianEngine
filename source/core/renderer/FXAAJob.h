@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/BlurEffect.h"
 
 namespace Utopian
 {

@@ -17,7 +17,19 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		mEffect = Vk::gEffectManager().AddEffect<Vk::SSAOEffect>(device, renderTarget->GetRenderPass());
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+
+		mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		mEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_TRUE;
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
+		mEffect->CreatePipeline();
 	}
 
 	SSAOJob::~SSAOJob()
@@ -29,6 +41,13 @@ namespace Utopian
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
 
+		cameraBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		// Note: Perhaps this should be moved to separate class instead
+		mEffect->BindUniformBuffer("UBO", cameraBlock);
+		mEffect->BindUniformBuffer("UBO_settings", settingsBlock);
+
 		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
 		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *sampler);
 		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalViewImage, *sampler);
@@ -39,8 +58,14 @@ namespace Utopian
 
 	void SSAOJob::Render(const JobInput& jobInput)
 	{
-		mEffect->SetCameraData(jobInput.sceneInfo.viewMatrix, jobInput.sceneInfo.projectionMatrix, glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		mEffect->SetSettings(jobInput.renderingSettings.ssaoRadius, jobInput.renderingSettings.ssaoBias);
+		cameraBlock.data.view = jobInput.sceneInfo.viewMatrix;
+		cameraBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
+		cameraBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
+		cameraBlock.UpdateMemory();
+
+		settingsBlock.data.radius = jobInput.renderingSettings.ssaoRadius;
+		settingsBlock.data.bias = jobInput.renderingSettings.ssaoBias;
+		settingsBlock.UpdateMemory();
 
 		renderTarget->Begin("SSAO pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
@@ -68,9 +93,9 @@ namespace Utopian
 			sample = glm::normalize(sample);
 			sample *= Math::GetRandom(0.0f, 1.0f);
 
-			mEffect->cameraBlock.data.samples[i] = glm::vec4(sample, 0);
+			cameraBlock.data.samples[i] = glm::vec4(sample, 0);
 		}
 
-		mEffect->UpdateMemory();
+		cameraBlock.UpdateMemory();
 	}
 }

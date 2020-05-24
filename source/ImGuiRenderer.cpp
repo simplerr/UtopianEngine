@@ -23,6 +23,7 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/Debug.h"
 #include "Input.h"
+#include "core/renderer/RendererUtility.h"
 
 #define MOUSE_WHEEL_SCALING 150.0f
 
@@ -87,7 +88,32 @@ namespace Utopian
 		io.Fonts->GetTexDataAsRGBA32(&fontData, &texWidth, &texHeight, &pixelSize);
 
 		// Note: Must be performed before Init()
-		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::ImguiEffect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass());
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/imgui/uioverlay.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/imgui/uioverlay.frag";
+
+		mImguiEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), shaderCreateInfo);
+
+		gRendererUtility().SetAlphaBlending(mImguiEffect->GetPipeline());
+
+		// The front facing order is reversed in the Imgui vertex buffer
+		mImguiEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
+
+		// No depth testing
+		mImguiEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
+		mImguiEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
+
+		// Need to override vertex input description from shader since there is some special
+		// treatment of U32 -> vec4 in ImGui
+		mVertexDescription = std::make_shared<Vk::VertexDescription>();
+		mVertexDescription->AddBinding(BINDING_0, sizeof(ImDrawVert), VK_VERTEX_INPUT_RATE_VERTEX);
+		mVertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());	// Location 0 : Position
+		mVertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());	// Location 1 : Uv
+		mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());	// Location 2 : Color
+
+		mImguiEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+
+		mImguiEffect->CreatePipeline();
 
 		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
 		mImguiEffect->BindCombinedImage("fontSampler", *mTexture);
@@ -113,7 +139,7 @@ namespace Utopian
 		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer.GetVkBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
 		// UI scale and translate via push constants
-		Vk::ImguiEffect::PushConstantBlock pushConstBlock;
+		PushConstantBlock pushConstBlock;
 		pushConstBlock.scale = glm::vec2(2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y);
 		pushConstBlock.translate = glm::vec2(-1.0f);
 		mCommandBuffer->CmdPushConstants(mImguiEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConstBlock), &pushConstBlock);

@@ -240,9 +240,6 @@
     <ClCompile Include="external\imgui\imgui_draw.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\ImguiEffect.cpp">
-      <Filter>Source Files\vulkan\effects\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="source\editor\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -309,20 +306,8 @@
     <ClCompile Include="source\core\renderer\Renderable.cpp">
       <Filter>Source Files\scene</Filter>
     </ClCompile>
-    <ClCompile Include="source\vulkan\GBufferEffect.cpp">
-      <Filter>Source Files\vulkan\effects\gbuffer</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\DeferredEffect.cpp">
-      <Filter>Source Files\vulkan\effects\deferred</Filter>
-    </ClCompile>
     <ClCompile Include="source\vulkan\BasicRenderTarget.cpp">
       <Filter>Source Files\vulkan</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\SSAOEffect.cpp">
-      <Filter>Source Files\vulkan\effects\ssao</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\BlurEffect.cpp">
-      <Filter>Source Files\vulkan\effects\blur</Filter>
     </ClCompile>
     <ClCompile Include="source\vulkan\ShaderFactory.cpp">
       <Filter>Source Files\vulkan</Filter>
@@ -338,9 +323,6 @@
     </ClCompile>
     <ClCompile Include="source\core\ActorFactory.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\vulkan\SkyboxEffect.cpp">
-      <Filter>Source Files\vulkan</Filter>
     </ClCompile>
     <ClCompile Include="source\core\AssetLoader.cpp">
       <Filter>Source Files\scene</Filter>
@@ -599,9 +581,6 @@
     <ClInclude Include="external\imgui\imgui_internal.h">
       <Filter>Source Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\ImguiEffect.h">
-      <Filter>Source Files\vulkan\effects\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="source\editor\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -680,23 +659,11 @@
     <ClInclude Include="source\core\renderer\Renderable.h">
       <Filter>Source Files\scene</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\GBufferEffect.h">
-      <Filter>Source Files\vulkan\effects\gbuffer</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\DeferredEffect.h">
-      <Filter>Source Files\vulkan\effects\deferred</Filter>
-    </ClInclude>
     <ClInclude Include="source\vulkan\BasicRenderTarget.h">
       <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\Common.h">
       <Filter>Source Files\utility</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\SSAOEffect.h">
-      <Filter>Source Files\vulkan\effects\ssao</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\BlurEffect.h">
-      <Filter>Source Files\vulkan\effects\blur</Filter>
     </ClInclude>
     <ClInclude Include="source\vulkan\ShaderFactory.h">
       <Filter>Source Files\vulkan</Filter>
@@ -712,9 +679,6 @@
     </ClInclude>
     <ClInclude Include="source\core\ActorFactory.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\vulkan\SkyboxEffect.h">
-      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\PerlinNoise.h">
       <Filter>Source Files\utility</Filter>

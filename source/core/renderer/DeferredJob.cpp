@@ -4,6 +4,7 @@
 #include "core/renderer/BlurJob.h"
 #include "core/renderer/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "vulkan/Effect.h"
 
 namespace Utopian
 {
@@ -11,18 +12,27 @@ namespace Utopian
 		: BaseJob(device, width, height)
 	{
 		renderTarget = std::make_shared<Vk::BasicRenderTarget>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
-		mEffect = Vk::gEffectManager().AddEffect<Vk::DeferredEffect>(device, renderTarget->GetRenderPass());
 
-		//mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
+		Vk::ShaderCreateInfo shaderCreateInfo;
+		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		shaderCreateInfo.fragmentShaderPath = "data/shaders/deferred/deferred.frag";
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
+
+		// Vertices generated in fullscreen.vert are in clockwise order
+		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mEffect->CreatePipeline();
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
 		mDepthSampler = std::make_shared<Vk::Sampler>(device, false);
-		mDepthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropy filter causes artifacts at the edge between cascades
+		mDepthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropic filter causes artifacts at the edge between cascades
 		mDepthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 		mDepthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 		mDepthSampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 		mDepthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
 		mDepthSampler->Create();
+
+		//mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
 	}
 
 	DeferredJob::~DeferredJob()
@@ -33,6 +43,16 @@ namespace Utopian
 	{
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
+
+		eyeBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		light_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		settings_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		cascade_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		mEffect->BindUniformBuffer("UBO_eyePos", eyeBlock);
+		mEffect->BindUniformBuffer("UBO_lights", light_ubo);
+		mEffect->BindUniformBuffer("UBO_settings", settings_ubo);
+		mEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
 
 		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
 		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *sampler);
@@ -46,23 +66,40 @@ namespace Utopian
 
 	void DeferredJob::Render(const JobInput& jobInput)
 	{
-		mEffect->SetSettingsData(jobInput.renderingSettings);
-		mEffect->SetEyePos(glm::vec4(jobInput.sceneInfo.eyePos, 1.0f));
-		mEffect->SetLightArray(jobInput.sceneInfo.lights);
+		// Settings data
+		settings_ubo.data.fogColor = jobInput.renderingSettings.fogColor;
+		settings_ubo.data.fogStart = jobInput.renderingSettings.fogStart;
+		settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
+		settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
+		settings_ubo.UpdateMemory();
+
+		// Eye pos
+		eyeBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
+		eyeBlock.UpdateMemory();
+
+		// Light array
+		light_ubo.lights.clear();
+		for (auto& light : jobInput.sceneInfo.lights)
+		{
+			light_ubo.lights.push_back(light->GetLightData());
+		}
+
+		light_ubo.constants.numLights = light_ubo.lights.size();
+		light_ubo.UpdateMemory();
 
 		// Note: Todo: Temporary
 		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
 		{
-			mEffect->cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
-			mEffect->cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
+			cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
+			cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
 		}
 
 		// Note: This should probably be moved. We need the fragment position in view space
 		// when comparing it's Z value to find out which shadow map cascade it should sample from.
-		mEffect->cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
-		mEffect->cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
-		mEffect->cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
-		mEffect->cascade_ubo.UpdateMemory();
+		cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+		cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
+		cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
+		cascade_ubo.UpdateMemory();
 
 		// End of temporary
 
