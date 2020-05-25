@@ -221,6 +221,12 @@ namespace Utopian
 			OnActorSelected(nullptr);
 		}
 
+		float mouseDz = gInput().MouseDz();
+		if (mouseDz != 0.0f && mSelectedActor != nullptr)
+		{
+			mSelectedActor->GetTransform().AddScale(glm::vec3(mouseDz * MWHEEL_SCALE_FACTOR));
+		}
+
 		// Hide/show UI
 		if (gInput().KeyPressed('H'))
 		{
