@@ -60,12 +60,6 @@ namespace Utopian::Vk
 	private:
 		SharedPtr<Buffer> mVertexBuffer;
 		SharedPtr<Buffer> mIndexBuffer;
-
-		// Note: Currently each block in the terrain is it's own Mesh which means all of them will have
-		// their own DescriptorSet even when the texture will not change on a per instance basis as
-		// the case is for Actors. 
-		// The solution is probabl to keep the terrain blocks as Meshes but they should not be Renderables.
-		// The textures and descriptor set of a Mesh will not be created unless LoadTextures() is called
 		SharedPtr<DescriptorSet> mTextureDescriptorSet;
 
 		Device* mDevice;

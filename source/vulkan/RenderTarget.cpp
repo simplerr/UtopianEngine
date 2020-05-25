@@ -16,9 +16,9 @@ namespace Utopian::Vk
 		mWidth = width;
 		mHeight = height;
 
-		mCommandBuffer = new CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-		mRenderPass = new RenderPass(device);
-		mFrameBuffer = new FrameBuffers(device);
+		mCommandBuffer = std::make_shared<CommandBuffer>(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
+		mRenderPass = std::make_shared<RenderPass>(device);
+		mFrameBuffer = std::make_shared<FrameBuffers>(device);
 		mSampler = std::make_shared<Sampler>(device);
 		
 		SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -68,7 +68,7 @@ namespace Utopian::Vk
 	void RenderTarget::Create()
 	{
 		mRenderPass->Create();
-		mFrameBuffer->Create(mRenderPass, GetWidth(), GetHeight());
+		mFrameBuffer->Create(mRenderPass.get(), GetWidth(), GetHeight());
 
 		for (uint32_t i = 0; i < mRenderPass->GetNumColorAttachments(); i++)
 		{
@@ -169,12 +169,12 @@ namespace Utopian::Vk
 
 	Utopian::Vk::CommandBuffer* RenderTarget::GetCommandBuffer()
 	{
-		return mCommandBuffer;
+		return mCommandBuffer.get();
 	}
 
 	RenderPass* RenderTarget::GetRenderPass()
 	{
-		return mRenderPass;
+		return mRenderPass.get();
 	}
 
 	void RenderTarget::SetClearColor(float r, float g, float b, float a)
