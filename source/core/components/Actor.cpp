@@ -1,7 +1,6 @@
 #include "Actor.h"
 #include "core/ObjectManager.h"
 #include "core/components/CTransform.h"
-#include "utility/Exception.h"
 
 namespace Utopian
 {
@@ -67,8 +66,7 @@ namespace Utopian
 	{
 		CTransform* transform = GetComponent<CTransform>();
 
-		if (transform == nullptr)
-			THROW_EXCEPTION(Exception, "No CTransform component");
+		assert(transform);
 
 		return transform->GetTransform();
 	}
