@@ -14,20 +14,15 @@ namespace Utopian
 
 		// Note: Todo: This should be shared with SkydomeJob
         UNIFORM_BLOCK_BEGIN(SkyParameterBlock)
-			UNIFORM_PARAM(glm::vec3, eyePos)
 			UNIFORM_PARAM(float, sphereRadius)
 			UNIFORM_PARAM(float, inclination)
 			UNIFORM_PARAM(float, azimuth)
-			UNIFORM_PARAM(float, time)
 			UNIFORM_PARAM(float, sunSpeed)
 			UNIFORM_PARAM(int, onlySun)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SSRSettingsBlock)
-			UNIFORM_PARAM(glm::mat4, _CameraProjectionMatrix)        // projection matrix that maps to screen pixels (not NDC)
-			UNIFORM_PARAM(glm::mat4, _CameraInverseProjectionMatrix) // inverse projection matrix (NDC to camera space)
 			UNIFORM_PARAM(glm::mat4, _NormalMatrix)
-			UNIFORM_PARAM(glm::mat4, _ViewMatrix)
 			UNIFORM_PARAM(glm::vec2, _RenderBufferSize)
 			UNIFORM_PARAM(glm::vec2, _OneDividedByRenderBufferSize)  // Optimization: removes 2 divisions every itteration
 			UNIFORM_PARAM(float, _Iterations)                        // maximum ray iterations

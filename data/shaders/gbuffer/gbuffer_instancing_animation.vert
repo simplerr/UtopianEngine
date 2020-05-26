@@ -1,5 +1,9 @@
 #version 450
 
+#extension GL_GOOGLE_include_directive : enable
+
+#include "shared_variables.glsl"
+
 layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;
@@ -16,16 +20,8 @@ struct Sphere
 	float radius;
 };
 
-layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
+layout (std140, set = 0, binding = 2) uniform UBO_animationParameters
 {
-	// Camera 
-	mat4 projection;
-	mat4 view;
-} per_frame_vs;
-
-layout (std140, set = 0, binding = 2) uniform UBO_animationParameters 
-{
-	float time;
 	float terrainSize; // Used to calculate windmap UV coordinate
 	float strength;
 	float frequency;
@@ -34,7 +30,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_animationParameters
 
 layout (set = 0, binding = 3) uniform sampler2D windmapSampler;
 
-layout (std140, set = 0, binding = 4) uniform UBO_sphereList 
+layout (std140, set = 0, binding = 4) uniform UBO_sphereList
 {
 	float numSpheres;
 	vec3 padding;
@@ -53,21 +49,21 @@ layout (location = 4) out vec3 OutNormalV;
 layout (location = 5) out vec2 OutTextureTiling;
 layout (location = 6) out mat3 OutTBN;
 
-out gl_PerVertex 
+out gl_PerVertex
 {
-	vec4 gl_Position;   
+	vec4 gl_Position;
 };
 
 vec2 transformToUv(vec2 posW)
 {
 	vec2 uv = posW;
-	uv += animationParameters_ubo.terrainSize / 2.0f; 
+	uv += animationParameters_ubo.terrainSize / 2.0f;
 	uv /= animationParameters_ubo.terrainSize;
 
 	return uv;
 }
 
-void main() 
+void main()
 {
 	// Todo: Workaround since glslang reflection removes unused vertex input
 	vec3 color = InColor;
@@ -80,8 +76,8 @@ void main()
 	OutPosW = (InInstanceWorld * vec4(localPos, 1.0)).xyz;
 
 	OutColor = vec4(1.0);
-	OutNormalW  = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
-	mat3 normalMatrix = transpose(inverse(mat3(per_frame_vs.view * InInstanceWorld)));
+	OutNormalW = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
+	mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix * InInstanceWorld)));
 	OutNormalV = normalMatrix * InNormalL;
 	OutTex = InTex;
 	OutTextureTiling = vec2(1.0, 1.0);
@@ -90,7 +86,7 @@ void main()
 	float modelHeight = pushConstants.modelHeight;
 	if (animationParameters_ubo.enabled == 1)
 	{
-		float time = animationParameters_ubo.time;
+		float time = sharedVariables.time;
 		vec2 uv = transformToUv(vec2(OutPosW.x, OutPosW.z));
 		uv = fract(uv * 400 + time / animationParameters_ubo.frequency);
 		vec3 windDir = texture(windmapSampler, uv).xyz;
@@ -116,5 +112,5 @@ void main()
 		}
 	}
 
-	gl_Position = per_frame_vs.projection * per_frame_vs.view * InInstanceWorld * vec4(localPos, 1.0);
+	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * InInstanceWorld * vec4(localPos, 1.0);
 }

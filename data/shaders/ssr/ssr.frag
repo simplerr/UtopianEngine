@@ -28,6 +28,7 @@
 
 #include "../common/sky_color.glsl"
 #include "material_types.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -47,10 +48,7 @@ layout (set = 0, binding = 7) uniform sampler2D normalSampler;
 
 layout(std140, set = 0, binding = 8) uniform UBO_ssrSettings
 {
-   mat4 _CameraProjectionMatrix;             // projection matrix that maps to screen pixels (not NDC)
-   mat4 _CameraInverseProjectionMatrix;      // inverse projection matrix (NDC to camera space)
    mat4 _NormalMatrix;
-   mat4 _ViewMatrix;
    vec2 _RenderBufferSize;
    vec2 _OneDividedByRenderBufferSize;       // Optimization: removes 2 divisions every itteration
    float _Iterations;                        // maximum ray iterations
@@ -147,8 +145,8 @@ bool traceScreenSpaceRay(vec3 rayOrigin,
    OutRayEnd = vec4(rayEnd, 1.0f);
 
    // Project into homogeneous clip space
-   vec4 H0 = ubo_settings._CameraProjectionMatrix * vec4(rayOrigin, 1.0);
-   vec4 H1 = ubo_settings._CameraProjectionMatrix * vec4(rayEnd, 1.0);
+   vec4 H0 = sharedVariables.projectionMatrix * vec4(rayOrigin, 1.0);
+   vec4 H1 = sharedVariables.projectionMatrix * vec4(rayEnd, 1.0);
 
    float k0 = 1.0 / H0.w;
    float k1 = 1.0 / H1.w;
@@ -308,7 +306,7 @@ void main()
    float decodedDepth = Linear01Depth(texture(_CameraDepthTexture, InTex).r);
 
    vec3 worldPosition = texture(positionSampler, InTex).xyz;
-   vec3 viewPosition = (ubo_settings._ViewMatrix * vec4(worldPosition, 1.0f)).xyz;
+   vec3 viewPosition = (sharedVariables.viewMatrix * vec4(worldPosition, 1.0f)).xyz;
 
    // Note: Use hard coded normal for now to remove the wobble when rotating the camera 
    // Transfering the normal to view space at this stage should remove the wobble effect when moving the camera
@@ -345,10 +343,10 @@ void main()
    if (materialType == MATERIAL_TYPE_WATER)
    {
       // Sky sphere color
-      vec3 toEyeW = normalize(ubo_parameters.eyePos + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
+      vec3 toEyeW = normalize(sharedVariables.eyePos.xyz + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
       vec3 reflection = reflect(toEyeW, worldNormal);
       reflection.y *= -1; // Note: -1
-      SkyOutput skyColor = GetSkyColor(reflection);
+      SkyOutput skyColor = GetSkyColor(reflection, sharedVariables.eyePos.xyz, sharedVariables.time);
       fallbackColor = skyColor.skyColor;
    }
 

@@ -5,11 +5,9 @@
 // which occupies bindng 0-5 for G-buffer textures
 layout (set = 0, binding = 9) uniform UBO_parameters 
 {
-	vec3 eyePos;
 	float sphereRadius;
 	float inclination;
 	float azimuth;
-	float time;
 	float sunSpeed;
 
 	// Used by the sun shaft job to create the radial blur effect
@@ -80,18 +78,18 @@ float FractalNoise(in vec2 xy)
 	return f;
 }
 
-float GetCloudFactor(in vec3 rd)
+float GetCloudFactor(in vec3 rd, vec3 eyePos, float time)
 {
 	//if (rd.y < 0.01) return sky;
-	vec3 cameraPos = ubo_parameters.eyePos;
+	vec3 cameraPos = eyePos;
 	cameraPos = vec3(0.0f); // Note: todo
 
 	float v = (200.0 - cameraPos.y) / rd.y;
 	rd.xz *= v;
 	rd.xz += cameraPos.xz;
 	rd.xz *= .010;
-	float cloudDensity = max(sin(ubo_parameters.time / 5000.0f) * 5.0, 5.0f);
-	float cloudOffset = ubo_parameters.time / CLOUD_SPEED;
+	float cloudDensity = max(sin(time / 5000.0f) * 5.0, 5.0f);
+	float cloudOffset = time / CLOUD_SPEED;
 	float f = (FractalNoise(rd.xz + cloudOffset) - 0.55) * cloudDensity;
 
 	// Uses the ray's y component for horizon fade of fixed colour clouds...
@@ -106,7 +104,7 @@ struct SkyOutput
 	vec4 sunColor; // sun only
 };
 
-SkyOutput GetSkyColor(vec3 direction)
+SkyOutput GetSkyColor(vec3 direction, vec3 eyePos, float time)
 {
     float radius = 1.0f;
 	float inclination = ubo_parameters.inclination;
@@ -129,7 +127,7 @@ SkyOutput GetSkyColor(vec3 direction)
 	float sun = 10 * pow(max(dot(sunPos, unitPos), 0.0), 1200.0);
 
 	// Clouds blocking the sun
-	float cloudFactor = GetCloudFactor(unitPos);
+	float cloudFactor = GetCloudFactor(unitPos, eyePos, time);
 	sun *= (1.0f - cloudFactor);
 
 	skyColor += sun * sunColor;

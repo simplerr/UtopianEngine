@@ -41,9 +41,11 @@ namespace Utopian
 		//effect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 		mEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInputBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mEffect->BindUniformBuffer("UBO_input", mInputBlock);
 		mEffect->BindUniformBuffer("UBO_parameters", mParameterBlock);
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
@@ -69,17 +71,13 @@ namespace Utopian
 
 		// Removes the translation components of the matrix to always keep the skydome at the same distance
 		glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		mViewProjectionBlock.data.view = glm::mat4(glm::mat3(jobInput.sceneInfo.viewMatrix));
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.data.world = glm::scale(world, glm::vec3(2000.0f));
-		mViewProjectionBlock.UpdateMemory();
+		mInputBlock.data.world = glm::scale(world, glm::vec3(2000.0f));
+		mInputBlock.UpdateMemory();
 
 		mParameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;
 		mParameterBlock.data.inclination = sunInclination;
 		mParameterBlock.data.azimuth = mSunAzimuth;
-		mParameterBlock.data.time = Timer::Instance().GetTime();
 		mParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
-		mParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
 		mParameterBlock.data.onlySun = false;
 		mParameterBlock.UpdateMemory();
 

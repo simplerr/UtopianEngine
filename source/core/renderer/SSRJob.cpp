@@ -70,6 +70,8 @@ namespace Utopian
 		mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mTraceSSREffect->BindUniformBuffer("UBO_parameters", mSkyParameterBlock);
 
+		mTraceSSREffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+
 		mSSRSettingsBlock.data._Iterations = 420;
 		mSSRSettingsBlock.data._BinarySearchIterations = 1;
 		mSSRSettingsBlock.data._PixelZSize = 0.0f;
@@ -121,21 +123,16 @@ namespace Utopian
 
 	void SSRJob::RenderTracePass(const JobInput& jobInput)
 	{
-		mSSRSettingsBlock.data._CameraProjectionMatrix = jobInput.sceneInfo.projectionMatrix;
-		mSSRSettingsBlock.data._CameraInverseProjectionMatrix = glm::inverse(glm::mat3(jobInput.sceneInfo.projectionMatrix));
 		mSSRSettingsBlock.data._NormalMatrix = glm::transpose(glm::inverse(glm::mat3(jobInput.sceneInfo.viewMatrix)));
 		mSSRSettingsBlock.data._RenderBufferSize = glm::vec2(mWidth, mHeight);
 		mSSRSettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight); 
-		mSSRSettingsBlock.data._ViewMatrix = jobInput.sceneInfo.viewMatrix;
 		mSSRSettingsBlock.data._SSREnabled = jobInput.renderingSettings.ssrEnabled;
 		mSSRSettingsBlock.UpdateMemory();
 
 		// Note: Todo: Move to common location
 		mSkyParameterBlock.data.inclination = 0.7853981850f;
 		mSkyParameterBlock.data.azimuth = 0.0f;
-		mSkyParameterBlock.data.time = Timer::Instance().GetTime();
 		mSkyParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
-		mSkyParameterBlock.data.eyePos = jobInput.sceneInfo.eyePos;
 		mSkyParameterBlock.data.onlySun = false;
 		mSkyParameterBlock.UpdateMemory();
 

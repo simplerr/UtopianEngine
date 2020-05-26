@@ -3,6 +3,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "shared_water.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
@@ -14,7 +15,7 @@ layout (location = 5) in vec3 InBitangentL;
 layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 
-void main() 
+void main()
 {
 	OutNormalL = InNormalL;
     OutTex = InTex;
@@ -23,7 +24,7 @@ void main()
     // Need to displace the Y coordinate here so that the tessellation factor
     // calculation in the .tesc shader works as expected. Otherwise all vertices will
     // have y=0.0.
-	gl_Position.xyz = calculateWavePosition(gl_Position.xz, ubo_camera.time, OutNormalL);
+	gl_Position.xyz = calculateWavePosition(gl_Position.xz, sharedVariables.time, OutNormalL);
 
 	// Note: workaround to avoid glslang to optimize unused inputs
 	vec3 temp = InColor;

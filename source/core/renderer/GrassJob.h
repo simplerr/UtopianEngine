@@ -15,10 +15,7 @@ namespace Utopian
 			//glm::vec3 scale;
 		};
 
-		UNIFORM_BLOCK_BEGIN(ViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
-			UNIFORM_PARAM(glm::vec4, eyePos)
+		UNIFORM_BLOCK_BEGIN(GrassSettings)
 			UNIFORM_PARAM(float, grassViewDistance)
 		UNIFORM_BLOCK_END()
 
@@ -32,6 +29,6 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::Effect> mEffect;
 		SharedPtr<Vk::Sampler> mSampler;
-		ViewProjection mViewProjectionBlock;
+		GrassSettings mGrassSettingsBlock;
 	};
 }

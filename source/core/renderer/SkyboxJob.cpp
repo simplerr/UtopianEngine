@@ -35,9 +35,10 @@ namespace Utopian
 		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mEffect->CreatePipeline();
 
-		viewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mInputBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		mEffect->BindUniformBuffer("UBO_viewProjection", viewProjectionBlock);
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mEffect->BindUniformBuffer("UBO_input", mInputBlock);
 		mEffect->BindCombinedImage("samplerCubeMap", *mSkybox);
 
 		mCubeModel = Vk::gModelLoader().LoadDebugBoxTriangles();
@@ -45,11 +46,8 @@ namespace Utopian
 
 	void SkyboxJob::Render(const JobInput& jobInput)
 	{
-		// Removes the translation components of the matrix to always keep the skybox at the same distance
-		viewProjectionBlock.data.view = glm::mat4(glm::mat3(jobInput.sceneInfo.viewMatrix));
-		viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		viewProjectionBlock.data.world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
-		viewProjectionBlock.UpdateMemory();
+		mInputBlock.data.world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
+		mInputBlock.UpdateMemory();
 
 		mRenderTarget->Begin();
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();

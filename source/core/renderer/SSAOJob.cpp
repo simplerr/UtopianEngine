@@ -41,11 +41,12 @@ namespace Utopian
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
 
-		cameraBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mKernelSampleBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		// Note: Perhaps this should be moved to separate class instead
-		mEffect->BindUniformBuffer("UBO", cameraBlock);
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+
+		mEffect->BindUniformBuffer("UBO_parameters", mKernelSampleBlock);
 		mEffect->BindUniformBuffer("UBO_settings", settingsBlock);
 
 		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
@@ -58,11 +59,6 @@ namespace Utopian
 
 	void SSAOJob::Render(const JobInput& jobInput)
 	{
-		cameraBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		cameraBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		cameraBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
-		cameraBlock.UpdateMemory();
-
 		settingsBlock.data.radius = jobInput.renderingSettings.ssaoRadius;
 		settingsBlock.data.bias = jobInput.renderingSettings.ssaoBias;
 		settingsBlock.UpdateMemory();
@@ -93,9 +89,9 @@ namespace Utopian
 			sample = glm::normalize(sample);
 			sample *= Math::GetRandom(0.0f, 1.0f);
 
-			cameraBlock.data.samples[i] = glm::vec4(sample, 0);
+			mKernelSampleBlock.data.samples[i] = glm::vec4(sample, 0);
 		}
 
-		cameraBlock.UpdateMemory();
+		mKernelSampleBlock.UpdateMemory();
 	}
 }

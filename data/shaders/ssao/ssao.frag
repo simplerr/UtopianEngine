@@ -2,6 +2,8 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_GOOGLE_include_directive : enable
 
+#include "shared_variables.glsl"
+
 layout (location = 0) in vec2 InTex;
 
 layout (location = 0) out vec4 OutFragColor;
@@ -12,11 +14,8 @@ layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 
 const int KERNEL_SIZE = 64;
 
-layout (std140, set = 0, binding = 0) uniform UBO 
+layout (std140, set = 0, binding = 0) uniform UBO_parameters
 {
-	mat4 projection;
-	mat4 view;
-	vec4 EyePosW;
 	vec4 kernelSamples[KERNEL_SIZE];
 } ubo;
 
@@ -31,7 +30,7 @@ void main()
 	vec3 positionWorld = texture(positionSampler, InTex).xyz;
 	//vec3 normalView = texture(normalSampler, uv).xyz;
 	vec3 albedo = texture(albedoSampler, InTex).rgb;
-	vec3 fragPosView = (ubo.view * vec4(positionWorld, 1.0f)).xyz;
+	vec3 fragPosView = (sharedVariables.viewMatrix * vec4(positionWorld, 1.0f)).xyz;
 	float positionDepth = texture(positionSampler, InTex).w;
 
 	
@@ -60,12 +59,12 @@ void main()
 		
 		// Project to NDC
 		vec4 offset = vec4(samplePos, 1.0f);
-		offset = ubo.projection * offset; 
-		offset.xyz /= offset.w; 
+		offset = sharedVariables.projectionMatrix * offset; 
+		offset.xyz /= offset.w;
 		offset.xyz = offset.xyz * 0.5f + 0.5f; 
 		
 		//float sampleDepth = -(texture(samplerPositionDepth, offset.xy)).w;
-		float sampleDepth = (ubo.view * vec4(texture(positionSampler, offset.xy).xyz, 1.0f)).z; 
+		float sampleDepth = (sharedVariables.viewMatrix * vec4(texture(positionSampler, offset.xy).xyz, 1.0f)).z; 
 
 		float rangeCheck = smoothstep(0.0f, 1.0f, settings_ubo.radius / abs(fragPosView.z - sampleDepth));
 		occlusion += (sampleDepth >= samplePos.z ? 1.0f : 0.0f) * rangeCheck;

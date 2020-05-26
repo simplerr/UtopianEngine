@@ -14,12 +14,8 @@ namespace Utopian
 	class WaterJob : public BaseJob
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(ViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
+		UNIFORM_BLOCK_BEGIN(FrustumPlanes)
 			UNIFORM_PARAM(glm::vec4, frustumPlanes[6])
-			UNIFORM_PARAM(glm::vec3, eyePos)
-			UNIFORM_PARAM(float, time)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
@@ -34,9 +30,8 @@ namespace Utopian
 
         UNIFORM_BLOCK_BEGIN(WaterParameterBlock)
     		UNIFORM_PARAM(glm::vec3, waterColor)
-			UNIFORM_PARAM(float, time)
-    		UNIFORM_PARAM(glm::vec3, foamColor)
 			UNIFORM_PARAM(float, waveSpeed)
+    		UNIFORM_PARAM(glm::vec3, foamColor)
 			UNIFORM_PARAM(float, foamSpeed)
 			UNIFORM_PARAM(float, distortionStrength)
 			UNIFORM_PARAM(float, shorelineDepth)
@@ -60,7 +55,7 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mEffect;
 		SharedPtr<Vk::QueryPool> mQueryPool;
 		SharedPtr<Vk::Sampler> mSampler;
-		ViewProjection mViewProjectionBlock;
+		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;
 		WaterParameterBlock mWaterParameterBlock;
         Vk::Mesh* mWaterMesh;

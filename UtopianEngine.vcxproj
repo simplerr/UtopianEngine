@@ -47,7 +47,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)\bin\</OutDir>
     <IntDir>$(SolutionDir)\bin\intermediate\$(ProjectName)\$(ConfigurationName)</IntDir>
-    <LibraryPath>external\glslang\build\install\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
+    <LibraryPath>libs\glslang;external\glslang\build\install\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -70,12 +70,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;_USE_MATH_DEFINES;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BT_USE_DOUBLE_PRECISION;GLM_FORCE_CTOR_INIT;WIN32;NDEBUG;_WINDOWS;VK_USE_PLATFORM_WIN32_KHR;_USE_MATH_DEFINES;NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>external\glslang\build\install\include;source\;base;external\glm;external\gli;external\assimp;external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>external\bullet3-2.88;external\luaplus;external\luaplus\lua53-luaplus\src;external\glslang\StandAlone;external\glslang;source\;base;external\glm;external\gli;external\assimp;external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/std:c++latest</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -248,7 +249,6 @@
     <ClInclude Include="source\Game.h" />
     <ClInclude Include="source\Im3dRenderer.h" />
     <ClInclude Include="source\utility\Common.h" />
-    <ClInclude Include="source\utility\Exception.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\LightData.h" />
     <ClInclude Include="source\utility\math\Frustum.h" />
@@ -356,6 +356,7 @@
     <None Include="data\shaders\include\math.glsl" />
     <None Include="data\shaders\include\noise.glsl" />
     <None Include="data\shaders\include\phong_lighting.glsl" />
+    <None Include="data\shaders\include\shared_variables.glsl" />
     <None Include="data\shaders\marching_cubes\marching_cubes.comp" />
     <None Include="data\shaders\normal_debug\base.frag" />
     <None Include="data\shaders\normal_debug\base.vert" />

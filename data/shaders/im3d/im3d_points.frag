@@ -8,7 +8,7 @@ layout (location = 0) out vec4 OutColor;
 
 #define kAntialiasing 3.0
 
-void main() 
+void main()
 {
     OutColor = InColor;
 

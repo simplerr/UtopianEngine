@@ -14,7 +14,7 @@ layout (location = 5) in vec3 InBitangentL;
 layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 
-void main() 
+void main()
 {
 	OutNormalL = InNormalL;
     OutTex = InTex;

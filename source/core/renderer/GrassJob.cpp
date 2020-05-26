@@ -48,8 +48,10 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mGrassSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mEffect->BindUniformBuffer("UBO_grassSettings", mGrassSettingsBlock);
 
 		// Need clamp to edge when using transparent textures to not get artifacts at the top
 		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
@@ -70,9 +72,6 @@ namespace Utopian
 
 	void GrassJob::Render(const JobInput& jobInput)
 	{
-		//viewProjectionBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
-		//viewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		//viewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
 		//viewProjectionBlock.data.grassViewDistance = jobInput.renderingSettings.grassViewDistance;
 		//viewProjectionBlock.UpdateMemory();
 

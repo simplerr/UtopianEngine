@@ -4,6 +4,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "../common/sky_color.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec3 InPosW;
 layout (location = 1) in vec3 InPosL;
@@ -12,9 +13,9 @@ layout (location = 2) in vec2 InTex;
 layout (location = 0) out vec4 OutFragColor;
 layout (location = 1) out vec4 OutSun;
 
-void main() 
+void main()
 {
-	SkyOutput skyOutput = GetSkyColor(normalize(InPosL));
+	SkyOutput skyOutput = GetSkyColor(normalize(InPosL), sharedVariables.eyePos.xyz, sharedVariables.time);
 
 	OutFragColor = skyOutput.skyColor;
 	OutSun = skyOutput.sunColor;

@@ -13,11 +13,8 @@ namespace Utopian
 	class GBufferTerrainJob : public BaseJob
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(ViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
+		UNIFORM_BLOCK_BEGIN(FrustumPlanes)
 			UNIFORM_PARAM(glm::vec4, frustumPlanes[6])
-			UNIFORM_PARAM(float, time)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
@@ -43,7 +40,7 @@ namespace Utopian
 		Vk::StaticModel* mQuadModel;
 		SharedPtr<Vk::QueryPool> mQueryPool;
 		SharedPtr<Vk::Sampler> mSampler;
-		ViewProjection mViewProjectionBlock;
+		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;
 		Terrain::BrushBlock mBrushBlock;
 		SharedPtr<Terrain> mTerrain;

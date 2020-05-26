@@ -74,24 +74,23 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-
+		mFrustumPlanesBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
-
 		mWaterParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_waterParameters", mWaterParameterBlock);
-
 		mLightBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_lights", mLightBlock);
-
 		mCascadeBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mEffect->BindUniformBuffer("UBO_frustum", mFrustumPlanesBlock);
+		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
+		mEffect->BindUniformBuffer("UBO_waterParameters", mWaterParameterBlock);
+		mEffect->BindUniformBuffer("UBO_lights", mLightBlock);
 		mEffect->BindUniformBuffer("UBO_cascades", mCascadeBlock);
 
 		mDuDvTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_dudv.png");
 		mNormalTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_normal.png");
 		mFoamMaskTexture = Vk::gTextureLoader().LoadTexture("data/textures/water_foam.png");
+
 		mEffect->BindCombinedImage("dudvSampler", *mDuDvTexture);
 		mEffect->BindCombinedImage("normalSampler", *mNormalTexture);
 		mEffect->BindCombinedImage("foamMaskSampler", *mFoamMaskTexture);
@@ -106,15 +105,9 @@ namespace Utopian
 
 	void WaterJob::Render(const JobInput& jobInput)
 	{
-		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.data.time = gTimer().GetTime();
-		mViewProjectionBlock.data.eyePos = gRenderer().GetMainCamera()->GetPosition();
-
 		const Frustum& frustum = gRenderer().GetMainCamera()->GetFrustum();
-		memcpy(mViewProjectionBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
-
-		mViewProjectionBlock.UpdateMemory();
+		memcpy(mFrustumPlanesBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
+		mFrustumPlanesBlock.UpdateMemory();
 
 		mSettingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
 		mSettingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
@@ -125,7 +118,6 @@ namespace Utopian
 		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		mSettingsBlock.UpdateMemory();
 
-		mWaterParameterBlock.data.time = Timer::Instance().GetTime();
 		mWaterParameterBlock.data.waterColor = jobInput.renderingSettings.waterColor;
 		mWaterParameterBlock.data.foamColor = jobInput.renderingSettings.foamColor;
 		mWaterParameterBlock.data.waveSpeed = jobInput.renderingSettings.waveSpeed;

@@ -53,8 +53,7 @@ Game::~Game()
 
 void Game::InitScene()
 {
-	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Sponza");
-	auto transform = actor->GetTransform();
+	//SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Sponza");
 	// Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
 	// Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	// renderable->LoadModel("data/models/sponza/sponza.obj");

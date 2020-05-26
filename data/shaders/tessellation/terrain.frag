@@ -5,6 +5,7 @@
 #include "shared.glsl"
 #include "math.glsl"
 #include "material_types.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -35,7 +36,7 @@ layout (std140, set = 0, binding = 8) uniform UBO_brush
 layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[3];
 layout (set = 0, binding = 5) uniform sampler2D samplerNormal[3];
 
-void main() 
+void main()
 {
     vec4 blend = texture(samplerBlendmap, InTex);
 	blend = clamp(blend, vec4(0.0), vec4(1.0));
@@ -98,7 +99,7 @@ void main()
     OutNormal = vec4(bumpNormal, 1.0);
 
     bumpNormal.y *= -1; // Unclear why this is needed
-    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
+    mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix)));
 	OutNormalV = vec4(normalMatrix * bumpNormal, 1.0);
     OutNormalV.xyz = normalize(OutNormalV.xyz * 0.5 + 0.5);
 

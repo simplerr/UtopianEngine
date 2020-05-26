@@ -70,7 +70,6 @@ namespace Utopian
 			glm::vec3 garbage;
 		} constants;
 
-		// Note: Todo:
 		const uint32_t NUM_MAX_LIGHTS = 100;
 		std::vector<Utopian::LightData> lights;
 	};

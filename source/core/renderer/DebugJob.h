@@ -7,11 +7,6 @@ namespace Utopian
 	class DebugJob : public BaseJob
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(ViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
-		UNIFORM_BLOCK_END()
-
 		DebugJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~DebugJob();
 
@@ -22,6 +17,5 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::Effect> mColorEffect;
 		SharedPtr<Vk::Effect> mNormalEffect;
-		ViewProjection mViewProjectionBlock;
 	};
 }

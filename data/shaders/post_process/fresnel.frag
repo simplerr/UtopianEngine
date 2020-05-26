@@ -5,6 +5,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "material_types.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -19,7 +20,6 @@ layout (set = 0, binding = 7) uniform sampler2D specularSampler;
 
 layout (set = 0, binding = 8) uniform UBO_parameters
 {
-    vec4 eyePos;
     float transparency;
     float underwaterViewDistance;
 } ubo_parameters;
@@ -46,7 +46,7 @@ void main()
         vec3 reflectionColor = texture(reflectionSampler, InTex + distortion).rgb;
         vec3 refractionColor = texture(refractionSampler, InTex + distortion).rgb;
 
-        vec3 toEyeW = normalize(ubo_parameters.eyePos.xyz + position); // Todo: Note: the +
+        vec3 toEyeW = normalize(sharedVariables.eyePos.xyz + position); // Todo: Note: the +
         float refractivity = dot(toEyeW, normal);
 
         // Deep water effect

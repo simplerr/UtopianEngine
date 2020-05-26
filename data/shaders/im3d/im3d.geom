@@ -2,6 +2,9 @@
 
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
+#extension GL_GOOGLE_include_directive : enable
+
+#include "shared_variables.glsl"
 
 layout (lines) in;
 layout (triangle_strip, max_vertices = 4) out;
@@ -13,21 +16,16 @@ layout (location = 0) out float OutSize;
 layout (location = 1) out vec4 OutColor;
 layout (location = 2) out float OutEdgeDistance;
 
-layout (std140, set = 0, binding = 1) uniform UBO_viewport
-{
-    vec2 viewport;
-} ubo_viewport;
-
 void main(void)
-{	
+{
     vec2 pos0 = gl_in[0].gl_Position.xy / gl_in[0].gl_Position.w;
     vec2 pos1 = gl_in[1].gl_Position.xy / gl_in[1].gl_Position.w;
     
     vec2 dir = pos0 - pos1;
-    dir = normalize(vec2(dir.x, dir.y * ubo_viewport.viewport.y / ubo_viewport.viewport.x));
+    dir = normalize(vec2(dir.x, dir.y * sharedVariables.viewportSize.y / sharedVariables.viewportSize.x));
     vec2 tng0 = vec2(-dir.y, dir.x);
-    vec2 tng1 = tng0 * InSize[1] / ubo_viewport.viewport;
-    tng0 = tng0 * InSize[0] / ubo_viewport.viewport;
+    vec2 tng1 = tng0 * InSize[1] / sharedVariables.viewportSize;
+    tng0 = tng0 * InSize[0] / sharedVariables.viewportSize;
 		
 	// Line start
     gl_Position = vec4((pos0 - tng0) * gl_in[0].gl_Position.w, gl_in[0].gl_Position.zw); 

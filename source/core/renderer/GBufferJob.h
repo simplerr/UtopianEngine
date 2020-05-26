@@ -48,17 +48,11 @@ namespace Utopian
 	class GBufferJob : public BaseJob
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(GBufferViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
-		UNIFORM_BLOCK_END()
-
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
 			UNIFORM_PARAM(int, normalMapping)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(AnimationParametersBlock)
-			UNIFORM_PARAM(float, time)
 			UNIFORM_PARAM(float, terrainSize)
 			UNIFORM_PARAM(float, strength)
 			UNIFORM_PARAM(float, frequency)
@@ -93,7 +87,6 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mInstancedAnimationEffect;
 		SharedPtr<Vk::Effect> mGBufferEffectInstanced;
 
-		GBufferViewProjection mViewProjectionBlock;
 		SettingsBlock mSettingsBlock;
 		SphereUniformBuffer mFoliageSpheresBlock;
 

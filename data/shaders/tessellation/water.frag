@@ -7,6 +7,7 @@
 #include "calculate_shadow.glsl"
 #include "math.glsl"
 #include "material_types.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -25,9 +26,8 @@ layout (location = 6) out vec4 OutSpecular;
 layout (set = 0, binding = 0) uniform UBO_waterParameters
 {
     vec3 waterColor;
-    float time;
-    vec3 foamColor;
     float waveSpeed;
+    vec3 foamColor;
     float foamSpeed;
     float distortionStrength;
     float shorelineDepth;
@@ -55,7 +55,7 @@ vec4 calculateFoam(float waterDepth)
     vec4 resultColor = vec4(vec3(0.0f), 1.0f);
 
     /* Shoreline */
-    float timeOffset = ubo_waterParameters.time * timeScaling * ubo_waterParameters.foamSpeed;
+    float timeOffset = sharedVariables.time * timeScaling * ubo_waterParameters.foamSpeed;
     vec2 scaledprojectedUV = InTex * 950.0f;
     float channelA = texture(foamMaskSampler, scaledprojectedUV - vec2(timeOffset, cos(InTex.x))).r;
     float channelB = texture(foamMaskSampler, scaledprojectedUV * 0.5 + vec2(sin(InTex.y), timeOffset)).b;
@@ -113,14 +113,14 @@ void main()
     OutPosition = vec4(InPosW, 1.0f);
 
     /* Project texture coordinates */
-    vec4 clipSpace = ubo_camera.projection * ubo_camera.view * vec4(InPosW.xyz, 1.0f);
+    vec4 clipSpace = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * vec4(InPosW.xyz, 1.0f);
     vec2 ndc = clipSpace.xy / clipSpace.w;
     vec2 projectedUV = ndc / 2 + 0.5f;
 
     /* Calculate distorted texture coordinates for normals and reflection/refraction distortion */
     const float textureScaling = 90.0f;
     vec2 texCoord = InTex * ubo_waterParameters.waveFrequnecy;
-    float offset = ubo_waterParameters.time * timeScaling * ubo_waterParameters.waveSpeed;
+    float offset = sharedVariables.time * timeScaling * ubo_waterParameters.waveSpeed;
     vec2 distortedTexCoords = texture(dudvSampler, vec2(texCoord.x + offset, texCoord.y)).rg * 0.1f;
     distortedTexCoords = texCoord + vec2(distortedTexCoords.x, distortedTexCoords.y + offset);
 
@@ -129,7 +129,7 @@ void main()
     vec3 finalNormal = texture(normalSampler, distortedTexCoords).rgb * 2.0f - 1.0f;
     finalNormal = normalize(finalNormal);
     finalNormal = normalize(TBN * finalNormal);
-    //normal = mix(normal, InNormalL, clamp((ubo_camera.eyePos + InPosW) / 2000.0f, 0.0f, 1.0f));
+    //normal = mix(normal, InNormalL, clamp((sharedVariables.eyePos + InPosW) / 2000.0f, 0.0f, 1.0f));
     OutAlbedo.xyz = finalNormal;
     // Note: Outputting this normal means that the normal in the SSR shader is not (0,1,0) so
     // the reflection texture itself will be distorted, meaning that the distortin in fresnel.frag is "done twice"
@@ -141,20 +141,20 @@ void main()
 
     /* Phong lighting */
     Material material;
-	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-	material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
+	material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	material.specular = vec4(1.0f, 1.0f, 1.f, ubo_waterParameters.waterSpecularity); 
 
 	vec4 litColor;
-	vec3 toEyeW = normalize(ubo_camera.eyePos + InPosW); // Todo: Move to common file
+	vec3 toEyeW = normalize(sharedVariables.eyePos.xyz + InPosW); // Todo: Move to common file
 	ApplyLighting(material, InPosW, finalNormal, toEyeW, vec4(ubo_waterParameters.waterColor, 1.0f), shadow, litColor);
     OutFragColor = litColor;
     OutFragColor.a = 1;
 
     /* Water depth calculation */
     float depth = texture(depthSampler, projectedUV).r;
-    float depthToTerrain = eye_z_from_depth(depth, ubo_camera.projection);
-    float depthToWater = eye_z_from_depth(gl_FragCoord.z, ubo_camera.projection);
+    float depthToTerrain = eye_z_from_depth(depth, sharedVariables.projectionMatrix);
+    float depthToWater = eye_z_from_depth(gl_FragCoord.z, sharedVariables.projectionMatrix);
     float waterDepth = depthToWater - depthToTerrain;
 
     /* Foam effect at shoreline */
@@ -185,7 +185,7 @@ void main()
 
     /* View normal output to SSR job */
     normalSSR.y *= -1; // Note: Y needs to be negated for the view normal calculation
-    mat3 normalMatrix = transpose(inverse(mat3(ubo_camera.view)));
+    mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix)));
 	vec3 viewNormalSSR = normalMatrix * normalSSR;
     viewNormalSSR = normalize(viewNormalSSR) * 0.5 + 0.5;
     OutNormalViewSSR = vec4(viewNormalSSR, 1.0f);

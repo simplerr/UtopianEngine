@@ -77,6 +77,8 @@ namespace Utopian
 		/** Returns the configured rendering settings. */
 		const RenderingSettings& GetRenderingSettings() const;
 
+		const SharedShaderVariables& GetSharedShaderVariables() const;
+
 		/** Instancing experimentation. */
 		void AddInstancedAsset(uint32_t assetId, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, bool animated = false, bool castShadow = false);
 		void RemoveInstancesWithinRadius(uint32_t assetId, glm::vec3 position, float radius);

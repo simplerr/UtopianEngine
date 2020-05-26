@@ -49,13 +49,13 @@ namespace Utopian
 
 		mEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-
+		mFrustumPlanesBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
-
 		mBrushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mEffect->BindUniformBuffer("UBO_frustum", mFrustumPlanesBlock);
+		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
 		mEffect->BindUniformBuffer("UBO_brush", *mTerrain->GetBrushBlock());
 
 		TerrainMaterial material = mTerrain->GetMaterial("grass");
@@ -92,14 +92,10 @@ namespace Utopian
 
 	void GBufferTerrainJob::Render(const JobInput& jobInput)
 	{
-		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.data.time = gTimer().GetTime();
-
 		const Frustum& frustum = gRenderer().GetMainCamera()->GetFrustum();
-		memcpy(mViewProjectionBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
+		memcpy(mFrustumPlanesBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
 
-		mViewProjectionBlock.UpdateMemory();
+		mFrustumPlanesBlock.UpdateMemory();
 
 		mSettingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
 		mSettingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;

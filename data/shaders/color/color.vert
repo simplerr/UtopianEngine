@@ -1,18 +1,15 @@
 #version 450
 
+#extension GL_GOOGLE_include_directive : enable
+
+#include "shared_variables.glsl"
+
 layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec3 InTangentL;
 layout (location = 5) in vec3 InBitangentL;
-
-layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
-{
-	// Camera 
-	mat4 projection;
-	mat4 view;
-} per_frame_vs;
 
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
@@ -25,7 +22,7 @@ layout (push_constant) uniform PushConstants {
 
 layout (location = 0) out vec4 OutColor;
 
-out gl_PerVertex 
+out gl_PerVertex
 {
 	vec4 gl_Position;
 };
@@ -41,5 +38,5 @@ void main()
 	vec3 temp2 = InTangentL;
 	temp2 = InBitangentL;
 
-	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConstants.world * vec4(InPosL.xyz, 1.0);
+	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

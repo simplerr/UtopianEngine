@@ -32,6 +32,7 @@
 #include "ScreenQuadRenderer.h"
 #include "vulkan/Debug.h"
 #include "utility/math/Helpers.h"
+#include "Input.h"
 
 namespace Utopian
 {
@@ -60,6 +61,8 @@ namespace Utopian
 		// Todo: Figure out where these belong
 		mIm3dRenderer = new Im3dRenderer(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
 		mImGuiRenderer = new ImGuiRenderer(mVulkanApp, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+
+		mSceneInfo.sharedVariables.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	}
 
 	Renderer::~Renderer()
@@ -303,6 +306,15 @@ namespace Utopian
 			mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
 			mSceneInfo.eyePos = mMainCamera->GetPosition();
 			mSceneInfo.im3dVertices = mIm3dRenderer->GetVertexBuffer();
+
+			mSceneInfo.sharedVariables.data.viewMatrix = mMainCamera->GetView();
+			mSceneInfo.sharedVariables.data.projectionMatrix = mMainCamera->GetProjection();
+			mSceneInfo.sharedVariables.data.inverseProjectionMatrix = glm::inverse(glm::mat3(mMainCamera->GetProjection()));
+			mSceneInfo.sharedVariables.data.eyePos = glm::vec4(mMainCamera->GetPosition(), 1.0f);
+			mSceneInfo.sharedVariables.data.mouseUV = gInput().GetMousePosition();
+			mSceneInfo.sharedVariables.data.time = gTimer().GetTime();
+			mSceneInfo.sharedVariables.data.viewportSize = glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+			mSceneInfo.sharedVariables.UpdateMemory();
 
 			mJobGraph->Render(mSceneInfo, mRenderingSettings);
 		}
@@ -594,6 +606,11 @@ namespace Utopian
 	const RenderingSettings& Renderer::GetRenderingSettings() const
 	{
 		return mRenderingSettings;
+	}
+
+	const SharedShaderVariables& Renderer::GetSharedShaderVariables() const
+	{
+		return mSceneInfo.sharedVariables;
 	}
 
 	Camera* Renderer::GetMainCamera() const

@@ -1,12 +1,9 @@
 /** Contains descriptors shared between multiple shader stages. */
 
-layout (std140, set = 0, binding = 0) uniform UBO_viewProjection 
+layout (std140, set = 0, binding = 0) uniform UBO_frustum
 {
-	mat4 projection;
-	mat4 view;
     vec4 frustumPlanes[6];
-    float time;
-} ubo_camera;
+} ubo_frustum;
 
 layout (std140, set = 0, binding = 1) uniform UBO_settings
 {

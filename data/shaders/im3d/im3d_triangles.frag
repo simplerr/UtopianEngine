@@ -6,7 +6,7 @@ layout (location = 2) in float InEdgeDistance;
 
 layout (location = 0) out vec4 OutColor;
 
-void main() 
+void main()
 {
     OutColor = InColor;
 }

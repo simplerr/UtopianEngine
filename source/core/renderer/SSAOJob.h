@@ -8,10 +8,7 @@ namespace Utopian
 	class SSAOJob : public BaseJob
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(SSAOCameraBlock)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
-			UNIFORM_PARAM(glm::vec4, eyePos)
+		UNIFORM_BLOCK_BEGIN(KernelSampleBlock)
 			UNIFORM_PARAM(glm::vec4, samples[64]) // Todo: Move to it's own block so the rest can be reused
 		UNIFORM_BLOCK_END()
 
@@ -32,7 +29,7 @@ namespace Utopian
 		void CreateKernelSamples();
 
 		SharedPtr<Vk::Effect> mEffect;
-		SSAOCameraBlock cameraBlock;
+		KernelSampleBlock mKernelSampleBlock;
 		SSAOSettingsBlock settingsBlock;
 	};
 }

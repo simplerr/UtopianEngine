@@ -31,8 +31,7 @@ namespace Utopian
 		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
 		mEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mEffect->BindCombinedImage("depthSampler", *gbuffer.depthImage, *mRenderTarget->GetSampler());
 
 		// const uint32_t size = 640;
@@ -41,10 +40,6 @@ namespace Utopian
 
 	void GeometryThicknessJob::Render(const JobInput& jobInput)
 	{
-		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.UpdateMemory();
-
 		mRenderTarget->Begin("Geometry thickness pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 

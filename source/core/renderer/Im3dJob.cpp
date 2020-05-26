@@ -27,9 +27,6 @@ namespace Utopian
 		Vk::ShaderCreateInfo createInfo;
 		createInfo.vertexShaderPath = "data/shaders/im3d/im3d.vert";
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mViewportBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
 		// Need to override vertex input description from shader since there is some special
 		// treatment of U32 -> vec4 in Im3d
 		mVertexDescription = std::make_shared<Vk::VertexDescription>();
@@ -68,23 +65,13 @@ namespace Utopian
 		gRendererUtility().SetAlphaBlending(mLinesEffect->GetPipeline());
 		mLinesEffect->CreatePipeline();
 
-		mLinesEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-		mPointsEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-		mTrianglesEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-
-		mLinesEffect->BindUniformBuffer("UBO_viewport", mViewportBlock);
+		mLinesEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mPointsEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mTrianglesEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 	}
 
 	void Im3dJob::Render(const JobInput& jobInput)
 	{
-		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.UpdateMemory();
-
-		mViewportBlock.data.viewport.x = mWidth;
-		mViewportBlock.data.viewport.y = mHeight;
-		mViewportBlock.UpdateMemory();
-
 		mRenderTarget->Begin("Im3d pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();

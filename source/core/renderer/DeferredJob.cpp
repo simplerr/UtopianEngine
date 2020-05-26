@@ -44,12 +44,11 @@ namespace Utopian
 		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
 
-		eyeBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		light_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		settings_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		cascade_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		mEffect->BindUniformBuffer("UBO_eyePos", eyeBlock);
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mEffect->BindUniformBuffer("UBO_lights", light_ubo);
 		mEffect->BindUniformBuffer("UBO_settings", settings_ubo);
 		mEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
@@ -72,10 +71,6 @@ namespace Utopian
 		settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
 		settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
 		settings_ubo.UpdateMemory();
-
-		// Eye pos
-		eyeBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
-		eyeBlock.UpdateMemory();
 
 		// Light array
 		light_ubo.lights.clear();

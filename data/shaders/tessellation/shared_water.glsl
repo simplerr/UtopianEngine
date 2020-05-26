@@ -1,13 +1,9 @@
 #include "gerstner.glsl"
 
-layout (std140, set = 0, binding = 6) uniform UBO_viewProjection 
+layout (std140, set = 0, binding = 6) uniform UBO_frustum 
 {
-	mat4 projection;
-	mat4 view;
     vec4 frustumPlanes[6];
-    vec3 eyePos;
-    float time;
-} ubo_camera;
+} ubo_frustum;
 
 layout (std140, set = 0, binding = 7) uniform UBO_settings
 {

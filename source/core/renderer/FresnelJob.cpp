@@ -41,6 +41,7 @@ namespace Utopian
 		mEffect->CreatePipeline();
 
 		mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mEffect->BindUniformBuffer("UBO_parameters", mUniformBlock);
 
 		mEffect->BindCombinedImage("reflectionSampler", *ssrJob->ssrBlurImage, *mRenderTarget->GetSampler());
@@ -53,7 +54,6 @@ namespace Utopian
 
 	void FresnelJob::Render(const JobInput& jobInput)
 	{
-		mUniformBlock.data.eyePos = glm::vec4(jobInput.sceneInfo.eyePos, 1.0f);
 		mUniformBlock.data.transparency = jobInput.renderingSettings.waterTransparency;
 		mUniformBlock.data.underwaterViewDistance = jobInput.renderingSettings.underwaterViewDistance;
 		mUniformBlock.UpdateMemory();

@@ -3,10 +3,11 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "shared.glsl"
+#include "shared_variables.glsl"
 
 layout (push_constant) uniform PushConstants {
-	 mat4 world;
-	 mat4 worldInv;
+	mat4 world;
+	mat4 worldInv;
 } pushConstants;
 
 layout(quads, fractional_odd_spacing, ccw) in;
@@ -60,5 +61,5 @@ void main()
 
 	OutPosW = (pushConstants.world * pos).xyz;
 	// Perspective projection
-	gl_Position = ubo_camera.projection * ubo_camera.view * pushConstants.world * pos;
+	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * pos;
 }

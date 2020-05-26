@@ -69,11 +69,10 @@ namespace Utopian
 		mGBufferEffectInstanced->CreatePipeline();
 		mInstancedAnimationEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-		mInstancedAnimationEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-		mGBufferEffectInstanced->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-		mGBufferEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-		mGBufferEffectWireframe->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mInstancedAnimationEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mGBufferEffectInstanced->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mGBufferEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mGBufferEffectWireframe->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mGBufferEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
@@ -93,14 +92,9 @@ namespace Utopian
 
 	void GBufferJob::Render(const JobInput& jobInput)
 	{
-		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.UpdateMemory();
-
 		mSettingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
 		mSettingsBlock.UpdateMemory();
 
-		mAnimationParametersBlock.data.time = gTimer().GetTime();
 		mAnimationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
 		mAnimationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
 		mAnimationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;

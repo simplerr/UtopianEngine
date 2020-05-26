@@ -8,9 +8,7 @@ namespace Utopian
 	class SkyboxJob : public BaseJob
 	{
 	public:
-		UNIFORM_BLOCK_BEGIN(ViewProjection)
-			UNIFORM_PARAM(glm::mat4, projection)
-			UNIFORM_PARAM(glm::mat4, view)
+		UNIFORM_BLOCK_BEGIN(SkyboxInput)
 			UNIFORM_PARAM(glm::mat4, world)
 		UNIFORM_BLOCK_END()
 
@@ -25,6 +23,6 @@ namespace Utopian
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mCubeModel;
-		ViewProjection viewProjectionBlock;
+		SkyboxInput mInputBlock;
 	};
 }

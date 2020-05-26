@@ -36,18 +36,12 @@ namespace Utopian
 		mNormalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
 		mNormalEffect->CreatePipeline();
 
-		mViewProjectionBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
-		mColorEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
-		mNormalEffect->BindUniformBuffer("UBO_viewProjection", mViewProjectionBlock);
+		mColorEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+		mNormalEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 	}
 
 	void DebugJob::Render(const JobInput& jobInput)
 	{
-		mViewProjectionBlock.data.view = jobInput.sceneInfo.viewMatrix;
-		mViewProjectionBlock.data.projection = jobInput.sceneInfo.projectionMatrix;
-		mViewProjectionBlock.UpdateMemory();
-
 		mRenderTarget->Begin("Debug pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 

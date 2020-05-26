@@ -3,6 +3,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "shared_water.glsl"
+#include "shared_variables.glsl"
 
 layout (push_constant) uniform PushConstants {
 	 mat4 world;
@@ -35,7 +36,7 @@ void main()
 	vec4 pos2 = mix(gl_in[3].gl_Position, gl_in[2].gl_Position, gl_TessCoord.x);
 	vec4 pos = mix(pos1, pos2, gl_TessCoord.y);
 
-	pos.xyz = calculateWavePosition(pos.xz, ubo_camera.time, OutNormalL);
+	pos.xyz = calculateWavePosition(pos.xz, sharedVariables.time, OutNormalL);
 
     float textureScaling = ubo_settings.textureScaling;
 
@@ -48,5 +49,5 @@ void main()
 
 	OutPosW = (pushConstants.world * pos).xyz;
 	// Perspective projection
-	gl_Position = ubo_camera.projection * ubo_camera.view * pushConstants.world * pos;
+	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * pos;
 }

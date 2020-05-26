@@ -54,6 +54,16 @@ namespace Utopian
 		glm::mat4 viewProjMatrix;
 	};
 
+	UNIFORM_BLOCK_BEGIN(SharedShaderVariables)
+		UNIFORM_PARAM(glm::mat4, viewMatrix)
+		UNIFORM_PARAM(glm::mat4, projectionMatrix)
+		UNIFORM_PARAM(glm::mat4, inverseProjectionMatrix)
+		UNIFORM_PARAM(glm::vec4, eyePos)
+		UNIFORM_PARAM(glm::vec2, viewportSize)
+		UNIFORM_PARAM(glm::vec2, mouseUV)
+		UNIFORM_PARAM(float, time)
+	UNIFORM_BLOCK_END()
+
 	struct SceneInfo
 	{
 		std::vector<Renderable*> renderables;
@@ -68,8 +78,10 @@ namespace Utopian
 		// Currently assumes that there only is one directional light in the scene
 		Light* directionalLight;
 
+		// Todo: Remove these
 		glm::mat4 viewMatrix;
 		glm::mat4 projectionMatrix;
 		glm::vec3 eyePos;
+		SharedShaderVariables sharedVariables;
 	};
 }

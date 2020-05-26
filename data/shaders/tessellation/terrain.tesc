@@ -3,6 +3,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "shared.glsl"
+#include "shared_variables.glsl"
 
 layout (vertices = 4) out;
  
@@ -23,11 +24,11 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 	float radius = distance(p0, p1) / 2.0;
 
 	// View space
-	vec4 v0 = ubo_camera.view * midPoint;
+	vec4 v0 = sharedVariables.viewMatrix * midPoint;
 
 	// Project into clip space
-	vec4 clip0 = (ubo_camera.projection * (v0 - vec4(radius, vec3(0.0))));
-	vec4 clip1 = (ubo_camera.projection * (v0 + vec4(radius, vec3(0.0))));
+	vec4 clip0 = (sharedVariables.projectionMatrix * (v0 - vec4(radius, vec3(0.0))));
+	vec4 clip1 = (sharedVariables.projectionMatrix * (v0 + vec4(radius, vec3(0.0))));
 
 	// Get normalized device coordinates
 	clip0 /= clip0.w;
@@ -52,7 +53,7 @@ bool frustumCheck()
 
 	// Check sphere against frustum planes
 	for (int i = 0; i < 6; i++) {
-		if (dot(pos, ubo_camera.frustumPlanes[i]) + radius < 0.0)
+		if (dot(pos, ubo_frustum.frustumPlanes[i]) + radius < 0.0)
 		{
 			return false;
 		}

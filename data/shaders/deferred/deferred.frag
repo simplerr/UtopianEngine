@@ -4,6 +4,7 @@
 
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"
+#include "shared_variables.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -13,11 +14,6 @@ layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
-
-layout (std140, set = 0, binding = 0) uniform UBO_eyePos
-{
-	vec4 EyePosW;
-} eye_ubo;
 
 // UBO_lights from phong_lighting.glsl is at slot = 0, binding = 1
 
@@ -39,7 +35,7 @@ void main()
 
 	// Todo: Note: the + sign is due to the fragment world position is negated for some reason
 	// this is a left over from an old problem
-	vec3 toEyeW = normalize(eye_ubo.EyePosW.xyz + position);
+	vec3 toEyeW = normalize(sharedVariables.eyePos.xyz + position);
 
 	// Calculate shadow factor
 	// Note: Assume directional light at index 0
@@ -55,7 +51,7 @@ void main()
 	ApplyLighting(material, position, normal, toEyeW, vec4(albedo, 1.0f), shadow, litColor);
 
 	// Apply fogging.
-	float distToEye = length(eye_ubo.EyePosW.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
+	float distToEye = length(sharedVariables.eyePos.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
 	float fogLerp = clamp((distToEye - settings_ubo.fogStart) / settings_ubo.fogDistance, 0.0, 1.0); 
 
 	// Blend the fog color and the lit color.
