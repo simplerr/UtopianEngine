@@ -845,6 +845,9 @@
     <ClInclude Include="source\vulkan\Texture.h">
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
+    <ClInclude Include="external\vk_mem_alloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\roadmap.md">

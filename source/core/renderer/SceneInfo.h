@@ -54,6 +54,9 @@ namespace Utopian
 		glm::mat4 viewProjMatrix;
 	};
 
+	// This uniform buffer contains data that is common in multiple shaders.
+	// It is defined in data\shaders\include\shared_variables.glsl and expected to be included
+	// in all shaders that needs any of its data, meant to act like built-in shader variables.
 	UNIFORM_BLOCK_BEGIN(SharedShaderVariables)
 		UNIFORM_PARAM(glm::mat4, viewMatrix)
 		UNIFORM_PARAM(glm::mat4, projectionMatrix)

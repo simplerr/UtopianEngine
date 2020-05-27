@@ -200,6 +200,7 @@
     <ClInclude Include="external\im3d\im3d_math.h" />
     <ClInclude Include="external\imgui\imgui.h" />
     <ClInclude Include="external\imgui\imgui_internal.h" />
+    <ClInclude Include="external\vk_mem_alloc.h" />
     <ClInclude Include="source\core\ActorFactory.h" />
     <ClInclude Include="source\core\AssetLoader.h" />
     <ClInclude Include="source\core\components\CCatmullSpline.h" />
