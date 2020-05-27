@@ -128,7 +128,7 @@ namespace Utopian
 		vkGetImageSubresourceLayout(mDevice->GetVkDevice(), hostImage->GetVkHandle(), &subResource, &subResourceLayout);
 
 		const char* data;
-		vkMapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory(), 0, VK_WHOLE_SIZE, 0, (void**)&data);
+		hostImage->MapMemory((void**)&data);
 		data += subResourceLayout.offset;
 
 		assert(subResourceLayout.rowPitch == MAP_RESOLUTION * sizeof(float));
@@ -137,7 +137,7 @@ namespace Utopian
 		// Since the image tiling is linear we can use memcpy
 		memcpy(heightmap.data(), data, subResourceLayout.size);
 
-		vkUnmapMemory(mDevice->GetVkDevice(), hostImage->GetDeviceMemory());
+		hostImage->UnmapMemory();
 
 		// Note: Todo: Hidden dependency to Renderer
 		gRenderer().UpdateInstanceAltitudes();

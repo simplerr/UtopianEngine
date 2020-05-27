@@ -6,6 +6,9 @@
 #include "vulkan/handles/CommandPool.h"
 #include "vulkan/Debug.h"
 
+#define VMA_IMPLEMENTATION
+#include "../external/vk_mem_alloc.h"
+
 namespace Utopian::Vk
 {
 	Device::Device(Instance* instance, bool enableValidation)
@@ -29,6 +32,13 @@ namespace Utopian::Vk
 		vkGetPhysicalDeviceMemoryProperties(mPhysicalDevice, &mDeviceMemoryProperties);
 
 		CreateLogical(enableValidation);
+
+		VmaAllocatorCreateInfo allocatorInfo = {};
+		allocatorInfo.physicalDevice = mPhysicalDevice;
+		allocatorInfo.device = mDevice;
+		allocatorInfo.instance = instance->GetVkHandle();
+
+		vmaCreateAllocator(&allocatorInfo, &mAllocator);
 
 		uint32_t queueFamilyIndex = GetQueueFamilyIndex(VK_QUEUE_GRAPHICS_BIT);
 		mCommandPool = new CommandPool(this, queueFamilyIndex);
@@ -109,7 +119,7 @@ namespace Utopian::Vk
 		queueInfo.pQueuePriorities = queuePriorities.data();
 		queueInfo.queueCount = 1;
 
-		// VK_KHR_SWAPCHAIN_EXTENSION_NAME allways needs to be used
+		// VK_KHR_SWAPCHAIN_EXTENSION_NAME always needs to be used
 		std::vector<const char*> enabledExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 		// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
@@ -118,6 +128,11 @@ namespace Utopian::Vk
 			// Note: Todo: Enabling debug markers seems to break RenderDoc.
 			enabledExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
 			mDebugMarkersEnabled = true;
+		}
+
+		if (IsExtensionSupported(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
+		{
+			enabledExtensions.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
 		}
 
 		VkDeviceCreateInfo deviceInfo = {};
@@ -202,6 +217,58 @@ namespace Utopian::Vk
 	Queue* Device::GetQueue() const
 	{
 		return mQueue;
+	}
+
+	VmaAllocation Device::AllocateMemory(VkImage image, VkMemoryPropertyFlags flags)
+	{
+		VmaAllocationCreateInfo allocCI = {};
+		allocCI.requiredFlags = flags;
+
+		VmaAllocationInfo allocInfo;
+		VmaAllocation allocation;
+		Debug::ErrorCheck(vmaAllocateMemoryForImage(mAllocator, image, &allocCI, &allocation, &allocInfo));
+
+		Debug::ErrorCheck(vkBindImageMemory(mDevice, image, allocInfo.deviceMemory, allocInfo.offset));
+
+		return allocation;
+	}
+
+	VmaAllocation Device::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags)
+	{
+		VmaAllocationCreateInfo allocCI = {};
+		allocCI.requiredFlags = flags;
+
+		VmaAllocationInfo allocInfo;
+		VmaAllocation memory;
+		Debug::ErrorCheck(vmaAllocateMemoryForBuffer(mAllocator, buffer, &allocCI, &memory, &allocInfo));
+
+		Debug::ErrorCheck(vkBindBufferMemory(mDevice, buffer, allocInfo.deviceMemory, allocInfo.offset));
+
+		return memory;
+	}
+
+	void Device::MapMemory(VmaAllocation allocation, void** data)
+	{
+		Debug::ErrorCheck(vmaMapMemory(mAllocator, allocation, data));
+	}
+
+	void Device::UnmapMemory(VmaAllocation allocation)
+	{
+		vmaUnmapMemory(mAllocator, allocation);
+	}
+
+	void Device::FreeMemory(VmaAllocation allocation)
+	{
+		vmaFreeMemory(mAllocator, allocation);
+	}
+
+	void Device::GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset)
+	{
+		VmaAllocationInfo allocInfo;
+		vmaGetAllocationInfo(mAllocator, allocation, &allocInfo);
+
+		memory = allocInfo.deviceMemory;
+		offset = allocInfo.offset;
 	}
 
 	CommandPool* Device::GetCommandPool() const

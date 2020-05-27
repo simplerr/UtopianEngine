@@ -1,8 +1,9 @@
 #pragma once
 
+#include <vector>
 #include "Handle.h"
 #include "vulkan/VulkanInclude.h"
-#include <vector>
+#include "../external/vk_mem_alloc.h"
 
 namespace Utopian::Vk
 {
@@ -34,21 +35,19 @@ namespace Utopian::Vk
 
 		~Image();
 
-
 		void LayoutTransition(const CommandBuffer& commandBuffer, VkImageLayout newLayout);
 		void Copy(const CommandBuffer& commandBuffer, Image* destination);
 		void Blit(const CommandBuffer& commandBuffer, Image* destination);
 		void SetFinalLayout(VkImageLayout finalLayout);
 
-		void MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data);
-		void UnmapMemory();
 		void UpdateMemory(void* data, VkDeviceSize size);
+		void MapMemory(void** data);
+		void UnmapMemory();
 
 		VkImageView GetView() const;
 		VkImageView GetLayerView(uint32_t layer) const;
 		VkFormat GetFormat() const;
 		VkImageLayout GetFinalLayout() const;
-		VkDeviceMemory GetDeviceMemory() const;
 		uint32_t GetWidth() const;
 		uint32_t GetHeight() const;
 		VkSubresourceLayout GetSubresourceLayout(Device* device) const;
@@ -64,12 +63,14 @@ namespace Utopian::Vk
 		/** Contains the view to the whole image, including all layers if more than one. */
 		VkImageView mImageView;
 
+		/* Device memory allocation. */
+		VmaAllocation mAllocation;
+
 		/** The image layout that's expected when used as a descriptor. */
 		VkImageLayout mFinalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		VkImageLayout mCurrentLayout;
 
-		VkDeviceMemory mDeviceMemory;
 		VkFormat mFormat;
 		uint32_t mWidth;
 		uint32_t mHeight;

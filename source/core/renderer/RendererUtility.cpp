@@ -51,7 +51,7 @@ namespace Utopian
 		vkGetImageSubresourceLayout(device->GetVkDevice(), hostVisibleImage->GetVkHandle(), &subResource, &subResourceLayout);
 
 		const char* data;
-		vkMapMemory(device->GetVkDevice(), hostVisibleImage->GetDeviceMemory(), 0, VK_WHOLE_SIZE, 0, (void**)&data);
+		hostVisibleImage->MapMemory((void**)&data);
 		data += subResourceLayout.offset;
 
 		std::ofstream file(filename, std::ios::out | std::ios::binary);
@@ -72,6 +72,7 @@ namespace Utopian
 		}
 
 		file.close();
+		hostVisibleImage->UnmapMemory();
 	}
 
 	SharedPtr<Vk::Image> RendererUtility::CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, uint32_t width, uint32_t height, VkFormat format)

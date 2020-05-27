@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include "vulkan/VulkanInclude.h"
 #include <vector>
 #include <string>
+#include "vulkan/VulkanInclude.h"
+#include "../external/vk_mem_alloc.h"
 
 namespace Utopian::Vk
 {
@@ -31,6 +32,13 @@ namespace Utopian::Vk
 		 * @note Currently only one queue is fetched from the device.
 		 */
 		Queue* GetQueue() const;
+
+		VmaAllocation AllocateMemory(VkImage image, VkMemoryPropertyFlags flags);
+		VmaAllocation AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags);
+		void MapMemory(VmaAllocation allocation, void** data);
+		void UnmapMemory(VmaAllocation allocation);
+		void FreeMemory(VmaAllocation allocation);
+		void GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset);
 
 		/** Returns the command pool from the device which new command buffers can be allocated from. */
 		CommandPool* GetCommandPool() const;
@@ -60,6 +68,7 @@ namespace Utopian::Vk
 		std::vector<std::string> mSupportedExtensions;
 		std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
 		VulkanVersion mVulkanVersion;
+		VmaAllocator mAllocator;
 
 		CommandPool* mCommandPool = nullptr;
 		Queue* mQueue = nullptr;

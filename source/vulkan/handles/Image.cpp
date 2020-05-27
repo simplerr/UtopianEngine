@@ -23,7 +23,8 @@ namespace Utopian::Vk
 		// Image handles all the cleanup itself
 		vkDestroyImageView(GetVkDevice(), mImageView, nullptr);
 		vkDestroyImage(GetVkDevice(), mHandle, nullptr);
-		vkFreeMemory(GetVkDevice(), mDeviceMemory, nullptr);
+
+		GetDevice()->FreeMemory(mAllocation);
 	}
 
 	void Image::CreateInternal(const IMAGE_CREATE_INFO& createInfo, Device* device)
@@ -98,18 +99,7 @@ namespace Utopian::Vk
 	{
 		Debug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mHandle));
 
-		// Get memory requirements
-		VkMemoryRequirements memRequirments;
-		vkGetImageMemoryRequirements(GetVkDevice(), mHandle, &memRequirments);
-
-		VkMemoryAllocateInfo allocateInfo = {};
-		allocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocateInfo.allocationSize = memRequirments.size;
-
-		GetDevice()->GetMemoryType(memRequirments.memoryTypeBits, properties, &allocateInfo.memoryTypeIndex);
-
-		Debug::ErrorCheck(vkAllocateMemory(GetVkDevice(), &allocateInfo, nullptr, &mDeviceMemory));
-		Debug::ErrorCheck(vkBindImageMemory(GetVkDevice(), mHandle, mDeviceMemory, 0));
+		mAllocation = GetDevice()->AllocateMemory(mHandle, properties);
 	}
 
 	void Image::CreateView(VkImageViewCreateInfo viewCreateInfo)
@@ -265,19 +255,19 @@ namespace Utopian::Vk
 		assert(data);
 
 		void *mapped;
-		MapMemory(0, size, 0, &mapped);
+		MapMemory(&mapped);
 		memcpy(mapped, data, size);
 		UnmapMemory();
 	}
 
-	void Image::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
+	void Image::MapMemory(void** data)
 	{
-		Debug::ErrorCheck(vkMapMemory(GetDevice()->GetVkDevice(), mDeviceMemory, offset, size, flags, data));
+		GetDevice()->MapMemory(mAllocation, data);
 	}
 
 	void Image::UnmapMemory()
 	{
-		vkUnmapMemory(GetDevice()->GetVkDevice(), mDeviceMemory);
+		GetDevice()->UnmapMemory(mAllocation);
 	}
 
 	VkImageView Image::GetView() const
@@ -303,11 +293,6 @@ namespace Utopian::Vk
 	VkImageLayout Image::GetFinalLayout() const
 	{
 		return mFinalImageLayout;
-	}
-
-	VkDeviceMemory Image::GetDeviceMemory() const
-	{
-		return mDeviceMemory;
 	}
 
 	uint32_t Image::GetWidth() const
