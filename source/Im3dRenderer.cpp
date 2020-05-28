@@ -86,9 +86,9 @@ namespace Utopian
 			gRenderer().QueueDestroy(mVertexBuffer);
 			mVertexBuffer = std::make_shared<Vk::Buffer>();
 
-			mVertexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
+			mVertexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBufferSize);
 			mVertexCount = totalNumVertices;
-			mVertexBuffer->MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedVertices);
+			mVertexBuffer->MapMemory((void**)&mMappedVertices);
 		}
 
 		Im3d::VertexData* vertexDst = mMappedVertices;
@@ -100,8 +100,6 @@ namespace Utopian
 			memcpy(vertexDst, drawList.m_vertexData, drawList.m_vertexCount * sizeof(Im3d::VertexData));
 			vertexDst += drawList.m_vertexCount;
 		}
-
-		mVertexBuffer->Flush();
 	}
 
 	uint32_t Im3dRenderer::GetTotalNumVertices()

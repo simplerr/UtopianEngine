@@ -16,7 +16,7 @@
 		public: 															\
 			virtual void UpdateMemory() { 									\
 				uint8_t *mapped; 											\
-				mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped); 	\
+				mBuffer->MapMemory((void**)&mapped); 	\
 				memcpy(mapped, &data, sizeof(data));	 					\
 				mBuffer->UnmapMemory(); 									\
 			}																\

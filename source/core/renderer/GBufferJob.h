@@ -20,14 +20,14 @@ namespace Utopian
 			uint8_t* mapped;
 			uint32_t dataOffset = 0;
 			uint32_t dataSize = sizeof(constants);
-			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
+			mBuffer->MapMemory((void**)&mapped);
 			memcpy(mapped, &constants.numSpheres, dataSize);
 			mBuffer->UnmapMemory();
 
 			dataOffset += dataSize;
 			dataSize = spheres.size() * sizeof(SphereInfo);
-			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
-			memcpy(mapped, spheres.data(), dataSize);
+			mBuffer->MapMemory((void**)&mapped);
+			memcpy(&mapped[dataOffset], spheres.data(), dataSize);
 			mBuffer->UnmapMemory();
 		}
 

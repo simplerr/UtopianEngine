@@ -26,7 +26,7 @@ namespace Utopian::Vk
 
 	void ShaderBuffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
 	{
-		mBuffer->MapMemory(offset, size, flags, data);
+		mBuffer->MapMemory(data);
 	}
 
 	void ShaderBuffer::UnmapMemory()

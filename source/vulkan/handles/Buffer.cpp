@@ -47,66 +47,47 @@ namespace Utopian::Vk
 		VkDevice vkDevice = mDevice->GetVkDevice();
 		Debug::ErrorCheck(vkCreateBuffer(vkDevice, &bufferCreateInfo, nullptr, &mBuffer));
 
-		vkGetBufferMemoryRequirements(vkDevice, mBuffer, &memReqs);
-		memAllocInfo.allocationSize = memReqs.size;
-		mDevice->GetMemoryType(memReqs.memoryTypeBits, memoryPropertyFlags, &memAllocInfo.memoryTypeIndex);
-		Debug::ErrorCheck(vkAllocateMemory(vkDevice, &memAllocInfo, nullptr, &mMemory));
+		mAllocation = device->AllocateMemory(mBuffer, memoryPropertyFlags);
 
 		if (data != nullptr)
 		{
-			void *mapped;
-			Debug::ErrorCheck(vkMapMemory(vkDevice, mMemory, 0, size, 0, &mapped));
-			memcpy(mapped, data, size);
-			vkUnmapMemory(vkDevice, mMemory);
+			UpdateMemory(data, size);
 		}
-
-		Debug::ErrorCheck(vkBindBufferMemory(vkDevice, mBuffer, mMemory, 0));
 	}
 
 	void Buffer::Destroy()
 	{
 		if (mBuffer != VK_NULL_HANDLE)
+		{
 			vkDestroyBuffer(mDevice->GetVkDevice(), mBuffer, nullptr);
-
-		if (mMemory != VK_NULL_HANDLE)
-			vkFreeMemory(mDevice->GetVkDevice(), mMemory, nullptr);
+			mDevice->FreeMemory(mAllocation);
+		}
 	}
 
 	void Buffer::UpdateMemory(void* data, VkDeviceSize size)
 	{
 		void *mapped;
-		MapMemory(0, size, 0, &mapped);
+		MapMemory(&mapped);
 		memcpy(mapped, data, size);
 		UnmapMemory();
 	}
 
-	void Buffer::MapMemory(VkDeviceSize offset, VkDeviceSize size, VkMemoryMapFlags flags, void** data)
+	void Buffer::MapMemory(void** data)
 	{
-		Debug::ErrorCheck(vkMapMemory(mDevice->GetVkDevice(), mMemory, offset, size, flags, data));
+		mDevice->MapMemory(mAllocation, data);
 		mMapped = true;
 	}
 
 	void Buffer::UnmapMemory()
 	{
 		if (mMapped)
-			vkUnmapMemory(mDevice->GetVkDevice(), mMemory);
+			mDevice->UnmapMemory(mAllocation);
 
 		mMapped = false;
 	}
 
-	VkResult Buffer::Flush(VkDeviceSize size, VkDeviceSize offset)
-	{
-		VkMappedMemoryRange mappedRange = {};
-		mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-		mappedRange.memory = mMemory;
-		mappedRange.offset = offset;
-		mappedRange.size = size;
-		return vkFlushMappedMemoryRanges(mDevice->GetVkDevice(), 1, &mappedRange);
-	}
-
 	void Buffer::Copy(CommandBuffer* commandBuffer, Image* destination, const std::vector<VkBufferImageCopy>& regions)
 	{
-		// Copy mip levels from staging buffer
 		vkCmdCopyBufferToImage(
 			commandBuffer->GetVkHandle(),
 			GetVkBuffer(),
@@ -122,8 +103,4 @@ namespace Utopian::Vk
 		return mBuffer;
 	}
 
-	VkDeviceMemory Buffer::GetVkMemory()
-	{
-		return mMemory;
-	}
 }

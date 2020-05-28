@@ -7,38 +7,6 @@
 
 namespace Utopian
 {
-	class CameraUniformBuffer : public Utopian::Vk::ShaderBuffer
-	{
-	public:
-		virtual void UpdateMemory()
-		{
-			// Map uniform buffer and update it
-			uint8_t *mapped;
-			mBuffer->MapMemory(0, sizeof(camera), 0, (void**)&mapped);
-			memcpy(mapped, &camera, sizeof(camera));
-			mBuffer->UnmapMemory();
-		}
-
-		virtual int GetSize()
-		{
-			return sizeof(camera) + sizeof(constants);
-		}
-
-		// Public data members
-		struct {
-			glm::mat4 projectionMatrix;
-			glm::mat4 viewMatrix;
-			glm::vec4 clippingPlane;
-			glm::vec3 eyePos;
-			float t;
-		} camera;
-
-		struct {
-			bool useInstancing;
-			glm::vec3 garbage;
-		} constants; // Currently unused
-	};
-
 	class LightUniformBuffer : public Utopian::Vk::ShaderBuffer
 	{
 	public:
@@ -48,15 +16,15 @@ namespace Utopian
 			uint8_t* mapped;
 			uint32_t dataOffset = 0;
 			uint32_t dataSize = sizeof(constants);
-			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
+			mBuffer->MapMemory((void**)&mapped);
 			memcpy(mapped, &constants.numLights, dataSize);
 			mBuffer->UnmapMemory();
 
 			// Map and update number of lights
 			dataOffset += dataSize;
 			dataSize = lights.size() * sizeof(Utopian::LightData);
-			mBuffer->MapMemory(dataOffset, dataSize, 0, (void**)&mapped);
-			memcpy(mapped, lights.data(), dataSize);
+			mBuffer->MapMemory((void**)&mapped);
+			memcpy(&mapped[dataOffset], lights.data(), dataSize);
 			mBuffer->UnmapMemory();
 		}
 
@@ -81,7 +49,7 @@ namespace Utopian
 		{
 			// Map uniform buffer and update it
 			uint8_t *mapped;
-			mBuffer->MapMemory(0, sizeof(data), 0, (void**)&mapped);
+			mBuffer->MapMemory((void**)&mapped);
 			memcpy(mapped, &data, sizeof(data));
 			mBuffer->UnmapMemory();
 		}

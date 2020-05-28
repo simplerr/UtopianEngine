@@ -189,9 +189,9 @@ namespace Utopian
 		if ((mVertexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mVertexCount != imDrawData->TotalVtxCount)) {
 			mVertexBuffer.UnmapMemory();
 			mVertexBuffer.Destroy();
-			mVertexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferSize);
+			mVertexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBufferSize);
 			mVertexCount = imDrawData->TotalVtxCount;
-			mVertexBuffer.MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedVertices);
+			mVertexBuffer.MapMemory((void**)&mMappedVertices);
 			updateCmdBuffers = true;
 		}
 
@@ -200,9 +200,9 @@ namespace Utopian
 		if ((mIndexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mIndexCount < imDrawData->TotalIdxCount)) {
 			mIndexBuffer.UnmapMemory();
 			mIndexBuffer.Destroy();
-			mIndexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, indexBufferSize);
+			mIndexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indexBufferSize);
 			mIndexCount = imDrawData->TotalIdxCount;
-			mIndexBuffer.MapMemory(0, VK_WHOLE_SIZE, 0, (void**)&mMappedIndices);
+			mIndexBuffer.MapMemory((void**)&mMappedIndices);
 			updateCmdBuffers = true;
 		}
 
@@ -217,10 +217,6 @@ namespace Utopian
 			vtxDst += cmd_list->VtxBuffer.Size;
 			idxDst += cmd_list->IdxBuffer.Size;
 		}
-
-		// Flush to make writes visible to GPU
-		mVertexBuffer.Flush();
-		mIndexBuffer.Flush();
 
 		// Todo: Note: Currently the command buffer needs to be updated each frame since if it is not
 		// then the framebuffer used when beginning the command buffer will get out of sync with the current one from the swap chain.
