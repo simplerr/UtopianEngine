@@ -65,17 +65,20 @@ namespace Utopian::Vk
 		uint32_t vertexBufferSize = mVerticesCount * sizeof(Vertex);
 		uint32_t indexBufferSize = mIndicesCount * sizeof(uint32_t);
 
-		mVertexBuffer = std::make_shared<Buffer>(device,
-												 VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-												 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-												 vertexBufferSize,
-												 vertexVector.data());
+		BUFFER_CREATE_INFO createInfo;
+		createInfo.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		createInfo.data = vertexVector.data();
+		createInfo.size = vertexBufferSize;
+		createInfo.name = "Vertex buffer: " + mDebugName;
+		mVertexBuffer = std::make_shared<Buffer>(createInfo, device);
 
-		mIndexBuffer = std::make_shared<Buffer>(device,
-												VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-												VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-												indexBufferSize,
-												indexVector.data());
+		createInfo.usageFlags = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+		createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		createInfo.data = indexVector.data();
+		createInfo.size = indexBufferSize;
+		createInfo.name = "Index buffer: " + mDebugName;
+		mIndexBuffer = std::make_shared<Buffer>(createInfo, device);
 	}
 
 	void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)
@@ -160,5 +163,10 @@ namespace Utopian::Vk
 		mNormalTexture = gTextureLoader().LoadTexture(normalPath);
 		mSpecularTexture = gTextureLoader().LoadTexture(specularPath);
 		CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
+	}
+
+	void Mesh::SetDebugName(std::string debugName)
+	{
+		mDebugName = debugName;
 	}
 }

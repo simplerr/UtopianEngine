@@ -33,6 +33,11 @@ namespace Utopian
 			return (NUM_MAX_LIGHTS) * sizeof(Utopian::LightData) + sizeof(constants);
 		}
 
+		virtual std::string GetDebugName()
+		{
+			return "LightUniformBuffer";
+		}
+
 		struct {
 			float numLights;
 			glm::vec3 garbage;
@@ -52,6 +57,11 @@ namespace Utopian
 			mBuffer->MapMemory((void**)&mapped);
 			memcpy(mapped, &data, sizeof(data));
 			mBuffer->UnmapMemory();
+		}
+
+		virtual std::string GetDebugName()
+		{
+			return "SettingsUniformBuffer";
 		}
 
 		virtual int GetSize()

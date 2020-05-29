@@ -11,11 +11,13 @@ namespace Utopian::Vk
 
 	void ShaderBuffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags propertyFlags)
 	{
-		mBuffer = new Buffer(device, 
-							 usageFlags,
-							 propertyFlags,
-							 GetSize(),	// Virtual function
-							 nullptr);
+		BUFFER_CREATE_INFO createInfo;
+		createInfo.usageFlags = usageFlags;
+		createInfo.memoryPropertyFlags = propertyFlags;
+		createInfo.data = nullptr;
+		createInfo.size = GetSize();
+		createInfo.name = "Shader buffer: " + GetDebugName();
+		mBuffer = new Buffer(createInfo, device);
 
 		// mBuffer will not be used by itself, it's the VkWriteDescriptorSet.pBufferInfo that points to our uniformBuffer.descriptor
 		// so here we need to point uniformBuffer.descriptor.buffer to uniformBuffer.buffer

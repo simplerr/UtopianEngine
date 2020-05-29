@@ -36,6 +36,11 @@ namespace Utopian
 			return (NUM_MAX_SPHERES) * sizeof(Utopian::SphereInfo) + sizeof(constants);
 		}
 
+		virtual std::string GetDebugName()
+		{
+			return "SphereUniformBuffer";
+		}
+
 		struct {
 			float numSpheres;
 			glm::vec3 padding;

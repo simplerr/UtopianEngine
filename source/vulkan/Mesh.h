@@ -51,6 +51,8 @@ namespace Utopian::Vk
 		// Note: Do not call this every run iteration
 		std::vector<Texture*> GetTextures();
 
+		void SetDebugName(std::string debugName);
+
 		std::vector<Vertex> vertexVector;
 		std::vector<unsigned int> indexVector;
 	private:
@@ -71,5 +73,7 @@ namespace Utopian::Vk
 
 		uint32_t mIndicesCount;
 		uint32_t mVerticesCount;
+
+		std::string mDebugName = "unnamed";
 	};
 }

@@ -6,21 +6,17 @@
 
 namespace Utopian::Vk
 {
-	Buffer::Buffer(Device* device)
+	Buffer::Buffer(Device* device, std::string debugName)
 		: Handle(device, nullptr)
 	{
+		SetDebugName(debugName);
 	}
 
 	Buffer::Buffer(const BUFFER_CREATE_INFO& createInfo, Device* device)
 		: Handle(device, nullptr)
 	{
+		SetDebugName(createInfo.name);
 		Create(device, createInfo.usageFlags, createInfo.memoryPropertyFlags, createInfo.size, createInfo.data);
-	}
-
-	Buffer::Buffer(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
-		: Handle(device, nullptr)
-	{
-		Create(device, usageFlags, memoryPropertyFlags, size, data);
 	}
 	
 	Buffer::~Buffer()
@@ -30,7 +26,6 @@ namespace Utopian::Vk
 
 	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
 	{
-		SetDebugName("Unnamed Buffer");
 		mDevice = device;
 
 		VkMemoryRequirements memReqs;

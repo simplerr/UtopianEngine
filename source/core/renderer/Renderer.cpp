@@ -429,11 +429,14 @@ namespace Utopian
 		{
 			gRenderer().QueueDestroy(mInstanceBuffer);
 
-			mInstanceBuffer = std::make_shared<Vk::Buffer>(device,
-														   VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-														   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-														   mInstances.size() * sizeof(InstanceData),
-														   mInstances.data());
+			Vk::BUFFER_CREATE_INFO createInfo;
+			createInfo.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+			createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+			createInfo.data = mInstances.data();
+			createInfo.size = mInstances.size() * sizeof(InstanceData);
+			createInfo.name = "ScreenQuad vertex buffer";
+
+			mInstanceBuffer = std::make_shared<Vk::Buffer>(createInfo, device);
 		}
 	}
 

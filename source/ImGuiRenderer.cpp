@@ -34,8 +34,8 @@ namespace Utopian
 	ImGuiRenderer::ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height)
 		: mVulkanApp(vulkanApp)
 	{
-		mVertexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice());
-		mIndexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice());
+		mVertexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice(), "ImGui vertex buffer");
+		mIndexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice(), "ImGui index buffer");
 
 		// Color scheme
 		ImGuiStyle& style = ImGui::GetStyle();

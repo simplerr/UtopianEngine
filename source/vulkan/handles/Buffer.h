@@ -11,21 +11,17 @@ namespace Utopian::Vk
    {
       VkBufferUsageFlags usageFlags;
       VkMemoryPropertyFlags memoryPropertyFlags;
-      VkDeviceSize size;
-      void* data;
+      std::string name = "Unnamed buffer";
+      void* data = nullptr;
+      VkDeviceSize size = 0;
    };
 
    class Buffer : public Handle<VkBuffer>
    {
    public:
-      Buffer(Device* device);
+      Buffer(Device* device, std::string debugName = "Unnamed buffer");
       Buffer(const BUFFER_CREATE_INFO& createInfo, Device* device);
 
-      Buffer(Device* device,
-            VkBufferUsageFlags usageFlags,
-            VkMemoryPropertyFlags memoryPropertyFlags,
-            VkDeviceSize size,
-            void* data);
       ~Buffer();
 
       void Create(Device* device,

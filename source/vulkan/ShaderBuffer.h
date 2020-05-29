@@ -16,7 +16,7 @@
 		public: 															\
 			virtual void UpdateMemory() { 									\
 				uint8_t *mapped; 											\
-				mBuffer->MapMemory((void**)&mapped); 	\
+				mBuffer->MapMemory((void**)&mapped); 						\
 				memcpy(mapped, &data, sizeof(data));	 					\
 				mBuffer->UnmapMemory(); 									\
 			}																\
@@ -24,6 +24,11 @@
 			virtual int GetSize() { 										\
 				return sizeof(data); 										\
 			} 																\
+																			\
+			virtual std::string GetDebugName()								\
+			{																\
+				return #Name;												\
+			}																\
  																			\
 			struct { 														\
 
@@ -52,6 +57,8 @@ namespace Utopian::Vk
 		virtual void UpdateMemory() = 0;
 
 		virtual int GetSize() = 0;
+
+		virtual std::string GetDebugName() = 0;
 
 		const VkDescriptorBufferInfo* GetDescriptor() const { return &mDescriptor; }
 		Buffer* GetBuffer() { return mBuffer; }

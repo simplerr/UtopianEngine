@@ -228,6 +228,7 @@ namespace Utopian
 			}
 		}
 
+		mesh->SetDebugName("Water patches");
 		mesh->BuildBuffers(mDevice);
 
         return mesh;

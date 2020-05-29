@@ -17,7 +17,7 @@ namespace Utopian
 		mViewportSize = viewportSize;
 		mVulkanApp = vulkanApp;
 
-		mVertexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice());
+		mVertexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice(), "Im3d vertex buffer");
 		mVertexCount = 0;
 	}
 
@@ -84,7 +84,7 @@ namespace Utopian
 
 			mVertexBuffer->UnmapMemory();
 			gRenderer().QueueDestroy(mVertexBuffer);
-			mVertexBuffer = std::make_shared<Vk::Buffer>(mVulkanApp->GetDevice());
+			mVertexBuffer = std::make_shared<Vk::Buffer>(mVulkanApp->GetDevice(), "Im3d vertex buffer");
 
 			mVertexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBufferSize);
 			mVertexCount = totalNumVertices;

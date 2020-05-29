@@ -75,6 +75,7 @@ namespace Utopian::Vk
 		bufferDesc.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 		bufferDesc.data = tex2D.data();
 		bufferDesc.size = tex2D.size();
+		bufferDesc.name = "Texture loader GLI staging buffer";
 		Buffer stagingBuffer = Buffer(bufferDesc, mDevice);
 
 		IMAGE_CREATE_INFO imageDesc;

@@ -196,6 +196,7 @@ namespace Utopian::Vk
 
 
 				mesh->LoadTextures(diffuseTexturePath, normalTexturePath, specularTexturePath);
+				mesh->SetDebugName(filename);
 				mesh->BuildBuffers(mDevice);
 				model->AddMesh(mesh);
 			}

@@ -252,6 +252,7 @@ namespace Utopian
 
 		mQuadModel = new Vk::StaticModel();
 		Vk::Mesh* mesh = new Vk::Mesh(mDevice);
+		mesh->SetDebugName("Terrain patches");
 
 		// Vertices
 		for (auto x = 0; x < numCells; x++)
