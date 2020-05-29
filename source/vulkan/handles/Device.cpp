@@ -5,6 +5,7 @@
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/CommandPool.h"
 #include "vulkan/Debug.h"
+#include <fstream>
 
 #define VMA_IMPLEMENTATION
 #include "../external/vk_mem_alloc.h"
@@ -209,7 +210,7 @@ namespace Utopian::Vk
 		return false;
 	}
 
-	VkPhysicalDeviceMemoryProperties Device::GetPhysicalDeviceMemoryProperties() const
+	VkPhysicalDeviceMemoryProperties Device::GetMemoryProperties() const
 	{
 		return mDeviceMemoryProperties;
 	}
@@ -269,6 +270,47 @@ namespace Utopian::Vk
 
 		memory = allocInfo.deviceMemory;
 		offset = allocInfo.offset;
+	}
+
+	VmaBudget Device::GetMemoryBudget(VkMemoryHeapFlags heapFlags)
+	{
+		std::vector<VmaBudget> budget(mDeviceMemoryProperties.memoryHeapCount);
+
+		vmaGetBudget(mAllocator, budget.data());
+		uint32_t deviceMemoryUsage = 0u;
+		VmaBudget totalBudget = { 0u };
+		for (uint32_t i = 0; i < mDeviceMemoryProperties.memoryHeapCount; i++)
+		{
+			if ((mDeviceMemoryProperties.memoryHeaps[i].flags & heapFlags) != 0)
+			{
+				totalBudget.blockBytes += budget[i].blockBytes;
+				totalBudget.allocationBytes += budget[i].allocationBytes;
+				totalBudget.usage += budget[i].usage;
+				totalBudget.budget += budget[i].budget;
+			}
+			deviceMemoryUsage += budget[i].usage;
+		}
+
+		return totalBudget;
+	}
+
+	void Device::GetMemoryStats(VmaStats* stats)
+	{
+		vmaCalculateStats(mAllocator, stats);
+	}
+
+	void Device::DumpMemoryStats(std::string filename)
+	{
+		char* statsPtr;
+		vmaBuildStatsString(mAllocator, &statsPtr, true);
+
+		std::string statsString = statsPtr;
+		std::ofstream fout(filename);
+
+		fout << statsString;
+
+		fout.close();
+		vmaFreeStatsString(mAllocator, statsPtr);
 	}
 
 	CommandPool* Device::GetCommandPool() const

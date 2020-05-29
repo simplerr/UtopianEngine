@@ -33,6 +33,7 @@ namespace Utopian::Vk
 		 */
 		Queue* GetQueue() const;
 
+		/* Memory management. */
 		VmaAllocation AllocateMemory(VkImage image, VkMemoryPropertyFlags flags);
 		VmaAllocation AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags);
 		void MapMemory(VmaAllocation allocation, void** data);
@@ -40,12 +41,23 @@ namespace Utopian::Vk
 		void FreeMemory(VmaAllocation allocation);
 		void GetAllocationInfo(VmaAllocation allocation, VkDeviceMemory& memory, VkDeviceSize& offset);
 
+		/** Returns the combined memory budget for all heaps matching heapFlags. */
+		VmaBudget GetMemoryBudget(VkMemoryHeapFlags heapFlags);
+
+		/** Returns detailed memory statistics. */
+		void GetMemoryStats(VmaStats* stats);
+
+		/** Writes memory statistics to .json file, can be visualized with VmpaDumpVis.py. */
+		void DumpMemoryStats(std::string filename);
+
+		/* Returns device memory properties. */
+		VkPhysicalDeviceMemoryProperties GetMemoryProperties() const;
+
 		/** Returns the command pool from the device which new command buffers can be allocated from. */
 		CommandPool* GetCommandPool() const;
 
 		VkPhysicalDevice GetPhysicalDevice() const;
 		VkDevice GetVkDevice() const;
-		VkPhysicalDeviceMemoryProperties GetPhysicalDeviceMemoryProperties() const;
 		uint32_t GetMemoryType(uint32_t typeBits, VkFlags properties, uint32_t * typeIndex) const;
 		bool IsDebugMarkersEnabled() const;
 		uint32_t GetQueueFamilyIndex(VkQueueFlagBits queueFlags) const;

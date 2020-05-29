@@ -197,6 +197,14 @@ namespace Utopian
 		ImGuiRenderer::TextV("Any window hovered: %d", ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem));
 		ImGuiRenderer::TextV("Any window focused: %d", ImGui::IsWindowFocused(ImGuiFocusedFlags_AnyWindow));
 
+		VmaBudget budget = mDevice->GetMemoryBudget(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
+		ImGuiRenderer::TextV("GPU memory usage: %uMB", budget.allocationBytes / 1000000u);
+
+		if (ImGui::Button("Calculate memory stats"))
+		{
+			mDevice->DumpMemoryStats("memory-statistics.json");
+		}
+
 		ImGuiRenderer::EndWindow();
 	}
 
