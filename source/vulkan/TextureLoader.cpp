@@ -83,6 +83,7 @@ namespace Utopian::Vk
 		imageDesc.format = format;
 		imageDesc.usage = imageUsageFlags | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		imageDesc.mipLevels = numMipLevels;
+		imageDesc.name = "Texture: "+ path;
 		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
 
 		// Setup buffer copy regions for each mip level
@@ -167,7 +168,9 @@ namespace Utopian::Vk
 			}
 		}
 
-		SharedPtr<Texture> texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM, width, height, 1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT);
+		SharedPtr<Texture> texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM,
+												   width, height, 1, pixelSize,
+												   VK_IMAGE_ASPECT_COLOR_BIT, "Texture: " + path);
 
 		mTextureMap[path] = texture;
 		texture->SetPath(path);
@@ -178,7 +181,7 @@ namespace Utopian::Vk
 		return texture;
 	}
 
-	SharedPtr<Texture> TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask)
+	SharedPtr<Texture> TextureLoader::CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask, std::string name)
 	{
 		VkDevice device = mDevice->GetVkDevice();
 		VkDeviceSize imageSize = width * height * depth * pixelSize; // NOTE: Assumes each pixel is stored as U8
@@ -201,6 +204,7 @@ namespace Utopian::Vk
 		imageDesc.tiling = VK_IMAGE_TILING_OPTIMAL;
 		imageDesc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		imageDesc.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		imageDesc.name = name;
 		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
 
 		CommandBuffer cmdBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);

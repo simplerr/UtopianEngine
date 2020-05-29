@@ -34,8 +34,8 @@ namespace Utopian::Vk
 		Queue* GetQueue() const;
 
 		/* Memory management. */
-		VmaAllocation AllocateMemory(VkImage image, VkMemoryPropertyFlags flags);
-		VmaAllocation AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags);
+		VmaAllocation AllocateMemory(Image* image, VkMemoryPropertyFlags flags);
+		VmaAllocation AllocateMemory(Buffer* buffer, VkMemoryPropertyFlags flags);
 		void MapMemory(VmaAllocation allocation, void** data);
 		void UnmapMemory(VmaAllocation allocation);
 		void FreeMemory(VmaAllocation allocation);

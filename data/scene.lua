@@ -2,35 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 0,
-				color_g = 1,
-				color_r = 0,
-				path = "data/models/sphere_lowres.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = -0.25387027859688,
-				orientation_x = 0.052028991281986,
-				orientation_y = -0.034035313874483,
-				orientation_z = 0.96523803472519,
-				pos_x = 809.93402099609,
-				pos_y = 87.239349365234,
-				pos_z = -157.49926757813,
-				scale_x = 19.999998092651,
-				scale_y = 19.999988555908,
-				scale_z = 20,
-			},
-		},
-	},
-	
-	{
 		actor_name = "Camera 1",
 		components = 
 		{
@@ -63,9 +34,9 @@ actor_list =
 				orientation_x = -0.29552018642426,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = -2423.3444824219,
-				pos_y = 94.795013427734,
-				pos_z = -11657.248046875,
+				pos_x = 277.95266723633,
+				pos_y = 740.25524902344,
+				pos_z = -12469.520507813,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
@@ -379,8 +350,8 @@ actor_list =
 				color_b = 0.88532823324203,
 				color_g = 0.93212097883224,
 				color_r = 0.9367088675499,
-				dir_x = 0.99614125490189,
-				dir_y = 0.087764166295528,
+				dir_x = 0.70710676908493,
+				dir_y = 0.70710676908493,
 				dir_z = -0,
 				intensity_x = 0.34900000691414,
 				intensity_y = 0.84300005435944,
@@ -502,30 +473,30 @@ actor_list =
 	}, 
 	[0] = 
 	{
-		actor_name = "Sponza",
+		actor_name = "EditorActor",
 		components = 
 		{
 			CRenderable = 
 			{
 				color_a = 1,
-				color_b = 1,
+				color_b = 0,
 				color_g = 1,
-				color_r = 1,
-				path = "data/models/sponza/sponza.obj",
+				color_r = 0,
+				path = "data/models/sphere_lowres.obj",
 				render_flags = 1,
 			},
 			CTransform = 
 			{
-				orientation_w = -0.0042035197839141,
-				orientation_x = 0.99999117851257,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = -1079.0122070313,
-				pos_y = -14.67700958252,
-				pos_z = -8788.6650390625,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
+				orientation_w = -0.25387027859688,
+				orientation_x = 0.052028991281986,
+				orientation_y = -0.034035313874483,
+				orientation_z = 0.96523803472519,
+				pos_x = 809.93402099609,
+				pos_y = 87.239349365234,
+				pos_z = -157.49926757813,
+				scale_x = 19.999998092651,
+				scale_y = 19.999988555908,
+				scale_z = 20,
 			},
 		},
 	},

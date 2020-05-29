@@ -22,6 +22,7 @@ namespace Utopian::Vk
 		VkImageCreateFlags flags = 0u;
 		uint32_t arrayLayers = 1;
 		uint32_t mipLevels = 1;
+		std::string name = "Unnamed Image";
 	};
 
 	/** Wrapper for VkImage and VkImageView. */
@@ -51,6 +52,7 @@ namespace Utopian::Vk
 		uint32_t GetWidth() const;
 		uint32_t GetHeight() const;
 		VkSubresourceLayout GetSubresourceLayout(Device* device) const;
+
 	protected:
 		void CreateInternal(const IMAGE_CREATE_INFO& createInfo, Device* device);
 		void CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties);

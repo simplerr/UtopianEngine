@@ -36,7 +36,6 @@ namespace Utopian::Vk
 			mDestroyFunc(mDevice->GetVkDevice(), mHandle, nullptr);
 
 			mHandle = VK_NULL_HANDLE;
-
 		}
 
 		Handle(Device* device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
@@ -69,10 +68,20 @@ namespace Utopian::Vk
 			return mDevice;
 		}
 
+		std::string GetDebugName() const
+		{
+			return mName;
+		}
+
 		/** Sets the device. */
 		void SetDevice(Device* device)
 		{
 			mDevice = device;
+		}
+
+		void SetDebugName(std::string name)
+		{
+			mName = name;
 		}
 
 	protected:
@@ -80,5 +89,6 @@ namespace Utopian::Vk
 	private:
 		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;
 		Device* mDevice = nullptr;
+		std::string mName = "Vulkan Handle";
 	};
 }

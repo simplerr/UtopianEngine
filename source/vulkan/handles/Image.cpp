@@ -15,7 +15,6 @@ namespace Utopian::Vk
 	Image::Image(Device* device)
 		: Handle(device, nullptr)
 	{
-
 	}
 
 	Image::~Image()
@@ -37,6 +36,7 @@ namespace Utopian::Vk
 		mNumMipLevels = createInfo.mipLevels;
 		mLayerCount = createInfo.arrayLayers;
 		mCurrentLayout = createInfo.initialLayout;
+		SetDebugName(createInfo.name);
 
 		VkImageCreateInfo imageCreateInfo = {};
 		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -99,7 +99,7 @@ namespace Utopian::Vk
 	{
 		Debug::ErrorCheck(vkCreateImage(GetVkDevice(), &imageCreateInfo, nullptr, &mHandle));
 
-		mAllocation = GetDevice()->AllocateMemory(mHandle, properties);
+		mAllocation = GetDevice()->AllocateMemory(this, properties);
 	}
 
 	void Image::CreateView(VkImageViewCreateInfo viewCreateInfo)

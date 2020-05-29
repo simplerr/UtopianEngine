@@ -155,7 +155,7 @@ namespace Utopian
 		if (object.IsFunction())
 		{
 			LuaPlus::LuaFunction<int> load_foliage = object;
-			load_foliage();
+			//load_foliage();
 		}
 
 		return;

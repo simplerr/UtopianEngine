@@ -85,7 +85,7 @@ namespace Utopian
 				mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 
 				mCommandBuffer->CmdBindVertexBuffer(0, 1, mScreenQuad.vertexBuffer);
-				mCommandBuffer->CmdBindIndexBuffer(mScreenQuad.indexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
+				mCommandBuffer->CmdBindIndexBuffer(mScreenQuad.indexBuffer->GetVkHandle(), 0, VK_INDEX_TYPE_UINT32);
 				mCommandBuffer->CmdDrawIndexed(6, 1, 0, 0, 0);
 			}
 		}

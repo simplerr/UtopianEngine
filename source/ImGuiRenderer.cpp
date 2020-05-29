@@ -34,6 +34,9 @@ namespace Utopian
 	ImGuiRenderer::ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height)
 		: mVulkanApp(vulkanApp)
 	{
+		mVertexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice());
+		mIndexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice());
+
 		// Color scheme
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.Colors[ImGuiCol_TitleBg] = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -135,8 +138,8 @@ namespace Utopian
 
 		mCommandBuffer->CmdBindPipeline(mImguiEffect->GetPipeline());
 
-		mCommandBuffer->CmdBindVertexBuffer(0, 1, &mVertexBuffer);
-		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer.GetVkBuffer(), 0, VK_INDEX_TYPE_UINT16);
+		mCommandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer.get());
+		mCommandBuffer->CmdBindIndexBuffer(mIndexBuffer->GetVkHandle(), 0, VK_INDEX_TYPE_UINT16);
 
 		// UI scale and translate via push constants
 		PushConstantBlock pushConstBlock;
@@ -186,23 +189,23 @@ namespace Utopian
 		// Update buffers only if vertex or index count has been changed compared to current buffer size
 
 		// Vertex buffer
-		if ((mVertexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mVertexCount != imDrawData->TotalVtxCount)) {
-			mVertexBuffer.UnmapMemory();
-			mVertexBuffer.Destroy();
-			mVertexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBufferSize);
+		if ((mVertexBuffer->GetVkHandle() == VK_NULL_HANDLE) || (mVertexCount != imDrawData->TotalVtxCount)) {
+			mVertexBuffer->UnmapMemory();
+			mVertexBuffer->Destroy();
+			mVertexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBufferSize);
 			mVertexCount = imDrawData->TotalVtxCount;
-			mVertexBuffer.MapMemory((void**)&mMappedVertices);
+			mVertexBuffer->MapMemory((void**)&mMappedVertices);
 			updateCmdBuffers = true;
 		}
 
 		// Index buffer
 		VkDeviceSize indexSize = imDrawData->TotalIdxCount * sizeof(ImDrawIdx);
-		if ((mIndexBuffer.GetVkBuffer() == VK_NULL_HANDLE) || (mIndexCount < imDrawData->TotalIdxCount)) {
-			mIndexBuffer.UnmapMemory();
-			mIndexBuffer.Destroy();
-			mIndexBuffer.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indexBufferSize);
+		if ((mIndexBuffer->GetVkHandle() == VK_NULL_HANDLE) || (mIndexCount < imDrawData->TotalIdxCount)) {
+			mIndexBuffer->UnmapMemory();
+			mIndexBuffer->Destroy();
+			mIndexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, indexBufferSize);
 			mIndexCount = imDrawData->TotalIdxCount;
-			mIndexBuffer.MapMemory((void**)&mMappedIndices);
+			mIndexBuffer->MapMemory((void**)&mMappedIndices);
 			updateCmdBuffers = true;
 		}
 

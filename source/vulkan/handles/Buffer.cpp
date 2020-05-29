@@ -6,16 +6,19 @@
 
 namespace Utopian::Vk
 {
-	Buffer::Buffer()
+	Buffer::Buffer(Device* device)
+		: Handle(device, nullptr)
 	{
 	}
 
 	Buffer::Buffer(const BUFFER_CREATE_INFO& createInfo, Device* device)
+		: Handle(device, nullptr)
 	{
 		Create(device, createInfo.usageFlags, createInfo.memoryPropertyFlags, createInfo.size, createInfo.data);
 	}
 
 	Buffer::Buffer(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
+		: Handle(device, nullptr)
 	{
 		Create(device, usageFlags, memoryPropertyFlags, size, data);
 	}
@@ -27,6 +30,7 @@ namespace Utopian::Vk
 
 	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
 	{
+		SetDebugName("Unnamed Buffer");
 		mDevice = device;
 
 		VkMemoryRequirements memReqs;
@@ -45,9 +49,9 @@ namespace Utopian::Vk
 		bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 		VkDevice vkDevice = mDevice->GetVkDevice();
-		Debug::ErrorCheck(vkCreateBuffer(vkDevice, &bufferCreateInfo, nullptr, &mBuffer));
+		Debug::ErrorCheck(vkCreateBuffer(vkDevice, &bufferCreateInfo, nullptr, &mHandle));
 
-		mAllocation = device->AllocateMemory(mBuffer, memoryPropertyFlags);
+		mAllocation = device->AllocateMemory(this, memoryPropertyFlags);
 
 		if (data != nullptr)
 		{
@@ -57,9 +61,9 @@ namespace Utopian::Vk
 
 	void Buffer::Destroy()
 	{
-		if (mBuffer != VK_NULL_HANDLE)
+		if (mHandle != VK_NULL_HANDLE)
 		{
-			vkDestroyBuffer(mDevice->GetVkDevice(), mBuffer, nullptr);
+			vkDestroyBuffer(mDevice->GetVkDevice(), mHandle, nullptr);
 			mDevice->FreeMemory(mAllocation);
 		}
 	}
@@ -90,17 +94,11 @@ namespace Utopian::Vk
 	{
 		vkCmdCopyBufferToImage(
 			commandBuffer->GetVkHandle(),
-			GetVkBuffer(),
+			GetVkHandle(),
 			destination->GetVkHandle(),
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			static_cast<uint32_t>(regions.size()),
 			regions.data()
 		);
 	}
-
-	VkBuffer Buffer::GetVkBuffer()
-	{
-		return mBuffer;
-	}
-
 }

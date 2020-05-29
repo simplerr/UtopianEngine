@@ -200,7 +200,7 @@ namespace Utopian
 		VmaBudget budget = mDevice->GetMemoryBudget(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
 		ImGuiRenderer::TextV("GPU memory usage: %uMB", budget.allocationBytes / 1000000u);
 
-		if (ImGui::Button("Calculate memory stats"))
+		if (ImGui::Button("Dump memory statistics"))
 		{
 			mDevice->DumpMemoryStats("memory-statistics.json");
 		}

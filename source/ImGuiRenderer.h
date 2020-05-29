@@ -60,10 +60,10 @@ namespace Utopian
 			glm::vec2 translate;
 		} pushConstBlock;
 
-		Utopian::Vk::VulkanApp* mVulkanApp;
-		Utopian::Vk::CommandBuffer* mCommandBuffer;
-		Utopian::Vk::Buffer mVertexBuffer;
-		Utopian::Vk::Buffer mIndexBuffer;
+		Vk::VulkanApp* mVulkanApp;
+		Vk::CommandBuffer* mCommandBuffer;
+		SharedPtr<Vk::Buffer> mVertexBuffer;
+		SharedPtr<Vk::Buffer> mIndexBuffer;
 		SharedPtr<Vk::Effect> mImguiEffect;
 		SharedPtr<Vk::DescriptorPool> mTextureDescriptorPool;
 		SharedPtr<Vk::VertexDescription> mVertexDescription;

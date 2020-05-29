@@ -14,7 +14,7 @@ Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, u
 
 	uint32_t size = blockSize*blockSize*blockSize * 5 * 3;
 	mVertexBuffer = new Utopian::Vk::Buffer(device, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, size, nullptr);
-	mBufferInfo.buffer = mVertexBuffer->GetVkBuffer();
+	mBufferInfo.buffer = mVertexBuffer->GetVkHandle();
 	mBufferInfo.range = size;
 	mBufferInfo.offset = 0;
 

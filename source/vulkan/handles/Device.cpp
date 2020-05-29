@@ -4,6 +4,8 @@
 #include "vulkan/handles/Instance.h"
 #include "vulkan/handles/Queue.h"
 #include "vulkan/handles/CommandPool.h"
+#include "vulkan/handles/Buffer.h"
+#include "vulkan/handles/Image.h"
 #include "vulkan/Debug.h"
 #include <fstream>
 
@@ -220,30 +222,36 @@ namespace Utopian::Vk
 		return mQueue;
 	}
 
-	VmaAllocation Device::AllocateMemory(VkImage image, VkMemoryPropertyFlags flags)
+	VmaAllocation Device::AllocateMemory(Image* image, VkMemoryPropertyFlags flags)
 	{
 		VmaAllocationCreateInfo allocCI = {};
 		allocCI.requiredFlags = flags;
+		allocCI.flags = VMA_ALLOCATION_CREATE_USER_DATA_COPY_STRING_BIT;
+		std::string imageName = image->GetDebugName();
+		allocCI.pUserData = (void*)imageName.c_str();
 
 		VmaAllocationInfo allocInfo;
 		VmaAllocation allocation;
-		Debug::ErrorCheck(vmaAllocateMemoryForImage(mAllocator, image, &allocCI, &allocation, &allocInfo));
+		Debug::ErrorCheck(vmaAllocateMemoryForImage(mAllocator, image->GetVkHandle(), &allocCI, &allocation, &allocInfo));
 
-		Debug::ErrorCheck(vkBindImageMemory(mDevice, image, allocInfo.deviceMemory, allocInfo.offset));
+		Debug::ErrorCheck(vkBindImageMemory(mDevice, image->GetVkHandle(), allocInfo.deviceMemory, allocInfo.offset));
 
 		return allocation;
 	}
 
-	VmaAllocation Device::AllocateMemory(VkBuffer buffer, VkMemoryPropertyFlags flags)
+	VmaAllocation Device::AllocateMemory(Buffer* buffer, VkMemoryPropertyFlags flags)
 	{
 		VmaAllocationCreateInfo allocCI = {};
 		allocCI.requiredFlags = flags;
+		allocCI.flags = VMA_ALLOCATION_CREATE_USER_DATA_COPY_STRING_BIT;
+		std::string bufferName = buffer->GetDebugName();
+		allocCI.pUserData = (void*)bufferName.c_str();
 
 		VmaAllocationInfo allocInfo;
 		VmaAllocation memory;
-		Debug::ErrorCheck(vmaAllocateMemoryForBuffer(mAllocator, buffer, &allocCI, &memory, &allocInfo));
+		Debug::ErrorCheck(vmaAllocateMemoryForBuffer(mAllocator, buffer->GetVkHandle(), &allocCI, &memory, &allocInfo));
 
-		Debug::ErrorCheck(vkBindBufferMemory(mDevice, buffer, allocInfo.deviceMemory, allocInfo.offset));
+		Debug::ErrorCheck(vkBindBufferMemory(mDevice, buffer->GetVkHandle(), allocInfo.deviceMemory, allocInfo.offset));
 
 		return memory;
 	}

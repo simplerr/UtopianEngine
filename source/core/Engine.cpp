@@ -49,7 +49,7 @@ namespace Utopian
 		Vk::EffectManager::Start();
 		ScreenQuadRenderer::Start(mVulkanApp.get());
 
-		gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
+		//gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 
 		ScriptExports::Register();
 		ScriptImports::Register();

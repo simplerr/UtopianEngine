@@ -3,6 +3,7 @@
 #include "vulkan/VulkanInclude.h"
 #include <vector>
 #include "../external/vk_mem_alloc.h"
+#include "Handle.h"
 
 namespace Utopian::Vk
 {
@@ -14,10 +15,10 @@ namespace Utopian::Vk
       void* data;
    };
 
-   class Buffer
+   class Buffer : public Handle<VkBuffer>
    {
    public:
-      Buffer();
+      Buffer(Device* device);
       Buffer(const BUFFER_CREATE_INFO& createInfo, Device* device);
 
       Buffer(Device* device,
@@ -41,12 +42,9 @@ namespace Utopian::Vk
 
       void Copy(CommandBuffer* commandBuffer, Image* destination, const std::vector<VkBufferImageCopy>& regions);
 
-      VkBuffer GetVkBuffer();
    private:
       VkResult Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
       Device* mDevice;
-
-      VkBuffer mBuffer = VK_NULL_HANDLE;
 
       /* Device memory allocation. */
       VmaAllocation mAllocation;
