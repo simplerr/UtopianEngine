@@ -99,6 +99,7 @@ namespace Utopian
 		createInfo.usage = info.usage;
 		createInfo.properties = info.memoryProperties;
 		createInfo.tiling = info.tiling;
+		createInfo.name = "Renderer utility copy image";
 		SharedPtr<Vk::Image> dstImage = std::make_shared<Vk::Image>(createInfo, device);
 		dstImage->SetFinalLayout(info.finalImageLayout);
 

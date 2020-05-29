@@ -10,7 +10,7 @@ namespace Utopian
 	FXAAJob::FXAAJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		mFXXAImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		mFXXAImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "FXAA image");
 
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		mRenderTarget->AddWriteOnlyColorAttachment(mFXXAImage);

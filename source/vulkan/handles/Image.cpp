@@ -38,6 +38,9 @@ namespace Utopian::Vk
 		mCurrentLayout = createInfo.initialLayout;
 		SetDebugName(createInfo.name);
 
+		if (createInfo.name == "Unnamed Image")
+			int a = 1;
+
 		VkImageCreateInfo imageCreateInfo = {};
 		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageCreateInfo.format = createInfo.format;
@@ -316,7 +319,7 @@ namespace Utopian::Vk
 		return subresourceLayout;
 	}
 
-	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)
+	ImageColor::ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, std::string debugName, uint32_t arrayLayers)
 		: Image(device)
 	{
 		IMAGE_CREATE_INFO createInfo;
@@ -326,10 +329,11 @@ namespace Utopian::Vk
 		createInfo.arrayLayers = arrayLayers;
 		createInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 		createInfo.aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
+		createInfo.name = debugName;
 		CreateInternal(createInfo, device);
 	}
 
-	ImageDepth::ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers)
+	ImageDepth::ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format, std::string debugName, uint32_t arrayLayers)
 		: Image(device)
 	{
 		IMAGE_CREATE_INFO createInfo;
@@ -339,6 +343,7 @@ namespace Utopian::Vk
 		createInfo.arrayLayers = arrayLayers;
 		createInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		createInfo.aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+		createInfo.name = debugName;
 		CreateInternal(createInfo, device);
 	}
 }

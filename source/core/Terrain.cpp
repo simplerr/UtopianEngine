@@ -145,7 +145,7 @@ namespace Utopian
 
 	void Terrain::SetupHeightmapEffect()
 	{
-		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT);
+		heightmapImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT, "Terrain heightmap image");
 		heightmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL);
 
 		heightmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
@@ -166,7 +166,7 @@ namespace Utopian
 
 	void Terrain::SetupNormalmapEffect()
 	{
-		normalImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT);
+		normalImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT, "Terrain normalmap image");
 
 		normalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
 		normalRenderTarget->AddWriteOnlyColorAttachment(normalImage);
@@ -188,7 +188,7 @@ namespace Utopian
 
 	void Terrain::SetupBlendmapEffect()
 	{
-		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R32G32B32A32_SFLOAT);
+		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R32G32B32A32_SFLOAT, "Terrain blendmap image");
 		blendmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL); // Special case since it needs to be used both as color attachment and descriptor
 
 		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);

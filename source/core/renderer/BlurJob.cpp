@@ -8,7 +8,7 @@ namespace Utopian
 	BlurJob::BlurJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		blurImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		blurImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "Blur image");
 
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		mRenderTarget->AddWriteOnlyColorAttachment(blurImage);

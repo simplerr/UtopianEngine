@@ -10,7 +10,7 @@ namespace Utopian
 	SSAOJob::SSAOJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		ssaoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT);
+		ssaoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "SSAO image");
 
 		renderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
 		renderTarget->AddWriteOnlyColorAttachment(ssaoImage);

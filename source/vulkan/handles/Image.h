@@ -85,13 +85,13 @@ namespace Utopian::Vk
 	class ImageColor : public Image
 	{
 	public:
-		ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers = 1);
+		ImageColor(Device* device, uint32_t width, uint32_t height, VkFormat format, std::string debugName, uint32_t arrayLayers = 1);
 	};
 
 	/** An image with flags corresponding to a depth image. */
 	class ImageDepth : public Image
 	{
 	public:
-		ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format, uint32_t arrayLayers = 1);
+		ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format, std::string debugName, uint32_t arrayLayers = 1);
 	};
 }

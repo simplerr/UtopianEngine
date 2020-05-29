@@ -151,6 +151,7 @@ namespace Utopian::Vk
 		imageDesc.height = height;
 		imageDesc.tiling = VK_IMAGE_TILING_LINEAR;
 		imageDesc.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		imageDesc.name = "Texture loader temporary image";
 		Image temporaryImage = Image(imageDesc, mDevice);
 
 		VkSubresourceLayout imageLayout = temporaryImage.GetSubresourceLayout(mDevice);
@@ -195,6 +196,7 @@ namespace Utopian::Vk
 		imageDesc.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		imageDesc.tiling = VK_IMAGE_TILING_LINEAR;
 		imageDesc.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+		imageDesc.name = "Texture loader staging texture";
 	 	Image stagingImage = Image(imageDesc, mDevice);
 
 		if (data != nullptr)

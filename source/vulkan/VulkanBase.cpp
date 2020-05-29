@@ -56,6 +56,7 @@ namespace Utopian::Vk
 		createInfo.format = mDepthFormat;
 		createInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 		createInfo.aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+		createInfo.name = "VulkanBase depth stencil image";
 		mDepthStencil = new Image(createInfo, mDevice);
 		//mDepthStencil = new Image(mDevice, GetWindowWidth(), GetWindowHeight(),
 		//						  mDepthFormat,

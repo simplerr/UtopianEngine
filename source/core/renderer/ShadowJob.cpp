@@ -9,8 +9,8 @@ namespace Utopian
 	ShadowJob::ShadowJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		depthColorImage = std::make_shared<Vk::ImageColor>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT, 4);
-		mDepthImage = std::make_shared<Vk::ImageDepth>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_D32_SFLOAT_S8_UINT);
+		depthColorImage = std::make_shared<Vk::ImageColor>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_R32_SFLOAT, "Shadow depth color image", 4);
+		mDepthImage = std::make_shared<Vk::ImageDepth>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION, VK_FORMAT_D32_SFLOAT_S8_UINT, "Shadow depth image");
 
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(device, SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 		mRenderTarget->AddColorAttachment(depthColorImage->GetLayerView(0), depthColorImage->GetFormat());

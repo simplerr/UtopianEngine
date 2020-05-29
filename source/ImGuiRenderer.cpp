@@ -118,7 +118,8 @@ namespace Utopian
 
 		mImguiEffect->CreatePipeline();
 
-		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight, 1, pixelSize);
+		mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight,
+													  1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT, "ImGui font image");
 		mImguiEffect->BindCombinedImage("fontSampler", *mTexture);
 
 		io.Fonts->TexID = (ImTextureID)AddImage(*mTexture->GetImage());

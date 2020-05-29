@@ -13,7 +13,7 @@ namespace Utopian
 		mParameterBlock.data.azimuth = 0.0f;
 		mSunAzimuth = 0.0f;
 
-		sunImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		sunImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM, "Skydome sun image");
 	}
 
 	SkydomeJob::~SkydomeJob()
