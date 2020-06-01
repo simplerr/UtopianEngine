@@ -38,22 +38,18 @@ namespace Utopian::Vk
 
 		void TogglePerformanceWarnings();
 
-		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
-			VkDebugReportFlagsEXT       flags,
-			VkDebugReportObjectTypeEXT  objectType,
-			uint64_t                    object,
-			size_t                      location,
-			int32_t                     messageCode,
-			const char*                 pLayerPrefix,
-			const char*                 pMessage,
-			void*                       pUserData);
+		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugMessengerCallback(
+			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+			VkDebugUtilsMessageTypeFlagsEXT messageType,
+			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+			void* userData);
 
 		// Debugging layers
 		extern std::vector<const char*> validation_layers;
 
 		// Both InitDebug() and VkInstance uses the create info from SetupDebugLayers()
-		extern VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo;
-		extern VkDebugReportCallbackEXT msgCallback;
+		extern VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo;
+		extern VkDebugUtilsMessengerEXT debugUtilsMessenger;
 
 		extern bool performanceWarnings;
 		extern std::chrono::high_resolution_clock::time_point startTime;

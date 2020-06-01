@@ -25,11 +25,11 @@ namespace Utopian::Vk
 #endif
 
 		// Add the debug extension
-		enabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+		enabledExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
 		VkInstanceCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;	// Must be VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
-		createInfo.pNext = &Debug::debugCallbackCreateInfo;	// Enables debugging when creating the instance
+		createInfo.pNext = &Debug::debugUtilsCreateInfo;	// Enables debugging when creating the instance
 		createInfo.flags = 0;										// Must be 0
 		createInfo.pApplicationInfo = &appInfo;
 		createInfo.enabledExtensionCount = enabledExtensions.size();			// Extensions

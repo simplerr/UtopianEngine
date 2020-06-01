@@ -16,31 +16,26 @@ namespace Utopian::Vk
 		PFN_vkDebugReportMessageEXT dbgBreakCallback = nullptr;
 
 		std::vector<const char*> validation_layers;
-		VkDebugReportCallbackCreateInfoEXT debugCallbackCreateInfo = {};
-		VkDebugReportCallbackEXT msgCallback = nullptr;
 		std::vector<VkValidationFeatureEnableEXT> enabledValidationFeatures;
 		VkValidationFeaturesEXT validationFeatures = {};
 		bool performanceWarnings = true;
 		std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
+
+		VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = {};
+		VkDebugUtilsMessengerEXT debugUtilsMessenger = nullptr;
 
 		void SetupDebugLayers()
 		{
 			// Create a console to forward standard output to
 			SetupConsole("Vulkan Debug Console");
 
-			// TODO: Add #ifdef _DEBUG
-			// Configure so that Debug::VulkanDebugCallback() gets all debug messages
-			debugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
-			debugCallbackCreateInfo.pNext = nullptr;
-			debugCallbackCreateInfo.flags =
-				//VK_DEBUG_REPORT_INFORMATION_BIT_EXT |
-				VK_DEBUG_REPORT_DEBUG_BIT_EXT |
-				VK_DEBUG_REPORT_ERROR_BIT_EXT |
-				VK_DEBUG_REPORT_WARNING_BIT_EXT |
-				VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
-
-			debugCallbackCreateInfo.pfnCallback = &VulkanDebugCallback;
-			debugCallbackCreateInfo.pUserData = nullptr;
+			debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+			debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
+												   VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+												   VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+												   VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+			debugUtilsCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+			debugUtilsCreateInfo.pfnUserCallback = VulkanDebugMessengerCallback;
 
 			enabledValidationFeatures.push_back(VK_VALIDATION_FEATURE_ENABLE_BEST_PRACTICES_EXT);
 
@@ -51,7 +46,7 @@ namespace Utopian::Vk
 			validationFeatures.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
 			validationFeatures.enabledValidationFeatureCount = enabledValidationFeatures.size();
 			validationFeatures.pEnabledValidationFeatures = enabledValidationFeatures.data();
-			debugCallbackCreateInfo.pNext = &validationFeatures;
+			debugUtilsCreateInfo.pNext = &validationFeatures;
 
 			// Add validation layer https://vulkan.lunarg.com/doc/sdk/1.2.135.0/windows/layer_configuration.html
 			validation_layers.push_back("VK_LAYER_KHRONOS_validation");
@@ -59,22 +54,18 @@ namespace Utopian::Vk
 
 		void InitDebug(Instance* instance)
 		{
-			VkInstance vkInstance = instance->GetVkHandle();
-			CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(vkInstance, "vkCreateDebugReportCallbackEXT");
-			DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(vkInstance, "vkDestroyDebugReportCallbackEXT");
-			dbgBreakCallback = (PFN_vkDebugReportMessageEXT)vkGetInstanceProcAddr(vkInstance, "vkDebugReportMessageEXT");
+			PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessenger = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance->GetVkHandle(), "vkCreateDebugUtilsMessengerEXT");
 
-			if (CreateDebugReportCallback == nullptr || DestroyDebugReportCallback == nullptr || dbgBreakCallback == nullptr) {
+			if (CreateDebugUtilsMessenger == nullptr)
 				Debug::ConsolePrint("Error fetching debug function pointers");
-			}
 
-			ErrorCheck(CreateDebugReportCallback(vkInstance, &debugCallbackCreateInfo, nullptr, &msgCallback));
+			ErrorCheck(CreateDebugUtilsMessenger(instance->GetVkHandle(), &debugUtilsCreateInfo, nullptr, &debugUtilsMessenger));
 		}
 
 		void CleanupDebugging(VkInstance instance)
 		{
-			DestroyDebugReportCallback(instance, msgCallback, nullptr);
-			msgCallback = nullptr;
+			PFN_vkDestroyDebugUtilsMessengerEXT DestroyDebugUtilsMessenger = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+			DestroyDebugUtilsMessenger(instance, debugUtilsMessenger, nullptr);
 		}
 
 		// Sets up a console window (Win32)
@@ -88,47 +79,32 @@ namespace Utopian::Vk
 #endif
 		}
 
-		// This is the callback that receives all debug messages from the different validation layers 
-		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
-			VkDebugReportFlagsEXT       flags,
-			VkDebugReportObjectTypeEXT  objectType,
-			uint64_t                    object,
-			size_t                      location,
-			int32_t                     messageCode,
-			const char*                 pLayerPrefix,
-			const char*                 pMessage,
-			void*                       pUserData)
+		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugMessengerCallback(
+			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+			VkDebugUtilsMessageTypeFlagsEXT messageType,
+			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
+			void* userData)
 		{
 			std::ostringstream stream;
 
-			stream << "VKDEBUG: ";
-			if (flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT) {
-				stream << "INFO: ";
-			}
-			if (flags & VK_DEBUG_REPORT_WARNING_BIT_EXT) {
-				stream << "WARNING: ";
-			}
-			if (flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) {
-				if(!performanceWarnings)
-					return VK_FALSE;
+			std::string debugPrefix = "Unknown";
+			if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
+				debugPrefix = "Verbose: ";
+			else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+				debugPrefix = "Info: ";
+			else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+				debugPrefix = "Warning: ";
+			else if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+				debugPrefix = "Error: ";
 
-				stream << "PERFORMANCE: ";
-			}
-			if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
-				stream << "ERROR: ";
-			}
-			if (flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
-				stream << "DEBUG: ";
-			}
-
-			stream << "@[" << pLayerPrefix << "]: ";
-			stream << pMessage << std::endl;
+			stream << callbackData->messageIdNumber << ":" << callbackData->pMessageIdName << ":"
+				   << callbackData->pMessage << std::endl;
 
 			Debug::ConsolePrint(stream.str());
 
 			// Critical errors will be printed in a message box (Win32)
 #ifdef _WIN32
-			if (flags & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
+			if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
 				MessageBox(nullptr, stream.str().c_str(), "Vulkan Error!", 0);
 			}
 #endif
