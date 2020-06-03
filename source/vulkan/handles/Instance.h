@@ -13,6 +13,7 @@ namespace Utopian::Vk
 		~Instance();
 
 		VkInstance GetVkHandle();
+		bool IsExtensionSupported(std::string extension) const;
 	private:
 		VkInstance mInstance;
 	};

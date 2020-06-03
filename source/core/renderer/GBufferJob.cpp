@@ -196,7 +196,7 @@ namespace Utopian
 			}
 		}	
 		
-		Vk::DebugMarker::EndRegion(commandBuffer->GetVkHandle());
+		Vk::DebugLabel::EndRegion(commandBuffer->GetVkHandle());
 
 		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}

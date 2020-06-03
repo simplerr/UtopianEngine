@@ -29,7 +29,7 @@ namespace Utopian::Vk
 		Debug::InitDebug(mInstance);
 
 		mDevice = new Device(mInstance);
-		DebugMarker::Setup(mDevice);
+		DebugLabel::Setup(mDevice);
 	}
 
 	VulkanBase::~VulkanBase()

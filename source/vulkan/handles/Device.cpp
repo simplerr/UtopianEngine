@@ -125,14 +125,6 @@ namespace Utopian::Vk
 		// VK_KHR_SWAPCHAIN_EXTENSION_NAME always needs to be used
 		std::vector<const char*> enabledExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-		// Enable the debug marker extension if it is present (likely meaning a debugging tool is present)
-		if (IsExtensionSupported(VK_EXT_DEBUG_MARKER_EXTENSION_NAME))
-		{
-			// Note: Todo: Enabling debug markers seems to break RenderDoc.
-			enabledExtensions.push_back(VK_EXT_DEBUG_MARKER_EXTENSION_NAME);
-			mDebugMarkersEnabled = true;
-		}
-
 		if (IsExtensionSupported(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
 		{
 			enabledExtensions.push_back(VK_EXT_MEMORY_BUDGET_EXTENSION_NAME);
@@ -153,7 +145,7 @@ namespace Utopian::Vk
 			deviceInfo.enabledLayerCount = Debug::validation_layers.size();
 			deviceInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
-
+		
 		Debug::ErrorCheck(vkCreateDevice(mPhysicalDevice, &deviceInfo, nullptr, &mDevice));
 	}
 

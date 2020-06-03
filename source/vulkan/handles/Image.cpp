@@ -57,6 +57,8 @@ namespace Utopian::Vk
 
 		CreateImage(imageCreateInfo, createInfo.properties);
 
+		DebugLabel::SetImageName(GetVkDevice(), mHandle, GetDebugName().c_str());
+
 		// Connect the view with the image
 		VkImageViewCreateInfo viewCreateInfo = {};
 		viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

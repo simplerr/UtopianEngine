@@ -52,6 +52,8 @@ namespace Utopian::Vk
 		{
 			UpdateMemory(data, size);
 		}
+
+		DebugLabel::SetBufferName(GetVkDevice(), mHandle, GetDebugName().c_str());
 	}
 
 	void Buffer::Destroy()

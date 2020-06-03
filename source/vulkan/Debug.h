@@ -44,6 +44,8 @@ namespace Utopian::Vk
 			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData);
 
+		std::string ObjectTypeToString(const VkObjectType objectType);
+
 		// Debugging layers
 		extern std::vector<const char*> validation_layers;
 
@@ -51,18 +53,19 @@ namespace Utopian::Vk
 		extern VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo;
 		extern VkDebugUtilsMessengerEXT debugUtilsMessenger;
 
+		extern VkValidationFeaturesEXT validationFeatures;
+		extern std::vector<VkValidationFeatureEnableEXT> enabledValidationFeatures;
+
 		extern bool performanceWarnings;
 		extern std::chrono::high_resolution_clock::time_point startTime;
 	}
 
 	/**
-	 * Setup and functions for the VK_EXT_debug_marker_extension
-	 * Extension spec can be found at https://github.com/KhronosGroup/Vulkan-Docs/blob/1.0-VK_EXT_debug_marker/doc/specs/vulkan/appendices/VK_EXT_debug_marker.txt
-	 * Note that the extension will only be present if run from an offline debugging application
-	 * The actual check for extension presence and enabling it on the device is done in Device
-	 * Implementation from https://github.com/SaschaWillems/Vulkan, guide: https://www.saschawillems.de/?page_id=2017
+	 * References:
+	 * https://github.com/KhronosGroup/Vulkan-Samples/blob/master/samples/extensions/debug_utils/debug_utils_tutorial.md
+	 * https://www.lunarg.com/wp-content/uploads/2018/05/Vulkan-Debug-Utils_05_18_v1.pdf
 	 */
-	namespace DebugMarker
+	namespace DebugLabel
 	{
 		/** Set to true if function pointer for the debug marker are available. */
 		extern bool active;
@@ -75,18 +78,18 @@ namespace Utopian::Vk
 		 * All Objects in Vulkan are represented by their 64-bit handles which are passed into this function
 		 * along with the object type. 
 		 */
-		void SetObjectName(VkDevice device, uint64_t object, VkDebugReportObjectTypeEXT objectType, const char*name);
+		void SetObjectName(VkDevice device, uint64_t object, VkObjectType objectType, const char* name);
 
 		/** Set the tag for an object. */
-		void SetObjectTag(VkDevice device, uint64_t object, VkDebugReportObjectTypeEXT objectType, uint64_t name, size_t tagSize, const void* tag);
+		void SetObjectTag(VkDevice device, uint64_t object, VkObjectType objectType, uint64_t name, size_t tagSize, const void* tag);
 
-		/** Start a new debug marker region. */
+		/** Start a new debug label region. */
 		void BeginRegion(VkCommandBuffer cmdbuffer, const char* pMarkerName, glm::vec4 color);
 
-		/** Insert a new debug marker into the command buffer. */
+		/** Insert a new debug label into the command buffer. */
 		void Insert(VkCommandBuffer cmdbuffer, std::string markerName, glm::vec4 color);
 
-		/** End the current debug marker region. */
+		/** End the current debug label region. */
 		void EndRegion(VkCommandBuffer cmdBuffer);
 
 		/** Object specific naming functions. */
@@ -107,4 +110,4 @@ namespace Utopian::Vk
 		void SetFenceName(VkDevice device, VkFence fence, const char* name);
 		void SetEventName(VkDevice device, VkEvent _event, const char* name);
 	};
-}	// VulkanLib namespace
+}

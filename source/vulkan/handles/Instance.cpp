@@ -7,8 +7,8 @@ namespace Utopian::Vk
 	Instance::Instance(std::string appName, bool enableValidation)
 	{
 		VkApplicationInfo appInfo = {};
-		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;			// Must be VK_STRUCTURE_TYPE_APPLICATION_INFO
-		appInfo.pNext = nullptr;									// Must be NULL
+		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		appInfo.pNext = nullptr;
 		appInfo.pApplicationName = appName.c_str();
 		appInfo.pEngineName = appName.c_str();
 		appInfo.apiVersion = VK_MAKE_VERSION(1, 1, 0);
@@ -24,15 +24,18 @@ namespace Utopian::Vk
 		enabledExtensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
 #endif
 
-		// Add the debug extension
-		enabledExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+		if (IsExtensionSupported(VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
+			enabledExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+		if (IsExtensionSupported(VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME))
+			enabledExtensions.push_back(VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME);
 
 		VkInstanceCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;	// Must be VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
-		createInfo.pNext = &Debug::debugUtilsCreateInfo;	// Enables debugging when creating the instance
-		createInfo.flags = 0;										// Must be 0
+		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		createInfo.pNext = &Debug::debugUtilsCreateInfo;
+		createInfo.flags = 0;
 		createInfo.pApplicationInfo = &appInfo;
-		createInfo.enabledExtensionCount = enabledExtensions.size();			// Extensions
+		createInfo.enabledExtensionCount = enabledExtensions.size();
 		createInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 		if (enableValidation)
@@ -47,6 +50,29 @@ namespace Utopian::Vk
 	Instance::~Instance()
 	{
 		vkDestroyInstance(mInstance, nullptr);
+	}
+
+	bool Instance::IsExtensionSupported(std::string extension) const
+	{
+		uint32_t instanceExtensionCount;
+		Debug::ErrorCheck(vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, nullptr));
+
+		std::vector<VkExtensionProperties> availableInstanceExtensions(instanceExtensionCount);
+		Debug::ErrorCheck(vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, availableInstanceExtensions.data()));
+
+		bool supported = false;
+		for (auto& available_extension : availableInstanceExtensions)
+		{
+			if (strcmp(available_extension.extensionName, extension.c_str()) == 0)
+			{
+				supported = true;
+			}
+		}
+
+		if (!supported)
+			Debug::ConsolePrint(extension + " is not supported.");
+
+		return supported;
 	}
 
 	VkInstance Instance::GetVkHandle()

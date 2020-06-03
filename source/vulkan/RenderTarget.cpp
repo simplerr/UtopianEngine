@@ -86,7 +86,7 @@ namespace Utopian::Vk
 	void RenderTarget::BeginCommandBuffer(std::string debugName, glm::vec4 debugColor)
 	{
 		mCommandBuffer->Begin();
-		Vk::DebugMarker::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
+		Vk::DebugLabel::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
 	}
 	
 	void RenderTarget::BeginRenderPass()
@@ -126,7 +126,7 @@ namespace Utopian::Vk
 		// Begin command buffer recording & the render pass
 		//mCommandBuffer->Begin();
 
-		Vk::DebugMarker::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
+		Vk::DebugLabel::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
 
 		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -138,7 +138,7 @@ namespace Utopian::Vk
 	{
 		mCommandBuffer->CmdEndRenderPass();
 
-		Vk::DebugMarker::EndRegion(mCommandBuffer->GetVkHandle());
+		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
 
 		mCommandBuffer->Flush();
 	}
@@ -147,7 +147,7 @@ namespace Utopian::Vk
 	{
 		mCommandBuffer->CmdEndRenderPass();
 
-		Vk::DebugMarker::EndRegion(mCommandBuffer->GetVkHandle());
+		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
 
 		mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
 	}
