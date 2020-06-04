@@ -37,6 +37,8 @@ namespace Utopian
 		mVertexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice(), "ImGui vertex buffer");
 		mIndexBuffer = std::make_shared<Vk::Buffer>(vulkanApp->GetDevice(), "ImGui index buffer");
 
+		ImGui::CreateContext();
+
 		// Color scheme
 		ImGuiStyle& style = ImGui::GetStyle();
 
@@ -46,7 +48,6 @@ namespace Utopian
         style.Colors[ImGuiCol_Text]                  = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
         style.Colors[ImGuiCol_TextDisabled]          = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
         style.Colors[ImGuiCol_WindowBg]              = ImVec4(0.94f, 0.94f, 0.94f, 0.94f);
-        style.Colors[ImGuiCol_ChildWindowBg]         = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
         style.Colors[ImGuiCol_PopupBg]               = ImVec4(1.00f, 1.00f, 1.00f, 0.94f);
         style.Colors[ImGuiCol_Border]                = ImVec4(0.00f, 0.00f, 0.00f, 0.39f);
         style.Colors[ImGuiCol_BorderShadow]          = ImVec4(1.00f, 1.00f, 1.00f, 0.10f);
@@ -61,7 +62,6 @@ namespace Utopian
         style.Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
         style.Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
         style.Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
-        //style.Colors[ImGuiCol_ComboBg]               = ImVec4(0.86f, 0.86f, 0.86f, 0.99f);
         style.Colors[ImGuiCol_CheckMark]             = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
         style.Colors[ImGuiCol_SliderGrab]            = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
         style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
@@ -71,15 +71,9 @@ namespace Utopian
         style.Colors[ImGuiCol_Header]                = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
         style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
         style.Colors[ImGuiCol_HeaderActive]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-        style.Colors[ImGuiCol_Column]                = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
-        style.Colors[ImGuiCol_ColumnHovered]         = ImVec4(0.26f, 0.59f, 0.98f, 0.78f);
-        style.Colors[ImGuiCol_ColumnActive]          = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
         style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(1.00f, 1.00f, 1.00f, 0.50f);
         style.Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
         style.Colors[ImGuiCol_ResizeGripActive]      = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-        style.Colors[ImGuiCol_CloseButton]           = ImVec4(0.59f, 0.59f, 0.59f, 0.50f);
-        style.Colors[ImGuiCol_CloseButtonHovered]    = ImVec4(0.98f, 0.39f, 0.36f, 1.00f);
-        style.Colors[ImGuiCol_CloseButtonActive]     = ImVec4(0.98f, 0.39f, 0.36f, 1.00f);
         style.Colors[ImGuiCol_PlotLines]             = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
         style.Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
         style.Colors[ImGuiCol_PlotHistogram]         = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
@@ -91,6 +85,7 @@ namespace Utopian
 		ImGuiIO& io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(width, height);
 		io.FontGlobalScale = mScale;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
 		io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
@@ -122,7 +117,7 @@ namespace Utopian
 	{
 		ImGuiIO& io = ImGui::GetIO();
 
-		io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Regular.ttf", 14.0f);
+		io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Regular.ttf", 15.0f);
 
 		// Create font texture
 		unsigned char* fontData;
@@ -164,6 +159,8 @@ namespace Utopian
 		io.Fonts->TexID = (ImTextureID)AddImage(*mTexture->GetImage());
 
 		mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mCommandBuffer->SetActive(false); // Enable the command buffer when something is recorded to it (not the first frame)
+
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
 	}
 
@@ -212,6 +209,14 @@ namespace Utopian
 		}
 
 		mCommandBuffer->End();
+
+		// A hack to disable the command buffer until something have been recorded to it
+		static bool firstCall = true;
+		if (firstCall)
+		{
+			mCommandBuffer->SetActive(true);
+			firstCall = false;
+		}
 	}
 
 	/** Update vertex and index buffer containing the imGui elements when required */
@@ -225,6 +230,9 @@ namespace Utopian
 		// Note: Alignment is done inside buffer creation
 		VkDeviceSize vertexBufferSize = imDrawData->TotalVtxCount * sizeof(ImDrawVert);
 		VkDeviceSize indexBufferSize = imDrawData->TotalIdxCount * sizeof(ImDrawIdx);
+
+		if (vertexBufferSize == 0u || indexBufferSize == 0u)
+			return;
 
 		// Update buffers only if vertex or index count has been changed compared to current buffer size
 
@@ -364,7 +372,7 @@ namespace Utopian
 	{
 		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 		ImGui::SetNextWindowPos(ImVec2(position.x, position.y), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiSetCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 		ImGui::Begin(label.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		ImGui::PushItemWidth(itemWidth);
 	}
