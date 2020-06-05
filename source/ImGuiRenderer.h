@@ -53,6 +53,7 @@ namespace Utopian
 	private:
 		void UpdateCommandBuffers();
 		void ResetKeyStates();
+		void StartDockSpace();
 
 	private:
 		struct PushConstantBlock {

@@ -160,17 +160,22 @@ namespace Utopian
 
 	void SSRJob::Update()
 	{
-		ImGuiRenderer::BeginWindow("SSR settings", glm::vec2(500.0f, 10.0f), 400.0f);
-		ImGui::SliderFloat("_Iterations: ", &mSSRSettingsBlock.data._Iterations, 1, 1000);
-		ImGui::SliderFloat("_BinarySearchIterations", &mSSRSettingsBlock.data._BinarySearchIterations, 1, 32);
-		ImGui::SliderFloat("_PixelZSize: ", &mSSRSettingsBlock.data._PixelZSize, 0.0f, 2.0f);
-		ImGui::SliderFloat("_PixelStride: ", &mSSRSettingsBlock.data._PixelStride, 1.0f, 64.0f);
-		ImGui::SliderFloat("_PixelStrideZCuttoff: ", &mSSRSettingsBlock.data._PixelStrideZCuttoff, 0.0f, 200.0f);
-		ImGui::SliderFloat("_MaxRayDistance: ", &mSSRSettingsBlock.data._MaxRayDistance, 0.0f, 400000.0f);
-		ImGui::SliderFloat("_ScreenEdgeFadeStart: ", &mSSRSettingsBlock.data._ScreenEdgeFadeStart, 0.0f, 1.0f);
-		ImGui::SliderFloat("_EyeFadeStart: ", &mSSRSettingsBlock.data._EyeFadeStart, 0.0f, 1.0f);
-		ImGui::SliderFloat("_EyeFadeEnd: ", &mSSRSettingsBlock.data._EyeFadeEnd, 0.0f, 1.0f);
-		ImGui::SliderFloat("_GeometryThickness: ", &mSSRSettingsBlock.data._GeometryThickness, 0.1f, 100.0f);
-		ImGuiRenderer::EndWindow();
+		static bool displayConfiguration = false;
+
+		if (displayConfiguration)
+		{
+			ImGuiRenderer::BeginWindow("SSR settings", glm::vec2(500.0f, 10.0f), 400.0f);
+			ImGui::SliderFloat("_Iterations: ", &mSSRSettingsBlock.data._Iterations, 1, 1000);
+			ImGui::SliderFloat("_BinarySearchIterations", &mSSRSettingsBlock.data._BinarySearchIterations, 1, 32);
+			ImGui::SliderFloat("_PixelZSize: ", &mSSRSettingsBlock.data._PixelZSize, 0.0f, 2.0f);
+			ImGui::SliderFloat("_PixelStride: ", &mSSRSettingsBlock.data._PixelStride, 1.0f, 64.0f);
+			ImGui::SliderFloat("_PixelStrideZCuttoff: ", &mSSRSettingsBlock.data._PixelStrideZCuttoff, 0.0f, 200.0f);
+			ImGui::SliderFloat("_MaxRayDistance: ", &mSSRSettingsBlock.data._MaxRayDistance, 0.0f, 400000.0f);
+			ImGui::SliderFloat("_ScreenEdgeFadeStart: ", &mSSRSettingsBlock.data._ScreenEdgeFadeStart, 0.0f, 1.0f);
+			ImGui::SliderFloat("_EyeFadeStart: ", &mSSRSettingsBlock.data._EyeFadeStart, 0.0f, 1.0f);
+			ImGui::SliderFloat("_EyeFadeEnd: ", &mSSRSettingsBlock.data._EyeFadeEnd, 0.0f, 1.0f);
+			ImGui::SliderFloat("_GeometryThickness: ", &mSSRSettingsBlock.data._GeometryThickness, 0.1f, 100.0f);
+			ImGuiRenderer::EndWindow();
+		}
 	}
 }

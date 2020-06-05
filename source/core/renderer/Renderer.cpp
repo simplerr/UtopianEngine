@@ -96,6 +96,8 @@ namespace Utopian
 		// It's expected that each rendering node might have it's own settings that can be configured
 		ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
 
+		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
+
 		if (ImGui::CollapsingHeader("Features"))
 		{
 			ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);

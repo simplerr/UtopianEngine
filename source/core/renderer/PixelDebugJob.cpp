@@ -88,6 +88,8 @@ namespace Utopian
 
 	void PixelDebugJob::Update()
 	{
+		return;
+
 		glm::vec4 pixelValue = mOutputBuffer.data.pixelValue;
 		glm::vec4 pixelValue2 = mOutputBuffer.data.pixelValue2;
 		glm::vec4 pixelValue3 = mOutputBuffer.data.pixelValue3;
