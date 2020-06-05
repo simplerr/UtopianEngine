@@ -10,3 +10,6 @@
 [submodule "external/glm"]
 	path = external/glm
 	url = git@github.com:g-truc/glm.git
+[submodule "external/LegitProfiler"]
+	path = external/LegitProfiler
+	url = git@github.com:simplerr/LegitProfiler.git

@@ -7,6 +7,7 @@
 #include "core/AssetLoader.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/RendererUtility.h"
+#include "core/Profiler.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
@@ -48,6 +49,7 @@ namespace Utopian
 		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
 		Vk::EffectManager::Start();
 		ScreenQuadRenderer::Start(mVulkanApp.get());
+		Profiler::Start();
 
 		//gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 
@@ -101,6 +103,7 @@ namespace Utopian
 		World::Instance().Update();
 		Renderer::Instance().Update();
 		Physics::Instance().Update();
+		Profiler::Instance().Update();
 
 		Vk::EffectManager::Instance().Update();
 

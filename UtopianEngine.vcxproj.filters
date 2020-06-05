@@ -471,6 +471,12 @@
     <ClCompile Include="external\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Profiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="external\LegitProfiler\ImGuiProfilerRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Window.h">
@@ -852,6 +858,12 @@
       <Filter>Source Files\vulkan\handles</Filter>
     </ClInclude>
     <ClInclude Include="external\vk_mem_alloc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="external\LegitProfiler\ImGuiProfilerRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\Profiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
