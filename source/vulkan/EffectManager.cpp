@@ -31,11 +31,13 @@ namespace Utopian::Vk
 			time_t updatedModificationTime = GetLatestModification(shaderCreateInfo);
 			if (updatedModificationTime > trackedEffect.lastModification)
 			{
-				trackedEffect.effect->RecompileShader();
+				if (trackedEffect.effect->RecompileShader())
+					Debug::ConsolePrint("Recompiled \"" + shaderCreateInfo.fragmentShaderPath + "\" succesfully");
+				else
+					Debug::ConsolePrint("Recompilation of \"" + shaderCreateInfo.fragmentShaderPath + "\" failed");
+
 				NotifyCallbacks(trackedEffect.effect->GetVertexShaderPath());
 				trackedEffect.lastModification = updatedModificationTime;
-
-				Debug::ConsolePrint("Recompiled \"" + shaderCreateInfo.fragmentShaderPath + "\"");
 			}
 		}
 	}

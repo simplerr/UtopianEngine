@@ -7,6 +7,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <chrono>
+#include <functional>
 #include "vulkan/VulkanInclude.h"
 #include "utility/Platform.h"
 
@@ -58,6 +59,14 @@ namespace Utopian::Vk
 
 		extern bool performanceWarnings;
 		extern std::chrono::high_resolution_clock::time_point startTime;
+
+		template<class ...Args>
+		void RegisterUserLogCallback(Args &&...args)
+		{
+			mUserLogCallback = std::bind(std::forward<Args>(args)...);
+		}
+
+		extern std::function<void(std::string)> mUserLogCallback;
 	}
 
 	/**

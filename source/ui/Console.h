@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <cstdio>
+#include <string>
 #include "imgui/imgui.h"
 
 namespace Utopian
@@ -36,5 +37,7 @@ namespace Utopian
       static int TextEditCallbackStub(ImGuiInputTextCallbackData * data);
 
       int TextEditCallback(ImGuiInputTextCallbackData * data);
+
+      void DebugLogCallback(std::string logMessage);
    };
 }

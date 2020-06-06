@@ -1,4 +1,6 @@
 #include "Console.h"
+#include "vulkan/Debug.h"
+#include <functional>
 
 namespace Utopian
 {
@@ -16,6 +18,8 @@ namespace Utopian
       AutoScroll = true;
       ScrollToBottom = false;
       AddLog("Welcome to Dear ImGui!");
+
+      Vk::Debug::RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
    }
 
    Console::~Console()
@@ -63,33 +67,8 @@ namespace Utopian
          ImGui::EndPopup();
       }
 
-      ImGui::TextWrapped(
-         "This example implements a console with basic coloring, completion and history. A more elaborate "
-         "implementation may want to store entries along with extra data such as timestamp, emitter, etc.");
-      ImGui::TextWrapped("Enter 'HELP' for help, press TAB to use text completion.");
-
-      // TODO: display items starting from the bottom
-
-      if (ImGui::SmallButton("Add Dummy Text")) { AddLog("%d some text", Items.Size); AddLog("some more text"); AddLog("display very important message here!"); } ImGui::SameLine();
-      if (ImGui::SmallButton("Add Dummy Error")) { AddLog("[error] something went wrong"); } ImGui::SameLine();
-      if (ImGui::SmallButton("Clear")) { ClearLog(); } ImGui::SameLine();
-      bool copy_to_clipboard = ImGui::SmallButton("Copy");
       //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
 
-      ImGui::Separator();
-
-      // Options menu
-      if (ImGui::BeginPopup("Options"))
-      {
-         ImGui::Checkbox("Auto-scroll", &AutoScroll);
-         ImGui::EndPopup();
-      }
-
-      // Options, Filter
-      if (ImGui::Button("Options"))
-         ImGui::OpenPopup("Options");
-      ImGui::SameLine();
-      Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
       ImGui::Separator();
 
       // Reserve enough left-over height for 1 separator + 1 input text
@@ -125,6 +104,8 @@ namespace Utopian
       // - Split them into same height items would be simpler and facilitate random-seeking into your list.
       // - Consider using manual call to IsRectVisible() and skipping extraneous decoration from your items.
       ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
+
+      static bool copy_to_clipboard = false;
       if (copy_to_clipboard)
          ImGui::LogToClipboard();
       for (int i = 0; i < Items.Size; i++)
@@ -168,6 +149,14 @@ namespace Utopian
          strcpy(s, "");
          reclaim_focus = true;
       }
+
+      ImGui::SameLine();
+      if (ImGui::SmallButton("Clear")) {
+         ClearLog();
+      }
+      
+      ImGui::SameLine();
+      copy_to_clipboard = ImGui::SmallButton("Copy");
 
       // Auto-focus on window apparition
       ImGui::SetItemDefaultFocus();
@@ -327,5 +316,10 @@ namespace Utopian
       }
 
       return 0;
+   }
+
+   void Console::DebugLogCallback(std::string logMessage)
+   {
+      AddLog(logMessage.c_str());
    }
 }

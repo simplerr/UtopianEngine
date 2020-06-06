@@ -20,6 +20,7 @@
 #include "core/physics/Physics.h"
 #include "utility/math/Helpers.h"
 #include "im3d/im3d.h"
+#include "vulkan/Debug.h"
 #include <random>
 
 namespace Utopian
@@ -364,6 +365,9 @@ namespace Utopian
 
 		mSelectedActor = actor;
 
+      if (mSelectedActor != nullptr)
+		   Vk::Debug::ConsolePrint("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
+
 		// Enable bounding box rendering
 		//auto renderable = mSelectedActor->GetComponent<CRenderable>();
 		//renderable->EnableBoundingBox();
@@ -375,6 +379,7 @@ namespace Utopian
 	void Editor::AddPaths()
 	{
 		// Add paths to models that can be loaded
+		AddActorCreation("data/models/sheep/sheep.obj");
 		AddActorCreation("data/models/adventure_village/CrateLong_reflective.obj");
 		AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);
 		AddActorCreation("data/models/adventure_village/CrateLong.obj", ActorTemplate::RIGID_BOX);

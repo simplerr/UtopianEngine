@@ -58,15 +58,19 @@ namespace Utopian::Vk
 		mPipeline->Create(mShader.get(), mPipelineInterface.get());
 	}
 
-	void Effect::RecompileShader()
+	bool Effect::RecompileShader()
 	{
+		bool result = false;
 		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mShaderCreateInfo);
 
 		if (shader != nullptr)
 		{
 			mShader = shader;
 			CreatePipeline();
+			result = true;
 		}
+
+		return result;
 	}
 
 	void Effect::CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device)

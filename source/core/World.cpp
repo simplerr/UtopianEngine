@@ -134,7 +134,10 @@ namespace Utopian
 
 	void World::AddActor(const SharedPtr<Actor>& actor)
 	{
+      static uint32_t nextId = 0;
+      actor->SetId(nextId);
 		mActors.push_back(actor);
+      nextId++;
 	}
 
 	void World::AddComponent(const SharedPtr<Component>& component)

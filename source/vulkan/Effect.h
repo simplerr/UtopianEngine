@@ -23,7 +23,7 @@ namespace Utopian::Vk
 		Effect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo);
 
 		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipeline. */
-		void RecompileShader();
+		bool RecompileShader();
 
 		/**
 		 * This must explicitly be called. Reason being that the constructor sets default values and to make

@@ -333,9 +333,9 @@ namespace Utopian::Vk
 
 		if (!shader.preprocess(&resources, DefaultVersion, ENoProfile, false, false, messages, &preprocessedGLSL, includer))
 		{
-			std::cout << "GLSL Preprocessing Failed for: " << filename << std::endl;
-			std::cout << shader.getInfoLog() << std::endl;
-			std::cout << shader.getInfoDebugLog() << std::endl;
+			Vk::Debug::ConsolePrint("GLSL Preprocessing Failed for: " + filename);
+			Vk::Debug::ConsolePrint(shader.getInfoLog());
+			Vk::Debug::ConsolePrint(shader.getInfoDebugLog());
 			error = true;
 		}
 
@@ -345,9 +345,9 @@ namespace Utopian::Vk
 		/* Compile */
 		if (!error && !shader.parse(&resources, 100, false, messages))
 		{
-			std::cout << "GLSL Parsing Failed for: " << filename << std::endl;
-			std::cout << shader.getInfoLog() << std::endl;
-			std::cout << shader.getInfoDebugLog() << std::endl;
+         Vk::Debug::ConsolePrint("GLSL Parsing Failed for: " + filename);
+         Vk::Debug::ConsolePrint(shader.getInfoLog());
+         Vk::Debug::ConsolePrint(shader.getInfoDebugLog());
 			error = true;
 		}
 
@@ -357,9 +357,9 @@ namespace Utopian::Vk
 
 		if (!error && !program.link(messages))
 		{
-			std::cout << "GLSL Linking Failed for: " << filename << std::endl;
-			std::cout << shader.getInfoLog() << std::endl;
-			std::cout << shader.getInfoDebugLog() << std::endl;
+         Vk::Debug::ConsolePrint("GLSL Linking Failed for: " + filename);
+         Vk::Debug::ConsolePrint(shader.getInfoLog());
+         Vk::Debug::ConsolePrint(shader.getInfoDebugLog());
 			error = true;
 		}
 
