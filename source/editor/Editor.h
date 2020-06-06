@@ -3,6 +3,7 @@
 #include "utility/Common.h"
 #include <vector>
 #include <string>
+#include "ui/Console.h"
 
 namespace Utopian
 {
@@ -50,6 +51,7 @@ namespace Utopian
 		SharedPtr<TerrainTool> mTerrainTool;
 		SharedPtr<FoliageTool> mFoliageTool;
 		Actor* mSelectedActor;
+      Console mConsole;
 		int mSelectedActorIndex = 0;
 
 		std::vector<const char*> mModelPaths;

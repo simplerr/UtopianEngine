@@ -333,6 +333,8 @@ namespace Utopian
 		}
 
 		ImGuiRenderer::EndWindow();
+
+      mConsole.Draw("Console", nullptr);
 	}
 
 	void Editor::Draw()
