@@ -1,5 +1,6 @@
 #include <vector>
 #include "vulkan/Debug.h"
+#include "core/Log.h"
 #include "Instance.h"
 
 namespace Utopian::Vk
@@ -70,7 +71,7 @@ namespace Utopian::Vk
 		}
 
 		if (!supported)
-			Debug::ConsolePrint(extension + " is not supported.");
+			UTO_LOG(extension + " is not supported.");
 
 		return supported;
 	}

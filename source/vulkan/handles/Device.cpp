@@ -7,6 +7,7 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/Debug.h"
+#include "core/Log.h"
 #include <fstream>
 
 #define VMA_IMPLEMENTATION
@@ -63,10 +64,10 @@ namespace Utopian::Vk
 		VkResult result = vkEnumeratePhysicalDevices(instance->GetVkHandle(), &gpuCount, NULL);
 
 		if (result != VK_SUCCESS)
-			Debug::ConsolePrint("vkEnumeratePhysicalDevices failed");
+			UTO_LOG("vkEnumeratePhysicalDevices failed");
 
 		if (gpuCount < 1)
-			Debug::ConsolePrint("vkEnumeratePhysicalDevices didn't find any valid devices for Vulkan");
+			UTO_LOG("vkEnumeratePhysicalDevices didn't find any valid devices for Vulkan");
 
 		// Enumerate devices
 		std::vector<VkPhysicalDevice> physicalDevices(gpuCount);
@@ -79,7 +80,7 @@ namespace Utopian::Vk
 
 		mVulkanVersion = VulkanVersion(mPhysicalDeviceProperties.apiVersion);
 
-		Debug::ConsolePrint("Retrieved physical device supporting Vulkan " + mVulkanVersion.version);
+		UTO_LOG("Retrieved physical device supporting Vulkan " + mVulkanVersion.version);
 	}
 
 	void Device::RetrieveQueueFamilyProperites()

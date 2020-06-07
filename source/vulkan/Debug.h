@@ -25,18 +25,8 @@ namespace Utopian::Vk
 		void InitDebug(Instance* instance);
 
 		void CleanupDebugging(VkInstance instance);
-		void SetupConsole(std::string title);
 		void ErrorCheck(VkResult result);
-
-		/** Prints timestamped text to the console. */
-	  	void ConsolePrint(std::string text);
 		 
-		void ConsolePrint(uint32_t num, std::string text = "");
-		void ConsolePrint(int32_t num, std::string text = "");
-		void ConsolePrint(float num, std::string text = "");
-		void ConsolePrint(glm::vec3 vec, std::string text = "");
-		void ConsolePrint(glm::vec4 vec, std::string text = "");
-
 		void TogglePerformanceWarnings();
 
 		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugMessengerCallback(
@@ -59,14 +49,6 @@ namespace Utopian::Vk
 
 		extern bool performanceWarnings;
 		extern std::chrono::high_resolution_clock::time_point startTime;
-
-		template<class ...Args>
-		void RegisterUserLogCallback(Args &&...args)
-		{
-			mUserLogCallback = std::bind(std::forward<Args>(args)...);
-		}
-
-		extern std::function<void(std::string)> mUserLogCallback;
 	}
 
 	/**

@@ -4,7 +4,7 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CTransform.h"
 #include "core/renderer/Renderer.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include "utility/Common.h"
 
 namespace Utopian
@@ -30,7 +30,7 @@ namespace Utopian
 
 	void ScriptExports::DebugPrint(const char* text)
 	{
-		Vk::Debug::ConsolePrint(text);
+		UTO_LOG(text);
 	}
 
 	void ScriptExports::AddAsset(uint32_t assetId, float x, float y, float z, float rx, float ry, float rz, float scale)
@@ -94,7 +94,7 @@ namespace Utopian
 		}
 		else
 		{
-			Vk::Debug::ConsolePrint("get_terrain_height() functin not found in Lua");
+			UTO_LOG("get_terrain_height() functin not found in Lua");
 		}
 	}
 

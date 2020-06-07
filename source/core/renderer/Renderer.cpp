@@ -30,7 +30,7 @@
 #include "core/renderer/DebugJob.h"
 #include "core/ScriptExports.h"
 #include "ScreenQuadRenderer.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include "utility/math/Helpers.h"
 #include "Input.h"
 
@@ -43,7 +43,7 @@ namespace Utopian
 
 	Renderer::Renderer(Vk::VulkanApp* vulkanApp)
 	{
-		Vk::Debug::ConsolePrint("Initializing Renderer...");
+		UTO_LOG("Initializing Renderer...");
 
 		mNextNodeId = 0;
 		mMainCamera = nullptr;

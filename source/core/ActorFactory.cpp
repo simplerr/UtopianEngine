@@ -10,13 +10,13 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CBloomLight.h"
 #include "core/components/CCatmullSpline.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 
 namespace Utopian
 {
 	void ActorFactory::LoadFromFile(Window* window, std::string filename)
 	{
-		Vk::Debug::ConsolePrint("Loading actors from file...");
+		UTO_LOG("Loading actors from file...");
 
 		gLuaManager().ExecuteFile(filename.c_str());
 

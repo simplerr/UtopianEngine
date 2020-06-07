@@ -23,8 +23,6 @@ namespace Utopian::Vk
 	VulkanBase::VulkanBase(Utopian::Window* window, bool enableValidation)
 		: mWindow(window)
 	{
-		Debug::SetupConsole("Vulkan Debug Console");
-
 		mInstance = new Instance("Utopian Engine (pre-alpha)", enableValidation);
 		Debug::InitDebug(mInstance);
 

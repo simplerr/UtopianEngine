@@ -1,6 +1,6 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/Effect.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include "imgui/imgui.h"
 
 namespace Utopian::Vk
@@ -32,9 +32,9 @@ namespace Utopian::Vk
 			if (updatedModificationTime > trackedEffect.lastModification)
 			{
 				if (trackedEffect.effect->RecompileShader())
-					Debug::ConsolePrint("Recompiled \"" + shaderCreateInfo.fragmentShaderPath + "\" succesfully");
+					UTO_LOG("Recompiled \"" + shaderCreateInfo.fragmentShaderPath + "\" succesfully");
 				else
-					Debug::ConsolePrint("Recompilation of \"" + shaderCreateInfo.fragmentShaderPath + "\" failed");
+					UTO_LOG("Recompilation of \"" + shaderCreateInfo.fragmentShaderPath + "\" failed");
 
 				NotifyCallbacks(trackedEffect.effect->GetVertexShaderPath());
 				trackedEffect.lastModification = updatedModificationTime;
@@ -53,7 +53,7 @@ namespace Utopian::Vk
 			trackedEffect.lastModification = updatedModificationTime;
 		}
 
-		Debug::ConsolePrint("Recompiled all shaders");
+		UTO_LOG("Recompiled all shaders");
 	}
 
 	void EffectManager::NotifyCallbacks(std::string name)

@@ -8,6 +8,7 @@
 #include "core/ActorFactory.h"
 #include "core/renderer/RendererUtility.h"
 #include "core/Profiler.h"
+#include "core/Log.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
@@ -25,11 +26,11 @@ namespace Utopian
 	Engine::Engine(SharedPtr<Vk::VulkanApp> vulkanApp)
 		: mVulkanApp(vulkanApp)
 	{
-		Vk::Debug::ConsolePrint("Starting engine modules...");
+		UTO_LOG("Starting engine modules...");
 
 		StartModules();
 
-		Vk::Debug::ConsolePrint("Engine modules ready");
+		UTO_LOG("Engine modules ready");
 	}
 	
 	Engine::~Engine()

@@ -11,6 +11,7 @@
 #include "core/renderer/Renderer.h"
 #include "editor/Editor.h"
 #include "core/Engine.h"
+#include "core/Log.h"
 #include "core/renderer/Renderer.h"
 #include "core/components/Actor.h"
 #include "core/components/CCatmullSpline.h"
@@ -20,13 +21,15 @@
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
 {
+   Utopian::Log::Start();
+
 	srand(time(NULL));
 
 	mIsClosing = false;
 
 	Utopian::Vk::Debug::TogglePerformanceWarnings();
 	Utopian::Vk::Debug::SetupDebugLayers();
-	Utopian::Vk::Debug::ConsolePrint(mAppName);
+   UTO_LOG(mAppName);
 
 	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
 	mVulkanApp->Prepare();

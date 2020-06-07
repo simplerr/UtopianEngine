@@ -4,6 +4,7 @@
 #include "ShaderFactory.h"
 #include "vulkan/handles/Device.h"
 #include "Debug.h"
+#include "core/Log.h"
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <DirStackFileIncluder.h>
 #include <ResourceLimits.h>
@@ -333,9 +334,9 @@ namespace Utopian::Vk
 
 		if (!shader.preprocess(&resources, DefaultVersion, ENoProfile, false, false, messages, &preprocessedGLSL, includer))
 		{
-			Vk::Debug::ConsolePrint("GLSL Preprocessing Failed for: " + filename);
-			Vk::Debug::ConsolePrint(shader.getInfoLog());
-			Vk::Debug::ConsolePrint(shader.getInfoDebugLog());
+			UTO_LOG("GLSL Preprocessing Failed for: " + filename);
+			UTO_LOG(shader.getInfoLog());
+			UTO_LOG(shader.getInfoDebugLog());
 			error = true;
 		}
 
@@ -345,9 +346,9 @@ namespace Utopian::Vk
 		/* Compile */
 		if (!error && !shader.parse(&resources, 100, false, messages))
 		{
-         Vk::Debug::ConsolePrint("GLSL Parsing Failed for: " + filename);
-         Vk::Debug::ConsolePrint(shader.getInfoLog());
-         Vk::Debug::ConsolePrint(shader.getInfoDebugLog());
+         UTO_LOG("GLSL Parsing Failed for: " + filename);
+         UTO_LOG(shader.getInfoLog());
+         UTO_LOG(shader.getInfoDebugLog());
 			error = true;
 		}
 
@@ -357,9 +358,9 @@ namespace Utopian::Vk
 
 		if (!error && !program.link(messages))
 		{
-         Vk::Debug::ConsolePrint("GLSL Linking Failed for: " + filename);
-         Vk::Debug::ConsolePrint(shader.getInfoLog());
-         Vk::Debug::ConsolePrint(shader.getInfoDebugLog());
+         UTO_LOG("GLSL Linking Failed for: " + filename);
+         UTO_LOG(shader.getInfoLog());
+         UTO_LOG(shader.getInfoDebugLog());
 			error = true;
 		}
 

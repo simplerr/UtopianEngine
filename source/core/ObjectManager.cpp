@@ -1,5 +1,5 @@
 #include "core/ObjectManager.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 
 namespace Utopian
 {
@@ -36,7 +36,7 @@ namespace Utopian
 	{
 		for (auto& entry : mObjects)
 		{
-			Utopian::Vk::Debug::ConsolePrint("Name: " + entry.second->GetName() + ", Id: " + std::to_string(entry.second->GetId()) + ", Use count: " + std::to_string(entry.second.use_count()));
+			UTO_LOG("Name: " + entry.second->GetName() + ", Id: " + std::to_string(entry.second->GetId()) + ", Use count: " + std::to_string(entry.second.use_count()));
 		}
 	}
 }

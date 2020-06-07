@@ -20,7 +20,7 @@
 #include "core/physics/Physics.h"
 #include "utility/math/Helpers.h"
 #include "im3d/im3d.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include <random>
 
 namespace Utopian
@@ -366,7 +366,7 @@ namespace Utopian
 		mSelectedActor = actor;
 
       if (mSelectedActor != nullptr)
-		   Vk::Debug::ConsolePrint("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
+		   UTO_LOG("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
 
 		// Enable bounding box rendering
 		//auto renderable = mSelectedActor->GetComponent<CRenderable>();

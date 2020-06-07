@@ -5,6 +5,8 @@
 #include "utility/Timer.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Instance.h"
+#include "vulkan/Debug.h"
+#include "core/Log.h"
 
 namespace Utopian::Vk
 {
@@ -23,9 +25,6 @@ namespace Utopian::Vk
 
 		void SetupDebugLayers()
 		{
-			// Create a console to forward standard output to
-			SetupConsole("Vulkan Debug Console");
-
 			// Debug utils setup
 			debugUtilsCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 			debugUtilsCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
@@ -57,7 +56,7 @@ namespace Utopian::Vk
 			PFN_vkCreateDebugUtilsMessengerEXT CreateDebugUtilsMessenger = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance->GetVkHandle(), "vkCreateDebugUtilsMessengerEXT");
 
 			if (CreateDebugUtilsMessenger == nullptr)
-				Debug::ConsolePrint("Error fetching vkCreateDebugUtilsMessengerEXT function pointer");
+				UTO_LOG("Error fetching vkCreateDebugUtilsMessengerEXT function pointer");
 			else
 				ErrorCheck(CreateDebugUtilsMessenger(instance->GetVkHandle(), &debugUtilsCreateInfo, nullptr, &debugUtilsMessenger));
 		}
@@ -123,7 +122,7 @@ namespace Utopian::Vk
 
 			stream << "-------------------------" << std::endl;
 
-			Debug::ConsolePrint(stream.str());
+			UTO_LOG(stream.str());
 
 #ifdef _WIN32
 			// Critical errors will be printed in a message box
@@ -141,55 +140,55 @@ namespace Utopian::Vk
 			{
 				switch (result) {
 				case VK_ERROR_OUT_OF_HOST_MEMORY:
-					ConsolePrint("VK_ERROR_OUT_OF_HOST_MEMORY");
+               UTO_LOG("VK_ERROR_OUT_OF_HOST_MEMORY");
 					break;
 				case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-					ConsolePrint("VK_ERROR_OUT_OF_DEVICE_MEMORY");
+               UTO_LOG("VK_ERROR_OUT_OF_DEVICE_MEMORY");
 					break;
 				case VK_ERROR_INITIALIZATION_FAILED:
-					ConsolePrint("VK_ERROR_INITIALIZATION_FAILED");
+               UTO_LOG("VK_ERROR_INITIALIZATION_FAILED");
 					break;
 				case VK_ERROR_DEVICE_LOST:
-					ConsolePrint("VK_ERROR_DEVICE_LOST");
+               UTO_LOG("VK_ERROR_DEVICE_LOST");
 					break;
 				case VK_ERROR_MEMORY_MAP_FAILED:
-					ConsolePrint("VK_ERROR_MEMORY_MAP_FAILED");
+               UTO_LOG("VK_ERROR_MEMORY_MAP_FAILED");
 					break;
 				case VK_ERROR_LAYER_NOT_PRESENT:
-					ConsolePrint("VK_ERROR_LAYER_NOT_PRESENT");
+               UTO_LOG("VK_ERROR_LAYER_NOT_PRESENT");
 					break;
 				case VK_ERROR_EXTENSION_NOT_PRESENT:
-					ConsolePrint("VK_ERROR_EXTENSION_NOT_PRESENT");
+               UTO_LOG("VK_ERROR_EXTENSION_NOT_PRESENT");
 					break;
 				case VK_ERROR_FEATURE_NOT_PRESENT:
-					ConsolePrint("VK_ERROR_FEATURE_NOT_PRESENT");
+               UTO_LOG("VK_ERROR_FEATURE_NOT_PRESENT");
 					break;
 				case VK_ERROR_INCOMPATIBLE_DRIVER:
-					ConsolePrint("VK_ERROR_INCOMPATIBLE_DRIVER");
+               UTO_LOG("VK_ERROR_INCOMPATIBLE_DRIVER");
 					break;
 				case VK_ERROR_TOO_MANY_OBJECTS:
-					ConsolePrint("VK_ERROR_TOO_MANY_OBJECTS");
+               UTO_LOG("VK_ERROR_TOO_MANY_OBJECTS");
 					break;
 				case VK_ERROR_FORMAT_NOT_SUPPORTED:
-					ConsolePrint("VK_ERROR_FORMAT_NOT_SUPPORTED");
+               UTO_LOG("VK_ERROR_FORMAT_NOT_SUPPORTED");
 					break;
 				case VK_ERROR_SURFACE_LOST_KHR:
-					ConsolePrint("VK_ERROR_SURFACE_LOST_KHR");
+               UTO_LOG("VK_ERROR_SURFACE_LOST_KHR");
 					break;
 				case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-					ConsolePrint("VK_ERROR_NATIVE_WINDOW_IN_USE_KHR");
+               UTO_LOG("VK_ERROR_NATIVE_WINDOW_IN_USE_KHR");
 					break;
 				case VK_SUBOPTIMAL_KHR:
-					ConsolePrint("VK_SUBOPTIMAL_KHR");
+               UTO_LOG("VK_SUBOPTIMAL_KHR");
 					break;
 				case VK_ERROR_OUT_OF_DATE_KHR:
-					ConsolePrint("VK_ERROR_OUT_OF_DATE_KHR");
+               UTO_LOG("VK_ERROR_OUT_OF_DATE_KHR");
 					break;
 				case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
-					ConsolePrint("VK_ERROR_INCOMPATIBLE_DISPLAY_KHR");
+               UTO_LOG("VK_ERROR_INCOMPATIBLE_DISPLAY_KHR");
 					break;
 				case VK_ERROR_VALIDATION_FAILED_EXT:
-					ConsolePrint("VK_ERROR_VALIDATION_FAILED_EXT");
+               UTO_LOG("VK_ERROR_VALIDATION_FAILED_EXT");
 					break;
 				default:
 					break;
@@ -270,57 +269,6 @@ namespace Utopian::Vk
     		}
 		}
 
-      void RegisterUserLogCallback(std::function<void(std::string)> callback)
-      {
-         mUserLogCallback = callback;
-      }
-
-		// Sets up a console window (Win32)
-		void SetupConsole(std::string title)
-		{
-#if defined(_WIN32)
-			AllocConsole();
-			AttachConsole(GetCurrentProcessId());
-			freopen("CON", "w", stdout);
-			SetConsoleTitle(TEXT(title.c_str()));
-#endif
-		}
-
-		void ConsolePrint(std::string text)
-		{
-			auto currentTime = std::chrono::high_resolution_clock::now();
-			auto elapsedTime = std::chrono::duration<double, std::milli>(currentTime - startTime).count();
-			std::cout << (uint32_t)elapsedTime << " " << text << std::endl;
-
-         if (mUserLogCallback != nullptr)
-            mUserLogCallback(text);
-		}
-
-		void ConsolePrint(int32_t num, std::string text)
-		{
-			std::cout << text << num << std::endl;
-		}
-
-		void ConsolePrint(float num, std::string text)
-		{
-			std::cout << text << num << std::endl;
-		}
-
-		void ConsolePrint(uint32_t num, std::string text)
-		{
-			std::cout << text << num << std::endl;
-		}
-
-		void ConsolePrint(glm::vec3 vec, std::string text)
-		{
-			std::cout << text << " " << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << std::endl;
-		}
-
-		void ConsolePrint(glm::vec4 vec, std::string text)
-		{
-			std::cout << text << " " << "x: " << vec.x << " y: " << vec.y << " z: " << vec.z << " w: " << vec.w << std::endl;
-		}
-
 		void TogglePerformanceWarnings()
 		{
 			performanceWarnings = !performanceWarnings;
@@ -349,7 +297,7 @@ namespace Utopian::Vk
 				pfnSetDebugUtilsObjectTag = reinterpret_cast<PFN_vkSetDebugUtilsObjectTagEXT>(vkGetDeviceProcAddr(vkDevice, "vkSetDebugUtilsObjectTagEXT"));;
 			
 				if (pfnBeginDebugUtilsLabel == nullptr)
-					Debug::ConsolePrint("Error fetching vkCmdBeginDebugUtilsLabelEXT function pointer");
+					UTO_LOG("Error fetching vkCmdBeginDebugUtilsLabelEXT function pointer");
 
 				// Set flag if at least one function pointer is present
 				active = (pfnBeginDebugUtilsLabel != VK_NULL_HANDLE);

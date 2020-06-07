@@ -34,6 +34,6 @@ private:
 	SharedPtr<Utopian::Editor> mEditor;
 	SharedPtr<Terrain> mTerrain;
 	Utopian::Window* mWindow;
-	const std::string mAppName = "Utopian Engine (alpha)";
+	const std::string mAppName = "Utopian Engine (v0.1)";
 	bool mIsClosing;
 };

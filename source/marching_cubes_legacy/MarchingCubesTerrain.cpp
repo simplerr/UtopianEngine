@@ -2,7 +2,7 @@
 #include <random>
 #include <numeric>
 #include "vulkan/VulkanApp.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -133,8 +133,8 @@ void MarchingCubesTerrain::UpdateBlockList()
 
 					mBlockList[blockKey] = block;
 
-					//Vulkan::Debug::ConsolePrint(x, "loaded blockX: ");
-					//Vulkan::Debug::ConsolePrint(z, "loaded blockZ: ");
+					//Vulkan::UTO_LOG(x, "loaded blockX: ");
+					//Vulkan::UTO_LOG(z, "loaded blockZ: ");
 				}
 				else
 				{
@@ -277,17 +277,17 @@ void MarchingCubesTerrain::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, L
 					numVertices += block->GetNumVertices();
 				}
 
-				Utopian::Vk::Debug::ConsolePrint(numBlocks, "numBlocks: ");
-				Utopian::Vk::Debug::ConsolePrint(numVertices, "numVertices: ");
+				Utopian::UTO_LOG(numBlocks, "numBlocks: ");
+				Utopian::UTO_LOG(numVertices, "numVertices: ");
 
 				glm::vec3 cameraPos = mCamera->GetPosition();
 				int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock);
 				int32_t blockY = 0;
 				int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock);
 
-				Utopian::Vk::Debug::ConsolePrint(blockX, "blockX: ");
-				Utopian::Vk::Debug::ConsolePrint(blockZ, "blockZ: ");
-				Utopian::Vk::Debug::ConsolePrint(GetHeight(mCamera->GetPosition().x, mCamera->GetPosition().z), "terrain height: ");
+				Utopian::UTO_LOG(blockX, "blockX: ");
+				Utopian::UTO_LOG(blockZ, "blockZ: ");
+				Utopian::UTO_LOG(GetHeight(mCamera->GetPosition().x, mCamera->GetPosition().z), "terrain height: ");
 
 				UpdateBlockList();
 			}

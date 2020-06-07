@@ -3,7 +3,7 @@
 #include "BulletHelpers.h"
 #include "btBulletDynamicsCommon.h"
 #include "im3d/im3d.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 
 namespace Utopian
 {
@@ -48,7 +48,7 @@ namespace Utopian
 
 	void PhysicsDebugDraw::reportErrorWarning(const char* warningString)
 	{
-		Vk::Debug::ConsolePrint(warningString);
+		UTO_LOG(warningString);
 	}
 
 	void PhysicsDebugDraw::draw3dText(const btVector3& location, const char* textString) 

@@ -5,7 +5,7 @@
 #include "vulkan/Mesh.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include "StaticModel.h"
 #include "vulkan/handles/Device.h"
 
@@ -207,7 +207,7 @@ namespace Utopian::Vk
 		}
 		else {
 			// Loading of model failed
-			Vk::Debug::ConsolePrint(filename);
+			UTO_LOG(filename);
 			assert(scene);
 		}
 

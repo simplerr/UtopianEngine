@@ -1,5 +1,5 @@
 #include "Console.h"
-#include "vulkan/Debug.h"
+#include "core/Log.h"
 #include <functional>
 
 namespace Utopian
@@ -19,7 +19,8 @@ namespace Utopian
       ScrollToBottom = false;
       AddLog("Welcome to Dear ImGui!");
 
-      Vk::Debug::RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
+      //Vk::Debug::RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
+      gLog().RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
    }
 
    Console::~Console()
