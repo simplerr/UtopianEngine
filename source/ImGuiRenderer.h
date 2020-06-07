@@ -54,6 +54,8 @@ namespace Utopian
 		void UpdateCommandBuffers();
 		void ResetKeyStates();
 		void StartDockSpace();
+      void SetDarkTheme();
+      void SetLightTheme();
 
 	private:
 		struct PushConstantBlock {
