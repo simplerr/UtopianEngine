@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "core/components/Component.h"
 #include "core/Transform.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 
 #include "BulletDynamics/Dynamics/btRigidBody.h"

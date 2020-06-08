@@ -5,7 +5,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
 #include <glm/glm.hpp>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/VertexDescription.h"
 
 namespace Utopian::Vk

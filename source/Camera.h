@@ -10,7 +10,7 @@
 #include "utility/math/Frustum.h"
 #include "utility/Common.h"
 #include "core/SceneNode.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 
 namespace Utopian
 {

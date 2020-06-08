@@ -17,7 +17,7 @@ namespace Utopian
       Commands.push_back("CLASSIFY");
       AutoScroll = true;
       ScrollToBottom = false;
-      AddLog("Welcome to Dear ImGui!");
+      AddLog("Utopian Engine (v0.1)");
 
       //Vk::Debug::RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
       gLog().RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);

@@ -2,7 +2,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "utility/Common.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/ShaderBuffer.h"
 #include "core/Terrain.h"
 #include "imgui/imgui.h"

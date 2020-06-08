@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/VertexDescription.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/DescriptorSet.h"

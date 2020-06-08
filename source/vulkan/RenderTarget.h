@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 
 namespace Utopian::Vk

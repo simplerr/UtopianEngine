@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/VertexDescription.h"
 #include "utility/Module.h"
 #include "utility/Common.h"

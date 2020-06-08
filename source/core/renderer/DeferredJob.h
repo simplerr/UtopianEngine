@@ -1,7 +1,7 @@
 #pragma once
 
 #include "core/renderer/BaseJob.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "core/CommonBuffers.h"
 
 namespace Utopian

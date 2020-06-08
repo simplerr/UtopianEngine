@@ -328,7 +328,7 @@
     <ClInclude Include="source\vulkan\VertexDescription.h" />
     <ClInclude Include="source\vulkan\VulkanApp.h" />
     <ClInclude Include="source\vulkan\VulkanBase.h" />
-    <ClInclude Include="source\vulkan\VulkanInclude.h" />
+    <ClInclude Include="source\vulkan\VulkanPrerequisites.h" />
     <ClInclude Include="source\vulkan\vulkanswapchain.hpp" />
     <ClInclude Include="source\ImGuiRenderer.h" />
     <ClInclude Include="source\Window.h" />

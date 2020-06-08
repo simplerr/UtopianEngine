@@ -12,7 +12,7 @@
 #include <vulkan/vulkan.h>
 
 #include "imgui/imgui.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/Effect.h"
 

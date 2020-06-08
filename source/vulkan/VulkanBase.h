@@ -5,7 +5,7 @@
 #endif
 
 #include "vulkan/vulkanswapchain.hpp"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 //#include "vulkan/handles/Semaphore.h"
 #include "Window.h"
 #include "utility/Timer.h"

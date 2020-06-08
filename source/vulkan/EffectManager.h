@@ -1,7 +1,7 @@
 #pragma once
 #include "utility/Module.h"
 #include "utility/Common.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/ShaderFactory.h"
 #include <vector>
 #include <functional>

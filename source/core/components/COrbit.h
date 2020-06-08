@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "core/components/Component.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 
 namespace Utopian

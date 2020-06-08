@@ -7,7 +7,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <map>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 
 namespace Utopian::Vk
 {

@@ -2,7 +2,7 @@
 
 #include <string>
 #include <map>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "../external/assimp/assimp/Importer.hpp"
 #include "../external/assimp/assimp/material.h"
 #include "vulkan/Vertex.h"

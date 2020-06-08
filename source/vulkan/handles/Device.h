@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <string>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "../external/vk_mem_alloc.h"
 
 namespace Utopian::Vk

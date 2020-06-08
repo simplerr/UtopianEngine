@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <chrono>
 #include <functional>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Platform.h"
 
 #define ENUM_TO_STR(x) #x

@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 #include "vulkan/handles/Handle.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 
 namespace Utopian::Vk

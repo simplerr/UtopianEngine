@@ -3,7 +3,7 @@
 #include "core/SceneNode.h"
 #include "core/components/Component.h"
 #include "utility/Common.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 
 namespace Utopian
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "core/renderer/BaseJob.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/Texture.h"
 #include "core/renderer/JobGraph.h"
 #include <glm/glm.hpp>

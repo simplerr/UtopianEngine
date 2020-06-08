@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <array>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/Texture.h"
 #include "utility/Common.h"

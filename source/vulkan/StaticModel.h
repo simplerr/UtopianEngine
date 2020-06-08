@@ -9,7 +9,7 @@
 #include "vulkan/Mesh.h"
 #include "utility/math/BoundingBox.h"
 #include "Vertex.h"
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 
 namespace Utopian::Vk
 {

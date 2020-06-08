@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Platform.h"
 #include "utility/Timer.h"
 #include "utility/Common.h"

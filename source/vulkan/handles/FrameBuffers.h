@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 
 class VulkanSwapChain;
 

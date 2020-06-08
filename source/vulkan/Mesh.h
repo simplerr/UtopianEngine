@@ -6,7 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/handles/Buffer.h"
 #include "utility/math/BoundingBox.h"

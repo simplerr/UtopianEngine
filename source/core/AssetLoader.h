@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "utility/Module.h"
-#include "vulkan\VulkanInclude.h"
+#include "vulkan\VulkanPrerequisites.h"
 
 #define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
 

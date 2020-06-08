@@ -2,7 +2,7 @@
 
 #include <map>
 #include <string>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
 

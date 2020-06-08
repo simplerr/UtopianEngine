@@ -584,9 +584,6 @@
     <ClInclude Include="source\LightData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\vulkan\VulkanInclude.h">
-      <Filter>Source Files\vulkan</Filter>
-    </ClInclude>
     <ClInclude Include="source\utility\Module.h">
       <Filter>Source Files\utility</Filter>
     </ClInclude>
@@ -877,6 +874,9 @@
     </ClInclude>
     <ClInclude Include="source\core\Log.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\vulkan\VulkanPrerequisites.h">
+      <Filter>Source Files\vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

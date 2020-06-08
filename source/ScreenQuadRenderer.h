@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <glm/glm.hpp>
-#include "vulkan/VulkanInclude.h"
+#include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 #include "utility/Module.h"
 #include "vulkan/Effect.h"

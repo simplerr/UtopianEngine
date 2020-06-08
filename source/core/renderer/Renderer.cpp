@@ -208,8 +208,6 @@ namespace Utopian
 		}
 
 		ImGuiRenderer::EndWindow();
-
-      ImGui::ShowDemoWindow();
 	}
 
 	/*
