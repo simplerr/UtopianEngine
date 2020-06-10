@@ -38,7 +38,8 @@ namespace Utopian::Vk
 	class Texture;
 	class Texture;
 	class Pipeline;
-	class QueryPool;
+	class QueryPoolStatistics;
+   class QueryPoolTimestamp;
 
 	// Other
 	class Device;

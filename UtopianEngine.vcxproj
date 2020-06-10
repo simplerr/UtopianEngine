@@ -169,7 +169,8 @@
     <ClCompile Include="source\vulkan\EffectManager.cpp" />
     <ClCompile Include="source\vulkan\handles\Device.cpp" />
     <ClCompile Include="source\vulkan\handles\Pipeline.cpp" />
-    <ClCompile Include="source\vulkan\handles\QueryPool.cpp" />
+    <ClCompile Include="source\vulkan\handles\QueryPoolStatistics.cpp" />
+    <ClCompile Include="source\vulkan\handles\QueryPoolTimestamp.cpp" />
     <ClCompile Include="source\vulkan\handles\Sampler.cpp" />
     <ClCompile Include="source\vulkan\RenderTarget.cpp" />
     <ClCompile Include="source\ScreenQuadRenderer.cpp" />
@@ -297,7 +298,8 @@
     <ClInclude Include="source\vulkan\EffectManager.h" />
     <ClInclude Include="source\vulkan\handles\Device.h" />
     <ClInclude Include="source\vulkan\handles\Pipeline.h" />
-    <ClInclude Include="source\vulkan\handles\QueryPool.h" />
+    <ClInclude Include="source\vulkan\handles\QueryPoolStatistics.h" />
+    <ClInclude Include="source\vulkan\handles\QueryPoolTimestamp.h" />
     <ClInclude Include="source\vulkan\handles\Sampler.h" />
     <ClInclude Include="source\vulkan\RenderTarget.h" />
     <ClInclude Include="source\ScreenQuadRenderer.h" />

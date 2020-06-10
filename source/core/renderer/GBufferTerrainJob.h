@@ -38,7 +38,7 @@ namespace Utopian
 	private:
 		SharedPtr<Vk::Effect> mEffect;
 		Vk::StaticModel* mQuadModel;
-		SharedPtr<Vk::QueryPool> mQueryPool;
+		SharedPtr<Vk::QueryPoolStatistics> mQueryPool;
 		SharedPtr<Vk::Sampler> mSampler;
 		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;

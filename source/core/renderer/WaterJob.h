@@ -53,7 +53,7 @@ namespace Utopian
         Vk::Mesh* GeneratePatches(float cellSize, int numCells);
     private:
 		SharedPtr<Vk::Effect> mEffect;
-		SharedPtr<Vk::QueryPool> mQueryPool;
+		SharedPtr<Vk::QueryPoolStatistics> mQueryPool;
 		SharedPtr<Vk::Sampler> mSampler;
 		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;

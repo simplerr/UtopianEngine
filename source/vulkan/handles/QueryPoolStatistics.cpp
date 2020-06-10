@@ -1,11 +1,11 @@
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
-#include "QueryPool.h"
+#include "QueryPoolStatistics.h"
 
 namespace Utopian::Vk
 {
-	QueryPool::QueryPool(Device* device)
+	QueryPoolStatistics::QueryPoolStatistics(Device* device)
 		: Handle(device, vkDestroyQueryPool)
 	{
 		VkQueryPoolCreateInfo queryPoolInfo = {};
@@ -27,7 +27,7 @@ namespace Utopian::Vk
 		Debug::ErrorCheck(vkCreateQueryPool(device->GetVkDevice(), &queryPoolInfo, NULL, &mHandle));
 	}
 
-	void QueryPool::RetreiveResults()
+	void QueryPoolStatistics::RetreiveResults()
 	{
 		vkGetQueryPoolResults(
 			GetDevice()->GetVkDevice(),
@@ -40,24 +40,24 @@ namespace Utopian::Vk
 			VK_QUERY_RESULT_64_BIT);
 	}
 
-	uint64_t QueryPool::GetStatistics(StatisticsIndex index)
+	uint64_t QueryPoolStatistics::GetStatistics(StatisticsIndex index)
 	{
 		return mStatistics[index];
 	}
 
-	void QueryPool::Begin(CommandBuffer* commandBuffer)
+	void QueryPoolStatistics::Begin(CommandBuffer* commandBuffer)
 	{
 		VkCommandBuffer cmdBuffer = commandBuffer->GetVkHandle();
 		vkCmdBeginQuery(cmdBuffer, mHandle, 0, 0);
 	}
 
-	void QueryPool::End(CommandBuffer* commandBuffer)
+	void QueryPoolStatistics::End(CommandBuffer* commandBuffer)
 	{
 		VkCommandBuffer cmdBuffer = commandBuffer->GetVkHandle();
 		vkCmdEndQuery(cmdBuffer, mHandle, 0);
 	}
 
-	void QueryPool::Reset(CommandBuffer* commandBuffer)
+	void QueryPoolStatistics::Reset(CommandBuffer* commandBuffer)
 	{
 		VkCommandBuffer cmdBuffer = commandBuffer->GetVkHandle();
 		vkCmdResetQueryPool(cmdBuffer, mHandle, 0, mStatistics.size());

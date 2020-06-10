@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "utility/Module.h"
 #include "LegitProfiler/ImGuiProfilerRenderer.h"
 
@@ -11,8 +12,11 @@ namespace Utopian
 		~Profiler();
 
 		void Update();
+      void AddProfilerTask(const std::string& name, float start, float end, const glm::vec4& color);
 	private:
 		LegitProfiler::ProfilersWindow mProfilerWindow;
+      std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
+      bool mEnabled;
 	};
 
 	Profiler& gProfiler();

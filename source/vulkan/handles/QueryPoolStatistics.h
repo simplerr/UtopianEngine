@@ -7,7 +7,7 @@
 namespace Utopian::Vk
 {
 	/** Wrapper for VkQueryPool. */
-	class QueryPool : public Handle<VkQueryPool>
+	class QueryPoolStatistics : public Handle<VkQueryPool>
 	{
 	public:
 		/** All available statistics. */
@@ -27,7 +27,7 @@ namespace Utopian::Vk
 			NUM_STATISTICS
 		};
 
-		QueryPool(Device* device);
+		QueryPoolStatistics(Device* device);
 	
 		/** 
 		 * Retrieves the result of the submitted statistics query. 

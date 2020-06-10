@@ -7,7 +7,7 @@
 #include "vulkan/TextureLoader.h"
 #include "ScreenQuadRenderer.h"
 #include "vulkan/Vertex.h"
-#include "vulkan/handles/QueryPool.h"
+#include "vulkan/handles/QueryPoolStatistics.h"
 #include "Camera.h"
 #include <random>
 
@@ -87,7 +87,7 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerNormal", mNormalTextureArray);
 		mEffect->BindCombinedImage("samplerDisplacement", mDisplacementTextureArray);
 
-		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
+		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
 	}
 
 	void GBufferTerrainJob::Render(const JobInput& jobInput)
@@ -142,10 +142,10 @@ namespace Utopian
 		// Display Actor creation list
 		ImGuiRenderer::BeginWindow("Terrain Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
 
-		ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
-		ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
-		ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
-		ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+		ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
+		ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
+		ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
+		ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
 
 		ImGuiRenderer::EndWindow();
 	}

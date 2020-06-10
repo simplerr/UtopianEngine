@@ -6,6 +6,11 @@
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 
+namespace LegitProfiler
+{
+   class ProfilerTask;
+}
+
 namespace Utopian::Vk
 {
 	class RenderTarget
@@ -75,5 +80,9 @@ namespace Utopian::Vk
 		uint32_t mWidth, mHeight;
 		glm::vec4 mClearColor;
 		std::vector<VkClearValue> mClearValues;
+
+      std::string mDebugName;
+      glm::vec4 mDebugColor;
+		SharedPtr<Vk::QueryPoolTimestamp> mQueryPool;
 	};
 }

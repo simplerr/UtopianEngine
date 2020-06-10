@@ -39,7 +39,7 @@ namespace Utopian
 
         ImGui::CreateContext();
 
-        SetLightTheme();
+        SetDarkTheme();
 
         // Dimensions
         ImGuiIO& io = ImGui::GetIO();
@@ -357,7 +357,7 @@ namespace Utopian
         {
             if (ImGui::BeginMenu("UI"))
             {
-               static bool darkTheme = false;
+               static bool darkTheme = true;
                if (ImGui::MenuItem("Flag: PassthruCentralNode",    "", (dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) != 0))
                   dockspaceFlags ^= ImGuiDockNodeFlags_PassthruCentralNode;
                if (ImGui::MenuItem("Dark theme", "", darkTheme))

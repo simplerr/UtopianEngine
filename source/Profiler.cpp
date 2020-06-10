@@ -3,6 +3,7 @@
 #include "ImGuiRenderer.h"
 #include "utility/Timer.h"
 #include "utility/math/Helpers.h"
+#include "Input.h"
 
 namespace Utopian
 {
@@ -13,6 +14,7 @@ namespace Utopian
 
 	Profiler::Profiler()
 	{
+      mEnabled = true;
 	}
 
 	Profiler::~Profiler()
@@ -21,33 +23,43 @@ namespace Utopian
 
 	void Profiler::Update()
 	{
-      #define RGBA_LE(col) (((col & 0xff000000) >> (3 * 8)) + ((col & 0x00ff0000) >> (1 * 8)) + ((col & 0x0000ff00) << (1 * 8)) + ((col & 0x000000ff) << (3 * 8)))
+      if (gInput().KeyPressed('P'))
+         mEnabled = !mEnabled;
+     
+      if (mEnabled)
+      {
+         static uint32_t period;
+         if (period % 50 == 0)
+            mProfilerWindow.gpuGraph.LoadFrameData(mProfilerTasks.data(), mProfilerTasks.size());
+         period++;
 
-      std::vector<LegitProfiler::ProfilerTask> testTasks;
-      LegitProfiler::ProfilerTask task;
-      task.name = "Test task";
-      task.color = RGBA_LE(0xf1c40fffu);
-      task.startTime = 0.0f;
-      task.endTime = Math::GetRandom(0.001f, 0.005f);;
-      testTasks.push_back(task);
-
-      task.name = "SSR task";
-      task.color = RGBA_LE(0x010000ffu);
-      task.startTime = task.endTime;
-      task.endTime = task.startTime + Math::GetRandom(0.001f, 0.01f);
-      testTasks.push_back(task);
-
-      task.name = "Junk task";
-      task.color = RGBA_LE(0x0188ccffu);
-      task.startTime = task.endTime;
-      task.endTime = task.startTime + Math::GetRandom(0.001f, 0.01f);
-      testTasks.push_back(task);
-
-      static uint32_t test;
-      if (test % 100 == 0)
-         mProfilerWindow.gpuGraph.LoadFrameData(testTasks.data(), testTasks.size());
-
-      test++;
-      mProfilerWindow.Render();
+         mProfilerWindow.Render();
+      }
 	}
+
+   void Profiler::AddProfilerTask(const std::string& name, float start, float end, const glm::vec4& color)
+   {
+      bool found = false;
+      for (auto& task : mProfilerTasks)
+      {
+         if (task.name == name)
+         {
+            task.startTime = 0;
+            task.endTime = (end - start) / 1000.0f; // To seconds
+            found = true;
+            break;
+         }
+      }
+
+      if (!found)
+      {
+         LegitProfiler::ProfilerTask task;
+         task.name = name;
+         task.startTime = 0;
+         task.endTime = (end - start) / 1000.0f; // To seconds
+         task.color = ((uint32_t(color.a * 255) << 24) | (uint32_t(color.b * 255) << 16) | (uint32_t(color.g * 255) << 8) | (uint32_t(color.r * 255)));
+            
+         mProfilerTasks.push_back(task);
+      }
+   }
 }

@@ -10,7 +10,7 @@
 #include "vulkan/TextureLoader.h"
 #include "ScreenQuadRenderer.h"
 #include "vulkan/Vertex.h"
-#include "vulkan/handles/QueryPool.h"
+#include "vulkan/handles/QueryPoolStatistics.h"
 #include "Camera.h"
 #include "Input.h"
 #include <random>
@@ -97,7 +97,7 @@ namespace Utopian
 		mEffect->BindCombinedImage("depthSampler", *opaqueCopyJob->opaqueDepthImage, *renderTarget->GetSampler());
 		mEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mShadowSampler);
 
-		mQueryPool = std::make_shared<Vk::QueryPool>(mDevice);
+		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
 
 		// const uint32_t size = 640;
 		// gScreenQuadUi().AddQuad(100 + 640, 100, size, size, distortionImage.get(), renderTarget->GetSampler());
@@ -153,7 +153,7 @@ namespace Utopian
 		mLightBlock.constants.numLights = mLightBlock.lights.size();
 		mLightBlock.UpdateMemory();
 
-		renderTarget->BeginCommandBuffer("Water Tessellation pass");
+		renderTarget->BeginCommandBuffer("Water Tessellation pass", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		mQueryPool->Reset(commandBuffer);
@@ -188,10 +188,10 @@ namespace Utopian
 		// Display Actor creation list
 		ImGuiRenderer::BeginWindow("Water Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
 
-		ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
-		ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
-		ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
-		ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPool::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+		ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
+		ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
+		ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
+		ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
 
 		ImGuiRenderer::EndWindow();
 	}

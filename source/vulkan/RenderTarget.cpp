@@ -7,7 +7,9 @@
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/QueryPoolTimestamp.h"
 #include "vulkan/Debug.h"
+#include "core/Profiler.h"
 
 namespace Utopian::Vk
 {
@@ -20,6 +22,7 @@ namespace Utopian::Vk
 		mRenderPass = std::make_shared<RenderPass>(device);
 		mFrameBuffer = std::make_shared<FrameBuffers>(device);
 		mSampler = std::make_shared<Sampler>(device);
+		mQueryPool = std::make_shared<Vk::QueryPoolTimestamp>(device);
 		
 		SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	}
@@ -85,12 +88,16 @@ namespace Utopian::Vk
 
 	void RenderTarget::BeginCommandBuffer(std::string debugName, glm::vec4 debugColor)
 	{
+      mDebugName = debugName;
+      mDebugColor = debugColor;
 		mCommandBuffer->Begin();
 		Vk::DebugLabel::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
 	}
 	
 	void RenderTarget::BeginRenderPass()
 	{
+      mQueryPool->Reset(mCommandBuffer.get());
+
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
@@ -101,6 +108,8 @@ namespace Utopian::Vk
 		renderPassBeginInfo.framebuffer = mFrameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
 
 		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+      mQueryPool->Begin(mCommandBuffer.get());
 
 		mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());
 		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
@@ -114,6 +123,9 @@ namespace Utopian::Vk
 
 	void RenderTarget::Begin(VkFramebuffer framebuffer, std::string debugName, glm::vec4 debugColor)
 	{
+      mDebugName = debugName;
+      mDebugColor = debugColor;
+
 		VkRenderPassBeginInfo renderPassBeginInfo = {};
 		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
@@ -145,11 +157,15 @@ namespace Utopian::Vk
 
 	void RenderTarget::End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore)
 	{
+      mQueryPool->End(mCommandBuffer.get());
+
 		mCommandBuffer->CmdEndRenderPass();
 
 		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
 
 		mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
+
+      gProfiler().AddProfilerTask(mDebugName, mQueryPool->GetStartTimestamp(), mQueryPool->GetEndTimestamp(), mDebugColor);
 	}
 
 	uint32_t RenderTarget::GetWidth()
