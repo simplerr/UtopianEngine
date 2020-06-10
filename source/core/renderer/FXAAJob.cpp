@@ -17,15 +17,13 @@ namespace Utopian
 		mRenderTarget->SetClearColor(1, 1, 1, 1);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/fxaa/fxaa.frag";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/fxaa/fxaa.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mEffect->CreatePipeline();
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mSettingsBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);

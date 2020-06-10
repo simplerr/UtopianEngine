@@ -69,7 +69,7 @@ namespace Utopian
     /** Free up all Vulkan resources acquired by the UI overlay */
     ImGuiRenderer::~ImGuiRenderer()
     {
-        
+
     }
 
     /** Prepare all vulkan resources required to render the UI overlay */
@@ -84,33 +84,24 @@ namespace Utopian
         int texWidth, texHeight, pixelSize;
         io.Fonts->GetTexDataAsRGBA32(&fontData, &texWidth, &texHeight, &pixelSize);
 
-        // Note: Must be performed before Init()
-        Vk::ShaderCreateInfo shaderCreateInfo;
-        shaderCreateInfo.vertexShaderPath = "data/shaders/imgui/uioverlay.vert";
-        shaderCreateInfo.fragmentShaderPath = "data/shaders/imgui/uioverlay.frag";
-
-        mImguiEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), shaderCreateInfo);
-
-        gRendererUtility().SetAlphaBlending(mImguiEffect->GetPipeline());
-
-        // The front facing order is reversed in the Imgui vertex buffer
-        mImguiEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-
-        // No depth testing
-        mImguiEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-        mImguiEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-
         // Need to override vertex input description from shader since there is some special
         // treatment of U32 -> vec4 in ImGui
         mVertexDescription = std::make_shared<Vk::VertexDescription>();
         mVertexDescription->AddBinding(BINDING_0, sizeof(ImDrawVert), VK_VERTEX_INPUT_RATE_VERTEX);
-        mVertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());	// Location 0 : Position
-        mVertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());	// Location 1 : Uv
-        mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());	// Location 2 : Color
+        mVertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());   // Location 0 : Position
+        mVertexDescription->AddAttribute(BINDING_0, Vk::Vec2Attribute());   // Location 1 : Uv
+        mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());    // Location 2 : Color
 
-        mImguiEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
+        Vk::EffectCreateInfo effectDesc;
+        effectDesc.shaderDesc.vertexShaderPath = "data/shaders/imgui/uioverlay.vert";
+        effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/imgui/uioverlay.frag";
+        effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE; // The front facing order is reversed in the Imgui vertex buffer
+        effectDesc.pipelineDesc.depthStencilState.depthTestEnable = VK_FALSE; // No depth testing
+        effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE; // No depth testing
+        effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
+        effectDesc.pipelineDesc.OverrideVertexInput(mVertexDescription);
 
-        mImguiEffect->CreatePipeline();
+        mImguiEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), effectDesc);
 
         mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight,
                                                       1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT, "ImGui font image");
@@ -236,7 +227,7 @@ namespace Utopian
             UpdateCommandBuffers();
         }
     }
-    
+
     ImTextureID ImGuiRenderer::AddImage(const Vk::Image& image)
     {
         VkDescriptorSet descriptorSet;
@@ -395,7 +386,7 @@ namespace Utopian
         ImGui::TextV(format, args);
         va_end(args);
     }
-    
+
     void ImGuiRenderer::BeginWindow(std::string label, glm::vec2 position, float itemWidth)
     {
         //ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
@@ -411,7 +402,7 @@ namespace Utopian
         ImGui::End();
         //ImGui::PopStyleVar();
     }
-    
+
     void ImGuiRenderer::ToggleVisible()
     {
         mImguiVisible = !mImguiVisible;
@@ -422,7 +413,7 @@ namespace Utopian
     {
         return mImguiVisible && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
     }
-    
+
     bool ImGuiRenderer::IsKeyboardCapture()
     {
         ImGuiIO& io = ImGui::GetIO();
@@ -509,7 +500,7 @@ namespace Utopian
 
     void ImGuiRenderer::SetLightTheme()
     {
-       // Light style based on https://github.com/ocornut/imgui/pull/511#issuecomment-175719267, by Pacôme Danhiez (user itamago) 
+       // Light style based on https://github.com/ocornut/imgui/pull/511#issuecomment-175719267, by Pacôme Danhiez (user itamago)
        ImVec4* colors = ImGui::GetStyle().Colors;
        colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
        colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);

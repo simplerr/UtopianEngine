@@ -30,15 +30,13 @@ namespace Utopian
 		mExtractRenderTarget->SetClearColor(1, 1, 1, 1);
 		mExtractRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/bloom_extract.frag";
-		mExtractEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mExtractRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_extract.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mExtractEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mExtractEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mExtractEffect->CreatePipeline();
+		mExtractEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mExtractRenderTarget->GetRenderPass(), effectDesc);
 
 		mExtractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mExtractEffect->BindUniformBuffer("UBO_settings", mExtractSettings);
@@ -46,7 +44,7 @@ namespace Utopian
 		//const uint32_t size = 240;
 		//gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (size + 10), size, size, brightColorsImage.get(), extractRenderTarget->GetSampler());
 	}
-	
+
 	void BloomJob::InitBlurPass()
 	{
 		outputImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO, VK_FORMAT_R16G16B16A16_SFLOAT, "Bloom output image");
@@ -56,15 +54,13 @@ namespace Utopian
 		mBlurRenderTarget->SetClearColor(1, 1, 1, 1);
 		mBlurRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/post_process/bloom_blur.frag";
-		mBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_blur.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mBlurEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mBlurEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mBlurEffect->CreatePipeline();
+		mBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDesc);
 
 		mBlurSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mBlurEffect->BindUniformBuffer("UBO_settings", mBlurSettings);
@@ -97,7 +93,7 @@ namespace Utopian
 
 		mExtractRenderTarget->End(GetWaitSemahore(), mWaitExtractPassSemaphore);
 	}
-	
+
 	void BloomJob::RenderBlurPass(const JobInput& jobInput)
 	{
 		mBlurSettings.data.size = 5;// = jobInput.renderingSettings.bloomThreshold;

@@ -16,29 +16,29 @@ namespace Utopian
 		commandBuffer->CmdDraw(3, 1, 0, 0);
 	}
 
-	void RendererUtility::SetAdditiveBlending(Vk::Pipeline* pipeline)
+	void RendererUtility::SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)
 	{
 		// Enable additive blending
-		pipeline->blendAttachmentState[0].blendEnable = VK_TRUE;
-		pipeline->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		pipeline->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		pipeline->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-		pipeline->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
-		pipeline->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		pipeline->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-		pipeline->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		blendAttachmentState.blendEnable = VK_TRUE;
+		blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+		blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+		blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 
-	void RendererUtility::SetAlphaBlending(Vk::Pipeline* pipeline)
+	void RendererUtility::SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)
 	{
-		pipeline->blendAttachmentState[0].blendEnable = VK_TRUE;
-		pipeline->blendAttachmentState[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		pipeline->blendAttachmentState[0].srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-		pipeline->blendAttachmentState[0].dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		pipeline->blendAttachmentState[0].colorBlendOp = VK_BLEND_OP_ADD;
-		pipeline->blendAttachmentState[0].srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-		pipeline->blendAttachmentState[0].dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		pipeline->blendAttachmentState[0].alphaBlendOp = VK_BLEND_OP_ADD;
+		blendAttachmentState.blendEnable = VK_TRUE;
+		blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+		blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 
 	void RendererUtility::SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height)

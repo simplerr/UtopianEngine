@@ -24,8 +24,8 @@ namespace Utopian
 		mRenderTarget->SetClearColor(1, 1, 1, 1);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo createInfo;
-		createInfo.vertexShaderPath = "data/shaders/im3d/im3d.vert";
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/im3d/im3d.vert";
 
 		// Need to override vertex input description from shader since there is some special
 		// treatment of U32 -> vec4 in Im3d
@@ -34,36 +34,27 @@ namespace Utopian
 		mVertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());
 		mVertexDescription->AddAttribute(BINDING_0, Vk::U32Attribute());
 
-		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_points.frag";
-		mPointsEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
-		mPointsEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-		mPointsEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mPointsEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-		mPointsEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-		mPointsEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
-		gRendererUtility().SetAlphaBlending(mPointsEffect->GetPipeline());
-		mPointsEffect->CreatePipeline();
+		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		effectDesc.pipelineDesc.depthStencilState.depthTestEnable = VK_FALSE;
+		effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
+		effectDesc.pipelineDesc.OverrideVertexInput(mVertexDescription);
+      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 
-		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_triangles.frag";
-		mTrianglesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
-		mTrianglesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-		mTrianglesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mTrianglesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-		mTrianglesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-		mTrianglesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
-		gRendererUtility().SetAlphaBlending(mTrianglesEffect->GetPipeline());
-		mTrianglesEffect->CreatePipeline();
+		// Points
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/im3d/im3d_points.frag";
+		mPointsEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
-		createInfo.geometryShaderPath = "data/shaders/im3d/im3d.geom";
-		createInfo.fragmentShaderPath = "data/shaders/im3d/im3d_lines.frag";
-		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), createInfo);
-		mLinesEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-		mLinesEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mLinesEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_FALSE;
-		mLinesEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-		mLinesEffect->GetPipeline()->OverrideVertexInput(mVertexDescription);
-		gRendererUtility().SetAlphaBlending(mLinesEffect->GetPipeline());
-		mLinesEffect->CreatePipeline();
+		// Triangles
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/im3d/im3d_triangles.frag";
+		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		mTrianglesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+
+		// Lines
+		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/im3d/im3d.geom";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/im3d/im3d_lines.frag";
+		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+		mLinesEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mLinesEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mPointsEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());

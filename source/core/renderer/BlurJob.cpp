@@ -15,15 +15,13 @@ namespace Utopian
 		mRenderTarget->SetClearColor(1, 1, 1, 1);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/blur/blur.frag";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/blur/blur.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mEffect->CreatePipeline();
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
 
 		/*const uint32_t size = 240;
 		gScreenQuadUi().AddQuad(10, height - (size + 10), size, size, blurImage.get(), renderTarget->GetSampler());*/

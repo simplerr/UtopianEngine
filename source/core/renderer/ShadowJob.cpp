@@ -28,29 +28,25 @@ namespace Utopian
 			mFrameBuffers.push_back(frameBuffer);
 		}
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/shadowmap/shadowmap.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/shadowmap/shadowmap.frag";
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/shadowmap/shadowmap.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/shadowmap/shadowmap.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
 
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mEffect->CreatePipeline();
-
-		shaderCreateInfo.vertexShaderPath = "data/shaders/shadowmap/shadowmap_instancing.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/shadowmap/shadowmap.frag";
-		mEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		mEffectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-
+		// Custom vertex description due to instancing
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
 		vertexDescription->AddBinding(BINDING_1, sizeof(InstanceData), VK_VERTEX_INPUT_RATE_INSTANCE);
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 0 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 1 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 2 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 3 : InInstanceWorld
-		mEffectInstanced->GetPipeline()->OverrideVertexInput(vertexDescription);
 
-		mEffectInstanced->CreatePipeline();
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/shadowmap/shadowmap_instancing.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/shadowmap/shadowmap.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		effectDesc.pipelineDesc.OverrideVertexInput(vertexDescription);
+		mEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mCascadeTransforms.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mEffect->BindUniformBuffer("UBO_cascadeTransforms", mCascadeTransforms);

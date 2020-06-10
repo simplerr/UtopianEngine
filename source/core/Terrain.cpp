@@ -153,15 +153,13 @@ namespace Utopian
 		heightmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/heightmap.frag";
-		mHeightmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/terrain_creation/heightmap.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mHeightmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mHeightmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mHeightmapEffect->CreatePipeline();
+		mHeightmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapRenderTarget->GetRenderPass(), effectDesc);
 	}
 
 	void Terrain::SetupNormalmapEffect()
@@ -173,15 +171,13 @@ namespace Utopian
 		normalRenderTarget->SetClearColor(1, 1, 1, 1);
 		normalRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/normalmap.frag";
-		mNormalmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, normalRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/terrain_creation/normalmap.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mNormalmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mNormalmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mNormalmapEffect->CreatePipeline();
+		mNormalmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, normalRenderTarget->GetRenderPass(), effectDesc);
 
 		mNormalmapEffect->BindCombinedImage("samplerHeightmap", *heightmapImage, *heightmapRenderTarget->GetSampler());
 	}
@@ -196,15 +192,13 @@ namespace Utopian
 		blendmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/blendmap.frag";
-		mBlendmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/terrain_creation/blendmap.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mBlendmapEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mBlendmapEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mBlendmapEffect->CreatePipeline();
+		mBlendmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapRenderTarget->GetRenderPass(), effectDesc);
 
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mBlendmapEffect->BindUniformBuffer("UBO_settings", settingsBlock);
@@ -395,7 +389,7 @@ namespace Utopian
 	{
 		return mAmplitudeScaling;
 	}
-	
+
 	void Terrain::SetAmplitudeScaling(float amplitudeScaling)
 	{
 		mAmplitudeScaling = amplitudeScaling;

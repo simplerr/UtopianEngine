@@ -26,8 +26,8 @@ namespace Utopian
 		//void DrawMesh(...);
 
 		/** Blend state helpers. */
-		void SetAdditiveBlending(Vk::Pipeline* pipeline);
-		void SetAlphaBlending(Vk::Pipeline* pipeline);
+		void SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
+		void SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
 
 		/** Functions for copying images. */
 		void SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height);

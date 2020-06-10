@@ -7,7 +7,7 @@ namespace Utopian
 	GeometryThicknessJob::GeometryThicknessJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-	
+
 	}
 
 	GeometryThicknessJob::~GeometryThicknessJob()
@@ -23,13 +23,11 @@ namespace Utopian
 		mRenderTarget->SetClearColor(DEFAULT_THICKNESS, 0.0f, 0.0f, 0.0f);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/geometry_thickness/geometry_thickness.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/geometry_thickness/geometry_thickness.frag";
-
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/geometry_thickness/geometry_thickness.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/geometry_thickness/geometry_thickness.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mEffect->BindCombinedImage("depthSampler", *gbuffer.depthImage, *mRenderTarget->GetSampler());

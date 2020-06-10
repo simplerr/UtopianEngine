@@ -61,7 +61,7 @@ namespace Utopian
 		brushSettings.radius += gInput().MouseDz() / 4.0f;
 
 		UpdateBrushUniform();
-		
+
 		if (brushSettings.mode == BrushSettings::Mode::BLEND)
 		{
 			if (gInput().KeyDown(VK_LBUTTON))
@@ -139,15 +139,13 @@ namespace Utopian
 		blendmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapBrushRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/blendmap_brush.frag";
-		mBlendmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/terrain_creation/blendmap_brush.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mBlendmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mBlendmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-		mBlendmapBrushEffect->CreatePipeline();
+		mBlendmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapBrushRenderTarget->GetRenderPass(), effectDesc);
 
 		mBlendmapBrushEffect->BindUniformBuffer("UBO_brush", *brushBlock);
 	}
@@ -159,18 +157,14 @@ namespace Utopian
 		heightmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
 		heightmapBrushRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/terrain_creation/heightmap_brush.frag";
-		mHeightmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapBrushRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/terrain_creation/heightmap_brush.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mHeightmapBrushEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mHeightmapBrushEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		gRendererUtility().SetAdditiveBlending(mHeightmapBrushEffect->GetPipeline());
-
-		mHeightmapBrushEffect->CreatePipeline();
+		mHeightmapBrushEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, heightmapBrushRenderTarget->GetRenderPass(), effectDesc);
 
 		mHeightmapBrushEffect->BindUniformBuffer("UBO_brush", *brushBlock);
 	}

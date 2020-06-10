@@ -35,19 +35,15 @@ namespace Utopian
 		renderTarget->SetClearColor(0, 0, 0, 1);
 		renderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
-		shaderCreateInfo.tescShaderPath = "data/shaders/tessellation/terrain.tesc";
-		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/terrain.tese";
-		shaderCreateInfo.geometryShaderPath = "data/shaders/tessellation/terrain.geom";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
-
-		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
-		mEffect->GetPipeline()->AddTessellationState(4);
-
-		mEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
+		effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/terrain.tesc";
+		effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/terrain.tese";
+		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/terrain.geom";
+		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+		effectDesc.pipelineDesc.AddTessellationState(4);
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
 
 		mFrustumPlanesBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

@@ -26,27 +26,21 @@ namespace Utopian
 		mRenderTarget->SetClearColor(1, 1, 1, 1);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/grass/grass.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/grass/grass.frag";
-
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/grass/grass.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/grass/grass.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
-
 		vertexDescription->AddBinding(BINDING_0, sizeof(GrassInstance), VK_VERTEX_INPUT_RATE_INSTANCE);
 		vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());	// Location 0 : InstancePos
 		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 1 : Color
-		vertexDescription->AddAttribute(BINDING_0, Vk::S32Attribute());		// Location 2 : InTexId
+		vertexDescription->AddAttribute(BINDING_0, Vk::S32Attribute());	// Location 2 : InTexId
+		effectDesc.pipelineDesc.OverrideVertexInput(vertexDescription);
 
-		mEffect->GetPipeline()->OverrideVertexInput(vertexDescription);
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
-
-		// Enable blending using alpha channel
-		gRendererUtility().SetAlphaBlending(mEffect->GetPipeline());
-
-		mEffect->CreatePipeline();
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mGrassSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 

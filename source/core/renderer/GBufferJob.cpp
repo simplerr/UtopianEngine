@@ -10,7 +10,7 @@ namespace Utopian
 	GBufferJob::GBufferJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		
+
 	}
 
 	GBufferJob::~GBufferJob()
@@ -31,43 +31,38 @@ namespace Utopian
 		mRenderTarget->SetClearColor(0, 0, 0, 1);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
-		// Todo: Implement a better way for multiple pipelines in the same Effect
-		mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mGBufferEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDescLine;
+		effectDescLine.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
+		effectDescLine.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+		effectDescLine.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescLine);
 
-		mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mGBufferEffectWireframe->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		mGBufferEffectWireframe->CreatePipeline();
-
-		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-
-		mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		shaderCreateInfo.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-
-		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		mGBufferEffectInstanced->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		mInstancedAnimationEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_NONE;
-
-		//SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
+		// Override vertex description for instancing shaders
 		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
 		vertexDescription->AddBinding(BINDING_1, sizeof(InstanceData), VK_VERTEX_INPUT_RATE_INSTANCE);
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 0 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 1 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 2 : InInstanceWorld
 		vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());	// Location 3 : InInstanceWorld
-		mGBufferEffectInstanced->GetPipeline()->OverrideVertexInput(vertexDescription);
-		mInstancedAnimationEffect->GetPipeline()->OverrideVertexInput(vertexDescription);
 
-		mGBufferEffectInstanced->CreatePipeline();
-		mInstancedAnimationEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDescInstancingAnimation;
+		effectDescInstancingAnimation.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
+		effectDescInstancingAnimation.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+		effectDescInstancingAnimation.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		effectDescInstancingAnimation.pipelineDesc.OverrideVertexInput(vertexDescription);
+		mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancingAnimation);
+
+		Vk::EffectCreateInfo effectDescInstancing;
+		effectDescInstancing.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
+		effectDescInstancing.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+		effectDescInstancing.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+		effectDescInstancing.pipelineDesc.OverrideVertexInput(vertexDescription);
+		mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancing);
 
 		mInstancedAnimationEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mGBufferEffectInstanced->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
@@ -100,7 +95,7 @@ namespace Utopian
 		mAnimationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
 		mAnimationParametersBlock.data.enabled = jobInput.renderingSettings.windEnabled;
 		mAnimationParametersBlock.UpdateMemory();
-		
+
 		// Collect renderables that should affect the vegetation
 		uint32_t nextSphereIndex = 0;
 		for (auto& renderable : jobInput.sceneInfo.renderables)
@@ -194,8 +189,8 @@ namespace Utopian
 				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 			}
-		}	
-		
+		}
+
 		Vk::DebugLabel::EndRegion(commandBuffer->GetVkHandle());
 
 		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());

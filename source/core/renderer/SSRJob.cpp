@@ -39,17 +39,12 @@ namespace Utopian
 		mTraceRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		mTraceRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
-
-		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mTraceSSREffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mTraceSSREffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		mTraceSSREffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
 
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 		GeometryThicknessJob* geometryThicknessJob = static_cast<GeometryThicknessJob*>(jobs[JobGraph::GEOMETRY_THICKNESS_INDEX]);
@@ -98,17 +93,14 @@ namespace Utopian
 		mBlurRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		mBlurRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssr/ssr_blur.frag";
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr_blur.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
-		mBlurSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), shaderCreateInfo);
+		mBlurSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDesc);
 
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mBlurSSREffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mBlurSSREffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		mBlurSSREffect->CreatePipeline();
 		mBlurSSREffect->BindCombinedImage("samplerSSAO", *ssrImage, *mTraceRenderTarget->GetSampler());
 
 		// const uint32_t size = 640;
@@ -125,7 +117,7 @@ namespace Utopian
 	{
 		mSSRSettingsBlock.data._NormalMatrix = glm::transpose(glm::inverse(glm::mat3(jobInput.sceneInfo.viewMatrix)));
 		mSSRSettingsBlock.data._RenderBufferSize = glm::vec2(mWidth, mHeight);
-		mSSRSettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight); 
+		mSSRSettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight);
 		mSSRSettingsBlock.data._SSREnabled = jobInput.renderingSettings.ssrEnabled;
 		mSSRSettingsBlock.UpdateMemory();
 

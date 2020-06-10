@@ -17,19 +17,12 @@ namespace Utopian
 		renderTarget->SetClearColor(1, 1, 1, 1);
 		renderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), shaderCreateInfo);
-
-		mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
-		mEffect->GetPipeline()->depthStencilState.depthTestEnable = VK_TRUE;
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		mEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
 	}
 
 	SSAOJob::~SSAOJob()

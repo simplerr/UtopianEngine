@@ -3,6 +3,7 @@
 #include "utility/Common.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/ShaderFactory.h"
+#include "vulkan/Effect.h"
 #include <vector>
 #include <functional>
 #include <string>
@@ -25,7 +26,7 @@ namespace Utopian::Vk
 		SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass);
 
 		template <typename T>
-		SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo);
+		SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo);
 
 		/** Recompiles shaders if requested from the UI. */
 		void Update();
@@ -70,11 +71,11 @@ namespace Utopian::Vk
 	}
 
 	template<typename T>
-	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo)
+	inline SharedPtr<T> EffectManager::AddEffect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo)
 	{
 		TrackedEffect trackedEffect;
-		trackedEffect.effect = std::make_shared<T>(device, renderPass, shaderCreateInfo);
-		trackedEffect.lastModification = GetLatestModification(shaderCreateInfo);
+		trackedEffect.effect = std::make_shared<T>(device, renderPass, effectCreateInfo);
+		trackedEffect.lastModification = GetLatestModification(effectCreateInfo.shaderDesc);
 
 		mEffects.push_back(trackedEffect);
 		return trackedEffect.effect;

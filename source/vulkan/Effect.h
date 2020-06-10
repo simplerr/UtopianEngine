@@ -15,23 +15,23 @@
 
 namespace Utopian::Vk
 {
+   /** Used as input when creating an Effect, contains parameters to control the entire pipeline setup. */
+	struct EffectCreateInfo
+	{
+		ShaderCreateInfo shaderDesc;
+		PipelineDesc pipelineDesc;
+	};
+
 	class Effect
 	{
 	public:
 		/** @note CreatePipeline() must be called explicitly after constructor. */
-		Effect(Device* device, RenderPass* renderPass);
-		Effect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo);
+		Effect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo);
 
 		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipeline. */
 		bool RecompileShader();
 
 		/**
-		 * This must explicitly be called. Reason being that the constructor sets default values and to make
-		 * modifications to the pipeline they must be made between before calling this function.
-		 */
-		void CreatePipeline();
-
-		/** 
 		 * Functions used to bind shader resources by name.
 		 * @note the name must match the name in the GLSL shader.
 		 * @note uses the internal shader reflection to perform name -> set ID mapping.
@@ -43,7 +43,7 @@ namespace Utopian::Vk
 		void BindCombinedImage(std::string name, const Image& image, const Sampler& sampler);
 		void BindCombinedImage(std::string name, const TextureArray& textureArray);
 
-		/** 
+		/**
 		 * Returns a descriptor set by index.
 		 * Needs to be used if you want to bind additional descriptor sets that not are part of the Effect itself,
 		 * for example Meshes contains their own descriptor set for their texture.
@@ -65,7 +65,7 @@ namespace Utopian::Vk
 
 		SharedPtr<Pipeline> mPipeline;
 	private:
-		void Init();
+		void CreatePipeline();
 		void CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device);
 
 		RenderPass* mRenderPass = nullptr;

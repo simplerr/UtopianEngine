@@ -20,12 +20,11 @@ namespace Utopian
 	{
 		mVulkanApp = vulkanApp;
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/screenquad/screenquad.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/screenquad/screenquad.frag";
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/screenquad/screenquad.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/screenquad/screenquad.frag";
 
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(), vulkanApp->GetRenderPass(), shaderCreateInfo);
-		mEffect->CreatePipeline();
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(), vulkanApp->GetRenderPass(), effectDesc);
 
 		mCommandBuffer = new Vk::CommandBuffer(vulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
@@ -33,7 +32,7 @@ namespace Utopian
 		mDescriptorPool = std::make_shared<Vk::DescriptorPool>(vulkanApp->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 20);
 		mDescriptorPool->Create();
-	
+
 		CreateQuadBuffers();
 	}
 

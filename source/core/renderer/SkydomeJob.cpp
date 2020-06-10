@@ -31,15 +31,12 @@ namespace Utopian
 		mRenderTarget->SetClearColor(0, 0, 0);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/skydome/skydome.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/skydome/skydome.frag";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		mEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		//effect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		mEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skydome/skydome.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skydome/skydome.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mInputBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

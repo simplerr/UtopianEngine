@@ -12,28 +12,16 @@
 
 namespace Utopian::Vk
 {
-	Effect::Effect(Device* device, RenderPass* renderPass)
+	Effect::Effect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo)
 	{
+		mShaderCreateInfo = effectCreateInfo.shaderDesc;
 		mRenderPass = renderPass;
 		mDevice = device;
 		mDescriptorPool = std::make_shared<DescriptorPool>(device);
 
-		Init();
-	}
+		mPipeline = std::make_shared<Pipeline>(effectCreateInfo.pipelineDesc, mDevice, mRenderPass);
 
-	Effect::Effect(Device* device, RenderPass* renderPass, const ShaderCreateInfo& shaderCreateInfo)
-	{
-		mShaderCreateInfo = shaderCreateInfo;
-		mRenderPass = renderPass;
-		mDevice = device;
-		mDescriptorPool = std::make_shared<DescriptorPool>(device);
-
-		Init();
-	}
-
-	void Effect::Init()
-	{
-		mPipeline = std::make_shared<Pipeline>(mDevice, mRenderPass);
+		CreatePipeline();
 	}
 
 	void Effect::SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo)
@@ -179,12 +167,12 @@ namespace Utopian::Vk
 	{
 		return mShaderCreateInfo.fragmentShaderPath;
 	}
-	
+
 	Pipeline* Effect::GetPipeline()
 	{
 		return mPipeline.get();
 	}
-	
+
 	const VkDescriptorSet* Effect::GetDescriptorSets() const
 	{
 		return mVkDescriptorSets.data();

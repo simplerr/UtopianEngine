@@ -26,19 +26,14 @@ namespace Utopian
 		mRadialBlurRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRadialBlurRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/sun_shafts/sun_shafts.frag";
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/sun_shafts/sun_shafts.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
 
-		mRadialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRadialBlurRenderTarget->GetRenderPass(), shaderCreateInfo);
-
-		// Vertices generated in fullscreen.vert are in clockwise order
-		mRadialBlurEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mRadialBlurEffect->GetPipeline()->rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-
-		// Enable additive blending
-		gRendererUtility().SetAdditiveBlending(mRadialBlurEffect->GetPipeline());
-		mRadialBlurEffect->CreatePipeline();
+		mRadialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRadialBlurRenderTarget->GetRenderPass(), effectDesc);
 
 		mRadialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mRadialBlurEffect->BindUniformBuffer("UBO_parameters", mRadialBlurParameters);

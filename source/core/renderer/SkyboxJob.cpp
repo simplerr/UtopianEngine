@@ -27,13 +27,12 @@ namespace Utopian
 
 		mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx");
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/skybox/skybox.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mEffect->GetPipeline()->depthStencilState.depthWriteEnable = VK_FALSE;
-		mEffect->GetPipeline()->rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		mEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
+		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+		effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mInputBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 

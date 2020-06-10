@@ -58,21 +58,17 @@ namespace Utopian
 		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		renderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/tessellation/water.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/tessellation/water.frag";
-		shaderCreateInfo.tescShaderPath = "data/shaders/tessellation/water.tesc";
-		shaderCreateInfo.teseShaderPath = "data/shaders/tessellation/water.tese";
-		shaderCreateInfo.geometryShaderPath = "data/shaders/tessellation/water.geom";
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), shaderCreateInfo);
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/water.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/water.frag";
+		effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/water.tesc";
+		effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/water.tese";
+		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/water.geom";
+      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
+		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+		effectDesc.pipelineDesc.AddTessellationState(4);
 
-		//mEffect->GetPipeline()->rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-		mEffect->GetPipeline()->inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
-		mEffect->GetPipeline()->AddTessellationState(4);
-
-		gRendererUtility().SetAlphaBlending(mEffect->GetPipeline());
-
-		mEffect->CreatePipeline();
+		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
 
 		mFrustumPlanesBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

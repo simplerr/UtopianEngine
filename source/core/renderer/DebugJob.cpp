@@ -24,17 +24,15 @@ namespace Utopian
 		mRenderTarget->SetClearColor(1, 1, 1, 1);
 		mRenderTarget->Create();
 
-		Vk::ShaderCreateInfo shaderCreateInfo;
-		shaderCreateInfo.vertexShaderPath = "data/shaders/color/color.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/color/color.frag";
-		mColorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mColorEffect->CreatePipeline();
+		Vk::EffectCreateInfo effectDesc;
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/color/color.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/color/color.frag";
+		mColorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
-		shaderCreateInfo.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
-		shaderCreateInfo.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
-		shaderCreateInfo.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
-		mNormalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), shaderCreateInfo);
-		mNormalEffect->CreatePipeline();
+		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
+		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
+		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
+		mNormalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
 		mColorEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 		mNormalEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
