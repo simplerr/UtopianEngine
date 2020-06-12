@@ -214,7 +214,7 @@ namespace Utopian
 		Vk::CommandBuffer* commandBuffer = heightmapRenderTarget->GetCommandBuffer();
 		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		heightmapRenderTarget->End();
+		heightmapRenderTarget->EndAndFlush();
 	}
 
 	void Terrain::RenderNormalmap()
@@ -224,7 +224,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(mNormalmapEffect->GetPipeline());
 		commandBuffer->CmdBindDescriptorSets(mNormalmapEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		normalRenderTarget->End();
+		normalRenderTarget->EndAndFlush();
 	}
 
 	void Terrain::RenderBlendmap()
@@ -237,7 +237,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(mBlendmapEffect->GetPipeline());
 		commandBuffer->CmdBindDescriptorSets(mBlendmapEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		blendmapRenderTarget->End();
+		blendmapRenderTarget->EndAndFlush();
 	}
 
 	void Terrain::GeneratePatches(float cellSize, int numCells)

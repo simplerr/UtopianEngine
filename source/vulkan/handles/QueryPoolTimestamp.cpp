@@ -22,7 +22,7 @@ namespace Utopian::Vk
       uint64_t startTimestamp;
       Debug::ErrorCheck(vkGetQueryPoolResults(GetVkDevice(), mHandle, 0, 1,
                                               sizeof(uint64_t), &startTimestamp, sizeof(uint64_t),
-                                              VK_QUERY_RESULT_64_BIT));
+                                              VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
    
       return startTimestamp / 1e6;
    }
@@ -32,7 +32,7 @@ namespace Utopian::Vk
       uint64_t endTimestamp;
       Debug::ErrorCheck(vkGetQueryPoolResults(GetVkDevice(), mHandle, 1, 1,
                                               sizeof(uint64_t), &endTimestamp, sizeof(uint64_t),
-                                              VK_QUERY_RESULT_64_BIT));
+                                              VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
       return endTimestamp / 1e6;
    }
 

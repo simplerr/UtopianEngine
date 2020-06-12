@@ -39,12 +39,17 @@ namespace Utopian
 		SharedPtr<Vk::Image> depthColorImage;
 
 	private:
-		SharedPtr<Vk::RenderTarget> mRenderTarget;
+      /* ShadowJob is using one framebuffer per cascade so it needs some special handling and therefor
+       * cannot use the RenderTarget API, leading to the job being more low level than other jobs in the graph. */
+		SharedPtr<Vk::RenderPass> mRenderPass;
+		SharedPtr<Vk::CommandBuffer> mCommandBuffer;
+      SharedPtr<Vk::QueryPoolTimestamp> mQueryPool;
+		std::vector<SharedPtr<Vk::FrameBuffers>> mFrameBuffers;
+      std::vector<VkClearValue> mClearValues;
 		SharedPtr<Vk::Image> mDepthImage;
 		SharedPtr<Vk::Effect> mEffect;
 		SharedPtr<Vk::Effect> mEffectInstanced;
 		CascadeTransforms mCascadeTransforms;
 		const uint32_t SHADOWMAP_DIMENSION = 4096;
-		std::vector<SharedPtr<Vk::FrameBuffers>> mFrameBuffers;
 	};
 }

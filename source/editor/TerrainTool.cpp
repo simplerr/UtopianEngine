@@ -187,7 +187,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(mBlendmapBrushEffect->GetPipeline());
 		commandBuffer->CmdBindDescriptorSets(mBlendmapBrushEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		blendmapBrushRenderTarget->End();
+		blendmapBrushRenderTarget->EndAndFlush();
 	}
 
 	void TerrainTool::RenderHeightmapBrush()
@@ -197,7 +197,7 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(mHeightmapBrushEffect->GetPipeline());
 		commandBuffer->CmdBindDescriptorSets(mHeightmapBrushEffect);
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
-		heightmapBrushRenderTarget->End();
+		heightmapBrushRenderTarget->EndAndFlush();
 	}
 
 	BrushSettings* TerrainTool::GetBrushSettings()
