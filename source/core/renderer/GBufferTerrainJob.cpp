@@ -35,6 +35,9 @@ namespace Utopian
 		renderTarget->SetClearColor(0, 0, 0, 1);
 		renderTarget->Create();
 
+		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
+      	renderTarget->AddStatisticsQuery(mQueryPool);
+
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
@@ -82,8 +85,6 @@ namespace Utopian
 		mEffect->BindCombinedImage("samplerDiffuse", mDiffuseTextureArray);
 		mEffect->BindCombinedImage("samplerNormal", mNormalTextureArray);
 		mEffect->BindCombinedImage("samplerDisplacement", mDisplacementTextureArray);
-
-		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
 	}
 
 	void GBufferTerrainJob::Render(const JobInput& jobInput)
@@ -102,17 +103,11 @@ namespace Utopian
 		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
 		mSettingsBlock.UpdateMemory();
 
-		renderTarget->BeginCommandBuffer("Terrain Tessellation pass");
+		renderTarget->Begin("Terrain Tessellation pass", glm::vec4(0.8f, 0.4f, 0.2f, 1.0f));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
-
-		mQueryPool->Reset(commandBuffer);
-
-		renderTarget->BeginRenderPass();
 
 		if (IsEnabled())
 		{
-			mQueryPool->Begin(commandBuffer);
-
 			glm::mat4 world = glm::mat4();
 			Vk::PushConstantBlock pushConsts(world);
 			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
@@ -124,13 +119,9 @@ namespace Utopian
 			commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
 			commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 			commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
-
-			mQueryPool->End(commandBuffer);
 		}
 
 		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
-
-		mQueryPool->RetreiveResults();
 	}
 
 	void GBufferTerrainJob::Update()

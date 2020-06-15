@@ -63,7 +63,7 @@ namespace Utopian
 
 	void Im3dJob::Render(const JobInput& jobInput)
 	{
-		mRenderTarget->Begin("Im3d pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		mRenderTarget->Begin("Im3d pass", glm::vec4(0.7, 0.2, 0.5, 1.0));
 
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 

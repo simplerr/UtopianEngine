@@ -53,7 +53,7 @@ namespace Utopian
 		mSettingsBlock.data.threshold = jobInput.renderingSettings.fxaaThreshold;
 		mSettingsBlock.UpdateMemory();
 
-		mRenderTarget->Begin("FXAA pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		mRenderTarget->Begin("FXAA pass", glm::vec4(0.5, 0.2, 0.8, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?

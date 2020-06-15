@@ -58,13 +58,16 @@ namespace Utopian
 		renderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		renderTarget->Create();
 
+		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
+		renderTarget->AddStatisticsQuery(mQueryPool);
+
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/water.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/water.frag";
 		effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/water.tesc";
 		effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/water.tese";
 		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/water.geom";
-      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
+      	effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
 		effectDesc.pipelineDesc.AddTessellationState(4);
 
@@ -92,8 +95,6 @@ namespace Utopian
 		mEffect->BindCombinedImage("foamMaskSampler", *mFoamMaskTexture);
 		mEffect->BindCombinedImage("depthSampler", *opaqueCopyJob->opaqueDepthImage, *renderTarget->GetSampler());
 		mEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mShadowSampler);
-
-		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
 
 		// const uint32_t size = 640;
 		// gScreenQuadUi().AddQuad(100 + 640, 100, size, size, distortionImage.get(), renderTarget->GetSampler());
@@ -149,17 +150,11 @@ namespace Utopian
 		mLightBlock.constants.numLights = mLightBlock.lights.size();
 		mLightBlock.UpdateMemory();
 
-		renderTarget->BeginCommandBuffer("Water Tessellation pass", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+		renderTarget->Begin("Water Tessellation pass", glm::vec4(0.0f, 0.7f, 0.7f, 1.0f));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
-
-		mQueryPool->Reset(commandBuffer);
-
-		renderTarget->BeginRenderPass();
 
 		if (IsEnabled())
 		{
-			mQueryPool->Begin(commandBuffer);
-
 			glm::mat4 world = glm::translate(glm::mat4(), glm::vec3(0.0f, jobInput.renderingSettings.waterLevel, 0.0f));
 			Vk::PushConstantBlock pushConsts(world);
 			commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
@@ -170,13 +165,9 @@ namespace Utopian
 			commandBuffer->CmdBindVertexBuffer(0, 1, mWaterMesh->GetVertxBuffer());
 			commandBuffer->CmdBindIndexBuffer(mWaterMesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
 			commandBuffer->CmdDrawIndexed(mWaterMesh->GetNumIndices(), 1, 0, 0, 0);
-
-			mQueryPool->End(commandBuffer);
 		}
 
 		renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
-
-		mQueryPool->RetreiveResults();
 	}
 
 	void WaterJob::Update()

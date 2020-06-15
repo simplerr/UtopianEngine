@@ -56,7 +56,7 @@ namespace Utopian
 		settingsBlock.data.bias = jobInput.renderingSettings.ssaoBias;
 		settingsBlock.UpdateMemory();
 
-		renderTarget->Begin("SSAO pass", glm::vec4(0.0, 1.0, 0.0, 1.0));
+		renderTarget->Begin("SSAO pass", glm::vec4(0.9, 1.0, 0.1, 1.0));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
 		if (IsEnabled())

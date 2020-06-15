@@ -113,7 +113,7 @@ namespace Utopian
 		if (mFoliageSpheresBlock.constants.numSpheres > 0)
 			mFoliageSpheresBlock.UpdateMemory();
 
-		mRenderTarget->Begin("G-buffer pass");
+		mRenderTarget->Begin("G-buffer pass", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		/* Render instanced assets */

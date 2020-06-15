@@ -196,7 +196,7 @@ namespace Utopian
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/terrain_creation/blendmap.frag";
 		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+      	effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 		mBlendmapEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, blendmapRenderTarget->GetRenderPass(), effectDesc);
 

@@ -99,7 +99,7 @@ namespace Utopian
 		mBlurSettings.data.size = 5;// = jobInput.renderingSettings.bloomThreshold;
 		mBlurSettings.UpdateMemory();
 
-		mBlurRenderTarget->Begin("Bloom blur pass");
+		mBlurRenderTarget->Begin("Bloom blur pass", glm::vec4(0.1f, 0.5f, 0.9f, 1.0f));
 		Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?

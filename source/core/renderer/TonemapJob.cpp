@@ -51,7 +51,7 @@ namespace Utopian
 		mSettingsBlock.data.exposure = jobInput.renderingSettings.exposure;
 		mSettingsBlock.UpdateMemory();
 
-		mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
+		mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
 		// Todo: Should this be moved to the effect instead?

@@ -8,166 +8,195 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/QueryPoolTimestamp.h"
+#include "vulkan/handles/QueryPoolStatistics.h"
 #include "vulkan/Debug.h"
 #include "core/Profiler.h"
 
 namespace Utopian::Vk
 {
-	RenderTarget::RenderTarget(Device* device, uint32_t width, uint32_t height)
-	{
-		mWidth = width;
-		mHeight = height;
+   RenderTarget::RenderTarget(Device* device, uint32_t width, uint32_t height)
+   {
+      mWidth = width;
+      mHeight = height;
 
-		mCommandBuffer = std::make_shared<CommandBuffer>(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
-		mRenderPass = std::make_shared<RenderPass>(device);
-		mFrameBuffer = std::make_shared<FrameBuffers>(device);
-		mSampler = std::make_shared<Sampler>(device);
-		mQueryPool = std::make_shared<Vk::QueryPoolTimestamp>(device);
-		
-		SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	}
+      mCommandBuffer = std::make_shared<CommandBuffer>(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, false);
+      mRenderPass = std::make_shared<RenderPass>(device);
+      mFrameBuffer = std::make_shared<FrameBuffers>(device);
+      mSampler = std::make_shared<Sampler>(device);
+      mTimestampQueryPool = std::make_shared<Vk::QueryPoolTimestamp>(device);
+      
+      SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+   }
 
-	RenderTarget::~RenderTarget()
-	{
+   RenderTarget::~RenderTarget()
+   {
 
-	}
+   }
 
-	void RenderTarget::AddReadWriteColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
-	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, initialImageLayout);
-		mFrameBuffer->AddAttachmentImage(image.get());
-	}
+   void RenderTarget::AddReadWriteColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
+   {
+      mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, initialImageLayout);
+      mFrameBuffer->AddAttachmentImage(image.get());
+   }
 
-	void RenderTarget::AddWriteOnlyColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
-	{
-		mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, initialImageLayout);
-		mFrameBuffer->AddAttachmentImage(image.get());
-	}
+   void RenderTarget::AddWriteOnlyColorAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
+   {
+      mRenderPass->AddColorAttachment(image->GetFormat(), finalImageLayout, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, initialImageLayout);
+      mFrameBuffer->AddAttachmentImage(image.get());
+   }
 
-	void RenderTarget::AddReadWriteDepthAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
-	{
-		mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, finalImageLayout, initialImageLayout);
-		mFrameBuffer->AddAttachmentImage(image.get());
-	}
+   void RenderTarget::AddReadWriteDepthAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
+   {
+      mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE, finalImageLayout, initialImageLayout);
+      mFrameBuffer->AddAttachmentImage(image.get());
+   }
 
-	void RenderTarget::AddWriteOnlyDepthAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
-	{
-		mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, finalImageLayout, initialImageLayout);
-		mFrameBuffer->AddAttachmentImage(image.get());
-	}
+   void RenderTarget::AddWriteOnlyDepthAttachment(const SharedPtr<Image>& image, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
+   {
+      mRenderPass->AddDepthAttachment(image->GetFormat(), VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, finalImageLayout, initialImageLayout);
+      mFrameBuffer->AddAttachmentImage(image.get());
+   }
 
-	void RenderTarget::AddColorAttachment(VkImageView imageView, VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
-	{
-		mRenderPass->AddColorAttachment(format, finalImageLayout, loadOp, storeOp);
-		mFrameBuffer->AddAttachmentImage(imageView);
-	}
+   void RenderTarget::AddColorAttachment(VkImageView imageView, VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+   {
+      mRenderPass->AddColorAttachment(format, finalImageLayout, loadOp, storeOp);
+      mFrameBuffer->AddAttachmentImage(imageView);
+   }
 
-	void RenderTarget::AddDepthAttachment(VkImageView imageView, VkFormat format, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
-	{
-		mRenderPass->AddDepthAttachment(format, loadOp, storeOp);
-		mFrameBuffer->AddAttachmentImage(imageView);
-	}
+   void RenderTarget::AddDepthAttachment(VkImageView imageView, VkFormat format, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp)
+   {
+      mRenderPass->AddDepthAttachment(format, loadOp, storeOp);
+      mFrameBuffer->AddAttachmentImage(imageView);
+   }
 
-	void RenderTarget::Create()
-	{
-		mRenderPass->Create();
-		mFrameBuffer->Create(mRenderPass.get(), GetWidth(), GetHeight());
+   void RenderTarget::Create()
+   {
+      mRenderPass->Create();
+      mFrameBuffer->Create(mRenderPass.get(), GetWidth(), GetHeight());
 
-		for (uint32_t i = 0; i < mRenderPass->GetNumColorAttachments(); i++)
-		{
-			VkClearValue clearValue;
-			clearValue.color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
-			mClearValues.push_back(clearValue);
-		}
+      for (uint32_t i = 0; i < mRenderPass->GetNumColorAttachments(); i++)
+      {
+         VkClearValue clearValue;
+         clearValue.color = { mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a };
+         mClearValues.push_back(clearValue);
+      }
 
-		// Note: Always assumes that the depth stencil attachment is the last one
-		VkClearValue clearValue;
-		clearValue.depthStencil = { 1.0f, 0 };
-		mClearValues.push_back(clearValue);
-	}
+      // Note: Always assumes that the depth stencil attachment is the last one
+      VkClearValue clearValue;
+      clearValue.depthStencil = { 1.0f, 0 };
+      mClearValues.push_back(clearValue);
+   }
 
-	void RenderTarget::Begin(std::string debugName, glm::vec4 debugColor)
-	{
-		BeginCommandBuffer(debugName, debugColor);
-		BeginRenderPass();
-	}
+   void RenderTarget::Begin(std::string debugName, glm::vec4 debugColor)
+   {
+      BeginCommandBuffer();
+      BeginDebugLabelAndQueries(debugName, debugColor);
+      BeginRenderPass();
+   }
 
-	void RenderTarget::BeginCommandBuffer(std::string debugName, glm::vec4 debugColor)
-	{
-      mDebugName = debugName;
-      mDebugColor = debugColor;
-		mCommandBuffer->Begin();
-
-		Vk::DebugLabel::BeginRegion(mCommandBuffer->GetVkHandle(), debugName.c_str(), debugColor);
-      mQueryPool->Reset(mCommandBuffer.get());
-      mQueryPool->Begin(mCommandBuffer.get());
-	}
-	
-	void RenderTarget::BeginRenderPass()
-	{
-		VkRenderPassBeginInfo renderPassBeginInfo = {};
-		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
-		renderPassBeginInfo.renderArea.extent.width = GetWidth();
-		renderPassBeginInfo.renderArea.extent.height = GetHeight();
-		renderPassBeginInfo.clearValueCount = mClearValues.size();
-		renderPassBeginInfo.pClearValues = mClearValues.data();
+   void RenderTarget::BeginCommandBuffer()
+   {
+      mCommandBuffer->Begin();
+   }
+   
+   void RenderTarget::BeginRenderPass()
+   {
+      VkRenderPassBeginInfo renderPassBeginInfo = {};
+      renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+      renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
+      renderPassBeginInfo.renderArea.extent.width = GetWidth();
+      renderPassBeginInfo.renderArea.extent.height = GetHeight();
+      renderPassBeginInfo.clearValueCount = mClearValues.size();
+      renderPassBeginInfo.pClearValues = mClearValues.data();
       renderPassBeginInfo.framebuffer = mFrameBuffer->GetFrameBuffer(0); // TODO: NOTE: Should not be like this
 
-		mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+      mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+      mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());
+      mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
+   }
 
-		mCommandBuffer->CmdSetViewPort(GetWidth(), GetHeight());
-		mCommandBuffer->CmdSetScissor(GetWidth(), GetHeight());
-	}
+   void RenderTarget::End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore)
+   {
+      mCommandBuffer->CmdEndRenderPass();
 
-	void RenderTarget::End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore)
-	{
-		mCommandBuffer->CmdEndRenderPass();
+      EndDebugLabelAndQueries();
 
-      mQueryPool->End(mCommandBuffer.get());
-		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
+      mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
 
-		mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
+      gProfiler().AddProfilerTask(mDebugName, mTimestampQueryPool->GetStartTimestamp(), mTimestampQueryPool->GetEndTimestamp(), mDebugColor);
+   }
 
-      gProfiler().AddProfilerTask(mDebugName, mQueryPool->GetStartTimestamp(), mQueryPool->GetEndTimestamp(), mDebugColor);
-	}
+   void RenderTarget::EndAndFlush()
+   {
+      mCommandBuffer->CmdEndRenderPass();
+      
+      EndDebugLabelAndQueries();
 
-	void RenderTarget::EndAndFlush()
-	{
-		mCommandBuffer->CmdEndRenderPass();
+      mCommandBuffer->Flush();
+   }
 
-		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
+   uint32_t RenderTarget::GetWidth()
+   {
+      return mWidth;
+   }
 
-		mCommandBuffer->Flush();
-	}
+   uint32_t RenderTarget::GetHeight()
+   {
+      return mHeight;
+   }
 
-	uint32_t RenderTarget::GetWidth()
-	{
-		return mWidth;
-	}
+   void RenderTarget::BeginDebugLabelAndQueries(std::string debugName, glm::vec4 debugColor)
+   {
+      mDebugName = debugName;
+      mDebugColor = debugColor;
 
-	uint32_t RenderTarget::GetHeight()
-	{
-		return mHeight;
-	}
+      Vk::DebugLabel::BeginRegion(mCommandBuffer->GetVkHandle(), mDebugName.c_str(), mDebugColor);
 
-	Utopian::Vk::Sampler* RenderTarget::GetSampler()
-	{
-		return mSampler.get();
-	}
+      mTimestampQueryPool->Reset(mCommandBuffer.get());
+      mTimestampQueryPool->Begin(mCommandBuffer.get());
 
-	Utopian::Vk::CommandBuffer* RenderTarget::GetCommandBuffer()
-	{
-		return mCommandBuffer.get();
-	}
+      if (mStatisticsQueryPool != nullptr)
+      {
+         mStatisticsQueryPool->Reset(mCommandBuffer.get());
+         mStatisticsQueryPool->Begin(mCommandBuffer.get());
+      }
+   }
 
-	RenderPass* RenderTarget::GetRenderPass()
-	{
-		return mRenderPass.get();
-	}
+   void RenderTarget::EndDebugLabelAndQueries()
+   {
+      Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
 
-	void RenderTarget::SetClearColor(float r, float g, float b, float a)
-	{
-		mClearColor = glm::vec4(r, g, b, a);
-	}
+      mTimestampQueryPool->End(mCommandBuffer.get());
+
+      if (mStatisticsQueryPool != nullptr)
+      {
+         mStatisticsQueryPool->End(mCommandBuffer.get());
+		   mStatisticsQueryPool->RetreiveResults();
+      }
+   }
+
+   Utopian::Vk::Sampler* RenderTarget::GetSampler()
+   {
+      return mSampler.get();
+   }
+
+   Utopian::Vk::CommandBuffer* RenderTarget::GetCommandBuffer()
+   {
+      return mCommandBuffer.get();
+   }
+
+   RenderPass* RenderTarget::GetRenderPass()
+   {
+      return mRenderPass.get();
+   }
+
+   void RenderTarget::SetClearColor(float r, float g, float b, float a)
+   {
+      mClearColor = glm::vec4(r, g, b, a);
+   }
+
+   void RenderTarget::AddStatisticsQuery(SharedPtr<Vk::QueryPoolStatistics> statisticsQuery)
+   {
+      mStatisticsQueryPool = statisticsQuery;
+   }
 }
