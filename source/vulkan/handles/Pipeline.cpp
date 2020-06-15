@@ -60,6 +60,7 @@ namespace Utopian::Vk
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
+		std::vector<VkPipelineColorBlendAttachmentState> blendAttachmentState;
       for (uint32_t i = 0; i < mRenderPass->colorReferences.size(); i++) {
          VkPipelineColorBlendAttachmentState colorBlend = {};
          colorBlend.colorWriteMask = 0xf;

@@ -60,8 +60,6 @@ namespace Utopian::Vk
 		/** Returns true if Create() has been called. */
 		bool IsCreated() const;
 
-		/** Public so they can be modified before calling Create(). */
-		std::vector<VkPipelineColorBlendAttachmentState> blendAttachmentState;
 	private:
       void SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
       void SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
