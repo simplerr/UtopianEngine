@@ -88,7 +88,7 @@ namespace Utopian
 
    void TerrainTool::RenderUi()
    {
-	   if (ImGui::CollapsingHeader("Terrain tool"))
+	   if (ImGui::CollapsingHeader("Terrain tool", ImGuiTreeNodeFlags_DefaultOpen))
 	   {
 		   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
 		   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);

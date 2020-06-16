@@ -5,6 +5,23 @@
 
 namespace Utopian
 {
+   class MiniPlot
+   {
+   public:
+      MiniPlot();
+      ~MiniPlot();
+
+      void Render(const std::string& label, float minScale, float maxScale);
+      void Configure(uint32_t maxEntries, float updateIntervalMs);
+      void AddData(float data);
+      void SetUpdateInterval(float intervalMs);
+   private:
+      std::vector<float> mEntries;
+      uint32_t mNumMaxEntries = 20;
+      float mUpdateIntervalMs = 300.0f;
+      float mLastAddTimestamp = 0.0f;
+   };
+
 	class Profiler : public Module<Profiler>
 	{
 	public:
@@ -17,6 +34,10 @@ namespace Utopian
 		LegitProfiler::ProfilersWindow mProfilerWindow;
       std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
       bool mEnabled;
+      MiniPlot mFrametimePlot;
+      MiniPlot mMemoryUsagePlot;
+      MiniPlot mFpsPlot;
+      std::vector<float> mFrameTimes;
 	};
 
 	Profiler& gProfiler();

@@ -1,9 +1,11 @@
 #include "core/Profiler.h"
+#include "core/renderer/Renderer.h"
 #include "imgui/imgui.h"
 #include "ImGuiRenderer.h"
 #include "utility/Timer.h"
 #include "utility/math/Helpers.h"
 #include "Input.h"
+#include "vulkan/handles/Device.h"
 
 namespace Utopian
 {
@@ -15,6 +17,10 @@ namespace Utopian
 	Profiler::Profiler()
 	{
       mEnabled = true;
+      mProfilerWindow.gpuGraph.SetMaxFrameTime(2.0f);
+      mFrametimePlot.Configure(20, 30.0f);
+      mFpsPlot.Configure(20, 30.0f);
+      mMemoryUsagePlot.Configure(20, 300.0f);
 	}
 
 	Profiler::~Profiler()
@@ -31,7 +37,28 @@ namespace Utopian
          static uint32_t period;
          if (period % 50 == 0)
             mProfilerWindow.gpuGraph.LoadFrameData(mProfilerTasks.data(), mProfilerTasks.size());
+
          period++;
+
+         /* GPU frame time */
+         float frameTime = 0.0f;
+         for (auto& iter : mProfilerTasks)
+            frameTime += iter.GetLength() * 1000.0f;
+
+         mFrametimePlot.AddData(frameTime);
+
+         /* GPU memory usage */
+         VmaBudget budget = gRenderer().GetDevice()->GetMemoryBudget(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
+         mMemoryUsagePlot.AddData(budget.allocationBytes / 1000000u);
+
+         /* FPS */
+         mFpsPlot.AddData(gTimer().GetFPS());
+
+         ImGui::Begin("Profiling data");
+         mFrametimePlot.Render("GPU frame time", 0.0f, 2.0f);
+         mFpsPlot.Render("FPS", 0.0f, 100.0f);
+         mMemoryUsagePlot.Render("GPU memory usage (MB)", 900.0f, 1100.0f);
+         ImGui::End();
 
          mProfilerWindow.Render();
       }
@@ -61,5 +88,48 @@ namespace Utopian
             
          mProfilerTasks.push_back(task);
       }
+   }
+
+   MiniPlot::MiniPlot()
+   {
+      mNumMaxEntries = 20;
+      mUpdateIntervalMs = 30.0f;
+   }
+
+   MiniPlot::~MiniPlot()
+   {
+   }
+
+   void MiniPlot::Configure(uint32_t maxEntries, float updateIntervalMs)
+   {
+      mNumMaxEntries = maxEntries;
+      mUpdateIntervalMs = updateIntervalMs;
+   }
+
+   void MiniPlot::Render(const std::string& label, float minScale, float maxScale)
+   {
+      if (mEntries.size() != 0)
+      {
+         ImGui::Text("%s: %.2f", label.c_str(), mEntries.at(mEntries.size() - 1));
+         ImGui::PlotLines("", mEntries.data(), mEntries.size(), 0, "", minScale, maxScale, ImVec2(0.0f, 40.0f));
+      }
+   }
+
+   void MiniPlot::AddData(float data)
+   {
+      float currentTimeMs = gTimer().GetTime();
+      if (currentTimeMs - mLastAddTimestamp > mUpdateIntervalMs)
+      {
+         mEntries.push_back(data);
+         if (mEntries.size() > mNumMaxEntries)
+            mEntries.erase(mEntries.begin());
+
+         mLastAddTimestamp = currentTimeMs;
+      }
+   }
+
+   void MiniPlot::SetUpdateInterval(float intervalMs)
+   {
+      mUpdateIntervalMs = intervalMs;
    }
 }

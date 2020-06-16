@@ -309,6 +309,8 @@ namespace Utopian
 		gPhysics().EnableSimulation(physicsEnabled);
 		gPhysics().EnableDebugDraw(debugDrawEnabled);
 
+		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.70f);
+
 		mTerrainTool->RenderUi();
 		mFoliageTool->RenderUi();
 		RenderActorCreationUi();
