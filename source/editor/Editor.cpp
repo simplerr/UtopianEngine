@@ -250,6 +250,7 @@ namespace Utopian
 		// Display Actor creation list
 		if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			ImGui::PushItemWidth(ImGui::GetWindowWidth());
 			ImGui::Text("Models:");
 			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
 
@@ -278,6 +279,7 @@ namespace Utopian
 		// Display Actor creation list
 		if (ImGui::CollapsingHeader("Actors in scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			ImGui::PushItemWidth(ImGui::GetWindowWidth());
 			std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
 			std::vector<const char*> actorNames;
 

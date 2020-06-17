@@ -146,6 +146,7 @@ namespace Utopian
 
 			// Listbox containing all assets that can be placed
 			// Todo: Some of them are broken
+			ImGui::PushItemWidth(ImGui::GetWindowWidth());
 			if (ImGui::CollapsingHeader("All available assets"))
 			{
 				if (ImGui::ListBox("", &mSelectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
