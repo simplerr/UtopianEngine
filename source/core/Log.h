@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include <vector>
 #include "utility/Module.h"
 
 #define UTO_LOG(message, ...)                   \
@@ -24,10 +25,14 @@ namespace Utopian
 		void RegisterUserLogCallback(Args &&...args)
 		{
 			mUserLogCallback = std::bind(std::forward<Args>(args)...);
+
+         for (const auto& entry : mStartupEntries)
+            mUserLogCallback(entry);
 		}
 
    private:
 		std::function<void(std::string)> mUserLogCallback;
+      std::vector<std::string> mStartupEntries;
    };
 
    Log& gLog();

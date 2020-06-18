@@ -9,13 +9,11 @@ layout (location = 1) in vec4 InColor;
 
 layout (location = 0) out float OutSize;
 layout (location = 1) out vec4 OutColor;
-layout (location = 2) out float OutEdgeDistance;
 
 void main()
 {
     OutSize = InPositionSize.w;
 	OutColor = InColor.abgr; // Swizzle for correct endianess
-	OutEdgeDistance = 0.0f; // Unused, calculated in GS
 
 	vec3 pos = -InPositionSize.xyz; // Todo: Note the -1
 	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * vec4(pos, 1.0);

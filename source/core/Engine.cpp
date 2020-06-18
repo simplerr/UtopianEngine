@@ -26,7 +26,7 @@ namespace Utopian
 	Engine::Engine(SharedPtr<Vk::VulkanApp> vulkanApp)
 		: mVulkanApp(vulkanApp)
 	{
-		UTO_LOG("Starting engine modules...");
+		UTO_LOG("Starting engine modules");
 
 		StartModules();
 

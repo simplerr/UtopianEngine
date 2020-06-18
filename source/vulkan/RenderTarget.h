@@ -22,8 +22,8 @@ namespace Utopian::Vk
       /** Begins the command buffer and the render pass. */
       void Begin(std::string debugName = "Unnamed pass", glm::vec4 debugColor = glm::vec4(1.0, 0.0, 0.0, 1.0));
 
-      void EndAndFlush();
       void End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore);
+      void EndAndFlush();
 
       void SetClearColor(float r, float g, float b, float a = 0.0f);
 

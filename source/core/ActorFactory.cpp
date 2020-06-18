@@ -16,7 +16,7 @@ namespace Utopian
 {
 	void ActorFactory::LoadFromFile(Window* window, std::string filename)
 	{
-		UTO_LOG("Loading actors from file...");
+		UTO_LOG("Loading actors from file");
 
 		gLuaManager().ExecuteFile(filename.c_str());
 

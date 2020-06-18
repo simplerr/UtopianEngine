@@ -76,6 +76,10 @@ namespace Utopian::Vk
 			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData)
 		{
+         // Ignore: vkCreateCommandPool(): VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT is set. Consider resetting entire pool instead.
+         if ((uint32_t)callbackData->messageIdNumber == 0x8728E724)
+            return VK_FALSE;
+
 			std::ostringstream stream;
 
 			std::string debugPrefix = "Unknown";
@@ -89,7 +93,7 @@ namespace Utopian::Vk
 				debugPrefix = "Error: ";
 
 			stream << std::endl << "-------------------------" << std::endl;
-			stream << callbackData->messageIdNumber << ":" << callbackData->pMessage << std::endl;
+			stream << debugPrefix << callbackData->messageIdNumber << ":" << callbackData->pMessage << std::endl;
 			// callbackData->pMessageIdName is a nullptr when RenderDoc is printing information causing the application to crash
 
 			if (callbackData->objectCount > 0)

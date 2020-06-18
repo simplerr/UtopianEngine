@@ -43,7 +43,7 @@ namespace Utopian
 
 	Renderer::Renderer(Vk::VulkanApp* vulkanApp)
 	{
-		UTO_LOG("Initializing Renderer...");
+		UTO_LOG("Initializing Renderer");
 
 		mNextNodeId = 0;
 		mMainCamera = nullptr;
@@ -98,7 +98,7 @@ namespace Utopian
 
 		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
 
-		if (ImGui::CollapsingHeader("Features"))
+		if (ImGui::CollapsingHeader("Features", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
 			ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);

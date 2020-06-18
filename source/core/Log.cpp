@@ -32,8 +32,10 @@ namespace Utopian
    void Log::AddMessage(std::string message)
    {
       std::cout << message << std::endl;
-
+      
       if (mUserLogCallback != nullptr)
          mUserLogCallback(message);
+      else
+         mStartupEntries.push_back(message);
    }
 }
