@@ -34,11 +34,11 @@ namespace Utopian
 		void SetMainCamera();
 
 		// Getters
-		const glm::vec3& GetDirection() const;
-		const glm::vec3& GetTarget() const;
-		const glm::vec3& GetRight() const;
-		const glm::vec3& GetUp() const;
-		const glm::vec3& GetLookAt() const;
+		glm::vec3 GetDirection() const;
+		glm::vec3 GetTarget() const;
+		glm::vec3 GetRight() const;
+		glm::vec3 GetUp() const;
+		glm::vec3 GetLookAt() const;
 		float GetPitch() const;
 		float GetYaw() const;
 		float GetFov() const;

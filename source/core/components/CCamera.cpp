@@ -102,27 +102,27 @@ namespace Utopian
 		mInternal->SetMainCamera();
 	}
 
-	const glm::vec3& CCamera::GetDirection() const
+	glm::vec3 CCamera::GetDirection() const
 	{
 		return mInternal->GetDirection();
 	}
 
-	const glm::vec3& CCamera::GetTarget() const
+	glm::vec3 CCamera::GetTarget() const
 	{
 		return mInternal->GetTarget();
 	}
 
-	const glm::vec3& CCamera::GetRight() const
+	glm::vec3 CCamera::GetRight() const
 	{
 		return mInternal->GetRight();
 	}
 
-	const glm::vec3& CCamera::GetUp() const
+	glm::vec3 CCamera::GetUp() const
 	{
 		return mInternal->GetUp();
 	}
 
-	const glm::vec3& CCamera::GetLookAt() const
+	glm::vec3 CCamera::GetLookAt() const
 	{
 		return mInternal->GetLookAt();
 	}

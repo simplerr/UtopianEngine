@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <string>
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 

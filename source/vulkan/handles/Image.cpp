@@ -1,8 +1,9 @@
+#include <stdexcept>
+#include <stdlib.h>
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/Debug.h"
 #include "Image.h"
-#include <stdlib.h>
 
 namespace Utopian::Vk
 {
@@ -37,9 +38,6 @@ namespace Utopian::Vk
 		mLayerCount = createInfo.arrayLayers;
 		mCurrentLayout = createInfo.initialLayout;
 		SetDebugName(createInfo.name);
-
-		if (createInfo.name == "Unnamed Image")
-			int a = 1;
 
 		VkImageCreateInfo imageCreateInfo = {};
 		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

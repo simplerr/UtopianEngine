@@ -61,6 +61,16 @@ bool frustumCheck()
 	return true;
 }
 
+bool isBelowWater()
+{
+	vec4 pos = gl_in[gl_InvocationID].gl_Position;
+
+	if (pos.y < 0.0f)
+		return false;
+	else
+		return true;
+}
+
 void main()
 {
 	if (gl_InvocationID == 0)
