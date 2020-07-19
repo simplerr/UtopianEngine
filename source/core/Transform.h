@@ -29,7 +29,7 @@ namespace Utopian
 		const glm::vec3& GetScale() const;
 		const glm::mat4& GetWorldMatrix() const;
 		const glm::mat4& GetWorldInverseTransposeMatrix() const;
-		const glm::quat& Transform::GetOrientation() const;
+		const glm::quat& GetOrientation() const;
 
 		void RebuildWorldMatrix();
 	//private:

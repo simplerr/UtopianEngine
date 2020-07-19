@@ -23,7 +23,7 @@ namespace Utopian
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		// Setters
-		void SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular);
+		void SetMaterials(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular);
 		void SetMaterial(const glm::vec4& color);
 		void SetMaterial(const Utopian::Material& material);
 

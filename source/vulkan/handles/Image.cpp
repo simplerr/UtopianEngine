@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <stdlib.h>
+#include <vulkan/vulkan_core.h>
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/Debug.h"
@@ -286,6 +287,7 @@ namespace Utopian::Vk
 		}
 
 		assert(0);
+		return VK_NULL_HANDLE;
 	}
 
 	VkFormat Image::GetFormat() const

@@ -1,4 +1,3 @@
-#pragma once
 #include "utility/math/Helpers.h"
 #include <random>
 

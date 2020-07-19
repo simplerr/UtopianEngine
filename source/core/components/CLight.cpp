@@ -77,7 +77,7 @@ namespace Utopian
 		return luaObject;
 	}
 
-	void CLight::SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
+	void CLight::SetMaterials(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
 	{
 		mInternal->SetMaterials(ambient, diffuse, specular);
 	}

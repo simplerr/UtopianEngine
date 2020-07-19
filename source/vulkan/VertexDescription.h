@@ -18,43 +18,43 @@ namespace Utopian::Vk
 	class VertexAttribute
 	{
 	public:
-		virtual VkFormat GetFormat() = 0;
-		virtual uint32_t GetSize() = 0;
+		virtual VkFormat GetFormat() const = 0;
+		virtual uint32_t GetSize() const = 0;
 	};
 
 	class Vec2Attribute : public VertexAttribute
 	{
 	public:
-		virtual VkFormat GetFormat() { return VK_FORMAT_R32G32_SFLOAT; }
-		virtual uint32_t GetSize() { return sizeof(glm::vec2); }
+		virtual VkFormat GetFormat() const { return VK_FORMAT_R32G32_SFLOAT; }
+		virtual uint32_t GetSize() const { return sizeof(glm::vec2); }
 	};
 
 	class Vec3Attribute : public VertexAttribute
 	{
 	public:
-		virtual VkFormat GetFormat() { return VK_FORMAT_R32G32B32_SFLOAT; }
-		virtual uint32_t GetSize() { return sizeof(glm::vec3); }
+		virtual VkFormat GetFormat() const { return VK_FORMAT_R32G32B32_SFLOAT; }
+		virtual uint32_t GetSize() const { return sizeof(glm::vec3); }
 	};
 
 	class Vec4Attribute : public VertexAttribute
 	{
 	public:
-		virtual VkFormat GetFormat() { return VK_FORMAT_R32G32B32A32_SFLOAT; }
-		virtual uint32_t GetSize() { return sizeof(glm::vec4); }
+		virtual VkFormat GetFormat() const { return VK_FORMAT_R32G32B32A32_SFLOAT; }
+		virtual uint32_t GetSize() const { return sizeof(glm::vec4); }
 	};
 
 	class U32Attribute : public VertexAttribute
 	{
 	public:
-		virtual VkFormat GetFormat() { return VK_FORMAT_R8G8B8A8_UNORM; }
-		virtual uint32_t GetSize() { return sizeof(unsigned int); }
+		virtual VkFormat GetFormat() const { return VK_FORMAT_R8G8B8A8_UNORM; }
+		virtual uint32_t GetSize() const { return sizeof(unsigned int); }
 	};
 
 	class S32Attribute : public VertexAttribute
 	{
 	public:
-		virtual VkFormat GetFormat() { return VK_FORMAT_R32_SINT; }
-		virtual uint32_t GetSize() { return sizeof(unsigned int); }
+		virtual VkFormat GetFormat() const { return VK_FORMAT_R32_SINT; }
+		virtual uint32_t GetSize() const { return sizeof(unsigned int); }
 	};
 
 	/*
@@ -99,7 +99,7 @@ namespace Utopian::Vk
 
 		// Adds a attribute
 		// Note: The ordering determines the location
-		void AddAttribute(uint32_t binding, VertexAttribute& attribute)
+		void AddAttribute(uint32_t binding, const VertexAttribute& attribute)
 		{
 			VkVertexInputAttributeDescription attributeDescription;
 
@@ -117,9 +117,9 @@ namespace Utopian::Vk
 			offsets[binding] += attribute.GetSize();
 		}
 
-		VkPipelineVertexInputStateCreateInfo GetInputState() const
+		const VkPipelineVertexInputStateCreateInfo* GetInputState() const
 		{
-			return inputState;
+			return &inputState;
 		}
 
 	private:

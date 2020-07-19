@@ -50,7 +50,7 @@ namespace Utopian
 		return mLightData;
 	}
 
-	void Light::SetMaterials(const const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
+	void Light::SetMaterials(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
 	{
 		mLightData.material = Utopian::Material(ambient, diffuse, specular);
 		mLightData.intensity = glm::vec3(0.0f, 1.0f, 0.0f);

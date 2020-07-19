@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <chrono>
 #include <functional>
+#include <string>
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Platform.h"
 

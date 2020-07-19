@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <ctime>
 
 namespace Utopian::Vk
 {

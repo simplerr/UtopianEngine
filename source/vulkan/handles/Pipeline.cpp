@@ -105,9 +105,9 @@ namespace Utopian::Vk
 		pipelineCreateInfo.renderPass = mRenderPass->GetVkHandle();
 
 		if (mPipelineDesc.overriddenVertexDescription != nullptr)
-			pipelineCreateInfo.pVertexInputState = &mPipelineDesc.overriddenVertexDescription->GetInputState();
+			pipelineCreateInfo.pVertexInputState = mPipelineDesc.overriddenVertexDescription->GetInputState();
 		else
-			pipelineCreateInfo.pVertexInputState = &shader->GetVertexDescription()->GetInputState();
+			pipelineCreateInfo.pVertexInputState = shader->GetVertexDescription()->GetInputState();
 
 		pipelineCreateInfo.pInputAssemblyState = &mPipelineDesc.inputAssemblyState;
 		pipelineCreateInfo.pRasterizationState = &mPipelineDesc.rasterizationState;

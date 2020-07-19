@@ -105,6 +105,7 @@ namespace Utopian::Vk
 
 		// No queue was found
 		assert(0);
+		return 0;
 	}
 
 	void Device::CreateLogical(bool enableValidation)

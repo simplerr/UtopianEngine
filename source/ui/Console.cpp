@@ -36,7 +36,7 @@ namespace Utopian
       Items.clear();
    }
 
-   void Console::AddLog(const char* fmt, ...) IM_FMTARGS(2)
+   void Console::AddLog(const char* fmt, ...)
    {
       // FIXME-OPT
       char buf[1024];

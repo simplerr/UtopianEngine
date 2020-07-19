@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include "vulkan/EffectManager.h"
 #include "vulkan/Effect.h"
 #include "core/Log.h"
