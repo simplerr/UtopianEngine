@@ -107,9 +107,7 @@ namespace Utopian
 				OnActorSelected(newActor.get());
 			}
 		}
-
-		// Add new actor to scene
-		if (gInput().KeyPressed('C'))
+      else if (gInput().KeyPressed('C')) // Add new actor to scene
 		{
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 

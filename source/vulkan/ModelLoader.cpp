@@ -17,6 +17,9 @@
 #include "../external/assimp/assimp/postprocess.h"
 #include "../external/assimp/assimp/scene.h"
 
+#define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
+
 namespace Utopian::Vk
 {
 	ModelLoader::ModelLoader(Device* device)
@@ -194,7 +197,6 @@ namespace Utopian::Vk
 					specularTexturePath = GetPath(material, aiTextureType_SPECULAR, filename);
 				}
 
-
 				mesh->LoadTextures(diffuseTexturePath, normalTexturePath, specularTexturePath);
 				mesh->SetDebugName(filename);
 				mesh->BuildBuffers(mDevice);
@@ -207,8 +209,12 @@ namespace Utopian::Vk
 		}
 		else {
 			// Loading of model failed
-			UTO_LOG(filename);
-			assert(scene);
+			UTO_LOG("Failed to load model: " + filename);
+
+         if (mPlaceholderModel == nullptr)
+            mPlaceholderModel = LoadModel(PLACEHOLDER_MODEL_PATH);
+
+         return mPlaceholderModel;
 		}
 
 		return model;

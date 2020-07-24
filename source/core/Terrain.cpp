@@ -118,8 +118,6 @@ namespace Utopian
 
 	void Terrain::RetrieveHeightmap()
 	{
-		gRendererUtility().SaveToFile(mDevice, heightmapImage, "screen.ppm", 256, 256);
-
 		hostImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32_SFLOAT);
 
 		// Get layout of the image (including row pitch)

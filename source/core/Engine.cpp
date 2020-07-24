@@ -56,8 +56,8 @@ namespace Utopian
 
 		ScriptExports::Register();
 		ScriptImports::Register();
-		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
 		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
+		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
 
 		RendererUtility::Start();
 		Renderer::Start(mVulkanApp.get());

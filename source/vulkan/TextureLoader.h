@@ -6,8 +6,6 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/WoodDetail1A_D.png"
-
 namespace Utopian::Vk
 {
 	class TextureLoader : public Module<TextureLoader>
