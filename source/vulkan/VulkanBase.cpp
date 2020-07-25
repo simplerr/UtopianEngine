@@ -2,7 +2,6 @@
 #include <array>
 #include <cassert>
 #include <sstream>
-#include <chrono>
 #include "utility/Platform.h"
 #include "VulkanBase.h"
 #include "vulkan/handles/Device.h"

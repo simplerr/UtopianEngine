@@ -7,7 +7,7 @@
 #include "vulkan/ShaderBuffer.h"
 #include "core/Terrain.h"
 #include "imgui/imgui.h"
-#include <chrono>
+#include "utility/Timer.h"
 
 namespace Utopian
 {
@@ -56,12 +56,7 @@ namespace Utopian
 
 		std::vector<const char*> mAssetNames;
 		int mSelectedAsset;
-
 		std::vector<UiAsset> mUiAssets;
-
-		// Note: This should be handled by the Timer component.
-		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 
-		// called at the same frequency as UIOverlay::Update.
-		std::chrono::high_resolution_clock::time_point mLastAddTimestamp;
+		Timestamp mLastAddTimestamp;
 	};
 }

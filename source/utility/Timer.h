@@ -8,6 +8,8 @@
 
 namespace Utopian
 {
+	typedef std::chrono::high_resolution_clock::time_point Timestamp;
+
 	class Timer : public Module<Timer>
 	{
 	public:
@@ -20,6 +22,12 @@ namespace Utopian
 
 		void		PrintLog(std::ofstream& fout) const;
 		void		ResetLifetimeCounter();
+
+		// Standalone interfaces for retrieving timestamps,
+		// rest of Timer is in need of a rewrite
+		Timestamp GetTimestamp() const;
+		double GetElapsedTime(Timestamp timestamp) const;
+
 	private:
 		std::chrono::high_resolution_clock::time_point mFrameBegin;
 

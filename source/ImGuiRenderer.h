@@ -8,13 +8,13 @@
 #include <sstream>
 #include <iomanip>
 #include <glm/glm.hpp>
-#include <chrono>
 #include <vulkan/vulkan.h>
 
 #include "imgui/imgui.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/Effect.h"
+#include "utility/Timer.h"
 
 namespace Utopian
 {
@@ -78,17 +78,10 @@ namespace Utopian
 
 		int32_t mVertexCount = 0;
 		int32_t mIndexCount = 0;
-		
+
 		float mScale = 1.0f;
-
-		// Note: This should be handled by the Timer component.
-		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 
-		// called at the same frequency as UIOverlay::Update.
-		std::chrono::high_resolution_clock::time_point mLastFrameTime;
-		double mDeltaTime;
-
+		Timestamp mLastFrameTime;
 		std::vector<VkDescriptorSet> mTextureDescriptorsToFree;
-
 		static bool mImguiVisible;
 	};
 }

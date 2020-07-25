@@ -1,7 +1,7 @@
 #pragma once
-#include "utility/Module.h"
 #include <glm/glm.hpp>
-#include <chrono>
+#include "utility/Module.h"
+#include "utility/Timer.h"
 
 class btBroadphaseInterface;
 class btCollisionDispatcher;
@@ -50,10 +50,7 @@ namespace Utopian
 		bool mDebugDrawEnabled;
 		double* mHeightmapCopy;
 
-		// Note: This should be handled by the Timer component.
-		// But since the calls to ImGui::NewFrame() and ImGui::Render() currently are not 
-		// called at the same frequency as UIOverlay::Update.
-		std::chrono::high_resolution_clock::time_point mLastFrameTime;
+		Timestamp mLastFrameTime;
 	};
 
 	Physics& gPhysics();

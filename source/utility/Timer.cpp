@@ -86,4 +86,16 @@ namespace Utopian
 		return mFrameTime;
 	}
 
+	Timestamp Timer::GetTimestamp() const
+	{
+		return std::chrono::high_resolution_clock::now();
+	}
+
+	double Timer::GetElapsedTime(Timestamp timestamp) const
+	{
+		Timestamp now = std::chrono::high_resolution_clock::now();
+		double elapsedTime = std::chrono::duration<double, std::milli>(now - timestamp).count();
+		return elapsedTime;
+	}
+
 }	// VulkanLib namespace

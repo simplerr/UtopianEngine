@@ -49,7 +49,6 @@ namespace Utopian::Vk
 		extern std::vector<VkValidationFeatureEnableEXT> enabledValidationFeatures;
 
 		extern bool performanceWarnings;
-		extern std::chrono::high_resolution_clock::time_point startTime;
 	}
 
 	/**

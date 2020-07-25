@@ -58,8 +58,7 @@ namespace Utopian
 
         PrepareResources();
 
-        mLastFrameTime = std::chrono::high_resolution_clock::now();
-        mDeltaTime = 0.0;
+        mLastFrameTime = gTimer().GetTimestamp();
 
         gInput().RegisterMouseInsideUiCallback(&ImGuiRenderer::IsMouseInsideUi);
         gInput().RegisterKeydownCallback(&ImGuiRenderer::KeydownCallback);
@@ -269,11 +268,10 @@ namespace Utopian
         ImGuiIO& io = ImGui::GetIO();
 
         // Update elapsed frame time
-        auto now = std::chrono::high_resolution_clock::now();
-        mDeltaTime = std::chrono::duration<double, std::milli>(now - mLastFrameTime).count();
-        mDeltaTime /= 1000.0f; // To seconds
-        mLastFrameTime = now;
-        io.DeltaTime = mDeltaTime;
+        double delta = gTimer().GetElapsedTime(mLastFrameTime);
+        delta /= 1000.0f; // To seconds
+        mLastFrameTime = gTimer().GetTimestamp();
+        io.DeltaTime = delta;
 
         // Update mouse state
         glm::vec2 mousePos = gInput().GetMousePosition();

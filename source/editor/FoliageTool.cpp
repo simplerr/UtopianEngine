@@ -20,7 +20,7 @@ namespace Utopian
 	{
 		mTerrain = terrain;
 		mDevice = device;
-		mLastAddTimestamp = std::chrono::high_resolution_clock::now();
+		mLastAddTimestamp = gTimer().GetTimestamp();
 		mVegetationSettings.continuous = true;
 		mVegetationSettings.restrictedDeletion = true;
 		mVegetationSettings.frequency = 1000.0f;
@@ -86,9 +86,7 @@ namespace Utopian
 
 				if (gInput().KeyDown(VK_LBUTTON) && mVegetationSettings.continuous)
 				{
-					auto now = std::chrono::high_resolution_clock::now();
-					double elapsedTime = std::chrono::duration<double, std::milli>(now - mLastAddTimestamp).count();
-					if (elapsedTime >= (1000.0f / mVegetationSettings.frequency))
+					if (gTimer().GetElapsedTime(mLastAddTimestamp) >= (1000.0f / mVegetationSettings.frequency))
 						AddVegetation(mSelectedAsset, position, true, true);
 				}
 			}
@@ -183,7 +181,7 @@ namespace Utopian
 		gRenderer().AddInstancedAsset(assetId, position, glm::vec3(180.0f, rotationY, 0.0f), glm::vec3(scale), animated, castShadows);
 		gRenderer().BuildAllInstances();
 
-		mLastAddTimestamp = std::chrono::high_resolution_clock::now();
+		mLastAddTimestamp = gTimer().GetTimestamp();
 	}
 
 	void FoliageTool::SetBrushSettings(BrushSettings* brushSettings)

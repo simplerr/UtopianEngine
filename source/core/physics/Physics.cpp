@@ -31,6 +31,8 @@ namespace Utopian
 		mEnabled = true;
 		mDebugDrawEnabled = false;
 
+		mLastFrameTime = gTimer().GetTimestamp();
+
 		// Add ground shape for experimentation
 		//AddGroundShape();
 	}
@@ -50,10 +52,9 @@ namespace Utopian
 	void Physics::Update()
 	{
 		// Update elapsed time
-		auto now = std::chrono::high_resolution_clock::now();
-		double deltaTime = std::chrono::duration<double, std::milli>(now - mLastFrameTime).count();
+		double deltaTime = gTimer().GetElapsedTime(mLastFrameTime);
 		deltaTime /= 1000.0f; // To seconds
-		mLastFrameTime = now;
+		mLastFrameTime = gTimer().GetTimestamp();
 
 		if (IsEnabled())
 		{

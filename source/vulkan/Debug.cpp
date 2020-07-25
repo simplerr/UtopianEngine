@@ -16,12 +16,11 @@ namespace Utopian::Vk
 		std::vector<VkValidationFeatureEnableEXT> enabledValidationFeatures;
 		VkValidationFeaturesEXT validationFeatures = {};
 		bool performanceWarnings = true;
-		std::chrono::high_resolution_clock::time_point startTime = std::chrono::high_resolution_clock::now();
 
 		VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = {};
 		VkDebugUtilsMessengerEXT debugUtilsMessenger = nullptr;
 
-      std::function<void(std::string)> mUserLogCallback = nullptr;
+      	std::function<void(std::string)> mUserLogCallback = nullptr;
 
 		void SetupDebugLayers()
 		{
@@ -76,9 +75,9 @@ namespace Utopian::Vk
 			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData)
 		{
-         // Ignore: vkCreateCommandPool(): VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT is set. Consider resetting entire pool instead.
-         if ((uint32_t)callbackData->messageIdNumber == 0x8728E724)
-            return VK_FALSE;
+         	// Ignore: vkCreateCommandPool(): VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT is set. Consider resetting entire pool instead.
+         	if ((uint32_t)callbackData->messageIdNumber == 0x8728E724)
+            	return VK_FALSE;
 
 			std::ostringstream stream;
 
@@ -198,7 +197,7 @@ namespace Utopian::Vk
 					break;
 				}
 
-			assert(0 && "ErrorCheck() catched an error!");
+				assert(0 && "ErrorCheck() catched an error!");
 			}
 		}
 		
