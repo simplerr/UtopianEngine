@@ -26,6 +26,8 @@
 // Enable internal culling for gizmos. The application must set a culling frustum via AppData.
 //#define IM3D_CULL_GIZMOS 1
 
+#define IM3D_DEPTH_TESTING_LAYER 1
+
 // Conversion to/from application math types.
 #define IM3D_VEC2_APP \
 	Vec2(const glm::vec2& _v)          { x = _v.x; y = _v.y;     } \

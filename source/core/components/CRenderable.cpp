@@ -25,8 +25,11 @@ namespace Utopian
 		{
 			glm::vec3 position = mInternal->GetTransform().GetPosition();
 			BoundingBox aabb = GetBoundingBox();
+
+			Im3d::PushEnableDepthTesting();
 			Im3d::DrawAlignedBox(aabb.GetMin(), aabb.GetMax());
 			Im3d::DrawPoint(position, 10.0f, Im3d::Color_Green);
+			Im3d::PopEnableDepthTesting();
 		}
 	}
 

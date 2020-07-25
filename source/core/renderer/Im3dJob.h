@@ -18,6 +18,9 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mLinesEffect;
 		SharedPtr<Vk::Effect> mPointsEffect;
 		SharedPtr<Vk::Effect> mTrianglesEffect;
+		SharedPtr<Vk::Effect> mLinesDepthTestEffect;
+		SharedPtr<Vk::Effect> mPointsDepthTestEffect;
+		SharedPtr<Vk::Effect> mTrianglesDepthTestEffect;
 		SharedPtr<Vk::VertexDescription> mVertexDescription;
 	};
 }

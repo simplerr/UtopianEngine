@@ -155,6 +155,9 @@ void  PushLayerId(const char* _str); // calls PushLayerId(MakeId(_str))
 void  PopLayerId();
 Id    GetLayerId();
 
+// Custom additions for UtopianEngine.
+void PushEnableDepthTesting();
+void PopEnableDepthTesting();
 
 // Manipulate translation/rotation/scale via a gizmo. Return true if the gizmo is 'active' (if it modified the output parameter).
 // If _local is true, the Gizmo* functions expect that the local matrix is on the matrix stack; in general the application should
@@ -754,6 +757,9 @@ inline void  PushLayerId(Id _layer)                                          { G
 inline void  PushLayerId(const char* _str)                                   { PushLayerId(MakeId(_str));        }
 inline void  PopLayerId()                                                    { GetContext().popLayerId();        }
 inline Id    GetLayerId()                                                    { return GetContext().getLayerId(); }
+
+inline void PushEnableDepthTesting()                                         { PushLayerId(IM3D_DEPTH_TESTING_LAYER); }
+inline void PopEnableDepthTesting()                                          { PopLayerId(); }
 
 inline bool GizmoTranslation(const char* _id, float _translation_[3], bool _local)                   { return GizmoTranslation(MakeId(_id), _translation_, _local);   }
 inline bool GizmoRotation(const char* _id, float _rotation_[3*3], bool _local)                       { return GizmoRotation(MakeId(_id), _rotation_, _local);         }
