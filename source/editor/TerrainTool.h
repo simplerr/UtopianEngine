@@ -41,7 +41,7 @@ namespace Utopian
 	class TerrainTool
 	{
 	public:
-		TerrainTool(const SharedPtr<Terrain>& terrain, Vk::Device* device);
+		TerrainTool(Terrain* terrain, Vk::Device* device);
 		~TerrainTool();
 
 		void Update();
@@ -64,7 +64,7 @@ namespace Utopian
 
 	private:
 		Vk::Device* mDevice;
-		SharedPtr<Terrain> mTerrain;
+		Terrain* mTerrain;
 		SharedPtr<Vk::Effect> mBlendmapBrushEffect;
 		SharedPtr<Vk::Effect> mHeightmapBrushEffect;
 		SharedPtr<Vk::RenderTarget> heightmapBrushRenderTarget;

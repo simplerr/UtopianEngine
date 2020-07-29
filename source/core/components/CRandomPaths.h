@@ -19,7 +19,7 @@ namespace Utopian
 	class CRandomPaths : public Component
 	{
 	public:
-		CRandomPaths(Actor* parent, const SharedPtr<Terrain>& terrain);
+		CRandomPaths(Actor* parent, Terrain* terrain);
 		~CRandomPaths();
 
 		void Update() override;
@@ -42,7 +42,7 @@ namespace Utopian
 		glm::vec2 GenerateNewTarget();
 	private:
 		CTransform* mTransform;
-		SharedPtr<Terrain> mTerrain;
+		Terrain* mTerrain;
 		glm::vec2 mTarget;
 		float mSpeed;
 	};

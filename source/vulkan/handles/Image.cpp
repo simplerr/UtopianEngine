@@ -21,9 +21,12 @@ namespace Utopian::Vk
 
 	Image::~Image()
 	{
-		// Image handles all the cleanup itself
+		// Image handles all the cleanup itself, instead of Handle
 		vkDestroyImageView(GetVkDevice(), mImageView, nullptr);
 		vkDestroyImage(GetVkDevice(), mHandle, nullptr);
+
+      for (auto& imageView : mLayerViews)
+         vkDestroyImageView(GetVkDevice(), imageView, nullptr);
 
 		GetDevice()->FreeMemory(mAllocation);
 	}

@@ -30,6 +30,8 @@ namespace Utopian
             mUserLogCallback(entry);
 		}
 
+      void UnregisterUserCallback();
+
    private:
 		std::function<void(std::string)> mUserLogCallback;
       std::vector<std::string> mStartupEntries;

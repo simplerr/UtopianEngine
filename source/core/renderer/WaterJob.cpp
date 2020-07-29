@@ -67,7 +67,7 @@ namespace Utopian
 		effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/water.tesc";
 		effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/water.tese";
 		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/water.geom";
-      	effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
+      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
 		effectDesc.pipelineDesc.AddTessellationState(4);
 

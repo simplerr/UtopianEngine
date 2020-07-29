@@ -14,7 +14,7 @@
 
 namespace Utopian
 {
-   TerrainTool::TerrainTool(const SharedPtr<Terrain>& terrain, Vk::Device* device)
+   TerrainTool::TerrainTool(Terrain* terrain, Vk::Device* device)
    {
 		mTerrain = terrain;
 		mDevice = device;

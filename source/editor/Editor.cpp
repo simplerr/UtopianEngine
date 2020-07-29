@@ -25,7 +25,7 @@
 
 namespace Utopian
 {
-	Editor::Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain)
+	Editor::Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, Terrain* terrain)
 		: mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
 	{
 		mSelectedActor = nullptr;

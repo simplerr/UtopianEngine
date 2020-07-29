@@ -60,6 +60,9 @@ namespace Utopian::Vk
 	{
 		if (mHandle != VK_NULL_HANDLE)
 		{
+         if (mMapped)
+            mDevice->UnmapMemory(mAllocation);
+
 			vkDestroyBuffer(mDevice->GetVkDevice(), mHandle, nullptr);
 			mDevice->FreeMemory(mAllocation);
 		}

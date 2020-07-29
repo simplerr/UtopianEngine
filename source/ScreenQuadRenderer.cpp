@@ -16,6 +16,12 @@ namespace Utopian
 		return ScreenQuadRenderer::Instance();
 	}
 
+	ScreenQuadRenderer::~ScreenQuadRenderer()
+	{
+		delete mScreenQuad.vertexBuffer;
+		delete mScreenQuad.indexBuffer;
+	}
+
 	ScreenQuadRenderer::ScreenQuadRenderer(Vk::VulkanApp* vulkanApp)
 	{
 		mVulkanApp = vulkanApp;

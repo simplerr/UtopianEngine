@@ -8,6 +8,7 @@
 #include <glslang/SPIRV/GlslangToSpv.h>
 #include <DirStackFileIncluder.h>
 #include <ResourceLimits.h>
+#include "core/renderer/Renderer.h"
 
 namespace Utopian::Vk
 {
@@ -125,6 +126,14 @@ namespace Utopian::Vk
 	Shader::Shader()
 	{
 
+	}
+
+	Shader::~Shader()
+	{
+      for (auto shader : compiledShaders)
+      {
+         vkDestroyShaderModule(gRenderer().GetDevice()->GetVkDevice(), shader->shaderModule, nullptr);
+      }
 	}
 
 	void Shader::AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo)
@@ -562,8 +571,8 @@ namespace Utopian::Vk
 			reflection->vertexDescription->AddBinding(BINDING_0, totalSize, VK_VERTEX_INPUT_RATE_VERTEX);
 	}
 
-	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(const ShaderCreateInfo& shaderCreateInfo)
-	{
+   SharedPtr<Shader> ShaderFactory::CreateShaderOnline(const ShaderCreateInfo& shaderCreateInfo)
+   {
 		SharedPtr<Shader> shader = nullptr;
 
 		/* Vertex shader */

@@ -68,7 +68,6 @@ namespace Utopian
     /** Free up all Vulkan resources acquired by the UI overlay */
     ImGuiRenderer::~ImGuiRenderer()
     {
-
     }
 
     /** Prepare all vulkan resources required to render the UI overlay */

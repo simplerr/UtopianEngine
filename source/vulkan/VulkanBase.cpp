@@ -33,6 +33,12 @@ namespace Utopian::Vk
 	{
 		mSwapChain.cleanup();
 
+      	// Needs to be freed before deleting the device
+      	mWaitFence = nullptr;
+      	mImageAvailable = nullptr;
+      	mRenderComplete = nullptr;
+      	mJobGraphWaitSemaphore = nullptr;
+
 		delete mDepthStencil;
 		delete mRenderPass;
 		delete mFrameBuffers;

@@ -58,7 +58,7 @@ namespace Utopian::Vk
 		 * This is used in order to get access to the shader reflection
 		 * to perform the string -> binding lookup.
 		 * Note: Maybe don't belong here. */
-		SharedPtr<Shader> mShader = nullptr;
+		Shader* mShader = nullptr;
 	};
 
 	/** Wrapper for VkDescriptorPool. */

@@ -20,6 +20,10 @@ namespace Utopian
 			this->layer = layer;
 		}
 
+      ~ScreenQuad() {
+         delete descriptorSet;
+      }
+
 		void SetVisible(bool visible) {
 			this->visible = visible;
 		}
@@ -42,6 +46,7 @@ namespace Utopian
 
 	public:
 		ScreenQuadRenderer(Vk::VulkanApp* vulkanApp);
+		~ScreenQuadRenderer();
 
 		void Render(Vk::VulkanApp* vulkanApp);
 		void ToggleVisible(uint32_t layer);

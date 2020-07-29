@@ -28,7 +28,7 @@
 
 namespace Utopian
 {
-	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, const SharedPtr<Terrain>& terrain, Vk::Device* device, uint32_t width, uint32_t height)
+	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, uint32_t width, uint32_t height)
 	{
 		/* Create the G-buffer attachments */
 		mGBuffer.positionImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "G-buffer position image");
@@ -79,7 +79,10 @@ namespace Utopian
 
 	JobGraph::~JobGraph()
 	{
-		// Todo: Delete jobs...
+		for(auto job : mJobs)
+		{
+			delete job;
+		}
 	}
 
 	void JobGraph::Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings)

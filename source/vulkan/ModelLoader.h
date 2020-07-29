@@ -25,6 +25,7 @@ namespace Utopian::Vk
    {
    public:
       ModelLoader(Device* device);
+      ~ModelLoader();
       void CleanupModels(VkDevice device);
 
       StaticModel* LoadModel(std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument

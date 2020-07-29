@@ -9,6 +9,11 @@ namespace Utopian::Vk
 		mDevice = device;
 	}
 
+   PipelineInterface::~PipelineInterface()
+   {
+      vkDestroyPipelineLayout(mDevice->GetVkDevice(), mPipelineLayout, nullptr);
+   }
+
 	void PipelineInterface::Create()
 	{
 		// Create all VkDescriptorSetLayouts

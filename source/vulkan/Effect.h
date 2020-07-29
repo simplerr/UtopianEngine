@@ -28,6 +28,8 @@ namespace Utopian::Vk
 		/** @note CreatePipeline() must be called explicitly after constructor. */
 		Effect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo);
 
+      ~Effect();
+
 		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipeline. */
 		bool RecompileShader();
 
@@ -58,7 +60,7 @@ namespace Utopian::Vk
 		ShaderCreateInfo GetShaderCreateInfo() const;
 		std::string GetVertexShaderPath() const;
 		uint32_t GetNumDescriptorSets() const;
-		SharedPtr<Shader> GetShader() const;
+		Shader* GetShader() const;
 		PipelineInterface* GetPipelineInterface();
 	protected:
 		void SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo);
@@ -66,7 +68,7 @@ namespace Utopian::Vk
 		SharedPtr<Pipeline> mPipeline;
 	private:
 		void CreatePipeline();
-		void CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device);
+		void CreatePipelineInterface(Shader*, Device* device);
 
 		RenderPass* mRenderPass = nullptr;
 		Device* mDevice = nullptr;

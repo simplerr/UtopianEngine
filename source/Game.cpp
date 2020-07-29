@@ -36,8 +36,9 @@ Game::Game(Utopian::Window* window)
 
 	// Start Utopian Engine
 	Utopian::gEngine().Start(mVulkanApp);
-	Utopian::gEngine().RegisterUpdateCallback(&Game::Update, this);
-	Utopian::gEngine().RegisterRenderCallback(&Game::Draw, this);
+	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
+	Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
+	Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);
 
 	InitScene();
 
@@ -52,22 +53,20 @@ Game::Game(Utopian::Window* window)
 
 Game::~Game()
 {
+   Utopian::gEngine().Destroy();
 }
 
-void Game::InitScene()
+void Game::DestroyCallback()
 {
-	//SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Sponza");
-	// Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
-	// Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
-	// renderable->LoadModel("data/models/sponza/sponza.obj");
+   mEditor = nullptr;
 }
 
-void Game::Update()
+void Game::UpdateCallback()
 {
 	mEditor->Update();
 }
 
-void Game::Draw()
+void Game::DrawCallback()
 {
 	mEditor->Draw();
 }
@@ -80,6 +79,14 @@ bool Game::IsClosing()
 void Game::Run()
 {
 	Utopian::gEngine().Run();
+}
+
+void Game::InitScene()
+{
+	//SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Sponza");
+	// Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
+	// Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+	// renderable->LoadModel("data/models/sponza/sponza.obj");
 }
 
 void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

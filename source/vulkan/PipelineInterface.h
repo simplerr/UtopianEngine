@@ -18,6 +18,7 @@ namespace Utopian::Vk
 	{
 	public:
 		PipelineInterface(Device* device);
+      ~PipelineInterface();
 
 		/**
 		 * Creates the descriptor set layout and pipeline layout objects	

@@ -12,10 +12,6 @@ namespace Utopian
 		LuaManager();
 		virtual ~LuaManager();
 
-		static bool Create();
-		static void Destroy();
-		static LuaManager* Get();
-
 		bool Init();
 		void ExecuteFile(const char* path);
 		void ExecuteString(const char* str);

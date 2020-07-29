@@ -18,7 +18,6 @@ namespace Utopian
       AutoScroll = true;
       ScrollToBottom = false;
 
-      //Vk::Debug::RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
       gLog().RegisterUserLogCallback(&Console::DebugLogCallback, this, std::placeholders::_1);
    }
 
@@ -27,6 +26,8 @@ namespace Utopian
       ClearLog();
       for (int i = 0; i < History.Size; i++)
          free(History[i]);
+
+      gLog().UnregisterUserCallback();
    }
 
    void Console::ClearLog()

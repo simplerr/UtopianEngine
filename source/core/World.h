@@ -54,4 +54,6 @@ namespace Utopian
 		std::vector<SharedPtr<Component>> mComponents;
 		std::map<SceneNode*, BoundNode> mBoundNodes;
 	};
+
+	World& gWorld();
 }

@@ -8,7 +8,7 @@
 
 namespace Utopian
 {
-	CRandomPaths::CRandomPaths(Actor* parent, const SharedPtr<Terrain>& terrain)
+	CRandomPaths::CRandomPaths(Actor* parent, Terrain* terrain)
 		: Component(parent)
 	{
 		SetName("CRandomPaths");

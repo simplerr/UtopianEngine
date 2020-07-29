@@ -72,7 +72,7 @@ namespace Utopian
 		Vk::Device* GetDevice() const;
 
 		/** Returns the terrain. */
-		const SharedPtr<Terrain>& GetTerrain() const;
+		Terrain* GetTerrain() const;
 
 		/** Returns the configured rendering settings. */
 		const RenderingSettings& GetRenderingSettings() const;
@@ -118,8 +118,8 @@ namespace Utopian
 
 		// Where does this belong?
 	public:
-		Im3dRenderer* mIm3dRenderer = nullptr;
-		ImGuiRenderer* mImGuiRenderer = nullptr;
+		SharedPtr<Im3dRenderer> mIm3dRenderer = nullptr;
+		SharedPtr<ImGuiRenderer> mImGuiRenderer = nullptr;
 	};
 
 	Renderer& gRenderer();

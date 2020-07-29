@@ -54,6 +54,7 @@ namespace Utopian::Vk
 		delete mCommandPool;
 		delete mQueue;
 
+		vmaDestroyAllocator(mAllocator);
 		vkDestroyDevice(mDevice, nullptr);
 	}
 
@@ -227,7 +228,6 @@ namespace Utopian::Vk
 		VmaAllocationInfo allocInfo;
 		VmaAllocation allocation;
 		Debug::ErrorCheck(vmaAllocateMemoryForImage(mAllocator, image->GetVkHandle(), &allocCI, &allocation, &allocInfo));
-
 		Debug::ErrorCheck(vkBindImageMemory(mDevice, image->GetVkHandle(), allocInfo.deviceMemory, allocInfo.offset));
 
 		return allocation;

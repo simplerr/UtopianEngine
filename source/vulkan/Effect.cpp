@@ -24,6 +24,11 @@ namespace Utopian::Vk
 		CreatePipeline();
 	}
 
+   Effect::~Effect()
+   {
+
+   }
+
 	void Effect::SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo)
 	{
 		mShaderCreateInfo = shaderCreateInfo;
@@ -40,7 +45,7 @@ namespace Utopian::Vk
 
 			assert(mShader);
 
-			CreatePipelineInterface(mShader, mDevice);
+			CreatePipelineInterface(mShader.get(), mDevice);
 		}
 
 		mPipeline->Create(mShader.get(), mPipelineInterface.get());
@@ -61,7 +66,7 @@ namespace Utopian::Vk
 		return result;
 	}
 
-	void Effect::CreatePipelineInterface(const SharedPtr<Shader>& shader, Device* device)
+	void Effect::CreatePipelineInterface(Shader* shader, Device* device)
 	{
 		mPipelineInterface = std::make_shared<PipelineInterface>(mDevice);
 
@@ -158,9 +163,9 @@ namespace Utopian::Vk
 		return mPipelineInterface.get();
 	}
 
-	SharedPtr<Shader> Effect::GetShader() const
+	Shader* Effect::GetShader() const
 	{
-		return mShader;
+		return mShader.get();
 	}
 
 	std::string Effect::GetVertexShaderPath() const

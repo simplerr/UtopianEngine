@@ -22,10 +22,10 @@ namespace Utopian
 		static float GetTerrainHeight(float x, float z);
 		//static glm::vec3 GetTerrainNormal(float x, float z);
 
-		static void SetTerrain(const SharedPtr<Terrain>& terrain);
+		static void SetTerrain(Terrain* terrain);
 	private:
 		static PerlinNoise<float> mPerlinNoise;
-		static SharedPtr<Terrain> mTerrain;
+		static Terrain* mTerrain;
 	};
 
 	class ScriptImports

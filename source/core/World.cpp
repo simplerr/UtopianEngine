@@ -12,6 +12,11 @@
 
 namespace Utopian
 {
+	World& gWorld()
+	{
+		return World::Instance();
+	}
+
 	World::World()
 	{
 

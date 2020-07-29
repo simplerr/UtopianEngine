@@ -16,7 +16,7 @@
 
 namespace Utopian
 {
-	FoliageTool::FoliageTool(const SharedPtr<Terrain>& terrain, Vk::Device* device)
+	FoliageTool::FoliageTool(Terrain* terrain, Vk::Device* device)
 	{
 		mTerrain = terrain;
 		mDevice = device;

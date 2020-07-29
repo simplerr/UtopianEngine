@@ -38,4 +38,9 @@ namespace Utopian
       else
          mStartupEntries.push_back(message);
    }
+
+   void Log::UnregisterUserCallback()
+   {
+      mUserLogCallback = nullptr;
+   }
 }

@@ -10,7 +10,7 @@
 namespace Utopian
 {
 	PerlinNoise<float> ScriptExports::mPerlinNoise;
-	SharedPtr<Terrain> ScriptExports::mTerrain;
+	Terrain* ScriptExports::mTerrain;
 	SharedPtr<LuaPlus::LuaFunction<float>> ScriptImports::get_terrain_height;
 
 	void ScriptExports::Register()
@@ -80,7 +80,7 @@ namespace Utopian
 	//	return mTerrain->GetNormal(x, z);
 	//}
 
-	void ScriptExports::SetTerrain(const SharedPtr<Terrain>& terrain)
+	void ScriptExports::SetTerrain(Terrain* terrain)
 	{
 		mTerrain = terrain;
 	}

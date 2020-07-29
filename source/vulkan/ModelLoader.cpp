@@ -37,6 +37,11 @@ namespace Utopian::Vk
 		mMeshTexturesDescriptorPool->Create();
 	}
 
+   ModelLoader::~ModelLoader()
+   {
+      CleanupModels(mDevice->GetVkDevice());
+   }
+
 	void ModelLoader::CleanupModels(VkDevice device)
 	{
 		for (auto& model : mModelMap)

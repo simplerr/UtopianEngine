@@ -35,7 +35,28 @@ namespace Utopian
 	
 	Engine::~Engine()
 	{
+		while (!mVulkanApp->PreviousFrameComplete())
+		{
+		}
 
+		// Call applications destroy function
+		mDestroyCallback();
+
+		Vk::gShaderFactory().Destroy();
+		Vk::gEffectManager().Destroy();
+		Vk::gTextureLoader().Destroy();
+		Vk::gModelLoader().Destroy();
+
+		gTimer().Destroy();
+		gWorld().Destroy();
+		gInput().Destroy();
+		gLuaManager().Destroy();
+		gAssetLoader().Destroy();
+		gScreenQuadUi().Destroy();
+		gProfiler().Destroy();
+		gRendererUtility().Destroy();
+		gRenderer().Destroy();
+		gPhysics().Destroy();
 	}
 
 	void Engine::StartModules()

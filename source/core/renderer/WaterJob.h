@@ -47,7 +47,7 @@ namespace Utopian
 		void Update() override;
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
-        SharedPtr<Vk::Image> distortionImage;
+      SharedPtr<Vk::Image> distortionImage;
 	private:
         // Note: Todo: Duplicate from Terrain.h
         Vk::Mesh* GeneratePatches(float cellSize, int numCells);
@@ -58,7 +58,7 @@ namespace Utopian
 		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;
 		WaterParameterBlock mWaterParameterBlock;
-        Vk::Mesh* mWaterMesh;
+      Vk::Mesh* mWaterMesh;
 		SharedPtr<Vk::Texture> mDuDvTexture;
 		SharedPtr<Vk::Texture> mNormalTexture;
 		SharedPtr<Vk::Texture> mFoamMaskTexture;

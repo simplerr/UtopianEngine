@@ -31,9 +31,9 @@ namespace Utopian::Vk
 
 			assert(mDevice);
 			assert(mDestroyFunc);
-			assert(mHandle);
 
-			mDestroyFunc(mDevice->GetVkDevice(), mHandle, nullptr);
+         if (mHandle != nullptr)
+			   mDestroyFunc(mDevice->GetVkDevice(), mHandle, nullptr);
 
 			mHandle = VK_NULL_HANDLE;
 		}

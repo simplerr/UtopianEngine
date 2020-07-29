@@ -35,6 +35,13 @@ namespace Utopian
 			mRenderCallback = std::bind(std::forward<Args>(args)...);
 		}
 
+		/** Registers a callback function to be called in Engine::Render(). */
+		template<class ...Args>
+		void RegisterDestroyCallback(Args &&...args)
+		{
+			mDestroyCallback = std::bind(std::forward<Args>(args)...);
+		}
+
 	private:
 		/**
 		 * Calls the per frame update function of all modules in the engine.
@@ -59,6 +66,7 @@ namespace Utopian
 		SharedPtr<Vk::VulkanApp> mVulkanApp;
 		std::function<void()> mUpdateCallback;
 		std::function<void()> mRenderCallback;
+		std::function<void()> mDestroyCallback;
 	};
 
 	/** Returns an instance to the Engine module. */

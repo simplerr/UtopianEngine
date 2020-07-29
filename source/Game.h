@@ -22,8 +22,11 @@ public:
 	~Game();
 
 	void Run();
-	void Update();
-	void Draw();
+
+   void DestroyCallback();
+	void UpdateCallback();
+	void DrawCallback();
+
 
 	virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
@@ -33,7 +36,6 @@ private:
 	// Move all of these to other locations
 	SharedPtr<Utopian::Vk::VulkanApp> mVulkanApp;
 	SharedPtr<Utopian::Editor> mEditor;
-	SharedPtr<Terrain> mTerrain;
 	Utopian::Window* mWindow;
 	const std::string mAppName = "Utopian Engine (v0.1)";
 	bool mIsClosing;

@@ -21,6 +21,12 @@ public:
 	{
 		_Instance() = new T(std::forward<Args>(args)...);
 	}
+
+   void Destroy()
+   {
+      delete _Instance();
+   }
+
 protected:
 	Module()
 	{

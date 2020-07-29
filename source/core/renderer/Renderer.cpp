@@ -59,8 +59,8 @@ namespace Utopian
 		mSceneInfo.directionalLight = nullptr;
 
 		// Todo: Figure out where these belong
-		mIm3dRenderer = new Im3dRenderer(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
-		mImGuiRenderer = new ImGuiRenderer(mVulkanApp, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mIm3dRenderer = std::make_shared<Im3dRenderer>(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
+		mImGuiRenderer = std::make_shared<ImGuiRenderer>(mVulkanApp, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		mSceneInfo.sharedVariables.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	}
@@ -72,9 +72,10 @@ namespace Utopian
 	void Renderer::PostWorldInit()
 	{
 		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
-		ScriptExports::SetTerrain(mSceneInfo.terrain);
 
-		mJobGraph = std::make_shared<JobGraph>(mVulkanApp, mSceneInfo.terrain, mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		ScriptExports::SetTerrain(GetTerrain());
+
+		mJobGraph = std::make_shared<JobGraph>(mVulkanApp, GetTerrain(), mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 	}
 
 	void Renderer::Update()
@@ -606,9 +607,9 @@ namespace Utopian
 		mMainCamera = camera;
 	}
 
-	const SharedPtr<Terrain>& Renderer::GetTerrain() const
+	Terrain* Renderer::GetTerrain() const
 	{
-		return mSceneInfo.terrain;
+		return mSceneInfo.terrain.get();
 	}
 
 	const RenderingSettings& Renderer::GetRenderingSettings() const
@@ -633,7 +634,7 @@ namespace Utopian
 
 	ImGuiRenderer* Renderer::GetUiOverlay()
 	{
-		return mImGuiRenderer;
+		return mImGuiRenderer.get();
 	}
 
 	uint32_t Renderer::GetWindowWidth() const

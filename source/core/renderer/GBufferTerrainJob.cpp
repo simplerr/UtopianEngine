@@ -13,7 +13,7 @@
 
 namespace Utopian
 {
-	GBufferTerrainJob::GBufferTerrainJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height)
+	GBufferTerrainJob::GBufferTerrainJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
 		mTerrain = terrain;

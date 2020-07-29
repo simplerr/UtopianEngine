@@ -31,8 +31,8 @@ namespace Utopian
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/fresnel.frag";
 		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-      effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
+      	effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+      	effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
 
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 

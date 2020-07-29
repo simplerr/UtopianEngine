@@ -27,7 +27,7 @@ namespace Utopian
 	class Editor
 	{
 	public:
-		Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, const SharedPtr<Terrain>& terrain);
+		Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, Terrain* terrain);
 		~Editor();
 
 		void Update();
@@ -44,14 +44,14 @@ namespace Utopian
 		void AddPaths();
 
 		World* mWorld;
-		SharedPtr<Terrain> mTerrain;
+		Terrain* mTerrain;
 		Camera* mCamera;
 		ImGuiRenderer* mImGuiRenderer;
 		ActorInspector* mActorInspector;
 		SharedPtr<TerrainTool> mTerrainTool;
 		SharedPtr<FoliageTool> mFoliageTool;
 		Actor* mSelectedActor;
-      Console mConsole;
+      	Console mConsole;
 		int mSelectedActorIndex = 0;
 
 		std::vector<const char*> mModelPaths;

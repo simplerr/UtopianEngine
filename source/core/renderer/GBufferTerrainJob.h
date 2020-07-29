@@ -27,7 +27,7 @@ namespace Utopian
 			UNIFORM_PARAM(int, wireframe)
 		UNIFORM_BLOCK_END()
 
-		GBufferTerrainJob(Vk::Device* device, const SharedPtr<Terrain>& terrain, uint32_t width, uint32_t height);
+		GBufferTerrainJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height);
 		~GBufferTerrainJob();
 
 		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
@@ -43,7 +43,7 @@ namespace Utopian
 		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;
 		Terrain::BrushBlock mBrushBlock;
-		SharedPtr<Terrain> mTerrain;
+		Terrain* mTerrain;
 
 		Vk::TextureArray mDiffuseTextureArray;
 		Vk::TextureArray mNormalTextureArray;

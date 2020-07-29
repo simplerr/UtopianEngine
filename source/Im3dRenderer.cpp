@@ -23,7 +23,7 @@ namespace Utopian
 
 	Im3dRenderer::~Im3dRenderer()
 	{
-
+      mVertexBuffer->UnmapMemory();
 	}
 
 	SharedPtr<Vk::Buffer> Im3dRenderer::GetVertexBuffer()

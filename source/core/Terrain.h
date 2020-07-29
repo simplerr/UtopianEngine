@@ -41,6 +41,7 @@ namespace Utopian
 		UNIFORM_BLOCK_END()
 
 		Terrain(Vk::Device* device);
+      ~Terrain();
 
 		void Update();
 
