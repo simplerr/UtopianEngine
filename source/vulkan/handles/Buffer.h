@@ -35,16 +35,18 @@ namespace Utopian::Vk
       void MapMemory(void** data);
       void UnmapMemory();
       void UpdateMemory(void* data, VkDeviceSize size);
+      uint32_t GetSize() const;
 
+      void Copy(CommandBuffer* commandBuffer, Buffer* destination);
       void Copy(CommandBuffer* commandBuffer, Image* destination, const std::vector<VkBufferImageCopy>& regions);
 
    private:
       VkResult Flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
       Device* mDevice;
+      uint32_t mSize = 0;
+      bool mMapped = false;
 
       /* Device memory allocation. */
       VmaAllocation mAllocation;
-
-      bool mMapped = false;
    };
 }

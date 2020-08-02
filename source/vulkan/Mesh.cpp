@@ -1,3 +1,4 @@
+#include <vulkan/vulkan_core.h>
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_RIGHT_HANDED 
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -9,6 +10,7 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/handles/CommandBuffer.h"
 #include "Mesh.h"
 
 namespace Utopian::Vk
@@ -65,20 +67,47 @@ namespace Utopian::Vk
 		uint32_t vertexBufferSize = mVerticesCount * sizeof(Vertex);
 		uint32_t indexBufferSize = mIndicesCount * sizeof(uint32_t);
 
-		BUFFER_CREATE_INFO createInfo;
-		createInfo.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-		createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-		createInfo.data = vertexVector.data();
-		createInfo.size = vertexBufferSize;
-		createInfo.name = "Vertex buffer: " + mDebugName;
-		mVertexBuffer = std::make_shared<Buffer>(createInfo, device);
+		// Host visible staging buffers
+		BUFFER_CREATE_INFO stagingVertexCI;
+		stagingVertexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		stagingVertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		stagingVertexCI.data = vertexVector.data();
+		stagingVertexCI.size = vertexBufferSize;
+		stagingVertexCI.name = "Staging Vertex buffer: " + mDebugName;
+		Buffer vertexStaging = Buffer(stagingVertexCI, device);
 
-		createInfo.usageFlags = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-		createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-		createInfo.data = indexVector.data();
-		createInfo.size = indexBufferSize;
-		createInfo.name = "Index buffer: " + mDebugName;
-		mIndexBuffer = std::make_shared<Buffer>(createInfo, device);
+		BUFFER_CREATE_INFO stagingIndexCI;
+		stagingIndexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+		stagingIndexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+		stagingIndexCI.data = indexVector.data();
+		stagingIndexCI.size = indexBufferSize;
+		stagingIndexCI.name = "Staging Index buffer: " + mDebugName;
+		Buffer indexStaging = Buffer(stagingIndexCI, device);
+
+		// Device local target buffers
+		BUFFER_CREATE_INFO vertexCI;
+		vertexCI.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+		vertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		vertexCI.data = nullptr;
+      vertexCI.size = vertexBufferSize;
+		vertexCI.name = "Vertex buffer: " + mDebugName;
+		mVertexBuffer = std::make_shared<Buffer>(vertexCI, device);
+
+		BUFFER_CREATE_INFO indexCI;
+		indexCI.usageFlags = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+		indexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+		indexCI.data = nullptr;
+      indexCI.size = indexBufferSize;
+		indexCI.name = "Index buffer: " + mDebugName;
+		mIndexBuffer = std::make_shared<Buffer>(indexCI, device);
+
+		// Copy from host visible to device local memory
+		CommandBuffer cmdBuffer = CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+		vertexStaging.Copy(&cmdBuffer, mVertexBuffer.get());
+		indexStaging.Copy(&cmdBuffer, mIndexBuffer.get());
+
+		cmdBuffer.Flush();
 	}
 
 	void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)

@@ -27,6 +27,7 @@ namespace Utopian::Vk
 	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
 	{
 		mDevice = device;
+		mSize = size;
 
 		VkMemoryRequirements memReqs;
 		VkMemoryAllocateInfo memAllocInfo = {};
@@ -90,6 +91,15 @@ namespace Utopian::Vk
 		mMapped = false;
 	}
 
+	void Buffer::Copy(CommandBuffer* commandBuffer, Buffer* destination)
+	{
+		VkBufferCopy regions;
+		regions.dstOffset = 0;
+		regions.srcOffset = 0;
+		regions.size = GetSize();
+		vkCmdCopyBuffer(commandBuffer->GetVkHandle(), GetVkHandle(), destination->GetVkHandle(), 1, &regions);
+	}
+
 	void Buffer::Copy(CommandBuffer* commandBuffer, Image* destination, const std::vector<VkBufferImageCopy>& regions)
 	{
 		vkCmdCopyBufferToImage(
@@ -100,5 +110,10 @@ namespace Utopian::Vk
 			static_cast<uint32_t>(regions.size()),
 			regions.data()
 		);
+	}
+
+	uint32_t Buffer::GetSize() const
+	{
+		return mSize;
 	}
 }
