@@ -42,8 +42,7 @@ namespace Utopian
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
-		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+
 		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
 
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
@@ -96,8 +95,6 @@ namespace Utopian
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr_blur.frag";
-		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-		effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
 		mBlurSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDesc);
 
