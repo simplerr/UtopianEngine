@@ -6,7 +6,7 @@
 #include "core/Log.h"
 #include "editor/Editor.h"
 #include "Game.h"
-#include "Window.h"
+#include "core/Window.h"
 #include "vulkan/Debug.h"
 
 Game::Game(Utopian::Window* window)

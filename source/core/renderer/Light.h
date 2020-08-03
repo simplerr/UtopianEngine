@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include "core/SceneNode.h"
 #include "core/components/Component.h"
-#include "LightData.h"
+#include "core/LightData.h"
 #include "utility/Common.h"
 
 namespace Utopian

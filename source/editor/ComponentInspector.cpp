@@ -1,5 +1,5 @@
 #include "ComponentInspector.h"
-#include "ImGuiRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/Debug.h"
 #include "core/components/CTransform.h"
 #include "core/components/CLight.h"

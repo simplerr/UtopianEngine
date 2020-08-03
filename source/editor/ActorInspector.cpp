@@ -7,7 +7,7 @@
 #include "core/components/CCatmullSpline.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
-#include "ImGuiRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
 
 namespace Utopian
 {

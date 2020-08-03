@@ -6,7 +6,7 @@
 #include "VulkanBase.h"
 #include "vulkan/handles/Device.h"
 #include "Debug.h"
-#include "Window.h"
+#include "core/Window.h"
 #include "ShaderFactory.h"
 #include "handles/CommandPool.h"
 #include "handles/Semaphore.h"

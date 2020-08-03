@@ -1,7 +1,7 @@
 #pragma once
 #include "core/components/Component.h"
 #include "core/renderer/Light.h"
-#include "LightData.h"
+#include "core/LightData.h"
 #include "utility/Common.h"
 #include "core/LuaManager.h"
 

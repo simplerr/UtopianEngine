@@ -16,7 +16,7 @@
 #include "vulkan/Texture.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "utility/PerlinNoise.h"
-#include "Camera.h"
+#include "core/Camera.h"
 #include "MarchingCubesTerrain.h"
 #include "Block.h"
 #include "MarchingCubes.h"

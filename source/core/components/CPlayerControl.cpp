@@ -4,7 +4,7 @@
 #include "core/components/CCamera.h"
 #include "core/components/CPlayerControl.h"
 #include "core/components/Actor.h"
-#include "Input.h"
+#include "core/Input.h"
 
 namespace Utopian
 {

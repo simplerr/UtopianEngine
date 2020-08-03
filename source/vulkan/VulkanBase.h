@@ -7,7 +7,7 @@
 #include "vulkan/vulkanswapchain.hpp"
 #include "vulkan/VulkanPrerequisites.h"
 //#include "vulkan/handles/Semaphore.h"
-#include "Window.h"
+#include "core/Window.h"
 #include "utility/Timer.h"
 #include "utility/Common.h"
 

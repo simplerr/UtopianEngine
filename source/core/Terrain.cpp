@@ -9,13 +9,13 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/StaticModel.h"
-#include "ScreenQuadRenderer.h"
+#include "core/renderer/ScreenQuadRenderer.h"
 #include "vulkan/Mesh.h"
 #include "core/renderer/Renderer.h"
 #include "core/physics/Physics.h"
-#include "Input.h"
-#include "Camera.h"
-#include "ImGuiRenderer.h"
+#include "core/Input.h"
+#include "core/Camera.h"
+#include "core/renderer/ImGuiRenderer.h"
 
 namespace Utopian
 {

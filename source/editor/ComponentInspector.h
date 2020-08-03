@@ -1,6 +1,6 @@
 #pragma once
 #include "core/Transform.h"
-#include "LightData.h"
+#include "core/LightData.h"
 #include "imgui/imgui.h"
 #include <string>
 #include <vector>

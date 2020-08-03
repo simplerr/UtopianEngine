@@ -1,6 +1,6 @@
 #include "editor/FoliageTool.h"
 #include "editor/TerrainTool.h"
-#include "ImGuiRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Image.h"
@@ -10,8 +10,8 @@
 #include "utility/Timer.h"
 #include "utility/math/Helpers.h"
 #include "utility/Utility.h"
-#include "Input.h"
-#include "Camera.h"
+#include "core/Input.h"
+#include "core/Camera.h"
 #include <random>
 
 namespace Utopian

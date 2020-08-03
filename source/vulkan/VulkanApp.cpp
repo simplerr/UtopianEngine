@@ -6,8 +6,7 @@
 #include "vulkan/VulkanApp.h"
 #include "Debug.h"
 #include "StaticModel.h"
-#include "Camera.h"
-#include "LightData.h"
+#include "core/Camera.h"
 #include "TextureLoader.h"
 #include "vulkan/handles/Device.h"
 #include "ShaderFactory.h"
@@ -22,7 +21,7 @@
 #include "handles/Queue.h"
 #include "handles/DescriptorSetLayout.h"
 #include "utility/Utility.h"
-#include "ScreenQuadRenderer.h"
+#include "core/renderer/ScreenQuadRenderer.h"
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0

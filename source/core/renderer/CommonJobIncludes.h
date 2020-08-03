@@ -21,4 +21,4 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/EffectManager.h"
-#include "ScreenQuadRenderer.h"
+#include "core/renderer/ScreenQuadRenderer.h"

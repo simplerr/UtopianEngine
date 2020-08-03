@@ -1,8 +1,8 @@
 #pragma once
-#include "core/CommonBuffers.h"
-#include "core/renderer/BaseJob.h"
+#include "core/renderer/CommonBuffers.h"
+#include "core/renderer/jobs/BaseJob.h"
 #include "core/renderer/RenderSettings.h"
-#include "core/renderer/JobGraph.h"
+#include "core/renderer/jobs/JobGraph.h"
 #include "core/Object.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/handles/DescriptorSetLayout.h"

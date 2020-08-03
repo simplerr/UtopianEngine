@@ -4,13 +4,13 @@
 #include "vulkan/Effect.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
-#include "ImGuiRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/TextureLoader.h"
 #include "core/renderer/Renderer.h"
 #include "core/renderer/RendererUtility.h"
 #include "core/Terrain.h"
-#include "Input.h"
-#include "Camera.h"
+#include "core/Input.h"
+#include "core/Camera.h"
 
 namespace Utopian
 {

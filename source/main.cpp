@@ -1,6 +1,6 @@
 
 #include "utility/Platform.h"
-#include "Window.h"
+#include "core/Window.h"
 #include "Game.h"
 
 Game* gGame = nullptr;

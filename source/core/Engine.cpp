@@ -13,13 +13,13 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
-#include "ScreenQuadRenderer.h"
-#include "ImGuiRenderer.h"
+#include "core/renderer/ScreenQuadRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/Debug.h"
-#include "Input.h"
+#include "core/Input.h"
 #include "vulkan/VulkanApp.h"
 #include "imgui/imgui.h"
-#include "Im3dRenderer.h"
+#include "core/renderer/Im3dRenderer.h"
 
 namespace Utopian
 {

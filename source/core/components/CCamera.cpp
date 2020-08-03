@@ -1,7 +1,7 @@
 #include "core/components/CCamera.h"
 #include "core/World.h"
 #include "core/components/Actor.h"
-#include "Camera.h"
+#include "core/Camera.h"
 
 namespace Utopian
 {
