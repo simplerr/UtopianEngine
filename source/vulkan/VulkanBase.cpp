@@ -105,7 +105,6 @@ namespace Utopian::Vk
 
 	bool VulkanBase::PreviousFrameComplete()
 	{
-
 		static bool firstFrame = true;
 		if (firstFrame)
 		{

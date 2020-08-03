@@ -1,41 +1,24 @@
-#include "Game.h"
-#include "Window.h"
-#include "Camera.h"
-#include "vulkan/VulkanApp.h"
-#include "vulkan/Debug.h"
 #include <string>
-#include <sstream>
-#include <stdlib.h>
 #include <time.h>
-#include "core/World.h"
 #include "core/renderer/Renderer.h"
-#include "editor/Editor.h"
+#include "core/World.h"
 #include "core/Engine.h"
 #include "core/Log.h"
-#include "core/renderer/Renderer.h"
-#include "core/components/Actor.h"
-#include "core/components/CCatmullSpline.h"
-#include "core/components/CTransform.h"
-#include "core/components/CRenderable.h"
+#include "editor/Editor.h"
+#include "Game.h"
+#include "Window.h"
+#include "vulkan/Debug.h"
 
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
 {
-   Utopian::Log::Start();
-
 	srand(time(NULL));
-
-	mIsClosing = false;
 
 	Utopian::Vk::Debug::TogglePerformanceWarnings();
 	Utopian::Vk::Debug::SetupDebugLayers();
-   UTO_LOG(mAppName);
-
-	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
-	mVulkanApp->Prepare();
 
 	// Start Utopian Engine
-	Utopian::gEngine().Start(mVulkanApp);
+	Utopian::gEngine().Start(window, "Utopian Engine (v0.1)");
 	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
 	Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
 	Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);
@@ -47,18 +30,16 @@ Game::Game(Utopian::Window* window)
 												Utopian::gRenderer().GetMainCamera(),
 												&Utopian::World::Instance(),
 												Utopian::Renderer::Instance().GetTerrain());
-
-	mWindow->SetTitle(mAppName);
 }
 
 Game::~Game()
 {
-   Utopian::gEngine().Destroy();
+	Utopian::gEngine().Destroy();
 }
 
 void Game::DestroyCallback()
 {
-   mEditor = nullptr;
+	mEditor = nullptr;
 }
 
 void Game::UpdateCallback()
@@ -69,11 +50,6 @@ void Game::UpdateCallback()
 void Game::DrawCallback()
 {
 	mEditor->Draw();
-}
-
-bool Game::IsClosing()
-{
-	return mIsClosing;
 }
 
 void Game::Run()
@@ -98,7 +74,6 @@ void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 		DestroyWindow(mWindow->GetHwnd());
 		PostQuitMessage(0);
-		mIsClosing = true;
 		break;
 	}
 }

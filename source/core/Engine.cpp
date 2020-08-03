@@ -23,9 +23,17 @@
 
 namespace Utopian
 {
-	Engine::Engine(SharedPtr<Vk::VulkanApp> vulkanApp)
-		: mVulkanApp(vulkanApp)
+	Engine::Engine(Window* window, const std::string& appName)
+      : mAppName(appName)
 	{
+		window->SetTitle(mAppName);
+
+		Utopian::Log::Start();
+
+		mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
+		mVulkanApp->Prepare();
+
+		UTO_LOG(mAppName);
 		UTO_LOG("Starting engine modules");
 
 		StartModules();
@@ -63,7 +71,6 @@ namespace Utopian
 	{
 		Timer::Start();
 		World::Start();
-
 		Input::Start();
 		LuaManager::Start();
 		AssetLoader::Start();
@@ -73,10 +80,6 @@ namespace Utopian
 		ScreenQuadRenderer::Start(mVulkanApp.get());
 		Profiler::Start();
 
-		//gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
-
-		ScriptExports::Register();
-		ScriptImports::Register();
 		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
 		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
 
@@ -91,6 +94,10 @@ namespace Utopian
 		ActorFactory::LoadFromFile(mVulkanApp->GetWindow(), "data/scene.lua");
 		World::Instance().LoadScene();
 		World::Instance().Update();
+
+		ScriptExports::Register();
+		ScriptImports::Register();
+		//gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
 	}
 
 	void Engine::Run()

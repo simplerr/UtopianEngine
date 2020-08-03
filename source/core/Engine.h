@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <string>
 #include "vulkan/VulkanApp.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
@@ -12,7 +13,7 @@ namespace Utopian
 	class Engine : public Module<Engine>
 	{
 	public:
-		Engine(SharedPtr<Vk::VulkanApp> vulkanApp);
+		Engine(Window* window, const std::string& appName);
 		~Engine();
 
 		/** Executes the main loop and calls Engine::Tick() every frame. */
@@ -67,6 +68,7 @@ namespace Utopian
 		std::function<void()> mUpdateCallback;
 		std::function<void()> mRenderCallback;
 		std::function<void()> mDestroyCallback;
+		std::string mAppName;
 	};
 
 	/** Returns an instance to the Engine module. */
