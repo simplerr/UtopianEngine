@@ -61,17 +61,17 @@ namespace Utopian::Vk
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
 		std::vector<VkPipelineColorBlendAttachmentState> blendAttachmentState;
-      for (uint32_t i = 0; i < mRenderPass->colorReferences.size(); i++) {
-         VkPipelineColorBlendAttachmentState colorBlend = {};
-         colorBlend.colorWriteMask = 0xf;
-         colorBlend.blendEnable = VK_FALSE;
-         blendAttachmentState.push_back(colorBlend);
-      }
+		for (uint32_t i = 0; i < mRenderPass->colorReferences.size(); i++) {
+			VkPipelineColorBlendAttachmentState colorBlend = {};
+			colorBlend.colorWriteMask = 0xf;
+			colorBlend.blendEnable = VK_FALSE;
+			blendAttachmentState.push_back(colorBlend);
+		}
 
-      if (mPipelineDesc.blendingType == BlendingType::BLENDING_ADDITIVE)
-         SetAdditiveBlending(blendAttachmentState[0]);
-      else if (mPipelineDesc.blendingType == BlendingType::BLENDING_ALPHA)
-         SetAlphaBlending(blendAttachmentState[0]);
+		if (mPipelineDesc.blendingType == BlendingType::BLENDING_ADDITIVE)
+			SetAdditiveBlending(blendAttachmentState[0]);
+		else if (mPipelineDesc.blendingType == BlendingType::BLENDING_ALPHA)
+			SetAlphaBlending(blendAttachmentState[0]);
 
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 		colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -131,28 +131,28 @@ namespace Utopian::Vk
 		return mCreated;
 	}
 
-   void Pipeline::SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)
-   {
-      // Enable additive blending
-      blendAttachmentState.blendEnable = VK_TRUE;
-      blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-      blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-      blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
-      blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
-      blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-      blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
-      blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
-   }
+	void Pipeline::SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)
+	{
+		// Enable additive blending
+		blendAttachmentState.blendEnable = VK_TRUE;
+		blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE;
+		blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+		blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_DST_ALPHA;
+		blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
+	}
 
-   void Pipeline::SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)
-   {
-      blendAttachmentState.blendEnable = VK_TRUE;
-      blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-      blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-      blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-      blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
-      blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-      blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-      blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
-   }
+	void Pipeline::SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)
+	{
+		blendAttachmentState.blendEnable = VK_TRUE;
+		blendAttachmentState.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		blendAttachmentState.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+		blendAttachmentState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		blendAttachmentState.colorBlendOp = VK_BLEND_OP_ADD;
+		blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
+	}
 }

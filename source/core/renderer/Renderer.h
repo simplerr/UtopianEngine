@@ -87,6 +87,7 @@ namespace Utopian
 
 		/** Adds the buffers the a garbage collect list that will be destroyed once no command buffer is active. */
 		void QueueDestroy(SharedPtr<Vk::Buffer>& buffer);
+      void QueueDestroy(VkPipeline pipeline);
 
 		/** Destroys all Vulkan resources that have been added to the garbage collect list. */
 		void GarbageCollect();
@@ -115,6 +116,7 @@ namespace Utopian
 		Camera* mMainCamera;
 		uint32_t mNextNodeId;
 		std::vector<SharedPtr<Vk::Buffer>> mBuffersToFree;
+		std::vector<VkPipeline> mPipelinesToFree;
 
 		// Where does this belong?
 	public:

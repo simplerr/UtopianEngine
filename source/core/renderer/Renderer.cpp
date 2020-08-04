@@ -547,10 +547,17 @@ namespace Utopian
 	void Renderer::GarbageCollect()
 	{
 		mImGuiRenderer->GarbageCollect();
+
 		if (mBuffersToFree.size() > 0)
 		{
 			mBuffersToFree.clear();
 		}
+
+		for (auto& pipeline : mPipelinesToFree)
+			vkDestroyPipeline(GetDevice()->GetVkDevice(), pipeline, nullptr);
+
+		if (mPipelinesToFree.size() > 0)
+			mPipelinesToFree.clear();
 	}
 
 	void Renderer::BuildAllInstances()
@@ -601,6 +608,11 @@ namespace Utopian
 		mBuffersToFree.push_back(buffer);
 		buffer = nullptr;
 	}
+
+   void Renderer::QueueDestroy(VkPipeline pipeline)
+   {
+      mPipelinesToFree.push_back(pipeline);
+   }
 
 	void Renderer::SetMainCamera(Camera* camera)
 	{

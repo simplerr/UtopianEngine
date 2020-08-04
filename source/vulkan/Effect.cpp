@@ -8,6 +8,7 @@
 #include "vulkan/Texture.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/PipelineLayout.h"
+#include "core/renderer/Renderer.h"
 #include "Effect.h"
 
 namespace Utopian::Vk
@@ -59,6 +60,11 @@ namespace Utopian::Vk
 		if (shader != nullptr)
 		{
 			mShader = shader;
+
+		   // Destroy pipeline if already created
+         if (mPipeline->IsCreated())
+            gRenderer().QueueDestroy(mPipeline->GetVkHandle());
+
 			CreatePipeline();
 			result = true;
 		}

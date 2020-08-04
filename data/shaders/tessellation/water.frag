@@ -186,7 +186,7 @@ void main()
     /* View normal output to SSR job */
     normalSSR.y *= -1; // Note: Y needs to be negated for the view normal calculation
     mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix)));
-	vec3 viewNormalSSR = normalMatrix * normalSSR;
+    vec3 viewNormalSSR = normalMatrix * normalSSR;
     viewNormalSSR = normalize(viewNormalSSR) * 0.5 + 0.5;
     OutNormalViewSSR = vec4(viewNormalSSR, 1.0f);
 
