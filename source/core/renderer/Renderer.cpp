@@ -376,6 +376,11 @@ namespace Utopian
 		assert(mModel);
 	}
 
+	InstanceGroup::~InstanceGroup()
+	{
+		RemoveInstances();
+	}
+
 	void InstanceGroup::AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 	{
 		glm::mat4 world = glm::translate(glm::mat4(), position);
@@ -524,13 +529,19 @@ namespace Utopian
 
 	void Renderer::RemoveInstancesWithinRadius(uint32_t assetId, glm::vec3 position, float radius)
 	{
-		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		for (auto iter = mSceneInfo.instanceGroups.begin(); iter != mSceneInfo.instanceGroups.end();)
 		{
-			if (assetId == DELETE_ALL_ASSETS_ID || mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
+			if (assetId == DELETE_ALL_ASSETS_ID || (*iter)->GetAssetId() == assetId)
 			{
-				mSceneInfo.instanceGroups[i]->RemoveInstancesWithinRadius(position, radius);
-				mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
+				(*iter)->RemoveInstancesWithinRadius(position, radius);
+				(*iter)->BuildBuffer(mDevice);
 			}
+
+			// Remove instance group if empty
+			if ((*iter)->GetNumInstances() == 0)
+				iter = mSceneInfo.instanceGroups.erase(iter);
+			else
+				iter++;
 		}
 	}
 

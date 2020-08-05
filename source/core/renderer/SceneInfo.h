@@ -21,6 +21,7 @@ namespace Utopian
 	{
 	public:
 		InstanceGroup(uint32_t assetId, bool animated = false, bool castShadows = false);
+		~InstanceGroup();
 
 		void AddInstance(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 		void RemoveInstances();
