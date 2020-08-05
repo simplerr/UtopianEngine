@@ -101,7 +101,7 @@ namespace Utopian::Vk
 	{
 	public:
 		Shader();
-      ~Shader();
+		~Shader();
 
 		void AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo);
 		void AddCompiledShader(SharedPtr<CompiledShader> compiledShader);

@@ -7,9 +7,6 @@
 
 namespace Utopian
 {
-	class Im3dRenderer;
-	class ImGuiRenderer;
-
 	class Engine : public Module<Engine>
 	{
 	public:
@@ -36,7 +33,7 @@ namespace Utopian
 			mRenderCallback = std::bind(std::forward<Args>(args)...);
 		}
 
-		/** Registers a callback function to be called in Engine::Render(). */
+		/** Registers a callback function to be called in Engine::~Engine(). */
 		template<class ...Args>
 		void RegisterDestroyCallback(Args &&...args)
 		{

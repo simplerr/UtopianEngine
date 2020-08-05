@@ -580,6 +580,7 @@ namespace Utopian
 			}
 		}
 	}
+
 	void Renderer::RemoveLight(Light* light)
 	{
 		for (auto iter = mSceneInfo.lights.begin(); iter != mSceneInfo.lights.end(); iter++)
@@ -591,6 +592,7 @@ namespace Utopian
 			}
 		}
 	}
+
 	void Renderer::RemoveCamera(Camera* camera)
 	{
 		for (auto iter = mSceneInfo.cameras.begin(); iter != mSceneInfo.cameras.end(); iter++)

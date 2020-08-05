@@ -1,4 +1,9 @@
+#include "core/renderer/RendererUtility.h"
+#include "core/renderer/Im3dRenderer.h"
+#include "core/renderer/ScreenQuadRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
 #include "core/Engine.h"
+#include "core/Input.h"
 #include "core/World.h"
 #include "core/physics/Physics.h"
 #include "core/renderer/Renderer.h"
@@ -6,29 +11,24 @@
 #include "core/ScriptExports.h"
 #include "core/AssetLoader.h"
 #include "core/ActorFactory.h"
-#include "core/renderer/RendererUtility.h"
 #include "core/Profiler.h"
 #include "core/Log.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
-#include "core/renderer/ScreenQuadRenderer.h"
-#include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/Debug.h"
-#include "core/Input.h"
 #include "vulkan/VulkanApp.h"
 #include "imgui/imgui.h"
-#include "core/renderer/Im3dRenderer.h"
 
 namespace Utopian
 {
 	Engine::Engine(Window* window, const std::string& appName)
-      : mAppName(appName)
+		: mAppName(appName)
 	{
 		window->SetTitle(mAppName);
 
-		Utopian::Log::Start();
+		gLog().Start();
 
 		mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
 		mVulkanApp->Prepare();
@@ -43,11 +43,12 @@ namespace Utopian
 	
 	Engine::~Engine()
 	{
+		// Vulkan handles cannot be destroyed when they are in use on the GPU
 		while (!mVulkanApp->PreviousFrameComplete())
 		{
 		}
 
-		// Call applications destroy function
+		// Call application destroy function
 		mDestroyCallback();
 
 		Vk::gShaderFactory().Destroy();
@@ -69,31 +70,31 @@ namespace Utopian
 
 	void Engine::StartModules()
 	{
-		Timer::Start();
-		World::Start();
-		Input::Start();
-		LuaManager::Start();
-		AssetLoader::Start();
-		Vk::ShaderFactory::Start(mVulkanApp->GetDevice());
-		Vk::ShaderFactory::Instance().AddIncludeDirectory("data/shaders/include");
-		Vk::EffectManager::Start();
-		ScreenQuadRenderer::Start(mVulkanApp.get());
-		Profiler::Start();
+		Vk::Device* device = mVulkanApp->GetDevice();
+		Vk::gEffectManager().Start();
+		Vk::gTextureLoader().Start(device);
+		Vk::gModelLoader().Start(device);
+		Vk::gShaderFactory().Start(device);
+		Vk::gShaderFactory().AddIncludeDirectory("data/shaders/include");
 
-		Vk::TextureLoader::Start(mVulkanApp->GetDevice());
-		Vk::ModelLoader::Start(mVulkanApp->GetDevice());
-
-		RendererUtility::Start();
-		Renderer::Start(mVulkanApp.get());
-		Physics::Start();
+		gTimer().Start();
+		gWorld().Start();
+		gInput().Start();
+		gPhysics().Start();
+		gLuaManager().Start();
+		gAssetLoader().Start();
+		gProfiler().Start();
+		gRendererUtility().Start();
+		gScreenQuadUi().Start(mVulkanApp.get());
+		gRenderer().Start(mVulkanApp.get());
 
 		// Todo: There is a dependency between loading the actors from Lua and the terrain creation
 		// Terrain needs to be created before World::Instance().LoadScene();
-		Renderer::Instance().PostWorldInit();
+		gRenderer().PostWorldInit();
 
 		ActorFactory::LoadFromFile(mVulkanApp->GetWindow(), "data/scene.lua");
-		World::Instance().LoadScene();
-		World::Instance().Update();
+		gWorld().LoadScene();
+		gWorld().Update();
 
 		ScriptExports::Register();
 		ScriptImports::Register();
@@ -122,21 +123,21 @@ namespace Utopian
 		Update();
 		Render();
 
-		Input::Instance().Update(0);
+		gInput().Update(0);
 	}
 
 	void Engine::Update()
 	{
 		gRenderer().NewUiFrame();
 
-		World::Instance().Update();
-		Renderer::Instance().Update();
-		Physics::Instance().Update();
-		Profiler::Instance().Update();
+		gWorld().Update();
+		gRenderer().Update();
+		gPhysics().Update();
+		gProfiler().Update();
 
-		Vk::EffectManager::Instance().Update();
+		Vk::gEffectManager().Update();
 
-		// Call the applications Update() function
+		// Call the application Update() function
 		mUpdateCallback();
 
 		gRenderer().EndUiFrame();
@@ -154,7 +155,7 @@ namespace Utopian
 
 			gRenderer().Render();
 
-			// Call the applications Render() function
+			// Call the application Render() function
 			mRenderCallback();
 
 			// Present to screen
@@ -169,7 +170,7 @@ namespace Utopian
 	{
 		mVulkanApp->HandleMessages(hWnd, uMsg, wParam, lParam);
 
-		Utopian::Input::Instance().HandleMessages(uMsg, wParam, lParam);
+		gInput().HandleMessages(uMsg, wParam, lParam);
 	}
 
 	bool Engine::DispatchMessages()

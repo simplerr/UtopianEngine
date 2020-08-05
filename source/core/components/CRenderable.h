@@ -12,7 +12,7 @@ namespace Utopian
 	{
 	public:
 		CRenderable(Actor* parent);
-		~CRenderable();
+		virtual ~CRenderable();
 
 		void Update() override;
 		void OnCreated() override;
