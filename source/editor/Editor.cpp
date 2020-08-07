@@ -253,7 +253,10 @@ namespace Utopian
 			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
 
 			if (ImGui::Button("Save scene"))
+			{
 				ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
+				gRenderer().SaveInstancesToFile("data/instances.txt");
+			}
 
 			if (ImGui::Button("Clear scene"))
 				World::Instance().RemoveActors();

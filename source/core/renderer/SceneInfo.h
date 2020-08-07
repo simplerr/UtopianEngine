@@ -12,9 +12,19 @@ namespace Utopian
 {
 	class Terrain;
 
-	struct InstanceData
+	struct InstanceDataGPU
 	{
 		glm::mat4 world;
+	};
+
+	struct InstanceData
+	{
+		InstanceData(glm::vec3 _position, glm::vec3 _rotation, glm::vec3 _scale)
+		: position(_position), rotation(_rotation), scale(_scale) {}
+
+		glm::vec3 position;
+		glm::vec3 rotation;
+		glm::vec3 scale;
 	};
 
 	class InstanceGroup
@@ -30,6 +40,7 @@ namespace Utopian
 		void BuildBuffer(Vk::Device* device);
 		void SetAnimated(bool animated);
 		void SetCastShadows(bool castShadows);
+		void SaveToFile(std::ofstream& fout);
 
 		uint32_t GetAssetId();
 		uint32_t GetNumInstances();
@@ -41,8 +52,8 @@ namespace Utopian
 	private:
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
 		Vk::StaticModel* mModel;
-		std::vector<InstanceData> mInstances; // Uploaded to GPU
-		std::vector<glm::vec3> mCachedPositions;
+		std::vector<InstanceDataGPU> mInstances; // Uploaded to GPU
+		std::vector<InstanceData> mInstanceData;
 		uint32_t mAssetId;
 		bool mAnimated;
 		bool mCastShadows;

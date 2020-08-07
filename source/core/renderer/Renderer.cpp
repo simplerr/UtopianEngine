@@ -34,6 +34,9 @@
 #include "utility/math/Helpers.h"
 #include "core/Input.h"
 
+#include <fstream>
+#include <glm/gtx/string_cast.hpp>
+
 namespace Utopian
 {
 	Renderer& gRenderer()
@@ -67,6 +70,10 @@ namespace Utopian
 
 	Renderer::~Renderer()
 	{
+		// Cannot rely on instance group being destroyed when going out of scope since that happens
+		// after the call to GarbageCollect()
+		ClearInstanceGroups();
+		GarbageCollect();
 	}
 
 	void Renderer::PostWorldInit()
@@ -76,6 +83,9 @@ namespace Utopian
 		ScriptExports::SetTerrain(GetTerrain());
 
 		mJobGraph = std::make_shared<JobGraph>(mVulkanApp, GetTerrain(), mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+
+		LoadInstancesFromFile("data/instances.txt");
+		BuildAllInstances();
 	}
 
 	void Renderer::Update()
@@ -389,17 +399,17 @@ namespace Utopian
 		world = glm::rotate(world, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 		world = glm::scale(world, scale);
 
-		InstanceData instanceData;
+		InstanceDataGPU instanceData;
 		instanceData.world = world;
 
 		mInstances.push_back(instanceData);
-		mCachedPositions.push_back(position);
+		mInstanceData.push_back(InstanceData(position, rotation, scale));
 	}
 
 	void InstanceGroup::RemoveInstances()
 	{
 		mInstances.clear();
-		mCachedPositions.clear();
+		mInstanceData.clear();
 
 		gRenderer().QueueDestroy(mInstanceBuffer);
 	}
@@ -414,10 +424,10 @@ namespace Utopian
 				iter++;
 		}
 
-		for (auto iter = mCachedPositions.begin(); iter != mCachedPositions.end();)
+		for (auto iter = mInstanceData.begin(); iter != mInstanceData.end();)
 		{
-			if (glm::distance(position, (*iter)) < radius)
-				iter = mCachedPositions.erase(iter);
+			if (glm::distance(position, (*iter).position) < radius)
+				iter = mInstanceData.erase(iter);
 			else
 				iter++;
 		}
@@ -436,9 +446,8 @@ namespace Utopian
 			createInfo.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 			createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 			createInfo.data = mInstances.data();
-			createInfo.size = mInstances.size() * sizeof(InstanceData);
+			createInfo.size = mInstances.size() * sizeof(InstanceDataGPU);
 			createInfo.name = "ScreenQuad vertex buffer";
-
 			mInstanceBuffer = std::make_shared<Vk::Buffer>(createInfo, device);
 		}
 	}
@@ -447,10 +456,10 @@ namespace Utopian
 	{
 		for (uint32_t i = 0; i < mInstances.size(); i++)
 		{
-			glm::vec3 translation = mCachedPositions[i];
+			glm::vec3 translation = mInstanceData[i].position;
 			translation.y = -terrain->GetHeight(-translation.x, -translation.z);
 			mInstances[i].world = Math::SetTranslation(mInstances[i].world, translation);
-			mCachedPositions[i] = translation;
+			mInstanceData[i].position = translation;
 		}
 	}
 
@@ -512,7 +521,6 @@ namespace Utopian
 			if (mSceneInfo.instanceGroups[i]->GetAssetId() == assetId)
 			{
 				instanceGroup = mSceneInfo.instanceGroups[i];
-
 				break;
 			}
 		}
@@ -555,6 +563,63 @@ namespace Utopian
 		mSceneInfo.instanceGroups.clear();
 	}
 
+	void Renderer::SaveInstancesToFile(const std::string& filename)
+	{
+		std::ofstream fout(filename);
+
+		fout << "INSTANCES:" << std::endl;
+
+		for (auto& instanceGroup : mSceneInfo.instanceGroups)
+		{
+			instanceGroup->SaveToFile(fout);
+		}
+
+		fout.close();
+	}
+
+	void Renderer::LoadInstancesFromFile(const std::string& filename)
+	{
+		std::ifstream fin(filename);
+
+		std::string header;
+		fin >> header;
+
+		while (!fin.eof())
+		{
+			uint32_t assetId;
+			bool animated, castShadows;
+			glm::vec3 position, rotation, scale;
+			fin >> assetId >> animated >> castShadows;
+			fin >> position.x >> position.y >> position.z;
+			fin >> rotation.x >> rotation.y >> rotation.z;
+			fin >> scale.x >> scale.y >> scale.z;
+
+			AddInstancedAsset(assetId, position, rotation, scale, animated, castShadows);
+		}
+
+		fin.close();
+	}
+
+	void InstanceGroup::SaveToFile(std::ofstream& fout)
+	{
+		for (auto& instance : mInstanceData)
+		{
+			fout << mAssetId << " " << mAnimated << " " << mCastShadows << " ";
+			fout << instance.position.x << " " << instance.position.y << " " << instance.position.z << " ";
+			fout << instance.rotation.x << " " << instance.rotation.y << " " << instance.rotation.z << " ";
+			fout << instance.scale.x << " " << instance.scale.y << " " << instance.scale.z;
+			fout << std::endl;
+		}
+	}
+
+	void Renderer::BuildAllInstances()
+	{
+		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
+		{
+			mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
+		}
+	}
+
 	void Renderer::GarbageCollect()
 	{
 		mImGuiRenderer->GarbageCollect();
@@ -569,14 +634,6 @@ namespace Utopian
 
 		if (mPipelinesToFree.size() > 0)
 			mPipelinesToFree.clear();
-	}
-
-	void Renderer::BuildAllInstances()
-	{
-		for (uint32_t i = 0; i < mSceneInfo.instanceGroups.size(); i++)
-		{
-			mSceneInfo.instanceGroups[i]->BuildBuffer(mDevice);
-		}
 	}
 
 	void Renderer::RemoveRenderable(Renderable* renderable)

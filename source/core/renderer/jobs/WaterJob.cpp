@@ -21,7 +21,7 @@ namespace Utopian
 	WaterJob::WaterJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-        mWaterMesh = GeneratePatches(128.0f, 512);
+		mWaterMesh = GeneratePatches(128.0f, 512);
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
 		// Note: Duplicate from DeferredJob
@@ -36,7 +36,7 @@ namespace Utopian
 
 	WaterJob::~WaterJob()
 	{
-        delete mWaterMesh;
+		delete mWaterMesh;
 	}
 
 	void WaterJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -67,7 +67,7 @@ namespace Utopian
 		effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/water.tesc";
 		effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/water.tese";
 		effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/water.geom";
-      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
+		effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
 		effectDesc.pipelineDesc.AddTessellationState(4);
 
@@ -218,6 +218,6 @@ namespace Utopian
 		mesh->SetDebugName("Water patches");
 		mesh->BuildBuffers(mDevice);
 
-        return mesh;
+		return mesh;
 	}
 }

@@ -84,6 +84,8 @@ namespace Utopian
 		void RemoveInstancesWithinRadius(uint32_t assetId, glm::vec3 position, float radius);
 		void BuildAllInstances();
 		void ClearInstanceGroups();
+		void SaveInstancesToFile(const std::string& filename);
+		void LoadInstancesFromFile(const std::string& filename);
 
 		/** Adds the buffers the a garbage collect list that will be destroyed once no command buffer is active. */
 		void QueueDestroy(SharedPtr<Vk::Buffer>& buffer);

@@ -149,7 +149,7 @@ namespace Utopian
 			luaActor.SetObject("components", luaComponentTable);
 			luaScene.SetObject(counter, luaActor);
 			counter++;
-		}				
+		}
 
 		gLuaManager().GetLuaState()->DumpObject(filename.c_str(), "actor_list", luaScene);
 	}

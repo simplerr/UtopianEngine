@@ -28,10 +28,10 @@ namespace Utopian
 			UNIFORM_PARAM(int, wireframe)
 		UNIFORM_BLOCK_END()
 
-        UNIFORM_BLOCK_BEGIN(WaterParameterBlock)
-    		UNIFORM_PARAM(glm::vec3, waterColor)
+		UNIFORM_BLOCK_BEGIN(WaterParameterBlock)
+			UNIFORM_PARAM(glm::vec3, waterColor)
 			UNIFORM_PARAM(float, waveSpeed)
-    		UNIFORM_PARAM(glm::vec3, foamColor)
+			UNIFORM_PARAM(glm::vec3, foamColor)
 			UNIFORM_PARAM(float, foamSpeed)
 			UNIFORM_PARAM(float, distortionStrength)
 			UNIFORM_PARAM(float, shorelineDepth)
@@ -47,18 +47,18 @@ namespace Utopian
 		void Update() override;
 
 		SharedPtr<Vk::RenderTarget> renderTarget;
-      SharedPtr<Vk::Image> distortionImage;
+		SharedPtr<Vk::Image> distortionImage;
 	private:
-        // Note: Todo: Duplicate from Terrain.h
-        Vk::Mesh* GeneratePatches(float cellSize, int numCells);
-    private:
+		// Note: Todo: Duplicate from Terrain.h
+		Vk::Mesh* GeneratePatches(float cellSize, int numCells);
+	private:
 		SharedPtr<Vk::Effect> mEffect;
 		SharedPtr<Vk::QueryPoolStatistics> mQueryPool;
 		SharedPtr<Vk::Sampler> mSampler;
 		FrustumPlanes mFrustumPlanesBlock;
 		SettingsBlock mSettingsBlock;
 		WaterParameterBlock mWaterParameterBlock;
-      Vk::Mesh* mWaterMesh;
+		Vk::Mesh* mWaterMesh;
 		SharedPtr<Vk::Texture> mDuDvTexture;
 		SharedPtr<Vk::Texture> mNormalTexture;
 		SharedPtr<Vk::Texture> mFoamMaskTexture;
