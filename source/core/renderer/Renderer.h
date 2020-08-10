@@ -15,6 +15,7 @@ namespace Utopian
 {
 	class ImGuiRenderer;
 	class Im3dRenderer;
+	class InstancingManager;
 
 	/**
 	 * The scene renderer that manages and renders all the nodes in the scene.
@@ -74,6 +75,9 @@ namespace Utopian
 		/** Returns the terrain. */
 		Terrain* GetTerrain() const;
 
+		/** Returns the scene info. */
+		SceneInfo* GetSceneInfo();
+
 		/** Returns the configured rendering settings. */
 		const RenderingSettings& GetRenderingSettings() const;
 
@@ -111,6 +115,7 @@ namespace Utopian
 
 	private:
 		SharedPtr<JobGraph> mJobGraph;
+		SharedPtr<InstancingManager> mInstancingManager;
 		RenderingSettings mRenderingSettings;
 		SceneInfo mSceneInfo;
 		Vk::VulkanApp* mVulkanApp;
