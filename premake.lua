@@ -60,11 +60,12 @@ project "UtopianEngine"
    includedirs { "external/luaplus/lua53-luaplus/src" }
    includedirs { "external/glslang/StandAlone" }
    includedirs { "external/glslang" }
-   includedirs { "source" }
    includedirs { "external/glm" }
    includedirs { "external/gli" }
    includedirs { "external/assimp" }
    includedirs { "external" }
+   includedirs { "source/engine" }
+   includedirs { "source" }
 
    -- Libraries
    libdirs { "libs/assimp" }
