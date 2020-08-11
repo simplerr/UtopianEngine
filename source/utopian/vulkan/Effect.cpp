@@ -8,6 +8,7 @@
 #include "vulkan/Texture.h"
 #include "vulkan/handles/RenderPass.h"
 #include "vulkan/handles/PipelineLayout.h"
+#include "vulkan/EffectManager.h"
 #include "core/renderer/Renderer.h"
 #include "Effect.h"
 
@@ -25,10 +26,17 @@ namespace Utopian::Vk
 		CreatePipeline();
 	}
 
-   Effect::~Effect()
-   {
+	Effect::~Effect()
+	{
 
-   }
+	}
+
+	SharedPtr<Effect> Effect::Create(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo)
+	{
+		SharedPtr<Effect> effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderPass, effectCreateInfo);
+
+		return effect;
+	}
 
 	void Effect::SetShaderCreateInfo(const ShaderCreateInfo& shaderCreateInfo)
 	{

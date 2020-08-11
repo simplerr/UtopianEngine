@@ -64,7 +64,7 @@ project "UtopianEngine"
    includedirs { "external/gli" }
    includedirs { "external/assimp" }
    includedirs { "external" }
-   includedirs { "source/engine" }
+   includedirs { "source/utopian" }
    includedirs { "source" }
 
    -- Libraries

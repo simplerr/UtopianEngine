@@ -43,7 +43,7 @@ namespace Utopian
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
 
-		mTraceSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
+		mTraceSSREffect = Vk::Effect::Create(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
 
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 		GeometryThicknessJob* geometryThicknessJob = static_cast<GeometryThicknessJob*>(jobs[JobGraph::GEOMETRY_THICKNESS_INDEX]);

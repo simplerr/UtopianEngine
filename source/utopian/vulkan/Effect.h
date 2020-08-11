@@ -27,8 +27,10 @@ namespace Utopian::Vk
 	public:
 		/** @note CreatePipeline() must be called explicitly after constructor. */
 		Effect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo);
+		~Effect();
 
-      ~Effect();
+		/** Creates the Effect and adds it to the Effect manager. */
+		static SharedPtr<Effect> Create(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo);
 
 		/** Loads the shaders from file again, compiles it, performs reflection and rebuilds the pipeline. */
 		bool RecompileShader();
