@@ -28,16 +28,16 @@ void main()
     vec3 blendmap = vec3(0.0);
 
     // Altitde 
-    float highAltitude = 3500.0;
+    float highAltitude = -200.0;
     vec3 flatBlend = vec3(1, 0, 0); // grass
     if (height > highAltitude)
-        flatBlend = vec3(0, 0, 1);  // dirt
+        flatBlend = vec3(0, 0, 1); // dirt
 
     // Slope
-    if (normal.y > 0.70)
+    if (normal.y > 0.30)
         blendmap = flatBlend;
     else
         blendmap.g = 1.0;
 
-    OutFragColor = vec4(blendmap, 1.0f);
+    OutFragColor = vec4(blendmap, 0.0f);
 }

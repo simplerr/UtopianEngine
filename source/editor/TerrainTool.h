@@ -27,7 +27,8 @@ namespace Utopian
 		enum BlendLayer {
 			GRASS = 0,
 			ROCK,
-			DIRT
+			DIRT,
+			ROAD
 		};
 
 		glm::vec2 position;
@@ -78,6 +79,7 @@ namespace Utopian
 			ImTextureID grass;
 			ImTextureID rock;
 			ImTextureID dirt;
+			ImTextureID road;
 			ImTextureID heightTool;
 		} textureIdentifiers;
 	};

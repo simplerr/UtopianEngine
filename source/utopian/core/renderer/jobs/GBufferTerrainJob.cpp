@@ -72,6 +72,11 @@ namespace Utopian
 		mNormalTextureArray.AddTexture(material.normal);
 		mDisplacementTextureArray.AddTexture(material.displacement);
 
+		material = mTerrain->GetMaterial("road");
+		mDiffuseTextureArray.AddTexture(material.diffuse);
+		mNormalTextureArray.AddTexture(material.normal);
+		mDisplacementTextureArray.AddTexture(material.displacement);
+
 		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
 		mSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
 		mSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;

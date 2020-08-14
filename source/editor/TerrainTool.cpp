@@ -42,6 +42,7 @@ namespace Utopian
 		textureIdentifiers.grass = imGuiRenderer->AddImage(*mTerrain->GetMaterial("grass").diffuse->GetImage());
 		textureIdentifiers.rock = imGuiRenderer->AddImage(*mTerrain->GetMaterial("rock").diffuse->GetImage());
 		textureIdentifiers.dirt = imGuiRenderer->AddImage(*mTerrain->GetMaterial("dirt").diffuse->GetImage());
+		textureIdentifiers.road = imGuiRenderer->AddImage(*mTerrain->GetMaterial("road").diffuse->GetImage());
 		textureIdentifiers.heightTool = imGuiRenderer->AddImage(*heightToolTexture->GetImage());
    }
 
@@ -121,6 +122,12 @@ namespace Utopian
 			   brushSettings.mode = BrushSettings::Mode::BLEND;
 			   brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
 		   }
+
+		   if (ImGui::ImageButton(textureIdentifiers.road, ImVec2(64, 64)))
+		   {
+			   brushSettings.mode = BrushSettings::Mode::BLEND;
+			   brushSettings.blendLayer = BrushSettings::BlendLayer::ROAD;
+		   }
 	   }
    }
 
@@ -134,7 +141,7 @@ namespace Utopian
 
    void TerrainTool::SetupBlendmapBrushEffect()
 	{
-		blendmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
+		blendmapBrushRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mTerrain->GetMapResolution(), mTerrain->GetMapResolution());
 		blendmapBrushRenderTarget->AddReadWriteColorAttachment(mTerrain->GetBlendmapImage(), VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
 		blendmapBrushRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapBrushRenderTarget->Create();

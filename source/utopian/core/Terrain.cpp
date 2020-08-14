@@ -34,9 +34,12 @@ namespace Utopian
 		mBrushBlock->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 		// Load materials
-		AddMaterial("grass", "data/textures/ground/grass_diffuse.ktx", "data/textures/ground/grass_normal.ktx", "data/textures/ground/grass_displacement.ktx");
+		//AddMaterial("grass", "data/textures/ground/grass_diffuse.ktx", "data/textures/ground/grass_normal.ktx", "data/textures/ground/grass_displacement.ktx");
+		//AddMaterial("grass", "data/textures/ground/aerial_rocks_01_1k_png/aerial_rocks_01_diff_1k.png", "data/textures/ground/aerial_rocks_01_1k_png/aerial_rocks_01_nor_1k.png", "data/textures/ground/aerial_rocks_01_1k_png/aerial_rocks_01_disp_1k.png");
+		AddMaterial("grass", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_diff_1k.png", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_nor_1k.png", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_disp_1k.png");
 		AddMaterial("rock", "data/textures/ground/rock_diffuse.ktx", "data/textures/ground/rock_normal.ktx", "data/textures/ground/rock_displacement.ktx");
 		AddMaterial("dirt", "data/textures/ground/dirt_diffuse.ktx", "data/textures/ground/dirt_normal.ktx", "data/textures/ground/dirt_displacement.ktx");
+		AddMaterial("road", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_diff_1k.png", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_nor_1k.png", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_disp_1k.png");
 
 		// Add heightmap to physics world
 		gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
@@ -189,10 +192,10 @@ namespace Utopian
 
 	void Terrain::SetupBlendmapEffect()
 	{
-		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, 256, 256, VK_FORMAT_R32G32B32A32_SFLOAT, "Terrain blendmap image");
+		blendmapImage = std::make_shared<Vk::ImageColor>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32G32B32A32_SFLOAT, "Terrain blendmap image");
 		blendmapImage->SetFinalLayout(VK_IMAGE_LAYOUT_GENERAL); // Special case since it needs to be used both as color attachment and descriptor
 
-		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, 256, 256);
+		blendmapRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, MAP_RESOLUTION, MAP_RESOLUTION);
 		blendmapRenderTarget->AddWriteOnlyColorAttachment(blendmapImage, VK_IMAGE_LAYOUT_GENERAL);
 		blendmapRenderTarget->SetClearColor(1, 1, 1, 1);
 		blendmapRenderTarget->Create();

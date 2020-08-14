@@ -19,7 +19,7 @@ layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 layout (location = 2) out vec3 OutPosW;
 
-layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement[3];
+layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement[4];
 
 void main()
 {
@@ -44,15 +44,17 @@ void main()
     float textureScaling = ubo_settings.textureScaling;
 
 	// Test
-	float lowAltitudeDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling).r; 
-	float highAltitudeDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling).r; 
-	float cliffDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling).r; 
+	float lowAltitudeDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling).r;
+	float highAltitudeDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling).r;
+	float cliffDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling).r;
+	float roadDisplacement = texture(samplerDisplacement[3], OutTex * textureScaling).r;
     vec4 blend = texture(samplerBlendmap, OutTex);
 	blend = clamp(blend, vec4(0.0), vec4(1.0));
 
     float finalDisplacement = blend.r * lowAltitudeDisplacement +
 							  blend.g * highAltitudeDisplacement +
-							  blend.b * cliffDisplacement;
+							  blend.b * cliffDisplacement +
+							  blend.a * roadDisplacement;
 
 	// Displace small details from displacement map along normal
 	vec3 normal = normalize(getNormal(OutTex));

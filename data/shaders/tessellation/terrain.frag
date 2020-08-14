@@ -33,8 +33,8 @@ layout (std140, set = 0, binding = 8) uniform UBO_brush
     int operation; // 0 = add, 1 = remove
 } ubo_brush;
 
-layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[3];
-layout (set = 0, binding = 5) uniform sampler2D samplerNormal[3];
+layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[4];
+layout (set = 0, binding = 5) uniform sampler2D samplerNormal[4];
 
 void main()
 {
@@ -45,15 +45,17 @@ void main()
 	vec3 lowAltitudeDiffuse = texture(samplerDiffuse[0], InTex * textureScaling).xyz; 
 	vec3 highAltitudeDiffuse = texture(samplerDiffuse[1], InTex * textureScaling).xyz; 
 	vec3 cliffDiffuse = texture(samplerDiffuse[2], InTex * textureScaling).xyz; 
+	vec3 roadDiffuse = texture(samplerDiffuse[3], InTex * textureScaling).xyz; 
 	vec3 finalDiffuse = vec3(0.0);
 
 	vec3 lowAltitudeNormal = texture(samplerNormal[0], InTex * textureScaling).xyz; 
 	vec3 highAltitudeNormal = texture(samplerNormal[1], InTex * textureScaling).xyz; 
 	vec3 cliffNormal = texture(samplerNormal[2], InTex * textureScaling).xyz; 
+	vec3 roadNormal = texture(samplerNormal[3], InTex * textureScaling).xyz; 
 	vec3 finalNormal = vec3(0.0);
 
-    finalDiffuse = blend.r * lowAltitudeDiffuse + blend.g * highAltitudeDiffuse + blend.b * cliffDiffuse;
-    finalNormal = blend.r * lowAltitudeNormal + blend.g * highAltitudeNormal + blend.b * cliffNormal;
+    finalDiffuse = blend.r * lowAltitudeDiffuse + blend.g * highAltitudeDiffuse + blend.b * cliffDiffuse + blend.a * roadDiffuse;
+    finalNormal = blend.r * lowAltitudeNormal + blend.g * highAltitudeNormal + blend.b * cliffNormal + blend.a * roadNormal;
     finalNormal = normalize(finalNormal);
 
     // Blendmap visualization
