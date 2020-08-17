@@ -27,7 +27,7 @@ void main()
 
     vec3 blendmap = vec3(0.0);
 
-    // Altitde 
+    // Altitde
     float highAltitude = -200.0;
     vec3 flatBlend = vec3(1, 0, 0); // grass
     if (height > highAltitude)

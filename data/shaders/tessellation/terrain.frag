@@ -38,24 +38,24 @@ layout (set = 0, binding = 5) uniform sampler2D samplerNormal[4];
 
 void main()
 {
-    vec4 blend = texture(samplerBlendmap, InTex);
+	vec4 blend = texture(samplerBlendmap, InTex);
 	blend = clamp(blend, vec4(0.0), vec4(1.0));
 
-    float textureScaling = ubo_settings.textureScaling;
-	vec3 lowAltitudeDiffuse = texture(samplerDiffuse[0], InTex * textureScaling).xyz; 
-	vec3 highAltitudeDiffuse = texture(samplerDiffuse[1], InTex * textureScaling).xyz; 
-	vec3 cliffDiffuse = texture(samplerDiffuse[2], InTex * textureScaling).xyz; 
-	vec3 roadDiffuse = texture(samplerDiffuse[3], InTex * textureScaling).xyz; 
+	float textureScaling = ubo_settings.textureScaling;
+	vec3 grassDiffuse = texture(samplerDiffuse[0], InTex * textureScaling / GRASS_TEXTURE_SCALE).xyz;
+	vec3 rockDiffuse = texture(samplerDiffuse[1], InTex * textureScaling / ROCK_TEXTURE_SCALE).xyz;
+	vec3 dirtDiffuse = texture(samplerDiffuse[2], InTex * textureScaling / DIRT_TEXTURE_SCALE).xyz;
+	vec3 roadDiffuse = texture(samplerDiffuse[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).xyz;
 	vec3 finalDiffuse = vec3(0.0);
 
-	vec3 lowAltitudeNormal = texture(samplerNormal[0], InTex * textureScaling).xyz; 
-	vec3 highAltitudeNormal = texture(samplerNormal[1], InTex * textureScaling).xyz; 
-	vec3 cliffNormal = texture(samplerNormal[2], InTex * textureScaling).xyz; 
-	vec3 roadNormal = texture(samplerNormal[3], InTex * textureScaling).xyz; 
+	vec3 grassNormal = texture(samplerNormal[0], InTex * textureScaling / GRASS_TEXTURE_SCALE).xyz;
+	vec3 rockNormal = texture(samplerNormal[1], InTex * textureScaling / ROCK_TEXTURE_SCALE).xyz;
+	vec3 dirtNormal = texture(samplerNormal[2], InTex * textureScaling / DIRT_TEXTURE_SCALE).xyz;
+	vec3 roadNormal = texture(samplerNormal[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).xyz;
 	vec3 finalNormal = vec3(0.0);
 
-    finalDiffuse = blend.r * lowAltitudeDiffuse + blend.g * highAltitudeDiffuse + blend.b * cliffDiffuse + blend.a * roadDiffuse;
-    finalNormal = blend.r * lowAltitudeNormal + blend.g * highAltitudeNormal + blend.b * cliffNormal + blend.a * roadNormal;
+    finalDiffuse = blend.r * grassDiffuse + blend.g * rockDiffuse + blend.b * dirtDiffuse + blend.a * roadDiffuse;
+    finalNormal = blend.r * grassNormal + blend.g * rockNormal + blend.b * dirtNormal + blend.a * roadNormal;
     finalNormal = normalize(finalNormal);
 
     // Blendmap visualization

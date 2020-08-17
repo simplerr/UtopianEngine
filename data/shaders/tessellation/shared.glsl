@@ -1,5 +1,15 @@
 /** Contains descriptors shared between multiple shader stages. */
 
+#define GRASS_TEXTURE_SCALE 1.0f
+#define ROCK_TEXTURE_SCALE 5.0f
+#define DIRT_TEXTURE_SCALE 1.0f
+#define ROAD_TEXTURE_SCALE 1.0f
+
+#define GRASS_AMPLITUDE_SCALE 1.0f
+#define ROCK_AMPLITUDE_SCALE 10.0f
+#define DIRT_AMPLITUDE_SCALE 1.0f
+#define ROAD_AMPLITUDE_SCALE 5.0f
+
 layout (std140, set = 0, binding = 0) uniform UBO_frustum
 {
     vec4 frustumPlanes[6];

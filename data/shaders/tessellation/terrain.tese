@@ -44,16 +44,16 @@ void main()
     float textureScaling = ubo_settings.textureScaling;
 
 	// Test
-	float lowAltitudeDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling).r;
-	float highAltitudeDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling).r;
-	float cliffDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling).r;
-	float roadDisplacement = texture(samplerDisplacement[3], OutTex * textureScaling).r;
-    vec4 blend = texture(samplerBlendmap, OutTex);
+	float grassDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling / GRASS_TEXTURE_SCALE).r * GRASS_AMPLITUDE_SCALE;
+	float rockDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling / ROCK_TEXTURE_SCALE).r * ROCK_AMPLITUDE_SCALE;
+	float dirtDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling / DIRT_TEXTURE_SCALE).r * DIRT_AMPLITUDE_SCALE;
+	float roadDisplacement = texture(samplerDisplacement[3], OutTex * textureScaling / ROAD_TEXTURE_SCALE).r * ROAD_AMPLITUDE_SCALE;
+	vec4 blend = texture(samplerBlendmap, OutTex);
 	blend = clamp(blend, vec4(0.0), vec4(1.0));
 
-    float finalDisplacement = blend.r * lowAltitudeDisplacement +
-							  blend.g * highAltitudeDisplacement +
-							  blend.b * cliffDisplacement +
+    float finalDisplacement = blend.r * grassDisplacement +
+							  blend.g * rockDisplacement +
+							  blend.b * dirtDisplacement +
 							  blend.a * roadDisplacement;
 
 	// Displace small details from displacement map along normal
