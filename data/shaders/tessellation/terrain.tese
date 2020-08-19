@@ -19,8 +19,6 @@ layout (location = 0) out vec3 OutNormalL;
 layout (location = 1) out vec2 OutTex;
 layout (location = 2) out vec3 OutPosW;
 
-layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement[4];
-
 void main()
 {
 	// Interpolate UV coordinates
@@ -43,7 +41,6 @@ void main()
 
     float textureScaling = ubo_settings.textureScaling;
 
-	// Test
 	float grassDisplacement = texture(samplerDisplacement[0], OutTex * textureScaling / GRASS_TEXTURE_SCALE).r * GRASS_AMPLITUDE_SCALE;
 	float rockDisplacement = texture(samplerDisplacement[1], OutTex * textureScaling / ROCK_TEXTURE_SCALE).r * ROCK_AMPLITUDE_SCALE;
 	float dirtDisplacement = texture(samplerDisplacement[2], OutTex * textureScaling / DIRT_TEXTURE_SCALE).r * DIRT_AMPLITUDE_SCALE;

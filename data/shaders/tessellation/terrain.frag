@@ -36,6 +36,22 @@ layout (std140, set = 0, binding = 8) uniform UBO_brush
 layout (set = 0, binding = 4) uniform sampler2D samplerDiffuse[4];
 layout (set = 0, binding = 5) uniform sampler2D samplerNormal[4];
 
+// http://untitledgam.es/2017/01/height-blending-shader/
+vec3 heightblend(vec3 input1, float height1, vec3 input2, float height2)
+{
+    const float _HeightblendFactor = 1.2f;
+    float height_start = max(height1, height2) - _HeightblendFactor;
+    float level1 = max(height1 - height_start, 0);
+    float level2 = max(height2 - height_start, 0);
+    return ((input1 * level1) + (input2 * level2)) / (level1 + level2);
+}
+
+vec3 heightlerp(vec3 input1, float height1, vec3 input2, float height2, float t)
+{
+    t = clamp(t, 0, 1);
+    return heightblend(input1, height1 * (1 - t), input2, height2 * t);
+}
+
 void main()
 {
 	vec4 blend = texture(samplerBlendmap, InTex);
@@ -54,9 +70,23 @@ void main()
 	vec3 roadNormal = texture(samplerNormal[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).xyz;
 	vec3 finalNormal = vec3(0.0);
 
+	float grassDisplacement = texture(samplerDisplacement[0], InTex * textureScaling / GRASS_TEXTURE_SCALE).r * GRASS_AMPLITUDE_SCALE;
+	float rockDisplacement = texture(samplerDisplacement[1], InTex * textureScaling / ROCK_TEXTURE_SCALE).r * ROCK_AMPLITUDE_SCALE;
+	float dirtDisplacement = texture(samplerDisplacement[2], InTex * textureScaling / DIRT_TEXTURE_SCALE).r * DIRT_AMPLITUDE_SCALE;
+    dirtDisplacement *= 10.0f; // Note this!
+	float roadDisplacement = texture(samplerDisplacement[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).r * ROAD_AMPLITUDE_SCALE;
+
     finalDiffuse = blend.r * grassDiffuse + blend.g * rockDiffuse + blend.b * dirtDiffuse + blend.a * roadDiffuse;
     finalNormal = blend.r * grassNormal + blend.g * rockNormal + blend.b * dirtNormal + blend.a * roadNormal;
     finalNormal = normalize(finalNormal);
+
+    finalDiffuse = heightlerp(grassDiffuse, grassDisplacement, roadDiffuse, roadDisplacement, blend.a);
+    finalDiffuse = heightlerp(finalDiffuse, grassDisplacement, rockDiffuse, rockDisplacement, blend.g);
+    finalDiffuse = heightlerp(finalDiffuse, grassDisplacement, dirtDiffuse, dirtDisplacement, blend.b);
+
+    finalNormal = heightlerp(grassNormal, grassDisplacement, roadNormal, roadDisplacement, blend.a);
+    finalNormal = heightlerp(finalNormal, grassDisplacement, rockNormal, rockDisplacement, blend.g);
+    finalNormal = heightlerp(finalNormal, grassDisplacement, dirtNormal, dirtDisplacement, blend.b);
 
     // Blendmap visualization
     //finalDiffuse = blend.xyz;

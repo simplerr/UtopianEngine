@@ -28,7 +28,7 @@ namespace Utopian
 		bool cascadeColorDebug = 0;
 		float cascadeSplitLambda = 0.927f;
 		float sunSpeed = 0.0f;
-		float sunInclination = 45.0f;
+		float sunInclination = -35.0f;
 		float sunAzimuth = 0.0f;
 		float tessellationFactor = 2.8f;
 		float terrainTextureScaling = 200.0;
