@@ -42,7 +42,7 @@ namespace Utopian
 		bool windEnabled = true;
 		// Water
 		float waterLevel = 0.0f;
-		glm::vec3 waterColor = glm::vec3(0.0f, 0.1f, 0.4f);
+		glm::vec3 waterColor = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 foamColor = glm::vec3(0.9f);
 		float waveSpeed = 1.0f;
 		float foamSpeed = 4.0f;

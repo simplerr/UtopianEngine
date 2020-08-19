@@ -74,6 +74,7 @@ void main()
 	float rockDisplacement = texture(samplerDisplacement[1], InTex * textureScaling / ROCK_TEXTURE_SCALE).r * ROCK_AMPLITUDE_SCALE;
 	float dirtDisplacement = texture(samplerDisplacement[2], InTex * textureScaling / DIRT_TEXTURE_SCALE).r * DIRT_AMPLITUDE_SCALE;
     dirtDisplacement *= 10.0f; // Note this!
+    grassDisplacement *= 10.0f; // Note this!
 	float roadDisplacement = texture(samplerDisplacement[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).r * ROAD_AMPLITUDE_SCALE;
 
     finalDiffuse = blend.r * grassDiffuse + blend.g * rockDiffuse + blend.b * dirtDiffuse + blend.a * roadDiffuse;
@@ -87,6 +88,7 @@ void main()
     finalNormal = heightlerp(grassNormal, grassDisplacement, roadNormal, roadDisplacement, blend.a);
     finalNormal = heightlerp(finalNormal, grassDisplacement, rockNormal, rockDisplacement, blend.g);
     finalNormal = heightlerp(finalNormal, grassDisplacement, dirtNormal, dirtDisplacement, blend.b);
+
 
     // Blendmap visualization
     //finalDiffuse = blend.xyz;

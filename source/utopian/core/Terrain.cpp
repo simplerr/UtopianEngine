@@ -36,7 +36,9 @@ namespace Utopian
 		// Load materials
 		//AddMaterial("grass", "data/textures/ground/grass_diffuse.ktx", "data/textures/ground/grass_normal.ktx", "data/textures/ground/grass_displacement.ktx");
 		//AddMaterial("grass", "data/textures/ground/aerial_rocks_01_1k_png/aerial_rocks_01_diff_1k.png", "data/textures/ground/aerial_rocks_01_1k_png/aerial_rocks_01_nor_1k.png", "data/textures/ground/aerial_rocks_01_1k_png/aerial_rocks_01_disp_1k.png");
-		AddMaterial("grass", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_diff_1k.ktx", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_nor_1k.ktx", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_disp_1k.ktx");
+		//AddMaterial("grass", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_diff_1k-modified.png", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_nor_1k.ktx", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_disp_1k.ktx");
+		//AddMaterial("grass", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_diff_1k.ktx", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_nor_1k.ktx", "data/textures/ground/aerial_grass_rock_1k_png/aerial_grass_rock_disp_1k.ktx");
+		AddMaterial("grass", "data/textures/ground/grass_countryside/grass_countryside_diffuse.ktx", "data/textures/ground/grass_countryside/grass_countryside_normal.ktx", "data/textures/ground/grass_countryside/grass_countryside_height.ktx");
 		AddMaterial("rock", "data/textures/ground/rock_diffuse.ktx", "data/textures/ground/rock_normal.ktx", "data/textures/ground/rock_displacement.ktx");
 		AddMaterial("dirt", "data/textures/ground/dirt_diffuse.ktx", "data/textures/ground/dirt_normal.ktx", "data/textures/ground/dirt_displacement.ktx");
 		AddMaterial("road", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_diff_1k.ktx", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_nor_1k.ktx", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_disp_1k.ktx");
