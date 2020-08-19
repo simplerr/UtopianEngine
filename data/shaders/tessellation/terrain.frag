@@ -6,6 +6,7 @@
 #include "math.glsl"
 #include "material_types.glsl"
 #include "shared_variables.glsl"
+#include "noise.glsl"
 
 layout (location = 0) in vec3 InNormalL;
 layout (location = 1) in vec2 InTex;
@@ -77,6 +78,16 @@ void main()
     grassDisplacement *= 10.0f; // Note this!
 	float roadDisplacement = texture(samplerDisplacement[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).r * ROAD_AMPLITUDE_SCALE;
 
+    // Grass color patches
+    float noise1 = clamp((1 - clamp(fbm(InPosW.xz / 1000) * 2, 0, 1)) * 9, 0, 1);
+    grassDiffuse = mix(grassDiffuse, grassDiffuse + vec3(0.0, 0.03, 0.02), noise1);
+
+    // Dirt patches
+    float noise2 = clamp((1 - clamp(fbm(InPosW.xz / 1000 + 500) * 3, 0, 1)) * 9, 0, 1);
+    grassDiffuse = mix(grassDiffuse, dirtDiffuse * 0.8, noise2);
+    grassNormal = mix(grassNormal, dirtNormal, noise2);
+    grassDisplacement = mix(grassDisplacement, dirtDisplacement, noise2);
+
     finalDiffuse = blend.r * grassDiffuse + blend.g * rockDiffuse + blend.b * dirtDiffuse + blend.a * roadDiffuse;
     finalNormal = blend.r * grassNormal + blend.g * rockNormal + blend.b * dirtNormal + blend.a * roadNormal;
     finalNormal = normalize(finalNormal);
@@ -88,7 +99,6 @@ void main()
     finalNormal = heightlerp(grassNormal, grassDisplacement, roadNormal, roadDisplacement, blend.a);
     finalNormal = heightlerp(finalNormal, grassDisplacement, rockNormal, rockDisplacement, blend.g);
     finalNormal = heightlerp(finalNormal, grassDisplacement, dirtNormal, dirtDisplacement, blend.b);
-
 
     // Blendmap visualization
     //finalDiffuse = blend.xyz;
