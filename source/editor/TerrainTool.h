@@ -16,7 +16,8 @@ namespace Utopian
 		enum Mode {
 			HEIGHT = 0,
 			BLEND = 1,
-			VEGETATION = 2
+			VEGETATION = 2,
+			HEIGHT_FLAT
 		};
 
 		enum Operation {
@@ -73,6 +74,7 @@ namespace Utopian
 		SharedPtr<Terrain::BrushBlock> brushBlock; // Note: Todo: This is retrieved from Terrain
 		BrushSettings brushSettings;
 		SharedPtr<Vk::Texture> heightToolTexture;
+		SharedPtr<Vk::Texture> heightToolFlatTexture;
 
 		struct TextureIdentifiers
 		{
@@ -81,6 +83,7 @@ namespace Utopian
 			ImTextureID dirt;
 			ImTextureID road;
 			ImTextureID heightTool;
+			ImTextureID heightToolFlat;
 		} textureIdentifiers;
 	};
 }

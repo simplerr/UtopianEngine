@@ -151,7 +151,7 @@ void main()
     float dist = distance(InTex, ubo_brush.pos);
     if ((dist > ubo_brush.radius - 0.0005) && dist < ubo_brush.radius)
     {
-        if (ubo_brush.mode == 0)    // Height
+        if (ubo_brush.mode == 0 || ubo_brush.mode == 3)    // Height
             OutAlbedo = vec4(1.0f, 0.0f, 0.0f, 0.0f);
         if (ubo_brush.mode == 1)    // Blend
             OutAlbedo = vec4(0.0f, 1.0f, 0.0f, 0.0f);

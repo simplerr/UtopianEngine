@@ -33,10 +33,11 @@ namespace Utopian
 		brushSettings.mode = BrushSettings::Mode::BLEND;
 		brushSettings.operation = BrushSettings::Operation::ADD;
 		brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
-		brushSettings.strength = 250.0f;
-		brushSettings.radius = 1500.0f;
+		brushSettings.strength = 2.0f;
+		brushSettings.radius = 700.0f;
 
 		heightToolTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.ktx");
+		heightToolFlatTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool-flat.png");
 
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
 		textureIdentifiers.grass = imGuiRenderer->AddImage(*mTerrain->GetMaterial("grass").diffuse->GetImage());
@@ -44,6 +45,7 @@ namespace Utopian
 		textureIdentifiers.dirt = imGuiRenderer->AddImage(*mTerrain->GetMaterial("dirt").diffuse->GetImage());
 		textureIdentifiers.road = imGuiRenderer->AddImage(*mTerrain->GetMaterial("road").diffuse->GetImage());
 		textureIdentifiers.heightTool = imGuiRenderer->AddImage(*heightToolTexture->GetImage());
+		textureIdentifiers.heightToolFlat = imGuiRenderer->AddImage(*heightToolFlatTexture->GetImage());
    }
 
    TerrainTool::~TerrainTool()
@@ -70,7 +72,7 @@ namespace Utopian
 				RenderBlendmapBrush();
 			}
 		}
-		else if (brushSettings.mode == BrushSettings::Mode::HEIGHT)
+		else if (brushSettings.mode == BrushSettings::Mode::HEIGHT || brushSettings.mode == BrushSettings::Mode::HEIGHT_FLAT)
 		{
 			if (gInput().KeyDown(VK_LBUTTON) || gInput().KeyDown(VK_RBUTTON))
 			{
@@ -91,8 +93,15 @@ namespace Utopian
    {
 	   if (ImGui::CollapsingHeader("Terrain tool", ImGuiTreeNodeFlags_DefaultOpen))
 	   {
-		   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 10000.0f);
-		   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 299.0f);
+		   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 3500.0f);
+		   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 5.0f);
+
+		   if (ImGui::ImageButton(textureIdentifiers.heightToolFlat, ImVec2(64, 64)))
+		   {
+			   brushSettings.mode = BrushSettings::Mode::HEIGHT_FLAT;
+		   }
+
+		   ImGui::SameLine();
 
 		   if (ImGui::ImageButton(textureIdentifiers.heightTool, ImVec2(64, 64)))
 		   {
@@ -115,13 +124,13 @@ namespace Utopian
 			   brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
 		   }
 
-		   ImGui::SameLine();
-
 		   if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
 		   {
 			   brushSettings.mode = BrushSettings::Mode::BLEND;
 			   brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
 		   }
+
+		   ImGui::SameLine();
 
 		   if (ImGui::ImageButton(textureIdentifiers.road, ImVec2(64, 64)))
 		   {
