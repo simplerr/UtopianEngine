@@ -47,6 +47,7 @@ namespace Utopian
 		AddAssetToUi(27, "data/textures/thumbnails/27.png");
 		AddAssetToUi(67, "data/textures/thumbnails/67.png");
 		AddAssetToUi(104, "data/textures/thumbnails/104.png", 0.04, false);
+		AddAssetToUi(136, "data/textures/thumbnails/136.png");
 		AddAssetToUi(145, "data/textures/thumbnails/145.png");
 		AddAssetToUi(149, "data/textures/thumbnails/149.png");
 	}
