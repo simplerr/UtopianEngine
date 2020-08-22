@@ -16,8 +16,16 @@ namespace Utopian
 
 	struct UiAsset
 	{
+		UiAsset() {
+			assetId = 0;
+			animated = true;
+			scaleFactor = 1.0f;
+		}
+
 		uint32_t assetId;
 		ImTextureID previewTextureId;
+		float scaleFactor;
+		bool animated;
 	};
 
 	class FoliageTool
@@ -30,13 +38,13 @@ namespace Utopian
 		// Note: Todo: Remove this dependency
 		void SetBrushSettings(BrushSettings* brushSettings);
 
-		void AddAssetToUi(uint32_t assetId, std::string previewPath);
+		void AddAssetToUi(uint32_t assetId, std::string previewPath, float scaleFactor = 1.0f, bool animated = true);
 
 		void Update();
 		void RenderUi();
 
 	private:
-		void AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows);
+		void AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows, float scaleFactor = 1.0f);
 	private:
 		Vk::Device* mDevice;
 		Terrain* mTerrain;
@@ -55,7 +63,7 @@ namespace Utopian
 		} mVegetationSettings;
 
 		std::vector<const char*> mAssetNames;
-		int mSelectedAsset;
+		UiAsset mSelectedUiAsset;
 		std::vector<UiAsset> mUiAssets;
 		Timestamp mLastAddTimestamp;
 	};

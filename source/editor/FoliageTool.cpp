@@ -23,14 +23,12 @@ namespace Utopian
 		mLastAddTimestamp = gTimer().GetTimestamp();
 		mVegetationSettings.continuous = true;
 		mVegetationSettings.restrictedDeletion = true;
-		mVegetationSettings.frequency = 1000.0f;
+		mVegetationSettings.frequency = 150.0f;
 		mVegetationSettings.assetId = 147;
 		mVegetationSettings.randomRotation = true;
 		mVegetationSettings.randomScale = true;
 		mVegetationSettings.minScale = 1.0f;
 		mVegetationSettings.maxScale = 2.0f;
-
-		mSelectedAsset = 0;
 
 		// Create data for ImGui listbox
 		const uint32_t numAssets = gAssetLoader().GetNumAssets();
@@ -48,7 +46,7 @@ namespace Utopian
 		AddAssetToUi(23, "data/textures/thumbnails/23.png");
 		AddAssetToUi(27, "data/textures/thumbnails/27.png");
 		AddAssetToUi(67, "data/textures/thumbnails/67.png");
-		AddAssetToUi(104, "data/textures/thumbnails/104.png");
+		AddAssetToUi(104, "data/textures/thumbnails/104.png", 0.04, false);
 		AddAssetToUi(145, "data/textures/thumbnails/145.png");
 		AddAssetToUi(149, "data/textures/thumbnails/149.png");
 	}
@@ -82,12 +80,12 @@ namespace Utopian
 				}
 
 				if (gInput().KeyPressed(VK_LBUTTON))
-					AddVegetation(mSelectedAsset, position, true, true);
+					AddVegetation(mSelectedUiAsset.assetId, position, mSelectedUiAsset.animated, true, mSelectedUiAsset.scaleFactor);
 
 				if (gInput().KeyDown(VK_LBUTTON) && mVegetationSettings.continuous)
 				{
 					if (gTimer().GetElapsedTime(mLastAddTimestamp) >= (1000.0f / mVegetationSettings.frequency))
-						AddVegetation(mSelectedAsset, position, true, true);
+						AddVegetation(mSelectedUiAsset.assetId, position, mSelectedUiAsset.animated, true, mSelectedUiAsset.scaleFactor);
 				}
 			}
 
@@ -100,7 +98,7 @@ namespace Utopian
 				intersection *= -1; // Todo: Note: negative sign
 
 				if (mVegetationSettings.restrictedDeletion)
-					gRenderer().RemoveInstancesWithinRadius(mSelectedAsset, intersection, radius);
+					gRenderer().RemoveInstancesWithinRadius(mSelectedUiAsset.assetId, intersection, radius);
 				else
 					gRenderer().RemoveInstancesWithinRadius(DELETE_ALL_ASSETS_ID, intersection, radius);
 
@@ -134,7 +132,7 @@ namespace Utopian
 			{
 				if (ImGui::ImageButton(mUiAssets[i].previewTextureId, ImVec2(64, 64)))
 				{
-					mSelectedAsset = mUiAssets[i].assetId;
+					mSelectedUiAsset = mUiAssets[i];
 					mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
 				}
 
@@ -147,13 +145,19 @@ namespace Utopian
 			ImGui::PushItemWidth(ImGui::GetWindowWidth());
 			if (ImGui::CollapsingHeader("All available assets"))
 			{
-				if (ImGui::ListBox("", &mSelectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
+				int selectedAsset = mSelectedUiAsset.assetId;
+				if (ImGui::ListBox("", &selectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
+				{
+					UiAsset uiAsset;
+					uiAsset.assetId = selectedAsset;
+					mSelectedUiAsset = uiAsset;
 					mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
+				}
 			}
 		}
 	}
 
-	void FoliageTool::AddAssetToUi(uint32_t assetId, std::string previewPath)
+	void FoliageTool::AddAssetToUi(uint32_t assetId, std::string previewPath, float scaleFactor, bool animated)
 	{
 		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(previewPath);
 		ImTextureID previewTextureId = gRenderer().GetUiOverlay()->AddImage(*texture->GetImage());
@@ -161,11 +165,13 @@ namespace Utopian
 		UiAsset uiAsset;
 		uiAsset.assetId = assetId;
 		uiAsset.previewTextureId = previewTextureId;
+		uiAsset.scaleFactor = scaleFactor;
+		uiAsset.animated = animated;
 
 		mUiAssets.push_back(uiAsset);
 	}
 
-	void FoliageTool::AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows)
+	void FoliageTool::AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows, float scaleFactor)
 	{
 		float scale = 1.0f;
 		float rotationY = 0.0f;
@@ -174,6 +180,8 @@ namespace Utopian
 			scale = Math::GetRandom(mVegetationSettings.minScale, mVegetationSettings.maxScale);
 		else
 			scale = mVegetationSettings.minScale;
+
+			scale *= scaleFactor;
 
 		if (mVegetationSettings.randomRotation)
 			rotationY = Math::GetRandom(0.0f, 360.0f);

@@ -34,7 +34,7 @@ namespace Utopian
 		brushSettings.operation = BrushSettings::Operation::ADD;
 		brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
 		brushSettings.strength = 2.0f;
-		brushSettings.radius = 700.0f;
+		brushSettings.radius = 350.0f;
 
 		heightToolTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.ktx");
 		heightToolFlatTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool-flat.png");
