@@ -42,7 +42,8 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 	// given by the distance of the two edge control points in screen space
 	// and a reference (min.) tessellation size for the edge set by the application
     float edgeSize = 30.0f;
-	return clamp(distance(clip0, clip1) / edgeSize * ubo_settings.tessellationFactor, 1.0, 64.0);
+	const float waterTessellationFactor = 16.0f;
+	return clamp(distance(clip0, clip1) / edgeSize * ubo_settings.tessellationFactor / waterTessellationFactor, 1.0, 64.0);
 }
 
 bool frustumCheck()
