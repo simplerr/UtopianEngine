@@ -90,7 +90,7 @@ namespace Utopian
 
 		for (auto& texture : allTextures)
 		{
-			textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddImage(*texture->GetImage()), texture->GetPath()));
+			textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddImage(texture->GetImage()), texture->GetPath()));
 		}
 	}
 

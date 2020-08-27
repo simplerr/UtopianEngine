@@ -30,7 +30,7 @@ layout (std140, set = 0, binding = 8) uniform UBO_brush
     vec2 pos;
     float radius;
     float strength;
-    int mode; // 0 = height, 1 = blend, 2 = foliage
+    int mode; // 0 = height, 1 = blend, 2 = foliage, 3 = height_flat
     int operation; // 0 = add, 1 = remove
 } ubo_brush;
 

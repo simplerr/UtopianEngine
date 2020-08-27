@@ -106,6 +106,8 @@ namespace Utopian
 		uint32_t GetWindowWidth() const;
 		uint32_t GetWindowHeight() const;
 
+		void SaveTerrainToFile(const std::string& filename);
+
 	private:
 		/** Adds widgets to the ImGui use interface for rendering settings. */
 		void UpdateUi();

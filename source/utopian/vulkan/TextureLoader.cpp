@@ -82,7 +82,7 @@ namespace Utopian::Vk
 		imageDesc.width = width;
 		imageDesc.height = height;
 		imageDesc.format = format;
-		imageDesc.usage = imageUsageFlags | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		imageDesc.usage = imageUsageFlags | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 		imageDesc.mipLevels = numMipLevels;
 		imageDesc.name = "Texture: "+ path;
 		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
@@ -205,7 +205,7 @@ namespace Utopian::Vk
 
 		// Create the final image
 		imageDesc.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageDesc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		imageDesc.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		imageDesc.properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 		imageDesc.name = name;
 		SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);

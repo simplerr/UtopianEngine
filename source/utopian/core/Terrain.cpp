@@ -9,6 +9,7 @@
 #include "vulkan/EffectManager.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/StaticModel.h"
+#include "vulkan/Texture.h"
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "vulkan/Mesh.h"
 #include "core/renderer/Renderer.h"
@@ -223,6 +224,10 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		heightmapRenderTarget->EndAndFlush();
+
+		// Test
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/heightmap.ppm");
+		gRendererUtility().CopyImage(mDevice, *heightmapImage, texture->GetImage());
 	}
 
 	void Terrain::RenderNormalmap()

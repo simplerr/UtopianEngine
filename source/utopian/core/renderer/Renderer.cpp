@@ -1,3 +1,4 @@
+#include <core/renderer/RendererUtility.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include "core/renderer/Renderer.h"
 #include "core/renderer/Renderable.h"
@@ -523,5 +524,11 @@ namespace Utopian
 	uint32_t Renderer::GetWindowHeight() const
 	{
 		return mVulkanApp->GetWindowHeight();
+	}
+
+	void Renderer::SaveTerrainToFile(const std::string& filename)
+	{
+		uint32_t resolution = mSceneInfo.terrain->GetMapResolution();
+		gRendererUtility().SaveToFile(mDevice, mSceneInfo.terrain->GetHeightmapImage(), filename, resolution, resolution);
 	}
 }

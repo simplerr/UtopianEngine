@@ -40,12 +40,12 @@ namespace Utopian
 		heightToolFlatTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool-flat.png");
 
 		ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
-		textureIdentifiers.grass = imGuiRenderer->AddImage(*mTerrain->GetMaterial("grass").diffuse->GetImage());
-		textureIdentifiers.rock = imGuiRenderer->AddImage(*mTerrain->GetMaterial("rock").diffuse->GetImage());
-		textureIdentifiers.dirt = imGuiRenderer->AddImage(*mTerrain->GetMaterial("dirt").diffuse->GetImage());
-		textureIdentifiers.road = imGuiRenderer->AddImage(*mTerrain->GetMaterial("road").diffuse->GetImage());
-		textureIdentifiers.heightTool = imGuiRenderer->AddImage(*heightToolTexture->GetImage());
-		textureIdentifiers.heightToolFlat = imGuiRenderer->AddImage(*heightToolFlatTexture->GetImage());
+		textureIdentifiers.grass = imGuiRenderer->AddImage(mTerrain->GetMaterial("grass").diffuse->GetImage());
+		textureIdentifiers.rock = imGuiRenderer->AddImage(mTerrain->GetMaterial("rock").diffuse->GetImage());
+		textureIdentifiers.dirt = imGuiRenderer->AddImage(mTerrain->GetMaterial("dirt").diffuse->GetImage());
+		textureIdentifiers.road = imGuiRenderer->AddImage(mTerrain->GetMaterial("road").diffuse->GetImage());
+		textureIdentifiers.heightTool = imGuiRenderer->AddImage(heightToolTexture->GetImage());
+		textureIdentifiers.heightToolFlat = imGuiRenderer->AddImage(heightToolFlatTexture->GetImage());
    }
 
    TerrainTool::~TerrainTool()

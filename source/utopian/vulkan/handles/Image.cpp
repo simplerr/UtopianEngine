@@ -156,6 +156,11 @@ namespace Utopian::Vk
 			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
 			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
 		}
+		else if (mCurrentLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+		{
+			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+			srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
+		}
 		else
 		{
 			throw std::invalid_argument("Unsupported layout transition!");
@@ -332,7 +337,8 @@ namespace Utopian::Vk
 		createInfo.height = height;
 		createInfo.format = format;
 		createInfo.arrayLayers = arrayLayers;
-		createInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+		createInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+						   VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		createInfo.aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
 		createInfo.name = debugName;
 		CreateInternal(createInfo, device);

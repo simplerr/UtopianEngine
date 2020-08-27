@@ -105,7 +105,7 @@ namespace Utopian
                                                       1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT, "ImGui font image");
         mImguiEffect->BindCombinedImage("fontSampler", *mTexture);
 
-        io.Fonts->TexID = (ImTextureID)AddImage(*mTexture->GetImage());
+        io.Fonts->TexID = (ImTextureID)AddImage(mTexture->GetImage());
 
         mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
         mCommandBuffer->SetActive(false); // Enable the command buffer when something is recorded to it (not the first frame)

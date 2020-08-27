@@ -19,14 +19,14 @@ namespace Utopian::Vk
 		return &mDescriptor;
 	}
 
-	Image* Texture::GetImage()
+	Image& Texture::GetImage()
 	{
-		return mImage.get();
+		return *mImage;
 	}
 	
-	Sampler* Texture::GetSampler()
+	Sampler& Texture::GetSampler()
 	{
-		return mSampler.get();
+		return *mSampler;
 	}
 
 	void Texture::SetPath(std::string path)
@@ -69,8 +69,8 @@ namespace Utopian::Vk
 	void TextureArray::AddTexture(const SharedPtr<Vk::Texture>& texture)
 	{
 		VkDescriptorImageInfo imageInfo;
-		imageInfo.sampler = texture->GetSampler()->GetVkHandle();
-		imageInfo.imageView = texture->GetImage()->GetView();
+		imageInfo.sampler = texture->GetSampler().GetVkHandle();
+		imageInfo.imageView = texture->GetImage().GetView();
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		mImageInfos.push_back(imageInfo);

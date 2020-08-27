@@ -256,6 +256,7 @@ namespace Utopian
 			{
 				ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
 				gRenderer().SaveInstancesToFile("data/instances.txt");
+				gRenderer().SaveTerrainToFile("data/heightmap.ppm");
 			}
 
 			if (ImGui::Button("Clear scene"))

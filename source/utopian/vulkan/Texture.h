@@ -19,8 +19,9 @@ namespace Utopian::Vk
 
 		void UpdateDescriptor();
 
-		Image* GetImage();
-		Sampler* GetSampler();
+		Image& GetImage();
+		Sampler& GetSampler();
+
 		std::string GetPath() const;
 		uint32_t GetWidth() const;
 		uint32_t GetHeight() const;
