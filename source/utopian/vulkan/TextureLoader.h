@@ -21,7 +21,7 @@ namespace Utopian::Vk
 		 *
 		 * \note TextureLoader handles the memory deallocation of the texture.
 		 */
-		SharedPtr<Texture> LoadTexture(std::string path);
+		SharedPtr<Texture> LoadTexture(std::string path, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
 
 		/** \brief Loads a cubemap texture from a file
 		 *
@@ -38,7 +38,7 @@ namespace Utopian::Vk
 		 */
 		SharedPtr<Texture> CreateTexture(void* data, VkFormat format, uint32_t width, uint32_t height, uint32_t depth, uint32_t pixelSize, VkImageAspectFlagBits aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, std::string name = "Unnamed Image");
 	private:
-		SharedPtr<Texture> LoadTextureGLI(std::string path);
+		SharedPtr<Texture> LoadTextureGLI(std::string path, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
 		SharedPtr<Texture> LoadTextureSTB(std::string path);
 	private:
 		std::map<std::string, SharedPtr<Texture>> mTextureMap;

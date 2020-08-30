@@ -31,7 +31,7 @@ namespace Utopian::Vk
 		return TextureLoader::Instance();
 	}
 
-	SharedPtr<Texture> TextureLoader::LoadTexture(std::string path)
+	SharedPtr<Texture> TextureLoader::LoadTexture(std::string path, VkFormat format)
 	{
 		// Check if the model is loaded already
 		if (mTextureMap.find(path) != mTextureMap.end())
@@ -42,7 +42,7 @@ namespace Utopian::Vk
 		SharedPtr<Texture> texture;
 		if (extension == ".ktx" || extension == ".dds")
 		{
-			texture = LoadTextureGLI(path);
+			texture = LoadTextureGLI(path, format);
 		}
 		else
 		{
@@ -55,12 +55,11 @@ namespace Utopian::Vk
 		return texture;
 	}
 	
-	SharedPtr<Texture> TextureLoader::LoadTextureGLI(std::string path)
+	SharedPtr<Texture> TextureLoader::LoadTextureGLI(std::string path, VkFormat format)
 	{
 		// These might be needed as parameters
 		VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT;
-		VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
 
 		gli::texture2d tex2D(gli::load(path.c_str()));
 

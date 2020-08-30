@@ -529,6 +529,8 @@ namespace Utopian
 	void Renderer::SaveTerrainToFile(const std::string& filename)
 	{
 		uint32_t resolution = mSceneInfo.terrain->GetMapResolution();
-		gRendererUtility().SaveToFile(mDevice, mSceneInfo.terrain->GetHeightmapImage(), filename, resolution, resolution);
+		gRendererUtility().SaveToFile(mDevice, mSceneInfo.terrain->GetHeightmapImage(), "data/heightmap-3.ktx", resolution, resolution);
+		gRendererUtility().SaveToFile(mDevice, mSceneInfo.terrain->GetHeightmapImage(), "data/heightmap-3.ppm", resolution, resolution);
+		gRendererUtility().SaveToFile(mDevice, mSceneInfo.terrain->GetHeightmapImage(), "data/heightmap-3.jpg", resolution, resolution);
 	}
 }

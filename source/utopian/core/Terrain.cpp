@@ -226,7 +226,7 @@ namespace Utopian
 		heightmapRenderTarget->EndAndFlush();
 
 		// Test
-		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/heightmap.ppm");
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/heightmap.ktx", VK_FORMAT_R32G32B32A32_SFLOAT);
 		gRendererUtility().CopyImage(mDevice, *heightmapImage, texture->GetImage());
 	}
 

@@ -2,10 +2,17 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Pipeline.h"
+#include "utopian/utility/Utility.h"
+#include "utopian/core/Log.h"
 #include <fstream>
+#include <utility/Utility.h>
+#include "ktx.h"
+#include "ktxVulkan.h"
 
 namespace Utopian
 {
+	#define GL_RGBA32F 0x8814		// same as GL_RGBA32F_EXT and GL_RGBA32F_ARB
+
 	RendererUtility& gRendererUtility()
 	{
 		return RendererUtility::Instance();
@@ -43,7 +50,13 @@ namespace Utopian
 
 	void RendererUtility::SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height)
 	{
-		SharedPtr<Vk::Image> hostVisibleImage = CreateHostVisibleImage(device, image, width, height, VK_FORMAT_R8G8B8A8_UNORM);
+		VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
+
+		// Use higher precision when saving to .ktx to meet heightmap precision requirements
+		if (GetFileExtension(filename) == ".ktx")
+			format = VK_FORMAT_R32G32B32A32_SFLOAT;
+
+		SharedPtr<Vk::Image> hostVisibleImage = CreateHostVisibleImage(device, image, width, height, format);
 
 		// Get layout of the image (including row pitch)
 		VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
@@ -54,6 +67,43 @@ namespace Utopian
 		hostVisibleImage->MapMemory((void**)&data);
 		data += subResourceLayout.offset;
 
+		if (GetFileExtension(filename) == ".ktx")
+			SaveToFileKtx(filename, data, width, height, subResourceLayout);
+		else if (GetFileExtension(filename) == ".ppm")
+			SaveToFilePpm(filename, data, width, height, subResourceLayout);
+		else
+			UTO_LOG("Unsupported file extension: " + filename);
+
+		hostVisibleImage->UnmapMemory();
+	}
+
+	void RendererUtility::SaveToFileKtx(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout)
+	{
+		ktxTexture* texture;
+		ktxTextureCreateInfo createInfo;
+		createInfo.glInternalformat = GL_RGBA32F; // Matches VK_FORMAT_R32G32B32A32_SFLOAT
+		createInfo.baseWidth = 512;
+		createInfo.baseHeight = 512;
+		createInfo.baseDepth = 1;
+		createInfo.numDimensions = 2;
+		createInfo.numLevels = 1;
+		createInfo.numLayers = 1;
+		createInfo.numFaces = 1;
+		createInfo.isArray = KTX_FALSE;
+		createInfo.generateMipmaps = KTX_FALSE;
+		KTX_error_code result = ktxTexture_Create(&createInfo, KTX_TEXTURE_CREATE_ALLOC_STORAGE, &texture);
+
+		const ktx_uint8_t* src = (const ktx_uint8_t*)data;
+		ktx_size_t srcSize = layout.size;
+		ktx_uint32_t level = 0, layer = 0, faceSlice = 0;
+		result = ktxTexture_SetImageFromMemory(texture, level, layer, faceSlice, src, srcSize);
+
+		ktxTexture_WriteToNamedFile(texture, filename.c_str());
+		ktxTexture_Destroy(texture);
+	}
+
+	void RendererUtility::SaveToFilePpm(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout)
+	{
 		std::ofstream file(filename, std::ios::out | std::ios::binary);
 
 		// ppm header
@@ -68,11 +118,10 @@ namespace Utopian
 				file.write((char*)row, 3);
 				row++;
 			}
-			data += subResourceLayout.rowPitch;
+			data += layout.rowPitch;
 		}
 
 		file.close();
-		hostVisibleImage->UnmapMemory();
 	}
 
 	SharedPtr<Vk::Image> RendererUtility::CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, uint32_t width, uint32_t height, VkFormat format)
