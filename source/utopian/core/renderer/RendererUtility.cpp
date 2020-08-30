@@ -9,6 +9,9 @@
 #include "ktx.h"
 #include "ktxVulkan.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 namespace Utopian
 {
 	#define GL_RGBA32F 0x8814		// same as GL_RGBA32F_EXT and GL_RGBA32F_ARB
@@ -71,6 +74,8 @@ namespace Utopian
 			SaveToFileKtx(filename, data, width, height, subResourceLayout);
 		else if (GetFileExtension(filename) == ".ppm")
 			SaveToFilePpm(filename, data, width, height, subResourceLayout);
+		else if (GetFileExtension(filename) == ".png")
+			stbi_write_png(filename.c_str(), width, height, 4, data, width * 4u);
 		else
 			UTO_LOG("Unsupported file extension: " + filename);
 
