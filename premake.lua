@@ -44,6 +44,8 @@ project "UtopianEngine"
       "source/**.cpp",
       "external/vk_mem_alloc.h",
       "external/stb_image.h",
+      "external/ktx.h",
+      "external/ktxvulkan.h",
       "external/im3d/*.h",
       "external/im3d/*.cpp",
       "external/imgui/*.h",
@@ -73,6 +75,7 @@ project "UtopianEngine"
    libdirs { "libs/glslang" }
    libdirs { "libs/luaplus" }
    libdirs { "libs/vulkan" }
+   libdirs { "libs/ktx" }
 
    -- "Debug"
    filter "configurations:Debug"
@@ -92,6 +95,7 @@ project "UtopianEngine"
       links { "SPVRemapperd" }
       links { "vulkan-1" }
       links { "assimp" }
+      links { "libktx.gl" }
 
    -- "Release"
    filter "configurations:Release"
