@@ -33,7 +33,7 @@ namespace Utopian
 			UNIFORM_PARAM(float, strength)
 			UNIFORM_PARAM(int, mode) // 0 = height, 1 = blend
 			UNIFORM_PARAM(int, operation) // 0 = add, 1 = remove
-    		UNIFORM_PARAM(int, blendLayer)
+			UNIFORM_PARAM(int, blendLayer)
 		UNIFORM_BLOCK_END()
 
 		UNIFORM_BLOCK_BEGIN(SettingsBlock)
@@ -48,6 +48,11 @@ namespace Utopian
 		glm::vec2 TransformToUv(float x, float z);
 
 		void AddMaterial(std::string name, std::string diffuse, std::string normal, std::string displacement);
+
+		void SaveHeightmap(std::string filename);
+		void SaveBlendmap(std::string filename);
+		void LoadHeightmap(std::string filename);
+		void LoadBlendmap(std::string filename);
 
 		glm::vec3 GetIntersectPoint(Ray ray);
 		SharedPtr<Vk::Image>& GetHeightmapImage();

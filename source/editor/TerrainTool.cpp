@@ -11,6 +11,7 @@
 #include "core/Terrain.h"
 #include "core/Input.h"
 #include "core/Camera.h"
+#include <imgui/imgui.h>
 
 namespace Utopian
 {
@@ -87,58 +88,93 @@ namespace Utopian
 				mTerrain->RetrieveHeightmap();
 			}
 		}
-   }
+	}
 
-   void TerrainTool::RenderUi()
-   {
-	   if (ImGui::CollapsingHeader("Terrain tool", ImGuiTreeNodeFlags_DefaultOpen))
-	   {
-		   ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 3500.0f);
-		   ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 5.0f);
+	void TerrainTool::RenderUi()
+	{
+		if (ImGui::CollapsingHeader("Terrain tool", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 3500.0f);
+			ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 5.0f);
 
-		   if (ImGui::ImageButton(textureIdentifiers.heightToolFlat, ImVec2(64, 64)))
-		   {
-			   brushSettings.mode = BrushSettings::Mode::HEIGHT_FLAT;
-		   }
+			if (ImGui::ImageButton(textureIdentifiers.heightToolFlat, ImVec2(64, 64)))
+			{
+				brushSettings.mode = BrushSettings::Mode::HEIGHT_FLAT;
+			}
 
-		   ImGui::SameLine();
+			ImGui::SameLine();
 
-		   if (ImGui::ImageButton(textureIdentifiers.heightTool, ImVec2(64, 64)))
-		   {
-			   brushSettings.mode = BrushSettings::Mode::HEIGHT;
-		   }
+			if (ImGui::ImageButton(textureIdentifiers.heightTool, ImVec2(64, 64)))
+			{
+				brushSettings.mode = BrushSettings::Mode::HEIGHT;
+			}
 
-		   ImGui::SameLine();
+			ImGui::SameLine();
 
-		   if (ImGui::ImageButton(textureIdentifiers.grass, ImVec2(64, 64)))
-		   {
-			   brushSettings.mode = BrushSettings::Mode::BLEND;
-			   brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
-		   }
+			if (ImGui::ImageButton(textureIdentifiers.grass, ImVec2(64, 64)))
+			{
+				brushSettings.mode = BrushSettings::Mode::BLEND;
+				brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
+			}
 
-		   ImGui::SameLine();
+			ImGui::SameLine();
 
-		   if (ImGui::ImageButton(textureIdentifiers.rock, ImVec2(64, 64)))
-		   {
-			   brushSettings.mode = BrushSettings::Mode::BLEND;
-			   brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
-		   }
+			if (ImGui::ImageButton(textureIdentifiers.rock, ImVec2(64, 64)))
+			{
+				brushSettings.mode = BrushSettings::Mode::BLEND;
+				brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
+			}
 
-		   if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
-		   {
-			   brushSettings.mode = BrushSettings::Mode::BLEND;
-			   brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
-		   }
+			if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
+			{
+				brushSettings.mode = BrushSettings::Mode::BLEND;
+				brushSettings.blendLayer = BrushSettings::BlendLayer::DIRT;
+			}
 
-		   ImGui::SameLine();
+			ImGui::SameLine();
 
-		   if (ImGui::ImageButton(textureIdentifiers.road, ImVec2(64, 64)))
-		   {
-			   brushSettings.mode = BrushSettings::Mode::BLEND;
-			   brushSettings.blendLayer = BrushSettings::BlendLayer::ROAD;
-		   }
-	   }
-   }
+			if (ImGui::ImageButton(textureIdentifiers.road, ImVec2(64, 64)))
+			{
+				brushSettings.mode = BrushSettings::Mode::BLEND;
+				brushSettings.blendLayer = BrushSettings::BlendLayer::ROAD;
+			}
+
+			/* Heightmap and Blendmap load/save UI */
+			ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
+			ImGui::InputText("Heightmap", heightmapPath, IM_ARRAYSIZE(heightmapPath), ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGui::SameLine();
+
+			if (ImGui::Button("Save"))
+			{
+				mTerrain->SaveHeightmap(heightmapPath);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Load"))
+			{
+				mTerrain->LoadHeightmap(heightmapPath);
+			}
+
+			ImGui::InputText("Blendmap", blendmapPath, IM_ARRAYSIZE(blendmapPath), ImGuiInputTextFlags_EnterReturnsTrue);
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Save##blend"))
+			{
+				mTerrain->SaveBlendmap(blendmapPath);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Load##blend"))
+			{
+				mTerrain->LoadBlendmap(blendmapPath);
+			}
+
+			ImGui::PopItemWidth();
+		}
+	}
 
 	void TerrainTool::EffectRecompiledCallback(std::string name)
 	{

@@ -34,7 +34,7 @@ namespace Utopian
 			std::string name = mActor->GetName();
 			if (ImGui::CollapsingHeader(mActor->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 			{
-                if (ImGui::InputText("Name", mActorName, IM_ARRAYSIZE(mActorName), ImGuiInputTextFlags_EnterReturnsTrue))
+				if (ImGui::InputText("Name", mActorName, IM_ARRAYSIZE(mActorName), ImGuiInputTextFlags_EnterReturnsTrue))
 				{
 					mActor->SetName(mActorName);
 				}

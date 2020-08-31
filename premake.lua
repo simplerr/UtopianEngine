@@ -44,6 +44,7 @@ project "UtopianEngine"
       "source/**.cpp",
       "external/vk_mem_alloc.h",
       "external/stb_image.h",
+      "external/stb_image_write.h",
       "external/ktx.h",
       "external/ktxvulkan.h",
       "external/im3d/*.h",

@@ -104,6 +104,30 @@ namespace Utopian
 		mMaterials[name] = material;
 	}
 
+	void Terrain::SaveHeightmap(std::string filename)
+	{
+		uint32_t resolution = GetMapResolution();
+		gRendererUtility().SaveToFile(mDevice, GetHeightmapImage(), filename, resolution, resolution);
+	}
+
+	void Terrain::SaveBlendmap(std::string filename)
+	{
+		uint32_t resolution = GetMapResolution();
+		gRendererUtility().SaveToFile(mDevice, GetBlendmapImage(), filename, resolution, resolution);
+	}
+
+	void Terrain::LoadHeightmap(std::string filename)
+	{
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32G32B32A32_SFLOAT);
+		gRendererUtility().CopyImage(mDevice, *heightmapImage, texture->GetImage());
+	}
+
+	void Terrain::LoadBlendmap(std::string filename)
+	{
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32G32B32A32_SFLOAT);
+		gRendererUtility().CopyImage(mDevice, *blendmapImage, texture->GetImage());
+	}
+
 	void Terrain::GenerateTerrainMaps()
 	{
 		SetupHeightmapEffect();
@@ -224,10 +248,6 @@ namespace Utopian
 		commandBuffer->CmdBindPipeline(mHeightmapEffect->GetPipeline());
 		gRendererUtility().DrawFullscreenQuad(commandBuffer);
 		heightmapRenderTarget->EndAndFlush();
-
-		// Test
-		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/heightmap.ktx", VK_FORMAT_R32G32B32A32_SFLOAT);
-		gRendererUtility().CopyImage(mDevice, *heightmapImage, texture->GetImage());
 	}
 
 	void Terrain::RenderNormalmap()
