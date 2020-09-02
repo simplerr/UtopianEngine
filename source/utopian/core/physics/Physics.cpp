@@ -144,7 +144,7 @@ namespace Utopian
 
 		btTransform groundTransform;
 		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, -(maxHeightScaled - minHeightScaled) / 2.0f, 0));
+		groundTransform.setOrigin(btVector3(0, (minHeightScaled + (maxHeightScaled - minHeightScaled) / 2.0f), 0));
 
 		btScalar mass(0.0f);
 		btVector3 localInertia(0, 0, 0);

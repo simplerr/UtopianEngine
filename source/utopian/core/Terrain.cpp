@@ -155,6 +155,7 @@ namespace Utopian
 		RenderBlendmap();
 
 		RetrieveHeightmap();
+		gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
 	}
 
 	void Terrain::RetrieveHeightmap()

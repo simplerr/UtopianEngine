@@ -35,7 +35,6 @@ layout (set = 0, binding = 6) uniform sampler2D samplerDisplacement[4];
 float getHeight(vec2 texCoord)
 {
     float height = texture(samplerHeightmap, texCoord).r * ubo_settings.amplitude;
-    //height = 0.0f;
 
     return height;
 }
