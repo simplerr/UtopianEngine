@@ -45,25 +45,25 @@ namespace Utopian
 		AddMaterial("road", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_diff_1k.ktx", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_nor_1k.ktx", "data/textures/ground/cobblestone_large_01_1k_png/cobblestone_large_01_disp_1k.ktx");
 
 		// Add heightmap to physics world
-		gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
+		UpdatePhysicsHeightmap();
 	}
 
-   Terrain::~Terrain()
-   {
-      mBlendmapEffect = nullptr;
-      mNormalmapEffect = nullptr;
-      mHeightmapEffect = nullptr;
+	Terrain::~Terrain()
+	{
+		mBlendmapEffect = nullptr;
+		mNormalmapEffect = nullptr;
+		mHeightmapEffect = nullptr;
 
-      mMaterials.clear();
+		mMaterials.clear();
 
-	   delete mQuadModel;
-   }
+		delete mQuadModel;
+	}
 
 	void Terrain::Update()
 	{
 		// Experimentation
 		if (gInput().KeyPressed('U'))
-			gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
+			UpdatePhysicsHeightmap();
 
 		//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
 
@@ -155,7 +155,7 @@ namespace Utopian
 		RenderBlendmap();
 
 		RetrieveHeightmap();
-		gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
+		UpdatePhysicsHeightmap();
 	}
 
 	void Terrain::RetrieveHeightmap()
@@ -181,6 +181,11 @@ namespace Utopian
 
 		// Note: Todo: Hidden dependency to Renderer
 		gRenderer().UpdateInstanceAltitudes();
+	}
+
+	void Terrain::UpdatePhysicsHeightmap()
+	{
+		gPhysics().SetHeightmap(heightmap.data(), MAP_RESOLUTION, mAmplitudeScaling, terrainSize);
 	}
 
 	void Terrain::SetupHeightmapEffect()

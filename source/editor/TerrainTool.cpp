@@ -87,6 +87,11 @@ namespace Utopian
 				mTerrain->RenderBlendmap();
 				mTerrain->RetrieveHeightmap();
 			}
+
+			if (gInput().KeyReleased(VK_LBUTTON) || gInput().KeyReleased(VK_RBUTTON))
+			{
+				mTerrain->UpdatePhysicsHeightmap();
+			}
 		}
 	}
 

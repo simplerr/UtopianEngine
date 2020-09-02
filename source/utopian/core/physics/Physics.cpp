@@ -25,7 +25,6 @@ namespace Utopian
 		mDebugDrawer = new PhysicsDebugDraw();
 		mDynamicsWorld->setDebugDrawer(mDebugDrawer);
 
-		mHeightmapCopy = nullptr;
 		mTerrainBody = nullptr;
 
 		mEnabled = true;
@@ -45,7 +44,6 @@ namespace Utopian
 		delete mCollisionConfiguration;
 		delete mBroadphase;
 		delete mDebugDrawer;
-		delete mHeightmapCopy;
 		delete mTerrainBody;
 	}
 
@@ -105,12 +103,6 @@ namespace Utopian
 
 	void Physics::SetHeightmap(const float* heightmap, const uint32_t size, float scale, float terrainSize)
 	{
-		// Bullet uses doubles internally
-		if (mHeightmapCopy != nullptr)
-			delete mHeightmapCopy;
-
-		mHeightmapCopy = new double[size * size];
-
 		// Bullet expects the UV coordinates to be flipped.
 		// Terrain::GeneratePatches() calculates them as Pos(0, 0) = Tex(0, 0) while
 		// Bullets expects Pos(0, 0) = Tex(1, 1)

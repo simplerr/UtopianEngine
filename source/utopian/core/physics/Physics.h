@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "utility/Module.h"
 #include "utility/Timer.h"
+#include "utopian/core/Terrain.h"
 
 class btBroadphaseInterface;
 class btCollisionDispatcher;
@@ -48,7 +49,7 @@ namespace Utopian
 		const glm::vec3 mGravity = glm::vec3(0, -982., 0);
 		bool mEnabled;
 		bool mDebugDrawEnabled;
-		double* mHeightmapCopy;
+		double mHeightmapCopy[MAP_RESOLUTION * MAP_RESOLUTION];
 
 		Timestamp mLastFrameTime;
 	};

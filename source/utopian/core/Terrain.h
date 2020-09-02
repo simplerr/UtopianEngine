@@ -20,6 +20,9 @@ namespace Utopian
 	class Terrain
 	{
 	public:
+
+		#define MAP_RESOLUTION 512
+
 		struct TerrainDebugDescriptorSets
 		{
 			ImTextureID heightmap;
@@ -76,6 +79,7 @@ namespace Utopian
 		void RenderNormalmap();
 		void RenderBlendmap();
 		void RetrieveHeightmap();
+		void UpdatePhysicsHeightmap();
 	private:
 		void EffectRecomiledCallback(std::string name);
 		void GeneratePatches(float cellSize, int numCells);
@@ -94,7 +98,6 @@ namespace Utopian
 		SharedPtr<BrushBlock> mBrushBlock;
 
 		// Height & normal map members
-		#define MAP_RESOLUTION 512
 		SharedPtr<Vk::Effect> mHeightmapEffect;
 		SharedPtr<Vk::Image> heightmapImage;
 		SharedPtr<Vk::RenderTarget> heightmapRenderTarget;
