@@ -18,7 +18,7 @@ Game::Game(Utopian::Window* window)
 	Utopian::Vk::Debug::SetupDebugLayers();
 
 	// Start Utopian Engine
-	Utopian::gEngine().Start(window, "Utopian Engine (v0.1)");
+	Utopian::gEngine().Start(window, "Utopian Engine (v0.2)");
 	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
 	Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
 	Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);
