@@ -45,3 +45,29 @@ Run the `generate_workspace.bat` script to generate a Visual Studio 2019 solutio
 If you want to generate a solution for another VS version run `tools/premake5.exe` manually.
 
 Pre compiled libraries for MSVC x64 Debug are included in the `libs/` folder.
+
+## Folder structure
+
+| Folder            | Description                                                |
+|-------------------|------------------------------------------------            |
+| source/utopian/   | Utopian Engine source code                                 |
+| source/editor/    | Editor source code                                         |
+| external/         | Third party submodules and .h files                        |
+| libs/             | Pre compiled third party dependencies                      |
+| data/             | Textures, models, shaders, scenes etc.                     |
+| tools/            | Tools and scripts                                          |
+
+## Thrid party dependencies
+
+| Library                                                      | Usage                                                      |
+|--------------------------------------------------------------|------------------------------------------------------------|
+| [gli](https://github.com/g-truc/gli)                         | Loading of .ktx textures                                   |
+| [assimp](https://github.com/assimp/assim)                    | Loading of model files                                     |
+| [bullet](https://github.com/bulletphysics/bullet3)           | Physics simulation                                         |
+| [glslang](https://github.com/KhronosGroup/glslang)           | Compilation and reflection of shaders                      |
+| [im3d](https://github.com/john-chapman/im3d)                 | Immediate mode 3D gizmos in editor                         |
+| [imgui](https://github.com/ocornut/imgui)                    | Editor UI                                                  |
+| [LegitProfiler](https://github.com/Raikiri/LegitProfiler)    | Profiler to visualize GPU performance                      |
+| [LuaPlus](https://github.com/jjensen/luaplus51-all)          | Lua binding to enable scripting                            |
+| [stb](https://github.com/nothings/stb)                       | Loading of textures                                        |
+| [libktx](https://github.com/KhronosGroup/KTX-Software)       | Creation and saving of .ktx texture to file                |
