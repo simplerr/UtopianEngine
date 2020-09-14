@@ -3,6 +3,7 @@ workspace "UtopianEngine"
    language "C++"
    cppdialect "C++17"
    platforms "x64"
+   startproject "Editor"
    characterset "ASCII"
 
    -- Defines
@@ -31,28 +32,95 @@ workspace "UtopianEngine"
       symbols "Off"
       optimize "Full"
 
-project "UtopianEngine"
+-- =========================================
+-- ================ Engine =================
+-- =========================================
+project "Engine"
+      kind "StaticLib"
+      targetdir "bin/%{cfg.buildcfg}"
+   
+      -- Files
+      files
+      {
+         -- Utopian
+         "source/utopian/**.hpp",
+         "source/utopian/**.h",
+         "source/utopian/**.cpp",
+         "external/vk_mem_alloc.h",
+         "external/stb_image.h",
+         "external/stb_image_write.h",
+         "external/ktx.h",
+         "external/ktxvulkan.h",
+         "external/im3d/*.h",
+         "external/im3d/*.cpp",
+         "external/imgui/*.h",
+         "external/imgui/*.cpp",
+         "external/LegitProfiler/*.h",
+         "external/LegitProfiler/*.cpp"
+      }
+   
+      removefiles { "**/marching_cubes_legacy/**" }
+   
+      -- Includes
+      includedirs { "external/bullet3-2.88" }
+      includedirs { "external/luaplus" }
+      includedirs { "external/luaplus/lua53-luaplus/src" }
+      includedirs { "external/glslang/StandAlone" }
+      includedirs { "external/glslang" }
+      includedirs { "external/glm" }
+      includedirs { "external/gli" }
+      includedirs { "external/assimp" }
+      includedirs { "external" }
+      includedirs { "source/utopian" }
+      includedirs { "source" }
+   
+      -- Libraries
+      libdirs { "libs/assimp" }
+      libdirs { "libs/bullet3-2.88" }
+      libdirs { "libs/glslang" }
+      libdirs { "libs/luaplus" }
+      libdirs { "libs/vulkan" }
+      libdirs { "libs/ktx" }
+   
+      -- "Debug"
+      filter "configurations:Debug"
+         defines { "DEBUG" }
+         symbols "On"
+         debugformat "c7"
+         links { "BulletCollision_x64_debug" }
+         links { "BulletDynamics_x64_debug" }
+         links { "BulletSoftBody_x64_debug" }
+         links { "LinearMath_x64_debug" }
+         links { "lua53-luaplus-static.debug" }
+         links { "OSDependentd" }
+         links { "glslangd" }
+         links { "HLSLd" }
+         links { "OGLCompilerd" }
+         links { "SPIRVd" }
+         links { "SPVRemapperd" }
+         links { "vulkan-1" }
+         links { "assimp" }
+         links { "libktx.gl" }
+   
+      -- "Release"
+      filter "configurations:Release"
+         defines { "NDEBUG" }
+         optimize "On"
+
+-- =========================================
+-- ================ Editor =================
+-- =========================================
+project "Editor"
    kind "WindowedApp"
    targetdir "bin/%{cfg.buildcfg}"
 
    -- Files
    files
    {
-      -- Utopian
-      "source/**.hpp",
-      "source/**.h",
-      "source/**.cpp",
-      "external/vk_mem_alloc.h",
-      "external/stb_image.h",
-      "external/stb_image_write.h",
-      "external/ktx.h",
-      "external/ktxvulkan.h",
-      "external/im3d/*.h",
-      "external/im3d/*.cpp",
-      "external/imgui/*.h",
-      "external/imgui/*.cpp",
-      "external/LegitProfiler/*.h",
-      "external/LegitProfiler/*.cpp"
+      -- Editor
+      "source/editor/**.hpp",
+      "source/editor/**.h",
+      "source/editor/**.cpp",
    }
 
    removefiles { "**/marching_cubes_legacy/**" }
@@ -71,34 +139,22 @@ project "UtopianEngine"
    includedirs { "source" }
 
    -- Libraries
-   libdirs { "libs/assimp" }
-   libdirs { "libs/bullet3-2.88" }
-   libdirs { "libs/glslang" }
-   libdirs { "libs/luaplus" }
-   libdirs { "libs/vulkan" }
-   libdirs { "libs/ktx" }
+
+   links
+   {
+      "Engine"
+   }
 
    -- "Debug"
    filter "configurations:Debug"
       defines { "DEBUG" }
       symbols "On"
       debugformat "c7"
-      links { "BulletCollision_x64_debug" }
-      links { "BulletDynamics_x64_debug" }
-      links { "BulletSoftBody_x64_debug" }
-      links { "LinearMath_x64_debug" }
-      links { "lua53-luaplus-static.debug" }
-      links { "OSDependentd" }
-      links { "glslangd" }
-      links { "HLSLd" }
-      links { "OGLCompilerd" }
-      links { "SPIRVd" }
-      links { "SPVRemapperd" }
-      links { "vulkan-1" }
-      links { "assimp" }
-      links { "libktx.gl" }
 
    -- "Release"
    filter "configurations:Release"
       defines { "NDEBUG" }
       optimize "On"
+
+-- include "source/utopian"
+-- include "source/editor"
