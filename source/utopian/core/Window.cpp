@@ -9,24 +9,6 @@ namespace Utopian
 		mHeight = height;
 	}
 	
-	void Window::SetTitle(std::string title)
-	{
-		std::stringstream ss;
-		ss << title;
-		std::string windowTitle = ss.str();
-		SetWindowText(GetHwnd(), windowTitle.c_str());
-	}
-
-	int Window::GetWidth() const
-	{
-		return mWidth;
-	}
-
-	int Window::GetHeight() const
-	{
-		return mHeight;
-	}
-
 	HWND Window::SetupWindow(HINSTANCE hInstance, WNDPROC WndProc)
 	{
 		mWindowInstance = hInstance;
@@ -81,6 +63,36 @@ namespace Utopian
 		return mWindow;
 	}
 
+	bool Window::DispatchMessages()
+	{
+		bool closeWindow = false;
+
+		MSG msg;
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+		 	{
+				closeWindow = true;
+		 	}
+		 	else
+		 	{
+		 		TranslateMessage(&msg);
+		 		DispatchMessage(&msg);
+		 	}
+		}
+
+		return closeWindow;
+	}
+
+	void Window::SetTitle(std::string title)
+	{
+		std::stringstream ss;
+		ss << title;
+		std::string windowTitle = ss.str();
+		SetWindowText(GetHwnd(), windowTitle.c_str());
+	}
+
+
 	HWND Window::GetHwnd()
 	{
 		return mWindow;
@@ -90,4 +102,15 @@ namespace Utopian
 	{
 		return mWindowInstance;
 	}
+
+	int Window::GetWidth() const
+	{
+		return mWidth;
+	}
+
+	int Window::GetHeight() const
+	{
+		return mHeight;
+	}
+
 }

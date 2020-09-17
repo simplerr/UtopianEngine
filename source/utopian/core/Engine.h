@@ -57,11 +57,9 @@ namespace Utopian
 		/** Renders all modules included in the engine. */
 		void Render();
 
-		/** Peeks and dispatches Win32 messages. */
-		bool DispatchMessages();
-
 	private:
 		SharedPtr<Vk::VulkanApp> mVulkanApp;
+		Window* mWindow;
 		std::function<void()> mUpdateCallback;
 		std::function<void()> mRenderCallback;
 		std::function<void()> mDestroyCallback;

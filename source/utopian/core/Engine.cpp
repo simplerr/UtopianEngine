@@ -26,7 +26,8 @@ namespace Utopian
 	Engine::Engine(Window* window, const std::string& appName)
 		: mAppName(appName)
 	{
-		window->SetTitle(mAppName);
+		mWindow = window;
+		mWindow->SetTitle(mAppName);
 
 		gLog().Start();
 
@@ -105,7 +106,7 @@ namespace Utopian
 	{
 		while (true)
 		{
-			bool closeWindow = DispatchMessages();
+			bool closeWindow = mWindow->DispatchMessages();
 
 			if (!closeWindow)
 			{
@@ -171,27 +172,6 @@ namespace Utopian
 		mVulkanApp->HandleMessages(hWnd, uMsg, wParam, lParam);
 
 		gInput().HandleMessages(uMsg, wParam, lParam);
-	}
-
-	bool Engine::DispatchMessages()
-	{
-		bool closeWindow = false;
-
-		MSG msg;
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-		 	{
-				closeWindow = true;
-		 	}
-		 	else
-		 	{
-		 		TranslateMessage(&msg);
-		 		DispatchMessage(&msg);
-		 	}
-		}
-
-		return closeWindow;
 	}
 
 	Engine& gEngine()

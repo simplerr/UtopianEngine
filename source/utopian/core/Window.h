@@ -9,14 +9,18 @@ namespace Utopian
 	{
 	public:
 		Window(int width, int height);
-		void SetTitle(std::string title);
-
-		int GetWidth() const;
-		int GetHeight() const;
 
 		HWND SetupWindow(HINSTANCE hInstance, WNDPROC wndProc);
+
+		/** Peeks and dispatches Win32 messages. */
+		bool DispatchMessages();
+
+		void SetTitle(std::string title);
+
 		HWND GetHwnd();
 		HINSTANCE GetInstance();
+		int GetWidth() const;
+		int GetHeight() const;
 
 	private:
 		HWND mWindow;
