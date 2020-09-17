@@ -64,7 +64,7 @@ namespace Utopian
 		AddJob(new PixelDebugJob(device, width, height));
 
 		FXAAJob* fxaaJob = new FXAAJob(device, width, height);
-		vulkanApp->SetJobGraphWaitSemaphore(fxaaJob->GetCompletedSemahore());
+		vulkanApp->SetWaitSubmitSemaphore(fxaaJob->GetCompletedSemahore());
 		AddJob(fxaaJob);
 
 		/* Add debug render targets */

@@ -56,12 +56,21 @@ namespace Utopian::Vk
 		uint32_t GetWindowWidth();
 		uint32_t GetWindowHeight();
 
+		/** Returns the semaphore that is signaled when a new swapchain image is ready for use. */
 		const SharedPtr<Semaphore>& GetImageAvailableSemaphore() const;
+
+		/** Returns the semaphore that is signaled when the submitted primary command buffer is executed, i.e 
+		 * the image can be presented. */
 		const SharedPtr<Semaphore>& GetRenderCompleteSemaphore() const;
 
-		bool PreviousFrameComplete();
+		/** Returns the semaphore which the primary command buffer submission is waiting on. */
+		const SharedPtr<Semaphore>& GetWaitSubmitSemaphore() const;
 
-		void SetJobGraphWaitSemaphore(SharedPtr<Semaphore>& waitSemaphore);
+		/** Sets the semaphore which the primary command buffer submission will wait on. This can
+		 * be GetImageAvailableSemaphore() directly or a semaphore signaled by another primary command buffer. */
+		void SetWaitSubmitSemaphore(const SharedPtr<Semaphore>& waitSemaphore);
+
+		bool PreviousFrameComplete();
 
 		Window* GetWindow();
 
@@ -79,7 +88,7 @@ namespace Utopian::Vk
 		Image*							mDepthStencil = nullptr;
 		SharedPtr<Semaphore>			mImageAvailable = nullptr;
 		SharedPtr<Semaphore>			mRenderComplete = nullptr;
-		SharedPtr<Semaphore>			mJobGraphWaitSemaphore = nullptr;
+		SharedPtr<Semaphore>			mWaitSubmitSemaphore = nullptr;
 		SharedPtr<Fence>				mWaitFence = nullptr;
 
 		// Note: Todo: Used by legacy effects

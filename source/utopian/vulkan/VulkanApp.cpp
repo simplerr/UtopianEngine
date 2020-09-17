@@ -115,7 +115,7 @@ namespace Utopian::Vk
 		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
 		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
-		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, mWaitFence.get(), mJobGraphWaitSemaphore, GetRenderCompleteSemaphore());
+		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, mWaitFence.get(), GetWaitSubmitSemaphore(), GetRenderCompleteSemaphore());
 	}
 
 	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)

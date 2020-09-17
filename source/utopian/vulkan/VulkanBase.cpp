@@ -37,7 +37,7 @@ namespace Utopian::Vk
       	mWaitFence = nullptr;
       	mImageAvailable = nullptr;
       	mRenderComplete = nullptr;
-      	mJobGraphWaitSemaphore = nullptr;
+      	mWaitSubmitSemaphore = nullptr;
 
 		delete mDepthStencil;
 		delete mRenderPass;
@@ -73,7 +73,8 @@ namespace Utopian::Vk
 
 		mImageAvailable = std::make_shared<Semaphore>(mDevice);
 		mRenderComplete = std::make_shared<Semaphore>(mDevice);
-		mJobGraphWaitSemaphore = std::make_shared<Semaphore>(mDevice);
+		SetWaitSubmitSemaphore(mImageAvailable);
+
 		mWaitFence = std::make_shared<Fence>(mDevice, 0*VK_FENCE_CREATE_SIGNALED_BIT);
 	}
 
@@ -177,8 +178,13 @@ namespace Utopian::Vk
 		return mRenderComplete;
 	}
 
-	void VulkanBase::SetJobGraphWaitSemaphore(SharedPtr<Semaphore>& waitSemaphore)
+	const SharedPtr<Semaphore>& VulkanBase::GetWaitSubmitSemaphore() const
 	{
-		mJobGraphWaitSemaphore = waitSemaphore;
+		return mWaitSubmitSemaphore;
+	}
+
+	void VulkanBase::SetWaitSubmitSemaphore(const SharedPtr<Semaphore>& waitSemaphore)
+	{
+		mWaitSubmitSemaphore = waitSemaphore;
 	}
 }	// VulkanLib namespace
