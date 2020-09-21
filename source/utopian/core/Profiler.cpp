@@ -14,13 +14,14 @@ namespace Utopian
 		return Profiler::Instance();
 	}
 
-	Profiler::Profiler()
+	Profiler::Profiler(Vk::VulkanApp* vulkanApp)
 	{
       mEnabled = true;
       mProfilerWindow.gpuGraph.SetMaxFrameTime(2.0f);
       mFrametimePlot.Configure(20, 30.0f);
       mFpsPlot.Configure(20, 30.0f);
       mMemoryUsagePlot.Configure(20, 300.0f);
+      mVulkanApp = vulkanApp;
 	}
 
 	Profiler::~Profiler()
@@ -48,7 +49,7 @@ namespace Utopian
          mFrametimePlot.AddData(frameTime);
 
          /* GPU memory usage */
-         VmaBudget budget = gRenderer().GetDevice()->GetMemoryBudget(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
+         VmaBudget budget = mVulkanApp->GetDevice()->GetMemoryBudget(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
          mMemoryUsagePlot.AddData(budget.allocationBytes / 1000000u);
 
          /* FPS */

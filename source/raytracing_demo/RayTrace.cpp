@@ -15,6 +15,8 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ModelLoader.h"
 #include "vulkan/ShaderFactory.h"
+#include "vulkan/handles/Image.h"
+#include "vulkan/handles/CommandBuffer.h"
 #include "RayTrace.h"
 
 RayTrace::RayTrace(Utopian::Window* window)
@@ -30,6 +32,9 @@ RayTrace::RayTrace(Utopian::Window* window)
 	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
 	mVulkanApp->Prepare();
 
+	mRayTraceComplete = std::make_shared<Vk::Semaphore>(mVulkanApp->GetDevice());
+	mVulkanApp->SetWaitSubmitSemaphore(mRayTraceComplete);
+
 	// Load modules
 	Vk::Device* device = mVulkanApp->GetDevice();
 	Vk::gEffectManager().Start();
@@ -41,8 +46,9 @@ RayTrace::RayTrace(Utopian::Window* window)
 	gInput().Start();
 	gTimer().Start();
 	gLuaManager().Start();
-	gProfiler().Start();
+	gProfiler().Start(mVulkanApp.get());
 	gRendererUtility().Start();
+	gScreenQuadUi().Start(mVulkanApp.get());
 
 	mImGuiRenderer = std::make_shared<ImGuiRenderer>(mVulkanApp.get(), mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
@@ -51,6 +57,11 @@ RayTrace::RayTrace(Utopian::Window* window)
 
 RayTrace::~RayTrace()
 {
+	// Vulkan handles cannot be destroyed when they are in use on the GPU
+	while (!mVulkanApp->PreviousFrameComplete())
+	{
+	}
+
 	Vk::gShaderFactory().Destroy();
 	Vk::gEffectManager().Destroy();
 	Vk::gTextureLoader().Destroy();
@@ -59,8 +70,27 @@ RayTrace::~RayTrace()
 	gTimer().Destroy();
 	gInput().Destroy();
 	gLuaManager().Destroy();
+	gScreenQuadUi().Destroy();
 	gProfiler().Destroy();
 	gRendererUtility().Destroy();
+}
+
+void RayTrace::InitScene()
+{
+	mOutputImage = std::make_shared<Vk::ImageColor>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight(), VK_FORMAT_R16G16B16A16_SFLOAT, "Tonemap image");
+
+	mRenderTarget = std::make_shared<Vk::RenderTarget>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight());
+	mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
+	mRenderTarget->SetClearColor(1, 1, 1, 1);
+	mRenderTarget->Create();
+
+	Vk::EffectCreateInfo effectDesc;
+	effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+	effectDesc.shaderDesc.fragmentShaderPath = "source/raytracing_demo/raytrace.frag";
+	mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mRenderTarget->GetRenderPass(), effectDesc);
+
+	mTestTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.png");
+	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage->GetView(), mRenderTarget->GetSampler());
 }
 
 void RayTrace::Update()
@@ -77,6 +107,14 @@ void RayTrace::Update()
 
 	ImGuiRenderer::EndWindow();
 
+	// Recompile shaders
+	if (gInput().KeyPressed('R'))
+	{
+		Vk::gEffectManager().RecompileModifiedShaders();
+	}
+
+	gProfiler().Update();
+
 	mImGuiRenderer->EndFrame();
 }
 
@@ -88,7 +126,23 @@ void RayTrace::Draw()
 
 		mVulkanApp->PrepareFrame();
 
+		// Test rendering
+		mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
+		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
+
+		// Todo: Should this be moved to the effect instead?
+		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+		//commandBuffer->CmdBindDescriptorSets(mEffect);
+
+		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+
+		mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mRayTraceComplete);
+
+		// End of test rendering
+		//////////////////////////////////////////
+
 		mImGuiRenderer->Render();
+		gScreenQuadUi().Render(mVulkanApp.get());
 
 		// Present to screen
 		mVulkanApp->Render();
@@ -115,11 +169,6 @@ void RayTrace::Run()
 				break;
 			}
 		}
-}
-
-void RayTrace::InitScene()
-{
-	
 }
 
 void RayTrace::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

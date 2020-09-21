@@ -39,7 +39,7 @@ namespace Utopian::Vk
 	class Texture;
 	class Pipeline;
 	class QueryPoolStatistics;
-   class QueryPoolTimestamp;
+	class QueryPoolTimestamp;
 
 	// Other
 	class Device;

@@ -84,7 +84,7 @@ namespace Utopian
 		gPhysics().Start();
 		gLuaManager().Start();
 		gAssetLoader().Start();
-		gProfiler().Start();
+		gProfiler().Start(mVulkanApp.get());
 		gRendererUtility().Start();
 		gScreenQuadUi().Start(mVulkanApp.get());
 		gRenderer().Start(mVulkanApp.get());

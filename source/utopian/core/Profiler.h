@@ -2,6 +2,7 @@
 #include <vector>
 #include "utility/Module.h"
 #include "LegitProfiler/ImGuiProfilerRenderer.h"
+#include "vulkan/VulkanPrerequisites.h"
 
 namespace Utopian
 {
@@ -25,19 +26,20 @@ namespace Utopian
 	class Profiler : public Module<Profiler>
 	{
 	public:
-		Profiler();
+		Profiler(Vk::VulkanApp* vulkanApp);
 		~Profiler();
 
 		void Update();
       void AddProfilerTask(const std::string& name, float start, float end, const glm::vec4& color);
 	private:
 		LegitProfiler::ProfilersWindow mProfilerWindow;
-      std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
-      bool mEnabled;
-      MiniPlot mFrametimePlot;
-      MiniPlot mMemoryUsagePlot;
-      MiniPlot mFpsPlot;
-      std::vector<float> mFrameTimes;
+		std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
+		bool mEnabled;
+		MiniPlot mFrametimePlot;
+		MiniPlot mMemoryUsagePlot;
+		MiniPlot mFpsPlot;
+		std::vector<float> mFrameTimes;
+		Vk::VulkanApp* mVulkanApp;
 	};
 
 	Profiler& gProfiler();

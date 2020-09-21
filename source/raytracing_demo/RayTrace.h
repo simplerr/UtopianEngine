@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vulkan/RenderTarget.h>
+#include <vulkan/handles/Semaphore.h>
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/VulkanApp.h"
 #include "utility/Common.h"
@@ -25,4 +27,11 @@ private:
 	SharedPtr<Vk::VulkanApp> mVulkanApp = nullptr;
 	SharedPtr<ImGuiRenderer> mImGuiRenderer = nullptr;
 	Utopian::Window* mWindow;
+
+	// Test
+	SharedPtr<Vk::RenderTarget> mRenderTarget;
+	SharedPtr<Vk::Effect> mEffect;
+	SharedPtr<Vk::Semaphore> mRayTraceComplete;
+	SharedPtr<Vk::Image> mOutputImage;
+	SharedPtr<Vk::Texture> mTestTexture;
 };
