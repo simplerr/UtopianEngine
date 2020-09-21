@@ -64,6 +64,7 @@ namespace Utopian::Vk
 		std::map<std::string, UniformBlockDesc> uniformBlocks;
 		std::map<std::string, UniformBlockDesc> storageBuffers;
 		std::map<std::string, UniformVariableDesc> combinedSamplers;
+		std::map<std::string, UniformVariableDesc> images;
 		std::map<std::string, PushConstantDesc> pushConstants;
 		SharedPtr<VertexDescription> vertexDescription;
 
@@ -88,6 +89,7 @@ namespace Utopian::Vk
 			geometryShaderPath = "NONE";
 			tescShaderPath = "NONE";
 			teseShaderPath = "NONE";
+			computeShaderPath = "NONE";
 		}
 
 		std::string vertexShaderPath;
@@ -95,6 +97,7 @@ namespace Utopian::Vk
 		std::string geometryShaderPath;
 		std::string tescShaderPath;
 		std::string teseShaderPath;
+		std::string computeShaderPath;
 	};
 
 	class Shader
@@ -111,6 +114,8 @@ namespace Utopian::Vk
 
 		const VertexDescription* GetVertexDescription() const;
 
+		bool IsComputeShader() const;
+
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 		std::vector<SharedPtr<CompiledShader>> compiledShaders;
 	};
@@ -120,22 +125,19 @@ namespace Utopian::Vk
 	public:
 		ShaderFactory(Device* device);
 		~ShaderFactory();
-		Shader* CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
-		Shader* CreateComputeShader(std::string computeShaderFilename);
-		SharedPtr<Shader> CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename = "NONE");
-		SharedPtr<Shader> CreateShaderOnline(const ShaderCreateInfo& shaderCreateInfo);
-		SharedPtr<CompiledShader> CompileShader(std::string filename);
+
+		SharedPtr<Shader> CreateShader(const ShaderCreateInfo& shaderCreateInfo);
 
 		void AddIncludeDirectory(std::string directory);
 
 	private:
+		SharedPtr<CompiledShader> CompileShader(std::string filename);
 		ShaderReflection ExtractShaderLayout(glslang::TProgram& program, EShLanguage shaderType);
 		void ReflectVertexInput(glslang::TProgram& program, ShaderReflection* reflection);
-		VkShaderModule LoadShader(std::string filename, VkShaderStageFlagBits stage);
 	private:
 		std::vector<Shader*> mLoadedShaders;
-		Device* mDevice;
 		std::vector<std::string> mIncludeDirectories;
+		Device* mDevice;
 	};
 
 	ShaderFactory& gShaderFactory();

@@ -191,6 +191,17 @@ namespace Utopian::Vk
 
 		assert(0);
 	}
+
+	bool Shader::IsComputeShader() const
+	{
+		for (auto& compiledShader : compiledShaders)
+		{
+			if (compiledShader->shaderStage == VK_SHADER_STAGE_COMPUTE_BIT)
+				return true;
+		}
+
+		return false;
+	}
 	
 	ShaderFactory::ShaderFactory(Device* device)
 		: mDevice(device)
@@ -209,43 +220,6 @@ namespace Utopian::Vk
 
 			delete mLoadedShaders[i];
 		}
-	}
-
-	Shader* ShaderFactory::CreateShader(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
-	{
-		// Vertex shader
-		VkPipelineShaderStageCreateInfo vertexShaderCreateInfo = {};
-		vertexShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		vertexShaderCreateInfo.pName = "main";
-		vertexShaderCreateInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-		vertexShaderCreateInfo.module = LoadShader(vertexShaderFilename.c_str(), VK_SHADER_STAGE_VERTEX_BIT);
-
-		// Pixel shader
-		VkPipelineShaderStageCreateInfo pixelShaderCreateInfo = {};
-		pixelShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		pixelShaderCreateInfo.pName = "main";
-		pixelShaderCreateInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		pixelShaderCreateInfo.module = LoadShader(pixelShaderFilename.c_str(), VK_SHADER_STAGE_FRAGMENT_BIT);
-
-		Shader* shader = new Shader();
-
-		shader->AddShaderStage(vertexShaderCreateInfo);
-		shader->AddShaderStage(pixelShaderCreateInfo);
-
-		VkPipelineShaderStageCreateInfo geometryShaderCreateInfo = {};
-		if (geometryShaderFilename != "NONE")
-		{
-			geometryShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-			geometryShaderCreateInfo.pName = "main";
-			geometryShaderCreateInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-			geometryShaderCreateInfo.module = LoadShader(geometryShaderFilename.c_str(), VK_SHADER_STAGE_GEOMETRY_BIT);
-
-			shader->AddShaderStage(geometryShaderCreateInfo);
-		}
-
-		mLoadedShaders.push_back(shader);
-		
-		return shader;
 	}
 
 	std::string GetFilePath(const std::string& str)
@@ -298,6 +272,8 @@ namespace Utopian::Vk
 			return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
 		else if (suffix == "tese")
 			return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+		else if (suffix == "comp")
+			return VK_SHADER_STAGE_COMPUTE_BIT;
 		else {
 			assert(0 && "Unknown shader stage");
 		}
@@ -571,32 +547,40 @@ namespace Utopian::Vk
 			reflection->vertexDescription->AddBinding(BINDING_0, totalSize, VK_VERTEX_INPUT_RATE_VERTEX);
 	}
 
-   SharedPtr<Shader> ShaderFactory::CreateShaderOnline(const ShaderCreateInfo& shaderCreateInfo)
+   SharedPtr<Shader> ShaderFactory::CreateShader(const ShaderCreateInfo& shaderCreateInfo)
    {
 		SharedPtr<Shader> shader = nullptr;
 
 		/* Vertex shader */
-		SharedPtr<CompiledShader> compiledVertexShader = CompileShader(shaderCreateInfo.vertexShaderPath);
-		if (compiledVertexShader != nullptr)
+		SharedPtr<CompiledShader> compiledVertexShader;
+		if (shaderCreateInfo.vertexShaderPath != "NONE")
 		{
-			VkShaderModuleCreateInfo moduleCreateInfo{};
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
-			moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
+			compiledVertexShader = CompileShader(shaderCreateInfo.vertexShaderPath);
+			if (compiledVertexShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
 
-			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
+			}
 		}
 
 		/* Pixel shader */
-		SharedPtr<CompiledShader> compiledPixelShader = CompileShader(shaderCreateInfo.fragmentShaderPath);
-		if (compiledPixelShader != nullptr)
+		SharedPtr<CompiledShader> compiledPixelShader;
+		if (shaderCreateInfo.fragmentShaderPath != "NONE")
 		{
-			VkShaderModuleCreateInfo moduleCreateInfo{};
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
-			moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
+			compiledPixelShader = CompileShader(shaderCreateInfo.fragmentShaderPath);
+			if (compiledPixelShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
 
-			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
+			}
 		}
 
 		/* Geometry shader */
@@ -647,6 +631,22 @@ namespace Utopian::Vk
 			}
 		}	
 
+		/* Compute shader */
+		SharedPtr<CompiledShader> compiledComputeShader;
+		if (shaderCreateInfo.computeShaderPath != "NONE")
+		{
+			compiledComputeShader = CompileShader(shaderCreateInfo.computeShaderPath);
+			if (compiledComputeShader != nullptr)
+			{
+				VkShaderModuleCreateInfo moduleCreateInfo{};
+				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+				moduleCreateInfo.codeSize = compiledComputeShader->spirvBytecode.size() * sizeof(unsigned int);
+				moduleCreateInfo.pCode = compiledComputeShader->spirvBytecode.data();
+
+				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledComputeShader->shaderModule));
+			}
+		}
+
 		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
 		{
 			shader = std::make_shared<Shader>();
@@ -672,121 +672,12 @@ namespace Utopian::Vk
 			}
 		}
 
-		return shader;
-	}
-
-	SharedPtr<Shader> ShaderFactory::CreateShaderOnline(std::string vertexShaderFilename, std::string pixelShaderFilename, std::string geometryShaderFilename)
-	{
-		SharedPtr<Shader> shader = nullptr;
-
-		/* Vertex shader */
-		SharedPtr<CompiledShader> compiledVertexShader = CompileShader(vertexShaderFilename);
-		if (compiledVertexShader != nullptr)
+		if (compiledComputeShader != nullptr)
 		{
-			VkShaderModuleCreateInfo moduleCreateInfo{};
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.codeSize = compiledVertexShader->spirvBytecode.size() * sizeof(unsigned int);
-			moduleCreateInfo.pCode = compiledVertexShader->spirvBytecode.data();
-
-			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledVertexShader->shaderModule));
-		}
-
-		/* Pixel shader */
-		SharedPtr<CompiledShader> compiledPixelShader = CompileShader(pixelShaderFilename);
-		if (compiledPixelShader != nullptr)
-		{
-			VkShaderModuleCreateInfo moduleCreateInfo{};
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.codeSize = compiledPixelShader->spirvBytecode.size() * sizeof(unsigned int);
-			moduleCreateInfo.pCode = compiledPixelShader->spirvBytecode.data();
-
-			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledPixelShader->shaderModule));
-		}
-
-		/* Geometry shader */
-		SharedPtr<CompiledShader> compiledGeometryShader;
-		if (geometryShaderFilename != "NONE")
-		{
-			compiledGeometryShader = CompileShader(geometryShaderFilename);
-			if (compiledGeometryShader != nullptr)
-			{
-				VkShaderModuleCreateInfo moduleCreateInfo{};
-				moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-				moduleCreateInfo.codeSize = compiledGeometryShader->spirvBytecode.size() * sizeof(unsigned int);
-				moduleCreateInfo.pCode = compiledGeometryShader->spirvBytecode.data();
-
-				Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &compiledGeometryShader->shaderModule));
-			}
-		}
-
-		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
-		{
-			if (geometryShaderFilename != "NONE" && compiledGeometryShader != nullptr)
-			{
-				shader = std::make_shared<Shader>();
-				shader->AddCompiledShader(compiledVertexShader);
-				shader->AddCompiledShader(compiledPixelShader);
-				shader->AddCompiledShader(compiledGeometryShader);
-			}
-			else if (geometryShaderFilename == "NONE")
-			{
-				shader = std::make_shared<Shader>();
-				shader->AddCompiledShader(compiledVertexShader);
-				shader->AddCompiledShader(compiledPixelShader);
-			}
+			shader = std::make_shared<Shader>();
+			shader->AddCompiledShader(compiledComputeShader);
 		}
 
 		return shader;
-	}
-
-	Shader* ShaderFactory::CreateComputeShader(std::string computeShaderFilename)
-	{
-		// Compute shader
-		VkPipelineShaderStageCreateInfo computeShaderCreateInfo = {};
-		computeShaderCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		computeShaderCreateInfo.pName = "main";
-		computeShaderCreateInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
-		computeShaderCreateInfo.module = LoadShader(computeShaderFilename.c_str(), VK_SHADER_STAGE_COMPUTE_BIT);
-
-		Shader* shader = new Shader();
-
-		shader->AddShaderStage(computeShaderCreateInfo);
-
-		mLoadedShaders.push_back(shader);
-		
-		return shader;
-	}
-
-	VkShaderModule ShaderFactory::LoadShader(std::string filename, VkShaderStageFlagBits stage)
-	{
-		std::ifstream is(filename.c_str(), std::ios::binary | std::ios::in | std::ios::ate);
-
-		if (is.is_open())
-		{
-			size_t size = is.tellg();
-			is.seekg(0, std::ios::beg);
-			char* shaderCode = new char[size];
-			is.read(shaderCode, size);
-			is.close();
-
-			assert(size > 0);
-
-			VkShaderModule shaderModule;
-			VkShaderModuleCreateInfo moduleCreateInfo{};
-			moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-			moduleCreateInfo.codeSize = size;
-			moduleCreateInfo.pCode = (uint32_t*)shaderCode;
-
-			Debug::ErrorCheck(vkCreateShaderModule(mDevice->GetVkDevice(), &moduleCreateInfo, NULL, &shaderModule));
-
-			delete[] shaderCode;
-
-			return shaderModule;
-		}
-		else
-		{
-			std::cerr << "Error: Could not open shader file \"" << filename.c_str() << "\"" << std::endl;
-			return nullptr;
-		}
 	}
 }

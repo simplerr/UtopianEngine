@@ -142,11 +142,6 @@ namespace Utopian::Vk
 		vkCmdSetScissor(mHandle, 0, 1, &rect);
 	}
 
-	void CommandBuffer::CmdBindPipeline(ComputePipeline* pipeline)
-	{
-		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetVkHandle());
-	}
-
 	void CommandBuffer::CmdBindPipeline(VkPipeline pipeline)
 	{
 		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -157,7 +152,10 @@ namespace Utopian::Vk
 		if (!pipeline->IsCreated())
 			assert(0);
 
-		vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
+		if (pipeline->IsComputePipeline())
+			vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_COMPUTE, pipeline->GetVkHandle());
+		else
+			vkCmdBindPipeline(mHandle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetVkHandle());
 	}
 
 	void CommandBuffer::CmdBindDescriptorSet(const PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet)

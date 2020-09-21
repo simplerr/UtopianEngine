@@ -4,6 +4,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/ShaderFactory.h"
 #include "core/renderer/RendererUtility.h"
+#include <vulkan/VulkanPrerequisites.h>
 
 namespace Utopian::Vk
 {
@@ -52,11 +53,37 @@ namespace Utopian::Vk
 		: Handle(device, vkDestroyPipeline)
 	{
 		mRenderPass = renderPass;
+		mComputePipeline = false;
 		mCreated = false;
 		mPipelineDesc = pipelineDesc;
 	}
 
 	void Pipeline::Create(Shader* shader, PipelineInterface* pipelineInterface)
+	{
+		if (shader->IsComputeShader())
+		{
+			CreateComputePipeline(shader, pipelineInterface);
+			mComputePipeline = true;
+		}
+		else
+		{
+			CreateGraphicsPipeline(shader, pipelineInterface);
+			mComputePipeline = false;
+		}
+
+		mCreated = true;
+	}
+
+	void Pipeline::CreateComputePipeline(Shader* shader, PipelineInterface* pipelineInterface)
+	{
+		VkComputePipelineCreateInfo createInfo = {};
+		createInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+		createInfo.layout = pipelineInterface->GetPipelineLayout();
+		createInfo.stage = shader->shaderStages[0];
+		vkCreateComputePipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &createInfo, nullptr, &mHandle);
+	}
+
+	void Pipeline::CreateGraphicsPipeline(Shader* shader, PipelineInterface* pipelineInterface)
 	{
 		// The pipeline consists of many stages, where each stage can have different states
 		// Creating a pipeline is simply defining the state for every stage (and some more...)
@@ -122,8 +149,11 @@ namespace Utopian::Vk
 
 		// Create the pipeline
 		Debug::ErrorCheck(vkCreateGraphicsPipelines(GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &mHandle));
+	}
 
-		mCreated = true;
+	bool Pipeline::IsComputePipeline() const
+	{
+		return mComputePipeline;
 	}
 
 	bool Pipeline::IsCreated() const

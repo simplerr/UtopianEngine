@@ -36,7 +36,7 @@ namespace Utopian::Vk
 		VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
 		SharedPtr<VertexDescription> overriddenVertexDescription = nullptr;
 		SharedPtr<VkPipelineTessellationStateCreateInfo> tessellationCreateInfo = nullptr;
-      BlendingType blendingType = BLENDING_NONE;
+		BlendingType blendingType = BLENDING_NONE;
 	};
 
 	/**
@@ -60,12 +60,18 @@ namespace Utopian::Vk
 		/** Returns true if Create() has been called. */
 		bool IsCreated() const;
 
+		/** Returns true if compute pipeline. */
+		bool IsComputePipeline() const;
+
 	private:
-      void SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
-      void SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
+		void SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
+		void SetAlphaBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState);
+		void CreateComputePipeline(Shader* shader, PipelineInterface* pipelineInterface);
+		void CreateGraphicsPipeline(Shader* shader, PipelineInterface* pipelineInterface);
 
 		RenderPass* mRenderPass;
 		PipelineDesc mPipelineDesc;
+		bool mComputePipeline;
 		bool mCreated;
 	};
 }

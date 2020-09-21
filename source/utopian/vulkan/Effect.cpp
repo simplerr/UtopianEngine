@@ -50,7 +50,7 @@ namespace Utopian::Vk
 		// mShaderCreateInfo is only set after SetShaderCreateInfo() has been called.
 		if (mShader == nullptr)
 		{
-			mShader = gShaderFactory().CreateShaderOnline(mShaderCreateInfo);
+			mShader = gShaderFactory().CreateShader(mShaderCreateInfo);
 
 			assert(mShader);
 
@@ -63,7 +63,7 @@ namespace Utopian::Vk
 	bool Effect::RecompileShader()
 	{
 		bool result = false;
-		SharedPtr<Shader> shader = gShaderFactory().CreateShaderOnline(mShaderCreateInfo);
+		SharedPtr<Shader> shader = gShaderFactory().CreateShader(mShaderCreateInfo);
 
 		if (shader != nullptr)
 		{
