@@ -107,6 +107,13 @@ namespace Utopian::Vk
 				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, iter.second.arraySize);
 			}
 
+			// Images
+			for (auto& iter : shader->compiledShaders[i]->reflection.images)
+			{
+				mPipelineInterface->AddStorageImage(iter.second.set, iter.second.binding, VK_SHADER_STAGE_ALL, iter.second.arraySize);
+				mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, iter.second.arraySize);
+			}
+
 			// Push constants
 			for (auto& iter : shader->compiledShaders[i]->reflection.pushConstants)
 			{
@@ -161,6 +168,13 @@ namespace Utopian::Vk
 	{
 		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
 		descriptorSet.BindCombinedImage(name, textureArray.GetDescriptor(), textureArray.GetNumImages());
+		descriptorSet.UpdateDescriptorSets();
+	}
+
+	void Effect::BindImage(std::string name, const Image& image)
+	{
+		DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+		descriptorSet.BindImage(name, image);
 		descriptorSet.UpdateDescriptorSets();
 	}
 

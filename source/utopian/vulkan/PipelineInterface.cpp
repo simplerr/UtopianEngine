@@ -59,6 +59,11 @@ namespace Utopian::Vk
 		AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, descriptorSet, binding, descriptorCount, stageFlags);
 	}
 
+	void PipelineInterface::AddStorageImage(uint32_t descriptorSet, uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount)
+	{
+		AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, descriptorSet, binding, descriptorCount, stageFlags);
+	}
+
 	void PipelineInterface::AddPushConstantRange(uint32_t size, VkShaderStageFlags shaderStage, uint32_t offset)
 	{
 		VkPushConstantRange pushConstantRange = {};

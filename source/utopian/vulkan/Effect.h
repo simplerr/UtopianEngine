@@ -46,6 +46,7 @@ namespace Utopian::Vk
 		void BindCombinedImage(std::string name, const Texture& texture);
 		void BindCombinedImage(std::string name, const Image& image, const Sampler& sampler);
 		void BindCombinedImage(std::string name, const TextureArray& textureArray);
+		void BindImage(std::string name, const Image& image);
 
 		/**
 		 * Returns a descriptor set by index.

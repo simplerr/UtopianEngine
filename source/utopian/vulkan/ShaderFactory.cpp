@@ -468,6 +468,19 @@ namespace Utopian::Vk
 					reflection.combinedSamplers[desc.name] = desc;
 					reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
 				}
+				else if (sampler.isImage())
+				{
+					switch (sampler.dim)
+					{
+						case glslang::Esd1D:	desc.type = UVT_SAMPLER1D; break;
+						case glslang::Esd2D:	desc.type = UVT_SAMPLER2D; break;
+						case glslang::Esd3D:	desc.type = UVT_SAMPLER3D; break;
+						case glslang::EsdCube:	desc.type = UVT_SAMPLERCUBE; break;
+					}
+
+					reflection.images[desc.name] = desc;
+					reflection.nameMappings[desc.name] = NameMapping(desc.set, desc.binding);
+				}
 				else
 				{
 					// Todo: Map uniform variables in UBOs to the correct block (not needed for pipeline layout creation)

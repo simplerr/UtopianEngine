@@ -141,10 +141,47 @@ namespace Utopian::Vk
 		mWriteDescriptorSets.push_back(writeDescriptorSet);
 	}
 
+	void DescriptorSet::BindImage(uint32_t binding, VkImageView imageView, VkImageLayout imageLayout)
+	{
+		/* Check if the VkDescriptorImageInfo already is added to the map.
+		Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
+		Image and Sampler from each other. The same Image should be able to use with
+		different samples and vice versa.
+		*/
+		if (mImageInfoMap.find(binding) != mImageInfoMap.end())
+		{
+			mImageInfoMap[binding].sampler = VK_NULL_HANDLE;
+			mImageInfoMap[binding].imageView = imageView;
+		}
+		else
+		{
+			VkDescriptorImageInfo imageInfo = {};
+			imageInfo.sampler = VK_NULL_HANDLE;
+			imageInfo.imageView = imageView;
+			imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+
+			mImageInfoMap[binding] = imageInfo;
+		}
+
+		VkWriteDescriptorSet writeDescriptorSet = {};
+		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writeDescriptorSet.dstSet = mDescriptorSet;
+		writeDescriptorSet.descriptorCount = 1;
+		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
+		writeDescriptorSet.dstBinding = binding;
+
+		mWriteDescriptorSets.push_back(writeDescriptorSet);
+	}
+
 	void DescriptorSet::BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler)
 	{
-		// Todo
 		BindCombinedImage(binding, image.GetView(), sampler.GetVkHandle(), image.GetFinalLayout());
+	}
+
+	void DescriptorSet::BindImage(uint32_t binding, const Image& image)
+	{
+		BindImage(binding, image.GetView(), image.GetFinalLayout());
 	}
 
 	void DescriptorSet::BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
@@ -175,6 +212,12 @@ namespace Utopian::Vk
 	{
 		assert(mShader != nullptr);
 		BindCombinedImage(mShader->NameToBinding(name), imageView, sampler);
+	}
+
+	void DescriptorSet::BindImage(std::string name, const Image& image)
+	{
+		assert(mShader != nullptr);
+		BindImage(mShader->NameToBinding(name), image);
 	}
 
 	void DescriptorSet::UpdateDescriptorSets()

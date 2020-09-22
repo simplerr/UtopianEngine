@@ -30,6 +30,8 @@ namespace Utopian::Vk
 		void BindCombinedImage(uint32_t binding, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler);
 		void BindCombinedImage(uint32_t binding, VkImageView imageView, VkSampler sampler, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void BindImage(uint32_t binding, VkImageView imageView, VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		void BindImage(uint32_t binding, const Image& image);
 
 		/**
 		 * Functions for binding different types of descriptors by their name. 
@@ -40,6 +42,7 @@ namespace Utopian::Vk
 		void BindCombinedImage(std::string name, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount = 1);
 		void BindCombinedImage(std::string name, const Image& image, const Sampler& sampler);
 		void BindCombinedImage(std::string name, VkImageView imageView, VkSampler sampler);
+		void BindImage(std::string name, const Image& image);
 
 		VkDescriptorSet GetVkHandle() const;
 
