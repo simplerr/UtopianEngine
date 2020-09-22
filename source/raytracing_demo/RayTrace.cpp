@@ -1,5 +1,6 @@
 #include <string>
 #include <time.h>
+#include <vulkan/vulkan_core.h>
 #include "core/Input.h"
 #include "core/Log.h"
 #include "core/renderer/Renderer.h"
@@ -16,6 +17,7 @@
 #include "vulkan/ModelLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "RayTrace.h"
 
@@ -85,17 +87,19 @@ void RayTrace::InitScene()
 	createInfo.name = "Raytrace image";
 	mOutputImage = std::make_shared<Vk::Image>(createInfo, mVulkanApp->GetDevice());
 
-	mRenderTarget = std::make_shared<Vk::RenderTarget>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight());
-	//mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
-	mRenderTarget->SetClearColor(1, 1, 1, 1);
-	mRenderTarget->Create();
+	// Transition to correct layout
+	Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+	mOutputImage->LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_GENERAL);
+	commandBuffer.Flush();
+
+	mSampler = std::make_shared<Vk::Sampler>(mVulkanApp->GetDevice());
 
 	Vk::EffectCreateInfo effectDesc;
 	effectDesc.shaderDesc.computeShaderPath = "source/raytracing_demo/raytrace.comp";
-	mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mRenderTarget->GetRenderPass(), effectDesc);
+	mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), nullptr, effectDesc);
 	mEffect->BindImage("outputImage", *mOutputImage);
 
-	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage->GetView(), mRenderTarget->GetSampler());
+	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage.get(), mSampler.get());
 }
 
 void RayTrace::Update()
@@ -132,26 +136,13 @@ void RayTrace::Draw()
 		mVulkanApp->PrepareFrame();
 
 		// Test rendering
-		//mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
-		Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-		mOutputImage->LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_GENERAL);
-		commandBuffer.Flush();
+		Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
 		commandBuffer.Begin();
 		commandBuffer.CmdBindPipeline(mEffect->GetPipeline());
 		commandBuffer.CmdBindDescriptorSets(mEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
 		commandBuffer.CmdDispatch(mWindow->GetWidth() / 16, mWindow->GetHeight() / 16, 1);
 		commandBuffer.Flush();
-
-		// Test
-		commandBuffer.Begin();
-		mOutputImage->LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-		commandBuffer.Flush();
-
-		//mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mRayTraceComplete);
-
-		// End of test rendering
-		//////////////////////////////////////////
 
 		mImGuiRenderer->Render();
 		gScreenQuadUi().Render(mVulkanApp.get());
