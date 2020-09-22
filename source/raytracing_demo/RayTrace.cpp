@@ -33,7 +33,7 @@ RayTrace::RayTrace(Utopian::Window* window)
 	mVulkanApp->Prepare();
 
 	mRayTraceComplete = std::make_shared<Vk::Semaphore>(mVulkanApp->GetDevice());
-	mVulkanApp->SetWaitSubmitSemaphore(mRayTraceComplete);
+	//mVulkanApp->SetWaitSubmitSemaphore(mRayTraceComplete);
 
 	// Load modules
 	Vk::Device* device = mVulkanApp->GetDevice();
@@ -77,19 +77,24 @@ RayTrace::~RayTrace()
 
 void RayTrace::InitScene()
 {
-	mOutputImage = std::make_shared<Vk::ImageColor>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight(), VK_FORMAT_R16G16B16A16_SFLOAT, "Tonemap image");
+	Vk::IMAGE_CREATE_INFO createInfo;
+	createInfo.width = mWindow->GetWidth();
+	createInfo.height = mWindow->GetHeight();
+	createInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	createInfo.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
+	createInfo.name = "Raytrace image";
+	mOutputImage = std::make_shared<Vk::Image>(createInfo, mVulkanApp->GetDevice());
 
 	mRenderTarget = std::make_shared<Vk::RenderTarget>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight());
-	mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
+	//mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
 	mRenderTarget->SetClearColor(1, 1, 1, 1);
 	mRenderTarget->Create();
 
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-	effectDesc.shaderDesc.fragmentShaderPath = "source/raytracing_demo/raytrace.frag";
+	effectDesc.shaderDesc.computeShaderPath = "source/raytracing_demo/raytrace.comp";
 	mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mRenderTarget->GetRenderPass(), effectDesc);
+	mEffect->BindImage("outputImage", *mOutputImage);
 
-	mTestTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.png");
 	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage->GetView(), mRenderTarget->GetSampler());
 }
 
@@ -127,16 +132,23 @@ void RayTrace::Draw()
 		mVulkanApp->PrepareFrame();
 
 		// Test rendering
-		mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
+		//mRenderTarget->Begin("Tonemap pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
+		Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+		mOutputImage->LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_GENERAL);
+		commandBuffer.Flush();
 
-		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-		//commandBuffer->CmdBindDescriptorSets(mEffect);
+		commandBuffer.Begin();
+		commandBuffer.CmdBindPipeline(mEffect->GetPipeline());
+		commandBuffer.CmdBindDescriptorSets(mEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
+		commandBuffer.CmdDispatch(mWindow->GetWidth() / 16, mWindow->GetHeight() / 16, 1);
+		commandBuffer.Flush();
 
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		// Test
+		commandBuffer.Begin();
+		mOutputImage->LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		commandBuffer.Flush();
 
-		mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mRayTraceComplete);
+		//mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mRayTraceComplete);
 
 		// End of test rendering
 		//////////////////////////////////////////

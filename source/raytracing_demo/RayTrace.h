@@ -33,5 +33,4 @@ private:
 	SharedPtr<Vk::Effect> mEffect;
 	SharedPtr<Vk::Semaphore> mRayTraceComplete;
 	SharedPtr<Vk::Image> mOutputImage;
-	SharedPtr<Vk::Texture> mTestTexture;
 };
