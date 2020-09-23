@@ -1,3 +1,4 @@
+#include <glm/matrix.hpp>
 #include <string>
 #include <time.h>
 #include <vulkan/vulkan_core.h>
@@ -79,6 +80,9 @@ RayTrace::~RayTrace()
 
 void RayTrace::InitScene()
 {
+	mCameraPos = glm::vec3(5, 25, 5);
+	mCameraTarget = glm::vec3(25, 0, 25);
+
 	Vk::IMAGE_CREATE_INFO createInfo;
 	createInfo.width = mWindow->GetWidth();
 	createInfo.height = mWindow->GetHeight();
@@ -94,10 +98,14 @@ void RayTrace::InitScene()
 
 	mSampler = std::make_shared<Vk::Sampler>(mVulkanApp->GetDevice());
 
+	mInputParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
 	Vk::EffectCreateInfo effectDesc;
 	effectDesc.shaderDesc.computeShaderPath = "source/raytracing_demo/raytrace.comp";
 	mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), nullptr, effectDesc);
+
 	mEffect->BindImage("outputImage", *mOutputImage);
+	mEffect->BindUniformBuffer("UBO_input", mInputParameters);
 
 	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage.get(), mSampler.get());
 }
@@ -135,6 +143,11 @@ void RayTrace::Draw()
 
 		mVulkanApp->PrepareFrame();
 
+		// Update uniforms
+		CalculateRays();
+		mInputParameters.data.eye = glm::vec4(mCameraPos, 1.0f);
+		mInputParameters.UpdateMemory();
+
 		// Test rendering
 		Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
@@ -153,6 +166,42 @@ void RayTrace::Draw()
 		mVulkanApp->SubmitFrame();
 		gTimer().FrameBegin();
 	}
+}
+
+void RayTrace::CalculateRays()
+{
+	// Camera/view matrix
+	glm::mat4 viewMatrix = glm::lookAt(mCameraPos, mCameraTarget, glm::vec3(0, -1, 0));
+
+	// Projection matrix
+	glm::mat4 projectionMatrix = glm::perspective(90, mWindow->GetWidth() / mWindow->GetHeight(), 1, 2);
+
+	// Get inverse of view * proj
+	glm::mat4 inverseViewProjection = projectionMatrix * viewMatrix;
+	inverseViewProjection = glm::inverse(inverseViewProjection);
+
+	glm::vec4 cameraPos = glm::vec4(mCameraPos, 0.0f);
+	// Calculate rays
+	glm::vec4 ray00 = inverseViewProjection * glm::vec4(-1, -1, 0, 1);
+	ray00 = ray00 / ray00.w;
+	ray00 -= cameraPos;
+
+	glm::vec4 ray10 = inverseViewProjection * glm::vec4(+1, -1, 0, 1);
+	ray10 = ray10 / ray10.w;
+	ray10 -= cameraPos;
+
+	glm::vec4 ray01 = inverseViewProjection * glm::vec4(-1, +1, 0, 1);
+	ray01 = ray01 / ray01.w;
+	ray01 -= cameraPos;
+
+	glm::vec4 ray11 = inverseViewProjection * glm::vec4(+1, +1, 0, 1);
+	ray11 = ray11 / ray11.w;
+	ray11 -= cameraPos;
+
+	mInputParameters.data.ray00 = ray00;
+	mInputParameters.data.ray01 = ray01;
+	mInputParameters.data.ray10 = ray10;
+	mInputParameters.data.ray11 = ray11;
 }
 
 void RayTrace::Run()
