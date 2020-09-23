@@ -123,16 +123,16 @@ namespace Utopian::Vk
 		return ShaderFactory::Instance();
 	}
 
-	Shader::Shader()
+	Shader::Shader(Device* device)
 	{
-
+		mDevice = device;
 	}
 
 	Shader::~Shader()
 	{
       for (auto shader : compiledShaders)
       {
-         vkDestroyShaderModule(gRenderer().GetDevice()->GetVkDevice(), shader->shaderModule, nullptr);
+         vkDestroyShaderModule(mDevice->GetVkDevice(), shader->shaderModule, nullptr);
       }
 	}
 
@@ -662,7 +662,7 @@ namespace Utopian::Vk
 
 		if (compiledVertexShader != nullptr && compiledPixelShader != nullptr)
 		{
-			shader = std::make_shared<Shader>();
+			shader = std::make_shared<Shader>(mDevice);
 			shader->AddCompiledShader(compiledVertexShader);
 			shader->AddCompiledShader(compiledPixelShader);
 
@@ -687,7 +687,7 @@ namespace Utopian::Vk
 
 		if (compiledComputeShader != nullptr)
 		{
-			shader = std::make_shared<Shader>();
+			shader = std::make_shared<Shader>(mDevice);
 			shader->AddCompiledShader(compiledComputeShader);
 		}
 

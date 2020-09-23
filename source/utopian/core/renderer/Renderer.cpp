@@ -75,7 +75,7 @@ namespace Utopian
 		// Cannot rely on instance group being destroyed when going out of scope since that happens
 		// after the call to GarbageCollect()
 		ClearInstanceGroups();
-		GarbageCollect();
+		GarbageCollectUiTextures();
 	}
 
 	void Renderer::PostWorldInit()
@@ -377,20 +377,9 @@ namespace Utopian
 		mSceneInfo.cameras.push_back(camera);
 	}
 
-	void Renderer::GarbageCollect()
+	void Renderer::GarbageCollectUiTextures()
 	{
 		mImGuiRenderer->GarbageCollect();
-
-		if (mBuffersToFree.size() > 0)
-		{
-			mBuffersToFree.clear();
-		}
-
-		for (auto& pipeline : mPipelinesToFree)
-			vkDestroyPipeline(GetDevice()->GetVkDevice(), pipeline, nullptr);
-
-		if (mPipelinesToFree.size() > 0)
-			mPipelinesToFree.clear();
 	}
 
 	void Renderer::RemoveRenderable(Renderable* renderable)
@@ -429,17 +418,6 @@ namespace Utopian
 			}
 		}
 	}
-
-	void Renderer::QueueDestroy(SharedPtr<Vk::Buffer>& buffer)
-	{
-		mBuffersToFree.push_back(buffer);
-		buffer = nullptr;
-	}
-
-	void Renderer::QueueDestroy(VkPipeline pipeline)
-	{
-		mPipelinesToFree.push_back(pipeline);
-    }
 
 	void Renderer::UpdateInstanceAltitudes()
 	{

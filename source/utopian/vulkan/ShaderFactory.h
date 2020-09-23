@@ -103,7 +103,7 @@ namespace Utopian::Vk
 	class Shader
 	{
 	public:
-		Shader();
+		Shader(Device* device);
 		~Shader();
 
 		void AddShaderStage(VkPipelineShaderStageCreateInfo shaderStageCreateInfo);
@@ -118,6 +118,9 @@ namespace Utopian::Vk
 
 		std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
 		std::vector<SharedPtr<CompiledShader>> compiledShaders;
+
+	private:
+		Device* mDevice;
 	};
 
 	class ShaderFactory : public Module<ShaderFactory>

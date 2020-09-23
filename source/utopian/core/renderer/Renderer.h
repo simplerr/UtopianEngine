@@ -91,12 +91,8 @@ namespace Utopian
 		void SaveInstancesToFile(const std::string& filename);
 		void LoadInstancesFromFile(const std::string& filename);
 
-		/** Adds the buffers the a garbage collect list that will be destroyed once no command buffer is active. */
-		void QueueDestroy(SharedPtr<Vk::Buffer>& buffer);
-		void QueueDestroy(VkPipeline pipeline);
-
-		/** Destroys all Vulkan resources that have been added to the garbage collect list. */
-		void GarbageCollect();
+		/** Garbage collects ImGui textures. */
+		void GarbageCollectUiTextures();
 
 		// Note: Todo: This is called from Terrain when the heightmap changes
 		void UpdateInstanceAltitudes();
@@ -122,8 +118,6 @@ namespace Utopian
 		Vk::Device* mDevice;
 		Camera* mMainCamera;
 		uint32_t mNextNodeId;
-		std::vector<SharedPtr<Vk::Buffer>> mBuffersToFree;
-		std::vector<VkPipeline> mPipelinesToFree;
 
 		// Where does this belong?
 	public:

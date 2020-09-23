@@ -69,9 +69,9 @@ namespace Utopian::Vk
 		{
 			mShader = shader;
 
-		   // Destroy pipeline if already created
-         if (mPipeline->IsCreated())
-            gRenderer().QueueDestroy(mPipeline->GetVkHandle());
+		// Destroy pipeline if already created
+		if (mPipeline->IsCreated())
+			mDevice->QueueDestroy(mPipeline->GetVkHandle());
 
 			CreatePipeline();
 			result = true;

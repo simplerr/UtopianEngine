@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "vulkan/VulkanPrerequisites.h"
+#include "utopian/utility/Common.h"
 #include "../external/vk_mem_alloc.h"
 
 namespace Utopian::Vk
@@ -32,6 +33,13 @@ namespace Utopian::Vk
 		 * @note Currently only one queue is fetched from the device.
 		 */
 		Queue* GetQueue() const;
+
+		/** Adds the buffers the a garbage collect list that will be destroyed once no command buffer is active. */
+		void QueueDestroy(SharedPtr<Vk::Buffer>& buffer);
+		void QueueDestroy(VkPipeline pipeline);
+
+		/** Destroys all Vulkan resources that have been added to the garbage collect list. */
+		void GarbageCollect();
 
 		/* Memory management. */
 		VmaAllocation AllocateMemory(Image* image, VkMemoryPropertyFlags flags);
@@ -85,5 +93,9 @@ namespace Utopian::Vk
 		CommandPool* mCommandPool = nullptr;
 		Queue* mQueue = nullptr;
 		bool mDebugMarkersEnabled = false;
+
+		// Garbage collection
+		std::vector<SharedPtr<Vk::Buffer>> mBuffersToFree;
+		std::vector<VkPipeline> mPipelinesToFree;
 	};
 }

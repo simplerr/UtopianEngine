@@ -85,6 +85,9 @@ namespace Utopian::Vk
 		if (stat(shaderCreateInfo.teseShaderPath.c_str(), &file_details) == 0)
 			latest = glm::max(latest, file_details.st_mtime);
 
+		if (stat(shaderCreateInfo.computeShaderPath.c_str(), &file_details) == 0)
+			latest = glm::max(latest, file_details.st_mtime);
+
 		//printf("Last modified time: %s", ctime(&latest));
 		return latest;
 	}

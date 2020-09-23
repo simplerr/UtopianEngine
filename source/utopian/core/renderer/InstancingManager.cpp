@@ -162,7 +162,7 @@ namespace Utopian
 		mInstances.clear();
 		mInstanceData.clear();
 
-		gRenderer().QueueDestroy(mInstanceBuffer);
+		gRenderer().GetDevice()->QueueDestroy(mInstanceBuffer);
 	}
 
 	void InstanceGroup::RemoveInstancesWithinRadius(glm::vec3 position, float radius)
@@ -203,7 +203,7 @@ namespace Utopian
 		// mapping and updating the memory is not enough.
 		if (GetNumInstances() != 0)
 		{
-			gRenderer().QueueDestroy(mInstanceBuffer);
+			gRenderer().GetDevice()->QueueDestroy(mInstanceBuffer);
 
 			Vk::BUFFER_CREATE_INFO createInfo;
 			createInfo.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;

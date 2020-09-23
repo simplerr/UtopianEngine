@@ -54,6 +54,8 @@ namespace Utopian::Vk
 		delete mCommandPool;
 		delete mQueue;
 
+		GarbageCollect();
+
 		vmaDestroyAllocator(mAllocator);
 		vkDestroyDevice(mDevice, nullptr);
 	}
@@ -215,6 +217,31 @@ namespace Utopian::Vk
 	Queue* Device::GetQueue() const
 	{
 		return mQueue;
+	}
+
+	void Device::QueueDestroy(SharedPtr<Vk::Buffer>& buffer)
+	{
+		mBuffersToFree.push_back(buffer);
+		buffer = nullptr;
+	}
+
+	void Device::QueueDestroy(VkPipeline pipeline)
+	{
+		mPipelinesToFree.push_back(pipeline);
+    }
+
+	void Device::GarbageCollect()
+	{
+		if (mBuffersToFree.size() > 0)
+		{
+			mBuffersToFree.clear();
+		}
+
+		for (auto& pipeline : mPipelinesToFree)
+			vkDestroyPipeline(GetVkDevice(), pipeline, nullptr);
+
+		if (mPipelinesToFree.size() > 0)
+			mPipelinesToFree.clear();
 	}
 
 	VmaAllocation Device::AllocateMemory(Image* image, VkMemoryPropertyFlags flags)

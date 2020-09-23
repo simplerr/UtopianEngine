@@ -83,7 +83,7 @@ namespace Utopian
 			VkDeviceSize vertexBufferSize = totalNumVertices * sizeof(Im3d::VertexData);
 
 			mVertexBuffer->UnmapMemory();
-			gRenderer().QueueDestroy(mVertexBuffer);
+			mVulkanApp->GetDevice()->QueueDestroy(mVertexBuffer);
 			mVertexBuffer = std::make_shared<Vk::Buffer>(mVulkanApp->GetDevice(), "Im3d vertex buffer");
 
 			mVertexBuffer->Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, vertexBufferSize);
