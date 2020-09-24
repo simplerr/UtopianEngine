@@ -100,6 +100,13 @@ namespace Utopian::Vk
 				mLayerViews.push_back(layerView);
 			}
 		}
+
+		if (createInfo.transitionToFinalLayout)
+		{
+			Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+			LayoutTransition(commandBuffer, GetFinalLayout());
+			commandBuffer.Flush();
+		}
 	}
 
 	void Image::CreateImage(VkImageCreateInfo imageCreateInfo, VkMemoryPropertyFlags properties)
@@ -355,6 +362,20 @@ namespace Utopian::Vk
 		createInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		createInfo.aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
 		createInfo.name = debugName;
+		CreateInternal(createInfo, device);
+	}
+
+	ImageStorage::ImageStorage(Device* device, uint32_t width, uint32_t height, std::string debugName, VkFormat format)
+		: Image(device)
+	{
+		IMAGE_CREATE_INFO createInfo;
+		createInfo.width = width;
+		createInfo.height = height;
+		createInfo.format = format;
+		createInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		createInfo.name = debugName;
+		createInfo.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		createInfo.transitionToFinalLayout = true;
 		CreateInternal(createInfo, device);
 	}
 }

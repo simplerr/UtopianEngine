@@ -23,6 +23,7 @@ namespace Utopian::Vk
 		uint32_t arrayLayers = 1;
 		uint32_t mipLevels = 1;
 		std::string name = "Unnamed Image";
+		bool transitionToFinalLayout = false;
 	};
 
 	/** Wrapper for VkImage and VkImageView. */
@@ -93,5 +94,12 @@ namespace Utopian::Vk
 	{
 	public:
 		ImageDepth(Device* device, uint32_t width, uint32_t height, VkFormat format, std::string debugName, uint32_t arrayLayers = 1);
+	};
+
+	/** An image with flags corresponding to a storage image. */
+	class ImageStorage : public Image
+	{
+	public:
+		ImageStorage(Device* device, uint32_t width, uint32_t height, std::string debugName, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
 	};
 }

@@ -7,18 +7,6 @@
 
 namespace Utopian
 {
-	struct CopyImageInfo
-	{
-		// Attributes describing the destination image
-		uint32_t width;
-		uint32_t height;
-		VkFormat format;
-		VkImageTiling tiling;
-		VkImageUsageFlags usage;
-		VkMemoryPropertyFlags memoryProperties;
-		VkImageLayout finalImageLayout;
-	};
-
 	class RendererUtility : public Module<RendererUtility>
 	{
 	public:
@@ -31,9 +19,7 @@ namespace Utopian
 
 		/** Functions for copying images. */
 		void CopyImage(Vk::Device* device, Vk::Image& dstImage, Vk::Image& srcImage);
-
 		void SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height);
-
 		SharedPtr<Vk::Image> CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, uint32_t width, uint32_t height, VkFormat format);
 
 	private:

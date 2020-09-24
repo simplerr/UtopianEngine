@@ -83,26 +83,14 @@ void RayTrace::InitScene()
 	mCameraPos = glm::vec3(5, 25, 5);
 	mCameraTarget = glm::vec3(25, 0, 25);
 
-	Vk::IMAGE_CREATE_INFO createInfo;
-	createInfo.width = mWindow->GetWidth();
-	createInfo.height = mWindow->GetHeight();
-	createInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-	createInfo.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
-	createInfo.name = "Raytrace image";
-	mOutputImage = std::make_shared<Vk::Image>(createInfo, mVulkanApp->GetDevice());
-
-	// Transition to correct layout
-	Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-	mOutputImage->LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_GENERAL);
-	commandBuffer.Flush();
-
 	mSampler = std::make_shared<Vk::Sampler>(mVulkanApp->GetDevice());
-
-	mInputParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mOutputImage = std::make_shared<Vk::ImageStorage>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight(), "Raytrace image");
 
 	Vk::EffectCreateInfo effectDesc;
 	effectDesc.shaderDesc.computeShaderPath = "source/raytracing_demo/raytrace.comp";
-	mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), nullptr, effectDesc);
+	mEffect = Vk::Effect::Create(mVulkanApp->GetDevice(), nullptr, effectDesc);
+
+	mInputParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 	mEffect->BindImage("outputImage", *mOutputImage);
 	mEffect->BindUniformBuffer("UBO_input", mInputParameters);
