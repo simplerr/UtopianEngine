@@ -91,25 +91,23 @@ void RayTrace::InitScene()
 	mEffect = Vk::Effect::Create(mVulkanApp->GetDevice(), nullptr, effectDesc);
 
 	mInputParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mSettingParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 	mEffect->BindImage("outputImage", *mOutputImage);
 	mEffect->BindUniformBuffer("UBO_input", mInputParameters);
+	mEffect->BindUniformBuffer("UBO_settings", mSettingParameters);
 
 	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage.get(), mSampler.get());
+
+	mSettingParameters.data.maxTraceDepth = 4;
 }
 
 void RayTrace::Update()
 {
 	mImGuiRenderer->NewFrame();
 
-	ImGuiRenderer::BeginWindow("Raytracing demo", glm::vec2(10, 150), 300.0f);
-
-	static bool shadows = false, normals = false, ssao = false;
-	ImGui::Checkbox("Shadows", &shadows);
-	ImGui::Checkbox("Normal mapping", &normals);
-	ImGui::Checkbox("SSAO", &ssao);
-	ImGui::Text("X: %f, Y: %f", gInput().GetMousePosition().x, gInput().GetMousePosition().y);
-
+	ImGuiRenderer::BeginWindow("Raytracing Demo", glm::vec2(10, 150), 300.0f);
+	ImGui::SliderInt("Max trace depth", &mSettingParameters.data.maxTraceDepth, 1, 8);
 	ImGuiRenderer::EndWindow();
 
 	// Recompile shaders
@@ -137,6 +135,7 @@ void RayTrace::Draw()
 		CalculateRays();
 		mInputParameters.data.eye = glm::vec4(mCamera->GetPosition(), 1.0f);
 		mInputParameters.UpdateMemory();
+		mSettingParameters.UpdateMemory();
 
 		// Test rendering
 		Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);

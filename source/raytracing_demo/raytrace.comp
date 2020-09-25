@@ -3,6 +3,14 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_ARB_shading_language_420pack : enable
 
+#define DIRECTIONAL_LIGHT 0
+#define POINT_LIGHT 1 
+#define SPOT_LIGHT 2
+#define MAX_SCENE_BOUNDS 100000.0
+#define TRACE_DEPTH 6
+#define REFLECTION_RAY 1
+#define REFRACTION_RAY 2
+
 layout (local_size_x = 16, local_size_y = 16) in;
 
 layout (set = 0, binding = 0, rgba8) uniform writeonly image2D outputImage;
@@ -14,7 +22,12 @@ layout (std140, set = 0, binding = 1) uniform UBO_input
     vec4 ray01;
     vec4 ray10;
     vec4 ray11;
-} input_ubo;
+} camera_ubo;
+
+layout (std140, set = 0, binding = 2) uniform UBO_settings
+{
+	int maxTraceDepth;
+} settings_ubo;
 
 struct Ray
 {
@@ -78,24 +91,10 @@ struct Sphere {
 	Material material;
 };
 
-#define DIRECTIONAL_LIGHT 0
-#define POINT_LIGHT 1 
-#define SPOT_LIGHT 2
-
-#define MAX_SCENE_BOUNDS 100000.0
-#define TRACE_DEPTH 6
-
-// Ray types
-#define REFLECTION_RAY 1
-#define REFRACTION_RAY 2
-
-const float side = 50.0f;
-
-// Temporary
-const int maxTraceDepth = 4;
 const int numLights = 1;
 const int numBoxes = 6;
 const int numSpheres = 5;
+const float side = 50.0f;
 
 Box boxList[] = {
 	{vec3(0, -0.1, 0), vec3(side, 0.0, side), { vec3(0.3, 0.3, 0.3), 1, true, 1}},
@@ -197,7 +196,7 @@ bool intersectBoxes(vec3 origin, vec3 dir, out hitinfo info) {
 			info.normal = calculateBoxNormal(info.intersection, info.index);
 			info.material = GetMaterialColor(info.intersection, boxList[i].material);
 			info.type = 1;
-			info.eyeDirection = normalize(input_ubo.eye.xyz - info.intersection);
+			info.eyeDirection = normalize(camera_ubo.eye.xyz - info.intersection);
 			info.reflectivity = boxList[i].material.reflectivity;
 			info.isDiffuse = boxList[i].material.isDiffuse;
 
@@ -262,7 +261,7 @@ bool intersectSpheres(vec3 origin, vec3 dir, out hitinfo info) {
 			info.index = i;
 			info.intersection = origin + dir * info.lambda.x;
 			info.normal = normalize(info.intersection - sphereList[info.index].center);
-			info.eyeDirection = normalize(input_ubo.eye.xyz - info.intersection);
+			info.eyeDirection = normalize(camera_ubo.eye.xyz - info.intersection);
 			info.material = GetMaterialColor(info.intersection, sphereList[info.index].material);
 			info.type = 0;
 			info.reflectivity = sphereList[info.index].material.reflectivity;
@@ -457,7 +456,7 @@ vec3 RayTrace(Ray ray)
 		if(closestObjectIntersection(stack[currentNode].ray.origin, stack[currentNode].ray.direction, intersectInfo)) 
 		{
 			// Only create new rays if max depth isn't exceeded
-			if(!intersectInfo.isDiffuse && intersectInfo.type != 2 && stack[currentNode].depth < maxTraceDepth) // && 0 == 1
+			if(!intersectInfo.isDiffuse && intersectInfo.type != 2 && stack[currentNode].depth < settings_ubo.maxTraceDepth) // && 0 == 1
 			{
 				// [TODO] Compute the diffuse color even if it reflects and refracts
 				stack[currentNode].color = CalculateColor(intersectInfo);
@@ -531,14 +530,14 @@ void main(void)
     ivec2 dim = imageSize(outputImage);
     vec2 uv = vec2(gl_GlobalInvocationID.xy) / dim;
 
-    vec3 ray00 = input_ubo.ray00.xyz;
-    vec3 ray01 = input_ubo.ray01.xyz;
-    vec3 ray10 = input_ubo.ray10.xyz;
-    vec3 ray11 = input_ubo.ray11.xyz;
+    vec3 ray00 = camera_ubo.ray00.xyz;
+    vec3 ray01 = camera_ubo.ray01.xyz;
+    vec3 ray10 = camera_ubo.ray10.xyz;
+    vec3 ray11 = camera_ubo.ray11.xyz;
 
     vec3 rayDir = mix(mix(ray00, ray01, uv.y), mix(ray10, ray11, uv.y), uv.x);
 
-    Ray ray = {input_ubo.eye.xyz, normalize(rayDir), 0};
+    Ray ray = {camera_ubo.eye.xyz, normalize(rayDir), 0};
     vec3 color = RayTrace(ray);
 
     imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), vec4(color, 1.0f));

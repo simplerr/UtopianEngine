@@ -24,6 +24,10 @@ public:
 		UNIFORM_PARAM(glm::vec4, ray11)
 	UNIFORM_BLOCK_END()
 
+	UNIFORM_BLOCK_BEGIN(SettingsParameters)
+		UNIFORM_PARAM(int, maxTraceDepth)
+	UNIFORM_BLOCK_END()
+
 	RayTrace(Utopian::Window* window);
 	~RayTrace();
 
@@ -49,4 +53,5 @@ private:
 
 	SharedPtr<MiniCamera> mCamera;
 	InputParameters mInputParameters;
+	SettingsParameters mSettingParameters;
 };
