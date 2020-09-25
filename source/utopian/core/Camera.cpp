@@ -1,7 +1,7 @@
 #include "core/Camera.h"
 #include "core/Window.h"
 #include "vulkan/Debug.h"
-#include "../external/glm/glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 #include "core/Input.h"
 #include "core/renderer/Renderer.h"
 

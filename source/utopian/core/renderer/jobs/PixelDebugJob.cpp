@@ -8,7 +8,7 @@
 #include "core/Camera.h"
 #include "core/renderer/Renderer.h"
 #include "im3d/im3d.h"
-#include "../external/glm/glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian
 {

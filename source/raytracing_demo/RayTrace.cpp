@@ -1,3 +1,4 @@
+#include "RayTrace.h"
 #include <glm/matrix.hpp>
 #include <string>
 #include <time.h>
@@ -20,7 +21,7 @@
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/CommandBuffer.h"
-#include "RayTrace.h"
+#include "core/MiniCamera.h"
 
 RayTrace::RayTrace(Utopian::Window* window)
 	: mWindow(window)
@@ -80,8 +81,7 @@ RayTrace::~RayTrace()
 
 void RayTrace::InitScene()
 {
-	mCameraPos = glm::vec3(5, 25, 5);
-	mCameraTarget = glm::vec3(25, 0, 25);
+	mCamera = std::make_shared<MiniCamera>(glm::vec3(5, 25, 5), glm::vec3(25, 0, 25), 1.0f, mWindow->GetWidth(), mWindow->GetHeight());
 
 	mSampler = std::make_shared<Vk::Sampler>(mVulkanApp->GetDevice());
 	mOutputImage = std::make_shared<Vk::ImageStorage>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight(), "Raytrace image");
@@ -118,6 +118,8 @@ void RayTrace::Update()
 		Vk::gEffectManager().RecompileModifiedShaders();
 	}
 
+	mCamera->Update();
+
 	gProfiler().Update();
 
 	mImGuiRenderer->EndFrame();
@@ -133,7 +135,7 @@ void RayTrace::Draw()
 
 		// Update uniforms
 		CalculateRays();
-		mInputParameters.data.eye = glm::vec4(mCameraPos, 1.0f);
+		mInputParameters.data.eye = glm::vec4(mCamera->GetPosition(), 1.0f);
 		mInputParameters.UpdateMemory();
 
 		// Test rendering
@@ -158,18 +160,9 @@ void RayTrace::Draw()
 
 void RayTrace::CalculateRays()
 {
-	// Camera/view matrix
-	glm::mat4 viewMatrix = glm::lookAt(mCameraPos, mCameraTarget, glm::vec3(0, -1, 0));
+	glm::mat4 inverseViewProjection = glm::inverse(mCamera->GetProjection() * mCamera->GetView());
 
-	// Projection matrix
-	glm::mat4 projectionMatrix = glm::perspective(90, mWindow->GetWidth() / mWindow->GetHeight(), 1, 2);
-
-	// Get inverse of view * proj
-	glm::mat4 inverseViewProjection = projectionMatrix * viewMatrix;
-	inverseViewProjection = glm::inverse(inverseViewProjection);
-
-	glm::vec4 cameraPos = glm::vec4(mCameraPos, 0.0f);
-	// Calculate rays
+	glm::vec4 cameraPos = glm::vec4(mCamera->GetPosition(), 0.0f);
 	glm::vec4 ray00 = inverseViewProjection * glm::vec4(-1, -1, 0, 1);
 	ray00 = ray00 / ray00.w;
 	ray00 -= cameraPos;

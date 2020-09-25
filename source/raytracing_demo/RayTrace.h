@@ -11,6 +11,8 @@
 
 using namespace Utopian;
 
+class MiniCamera;
+
 class RayTrace
 {
 public:
@@ -45,8 +47,6 @@ private:
 	SharedPtr<Vk::Image> mOutputImage;
 	SharedPtr<Vk::Sampler> mSampler;
 
-
+	SharedPtr<MiniCamera> mCamera;
 	InputParameters mInputParameters;
-	glm::vec3 mCameraPos;
-	glm::vec3 mCameraTarget;
 };
