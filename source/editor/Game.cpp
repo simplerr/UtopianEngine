@@ -19,6 +19,10 @@ Game::Game(Utopian::Window* window)
 
 	// Start Utopian Engine
 	Utopian::gEngine().Start(window, "Utopian Engine (v0.2)");
+	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
+	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>());
+	Utopian::gEngine().StartModules();
+
 	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
 	Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
 	Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);

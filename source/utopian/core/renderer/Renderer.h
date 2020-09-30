@@ -91,12 +91,10 @@ namespace Utopian
 		void SaveInstancesToFile(const std::string& filename);
 		void LoadInstancesFromFile(const std::string& filename);
 
-		/** Garbage collects ImGui textures. */
-		void GarbageCollectUiTextures();
-
 		// Note: Todo: This is called from Terrain when the heightmap changes
 		void UpdateInstanceAltitudes();
 
+		void SetUiOverlay(ImGuiRenderer* imguiRenderer);
 		ImGuiRenderer* GetUiOverlay();
 
 		uint32_t GetWindowWidth() const;
@@ -117,12 +115,12 @@ namespace Utopian
 		Vk::VulkanApp* mVulkanApp;
 		Vk::Device* mDevice;
 		Camera* mMainCamera;
+		ImGuiRenderer* mImGuiRenderer;
 		uint32_t mNextNodeId;
 
 		// Where does this belong?
 	public:
 		SharedPtr<Im3dRenderer> mIm3dRenderer = nullptr;
-		SharedPtr<ImGuiRenderer> mImGuiRenderer = nullptr;
 	};
 
 	Renderer& gRenderer();

@@ -22,6 +22,7 @@
 #include "vulkan/handles/Sampler.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "core/MiniCamera.h"
+#include "core/Engine.h"
 
 RayTrace::RayTrace(Utopian::Window* window)
 	: mWindow(window)
@@ -31,52 +32,32 @@ RayTrace::RayTrace(Utopian::Window* window)
 	Utopian::Vk::Debug::TogglePerformanceWarnings();
 	Utopian::Vk::Debug::SetupDebugLayers();
 
-	gLog().Start();
+	// Start Utopian Engine
+	Utopian::gEngine().Start(window, "Raytrace demo");
+	Utopian::gEngine().StartModules();
+	Utopian::gEngine().RegisterUpdateCallback(&RayTrace::UpdateCallback, this);
+	Utopian::gEngine().RegisterRenderCallback(&RayTrace::DrawCallback, this);
+	Utopian::gEngine().RegisterDestroyCallback(&RayTrace::DestroyCallback, this);
 
-	mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
-	mVulkanApp->Prepare();
+	mVulkanApp = Utopian::gEngine().GetVulkanApp();
 
 	mRayTraceComplete = std::make_shared<Vk::Semaphore>(mVulkanApp->GetDevice());
 	//mVulkanApp->SetWaitSubmitSemaphore(mRayTraceComplete);
-
-	// Load modules
-	Vk::Device* device = mVulkanApp->GetDevice();
-	Vk::gEffectManager().Start();
-	Vk::gTextureLoader().Start(device);
-	Vk::gModelLoader().Start(device);
-	Vk::gShaderFactory().Start(device);
-	Vk::gShaderFactory().AddIncludeDirectory("data/shaders/include");
-
-	gInput().Start();
-	gTimer().Start();
-	gLuaManager().Start();
-	gProfiler().Start(mVulkanApp.get());
-	gRendererUtility().Start();
-	gScreenQuadUi().Start(mVulkanApp.get());
-
-	mImGuiRenderer = std::make_shared<ImGuiRenderer>(mVulkanApp.get(), mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 	InitScene();
 }
 
 RayTrace::~RayTrace()
 {
-	// Vulkan handles cannot be destroyed when they are in use on the GPU
-	while (!mVulkanApp->PreviousFrameComplete())
-	{
-	}
+	Utopian::gEngine().Destroy();
+}
 
-	Vk::gShaderFactory().Destroy();
-	Vk::gEffectManager().Destroy();
-	Vk::gTextureLoader().Destroy();
-	Vk::gModelLoader().Destroy();
-
-	gTimer().Destroy();
-	gInput().Destroy();
-	gLuaManager().Destroy();
-	gScreenQuadUi().Destroy();
-	gProfiler().Destroy();
-	gRendererUtility().Destroy();
+void RayTrace::DestroyCallback()
+{
+	mEffect = nullptr;
+	mRayTraceComplete = nullptr;
+	mOutputImage = nullptr;
+	mSampler = nullptr;
 }
 
 void RayTrace::InitScene()
@@ -102,10 +83,8 @@ void RayTrace::InitScene()
 	mSettingParameters.data.maxTraceDepth = 4;
 }
 
-void RayTrace::Update()
+void RayTrace::UpdateCallback()
 {
-	mImGuiRenderer->NewFrame();
-
 	ImGuiRenderer::BeginWindow("Raytracing Demo", glm::vec2(10, 150), 300.0f);
 	ImGui::SliderInt("Max trace depth", &mSettingParameters.data.maxTraceDepth, 1, 8);
 	ImGuiRenderer::EndWindow();
@@ -117,44 +96,27 @@ void RayTrace::Update()
 	}
 
 	mCamera->Update();
-
-	gProfiler().Update();
-
-	mImGuiRenderer->EndFrame();
 }
 
-void RayTrace::Draw()
+void RayTrace::DrawCallback()
 {
-	if (mVulkanApp->PreviousFrameComplete())
-	{
-		gTimer().FrameEnd();
+	// Update uniforms
+	CalculateRays();
+	mInputParameters.data.eye = glm::vec4(mCamera->GetPosition(), 1.0f);
+	mInputParameters.UpdateMemory();
+	mSettingParameters.UpdateMemory();
 
-		mVulkanApp->PrepareFrame();
+	// Test rendering
+	Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
-		// Update uniforms
-		CalculateRays();
-		mInputParameters.data.eye = glm::vec4(mCamera->GetPosition(), 1.0f);
-		mInputParameters.UpdateMemory();
-		mSettingParameters.UpdateMemory();
+	commandBuffer.Begin();
+	commandBuffer.CmdBindPipeline(mEffect->GetPipeline());
+	commandBuffer.CmdBindDescriptorSets(mEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
+	commandBuffer.CmdDispatch(mWindow->GetWidth() / 16, mWindow->GetHeight() / 16, 1);
+	commandBuffer.Flush();
 
-		// Test rendering
-		Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-		commandBuffer.Begin();
-		commandBuffer.CmdBindPipeline(mEffect->GetPipeline());
-		commandBuffer.CmdBindDescriptorSets(mEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
-		commandBuffer.CmdDispatch(mWindow->GetWidth() / 16, mWindow->GetHeight() / 16, 1);
-		commandBuffer.Flush();
-
-		mImGuiRenderer->Render();
-		gScreenQuadUi().Render(mVulkanApp.get());
-
-		// Present to screen
-		mVulkanApp->Render();
-
-		mVulkanApp->SubmitFrame();
-		gTimer().FrameBegin();
-	}
+	// Todo: Should be in Engine somewhere
+	gScreenQuadUi().Render(mVulkanApp);
 }
 
 void RayTrace::CalculateRays()
@@ -186,25 +148,13 @@ void RayTrace::CalculateRays()
 
 void RayTrace::Run()
 {
-	while (true)
-		{
-			bool closeWindow = mWindow->DispatchMessages();
-
-			if (!closeWindow)
-			{
-				Update();
-				Draw();
-				Utopian::gInput().Update(0);
-			}
-			else
-			{
-				break;
-			}
-		}
+	Utopian::gEngine().Run();
 }
 
 void RayTrace::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
+
 	switch (uMsg)
 	{
 	case WM_CLOSE:
@@ -212,7 +162,4 @@ void RayTrace::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		PostQuitMessage(0);
 		break;
 	}
-
-	mVulkanApp->HandleMessages(hWnd, uMsg, wParam, lParam);
-	gInput().HandleMessages(uMsg, wParam, lParam);
 }

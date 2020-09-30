@@ -65,7 +65,6 @@ namespace Utopian
 
 		// Todo: Figure out where these belong
 		mIm3dRenderer = std::make_shared<Im3dRenderer>(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
-		mImGuiRenderer = std::make_shared<ImGuiRenderer>(mVulkanApp, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
 		mSceneInfo.sharedVariables.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	}
@@ -75,7 +74,6 @@ namespace Utopian
 		// Cannot rely on instance group being destroyed when going out of scope since that happens
 		// after the call to GarbageCollect()
 		ClearInstanceGroups();
-		GarbageCollectUiTextures();
 	}
 
 	void Renderer::PostWorldInit()
@@ -338,19 +336,16 @@ namespace Utopian
 			mJobGraph->Render(mSceneInfo, mRenderingSettings);
 		}
 
-		mImGuiRenderer->Render();
 		gScreenQuadUi().Render(mVulkanApp);
 	}
 
 	void Renderer::NewUiFrame()
 	{
-		mImGuiRenderer->NewFrame();
 		mIm3dRenderer->NewFrame();
 	}
 
 	void Renderer::EndUiFrame()
 	{
-		mImGuiRenderer->EndFrame();
 		mIm3dRenderer->EndFrame();
 	}
 
@@ -375,11 +370,6 @@ namespace Utopian
 	{
 		camera->SetId(mNextNodeId++);
 		mSceneInfo.cameras.push_back(camera);
-	}
-
-	void Renderer::GarbageCollectUiTextures()
-	{
-		mImGuiRenderer->GarbageCollect();
 	}
 
 	void Renderer::RemoveRenderable(Renderable* renderable)
@@ -459,6 +449,11 @@ namespace Utopian
 		mMainCamera = camera;
 	}
 
+	void Renderer::SetUiOverlay(ImGuiRenderer* imguiRenderer)
+	{
+		mImGuiRenderer = imguiRenderer;
+	}
+
 	Terrain* Renderer::GetTerrain() const
 	{
 		return mSceneInfo.terrain.get();
@@ -491,7 +486,7 @@ namespace Utopian
 
 	ImGuiRenderer* Renderer::GetUiOverlay()
 	{
-		return mImGuiRenderer.get();
+		return mImGuiRenderer;
 	}
 
 	uint32_t Renderer::GetWindowWidth() const

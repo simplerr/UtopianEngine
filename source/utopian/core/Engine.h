@@ -7,6 +7,48 @@
 
 namespace Utopian
 {
+	class Engine;
+
+	class EnginePlugin
+	{
+	public:
+		EnginePlugin() {};
+		virtual ~EnginePlugin() {};
+
+		virtual void Start(Engine* engine) = 0;
+		virtual void PostInit(Engine* engine) = 0;
+		virtual void Destroy() = 0;
+		virtual void Update() = 0;
+		virtual void Draw() {};
+		virtual void NewFrame() {};
+		virtual void EndFrame() {};
+	};
+
+	class DeferredRenderingPlugin : public EnginePlugin
+	{
+	public:
+		virtual void Start(Engine* engine) override;
+		virtual void PostInit(Engine* engine) override;
+		virtual void Destroy() override;
+		virtual void Update() override;
+		virtual void Draw() override;
+		virtual void NewFrame() override;
+		virtual void EndFrame() override;
+
+	};
+
+	class ECSPlugin : public EnginePlugin
+	{
+	public:
+		virtual void Start(Engine* engine) override;
+		virtual void PostInit(Engine* engine) override;
+		virtual void Destroy() override;
+		virtual void Update() override;
+		virtual void Draw() override;
+		virtual void NewFrame() override;
+		virtual void EndFrame() override;
+	};
+
 	class Engine : public Module<Engine>
 	{
 	public:
@@ -40,6 +82,14 @@ namespace Utopian
 			mDestroyCallback = std::bind(std::forward<Args>(args)...);
 		}
 
+		/** Starts all the modules included in the engine. */
+		void StartModules();
+
+		void AddPlugin(SharedPtr<EnginePlugin> plugin);
+
+		Vk::VulkanApp* GetVulkanApp();
+		ImGuiRenderer* GetImGuiRenderer();
+
 	private:
 		/**
 		 * Calls the per frame update function of all modules in the engine.
@@ -47,9 +97,6 @@ namespace Utopian
 		 * @note Also calls registered application callback functions.
 		 */
 		void Tick();
-
-		/** Starts all the modules included in the engine. */
-		void StartModules();
 
 		/** Updates all modules included in the engine. */
 		void Update();
@@ -59,6 +106,8 @@ namespace Utopian
 
 	private:
 		SharedPtr<Vk::VulkanApp> mVulkanApp;
+		SharedPtr<ImGuiRenderer> mImGuiRenderer;
+		std::vector<SharedPtr<EnginePlugin>> mPlugins;
 		Window* mWindow;
 		std::function<void()> mUpdateCallback;
 		std::function<void()> mRenderCallback;

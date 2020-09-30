@@ -35,11 +35,6 @@ namespace Utopian
 		mVulkanApp->Prepare();
 
 		UTO_LOG(mAppName);
-		UTO_LOG("Starting engine modules");
-
-		StartModules();
-
-		UTO_LOG("Engine modules ready");
 	}
 	
 	Engine::~Engine()
@@ -58,19 +53,22 @@ namespace Utopian
 		Vk::gModelLoader().Destroy();
 
 		gTimer().Destroy();
-		gWorld().Destroy();
 		gInput().Destroy();
 		gLuaManager().Destroy();
-		gAssetLoader().Destroy();
 		gScreenQuadUi().Destroy();
 		gProfiler().Destroy();
 		gRendererUtility().Destroy();
-		gRenderer().Destroy();
-		gPhysics().Destroy();
+
+		for(auto& plugin : mPlugins)
+			plugin->Destroy();
+
+		mImGuiRenderer->GarbageCollect();
 	}
 
 	void Engine::StartModules()
 	{
+		UTO_LOG("Starting engine modules");
+
 		Vk::Device* device = mVulkanApp->GetDevice();
 		Vk::gEffectManager().Start();
 		Vk::gTextureLoader().Start(device);
@@ -79,27 +77,21 @@ namespace Utopian
 		Vk::gShaderFactory().AddIncludeDirectory("data/shaders/include");
 
 		gTimer().Start();
-		gWorld().Start();
 		gInput().Start();
-		gPhysics().Start();
 		gLuaManager().Start();
-		gAssetLoader().Start();
 		gProfiler().Start(mVulkanApp.get());
 		gRendererUtility().Start();
 		gScreenQuadUi().Start(mVulkanApp.get());
-		gRenderer().Start(mVulkanApp.get());
 
-		// Todo: There is a dependency between loading the actors from Lua and the terrain creation
-		// Terrain needs to be created before World::Instance().LoadScene();
-		gRenderer().PostWorldInit();
+		mImGuiRenderer = std::make_shared<ImGuiRenderer>(mVulkanApp.get(), mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 
-		ActorFactory::LoadFromFile(mVulkanApp->GetWindow(), "data/scene.lua");
-		gWorld().LoadScene();
-		gWorld().Update();
+		for(auto& plugin : mPlugins)
+			plugin->Start(this);
 
-		ScriptExports::Register();
-		ScriptImports::Register();
-		//gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
+		for(auto& plugin : mPlugins)
+			plugin->PostInit(this);
+
+		UTO_LOG("Engine modules ready");
 	}
 
 	void Engine::Run()
@@ -129,11 +121,14 @@ namespace Utopian
 
 	void Engine::Update()
 	{
-		gRenderer().NewUiFrame();
+		for(auto& plugin : mPlugins)
+			plugin->NewFrame();
 
-		gWorld().Update();
-		gRenderer().Update();
-		gPhysics().Update();
+		mImGuiRenderer->NewFrame();
+
+		for(auto& plugin : mPlugins)
+			plugin->Update();
+
 		gProfiler().Update();
 
 		Vk::gEffectManager().Update();
@@ -141,20 +136,26 @@ namespace Utopian
 		// Call the application Update() function
 		mUpdateCallback();
 
-		gRenderer().EndUiFrame();
+		for(auto& plugin : mPlugins)
+			plugin->EndFrame();
+
+		mImGuiRenderer->EndFrame();
 	}
 
 	void Engine::Render()
 	{
 		if (mVulkanApp->PreviousFrameComplete())
 		{
-			gRenderer().GarbageCollectUiTextures();
+			mImGuiRenderer->GarbageCollect();
 
 			gTimer().FrameEnd();
 
 			mVulkanApp->PrepareFrame();
 
-			gRenderer().Render();
+			for(auto& plugin : mPlugins)
+				plugin->Draw();
+
+			mImGuiRenderer->Render();
 
 			// Call the application Render() function
 			mRenderCallback();
@@ -174,8 +175,106 @@ namespace Utopian
 		gInput().HandleMessages(uMsg, wParam, lParam);
 	}
 
+	void Engine::AddPlugin(SharedPtr<EnginePlugin> plugin)
+	{
+		mPlugins.push_back(plugin);
+	}
+
+	Vk::VulkanApp* Engine::GetVulkanApp()
+	{
+		return mVulkanApp.get();
+	}
+
+	ImGuiRenderer* Engine::GetImGuiRenderer()
+	{
+		return mImGuiRenderer.get();
+	}
+
 	Engine& gEngine()
 	{
 		return Engine::Instance();
+	}
+
+	void DeferredRenderingPlugin::Start(Engine* engine)
+	{
+		gRenderer().Start(engine->GetVulkanApp());
+		gRenderer().SetUiOverlay(engine->GetImGuiRenderer());
+
+		// Todo: There is a dependency between loading the actors from Lua and the terrain creation
+		// Terrain needs to be created before World::Instance().LoadScene();
+		gRenderer().PostWorldInit();
+	}
+
+	void DeferredRenderingPlugin::PostInit(Engine* engine)
+	{
+
+	}
+
+	void DeferredRenderingPlugin::Destroy()
+	{
+		gRenderer().Destroy();
+	}
+
+	void DeferredRenderingPlugin::Update()
+	{
+		gRenderer().Update();
+	}
+
+	void DeferredRenderingPlugin::Draw()
+	{
+		gRenderer().Render();
+	}
+
+	void DeferredRenderingPlugin::NewFrame()
+	{
+		gRenderer().NewUiFrame();
+	}
+
+	void DeferredRenderingPlugin::EndFrame()
+	{
+		gRenderer().EndUiFrame();
+	}
+
+	void ECSPlugin::Start(Engine* engine)
+	{
+		gWorld().Start();
+		gPhysics().Start();
+		gAssetLoader().Start();
+	}
+
+	void ECSPlugin::PostInit(Engine* engine)
+	{
+		ActorFactory::LoadFromFile(engine->GetVulkanApp()->GetWindow(), "data/scene.lua");
+		gWorld().LoadScene();
+		gWorld().Update();
+
+		ScriptExports::Register();
+		ScriptImports::Register();
+		//gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");
+	}
+
+	void ECSPlugin::Destroy()
+	{
+		gWorld().Destroy();
+		gAssetLoader().Destroy();
+		gPhysics().Destroy();
+	}
+
+	void ECSPlugin::Update()
+	{
+		gWorld().Update();
+		gPhysics().Update();
+	}
+
+	void ECSPlugin::Draw()
+	{
+	}
+
+	void ECSPlugin::NewFrame()
+	{
+	}
+
+	void ECSPlugin::EndFrame()
+	{
 	}
 }

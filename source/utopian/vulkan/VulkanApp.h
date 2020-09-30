@@ -80,8 +80,6 @@ namespace Utopian::Vk
 
 		void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-		ImGuiRenderer* GetUiOverlay();
-
 		void SetImguiRenderer(ImGuiRenderer* imguiRenderer);
 		void SetClearColor(glm::vec4 color);
 		glm::vec4 GetClearColor();

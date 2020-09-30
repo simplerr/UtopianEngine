@@ -33,16 +33,16 @@ public:
 
 	void Run();
 
-	void Update();
-	void Draw();
+	void DestroyCallback();
+	void UpdateCallback();
+	void DrawCallback();
 
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
 	void InitScene();
 	void CalculateRays();
 
-	SharedPtr<Vk::VulkanApp> mVulkanApp = nullptr;
-	SharedPtr<ImGuiRenderer> mImGuiRenderer = nullptr;
+	Vk::VulkanApp* mVulkanApp;
 	Utopian::Window* mWindow;
 
 	// Test
