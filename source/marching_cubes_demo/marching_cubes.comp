@@ -1,0 +1,28 @@
+#version 450
+
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
+
+layout (local_size_x = 16, local_size_y = 16) in;
+
+layout (set = 0, binding = 0, rgba8) uniform writeonly image2D outputImage;
+
+layout (set = 0, binding = 3) uniform UBO_input 
+{
+	mat4 projection;
+	mat4 view;
+	vec4 offsets[8];
+	vec4 color;
+	float voxelSize;
+	float time;
+} input_ubo;
+
+void main(void)
+{
+    ivec2 dim = imageSize(outputImage);
+    vec2 uv = vec2(gl_GlobalInvocationID.xy) / dim;
+	vec3 color = vec3(uv.x, uv.y, 0);
+	float t = input_ubo.time;
+
+    imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), vec4(color, 1.0f));
+}
