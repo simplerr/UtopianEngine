@@ -27,11 +27,6 @@
 RayTrace::RayTrace(Utopian::Window* window)
 	: mWindow(window)
 {
-	srand(time(NULL));
-
-	Utopian::Vk::Debug::TogglePerformanceWarnings();
-	Utopian::Vk::Debug::SetupDebugLayers();
-
 	// Start Utopian Engine
 	Utopian::gEngine().Start(window, "Raytrace demo");
 	Utopian::gEngine().StartModules();
@@ -44,7 +39,7 @@ RayTrace::RayTrace(Utopian::Window* window)
 	mRayTraceComplete = std::make_shared<Vk::Semaphore>(mVulkanApp->GetDevice());
 	//mVulkanApp->SetWaitSubmitSemaphore(mRayTraceComplete);
 
-	InitScene();
+	InitResources();
 }
 
 RayTrace::~RayTrace()
@@ -54,31 +49,39 @@ RayTrace::~RayTrace()
 
 void RayTrace::DestroyCallback()
 {
+	// Free Vulkan resources
 	mEffect = nullptr;
 	mRayTraceComplete = nullptr;
 	mOutputImage = nullptr;
 	mSampler = nullptr;
+
+	mInputParameters.GetBuffer()->Destroy();
+	mSettingParameters.GetBuffer()->Destroy();
 }
 
-void RayTrace::InitScene()
+void RayTrace::InitResources()
 {
-	mCamera = std::make_shared<MiniCamera>(glm::vec3(5, 25, 5), glm::vec3(25, 0, 25), 1.0f, mWindow->GetWidth(), mWindow->GetHeight());
+	uint32_t width = mWindow->GetWidth();
+	uint32_t height = mWindow->GetHeight();
+	Vk::Device* device = mVulkanApp->GetDevice();
 
-	mSampler = std::make_shared<Vk::Sampler>(mVulkanApp->GetDevice());
-	mOutputImage = std::make_shared<Vk::ImageStorage>(mVulkanApp->GetDevice(), mWindow->GetWidth(), mWindow->GetHeight(), "Raytrace image");
+	mCamera = std::make_shared<MiniCamera>(glm::vec3(5, 25, 5), glm::vec3(25, 0, 25), 1.0f, width, height);
 
 	Vk::EffectCreateInfo effectDesc;
 	effectDesc.shaderDesc.computeShaderPath = "source/raytracing_demo/raytrace.comp";
-	mEffect = Vk::Effect::Create(mVulkanApp->GetDevice(), nullptr, effectDesc);
+	mEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
-	mInputParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-	mSettingParameters.Create(mVulkanApp->GetDevice(), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mSettingParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+	mOutputImage = std::make_shared<Vk::ImageStorage>(device, width, height, "Raytrace image");
+	mSampler = std::make_shared<Vk::Sampler>(device);
 
 	mEffect->BindImage("outputImage", *mOutputImage);
 	mEffect->BindUniformBuffer("UBO_input", mInputParameters);
 	mEffect->BindUniformBuffer("UBO_settings", mSettingParameters);
 
-	gScreenQuadUi().AddQuad(0, 0, mWindow->GetWidth(), mWindow->GetHeight(), mOutputImage.get(), mSampler.get());
+	gScreenQuadUi().AddQuad(0, 0, width, height, mOutputImage.get(), mSampler.get());
 
 	mSettingParameters.data.maxTraceDepth = 4;
 }
@@ -154,12 +157,4 @@ void RayTrace::Run()
 void RayTrace::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
-
-	switch (uMsg)
-	{
-	case WM_CLOSE:
-		DestroyWindow(mWindow->GetHwnd());
-		PostQuitMessage(0);
-		break;
-	}
 }

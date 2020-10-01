@@ -39,7 +39,7 @@ public:
 
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
-	void InitScene();
+	void InitResources();
 	void CalculateRays();
 
 	Vk::VulkanApp* mVulkanApp;

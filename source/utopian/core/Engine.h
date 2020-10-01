@@ -75,7 +75,8 @@ namespace Utopian
 			mRenderCallback = std::bind(std::forward<Args>(args)...);
 		}
 
-		/** Registers a callback function to be called in Engine::~Engine(). */
+		/** Registers a callback function to be called in Engine::~Engine()
+		 *  All Vulkan resources used by the application needs to be destroyed in this callback. */
 		template<class ...Args>
 		void RegisterDestroyCallback(Args &&...args)
 		{

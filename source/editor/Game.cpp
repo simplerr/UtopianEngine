@@ -12,11 +12,6 @@
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
 {
-	srand(time(NULL));
-
-	Utopian::Vk::Debug::TogglePerformanceWarnings();
-	Utopian::Vk::Debug::SetupDebugLayers();
-
 	// Start Utopian Engine
 	Utopian::gEngine().Start(window, "Utopian Engine (v0.2)");
 	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
@@ -72,12 +67,4 @@ void Game::InitScene()
 void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
-
-	switch (uMsg)
-	{
-	case WM_CLOSE:
-		DestroyWindow(mWindow->GetHwnd());
-		PostQuitMessage(0);
-		break;
-	}
 }

@@ -3,6 +3,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/Debug.h"
+#include <vulkan/vulkan_core.h>
 
 namespace Utopian::Vk
 {
@@ -61,11 +62,13 @@ namespace Utopian::Vk
 	{
 		if (mHandle != VK_NULL_HANDLE)
 		{
-         if (mMapped)
-            mDevice->UnmapMemory(mAllocation);
+			if (mMapped)
+				mDevice->UnmapMemory(mAllocation);
 
 			vkDestroyBuffer(mDevice->GetVkDevice(), mHandle, nullptr);
 			mDevice->FreeMemory(mAllocation);
+
+			mHandle = VK_NULL_HANDLE;
 		}
 	}
 

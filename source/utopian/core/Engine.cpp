@@ -26,6 +26,11 @@ namespace Utopian
 	Engine::Engine(Window* window, const std::string& appName)
 		: mAppName(appName)
 	{
+		srand(time(NULL));
+
+		Utopian::Vk::Debug::TogglePerformanceWarnings();
+		Utopian::Vk::Debug::SetupDebugLayers();
+
 		mWindow = window;
 		mWindow->SetTitle(mAppName);
 
@@ -39,7 +44,7 @@ namespace Utopian
 	
 	Engine::~Engine()
 	{
-		// Vulkan handles cannot be destroyed when they are in use on the GPU
+		// Vulkan resources cannot be destroyed when they are in use on the GPU
 		while (!mVulkanApp->PreviousFrameComplete())
 		{
 		}
@@ -59,6 +64,7 @@ namespace Utopian
 		gProfiler().Destroy();
 		gRendererUtility().Destroy();
 
+		// Destroy all plugins
 		for(auto& plugin : mPlugins)
 			plugin->Destroy();
 
@@ -160,7 +166,6 @@ namespace Utopian
 			// Call the application Render() function
 			mRenderCallback();
 
-			// Present to screen
 			mVulkanApp->Render();
 
 			mVulkanApp->SubmitFrame();
@@ -173,6 +178,14 @@ namespace Utopian
 		mVulkanApp->HandleMessages(hWnd, uMsg, wParam, lParam);
 
 		gInput().HandleMessages(uMsg, wParam, lParam);
+
+		switch (uMsg)
+		{
+		case WM_CLOSE:
+			DestroyWindow(mWindow->GetHwnd());
+			PostQuitMessage(0);
+			break;
+		}
 	}
 
 	void Engine::AddPlugin(SharedPtr<EnginePlugin> plugin)
