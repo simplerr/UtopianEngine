@@ -39,11 +39,6 @@ namespace Utopian::Vk
 	VulkanApp::~VulkanApp()
 	{
 		delete mPrimaryCommandBuffer;
-
-		for (CommandBuffer* commandBuffer : mSecondaryCommandBuffers)
-		{
-			delete commandBuffer;
-		}
 	}
 
 	void VulkanApp::Prepare()

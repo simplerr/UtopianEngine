@@ -107,10 +107,10 @@ namespace Utopian
 
         io.Fonts->TexID = (ImTextureID)AddImage(mTexture->GetImage());
 
-        mCommandBuffer = new Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+        mCommandBuffer = std::make_shared<Vk::CommandBuffer>(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
         mCommandBuffer->SetActive(false); // Enable the command buffer when something is recorded to it (not the first frame)
 
-        mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
+        mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer.get());
     }
 
     void ImGuiRenderer::UpdateCommandBuffers()
@@ -373,7 +373,7 @@ namespace Utopian
 
     Utopian::Vk::CommandBuffer* ImGuiRenderer::GetCommandBuffer() const
     {
-        return mCommandBuffer;
+        return mCommandBuffer.get();
     }
 
     void ImGuiRenderer::TextV(const char* format, ...)

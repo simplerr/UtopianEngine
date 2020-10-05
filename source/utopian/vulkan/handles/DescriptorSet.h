@@ -46,6 +46,8 @@ namespace Utopian::Vk
 
 		VkDescriptorSet GetVkHandle() const;
 
+		void SetShader(Shader* shader);
+
 	private:
 		void Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool);
 

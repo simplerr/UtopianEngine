@@ -69,11 +69,15 @@ namespace Utopian::Vk
 		{
 			mShader = shader;
 
-		// Destroy pipeline if already created
-		if (mPipeline->IsCreated())
-			mDevice->QueueDestroy(mPipeline->GetVkHandle());
+			for (auto& descriptorSet : mDescriptorSets)
+				descriptorSet.SetShader(mShader.get());
+
+			// Destroy pipeline if already created
+			if (mPipeline->IsCreated())
+				mDevice->QueueDestroy(mPipeline->GetVkHandle());
 
 			CreatePipeline();
+
 			result = true;
 		}
 
@@ -148,6 +152,11 @@ namespace Utopian::Vk
 	void Effect::BindUniformBuffer(std::string name, const ShaderBuffer& shaderBlock)
 	{
 		BindUniformBuffer(name, shaderBlock.GetDescriptor());
+	}
+
+	void Effect::BindStorageBuffer(std::string name, const ShaderBuffer& shaderBlock)
+	{
+		BindStorageBuffer(name, shaderBlock.GetDescriptor());
 	}
 
 	void Effect::BindCombinedImage(std::string name, const Texture& texture)

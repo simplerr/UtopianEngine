@@ -12,6 +12,19 @@
 using namespace Utopian;
 
 class MiniCamera;
+class Block;
+
+struct BlockKey
+{
+	BlockKey(int32_t _x, int32_t _y, int32_t _z)
+		: x(_x), y(_y), z(_z) {
+
+	}
+
+	int32_t x, y, z;
+};
+
+bool operator<(BlockKey const& a, BlockKey const& b);
 
 class MarchingCubes
 {
@@ -25,6 +38,18 @@ public:
 		UNIFORM_PARAM(float, time)
 	UNIFORM_BLOCK_END()
 
+	UNIFORM_BLOCK_BEGIN(CounterSSBO)
+		UNIFORM_PARAM(uint32_t, numVertices)
+	UNIFORM_BLOCK_END()
+
+	UNIFORM_BLOCK_BEGIN(TerrainInputParameters)
+		UNIFORM_PARAM(glm::mat4, projection)
+		UNIFORM_PARAM(glm::mat4, view)
+		UNIFORM_PARAM(glm::vec4, clippingPlane)
+		UNIFORM_PARAM(glm::vec3, eyePos)
+		UNIFORM_PARAM(float, pad)
+	UNIFORM_BLOCK_END()
+
 	MarchingCubes(Utopian::Window* window);
 	~MarchingCubes();
 
@@ -34,19 +59,45 @@ public:
 	void UpdateCallback();
 	void DrawCallback();
 
+	/** Adds the blocks within the viewing distance range. */
+	void UpdateBlockList();
+
+	/** Generates the vertex buffer for newly added or modified blocks. */
+	void GenerateBlocks();
+
+	void RenderBlocks();
+
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
 	void InitResources();
+	void InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height);
+	void InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height);
 
 	Vk::VulkanApp* mVulkanApp;
 	Utopian::Window* mWindow;
-
-	// Test
-	SharedPtr<Vk::Effect> mEffect;
-	SharedPtr<Vk::Semaphore> mRayTraceComplete;
-	SharedPtr<Vk::Image> mOutputImage;
-	SharedPtr<Vk::Sampler> mSampler;
-
 	SharedPtr<MiniCamera> mCamera;
+
+	// Marching cubes
+	SharedPtr<Vk::Effect> mMarchingCubesEffect;
+	SharedPtr<Vk::Semaphore> mRayTraceComplete;
 	InputParameters mInputParameters;
+
+	SharedPtr<Utopian::Vk::Texture> mEdgeTableTex;
+	SharedPtr<Utopian::Vk::Texture> mTriangleTableTex;
+	CounterSSBO mCounterSSBO;
+	const int32_t mVoxelsInBlock = 32;
+	const int32_t mVoxelSize = 400;
+	const int32_t mViewDistance = 1;
+	std::map<BlockKey, Block*> mBlockList;
+	//SharedPtr<Utopian::Vk::Texture> texture3d;
+
+	// Terrain
+	SharedPtr<Vk::Effect> mTerrainEffect;
+	TerrainInputParameters mTerrainInputParameters;
+	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
+
+	struct PushConstantBlock {
+		glm::mat4 world;
+		glm::vec3 color;
+	};
 };

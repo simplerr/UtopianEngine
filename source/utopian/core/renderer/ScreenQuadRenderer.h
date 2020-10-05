@@ -60,8 +60,8 @@ namespace Utopian
 
 		SharedPtr<Utopian::Vk::Effect> mEffect;
 		SharedPtr<Utopian::Vk::DescriptorPool> mDescriptorPool;
+		SharedPtr<Utopian::Vk::CommandBuffer> mCommandBuffer;
 		Utopian::Vk::VulkanApp* mVulkanApp;
-		Utopian::Vk::CommandBuffer* mCommandBuffer;
 
 		struct {
 			Vk::Buffer* vertexBuffer;

@@ -43,6 +43,7 @@ namespace Utopian::Vk
 		void BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo);
 		void BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo);
 		void BindUniformBuffer(std::string name, const ShaderBuffer& shaderBlock);
+		void BindStorageBuffer(std::string name, const ShaderBuffer& shaderBlock);
 		void BindCombinedImage(std::string name, const Texture& texture);
 		void BindCombinedImage(std::string name, const Image& image, const Sampler& sampler);
 		void BindCombinedImage(std::string name, const TextureArray& textureArray);

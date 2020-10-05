@@ -32,8 +32,8 @@ namespace Utopian
 
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(), vulkanApp->GetRenderPass(), effectDesc);
 
-		mCommandBuffer = new Vk::CommandBuffer(vulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
-		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer);
+		mCommandBuffer = std::make_shared<Vk::CommandBuffer>(vulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
+		mVulkanApp->AddSecondaryCommandBuffer(mCommandBuffer.get());
 
 		mDescriptorPool = std::make_shared<Vk::DescriptorPool>(vulkanApp->GetDevice());
 		mDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 20);

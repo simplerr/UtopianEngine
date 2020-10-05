@@ -64,7 +64,7 @@ namespace Utopian
 		} pushConstBlock;
 
 		Vk::VulkanApp* mVulkanApp;
-		Vk::CommandBuffer* mCommandBuffer;
+		SharedPtr<Vk::CommandBuffer> mCommandBuffer;
 		SharedPtr<Vk::Buffer> mVertexBuffer;
 		SharedPtr<Vk::Buffer> mIndexBuffer;
 		SharedPtr<Vk::Effect> mImguiEffect;

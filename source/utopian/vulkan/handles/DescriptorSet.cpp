@@ -230,6 +230,11 @@ namespace Utopian::Vk
 		return mDescriptorSet;
 	}
 
+	void DescriptorSet::SetShader(Shader* shader)
+	{
+		mShader = shader;
+	}
+
 	DescriptorPool::DescriptorPool(Device* device)
 		: Handle(device, vkDestroyDescriptorPool)
 	{
