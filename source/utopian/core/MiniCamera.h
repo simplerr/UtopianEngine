@@ -5,7 +5,7 @@
 class MiniCamera
 {
 public:
-	MiniCamera(glm::vec3 position, glm::vec3 target, float speed, int windowWidth, int windowHeight);
+	MiniCamera(glm::vec3 position, glm::vec3 target, int nearPlane, int farPlane, float speed, int windowWidth, int windowHeight);
 
 	void Update();
 
@@ -22,4 +22,6 @@ private:
 	float mSpeed;
 	float mPitch;
 	float mYaw;
+	int mNear;
+	int mFar;
 };
