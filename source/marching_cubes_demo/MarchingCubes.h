@@ -29,7 +29,7 @@ bool operator<(BlockKey const& a, BlockKey const& b);
 class MarchingCubes
 {
 public:
-	UNIFORM_BLOCK_BEGIN(InputParameters)
+	UNIFORM_BLOCK_BEGIN(MarchingInputParameters)
 		UNIFORM_PARAM(glm::mat4, projection)
 		UNIFORM_PARAM(glm::mat4, view)
 		UNIFORM_PARAM(glm::vec4, offsets[8])
@@ -64,7 +64,6 @@ public:
 
 	/** Generates the vertex buffer for newly added or modified blocks. */
 	void GenerateBlocks();
-
 	void RenderBlocks();
 
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -79,11 +78,9 @@ private:
 
 	// Marching cubes
 	SharedPtr<Vk::Effect> mMarchingCubesEffect;
-	SharedPtr<Vk::Semaphore> mRayTraceComplete;
-	InputParameters mInputParameters;
-
 	SharedPtr<Utopian::Vk::Texture> mEdgeTableTex;
 	SharedPtr<Utopian::Vk::Texture> mTriangleTableTex;
+	MarchingInputParameters mMarchingInputParameters;
 	CounterSSBO mCounterSSBO;
 	const int32_t mVoxelsInBlock = 32;
 	const int32_t mVoxelSize = 400;
@@ -93,11 +90,6 @@ private:
 
 	// Terrain
 	SharedPtr<Vk::Effect> mTerrainEffect;
-	TerrainInputParameters mTerrainInputParameters;
 	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
-
-	struct PushConstantBlock {
-		glm::mat4 world;
-		glm::vec3 color;
-	};
+	TerrainInputParameters mTerrainInputParameters;
 };

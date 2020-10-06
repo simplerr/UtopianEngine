@@ -7,10 +7,8 @@
 #include "core/Log.h"
 #include "core/renderer/Renderer.h"
 #include "core/Window.h"
-#include "core/LuaManager.h"
-#include "core/Profiler.h"
-#include "core/renderer/ImGuiRenderer.h"
 #include "core/renderer/RendererUtility.h"
+#include "core/renderer/ImGuiRenderer.h"
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
@@ -49,9 +47,6 @@ MarchingCubes::MarchingCubes(Utopian::Window* window)
 
 	mVulkanApp = Utopian::gEngine().GetVulkanApp();
 
-	mRayTraceComplete = std::make_shared<Vk::Semaphore>(mVulkanApp->GetDevice());
-	//mVulkanApp->SetWaitSubmitSemaphore(mRayTraceComplete);
-
 	InitResources();
 }
 
@@ -65,12 +60,11 @@ void MarchingCubes::DestroyCallback()
 	// Free Vulkan resources
 	mMarchingCubesEffect = nullptr;
 	mTerrainEffect = nullptr;
-	mRayTraceComplete = nullptr;
 	mTerrainCommandBuffer = nullptr;
 	mEdgeTableTex = nullptr;
 	mTriangleTableTex = nullptr;
 
-	mInputParameters.GetBuffer()->Destroy();
+	mMarchingInputParameters.GetBuffer()->Destroy();
 	mTerrainInputParameters.GetBuffer()->Destroy();
 	mCounterSSBO.GetBuffer()->Destroy();
 
@@ -98,28 +92,29 @@ void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, 
 	effectDesc.shaderDesc.computeShaderPath = "source/marching_cubes_demo/marching_cubes.comp";
 	mMarchingCubesEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
-	mInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-	mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	mMarchingInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mMarchingInputParameters.data.offsets[0] = glm::vec4(0, 0, 0, 0);
+	mMarchingInputParameters.data.offsets[1] = glm::vec4(mVoxelSize, 0, 0, 0);
+	mMarchingInputParameters.data.offsets[2] = glm::vec4(mVoxelSize, mVoxelSize, 0, 0);
+	mMarchingInputParameters.data.offsets[3] = glm::vec4(0, mVoxelSize, 0, 0);
+	mMarchingInputParameters.data.offsets[4] = glm::vec4(0, 0, mVoxelSize, 0);
+	mMarchingInputParameters.data.offsets[5] = glm::vec4(mVoxelSize, 0, mVoxelSize, 0);
+	mMarchingInputParameters.data.offsets[6] = glm::vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
+	mMarchingInputParameters.data.offsets[7] = glm::vec4(0, mVoxelSize, mVoxelSize, 0);
+	mMarchingInputParameters.data.color = glm::vec4(0, 1, 0, 1);
+	mMarchingInputParameters.data.voxelSize = mVoxelSize;
+	mMarchingInputParameters.UpdateMemory();
+
+	mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
+						VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	mEdgeTableTex = Utopian::Vk::gTextureLoader().CreateTexture(edgeTable, VK_FORMAT_R32_SINT, 256, 1, 1, sizeof(int));
 	mTriangleTableTex = Utopian::Vk::gTextureLoader().CreateTexture(triTable, VK_FORMAT_R32_SINT, 16, 256, 1, sizeof(int));
 
-	mMarchingCubesEffect->BindUniformBuffer("UBO_input", mInputParameters);
+	mMarchingCubesEffect->BindUniformBuffer("UBO_input", mMarchingInputParameters);
 	mMarchingCubesEffect->BindStorageBuffer("CounterSSBO", mCounterSSBO);
 	mMarchingCubesEffect->BindCombinedImage("edgeTableTex", *mEdgeTableTex);
 	mMarchingCubesEffect->BindCombinedImage("triangleTableTex", *mTriangleTableTex);
-
-	mInputParameters.data.offsets[0] = glm::vec4(0, 0, 0, 0);
-	mInputParameters.data.offsets[1] = glm::vec4(mVoxelSize, 0, 0, 0);
-	mInputParameters.data.offsets[2] = glm::vec4(mVoxelSize, mVoxelSize, 0, 0);
-	mInputParameters.data.offsets[3] = glm::vec4(0, mVoxelSize, 0, 0);
-	mInputParameters.data.offsets[4] = glm::vec4(0, 0, mVoxelSize, 0);
-	mInputParameters.data.offsets[5] = glm::vec4(mVoxelSize, 0, mVoxelSize, 0);
-	mInputParameters.data.offsets[6] = glm::vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
-	mInputParameters.data.offsets[7] = glm::vec4(0, mVoxelSize, mVoxelSize, 0);
-	mInputParameters.data.color = glm::vec4(0, 1, 0, 1);
-	mInputParameters.data.voxelSize = mVoxelSize;
-	mInputParameters.UpdateMemory();
 }
 
 void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height)
@@ -128,7 +123,7 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 	effectDesc.shaderDesc.vertexShaderPath = "source/marching_cubes_demo/terrain.vert";
 	effectDesc.shaderDesc.fragmentShaderPath = "source/marching_cubes_demo/terrain.frag";
 	effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-	effectDesc.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+	//effectDesc.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mTerrainEffect = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
 
 	mTerrainInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -190,19 +185,15 @@ void MarchingCubes::GenerateBlocks()
 	for (auto blockIter : mBlockList)
 	{
 		Block* block = blockIter.second;
-		// Generate the vertex buffer for the block 
+
+		// Generate the vertex buffer for the block
 		if (!block->generated || block->modified)
 		{
-			/* Experimentation */
-			const uint32_t w = 16;
-			const uint32_t h = 16;
-			const uint32_t d = 16;
-
-			mInputParameters.data.projection = mCamera->GetProjection();
-			mInputParameters.data.view = mCamera->GetView();
-			mInputParameters.data.voxelSize = mVoxelSize;
-			mInputParameters.data.time = gTimer().GetTime();
-			mInputParameters.UpdateMemory();
+			mMarchingInputParameters.data.projection = mCamera->GetProjection();
+			mMarchingInputParameters.data.view = mCamera->GetView();
+			mMarchingInputParameters.data.voxelSize = mVoxelSize;
+			mMarchingInputParameters.data.time = gTimer().GetTime();
+			mMarchingInputParameters.UpdateMemory();
 
 			// Reset block vertex count
 			mCounterSSBO.data.numVertices = 0;
@@ -214,19 +205,11 @@ void MarchingCubes::GenerateBlocks()
 			Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect->GetPipeline());
-			// TODO: Use the firstSet parameter to only update the Block descriptor
-			// VkDescriptorSet descriptorSets[2] = { mMarchingCubesEffect.GetDescriptorSet0(),
-			// 									  mMarchingCubesEffect.GetDescriptorSet1() };
-
 			commandBuffer.CmdBindDescriptorSets(mMarchingCubesEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
-			// NOTE: Needs to use new Effect 
-			//commandBuffer.CmdBindDescriptorSet(&mMarchingCubesEffect, 2, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE);
 
-			// Push the world matrix constant
 			Utopian::Vk::PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->position));
-
-			// NOTE: Needs to use new Effect 
 			commandBuffer.CmdPushConstants(mMarchingCubesEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+
 			commandBuffer.CmdDispatch(32, 32, 32);
 			commandBuffer.Flush();
 
@@ -263,18 +246,10 @@ void MarchingCubes::RenderBlocks()
 
 			mTerrainCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
-			// Push the world matrix constant
-			PushConstantBlock pushConstantBlock;
-			pushConstantBlock.world = glm::mat4();
-			pushConstantBlock.color = block->color;
+			Utopian::Vk::PushConstantBlock pushConstantBlock(glm::translate(glm::mat4(), block->position), glm::vec4(block->color, 1.0f));
+			mTerrainCommandBuffer->CmdPushConstants(mTerrainEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
+													sizeof(pushConstantBlock), &pushConstantBlock);
 
-			pushConstantBlock.world = glm::translate(glm::mat4(), block->position);
-			pushConstantBlock.world[3][0] = -pushConstantBlock.world[3][0];
-			pushConstantBlock.world[3][1] = -pushConstantBlock.world[3][1];
-			pushConstantBlock.world[3][2] = -pushConstantBlock.world[3][2];
-
-			// NOTE: Needs to use new Effect 
-			mTerrainCommandBuffer->CmdPushConstants(mTerrainEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConstantBlock), &pushConstantBlock);
 			mTerrainCommandBuffer->CmdDraw(block->numVertices, 1, 0, 0);
 		}
 	}
@@ -284,9 +259,8 @@ void MarchingCubes::RenderBlocks()
 
 void MarchingCubes::UpdateCallback()
 {
-	// ImGuiRenderer::BeginWindow("Raytracing Demo", glm::vec2(10, 150), 300.0f);
-	// ImGui::SliderInt("Max trace depth", &mSettingParameters.data.maxTraceDepth, 1, 8);
-	// ImGuiRenderer::EndWindow();
+	ImGuiRenderer::BeginWindow("Raytracing Demo", glm::vec2(10, 150), 300.0f);
+	ImGuiRenderer::EndWindow();
 
 	// Recompile shaders
 	if (gInput().KeyPressed('R'))
@@ -307,19 +281,10 @@ void MarchingCubes::UpdateCallback()
 void MarchingCubes::DrawCallback()
 {
 	// Update uniforms
-	mInputParameters.data.time = 0.0f;
-	mInputParameters.UpdateMemory();
+	mMarchingInputParameters.data.time = 0.0f;
+	mMarchingInputParameters.UpdateMemory();
 
 	RenderBlocks();
-
-	// Test rendering
-	//Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-
-	//commandBuffer.Begin();
-	//commandBuffer.CmdBindPipeline(mMarchingCubesEffect->GetPipeline());
-	//commandBuffer.CmdBindDescriptorSets(mMarchingCubesEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
-	//commandBuffer.CmdDispatch(mWindow->GetWidth() / 16, mWindow->GetHeight() / 16, 1);
-	//commandBuffer.Flush();
 
 	// Todo: Should be in Engine somewhere
 	gScreenQuadUi().Render(mVulkanApp);

@@ -13,19 +13,19 @@ layout (location = 3) out vec3 OutColor;
 
 layout (std140, set = 0, binding = 0) uniform UBO
 {
-	// Camera
-	mat4 projection;
-	mat4 view;
-	
-	vec4 clippingPlane;
-	vec3 eyePos;
+    // Camera
+    mat4 projection;
+    mat4 view;
 
-	float t;
+    vec4 clippingPlane;
+    vec3 eyePos;
+
+    float t;
 } per_frame_vs;
 
 layout(push_constant) uniform PushConsts {
-	mat4 world;
-	vec3 color;
+    mat4 world;
+    vec4 color;
 } pushConsts;
 
 // out gl_PerVertex
@@ -36,13 +36,12 @@ layout(push_constant) uniform PushConsts {
 
 void main(void)
 {
-	OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
-	OutColor = pushConsts.color;
-	OutNormalW = InNormal.xyz;
-	OutEyePosW = per_frame_vs.eyePos;
+    OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
+    OutColor = pushConsts.color.rgb;
+    OutNormalW = InNormal.xyz;
+    OutEyePosW = per_frame_vs.eyePos;
 
-	gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
-	//gl_Position = per_frame_vs.projection * per_frame_vs.view * vec4(InPosL.xyz, 1.0);
+    gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 
-	//gl_ClipDistance[0] = dot(pushConsts.world * vec4(InPosL.xyz, 1.0), per_frame_vs.clippingPlane);
+    //gl_ClipDistance[0] = dot(pushConsts.world * vec4(InPosL.xyz, 1.0), per_frame_vs.clippingPlane);
 }
