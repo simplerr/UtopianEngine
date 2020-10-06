@@ -167,9 +167,9 @@ targetdir "bin/%{cfg.buildcfg}"
 files
 {
    -- Editor
-   "source/raytracing_demo/**.hpp",
-   "source/raytracing_demo/**.h",
-   "source/raytracing_demo/**.cpp",
+   "source/demos/raytracing/**.hpp",
+   "source/demos/raytracing/**.h",
+   "source/demos/raytracing/**.cpp",
 }
 
 -- Includes
@@ -214,9 +214,9 @@ targetdir "bin/%{cfg.buildcfg}"
 files
 {
    -- Editor
-   "source/marching_cubes_demo/**.hpp",
-   "source/marching_cubes_demo/**.h",
-   "source/marching_cubes_demo/**.cpp",
+   "source/demos/marching_cubes/**.hpp",
+   "source/demos/marching_cubes/**.h",
+   "source/demos/marching_cubes/**.cpp",
 }
 
 -- Includes

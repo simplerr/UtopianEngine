@@ -68,7 +68,7 @@ void RayTrace::InitResources()
 	mCamera = std::make_shared<MiniCamera>(glm::vec3(5, 25, 5), glm::vec3(25, 0, 25), 1, 2, 1.0f, width, height);
 
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.computeShaderPath = "source/raytracing_demo/raytrace.comp";
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/raytracing/raytrace.comp";
 	mEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

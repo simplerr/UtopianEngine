@@ -89,7 +89,7 @@ void MarchingCubes::InitResources()
 void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height)
 {
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.computeShaderPath = "source/marching_cubes_demo/marching_cubes.comp";
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/marching_cubes.comp";
 	mMarchingCubesEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mMarchingInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -120,8 +120,8 @@ void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, 
 void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height)
 {
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.vertexShaderPath = "source/marching_cubes_demo/terrain.vert";
-	effectDesc.shaderDesc.fragmentShaderPath = "source/marching_cubes_demo/terrain.frag";
+	effectDesc.shaderDesc.vertexShaderPath = "source/demos/marching_cubes/terrain.vert";
+	effectDesc.shaderDesc.fragmentShaderPath = "source/demos/marching_cubes/terrain.frag";
 	effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
 	//effectDesc.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mTerrainEffect = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
