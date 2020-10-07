@@ -94,8 +94,6 @@ namespace Utopian
         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/imgui/uioverlay.vert";
         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/imgui/uioverlay.frag";
         effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE; // The front facing order is reversed in the Imgui vertex buffer
-        effectDesc.pipelineDesc.depthStencilState.depthTestEnable = VK_FALSE; // No depth testing
-        effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE; // No depth testing
         effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
         effectDesc.pipelineDesc.OverrideVertexInput(mVertexDescription);
 
