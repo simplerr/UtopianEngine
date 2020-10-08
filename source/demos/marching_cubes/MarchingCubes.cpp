@@ -35,6 +35,16 @@ bool operator<(BlockKey const& a, BlockKey const& b)
    return (a.z < b.z);
 }
 
+struct PushConstantBlock {
+	glm::mat4 world;
+	glm::vec4 color;
+
+	PushConstantBlock(glm::mat4 _world, glm::vec4 _color = glm::vec4(1.0f)) {
+		world = _world;
+		color = _color;
+	}
+};
+
 MarchingCubes::MarchingCubes(Utopian::Window* window)
 	: mWindow(window)
 {
@@ -78,7 +88,8 @@ void MarchingCubes::InitResources()
 	uint32_t height = mWindow->GetHeight();
 	Vk::Device* device = mVulkanApp->GetDevice();
 
-	mCamera = std::make_shared<MiniCamera>(glm::vec3(5, 25, 5), glm::vec3(25, 0, 25), 1, 50000, 1.0f, width, height);
+	//mCamera = std::make_shared<MiniCamera>(glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
+	mCamera = std::make_shared<MiniCamera>(mOrigin + glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 100.0f, width, height);
 
 	InitMarchingCubesEffect(device, width, height);
 	InitTerrainEffect(device, width, height);
@@ -134,6 +145,19 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 	mVulkanApp->AddSecondaryCommandBuffer(mTerrainCommandBuffer.get());
 }
 
+glm::ivec3 MarchingCubes::GetBlockCoordinate(glm::vec3 position)
+{
+	int32_t blockX = position.x / (float)(mVoxelSize * mVoxelsInBlock);
+	int32_t blockY = position.y / (float)(mVoxelSize * mVoxelsInBlock);
+	int32_t blockZ = position.z / (float)(mVoxelSize * mVoxelsInBlock);
+
+	// blockX += position.x < 0 ? - 1 : 1;
+	// blockY += position.y < 0 ? - 1 : 1;
+	// blockZ += position.z < 0 ? - 1 : 1;
+
+	return glm::ivec3(blockX, blockY, blockZ);
+}
+
 void MarchingCubes::UpdateBlockList()
 {
 	// 1) Which blocks should be rendered? Based on the camera position
@@ -142,9 +166,7 @@ void MarchingCubes::UpdateBlockList()
 	// 3) Add them
 
 	glm::vec3 cameraPos = mCamera->GetPosition();
-	int32_t blockX = cameraPos.x / (float)(mVoxelSize * mVoxelsInBlock) + 1;
-	int32_t blockY = cameraPos.y / (float)(mVoxelSize * mVoxelsInBlock) + 1;
-	int32_t blockZ = cameraPos.z / (float)(mVoxelSize * mVoxelsInBlock) + 1;
+	glm::ivec3 cameraCoord = GetBlockCoordinate(cameraPos);
 
 	// Make all blocks invisible
 	for (auto blockIter : mBlockList)
@@ -152,24 +174,30 @@ void MarchingCubes::UpdateBlockList()
 		blockIter.second->visible = false;
 	}
 
-	for (int32_t x = blockX - mViewDistance; x <= (blockX + mViewDistance); x++)
+	// Note: This only works for positive block coordinates
+	for (int32_t x = -mViewDistance; x <= mViewDistance; x++)
 	{
-		for (int32_t z = blockZ - mViewDistance; z <= (blockZ + mViewDistance); z++)
+		for (int32_t z = -mViewDistance; z <= mViewDistance; z++)
 		{
-			for (int32_t y = blockY - mViewDistance; y <= (blockY + mViewDistance); y++)
+			for (int32_t y = -mViewDistance; y <= mViewDistance; y++)
 			{
-				BlockKey blockKey(x, y, z);
+				glm::ivec3 coord = glm::ivec3(x, y, z) + cameraCoord;
+
+				BlockKey blockKey(coord.x, coord.y, coord.z);
 				if (mBlockList.find(blockKey) == mBlockList.end())
 				{
-					glm::vec3 position = glm::vec3(x * mVoxelsInBlock * mVoxelSize, y * mVoxelsInBlock * mVoxelSize, z * mVoxelsInBlock * mVoxelSize);
+					glm::vec3 position = glm::vec3(coord.x * mVoxelsInBlock * mVoxelSize,
+												   coord.y * mVoxelsInBlock * mVoxelSize,
+												   coord.z * mVoxelsInBlock * mVoxelSize);
+
 					glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-					//color = glm::vec3(0.0f, 0.7f, 0.0f);
 					Block* block = new Block(mVulkanApp->GetDevice(), position, color, mVoxelsInBlock, mVoxelSize);
 
 					mBlockList[blockKey] = block;
 
-					//Vulkan::UTO_LOG(x, "loaded blockX: ");
-					//Vulkan::UTO_LOG(z, "loaded blockZ: ");
+					UTO_LOG("loaded block (" + std::to_string(x) + ", "
+					 						 + std::to_string(y) + ", "
+					 						 + std::to_string(z) + ")");
 				}
 				else
 				{
@@ -207,7 +235,7 @@ void MarchingCubes::GenerateBlocks()
 			commandBuffer.CmdBindPipeline(mMarchingCubesEffect->GetPipeline());
 			commandBuffer.CmdBindDescriptorSets(mMarchingCubesEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
 
-			Utopian::Vk::PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->position));
+			PushConstantBlock pushConsts(glm::translate(glm::mat4(), block->position));
 			commandBuffer.CmdPushConstants(mMarchingCubesEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
 			commandBuffer.CmdDispatch(32, 32, 32);
@@ -246,7 +274,7 @@ void MarchingCubes::RenderBlocks()
 
 			mTerrainCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
-			Utopian::Vk::PushConstantBlock pushConstantBlock(glm::translate(glm::mat4(), block->position), glm::vec4(block->color, 1.0f));
+			PushConstantBlock pushConstantBlock(glm::translate(glm::mat4(), block->position), glm::vec4(block->color, 1.0f));
 			mTerrainCommandBuffer->CmdPushConstants(mTerrainEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
 													sizeof(pushConstantBlock), &pushConstantBlock);
 
@@ -259,7 +287,13 @@ void MarchingCubes::RenderBlocks()
 
 void MarchingCubes::UpdateCallback()
 {
+	glm::vec3 cameraPos = mCamera->GetPosition();
+	glm::ivec3 blockCoord = GetBlockCoordinate(cameraPos);
+
 	ImGuiRenderer::BeginWindow("Raytracing Demo", glm::vec2(10, 150), 300.0f);
+	ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
+	ImGui::Text("Camera origin pos: (%.2f %.2f %.2f)", cameraPos.x - mOrigin.x, cameraPos.y - mOrigin.y, cameraPos.z - mOrigin.z);
+	ImGui::Text("Block (%d, %d, %d)", blockCoord.x, blockCoord.y, blockCoord.z);
 	ImGuiRenderer::EndWindow();
 
 	// Recompile shaders

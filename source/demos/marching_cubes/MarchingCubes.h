@@ -81,6 +81,7 @@ private:
 	void InitResources();
 	void InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height);
+	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
 
 	Vk::VulkanApp* mVulkanApp;
 	Utopian::Window* mWindow;
@@ -94,7 +95,7 @@ private:
 	CounterSSBO mCounterSSBO;
 	const int32_t mVoxelsInBlock = 32;
 	const int32_t mVoxelSize = 400;
-	const int32_t mViewDistance = 1;
+	const int32_t mViewDistance = 3;
 	std::map<BlockKey, Block*> mBlockList;
 	//SharedPtr<Utopian::Vk::Texture> texture3d;
 
@@ -102,4 +103,6 @@ private:
 	SharedPtr<Vk::Effect> mTerrainEffect;
 	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
 	TerrainInputParameters mTerrainInputParameters;
+
+	const glm::vec3 mOrigin = glm::vec3(256000.0f);
 };
