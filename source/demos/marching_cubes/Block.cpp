@@ -10,7 +10,7 @@ Block::Block(Utopian::Vk::Device* device, glm::vec3 position, glm::vec3 color, u
 	this->numVertices = 0;
 	this->visible = true;
 
-	uint32_t size = blockSize*blockSize*blockSize * 5 * 3;
+	uint32_t size = blockSize * blockSize * blockSize * 5 * sizeof(glm::vec3);
 	Utopian::Vk::BUFFER_CREATE_INFO createInfo;
 	createInfo.data = nullptr;
 	createInfo.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;

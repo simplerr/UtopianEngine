@@ -247,6 +247,11 @@ void MarchingCubes::GenerateBlocks()
 			uint32_t numVertices = *(uint32_t*)mapped;
 			mCounterSSBO.UnmapMemory();
 
+			UTO_LOG("(" + std::to_string(blockIter.first.x) + ", "
+					+ std::to_string(blockIter.first.y) + ", "
+					+ std::to_string(blockIter.first.z) + ") "
+					"numVertices: " + std::to_string(numVertices));
+
 			block->numVertices = numVertices;
 			block->generated = true;
 			block->modified = false;
