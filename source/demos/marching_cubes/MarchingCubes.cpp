@@ -166,6 +166,10 @@ void MarchingCubes::UpdateBlockList()
 	// 3) Add them
 
 	glm::vec3 cameraPos = mCamera->GetPosition();
+
+	if (mStaticPosition)
+		cameraPos = mOrigin;
+
 	glm::ivec3 cameraCoord = GetBlockCoordinate(cameraPos);
 
 	// Make all blocks invisible
@@ -299,6 +303,7 @@ void MarchingCubes::UpdateCallback()
 	ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::Text("Camera origin pos: (%.2f %.2f %.2f)", cameraPos.x - mOrigin.x, cameraPos.y - mOrigin.y, cameraPos.z - mOrigin.z);
 	ImGui::Text("Block (%d, %d, %d)", blockCoord.x, blockCoord.y, blockCoord.z);
+	ImGui::Checkbox("Static position:", &mStaticPosition);
 	ImGuiRenderer::EndWindow();
 
 	// Recompile shaders

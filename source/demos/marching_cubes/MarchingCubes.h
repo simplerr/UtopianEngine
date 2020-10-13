@@ -105,4 +105,7 @@ private:
 	TerrainInputParameters mTerrainInputParameters;
 
 	const glm::vec3 mOrigin = glm::vec3(256000.0f);
+
+	// Settings
+	bool mStaticPosition = true;
 };
