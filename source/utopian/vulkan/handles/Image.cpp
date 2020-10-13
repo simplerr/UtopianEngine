@@ -46,7 +46,7 @@ namespace Utopian::Vk
 		VkImageCreateInfo imageCreateInfo = {};
 		imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageCreateInfo.format = createInfo.format;
-		imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+		imageCreateInfo.imageType = (createInfo.depth == 1 ? VK_IMAGE_TYPE_2D : VK_IMAGE_TYPE_3D);
 		imageCreateInfo.extent = { createInfo.width, createInfo.height, createInfo.depth };
 		imageCreateInfo.mipLevels = createInfo.mipLevels;
 		imageCreateInfo.arrayLayers = createInfo.arrayLayers;
@@ -64,7 +64,12 @@ namespace Utopian::Vk
 		// Connect the view with the image
 		VkImageViewCreateInfo viewCreateInfo = {};
 		viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewCreateInfo.viewType = (createInfo.arrayLayers == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_2D_ARRAY);
+
+		if (createInfo.depth == 1)
+			viewCreateInfo.viewType = (createInfo.arrayLayers == 1 ? VK_IMAGE_VIEW_TYPE_2D : VK_IMAGE_VIEW_TYPE_2D_ARRAY);
+		else if (createInfo.depth > 1)
+			viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_3D;
+
 		viewCreateInfo.format = createInfo.format;
 		viewCreateInfo.subresourceRange = {};
 		viewCreateInfo.subresourceRange.aspectMask = createInfo.aspectFlags;
