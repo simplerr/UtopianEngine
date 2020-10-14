@@ -79,8 +79,10 @@ public:
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
 	void InitResources();
+	void InitNoiseTextureEffect(Vk::Device* device);
 	void InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height);
+	void GenerateNoiseTexture();
 	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
 
 	Vk::VulkanApp* mVulkanApp;
@@ -105,6 +107,11 @@ private:
 	TerrainInputParameters mTerrainInputParameters;
 
 	const glm::vec3 mOrigin = glm::vec3(256000.0f);
+
+	// Noise rendering
+	SharedPtr<Vk::Effect> mNoiseEffect;
+	SharedPtr<Vk::Image> mNoiseImage;
+	SharedPtr<Vk::Sampler> mNoiseSampler;
 
 	// Settings
 	bool mStaticPosition = true;

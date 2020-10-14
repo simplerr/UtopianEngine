@@ -5,7 +5,7 @@
 
 layout (set = 0, binding = 0) uniform isampler2D edgeTableTex;
 layout (set = 0, binding = 1) uniform isampler2D triangleTableTex;
-layout (set = 0, binding = 2) uniform sampler3D texture3d;
+layout (set = 0, binding = 2) uniform sampler3D noiseTexture;
 
 layout(push_constant) uniform PushConsts {
 	mat4 world;
@@ -173,6 +173,8 @@ float density(vec3 pos)
 
 	//density = max(-noised(pos / 10000).x + 0.37, density);
 	density = max(-fbmd(pos / 20000.0f).x + 0.37, density);
+
+	density = texture(noiseTexture, vec3(pos / 200000)).r;
 
 	return density;
 }

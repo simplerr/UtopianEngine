@@ -73,6 +73,9 @@ void MarchingCubes::DestroyCallback()
 	mTerrainCommandBuffer = nullptr;
 	mEdgeTableTex = nullptr;
 	mTriangleTableTex = nullptr;
+	mNoiseSampler = nullptr;
+	mNoiseEffect = nullptr;
+	mNoiseImage = nullptr;
 
 	mMarchingInputParameters.GetBuffer()->Destroy();
 	mTerrainInputParameters.GetBuffer()->Destroy();
@@ -91,10 +94,35 @@ void MarchingCubes::InitResources()
 	//mCamera = std::make_shared<MiniCamera>(glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
 	mCamera = std::make_shared<MiniCamera>(mOrigin + glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 100.0f, width, height);
 
+	InitNoiseTextureEffect(device);
 	InitMarchingCubesEffect(device, width, height);
 	InitTerrainEffect(device, width, height);
 
-	//gScreenQuadUi().AddQuad(0, 0, width, height, mOutputImage.get(), mSampler.get());
+	GenerateNoiseTexture();
+
+	gScreenQuadUi().AddQuad(0, 0, width / 4, height / 4, mNoiseImage.get(), mNoiseSampler.get());
+}
+
+void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
+{
+	Vk::EffectCreateInfo effectDesc;
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/generate_noise.comp";
+	mNoiseEffect = Vk::Effect::Create(device, nullptr, effectDesc);
+
+	Utopian::Vk::IMAGE_CREATE_INFO createInfo;
+	createInfo.width = 32;
+	createInfo.height = 32;
+	createInfo.depth = 32;
+	createInfo.format = VK_FORMAT_R16G16B16A16_SFLOAT;
+	createInfo.name = "3D Noise Texture";
+	createInfo.transitionToFinalLayout = true;
+	createInfo.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+	createInfo.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
+	mNoiseImage = std::make_shared<Utopian::Vk::Image>(createInfo, device);
+
+	mNoiseEffect->BindImage("resultImage", *mNoiseImage);
+
+	mNoiseSampler = std::make_shared<Utopian::Vk::Sampler>(device);
 }
 
 void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height)
@@ -126,6 +154,7 @@ void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, 
 	mMarchingCubesEffect->BindStorageBuffer("CounterSSBO", mCounterSSBO);
 	mMarchingCubesEffect->BindCombinedImage("edgeTableTex", *mEdgeTableTex);
 	mMarchingCubesEffect->BindCombinedImage("triangleTableTex", *mTriangleTableTex);
+	mMarchingCubesEffect->BindCombinedImage("noiseTexture", *mNoiseImage, *mNoiseSampler);
 }
 
 void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height)
@@ -156,6 +185,16 @@ glm::ivec3 MarchingCubes::GetBlockCoordinate(glm::vec3 position)
 	// blockZ += position.z < 0 ? - 1 : 1;
 
 	return glm::ivec3(blockX, blockY, blockZ);
+}
+
+void MarchingCubes::GenerateNoiseTexture()
+{
+	Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+	commandBuffer.CmdBindPipeline(mNoiseEffect->GetPipeline());
+	commandBuffer.CmdBindDescriptorSets(mNoiseEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
+	commandBuffer.CmdDispatch(32, 32, 32);
+	commandBuffer.Flush();
 }
 
 void MarchingCubes::UpdateBlockList()
@@ -251,10 +290,10 @@ void MarchingCubes::GenerateBlocks()
 			uint32_t numVertices = *(uint32_t*)mapped;
 			mCounterSSBO.UnmapMemory();
 
-			UTO_LOG("(" + std::to_string(blockIter.first.x) + ", "
-					+ std::to_string(blockIter.first.y) + ", "
-					+ std::to_string(blockIter.first.z) + ") "
-					"numVertices: " + std::to_string(numVertices));
+			// UTO_LOG("(" + std::to_string(blockIter.first.x) + ", "
+			// 		+ std::to_string(blockIter.first.y) + ", "
+			// 		+ std::to_string(blockIter.first.z) + ") "
+			// 		"numVertices: " + std::to_string(numVertices));
 
 			block->numVertices = numVertices;
 			block->generated = true;
@@ -310,6 +349,7 @@ void MarchingCubes::UpdateCallback()
 	if (gInput().KeyPressed('R'))
 	{
 		Vk::gEffectManager().RecompileModifiedShaders();
+		GenerateNoiseTexture();
 
 		// Regenerate all blocks since the algorithm might have changed
 		for (auto blockIter : mBlockList)
@@ -327,6 +367,8 @@ void MarchingCubes::DrawCallback()
 	// Update uniforms
 	mMarchingInputParameters.data.time = 0.0f;
 	mMarchingInputParameters.UpdateMemory();
+
+	GenerateNoiseTexture();
 
 	RenderBlocks();
 
