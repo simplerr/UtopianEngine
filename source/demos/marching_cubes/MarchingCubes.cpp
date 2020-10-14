@@ -92,7 +92,7 @@ void MarchingCubes::InitResources()
 	Vk::Device* device = mVulkanApp->GetDevice();
 
 	//mCamera = std::make_shared<MiniCamera>(glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
-	mCamera = std::make_shared<MiniCamera>(mOrigin + glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 100.0f, width, height);
+	mCamera = std::make_shared<MiniCamera>(mOrigin + glm::vec3(1400, 1400, 1400), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
 
 	InitNoiseTextureEffect(device);
 	InitMarchingCubesEffect(device, width, height);
@@ -113,7 +113,7 @@ void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
 	createInfo.width = 32;
 	createInfo.height = 32;
 	createInfo.depth = 32;
-	createInfo.format = VK_FORMAT_R16G16B16A16_SFLOAT;
+	createInfo.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 	createInfo.name = "3D Noise Texture";
 	createInfo.transitionToFinalLayout = true;
 	createInfo.usage |= VK_IMAGE_USAGE_STORAGE_BIT;

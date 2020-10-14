@@ -149,32 +149,37 @@ vec4 fbmd( in vec3 x )
 	return vec4( a, d );
 }
 
+float addShapes(vec3 pos, float density)
+{
+	float finalDensity = max(-sdTorus(pos - toOrigin(vec3(200, 500, 500)), vec2(100, 50)), density);
+	finalDensity = max(-sdBox(pos - toOrigin(vec3(800, 500, 800)), vec3(150)), finalDensity);
+	finalDensity = max(-sdSphere(pos - toOrigin(vec3(850, 500, 0)), 250), finalDensity);
+
+	return finalDensity;
+}
+
 float density(vec3 pos)
 {
-	// Magic from Shadertoy: https://www.shadertoy.com/view/MtsSRf
-	float h = 0.0;
-	vec2 q = pos.xz*0.5;
+	// Ground plane
+	float density = getOrigin().y - pos.y - 900;
 
-    // float s = 0.5;
-    // for(int i=0; i<4; i++) // NOTE: Has to be i < 1 for the Terrain::Density() function to match
-    // {
-    //     h -= s*cosNoise(q); 
-    //     q = m2*q*0.85; 
-    //     q += vec2(2.41,8.13);
-    //     s *= 0.48 + 0.2*h;
-    // }
-    // h *= 10500.0;
+	density = addShapes(pos, density);
 
-	float density = getOrigin().y - pos.y;// + h;
+	// Generate Noise
+#if 0
+	density = max(-noised(pos / 300).x + 0.37, density);
+#endif
 
-	// density = max(-sdTorus(pos - toOrigin(vec3(20000, 5000, 5000)), vec2(2000, 1000)), density);
-	// density = max(-sdBox(pos - toOrigin(vec3(8000, 10000, 8000)), vec3(1500)), density);
-	// density = max(-sdSphere(pos - toOrigin(vec3(8500, 10600, 0)), 1500), density);
+	// Generate Fbm
+#if 1
+	density = max(-fbmd(pos / 500.0f).x + 0.37, density);
+#endif
 
-	//density = max(-noised(pos / 10000).x + 0.37, density);
-	density = max(-fbmd(pos / 20000.0f).x + 0.37, density);
-
-	density = texture(noiseTexture, vec3(pos / 200000)).r;
+	// Noise from 3D texture
+#if 1
+	float noise3d = texture(noiseTexture, vec3(pos / 5000)).r;
+	density = max(noise3d, density);
+#endif
 
 	return density;
 }
@@ -219,7 +224,9 @@ vec3 generateNormal(vec3 pos)
 {
 	pos = (pushConsts.world * vec4(pos, 1.0f)).xyz;
 	vec3 grad;
-	float d = 1.0f / 1.0f;
+
+	// Tuning this is important when changing voxel size
+	float d = 10.0f / 1.0f;
 
 	grad.x = density(pos + vec3(d, 0, 0)) - density(pos + vec3(-d, 0, 0));
 	grad.y = density(pos + vec3(0, d, 0)) - density(pos + vec3(0, -d, 0));
