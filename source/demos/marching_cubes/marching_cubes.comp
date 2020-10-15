@@ -20,6 +20,7 @@ layout (set = 0, binding = 3) uniform UBO_input
 	vec4 color;
 	float voxelSize;
 	float time;
+	bool flatNormals;
 } ubo;
 
 struct GeometryVertex
@@ -274,12 +275,12 @@ void main(void)
 			vertexSSBO.vertices[index].normal = vec4(normal, 1);
 
 			position = vertList[triangleTableValue(cubeIndex, i + 1)];
-			normal = generateNormal(position);
+			normal = ubo.flatNormals ? normal : generateNormal(position);
 			vertexSSBO.vertices[index + 1].pos = vec4(position, 1);
 			vertexSSBO.vertices[index + 1].normal = vec4(normal, 1);
 
 			position = vertList[triangleTableValue(cubeIndex, i + 2)];
-			normal = generateNormal(position);
+			normal = ubo.flatNormals ? normal : generateNormal(position);
 			vertexSSBO.vertices[index + 2].pos = vec4(position, 1);
 			vertexSSBO.vertices[index + 2].normal = vec4(normal, 1);
 

@@ -70,6 +70,7 @@ void MarchingCubes::DestroyCallback()
 	// Free Vulkan resources
 	mMarchingCubesEffect = nullptr;
 	mTerrainEffect = nullptr;
+	mTerrainEffectWireframe = nullptr;
 	mTerrainCommandBuffer = nullptr;
 	mEdgeTableTex = nullptr;
 	mTriangleTableTex = nullptr;
@@ -134,6 +135,7 @@ void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, 
 	mMarchingInputParameters.data.offsets[7] = glm::vec4(0, mVoxelSize, mVoxelSize, 0);
 	mMarchingInputParameters.data.color = glm::vec4(0, 1, 0, 1);
 	mMarchingInputParameters.data.voxelSize = mVoxelSize;
+	mMarchingInputParameters.data.flatNormals = false;
 	mMarchingInputParameters.UpdateMemory();
 
 	mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
@@ -155,12 +157,16 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 	effectDesc.shaderDesc.vertexShaderPath = "source/demos/marching_cubes/terrain.vert";
 	effectDesc.shaderDesc.fragmentShaderPath = "source/demos/marching_cubes/terrain.frag";
 	effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-	//effectDesc.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mTerrainEffect = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
+
+	// Wireframe variant
+	effectDesc.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+	mTerrainEffectWireframe = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
 
 	mTerrainInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
 	mTerrainEffect->BindUniformBuffer("UBO", mTerrainInputParameters);
+	mTerrainEffectWireframe->BindUniformBuffer("UBO", mTerrainInputParameters);
 
 	mTerrainCommandBuffer = std::make_shared<Vk::CommandBuffer>(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	mVulkanApp->AddSecondaryCommandBuffer(mTerrainCommandBuffer.get());
@@ -304,18 +310,20 @@ void MarchingCubes::RenderBlocks()
 	mTerrainCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindow()->GetWidth(), mVulkanApp->GetWindow()->GetHeight());
 	mTerrainCommandBuffer->CmdSetScissor(mVulkanApp->GetWindow()->GetWidth(), mVulkanApp->GetWindow()->GetHeight());
 
+	SharedPtr<Utopian::Vk::Effect> effect = mWireframe ? mTerrainEffectWireframe : mTerrainEffect;
+
 	for (auto blockIter : mBlockList)
 	{
 		Block* block = blockIter.second;
 		if (block->visible && block->generated && block->numVertices != 0)
 		{
-			mTerrainCommandBuffer->CmdBindPipeline(mTerrainEffect->GetPipeline());
-			mTerrainCommandBuffer->CmdBindDescriptorSets(mTerrainEffect);
+			mTerrainCommandBuffer->CmdBindPipeline(effect->GetPipeline());
+			mTerrainCommandBuffer->CmdBindDescriptorSets(effect);
 
 			mTerrainCommandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
 			PushConstantBlock pushConstantBlock(glm::translate(glm::mat4(), block->position), glm::vec4(block->color, 1.0f));
-			mTerrainCommandBuffer->CmdPushConstants(mTerrainEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
+			mTerrainCommandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
 													sizeof(pushConstantBlock), &pushConstantBlock);
 
 			mTerrainCommandBuffer->CmdDraw(block->numVertices, 1, 0, 0);
@@ -323,6 +331,12 @@ void MarchingCubes::RenderBlocks()
 	}
 
 	mTerrainCommandBuffer->End();
+}
+
+void MarchingCubes::ActivateBlockRegeneration()
+{
+	for (auto blockIter : mBlockList)
+		blockIter.second->modified = true;
 }
 
 void MarchingCubes::UpdateCallback()
@@ -335,6 +349,15 @@ void MarchingCubes::UpdateCallback()
 	ImGui::Text("Camera origin pos: (%.2f %.2f %.2f)", cameraPos.x - mOrigin.x, cameraPos.y - mOrigin.y, cameraPos.z - mOrigin.z);
 	ImGui::Text("Block (%d, %d, %d)", blockCoord.x, blockCoord.y, blockCoord.z);
 	ImGui::Checkbox("Static position:", &mStaticPosition);
+	ImGui::Checkbox("Wireframe:", &mWireframe);
+
+	bool flatNormals = mMarchingInputParameters.data.flatNormals;
+	if (ImGui::Checkbox("Flat normals:", &flatNormals))
+	{
+		mMarchingInputParameters.data.flatNormals = flatNormals;
+		ActivateBlockRegeneration();
+	}
+
 	ImGuiRenderer::EndWindow();
 
 	// Recompile shaders
@@ -344,8 +367,7 @@ void MarchingCubes::UpdateCallback()
 		GenerateNoiseTexture();
 
 		// Regenerate all blocks since the algorithm might have changed
-		for (auto blockIter : mBlockList)
-			blockIter.second->modified = true;
+		ActivateBlockRegeneration();
 	}
 
 	mCamera->Update();

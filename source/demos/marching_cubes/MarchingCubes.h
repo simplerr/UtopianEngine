@@ -46,6 +46,7 @@ public:
 		UNIFORM_PARAM(glm::vec4, color)
 		UNIFORM_PARAM(float, voxelSize)
 		UNIFORM_PARAM(float, time)
+		UNIFORM_PARAM(uint32_t, flatNormals)
 	UNIFORM_BLOCK_END()
 
 	UNIFORM_BLOCK_BEGIN(CounterSSBO)
@@ -83,6 +84,7 @@ private:
 	void InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void GenerateNoiseTexture();
+	void ActivateBlockRegeneration();
 	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
 
 	Vk::VulkanApp* mVulkanApp;
@@ -103,6 +105,7 @@ private:
 
 	// Terrain
 	SharedPtr<Vk::Effect> mTerrainEffect;
+	SharedPtr<Vk::Effect> mTerrainEffectWireframe;
 	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
 	TerrainInputParameters mTerrainInputParameters;
 
@@ -116,4 +119,5 @@ private:
 
 	// Settings
 	bool mStaticPosition = true;
+	bool mWireframe = false;
 };
