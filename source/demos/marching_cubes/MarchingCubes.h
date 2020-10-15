@@ -112,6 +112,7 @@ private:
 	SharedPtr<Vk::Effect> mNoiseEffect;
 	SharedPtr<Vk::Image> mNoiseImage;
 	SharedPtr<Vk::Sampler> mNoiseSampler;
+	const uint32_t NOISE_TEXTURE_SIZE = 256;
 
 	// Settings
 	bool mStaticPosition = true;

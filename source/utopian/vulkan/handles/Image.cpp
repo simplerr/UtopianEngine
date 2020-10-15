@@ -370,12 +370,13 @@ namespace Utopian::Vk
 		CreateInternal(createInfo, device);
 	}
 
-	ImageStorage::ImageStorage(Device* device, uint32_t width, uint32_t height, std::string debugName, VkFormat format)
+	ImageStorage::ImageStorage(Device* device, uint32_t width, uint32_t height, uint32_t depth, std::string debugName, VkFormat format)
 		: Image(device)
 	{
 		IMAGE_CREATE_INFO createInfo;
 		createInfo.width = width;
 		createInfo.height = height;
+		createInfo.depth = depth;
 		createInfo.format = format;
 		createInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		createInfo.name = debugName;

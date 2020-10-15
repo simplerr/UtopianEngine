@@ -109,16 +109,8 @@ void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
 	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/generate_noise.comp";
 	mNoiseEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
-	Utopian::Vk::IMAGE_CREATE_INFO createInfo;
-	createInfo.width = 32;
-	createInfo.height = 32;
-	createInfo.depth = 32;
-	createInfo.format = VK_FORMAT_R32G32B32A32_SFLOAT;
-	createInfo.name = "3D Noise Texture";
-	createInfo.transitionToFinalLayout = true;
-	createInfo.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
-	createInfo.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
-	mNoiseImage = std::make_shared<Utopian::Vk::Image>(createInfo, device);
+	mNoiseImage = std::make_shared<Utopian::Vk::ImageStorage>(device, NOISE_TEXTURE_SIZE, NOISE_TEXTURE_SIZE,
+															  NOISE_TEXTURE_SIZE, "3D Noise Texture", VK_FORMAT_R8_SNORM);
 
 	mNoiseEffect->BindImage("resultImage", *mNoiseImage);
 
@@ -193,7 +185,7 @@ void MarchingCubes::GenerateNoiseTexture()
 
 	commandBuffer.CmdBindPipeline(mNoiseEffect->GetPipeline());
 	commandBuffer.CmdBindDescriptorSets(mNoiseEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
-	commandBuffer.CmdDispatch(32, 32, 32);
+	commandBuffer.CmdDispatch(NOISE_TEXTURE_SIZE, NOISE_TEXTURE_SIZE, NOISE_TEXTURE_SIZE);
 	commandBuffer.Flush();
 }
 
@@ -367,8 +359,6 @@ void MarchingCubes::DrawCallback()
 	// Update uniforms
 	mMarchingInputParameters.data.time = 0.0f;
 	mMarchingInputParameters.UpdateMemory();
-
-	GenerateNoiseTexture();
 
 	RenderBlocks();
 

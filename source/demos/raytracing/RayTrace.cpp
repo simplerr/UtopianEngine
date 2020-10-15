@@ -74,7 +74,7 @@ void RayTrace::InitResources()
 	mInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	mSettingParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-	mOutputImage = std::make_shared<Vk::ImageStorage>(device, width, height, "Raytrace image");
+	mOutputImage = std::make_shared<Vk::ImageStorage>(device, width, height, 1, "Raytrace image");
 	mSampler = std::make_shared<Vk::Sampler>(device);
 
 	mEffect->BindImage("outputImage", *mOutputImage);

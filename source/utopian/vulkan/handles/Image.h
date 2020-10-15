@@ -100,6 +100,6 @@ namespace Utopian::Vk
 	class ImageStorage : public Image
 	{
 	public:
-		ImageStorage(Device* device, uint32_t width, uint32_t height, std::string debugName, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
+		ImageStorage(Device* device, uint32_t width, uint32_t height, uint32_t depth, std::string debugName, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
 	};
 }

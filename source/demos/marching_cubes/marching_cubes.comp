@@ -74,23 +74,6 @@ float sdBox( vec3 p, vec3 b )
   return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
 }
 
-float opI( float d1, float d2 )
-{
-    return max(d1,d2);
-}
-
-float cosNoise(vec2 pos)
-{
-	float amplitude = 1.0f;
-	float freq = 5500.0f;
-	return amplitude * (sin(pos.x/freq) + sin(pos.y / freq));
-}
-
-const mat2 m2 = mat2(1.6,-1.2,
-                     1.2, 1.6);
-
-
-
 //---------------------------------------------------------------
 // value noise, and its analytical derivatives
 // Reference: https://www.shadertoy.com/view/XttSz2
@@ -171,7 +154,7 @@ float density(vec3 pos)
 #endif
 
 	// Generate Fbm
-#if 1
+#if 0
 	density = max(-fbmd(pos / 500.0f).x + 0.37, density);
 #endif
 
