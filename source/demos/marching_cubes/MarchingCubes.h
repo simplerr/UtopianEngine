@@ -26,6 +26,41 @@ struct BlockKey
 
 bool operator<(BlockKey const& a, BlockKey const& b);
 
+// Storage buffer test
+struct Metaball
+{
+	Metaball() { };
+	Metaball(glm::vec3 _pos, float _radius)
+		: pos(_pos), radius(_radius) {
+
+	}
+
+	glm::vec3 pos;
+	float radius;
+};
+	
+class MetaballsSSBO : public Utopian::Vk::ShaderBuffer
+{
+public:
+	virtual void UpdateMemory()
+	{
+		uint8_t* mapped;
+		uint32_t size = metaballs.size() * sizeof(Metaball);
+		mBuffer->MapMemory((void**)&mapped);
+		memcpy(mapped, metaballs.data(), size);
+		mBuffer->UnmapMemory();
+	}
+
+	virtual int GetSize()
+	{
+		return metaballs.size() * sizeof(Metaball);
+	}
+
+	virtual std::string GetDebugName() { return "MetaballsSSBO"; }
+
+	std::vector<Metaball> metaballs;
+};
+
 /**
  * The concept from Nvidias article (http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html) is to generate a terrain mesh for each block
  * and write it to a vertex buffer that can be reused as long as the block is visible. Blocks are only generated when needed, i.e when they get visible.
@@ -47,6 +82,7 @@ public:
 		UNIFORM_PARAM(float, voxelSize)
 		UNIFORM_PARAM(float, time)
 		UNIFORM_PARAM(uint32_t, flatNormals)
+		UNIFORM_PARAM(uint32_t, metaballCount)
 	UNIFORM_BLOCK_END()
 
 	UNIFORM_BLOCK_BEGIN(CounterSSBO)
@@ -87,6 +123,8 @@ private:
 	void ActivateBlockRegeneration();
 	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
 
+	void AddMetaballs();
+
 	Vk::VulkanApp* mVulkanApp;
 	Utopian::Window* mWindow;
 	SharedPtr<MiniCamera> mCamera;
@@ -116,6 +154,10 @@ private:
 	SharedPtr<Vk::Image> mNoiseImage;
 	SharedPtr<Vk::Sampler> mNoiseSampler;
 	const uint32_t NOISE_TEXTURE_SIZE = 256;
+
+	// Metaballs
+	MetaballsSSBO mMetaballsSSBO;
+	Utopian::Timestamp mLastAddTimestamp;
 
 	// Settings
 	bool mStaticPosition = true;

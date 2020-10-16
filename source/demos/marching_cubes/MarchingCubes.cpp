@@ -57,6 +57,8 @@ MarchingCubes::MarchingCubes(Utopian::Window* window)
 
 	mVulkanApp = Utopian::gEngine().GetVulkanApp();
 
+	mLastAddTimestamp = gTimer().GetTimestamp();
+
 	InitResources();
 }
 
@@ -81,6 +83,7 @@ void MarchingCubes::DestroyCallback()
 	mMarchingInputParameters.GetBuffer()->Destroy();
 	mTerrainInputParameters.GetBuffer()->Destroy();
 	mCounterSSBO.GetBuffer()->Destroy();
+	mMetaballsSSBO.GetBuffer()->Destroy();
 
 	for (auto& block : mBlockList)
 		delete block.second;
@@ -136,16 +139,22 @@ void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, 
 	mMarchingInputParameters.data.color = glm::vec4(0, 1, 0, 1);
 	mMarchingInputParameters.data.voxelSize = mVoxelSize;
 	mMarchingInputParameters.data.flatNormals = false;
+	mMarchingInputParameters.data.metaballCount = 2;
 	mMarchingInputParameters.UpdateMemory();
 
-	mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, 
+	mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 						VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	mMetaballsSSBO.metaballs.resize(1000);
+	mMetaballsSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+						  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	mEdgeTableTex = Utopian::Vk::gTextureLoader().CreateTexture(edgeTable, VK_FORMAT_R32_SINT, 256, 1, 1, sizeof(int));
 	mTriangleTableTex = Utopian::Vk::gTextureLoader().CreateTexture(triTable, VK_FORMAT_R32_SINT, 16, 256, 1, sizeof(int));
 
 	mMarchingCubesEffect->BindUniformBuffer("UBO_input", mMarchingInputParameters);
 	mMarchingCubesEffect->BindStorageBuffer("CounterSSBO", mCounterSSBO);
+	mMarchingCubesEffect->BindStorageBuffer("MetaballsSSBO", mMetaballsSSBO);
 	mMarchingCubesEffect->BindCombinedImage("edgeTableTex", *mEdgeTableTex);
 	mMarchingCubesEffect->BindCombinedImage("triangleTableTex", *mTriangleTableTex);
 	mMarchingCubesEffect->BindCombinedImage("noiseTexture", *mNoiseImage, *mNoiseSampler);
@@ -264,6 +273,10 @@ void MarchingCubes::GenerateBlocks()
 			mMarchingInputParameters.data.time = gTimer().GetTime();
 			mMarchingInputParameters.UpdateMemory();
 
+			mMetaballsSSBO.metaballs[0] = Metaball(glm::vec3(500), 150);
+			mMetaballsSSBO.metaballs[1] = Metaball(glm::vec3(700), 150);
+			mMetaballsSSBO.UpdateMemory();
+
 			// Reset block vertex count
 			mCounterSSBO.data.numVertices = 0;
 			mCounterSSBO.UpdateMemory();
@@ -339,6 +352,28 @@ void MarchingCubes::ActivateBlockRegeneration()
 		blockIter.second->modified = true;
 }
 
+void MarchingCubes::AddMetaballs()
+{
+	// Experimentation
+	if (gInput().KeyDown(VK_LBUTTON) && gTimer().GetElapsedTime(mLastAddTimestamp) > 50)
+	{
+		mLastAddTimestamp = gTimer().GetTimestamp();
+
+		glm::vec3 target = mCamera->GetPosition() - mOrigin + glm::normalize(mCamera->GetTarget() - mCamera->GetPosition()) * glm::vec3(1000.0f);
+		mMetaballsSSBO.metaballs[mMarchingInputParameters.data.metaballCount].pos = target;
+		mMetaballsSSBO.metaballs[mMarchingInputParameters.data.metaballCount].radius = 50;
+		mMarchingInputParameters.data.metaballCount++;
+		mMetaballsSSBO.UpdateMemory();
+		mMarchingInputParameters.UpdateMemory();
+
+		glm::ivec3 blockCoord = GetBlockCoordinate(mOrigin + target);
+		BlockKey blockKey(blockCoord.x, blockCoord.y, blockCoord.z);
+
+		if (mBlockList.find(blockKey) != mBlockList.end())
+			mBlockList[blockKey]->modified = true;
+	}
+}
+
 void MarchingCubes::UpdateCallback()
 {
 	glm::vec3 cameraPos = mCamera->GetPosition();
@@ -348,6 +383,7 @@ void MarchingCubes::UpdateCallback()
 	ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::Text("Camera origin pos: (%.2f %.2f %.2f)", cameraPos.x - mOrigin.x, cameraPos.y - mOrigin.y, cameraPos.z - mOrigin.z);
 	ImGui::Text("Block (%d, %d, %d)", blockCoord.x, blockCoord.y, blockCoord.z);
+	ImGui::Text("Num metaballs: %d", mMarchingInputParameters.data.metaballCount);
 	ImGui::Checkbox("Static position:", &mStaticPosition);
 	ImGui::Checkbox("Wireframe:", &mWireframe);
 
@@ -359,6 +395,8 @@ void MarchingCubes::UpdateCallback()
 	}
 
 	ImGuiRenderer::EndWindow();
+
+	AddMetaballs();
 
 	// Recompile shaders
 	if (gInput().KeyPressed('R'))

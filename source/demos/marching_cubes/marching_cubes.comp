@@ -21,6 +21,7 @@ layout (set = 0, binding = 3) uniform UBO_input
 	float voxelSize;
 	float time;
 	bool flatNormals;
+	int metaballCount;
 } ubo;
 
 struct GeometryVertex
@@ -38,6 +39,17 @@ layout(std430, set = 1, binding = 0) buffer VertexSSBO
 {
 	GeometryVertex vertices[];
 } vertexSSBO;
+
+struct Metaball
+{
+	vec3 pos;
+	float radius;
+};
+
+layout (set = 0, binding = 5) buffer MetaballsSSBO
+{
+	Metaball metaballs[];
+} metaballsSSBO;
 
 const vec3 origin = vec3(256000.0f);
 
@@ -139,6 +151,14 @@ float addShapes(vec3 pos, float density)
 	finalDensity = max(-sdBox(pos - toOrigin(vec3(800, 500, 800)), vec3(150)), finalDensity);
 	finalDensity = max(-sdSphere(pos - toOrigin(vec3(850, 500, 0)), 250), finalDensity);
 
+#if 1
+	// Metaballs from CPU
+	for (int i = 0; i < ubo.metaballCount; i++)
+	{
+		finalDensity = max(-sdSphere(pos - toOrigin(metaballsSSBO.metaballs[i].pos), metaballsSSBO.metaballs[i].radius), finalDensity);
+	}
+#endif
+
 	return finalDensity;
 }
 
@@ -162,7 +182,7 @@ float density(vec3 pos)
 	// Noise from 3D texture
 #if 1
 	float noise3d = texture(noiseTexture, vec3(pos / 5000)).r;
-	density = max(noise3d, density);
+	// density = max(noise3d, density);
 #endif
 
 	return density;
