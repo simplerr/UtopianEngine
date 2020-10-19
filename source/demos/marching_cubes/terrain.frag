@@ -17,5 +17,5 @@ void main(void)
     tmp = InColor;
 
     OutFragColor = vec4(InNormalW, 1.0f);
-    //OutFragColor = vec4(InColor, 1.0f);
+    //OutFragColor *= vec4(InColor, 1.0f);
 }

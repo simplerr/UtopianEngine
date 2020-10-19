@@ -26,41 +26,6 @@ struct BlockKey
 
 bool operator<(BlockKey const& a, BlockKey const& b);
 
-// Storage buffer test
-struct Metaball
-{
-	Metaball() { };
-	Metaball(glm::vec3 _pos, float _radius)
-		: pos(_pos), radius(_radius) {
-
-	}
-
-	glm::vec3 pos;
-	float radius;
-};
-	
-class MetaballsSSBO : public Utopian::Vk::ShaderBuffer
-{
-public:
-	virtual void UpdateMemory()
-	{
-		uint8_t* mapped;
-		uint32_t size = metaballs.size() * sizeof(Metaball);
-		mBuffer->MapMemory((void**)&mapped);
-		memcpy(mapped, metaballs.data(), size);
-		mBuffer->UnmapMemory();
-	}
-
-	virtual int GetSize()
-	{
-		return metaballs.size() * sizeof(Metaball);
-	}
-
-	virtual std::string GetDebugName() { return "MetaballsSSBO"; }
-
-	std::vector<Metaball> metaballs;
-};
-
 /**
  * The concept from Nvidias article (http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html) is to generate a terrain mesh for each block
  * and write it to a vertex buffer that can be reused as long as the block is visible. Blocks are only generated when needed, i.e when they get visible.
@@ -80,9 +45,10 @@ public:
 		UNIFORM_PARAM(glm::vec4, offsets[8])
 		UNIFORM_PARAM(glm::vec4, color)
 		UNIFORM_PARAM(float, voxelSize)
+		UNIFORM_PARAM(uint32_t, viewDistance)
+		UNIFORM_PARAM(uint32_t, voxelsInBlock)
 		UNIFORM_PARAM(float, time)
 		UNIFORM_PARAM(uint32_t, flatNormals)
-		UNIFORM_PARAM(uint32_t, metaballCount)
 	UNIFORM_BLOCK_END()
 
 	UNIFORM_BLOCK_BEGIN(CounterSSBO)
@@ -95,6 +61,13 @@ public:
 		UNIFORM_PARAM(glm::vec4, clippingPlane)
 		UNIFORM_PARAM(glm::vec3, eyePos)
 		UNIFORM_PARAM(float, pad)
+	UNIFORM_BLOCK_END()
+
+	UNIFORM_BLOCK_BEGIN(BrushInputParameters)
+		UNIFORM_PARAM(glm::ivec3, startCoord)
+		UNIFORM_PARAM(float, brushSize)
+		UNIFORM_PARAM(int, mode)
+		UNIFORM_PARAM(int, textureRegionSize)
 	UNIFORM_BLOCK_END()
 
 	MarchingCubes(Utopian::Window* window);
@@ -117,29 +90,29 @@ public:
 private:
 	void InitResources();
 	void InitNoiseTextureEffect(Vk::Device* device);
+	void InitBrushEffect(Vk::Device* device);
 	void InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void GenerateNoiseTexture();
+	void ApplyTerrainBrush();
 	void ActivateBlockRegeneration();
 	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
-
-	void AddMetaballs();
 
 	Vk::VulkanApp* mVulkanApp;
 	Utopian::Window* mWindow;
 	SharedPtr<MiniCamera> mCamera;
+	const glm::vec3 mOrigin = glm::vec3(256000.0f);
 
 	// Marching cubes
+	std::map<BlockKey, Block*> mBlockList;
 	SharedPtr<Vk::Effect> mMarchingCubesEffect;
-	SharedPtr<Utopian::Vk::Texture> mEdgeTableTex;
-	SharedPtr<Utopian::Vk::Texture> mTriangleTableTex;
+	SharedPtr<Utopian::Vk::Texture> mEdgeTableTexture;
+	SharedPtr<Utopian::Vk::Texture> mTriangleTableTexture;
 	MarchingInputParameters mMarchingInputParameters;
 	CounterSSBO mCounterSSBO;
 	const int32_t mVoxelsInBlock = 32;
 	const int32_t mVoxelSize = 10;
-	const int32_t mViewDistance = 3;
-	std::map<BlockKey, Block*> mBlockList;
-	//SharedPtr<Utopian::Vk::Texture> texture3d;
+	const int32_t mViewDistance = 4;
 
 	// Terrain
 	SharedPtr<Vk::Effect> mTerrainEffect;
@@ -147,17 +120,16 @@ private:
 	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
 	TerrainInputParameters mTerrainInputParameters;
 
-	const glm::vec3 mOrigin = glm::vec3(256000.0f);
-
 	// Noise rendering
 	SharedPtr<Vk::Effect> mNoiseEffect;
-	SharedPtr<Vk::Image> mNoiseImage;
+	SharedPtr<Vk::Image> mSdfImage;
 	SharedPtr<Vk::Sampler> mNoiseSampler;
-	const uint32_t NOISE_TEXTURE_SIZE = 256;
+	const uint32_t mNoiseTextureSize = 256;
 
-	// Metaballs
-	MetaballsSSBO mMetaballsSSBO;
-	Utopian::Timestamp mLastAddTimestamp;
+	// Terrain brush
+	SharedPtr<Vk::Effect> mBrushEffect;
+	BrushInputParameters mBrushInputParameters;
+	const uint32_t mBrushTextureRegion = 32;
 
 	// Settings
 	bool mStaticPosition = true;

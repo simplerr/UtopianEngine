@@ -1,0 +1,60 @@
+#version 450
+
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
+#extension GL_OES_shader_image_atomic : require
+
+layout (set = 0, binding = 0, r8) uniform coherent image3D sdfImage;
+
+layout (set = 0, binding = 3) uniform UBO_input
+{
+   ivec3 startCoord;
+   float brushSize;
+   int mode; // 0 = add, 1 = subtract
+   int textureRegionSize;
+} ubo;
+
+float sdSphere(vec3 p, float s)
+{
+   return length(p)-s;
+}
+
+float sdTorus(vec3 p, vec2 t)
+{
+   vec2 q = vec2(length(p.xz)-t.x,p.y);
+   return length(q)-t.y;
+}
+
+float sdCone(vec3 p, vec2 c)
+{
+   // c must be normalized
+   float q = length(p.xy);
+   return dot(c,vec2(q,p.z));
+}
+
+float sdBox(vec3 p, vec3 b)
+{
+   vec3 d = abs(p) - b;
+   return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
+}
+
+void main(void)
+{
+   // The brush is allways at the center which is at startCoord + (32/2, 32/2, 32/2)
+
+   ivec3 pixelPos = ubo.startCoord + ivec3(gl_GlobalInvocationID.xyz);
+
+   float distance = distance(ubo.startCoord + ubo.textureRegionSize / 2.0f, pixelPos);
+   float strength = ubo.brushSize - distance;
+   strength = clamp(strength / (ubo.textureRegionSize / 2.0f), -1.0f, 1.0f);
+
+   float currentDensity = imageLoad(sdfImage, pixelPos).r;
+
+   float density;
+   if (ubo.mode == 0) // Add
+      density = max(currentDensity, strength);
+   else if (ubo.mode == 1) // Subtract
+      density = min(currentDensity, -strength);
+
+   imageStore(sdfImage, pixelPos, vec4(density));
+}

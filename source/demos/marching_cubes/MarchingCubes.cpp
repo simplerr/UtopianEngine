@@ -57,8 +57,6 @@ MarchingCubes::MarchingCubes(Utopian::Window* window)
 
 	mVulkanApp = Utopian::gEngine().GetVulkanApp();
 
-	mLastAddTimestamp = gTimer().GetTimestamp();
-
 	InitResources();
 }
 
@@ -74,16 +72,17 @@ void MarchingCubes::DestroyCallback()
 	mTerrainEffect = nullptr;
 	mTerrainEffectWireframe = nullptr;
 	mTerrainCommandBuffer = nullptr;
-	mEdgeTableTex = nullptr;
-	mTriangleTableTex = nullptr;
+	mEdgeTableTexture = nullptr;
+	mTriangleTableTexture = nullptr;
 	mNoiseSampler = nullptr;
 	mNoiseEffect = nullptr;
-	mNoiseImage = nullptr;
+	mSdfImage = nullptr;
+	mBrushEffect = nullptr;
 
 	mMarchingInputParameters.GetBuffer()->Destroy();
 	mTerrainInputParameters.GetBuffer()->Destroy();
 	mCounterSSBO.GetBuffer()->Destroy();
-	mMetaballsSSBO.GetBuffer()->Destroy();
+	mBrushInputParameters.GetBuffer()->Destroy();
 
 	for (auto& block : mBlockList)
 		delete block.second;
@@ -95,16 +94,16 @@ void MarchingCubes::InitResources()
 	uint32_t height = mWindow->GetHeight();
 	Vk::Device* device = mVulkanApp->GetDevice();
 
-	//mCamera = std::make_shared<MiniCamera>(glm::vec3(16000, 11000, 7000), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
 	mCamera = std::make_shared<MiniCamera>(mOrigin + glm::vec3(1400, 1400, 1400), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
 
 	InitNoiseTextureEffect(device);
+	InitBrushEffect(device);
 	InitMarchingCubesEffect(device, width, height);
 	InitTerrainEffect(device, width, height);
 
 	GenerateNoiseTexture();
 
-	gScreenQuadUi().AddQuad(0, 0, width / 4, height / 4, mNoiseImage.get(), mNoiseSampler.get());
+	gScreenQuadUi().AddQuad(50, 50, 512, 512, mSdfImage.get(), mNoiseSampler.get());
 }
 
 void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
@@ -113,12 +112,26 @@ void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
 	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/generate_noise.comp";
 	mNoiseEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
-	mNoiseImage = std::make_shared<Utopian::Vk::ImageStorage>(device, NOISE_TEXTURE_SIZE, NOISE_TEXTURE_SIZE,
-															  NOISE_TEXTURE_SIZE, "3D Noise Texture", VK_FORMAT_R8_SNORM);
+	mSdfImage = std::make_shared<Utopian::Vk::ImageStorage>(device, mNoiseTextureSize, mNoiseTextureSize, mNoiseTextureSize,
+															"3D Noise Texture", VK_FORMAT_R8_SNORM);
 
-	mNoiseEffect->BindImage("resultImage", *mNoiseImage);
+	mNoiseEffect->BindImage("sdfImage", *mSdfImage);
 
 	mNoiseSampler = std::make_shared<Utopian::Vk::Sampler>(device);
+}
+
+void MarchingCubes::InitBrushEffect(Vk::Device* device)
+{
+	Vk::EffectCreateInfo effectDesc;
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/terrain_brush.comp";
+	mBrushEffect = Vk::Effect::Create(device, nullptr, effectDesc);
+
+	mBrushInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mBrushInputParameters.data.brushSize = 8.0f;
+	mBrushInputParameters.data.mode = 0; // Add
+
+	mBrushEffect->BindImage("sdfImage", *mSdfImage);
+	mBrushEffect->BindUniformBuffer("UBO_input", mBrushInputParameters);
 }
 
 void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height)
@@ -138,26 +151,22 @@ void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, 
 	mMarchingInputParameters.data.offsets[7] = glm::vec4(0, mVoxelSize, mVoxelSize, 0);
 	mMarchingInputParameters.data.color = glm::vec4(0, 1, 0, 1);
 	mMarchingInputParameters.data.voxelSize = mVoxelSize;
+	mMarchingInputParameters.data.viewDistance = mViewDistance;
+	mMarchingInputParameters.data.voxelsInBlock = mVoxelsInBlock;
 	mMarchingInputParameters.data.flatNormals = false;
-	mMarchingInputParameters.data.metaballCount = 2;
 	mMarchingInputParameters.UpdateMemory();
 
 	mCounterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 						VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-	mMetaballsSSBO.metaballs.resize(1000);
-	mMetaballsSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-						  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-	mEdgeTableTex = Utopian::Vk::gTextureLoader().CreateTexture(edgeTable, VK_FORMAT_R32_SINT, 256, 1, 1, sizeof(int));
-	mTriangleTableTex = Utopian::Vk::gTextureLoader().CreateTexture(triTable, VK_FORMAT_R32_SINT, 16, 256, 1, sizeof(int));
+	mEdgeTableTexture = Utopian::Vk::gTextureLoader().CreateTexture(edgeTable, VK_FORMAT_R32_SINT, 256, 1, 1, sizeof(int));
+	mTriangleTableTexture = Utopian::Vk::gTextureLoader().CreateTexture(triTable, VK_FORMAT_R32_SINT, 16, 256, 1, sizeof(int));
 
 	mMarchingCubesEffect->BindUniformBuffer("UBO_input", mMarchingInputParameters);
 	mMarchingCubesEffect->BindStorageBuffer("CounterSSBO", mCounterSSBO);
-	mMarchingCubesEffect->BindStorageBuffer("MetaballsSSBO", mMetaballsSSBO);
-	mMarchingCubesEffect->BindCombinedImage("edgeTableTex", *mEdgeTableTex);
-	mMarchingCubesEffect->BindCombinedImage("triangleTableTex", *mTriangleTableTex);
-	mMarchingCubesEffect->BindCombinedImage("noiseTexture", *mNoiseImage, *mNoiseSampler);
+	mMarchingCubesEffect->BindCombinedImage("edgeTableTex", *mEdgeTableTexture);
+	mMarchingCubesEffect->BindCombinedImage("triangleTableTex", *mTriangleTableTexture);
+	mMarchingCubesEffect->BindCombinedImage("sdfImage", *mSdfImage, *mNoiseSampler);
 }
 
 void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height)
@@ -168,7 +177,6 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 	effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
 	mTerrainEffect = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
 
-	// Wireframe variant
 	effectDesc.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
 	mTerrainEffectWireframe = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
 
@@ -200,8 +208,49 @@ void MarchingCubes::GenerateNoiseTexture()
 
 	commandBuffer.CmdBindPipeline(mNoiseEffect->GetPipeline());
 	commandBuffer.CmdBindDescriptorSets(mNoiseEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
-	commandBuffer.CmdDispatch(NOISE_TEXTURE_SIZE, NOISE_TEXTURE_SIZE, NOISE_TEXTURE_SIZE);
+	commandBuffer.CmdDispatch(mNoiseTextureSize, mNoiseTextureSize, mNoiseTextureSize);
 	commandBuffer.Flush();
+}
+
+void MarchingCubes::ApplyTerrainBrush()
+{
+	glm::vec3 target = mCamera->GetPosition() + glm::normalize(mCamera->GetTarget() - mCamera->GetPosition()) * glm::vec3(500.0f);
+	glm::vec3 localPosition = target - glm::vec3((800 - mViewDistance) * mVoxelsInBlock * mVoxelSize);
+	glm::ivec3 startCoord = (localPosition / (float)mVoxelSize) - mBrushTextureRegion / 2.0f;
+
+	mBrushInputParameters.data.startCoord = startCoord;
+	mBrushInputParameters.data.textureRegionSize = mBrushTextureRegion;
+	mBrushInputParameters.UpdateMemory();
+
+	Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+	commandBuffer.CmdBindPipeline(mBrushEffect->GetPipeline());
+	commandBuffer.CmdBindDescriptorSets(mBrushEffect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
+	commandBuffer.CmdDispatch(mBrushTextureRegion, mBrushTextureRegion, mBrushTextureRegion); // Don't dispatch full texture to optimize performance
+	commandBuffer.Flush();
+
+	glm::ivec3 globalBlockCoord = GetBlockCoordinate(target);
+	BlockKey blockKey(globalBlockCoord.x, globalBlockCoord.y, globalBlockCoord.z);
+
+	// Update surrounding blocks
+	// Note: This only works for positive block coordinates
+	for (int32_t x = -1; x <= 1; x++) // Should be <= to cover full range
+	{
+		for (int32_t z = -1; z <= 1; z++)
+		{
+			for (int32_t y = -1; y <= 1; y++)
+			{
+				glm::ivec3 coord = glm::ivec3(x, y, z) + globalBlockCoord;
+				glm::vec3 blockCenter = coord * mVoxelSize * mVoxelsInBlock + (mVoxelSize * mVoxelsInBlock / 2);
+				if (glm::distance(blockCenter, target) < mBrushInputParameters.data.brushSize * 20.0f + (mVoxelSize * mVoxelsInBlock / 2)) // Why 20?
+				{
+					BlockKey blockKey(coord.x, coord.y, coord.z);
+					if (mBlockList.find(blockKey) != mBlockList.end())
+						mBlockList[blockKey]->modified = true;
+				}
+			}
+		}
+	}
 }
 
 void MarchingCubes::UpdateBlockList()
@@ -225,11 +274,11 @@ void MarchingCubes::UpdateBlockList()
 	}
 
 	// Note: This only works for positive block coordinates
-	for (int32_t x = -mViewDistance; x <= mViewDistance; x++)
+	for (int32_t x = -mViewDistance; x < mViewDistance; x++) // Should be <= to cover full range
 	{
-		for (int32_t z = -mViewDistance; z <= mViewDistance; z++)
+		for (int32_t z = -mViewDistance; z < mViewDistance; z++)
 		{
-			for (int32_t y = -mViewDistance; y <= mViewDistance; y++)
+			for (int32_t y = -mViewDistance; y < mViewDistance; y++)
 			{
 				glm::ivec3 coord = glm::ivec3(x, y, z) + cameraCoord;
 
@@ -273,10 +322,6 @@ void MarchingCubes::GenerateBlocks()
 			mMarchingInputParameters.data.time = gTimer().GetTime();
 			mMarchingInputParameters.UpdateMemory();
 
-			mMetaballsSSBO.metaballs[0] = Metaball(glm::vec3(500), 150);
-			mMetaballsSSBO.metaballs[1] = Metaball(glm::vec3(700), 150);
-			mMetaballsSSBO.UpdateMemory();
-
 			// Reset block vertex count
 			mCounterSSBO.data.numVertices = 0;
 			mCounterSSBO.UpdateMemory();
@@ -300,11 +345,6 @@ void MarchingCubes::GenerateBlocks()
 			mCounterSSBO.MapMemory(0, sizeof(uint32_t), 0, (void**)&mapped);
 			uint32_t numVertices = *(uint32_t*)mapped;
 			mCounterSSBO.UnmapMemory();
-
-			// UTO_LOG("(" + std::to_string(blockIter.first.x) + ", "
-			// 		+ std::to_string(blockIter.first.y) + ", "
-			// 		+ std::to_string(blockIter.first.z) + ") "
-			// 		"numVertices: " + std::to_string(numVertices));
 
 			block->numVertices = numVertices;
 			block->generated = true;
@@ -352,28 +392,6 @@ void MarchingCubes::ActivateBlockRegeneration()
 		blockIter.second->modified = true;
 }
 
-void MarchingCubes::AddMetaballs()
-{
-	// Experimentation
-	if (gInput().KeyDown(VK_LBUTTON) && gTimer().GetElapsedTime(mLastAddTimestamp) > 50)
-	{
-		mLastAddTimestamp = gTimer().GetTimestamp();
-
-		glm::vec3 target = mCamera->GetPosition() - mOrigin + glm::normalize(mCamera->GetTarget() - mCamera->GetPosition()) * glm::vec3(1000.0f);
-		mMetaballsSSBO.metaballs[mMarchingInputParameters.data.metaballCount].pos = target;
-		mMetaballsSSBO.metaballs[mMarchingInputParameters.data.metaballCount].radius = 50;
-		mMarchingInputParameters.data.metaballCount++;
-		mMetaballsSSBO.UpdateMemory();
-		mMarchingInputParameters.UpdateMemory();
-
-		glm::ivec3 blockCoord = GetBlockCoordinate(mOrigin + target);
-		BlockKey blockKey(blockCoord.x, blockCoord.y, blockCoord.z);
-
-		if (mBlockList.find(blockKey) != mBlockList.end())
-			mBlockList[blockKey]->modified = true;
-	}
-}
-
 void MarchingCubes::UpdateCallback()
 {
 	glm::vec3 cameraPos = mCamera->GetPosition();
@@ -383,9 +401,10 @@ void MarchingCubes::UpdateCallback()
 	ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
 	ImGui::Text("Camera origin pos: (%.2f %.2f %.2f)", cameraPos.x - mOrigin.x, cameraPos.y - mOrigin.y, cameraPos.z - mOrigin.z);
 	ImGui::Text("Block (%d, %d, %d)", blockCoord.x, blockCoord.y, blockCoord.z);
-	ImGui::Text("Num metaballs: %d", mMarchingInputParameters.data.metaballCount);
+	ImGui::Text("Num blocks: %d", (int)mBlockList.size());
 	ImGui::Checkbox("Static position:", &mStaticPosition);
 	ImGui::Checkbox("Wireframe:", &mWireframe);
+	ImGui::SliderFloat("Brush size:", &mBrushInputParameters.data.brushSize, 1.0f, 16.0f);
 
 	bool flatNormals = mMarchingInputParameters.data.flatNormals;
 	if (ImGui::Checkbox("Flat normals:", &flatNormals))
@@ -394,9 +413,15 @@ void MarchingCubes::UpdateCallback()
 		ActivateBlockRegeneration();
 	}
 
+	mCamera->Update();
+
 	ImGuiRenderer::EndWindow();
 
-	AddMetaballs();
+	if (gInput().KeyPressed(VK_SPACE))
+		mBrushInputParameters.data.mode = !mBrushInputParameters.data.mode;
+
+	if (gInput().KeyDown(VK_LBUTTON))
+		ApplyTerrainBrush();
 
 	// Recompile shaders
 	if (gInput().KeyPressed('R'))
@@ -408,7 +433,9 @@ void MarchingCubes::UpdateCallback()
 		ActivateBlockRegeneration();
 	}
 
-	mCamera->Update();
+	if (gInput().KeyPressed('T'))
+		ActivateBlockRegeneration();
+
 
 	UpdateBlockList();
 	GenerateBlocks();
