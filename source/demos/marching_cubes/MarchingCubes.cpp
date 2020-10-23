@@ -81,6 +81,7 @@ void MarchingCubes::DestroyCallback()
 
 	mMarchingInputParameters.GetBuffer()->Destroy();
 	mTerrainInputParameters.GetBuffer()->Destroy();
+	mTerrainSettings.GetBuffer()->Destroy();
 	mCounterSSBO.GetBuffer()->Destroy();
 	mBrushInputParameters.GetBuffer()->Destroy();
 
@@ -181,9 +182,13 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 	mTerrainEffectWireframe = Vk::Effect::Create(device, mVulkanApp->GetRenderPass(), effectDesc);
 
 	mTerrainInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mTerrainSettings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mTerrainSettings.data.mode = 0; // Phong
 
 	mTerrainEffect->BindUniformBuffer("UBO", mTerrainInputParameters);
+	mTerrainEffect->BindUniformBuffer("UBO_settings", mTerrainSettings);
 	mTerrainEffectWireframe->BindUniformBuffer("UBO", mTerrainInputParameters);
+	mTerrainEffectWireframe->BindUniformBuffer("UBO_settings", mTerrainSettings);
 
 	mTerrainCommandBuffer = std::make_shared<Vk::CommandBuffer>(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_SECONDARY);
 	mVulkanApp->AddSecondaryCommandBuffer(mTerrainCommandBuffer.get());
@@ -194,10 +199,6 @@ glm::ivec3 MarchingCubes::GetBlockCoordinate(glm::vec3 position)
 	int32_t blockX = position.x / (float)(mVoxelSize * mVoxelsInBlock);
 	int32_t blockY = position.y / (float)(mVoxelSize * mVoxelsInBlock);
 	int32_t blockZ = position.z / (float)(mVoxelSize * mVoxelsInBlock);
-
-	// blockX += position.x < 0 ? - 1 : 1;
-	// blockY += position.y < 0 ? - 1 : 1;
-	// blockZ += position.z < 0 ? - 1 : 1;
 
 	return glm::ivec3(blockX, blockY, blockZ);
 }
@@ -359,6 +360,8 @@ void MarchingCubes::RenderBlocks()
 	mTerrainInputParameters.data.view = mCamera->GetView();
 	mTerrainInputParameters.UpdateMemory();
 
+	mTerrainSettings.UpdateMemory(); // Updated from ImGui combobox
+
 	mTerrainCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 	mTerrainCommandBuffer->CmdSetViewPort(mVulkanApp->GetWindow()->GetWidth(), mVulkanApp->GetWindow()->GetHeight());
 	mTerrainCommandBuffer->CmdSetScissor(mVulkanApp->GetWindow()->GetWidth(), mVulkanApp->GetWindow()->GetHeight());
@@ -405,6 +408,7 @@ void MarchingCubes::UpdateCallback()
 	ImGui::Checkbox("Static position:", &mStaticPosition);
 	ImGui::Checkbox("Wireframe:", &mWireframe);
 	ImGui::SliderFloat("Brush size:", &mBrushInputParameters.data.brushSize, 1.0f, 16.0f);
+	ImGui::Combo("Terrain render option", &mTerrainSettings.data.mode, "Phong\0Normals\0Block cells\0");
 
 	bool flatNormals = mMarchingInputParameters.data.flatNormals;
 	if (ImGui::Checkbox("Flat normals:", &flatNormals))

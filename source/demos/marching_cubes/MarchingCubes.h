@@ -63,6 +63,10 @@ public:
 		UNIFORM_PARAM(float, pad)
 	UNIFORM_BLOCK_END()
 
+	UNIFORM_BLOCK_BEGIN(TerrainSettings)
+		UNIFORM_PARAM(int, mode) // 0 = phong, 1 = normals, 2 = block cells
+	UNIFORM_BLOCK_END()
+
 	UNIFORM_BLOCK_BEGIN(BrushInputParameters)
 		UNIFORM_PARAM(glm::ivec3, startCoord)
 		UNIFORM_PARAM(float, brushSize)
@@ -119,6 +123,7 @@ private:
 	SharedPtr<Vk::Effect> mTerrainEffectWireframe;
 	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
 	TerrainInputParameters mTerrainInputParameters;
+	TerrainSettings mTerrainSettings;
 
 	// Noise rendering
 	SharedPtr<Vk::Effect> mNoiseEffect;

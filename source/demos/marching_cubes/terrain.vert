@@ -28,12 +28,6 @@ layout(push_constant) uniform PushConsts {
     vec4 color;
 } pushConsts;
 
-// out gl_PerVertex
-// {
-// 	vec4 gl_Position;
-// 	float gl_ClipDistance[];
-// };
-
 void main(void)
 {
     OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
@@ -42,6 +36,4 @@ void main(void)
     OutEyePosW = per_frame_vs.eyePos;
 
     gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
-
-    //gl_ClipDistance[0] = dot(pushConsts.world * vec4(InPosL.xyz, 1.0), per_frame_vs.clippingPlane);
 }

@@ -94,7 +94,7 @@ float density(vec3 pos)
 {
 	float density = -1; //getOrigin().y - pos.y - 4 * blockSize;
 
-	density = addShapes(pos, density);
+	//density = addShapes(pos, density);
 
 	// Generate Noise
 #if 0
