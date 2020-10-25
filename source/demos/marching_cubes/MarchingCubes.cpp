@@ -183,7 +183,7 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 
 	mTerrainInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	mTerrainSettings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-	mTerrainSettings.data.mode = 1; // Phong
+	mTerrainSettings.data.mode = 0; // Phong
 
 	mTerrainEffect->BindUniformBuffer("UBO", mTerrainInputParameters);
 	mTerrainEffect->BindUniformBuffer("UBO_settings", mTerrainSettings);
