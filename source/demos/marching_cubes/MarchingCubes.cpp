@@ -114,7 +114,7 @@ void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
 	mNoiseEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mSdfImage = std::make_shared<Utopian::Vk::ImageStorage>(device, mNoiseTextureSize, mNoiseTextureSize, mNoiseTextureSize,
-															"3D Noise Texture", VK_FORMAT_R8_SNORM);
+															"3D Noise Texture", VK_FORMAT_R32_SFLOAT);
 
 	mNoiseEffect->BindImage("sdfImage", *mSdfImage);
 
@@ -183,7 +183,7 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 
 	mTerrainInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	mTerrainSettings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-	mTerrainSettings.data.mode = 0; // Phong
+	mTerrainSettings.data.mode = 1; // Phong
 
 	mTerrainEffect->BindUniformBuffer("UBO", mTerrainInputParameters);
 	mTerrainEffect->BindUniformBuffer("UBO_settings", mTerrainSettings);
