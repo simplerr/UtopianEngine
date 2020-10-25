@@ -19,9 +19,10 @@ layout (std140, set = 0, binding = 1) uniform UBO_settings
 
 void main(void)
 {
-   vec3 tmp = InPosW;
-   tmp = InEyePosW;
+   vec3 tmp = InEyePosW;
    tmp = InColor;
+
+   vec3 originPos = InPosW - vec3(256000.0f);
 
    vec3 lightVec = normalize(lightDir);
    float diffuseFactor = max(dot(lightVec, InNormalW), 0.0f);

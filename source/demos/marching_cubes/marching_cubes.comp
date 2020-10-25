@@ -234,16 +234,6 @@ void main(void)
 			normal = ubo.flatNormals ? normal : generateNormal(position);
 			vertexSSBO.vertices[index + 2].pos = vec4(position, 1);
 			vertexSSBO.vertices[index + 2].normal = vec4(normal, 1);
-
-			// Surface normal
-			vec3 U = vertexSSBO.vertices[index + 1].pos.xyz - vertexSSBO.vertices[index].pos.xyz;
-			vec3 V = vertexSSBO.vertices[index + 2].pos.xyz - vertexSSBO.vertices[index].pos.xyz;
-
-			normal.x = U.y * V.z - U.z * V.y;
-			normal.y = U.z * V.x - U.x * V.z;
-			normal.z = 1;//U.x * V.y - U.y - V.x;
-
-			normal = normalize(normal);
 		}
 	}
 }

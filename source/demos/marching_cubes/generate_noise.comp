@@ -8,7 +8,7 @@
 
 #define POSITION_SCALE 32.0f // Value makes it look OK
 
-layout (set = 0, binding = 0, r8) uniform writeonly image3D sdfImage;
+layout (set = 0, binding = 0, r32f) uniform writeonly image3D sdfImage;
 
 float sdBox(vec3 p, vec3 b)
 {
@@ -21,9 +21,20 @@ float density(vec3 pos)
    float density = -1; //80.0f - pos.y;
 
    vec3 scaledPos = pos / POSITION_SCALE;
-   float noise = fbm(scaledPos) + 0.6 - 0.4 * scaledPos.y; // Generally increase solid volumes but decrease it by Y coordinate
-   density = max(noise, density);
 
+   // Generally increase solid volumes but decrease it by Y coordinate
+   float noise3d = -fbm(scaledPos) + 0.0 + 0.13 * scaledPos.y;
+
+   // Important: Need to divide pos.y instead of multiplying fbm() by large factor to avoid floating point precision errors
+   float heightmap = fbm(pos.xz / 100.0f) + 0.5 - pos.y / 100.0f;
+
+   // Combine 3D noise and heightmap
+   // density = max(noise3d, heightmap); // Add 3d noise
+   density = min(-noise3d, heightmap); // Subtract 3d noise
+   //density = noise3d;
+   //density = heightmap;
+
+   // Apply bounding box
    vec3 side = imageSize(sdfImage);
    float boundingBox = sdBox(side / 2 - pos, side / 2 - 1.0f);
    density = min(-boundingBox, density);
