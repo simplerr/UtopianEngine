@@ -27,13 +27,13 @@ float noise (in vec2 st) {
             (c - a)* u.y * (1.0 - u.x) +
             (d - b) * u.x * u.y;
 
-    return n;
-
     // Ridge noise
-    // n = (n * 2) - 1;
-    // n = abs(n);
-    // n = n;
-    // return abs(n); 
+#ifdef RIDGE_NOISE
+    n = (n * 2) - 1;
+    return -abs(n); 
+#else
+    return n;
+#endif
 }
 
 #define OCTAVES 6
