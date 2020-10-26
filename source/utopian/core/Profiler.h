@@ -30,7 +30,8 @@ namespace Utopian
 		~Profiler();
 
 		void Update();
-      void AddProfilerTask(const std::string& name, float start, float end, const glm::vec4& color);
+		void AddProfilerTask(const std::string& name, float start, float end, const glm::vec4& color);
+		void SetEnabled(bool enabled);
 	private:
 		LegitProfiler::ProfilersWindow mProfilerWindow;
 		std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
@@ -40,6 +41,7 @@ namespace Utopian
 		MiniPlot mFpsPlot;
 		std::vector<float> mFrameTimes;
 		Vk::VulkanApp* mVulkanApp;
+		bool mVisible;
 	};
 
 	Profiler& gProfiler();

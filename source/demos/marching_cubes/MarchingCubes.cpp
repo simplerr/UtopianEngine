@@ -1,4 +1,5 @@
 #include "MarchingCubes.h"
+#include <core/Profiler.h>
 #include <glm/matrix.hpp>
 #include <string>
 #include <time.h>
@@ -57,6 +58,8 @@ MarchingCubes::MarchingCubes(Utopian::Window* window)
 
 	mVulkanApp = Utopian::gEngine().GetVulkanApp();
 
+	Utopian::gProfiler().SetEnabled(false);
+
 	InitResources();
 }
 
@@ -104,7 +107,7 @@ void MarchingCubes::InitResources()
 
 	GenerateNoiseTexture();
 
-	gScreenQuadUi().AddQuad(50, 50, 512, 512, mSdfImage.get(), mNoiseSampler.get());
+	gScreenQuadUi().AddQuad(50, 50, 256, 256, mSdfImage.get(), mNoiseSampler.get());
 }
 
 void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
@@ -358,6 +361,7 @@ void MarchingCubes::RenderBlocks()
 {
 	mTerrainInputParameters.data.projection = mCamera->GetProjection();
 	mTerrainInputParameters.data.view = mCamera->GetView();
+	mTerrainInputParameters.data.eyePos = mCamera->GetPosition();
 	mTerrainInputParameters.UpdateMemory();
 
 	mTerrainSettings.UpdateMemory(); // Updated from ImGui combobox

@@ -91,6 +91,11 @@ namespace Utopian
       }
    }
 
+   void Profiler::SetEnabled(bool enabled)
+   {
+      mEnabled = enabled;
+   }
+
    MiniPlot::MiniPlot()
    {
       mNumMaxEntries = 20;

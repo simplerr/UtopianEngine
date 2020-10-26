@@ -38,9 +38,14 @@ void main(void)
    lowAltitude = mix(lowAltitude, dirtColor, clamp((originPos.y - 800.0) / 100.0, 0.0, 1.0));
    finalColor = mix(lowAltitude, peakColor, clamp((originPos.y - 1000.0) / 100.0, 0.0, 1.0));
 
-   finalColor = mix(finalColor, rockColor, clamp((1.0 - InNormalW.y - 0.3) / 0.4, 0.0, 1.0));
+   finalColor = mix(finalColor, rockColor, clamp((1.0 - InNormalW.y - 0.4) / 0.4, 0.0, 1.0));
 
    vec3 shadedColor = finalColor * (0.1 + vec3(diffuseFactor) * 1.0);
+
+   // Fog
+   float distToEye = distance(InEyePosW, InPosW);
+   float fogLerp = clamp((distToEye - 1200.0) / 5000.0, 0.0, 1.0);
+   shadedColor = mix(shadedColor, vec3(0.75), fogLerp);
 
    if (ubo_settings.mode == 0)
       OutFragColor = vec4(shadedColor, 1.0f);
