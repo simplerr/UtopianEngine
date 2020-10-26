@@ -34,12 +34,12 @@ struct GeometryVertex
 	vec4 normal;
 };
 
-layout(std430, set = 0, binding = 4) buffer CounterSSBO 
+layout(std430, set = 0, binding = 4) buffer CounterSSBO
 {
 	uint vertexCount;
 } counterSSBO;
 
-layout(std430, set = 1, binding = 0) buffer VertexSSBO 
+layout(std430, set = 1, binding = 0) buffer VertexSSBO
 {
 	GeometryVertex vertices[];
 } vertexSSBO;

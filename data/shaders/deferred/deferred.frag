@@ -26,7 +26,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
 	int cascadeColorDebug;
 } settings_ubo;
 
-void main() 
+void main()
 {
 	vec3 position = texture(positionSampler, InTex).xyz;
 	vec3 normal = texture(normalSampler, InTex).rgb;

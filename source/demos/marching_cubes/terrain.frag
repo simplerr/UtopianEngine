@@ -9,6 +9,7 @@ layout (location = 2) in vec3 InEyePosW;
 layout (location = 3) in vec3 InColor;
 
 layout (location = 0) out vec4 OutFragColor;
+layout (location = 1) out vec4 OutPosition;
 
 const vec3 lightDir = vec3(0.5, 0.5, 0.5);
 
@@ -53,4 +54,6 @@ void main(void)
       OutFragColor = vec4(InNormalW, 1.0f);
    else
       OutFragColor *= vec4(InColor, 1.0f);
+
+   OutPosition = vec4(InPosW, 1.0f);
 }

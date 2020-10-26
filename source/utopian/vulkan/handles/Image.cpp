@@ -378,7 +378,7 @@ namespace Utopian::Vk
 		createInfo.height = height;
 		createInfo.depth = depth;
 		createInfo.format = format;
-		createInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		createInfo.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 		createInfo.name = debugName;
 		createInfo.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
 		createInfo.transitionToFinalLayout = true;

@@ -74,6 +74,15 @@ public:
 		UNIFORM_PARAM(int, textureRegionSize)
 	UNIFORM_BLOCK_END()
 
+	// Intersection
+	UNIFORM_BLOCK_BEGIN(IntersectionOutputSSBO)
+		UNIFORM_PARAM(glm::vec3, brushPos)
+	UNIFORM_BLOCK_END()
+
+	UNIFORM_BLOCK_BEGIN(IntersectionInputUBO)
+		UNIFORM_PARAM(glm::ivec2, mousePosition)
+	UNIFORM_BLOCK_END()
+
 	MarchingCubes(Utopian::Window* window);
 	~MarchingCubes();
 
@@ -97,9 +106,11 @@ private:
 	void InitBrushEffect(Vk::Device* device);
 	void InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void InitTerrainEffect(Vk::Device* device, uint32_t width, uint32_t height);
+	void InitIntersectionEffect(Vk::Device* device, uint32_t width, uint32_t height);
 	void GenerateNoiseTexture();
 	void ApplyTerrainBrush();
 	void ActivateBlockRegeneration();
+	void QueryBrushPosition();
 	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
 
 	Vk::VulkanApp* mVulkanApp;
@@ -119,8 +130,13 @@ private:
 	const int32_t mViewDistance = 4;
 
 	// Terrain
+	SharedPtr<Vk::RenderTarget> mTerrainRenderTarget;
+	SharedPtr<Vk::Image> mTerrainColorImage;
+	SharedPtr<Vk::Image> mTerrainPositionImage;
+	SharedPtr<Vk::Image> mTerrainDepthImage;
 	SharedPtr<Vk::Effect> mTerrainEffect;
 	SharedPtr<Vk::Effect> mTerrainEffectWireframe;
+	SharedPtr<Vk::Semaphore> mTerrainCompletedSemaphore;
 	SharedPtr<Vk::CommandBuffer> mTerrainCommandBuffer;
 	TerrainInputParameters mTerrainInputParameters;
 	TerrainSettings mTerrainSettings;
@@ -135,6 +151,12 @@ private:
 	SharedPtr<Vk::Effect> mBrushEffect;
 	BrushInputParameters mBrushInputParameters;
 	const uint32_t mBrushTextureRegion = 32;
+
+	// Intersection
+	SharedPtr<Vk::Effect> mIntersectionEffect;
+	IntersectionOutputSSBO mIntersectionOutputSSBO;
+	IntersectionInputUBO mIntersectionInputUBO;
+	glm::vec3 mBrushPos;
 
 	// Settings
 	bool mStaticPosition = true;

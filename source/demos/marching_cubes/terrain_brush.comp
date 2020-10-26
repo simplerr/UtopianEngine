@@ -52,6 +52,7 @@ void main(void)
 
    float density;
    if (ubo.mode == 0) // Add
+      //density = currentDensity + strength / 50.0;
       density = max(currentDensity, strength);
    else if (ubo.mode == 1) // Subtract
       density = min(currentDensity, -strength);
