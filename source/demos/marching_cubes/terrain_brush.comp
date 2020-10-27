@@ -10,6 +10,7 @@ layout (set = 0, binding = 3) uniform UBO_input
 {
    ivec3 startCoord;
    float brushSize;
+   float brushStrength;
    int mode; // 0 = add, 1 = subtract
    int textureRegionSize;
 } ubo;
@@ -46,16 +47,12 @@ void main(void)
 
    float distance = distance(ubo.startCoord + ubo.textureRegionSize / 2.0f, pixelPos);
    float strength = ubo.brushSize - distance;
-   strength = clamp(strength / (ubo.textureRegionSize / 2.0f), -1.0f, 1.0f);
+   strength = strength / (ubo.textureRegionSize / 2.0f);
+   strength = clamp(strength, 0.0f, 1.0f);
+   strength = ubo.mode == 0 ? strength : -strength; // Add or subtract
 
    float currentDensity = imageLoad(sdfImage, pixelPos).r;
+   float finalDensity = currentDensity + strength / (101.0f - ubo.brushStrength);
 
-   float density;
-   if (ubo.mode == 0) // Add
-      //density = currentDensity + strength / 50.0;
-      density = max(currentDensity, strength);
-   else if (ubo.mode == 1) // Subtract
-      density = min(currentDensity, -strength);
-
-   imageStore(sdfImage, pixelPos, vec4(density));
+   imageStore(sdfImage, pixelPos, vec4(finalDensity));
 }

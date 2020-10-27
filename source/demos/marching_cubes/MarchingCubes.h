@@ -70,7 +70,8 @@ public:
 	UNIFORM_BLOCK_BEGIN(BrushInputParameters)
 		UNIFORM_PARAM(glm::ivec3, startCoord)
 		UNIFORM_PARAM(float, brushSize)
-		UNIFORM_PARAM(int, mode)
+		UNIFORM_PARAM(float, brushStrength)
+		UNIFORM_PARAM(int, mode) // 0 = add, 1 = subtract
 		UNIFORM_PARAM(int, textureRegionSize)
 	UNIFORM_BLOCK_END()
 

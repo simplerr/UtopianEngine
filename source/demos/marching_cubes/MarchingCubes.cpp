@@ -141,6 +141,7 @@ void MarchingCubes::InitBrushEffect(Vk::Device* device)
 
 	mBrushInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 	mBrushInputParameters.data.brushSize = 8.0f;
+	mBrushInputParameters.data.brushStrength = 50.0f;
 	mBrushInputParameters.data.mode = 0; // Add
 
 	mBrushEffect->BindImage("sdfImage", *mSdfImage);
@@ -465,17 +466,23 @@ void MarchingCubes::UpdateCallback()
 	ImGui::Text("Block (%d, %d, %d)", blockCoord.x, blockCoord.y, blockCoord.z);
 	ImGui::Text("Brush pos: (%.2f %.2f %.2f)", mBrushPos.x, mBrushPos.y, mBrushPos.z);
 	ImGui::Text("Num blocks: %d", (int)mBlockList.size());
-	ImGui::Checkbox("Static position:", &mStaticPosition);
-	ImGui::Checkbox("Wireframe:", &mWireframe);
-	ImGui::SliderFloat("Brush size:", &mBrushInputParameters.data.brushSize, 1.0f, 16.0f);
-	ImGui::Combo("Terrain render option", &mTerrainSettings.data.mode, "Phong\0Normals\0Block cells\0");
 
-	bool flatNormals = mMarchingInputParameters.data.flatNormals;
-	if (ImGui::Checkbox("Flat normals:", &flatNormals))
+	if (ImGui::CollapsingHeader("Options", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		mMarchingInputParameters.data.flatNormals = flatNormals;
-		ActivateBlockRegeneration();
+		ImGui::Checkbox("Static position:", &mStaticPosition);
+		ImGui::Checkbox("Wireframe:", &mWireframe);
+		ImGui::SliderFloat("Brush size:", &mBrushInputParameters.data.brushSize, 1.0f, 16.0f);
+		ImGui::SliderFloat("Brush strength:", &mBrushInputParameters.data.brushStrength, 1.0f, 100.0f);
+		ImGui::Combo("Terrain render option", &mTerrainSettings.data.mode, "Phong\0Normals\0Block cells\0");
+
+		bool flatNormals = mMarchingInputParameters.data.flatNormals;
+		if (ImGui::Checkbox("Flat normals:", &flatNormals))
+		{
+			mMarchingInputParameters.data.flatNormals = flatNormals;
+			ActivateBlockRegeneration();
+		}
 	}
+
 
 	mCamera->Update();
 
