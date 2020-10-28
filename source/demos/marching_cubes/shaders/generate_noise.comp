@@ -19,7 +19,7 @@ float sdBox(vec3 p, vec3 b)
 
 float density(vec3 pos)
 {
-   float density = -1; //80.0f - pos.y;
+   float density = -1;
 
    vec3 scaledPos = pos / POSITION_SCALE;
 
