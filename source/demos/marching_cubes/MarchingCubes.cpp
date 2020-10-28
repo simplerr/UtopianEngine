@@ -122,7 +122,7 @@ void MarchingCubes::InitResources()
 void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
 {
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/generate_noise.comp";
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/shaders/generate_noise.comp";
 	mNoiseEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mSdfImage = std::make_shared<Utopian::Vk::ImageStorage>(device, mNoiseTextureSize, mNoiseTextureSize, mNoiseTextureSize,
@@ -136,7 +136,7 @@ void MarchingCubes::InitNoiseTextureEffect(Vk::Device* device)
 void MarchingCubes::InitBrushEffect(Vk::Device* device)
 {
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/terrain_brush.comp";
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/shaders/terrain_brush.comp";
 	mBrushEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mBrushInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -151,7 +151,7 @@ void MarchingCubes::InitBrushEffect(Vk::Device* device)
 void MarchingCubes::InitMarchingCubesEffect(Vk::Device* device, uint32_t width, uint32_t height)
 {
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/marching_cubes.comp";
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/shaders/marching_cubes.comp";
 	mMarchingCubesEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mMarchingInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -200,8 +200,8 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 	mTerrainRenderTarget->Create();
 
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.vertexShaderPath = "source/demos/marching_cubes/terrain.vert";
-	effectDesc.shaderDesc.fragmentShaderPath = "source/demos/marching_cubes/terrain.frag";
+	effectDesc.shaderDesc.vertexShaderPath = "source/demos/marching_cubes/shaders/terrain.vert";
+	effectDesc.shaderDesc.fragmentShaderPath = "source/demos/marching_cubes/shaders/terrain.frag";
 	effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
 	mTerrainEffect = Vk::Effect::Create(device, mTerrainRenderTarget->GetRenderPass(), effectDesc);
 
@@ -223,7 +223,7 @@ void MarchingCubes::InitTerrainEffect(Vk::Device* device, uint32_t width, uint32
 void MarchingCubes::InitIntersectionEffect(Vk::Device* device, uint32_t width, uint32_t height)
 {
 	Vk::EffectCreateInfo effectDesc;
-	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/terrain_intersection.comp";
+	effectDesc.shaderDesc.computeShaderPath = "source/demos/marching_cubes/shaders/terrain_intersection.comp";
 	mIntersectionEffect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mIntersectionOutputSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
