@@ -83,7 +83,7 @@ void MarchingCubes::DestroyCallback()
 
 	mMarchingCubesJob.inputUBO.GetBuffer()->Destroy();
 	mTerrainJob.inputUBO.GetBuffer()->Destroy();
-	mTerrainJob.terrainSettings.GetBuffer()->Destroy();
+	mTerrainJob.fragmentInputUBO.GetBuffer()->Destroy();
 	mMarchingCubesJob.counterSSBO.GetBuffer()->Destroy();
 	mBrushJob.inputUBO.GetBuffer()->Destroy();
 	mIntersectionJob.outputSSBO.GetBuffer()->Destroy();
@@ -202,13 +202,13 @@ void MarchingCubes::InitTerrainJob(Vk::Device* device, uint32_t width, uint32_t 
 	mTerrainJob.effectWireframe = Vk::Effect::Create(device, mTerrainJob.renderTarget->GetRenderPass(), effectDesc);
 
 	mTerrainJob.inputUBO.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-	mTerrainJob.terrainSettings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-	mTerrainJob.terrainSettings.data.mode = 0; // Phong
+	mTerrainJob.fragmentInputUBO.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+	mTerrainJob.fragmentInputUBO.data.mode = 0; // Phong
 
 	mTerrainJob.effect->BindUniformBuffer("UBO", mTerrainJob.inputUBO);
-	mTerrainJob.effect->BindUniformBuffer("UBO_settings", mTerrainJob.terrainSettings);
+	mTerrainJob.effect->BindUniformBuffer("UBO_fragInput", mTerrainJob.fragmentInputUBO);
 	mTerrainJob.effectWireframe->BindUniformBuffer("UBO", mTerrainJob.inputUBO);
-	mTerrainJob.effectWireframe->BindUniformBuffer("UBO_settings", mTerrainJob.terrainSettings);
+	mTerrainJob.effectWireframe->BindUniformBuffer("UBO_fragInput", mTerrainJob.fragmentInputUBO);
 
 	gScreenQuadUi().AddQuad(0, 0, width, height, mTerrainJob.colorImage.get(), mTerrainJob.renderTarget->GetSampler());
 }
@@ -392,7 +392,8 @@ void MarchingCubes::RunTerrainJob()
 	mTerrainJob.inputUBO.data.eyePos = mCamera->GetPosition();
 	mTerrainJob.inputUBO.UpdateMemory();
 
-	mTerrainJob.terrainSettings.UpdateMemory(); // Updated from ImGui combobox
+	mTerrainJob.fragmentInputUBO.data.brushPos = mIntersectionJob.brushPos;
+	mTerrainJob.fragmentInputUBO.UpdateMemory(); // Updated from ImGui combobox
 
 	mTerrainJob.renderTarget->Begin("Terrain pass", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	Vk::CommandBuffer* commandBuffer = mTerrainJob.renderTarget->GetCommandBuffer();
@@ -462,7 +463,7 @@ void MarchingCubes::UpdateCallback()
 		ImGui::Checkbox("Wireframe:", &mWireframe);
 		ImGui::SliderFloat("Brush size:", &mBrushJob.inputUBO.data.brushSize, 1.0f, 16.0f);
 		ImGui::SliderFloat("Brush strength:", &mBrushJob.inputUBO.data.brushStrength, 1.0f, 100.0f);
-		ImGui::Combo("Terrain render option", &mTerrainJob.terrainSettings.data.mode, "Phong\0Normals\0Block cells\0");
+		ImGui::Combo("Terrain render option", &mTerrainJob.fragmentInputUBO.data.mode, "Phong\0Normals\0Block cells\0");
 
 		bool flatNormals = mMarchingCubesJob.inputUBO.data.flatNormals;
 		if (ImGui::Checkbox("Flat normals:", &flatNormals))
@@ -479,9 +480,10 @@ void MarchingCubes::UpdateCallback()
 	if (gInput().KeyPressed(VK_SPACE))
 		mBrushJob.inputUBO.data.mode = !mBrushJob.inputUBO.data.mode;
 
+	RunIntersectionJob();
+
 	if (gInput().KeyDown(VK_LBUTTON))
 	{
-		RunIntersectionJob();
 		RunBrushJob();
 	}
 

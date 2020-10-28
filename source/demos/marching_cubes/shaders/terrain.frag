@@ -18,10 +18,11 @@ const vec3 grassColor = vec3(19.0 / 255, 149.0 / 255, 21.0 / 255);
 const vec3 dirtColor = vec3(155.0 / 255, 118.0 / 255, 83.0 / 255);
 const vec3 rockColor = vec3(0.33f);
 
-layout (std140, set = 0, binding = 1) uniform UBO_settings
+layout (std140, set = 0, binding = 1) uniform UBO_fragInput
 {
+   vec3 brushPos;
    int mode; // 0 = phong, 1 = normals, 2 = block cells
-} ubo_settings;
+} ubo_input;
 
 void main(void)
 {
@@ -48,9 +49,12 @@ void main(void)
    float fogLerp = clamp((distToEye - 1200.0) / 5000.0, 0.0, 1.0);
    shadedColor = mix(shadedColor, vec3(0.75), fogLerp);
 
-   if (ubo_settings.mode == 0)
+   // Red marker close to the brush position
+   shadedColor = mix(vec3(1.0, 0.0, 0.0), shadedColor, clamp((distance(ubo_input.brushPos, InPosW) - 50) / 100.0, 0.6, 1.0));
+
+   if (ubo_input.mode == 0)
       OutFragColor = vec4(shadedColor, 1.0f);
-   else if (ubo_settings.mode == 1)
+   else if (ubo_input.mode == 1)
       OutFragColor = vec4(InNormalW, 1.0f);
    else
       OutFragColor *= vec4(InColor, 1.0f);

@@ -108,7 +108,7 @@ private:
 
 	// Vertex + pixel shader that renders each generated block mesh from the marching cubes job
 	struct TerrainJob {
-		UNIFORM_BLOCK_BEGIN(TerrainInputParameters)
+		UNIFORM_BLOCK_BEGIN(VertexInputParameters)
 			UNIFORM_PARAM(glm::mat4, projection)
 			UNIFORM_PARAM(glm::mat4, view)
 			UNIFORM_PARAM(glm::vec4, clippingPlane)
@@ -116,7 +116,8 @@ private:
 			UNIFORM_PARAM(float, pad)
 		UNIFORM_BLOCK_END()
 
-		UNIFORM_BLOCK_BEGIN(TerrainSettings)
+		UNIFORM_BLOCK_BEGIN(FragmentInputParameters)
+			UNIFORM_PARAM(glm::vec3, brushPos)
 			UNIFORM_PARAM(int, mode) // 0 = phong, 1 = normals, 2 = block cells
 		UNIFORM_BLOCK_END()
 
@@ -127,8 +128,8 @@ private:
 		SharedPtr<Vk::Effect> effect;
 		SharedPtr<Vk::Effect> effectWireframe;
 		SharedPtr<Vk::Semaphore> completedSemaphore;
-		TerrainInputParameters inputUBO;
-		TerrainSettings terrainSettings;
+		VertexInputParameters inputUBO;
+		FragmentInputParameters fragmentInputUBO;
 	} mTerrainJob;
 
 	// Compute shader that generates 3D noise and writes it to an 3D image
