@@ -9,6 +9,7 @@ It is written C++ and uses Vulkan as the rendering API.
 ![Image](data/printscreens/readme-print.png)
 ![Image](data/printscreens/terrain-texturing-2.png)
 ![Image](data/printscreens/water-ssr-8.png)
+![Image](data/printscreens/marching-cubes.png)
 
 ## Features
 + Vulkan backend
@@ -52,6 +53,8 @@ Pre compiled libraries for MSVC x64 Debug are included in the `libs/` folder.
 |-------------------|------------------------------------------------            |
 | source/utopian/   | Utopian Engine source code                                 |
 | source/editor/    | Editor source code                                         |
+| source/demos/marching_cubes/ | [A demo using marching cubes to generate a modifiable terrain](https://github.com/simplerr/UtopianEngine/tree/master/source/demos/marching_cubes) |
+| source/demos/raytracing/ | [A simple compute shader raytracer](https://github.com/simplerr/UtopianEngine/tree/master/source/demos/raytracing) |
 | external/         | Third party submodules and .h files                        |
 | libs/             | Pre compiled third party dependencies                      |
 | data/             | Textures, models, shaders, scenes etc.                     |
