@@ -16,7 +16,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {
 	Utopian::Window window = Utopian::Window(2000, 1260);
-
 	window.SetupWindow(hInstance, WndProc);
 
 	gApp = new MarchingCubes(&window);

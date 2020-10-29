@@ -55,6 +55,10 @@ MarchingCubes::MarchingCubes(Utopian::Window* window)
 	Utopian::gProfiler().SetEnabled(true);
 
 	InitResources();
+
+	// Wait on the terrain job before submitting the frame
+	mTerrainJob.completedSemaphore = std::make_shared<Vk::Semaphore>(mVulkanApp->GetDevice());
+	mVulkanApp->SetWaitSubmitSemaphore(mTerrainJob.completedSemaphore);
 }
 
 MarchingCubes::~MarchingCubes()
@@ -64,7 +68,7 @@ MarchingCubes::~MarchingCubes()
 
 void MarchingCubes::DestroyCallback()
 {
-	// Free Vulkan resources
+	// Todo: Remove this when the engine shutdown sequence is improved
 	mMarchingCubesJob.effect = nullptr;
 	mTerrainJob.effect = nullptr;
 	mTerrainJob.effectWireframe = nullptr;
@@ -95,9 +99,9 @@ void MarchingCubes::DestroyCallback()
 
 void MarchingCubes::InitResources()
 {
+	Vk::Device* device = mVulkanApp->GetDevice();
 	uint32_t width = mWindow->GetWidth();
 	uint32_t height = mWindow->GetHeight();
-	Vk::Device* device = mVulkanApp->GetDevice();
 
 	mCamera = std::make_shared<MiniCamera>(mOrigin + glm::vec3(1400, 1400, 1400), glm::vec3(25, 0, 25), 1, 50000, 10.0f, width, height);
 
@@ -119,7 +123,7 @@ void MarchingCubes::InitNoiseJob(Vk::Device* device)
 	mNoiseJob.effect = Vk::Effect::Create(device, nullptr, effectDesc);
 
 	mNoiseJob.sdfImage = std::make_shared<Utopian::Vk::ImageStorage>(device, mNoiseJob.textureSize, mNoiseJob.textureSize, mNoiseJob.textureSize,
-															"3D Noise Texture", VK_FORMAT_R32_SFLOAT);
+																	 "3D Noise Texture", VK_FORMAT_R32_SFLOAT);
 
 	mNoiseJob.effect->BindImage("sdfImage", *mNoiseJob.sdfImage);
 
@@ -136,6 +140,7 @@ void MarchingCubes::InitBrushJob(Vk::Device* device)
 	mBrushJob.inputUBO.data.brushSize = 8.0f;
 	mBrushJob.inputUBO.data.brushStrength = 50.0f;
 	mBrushJob.inputUBO.data.mode = 0; // Add
+	mBrushJob.inputUBO.UpdateMemory();
 
 	mBrushJob.effect->BindImage("sdfImage", *mNoiseJob.sdfImage);
 	mBrushJob.effect->BindUniformBuffer("UBO_input", mBrushJob.inputUBO);
@@ -164,7 +169,7 @@ void MarchingCubes::InitMarchingCubesJob(Vk::Device* device, uint32_t width, uin
 	mMarchingCubesJob.inputUBO.UpdateMemory();
 
 	mMarchingCubesJob.counterSSBO.Create(device, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
-						VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+										 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	mMarchingCubesJob.edgeTableTexture = Utopian::Vk::gTextureLoader().CreateTexture(edgeTable, VK_FORMAT_R32_SINT, 256, 1, 1, sizeof(int));
 	mMarchingCubesJob.triangleTableTexture = Utopian::Vk::gTextureLoader().CreateTexture(triTable, VK_FORMAT_R32_SINT, 16, 256, 1, sizeof(int));
@@ -178,9 +183,6 @@ void MarchingCubes::InitMarchingCubesJob(Vk::Device* device, uint32_t width, uin
 
 void MarchingCubes::InitTerrainJob(Vk::Device* device, uint32_t width, uint32_t height)
 {
-	mTerrainJob.completedSemaphore = std::make_shared<Vk::Semaphore>(device);
-	mVulkanApp->SetWaitSubmitSemaphore(mTerrainJob.completedSemaphore);
-
 	mTerrainJob.colorImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "Terrain color image");
 	mTerrainJob.depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Terrain depth image");
 	mTerrainJob.positionImage = std::make_shared<Vk::ImageStorage>(device, width, height, 1, "Terrain position image", VK_FORMAT_R32G32B32A32_SFLOAT);
@@ -189,7 +191,7 @@ void MarchingCubes::InitTerrainJob(Vk::Device* device, uint32_t width, uint32_t 
 	mTerrainJob.renderTarget->AddWriteOnlyColorAttachment(mTerrainJob.colorImage);
 	mTerrainJob.renderTarget->AddWriteOnlyColorAttachment(mTerrainJob.positionImage, VK_IMAGE_LAYOUT_GENERAL);
 	mTerrainJob.renderTarget->AddWriteOnlyDepthAttachment(mTerrainJob.depthImage);
-	mTerrainJob.renderTarget->SetClearColor(47.0 / 255, 141.0 / 255, 255.0 / 255);
+	mTerrainJob.renderTarget->SetClearColor(47.0 / 255.0, 141.0 / 255.0, 1.0f);
 	mTerrainJob.renderTarget->Create();
 
 	Vk::EffectCreateInfo effectDesc;
@@ -393,7 +395,7 @@ void MarchingCubes::RunTerrainJob()
 	mTerrainJob.inputUBO.UpdateMemory();
 
 	mTerrainJob.fragmentInputUBO.data.brushPos = mIntersectionJob.brushPos;
-	mTerrainJob.fragmentInputUBO.UpdateMemory(); // Updated from ImGui combobox
+	mTerrainJob.fragmentInputUBO.UpdateMemory();
 
 	mTerrainJob.renderTarget->Begin("Terrain pass", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	Vk::CommandBuffer* commandBuffer = mTerrainJob.renderTarget->GetCommandBuffer();
@@ -407,7 +409,6 @@ void MarchingCubes::RunTerrainJob()
 		{
 			commandBuffer->CmdBindPipeline(effect->GetPipeline());
 			commandBuffer->CmdBindDescriptorSets(effect);
-
 			commandBuffer->CmdBindVertexBuffer(BINDING_0, 1, block->GetVertexBuffer());
 
 			PushConstantBlock pushConstantBlock(glm::translate(glm::mat4(), block->position), glm::vec4(block->color, 1.0f));
@@ -427,7 +428,6 @@ void MarchingCubes::RunIntersectionJob()
 	mIntersectionJob.inputUBO.UpdateMemory();
 
 	Utopian::Vk::CommandBuffer commandBuffer = Utopian::Vk::CommandBuffer(mVulkanApp->GetDevice(), VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-
 	commandBuffer.CmdBindPipeline(mIntersectionJob.effect->GetPipeline());
 	commandBuffer.CmdBindDescriptorSets(mIntersectionJob.effect, 0, VK_PIPELINE_BIND_POINT_COMPUTE);
 	commandBuffer.CmdDispatch(1, 1, 1);
@@ -446,6 +446,36 @@ void MarchingCubes::ActivateBlockRegeneration()
 }
 
 void MarchingCubes::UpdateCallback()
+{
+	mCamera->Update();
+	UpdateUi();
+
+	if (gInput().KeyPressed(VK_SPACE))
+		mBrushJob.inputUBO.data.mode = !mBrushJob.inputUBO.data.mode;
+
+	RunIntersectionJob();
+
+	if (gInput().KeyDown(VK_LBUTTON))
+		RunBrushJob();
+
+	if (gInput().KeyPressed('T'))
+		ActivateBlockRegeneration();
+
+	UpdateBlockList();
+	RunMarchingCubesJob();
+
+	// Recompile shaders
+	if (gInput().KeyPressed('R'))
+	{
+		Vk::gEffectManager().RecompileModifiedShaders();
+		RunNoiseJob();
+
+		// Regenerate all blocks since the algorithm might have changed
+		ActivateBlockRegeneration();
+	}
+}
+
+void MarchingCubes::UpdateUi()
 {
 	glm::vec3 cameraPos = mCamera->GetPosition();
 	glm::ivec3 blockCoord = GetBlockCoordinate(cameraPos);
@@ -473,35 +503,7 @@ void MarchingCubes::UpdateCallback()
 		}
 	}
 
-	mCamera->Update();
-
 	ImGuiRenderer::EndWindow();
-
-	if (gInput().KeyPressed(VK_SPACE))
-		mBrushJob.inputUBO.data.mode = !mBrushJob.inputUBO.data.mode;
-
-	RunIntersectionJob();
-
-	if (gInput().KeyDown(VK_LBUTTON))
-	{
-		RunBrushJob();
-	}
-
-	// Recompile shaders
-	if (gInput().KeyPressed('R'))
-	{
-		Vk::gEffectManager().RecompileModifiedShaders();
-		RunNoiseJob();
-
-		// Regenerate all blocks since the algorithm might have changed
-		ActivateBlockRegeneration();
-	}
-
-	if (gInput().KeyPressed('T'))
-		ActivateBlockRegeneration();
-
-	UpdateBlockList();
-	RunMarchingCubesJob();
 }
 
 void MarchingCubes::DrawCallback()

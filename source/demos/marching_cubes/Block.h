@@ -5,21 +5,11 @@
 #include "vulkan/ShaderBuffer.h"
 #include "vulkan/handles/Buffer.h"
 
-namespace Utopian::Vk
-{
-	class VulkanApp;
-	class Buffer;
-	class DescriptorSetLayout;
-	class DescriptorSet;
-	class DescriptorPool;
-}
-
 // Storage buffer test
 struct GeometryVertex
 {
 	GeometryVertex(glm::vec4 _pos, glm::vec4 _normal)
 		: pos(_pos), normal(_normal) {
-
 	}
 
 	glm::vec4 pos;

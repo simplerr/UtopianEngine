@@ -27,10 +27,7 @@ struct BlockKey
 bool operator<(BlockKey const& a, BlockKey const& b);
 
 /**
- * The concept from Nvidias article (http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html) is to generate a terrain mesh for each block
- * and write it to a vertex buffer that can be reused as long as the block is visible.
- *
- * Sources:
+ * References:
  * http://paulbourke.net/geometry/polygonise/
  * http://http.developer.nvidia.com/GPUGems3/gpugems3_ch01.html
  * http://www.icare3d.org/codes-and-projects/codes/opengl_geometry_shader_marching_cubes.html
@@ -50,6 +47,7 @@ public:
 
 	/** Adds the blocks within the viewing distance range. */
 	void UpdateBlockList();
+	void UpdateUi();
 
 	void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
@@ -68,6 +66,8 @@ private:
 
 	void ActivateBlockRegeneration();
 	glm::ivec3 GetBlockCoordinate(glm::vec3 position);
+
+private:
 
 	std::map<BlockKey, Block*> mBlockList;
 	SharedPtr<MiniCamera> mCamera;

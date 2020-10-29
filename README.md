@@ -2,7 +2,7 @@
 
 This project is developed to learn how renderers and game engine works as well as acting as a base for research/experimentation. The intention is to make my own games using it and also once more mature make it convenient for others to use as well.
 
-It is written C++ and uses Vulkan as the rendering API.
+It is written in C++ and uses Vulkan as the rendering API.
 
 ## Media
 
