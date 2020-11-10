@@ -1,5 +1,9 @@
 #include <string>
 #include <time.h>
+#include "core/components/Actor.h"
+#include "core/components/CTransform.h"
+#include "core/components/CRenderable.h"
+#include "core/components/CRigidBody.h"
 #include "core/renderer/Renderer.h"
 #include "core/World.h"
 #include "core/Engine.h"
@@ -8,6 +12,7 @@
 #include "Game.h"
 #include "core/Window.h"
 #include "vulkan/Debug.h"
+#include "vulkan/ModelLoader.h"
 
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
@@ -58,10 +63,21 @@ void Game::Run()
 
 void Game::InitScene()
 {
-	//SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Sponza");
-	// Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>();
-	// Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
-	// renderable->LoadModel("data/models/sponza/sponza.obj");
+	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Floor");
+	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(500, 300, -12000));
+	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
+
+	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
+	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadGrid(100, 32);
+	renderable->SetModel(model);
+
+	actor->PostInit();
+	Utopian::World::Instance().SynchronizeNodeTransforms();
+
+	// Must be called after PostInit() since it needs the Renderable component
+	rigidBody->SetKinematic(true);
+	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::BOX);
 }
 
 void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

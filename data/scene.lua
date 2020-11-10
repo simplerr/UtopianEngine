@@ -2,35 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "House",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/HouseStuccoNormal.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 0.024075999855995,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0.99971014261246,
-				pos_x = -2413.4702148438,
-				pos_y = -18.430480957031,
-				pos_z = -11664.0859375,
-				scale_x = 47.000072479248,
-				scale_y = 47.000072479248,
-				scale_z = 47,
-			},
-		},
-	},
-	
-	{
 		actor_name = "Camera 1",
 		components = 
 		{
@@ -63,16 +34,16 @@ actor_list =
 				orientation_x = -0.29552018642426,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 520.16668701172,
-				pos_y = 647.978515625,
-				pos_z = -12294.14453125,
+				pos_x = 2589.7890625,
+				pos_y = 2284.3510742188,
+				pos_z = -12111.716796875,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
 			},
 		},
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "Directional light",
 		components = 
@@ -89,9 +60,9 @@ actor_list =
 				color_b = 0.88532823324203,
 				color_g = 0.93212097883224,
 				color_r = 0.9367088675499,
-				dir_x = 0.70710676908493,
-				dir_y = 0.70710676908493,
-				dir_z = -0,
+				dir_x = -0.5735764503479,
+				dir_y = 0.81915205717087,
+				dir_z = 0,
 				intensity_x = 0.34900000691414,
 				intensity_y = 0.84300005435944,
 				intensity_z = 0.58300000429153,
@@ -120,6 +91,35 @@ actor_list =
 				scale_x = 1.2000000476837,
 				scale_y = 1.2000000476837,
 				scale_z = 1.2000000476837,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "House",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/HouseStuccoNormal.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.024075999855995,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0.99971014261246,
+				pos_x = -2413.4702148438,
+				pos_y = -18.430480957031,
+				pos_z = -11664.0859375,
+				scale_x = 47.000072479248,
+				scale_y = 47.000072479248,
+				scale_z = 47,
 			},
 		},
 	},

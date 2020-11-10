@@ -18,7 +18,7 @@
 #include "../external/assimp/assimp/scene.h"
 
 #define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/checker.jpg"
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/templategrid-test.jpg"
 
 namespace Utopian::Vk
 {
@@ -386,18 +386,16 @@ namespace Utopian::Vk
 		StaticModel* model = new StaticModel();
 		Mesh* mesh = new Mesh(mDevice);
 
-		float ANY = 0;
 		for (int x = 0; x < numCells; x++)
 		{
 			for (int z = 0; z < numCells; z++)
 			{
+				Vk::Vertex vertex;
 				const float originOffset = (cellSize * numCells) / 2.0f;
-				glm::vec3 originInCenterPos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
-				glm::vec3 position = glm::vec3(x * cellSize, 0.0f, z * cellSize);
-				glm::vec2 texcord = glm::vec2(position.x / (cellSize * (numCells - 1)), position.z / (cellSize * (numCells - 1)));
-
-				// Note: normal.y is -1 when it's expected to be 1
-				mesh->AddVertex(Vertex(originInCenterPos.x, originInCenterPos.y, originInCenterPos.z, 0.0f, -1.0f, 0.0f, ANY, ANY, ANY, ANY, ANY, ANY, texcord.x, texcord.y, ANY, ANY, ANY));
+				vertex.Pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
+				vertex.Normal = glm::vec3(0.0f, -1.0f, 0.0f);
+				vertex.Tex = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
+				mesh->AddVertex(vertex);
 			}
 		}
 
@@ -405,14 +403,11 @@ namespace Utopian::Vk
 		{
 			for (int z = 0; z < numCells - 1; z++)
 			{
-				//mesh->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
-				//mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
-				uint32_t index = (x + z * (numCells - 1)) * 4;
-				uint32_t first = (x + z * numCells);
-				mesh->AddQuad(first, first + 1, first + 2, first + 3);
+				mesh->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+				mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
 			}
 		}
-					
+
 		mesh->LoadTextures(PLACEHOLDER_TEXTURE_PATH);
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);

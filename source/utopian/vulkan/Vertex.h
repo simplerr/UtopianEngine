@@ -12,7 +12,15 @@ namespace Utopian::Vk
 {
 	struct Vertex
 	{
-		Vertex() {}
+		Vertex() {
+			Pos = glm::vec3(0.0f);
+			Color = glm::vec3(1.0f);
+			Normal = glm::vec3(0.0f);
+			Tex = glm::vec2(0.0f);
+			Tangent = glm::vec3(0.0f);
+			Bitangent = glm::vec3(0.0f);
+		}
+
 		Vertex(glm::vec3 pos) : Pos(pos) {}
 		Vertex(float px, float py, float pz) : Pos(glm::vec3(px, py, pz)) {}
 		Vertex(float px, float py, float pz, float nx, float ny, float nz)
