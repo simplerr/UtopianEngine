@@ -18,7 +18,7 @@
 #include "../external/assimp/assimp/scene.h"
 
 #define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/templategrid-test.jpg"
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/grid.png"
 
 namespace Utopian::Vk
 {
@@ -379,9 +379,11 @@ namespace Utopian::Vk
 
 	StaticModel* ModelLoader::LoadGrid(float cellSize, int numCells)
 	{
+		std::string name = "grid: " + std::to_string(cellSize) + ", " + std::to_string(numCells);
+
 		// Check if the model already is loaded
-		//if (mModelMap.find("grid") != mModelMap.end())
-		//	return mModelMap["grid"];
+		if (mModelMap.find(name) != mModelMap.end())
+			return mModelMap[name];
 
 		StaticModel* model = new StaticModel();
 		Mesh* mesh = new Mesh(mDevice);
@@ -413,7 +415,7 @@ namespace Utopian::Vk
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-		//mModelMap["grid"] = model;
+		mModelMap[name] = model;
 		return model;
 	}
 

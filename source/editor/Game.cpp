@@ -64,7 +64,7 @@ void Game::Run()
 void Game::InitScene()
 {
 	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Floor");
-	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(500, 300, -12000));
+	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 3300, 0.0f));
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
