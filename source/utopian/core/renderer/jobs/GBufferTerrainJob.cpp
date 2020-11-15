@@ -36,7 +36,7 @@ namespace Utopian
 		renderTarget->Create();
 
 		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
-      	renderTarget->AddStatisticsQuery(mQueryPool);
+		renderTarget->AddStatisticsQuery(mQueryPool);
 
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/terrain.vert";

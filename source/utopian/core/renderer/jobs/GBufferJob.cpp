@@ -1,5 +1,4 @@
 #include "core/renderer/jobs/GBufferJob.h"
-#include "core/renderer/jobs/GBufferTerrainJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Queue.h"
@@ -19,8 +18,6 @@ namespace Utopian
 
 	void GBufferJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
-
 		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
 		mRenderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRenderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);

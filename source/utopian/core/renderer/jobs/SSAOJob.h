@@ -29,6 +29,7 @@ namespace Utopian
 		void CreateKernelSamples();
 
 		SharedPtr<Vk::Effect> mEffect;
+		SharedPtr<Vk::Sampler> mSampler;
 		KernelSampleBlock mKernelSampleBlock;
 		SSAOSettingsBlock settingsBlock;
 	};

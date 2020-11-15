@@ -1,6 +1,4 @@
 #include "core/renderer/jobs/SSAOJob.h"
-#include "core/renderer/jobs/GBufferJob.h"
-#include "core/renderer/jobs/GBufferTerrainJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "utility/math/Helpers.h"
 #include <random>
@@ -22,6 +20,8 @@ namespace Utopian
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
 
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
+
+		mSampler = std::make_shared<Vk::Sampler>(mDevice);
 	}
 
 	SSAOJob::~SSAOJob()
@@ -30,9 +30,6 @@ namespace Utopian
 
 	void SSAOJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
-		GBufferJob* gbufferJob = static_cast<GBufferJob*>(jobs[JobGraph::GBUFFER_INDEX]);
-
 		mKernelSampleBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
@@ -41,10 +38,9 @@ namespace Utopian
 		mEffect->BindUniformBuffer("UBO_parameters", mKernelSampleBlock);
 		mEffect->BindUniformBuffer("UBO_settings", settingsBlock);
 
-		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
-		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *sampler);
-		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalViewImage, *sampler);
-		mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *sampler);
+		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
+		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalViewImage, *mSampler);
+		mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *mSampler);
 
 		CreateKernelSamples();
 	}

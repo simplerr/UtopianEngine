@@ -1,6 +1,4 @@
 #include "core/renderer/jobs/DeferredJob.h"
-#include "core/renderer/jobs/GBufferJob.h"
-#include "core/renderer/jobs/GBufferTerrainJob.h"
 #include "core/renderer/jobs/BlurJob.h"
 #include "core/renderer/jobs/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
@@ -28,6 +26,8 @@ namespace Utopian
 		mDepthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
 		mDepthSampler->Create();
 
+		mSampler = std::make_shared<Vk::Sampler>(mDevice);
+
 		//mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
 	}
 
@@ -37,8 +37,8 @@ namespace Utopian
 
 	void DeferredJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
-		GBufferTerrainJob* gbufferTerrainJob = static_cast<GBufferTerrainJob*>(jobs[JobGraph::GBUFFER_TERRAIN_INDEX]);
 		BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
+		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 
 		light_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		settings_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -49,13 +49,10 @@ namespace Utopian
 		mEffect->BindUniformBuffer("UBO_settings", settings_ubo);
 		mEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
 
-		Vk::Sampler* sampler = gbufferTerrainJob->renderTarget->GetSampler();
-		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *sampler);
-		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *sampler);
-		mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *sampler);
-		mEffect->BindCombinedImage("ssaoSampler", *blurJob->blurImage, *sampler);
-
-		ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
+		mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
+		mEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mSampler);
+		mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *mSampler);
+		mEffect->BindCombinedImage("ssaoSampler", *blurJob->blurImage, *mSampler);
 		mEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
 	}
 

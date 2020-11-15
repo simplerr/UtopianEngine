@@ -19,6 +19,7 @@ namespace Utopian
 	private:
 		SharedPtr<Vk::Sampler> mDepthSampler;
 		SharedPtr<Vk::Effect> mEffect;
+		SharedPtr<Vk::Sampler> mSampler;
 		LightUniformBuffer light_ubo;
 		SettingsUniformBuffer settings_ubo;
 		CascadeBlock cascade_ubo;
