@@ -132,6 +132,8 @@ namespace Utopian
 		if (tzmax < tmax)
 			tmax = tzmax;
 
+		dist = tmin;
+
 		return true;
 	}
 
