@@ -393,7 +393,7 @@ namespace Utopian::Vk
 			for (int z = 0; z < numCells; z++)
 			{
 				Vk::Vertex vertex;
-				const float originOffset = (cellSize * numCells) / 2.0f;
+				const float originOffset = (cellSize * numCells) / 2.0f - cellSize/2;
 				vertex.Pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
 				vertex.Normal = glm::vec3(0.0f, -1.0f, 0.0f);
 				vertex.Tex = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
