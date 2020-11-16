@@ -42,7 +42,7 @@ namespace Utopian
 		void RemoveActors();
 		void LoadScene();
 
-		SharedPtr<Actor> RayIntersection(const Ray& ray);
+		SharedPtr<Actor> RayIntersection(const Ray& ray, float& distance);
 		std::vector<SharedPtr<Actor>>& GetActors();
 		uint32_t GetActorIndex(SharedPtr<Actor> actor);
 

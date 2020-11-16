@@ -75,7 +75,8 @@ namespace Utopian
 		{
 			Ray ray = mCamera->GetPickingRay();
 
-			SharedPtr<Actor> selectedActor = mWorld->RayIntersection(ray);
+			float distance = FLT_MAX;
+			SharedPtr<Actor> selectedActor = mWorld->RayIntersection(ray, distance);
 			if (selectedActor != nullptr && selectedActor.get() != mSelectedActor)
 			{
 				mSelectedActorIndex = mWorld->GetActorIndex(selectedActor);
@@ -107,7 +108,7 @@ namespace Utopian
 				OnActorSelected(newActor.get());
 			}
 		}
-      else if (gInput().KeyPressed('C')) // Add new actor to scene
+		else if (gInput().KeyPressed('C')) // Add new actor to scene
 		{
 			SharedPtr<Actor> actor = Actor::Create("EditorActor");
 
@@ -125,8 +126,18 @@ namespace Utopian
 			}
 			else
 			{
-				glm::vec3 intersection = mTerrain->GetIntersectPoint(ray);
-				pos = intersection + glm::vec3(0, 50.0f, 0);
+				glm::vec3 intersection;
+
+				float distance = FLT_MAX;
+				auto actor = mWorld->RayIntersection(ray, distance);
+
+				// Todo: Only check intersection against specific layer
+				if (actor != nullptr)
+					intersection = ray.origin + ray.direction * distance;
+				else
+					intersection = mTerrain->GetIntersectPoint(ray);
+
+				pos = intersection;
 			}
 
 			CTransform* transform = actor->AddComponent<CTransform>(pos);
@@ -141,8 +152,7 @@ namespace Utopian
 			{
 				// Models from adventure_village needs to be scaled and rotated
 				transform->SetScale(glm::vec3(50));
-				// Todo: Broken after quaternion implementation
-				//transform->SetRotation(glm::vec3(180, 0, 0));
+				transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
 
 				renderable->LoadModel(mModelPaths[mSelectedModel]);
 			}

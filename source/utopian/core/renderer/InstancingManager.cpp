@@ -84,7 +84,10 @@ namespace Utopian
 	{
 		std::ofstream fout(filename);
 
-		fout << "INSTANCES:" << std::endl;
+		fout << "INSTANCES:";
+
+		if (mSceneInfo->instanceGroups.size() > 0)
+			fout << std::endl;
 
 		for (auto& instanceGroup : mSceneInfo->instanceGroups)
 		{

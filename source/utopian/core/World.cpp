@@ -32,7 +32,7 @@ namespace Utopian
 		// Removes the Actor and all of it's components
 	}
 
-	SharedPtr<Actor> World::RayIntersection(const Ray& ray)
+	SharedPtr<Actor> World::RayIntersection(const Ray& ray, float& distance)
 	{
 		SharedPtr<Actor> selectedActor = nullptr;
 
@@ -43,10 +43,11 @@ namespace Utopian
 			{
 				BoundingBox boundingBox = actor->GetBoundingBox();
 
-				float distance = FLT_MAX;
-				if (boundingBox.RayIntersect(ray, distance))// && distance < minDistance)
+				float dist = FLT_MAX;
+				if (boundingBox.RayIntersect(ray, dist))
 				{
 					selectedActor = actor;
+					distance = dist;
 				}
 			}
 		}
