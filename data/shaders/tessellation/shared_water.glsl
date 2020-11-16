@@ -9,8 +9,8 @@ layout (std140, set = 0, binding = 7) uniform UBO_settings
 {
     vec2 viewportSize;
     float edgeSize; // The size in pixels that all edges should have
-	float tessellationFactor;
-    float amplitude;
+    float tessellationFactor;
+    float amplitude; // Todo: remove
     float textureScaling;
     float bumpmapAmplitude;
     int wireframe;

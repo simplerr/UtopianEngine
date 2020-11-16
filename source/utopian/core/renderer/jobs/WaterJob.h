@@ -9,8 +9,6 @@
 
 namespace Utopian
 {
-	class Terrain;
-
 	class WaterJob : public BaseJob
 	{
 	public:

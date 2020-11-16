@@ -42,8 +42,8 @@ actor_list =
 				scale_z = 1,
 			},
 		},
-	},
-	
+	}, 
+	[0] = 
 	{
 		actor_name = "Directional light",
 		components = 
@@ -91,35 +91,6 @@ actor_list =
 				scale_x = 1.2000000476837,
 				scale_y = 1.2000000476837,
 				scale_z = 1.2000000476837,
-			},
-		},
-	}, 
-	[0] = 
-	{
-		actor_name = "House",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/HouseStuccoNormal.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 0.024075999855995,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0.99971014261246,
-				pos_x = -2413.4702148438,
-				pos_y = -18.430480957031,
-				pos_z = -11664.0859375,
-				scale_x = 47.000072479248,
-				scale_y = 47.000072479248,
-				scale_z = 47,
 			},
 		},
 	},

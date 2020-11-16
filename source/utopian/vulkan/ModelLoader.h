@@ -29,7 +29,6 @@ namespace Utopian::Vk
       void CleanupModels(VkDevice device);
 
       StaticModel* LoadModel(std::string filename);		// NOTE: TODO: Not a good idea to take VulkanBase as argument
-      StaticModel* GenerateTerrain(std::string filename);
       StaticModel* LoadDebugBoxLines();		// Use with VK_PRIMITIVE_TOPOLOGY_LINE_LIST
       StaticModel* LoadDebugBoxTriangles();	// Use with VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
       StaticModel* LoadQuad();

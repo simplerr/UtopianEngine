@@ -4,6 +4,7 @@
 #include "vulkan/VulkanApp.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
+#include "core/renderer/RenderSettings.h"
 
 namespace Utopian
 {
@@ -27,6 +28,7 @@ namespace Utopian
 	class DeferredRenderingPlugin : public EnginePlugin
 	{
 	public:
+		DeferredRenderingPlugin(const RenderingSettings& renderingSettings);
 		virtual void Start(Engine* engine) override;
 		virtual void PostInit(Engine* engine) override;
 		virtual void Destroy() override;
@@ -35,6 +37,8 @@ namespace Utopian
 		virtual void NewFrame() override;
 		virtual void EndFrame() override;
 
+	private:
+		RenderingSettings mRenderingSettings;
 	};
 
 	class ECSPlugin : public EnginePlugin

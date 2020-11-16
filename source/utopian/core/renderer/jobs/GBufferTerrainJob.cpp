@@ -38,6 +38,12 @@ namespace Utopian
 		mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
 		renderTarget->AddStatisticsQuery(mQueryPool);
 
+		// Don't create any more objects if there's no terrain in the scene.
+		// This is a workaround which means that even if there's no terrain
+		// there'll always be a GBufferTerrainJob with an empty renderpass.
+		if (mTerrain == nullptr)
+			return;
+
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
@@ -94,24 +100,30 @@ namespace Utopian
 
 	void GBufferTerrainJob::Render(const JobInput& jobInput)
 	{
-		const Frustum& frustum = gRenderer().GetMainCamera()->GetFrustum();
-		memcpy(mFrustumPlanesBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
+		if (mTerrain != nullptr)
+		{
+			const Frustum& frustum = gRenderer().GetMainCamera()->GetFrustum();
+			memcpy(mFrustumPlanesBlock.data.frustumPlanes, frustum.planes.data(), sizeof(glm::vec4) * 6);
 
-		mFrustumPlanesBlock.UpdateMemory();
+			mFrustumPlanesBlock.UpdateMemory();
 
-		mSettingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
-		mSettingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
-		mSettingsBlock.data.edgeSize = 200.0f;
-		mSettingsBlock.data.amplitude = jobInput.sceneInfo.terrain->GetAmplitudeScaling();
-		mSettingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
-		mSettingsBlock.data.bumpmapAmplitude = jobInput.renderingSettings.terrainBumpmapAmplitude;
-		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
-		mSettingsBlock.UpdateMemory();
+			mSettingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
+			mSettingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
+			mSettingsBlock.data.edgeSize = 200.0f;
+			mSettingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
+			mSettingsBlock.data.bumpmapAmplitude = jobInput.renderingSettings.terrainBumpmapAmplitude;
+			mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;
+
+			if (jobInput.sceneInfo.terrain != nullptr)
+				mSettingsBlock.data.amplitude = jobInput.sceneInfo.terrain->GetAmplitudeScaling();
+
+			mSettingsBlock.UpdateMemory();
+		}
 
 		renderTarget->Begin("Terrain Tessellation pass", glm::vec4(0.8f, 0.4f, 0.2f, 1.0f));
 		Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-		if (IsEnabled())
+		if (IsEnabled() && mTerrain != nullptr)
 		{
 			glm::mat4 world = glm::mat4();
 			Vk::PushConstantBlock pushConsts(world);

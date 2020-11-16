@@ -4,9 +4,15 @@
 
 namespace Utopian::Vk
 {
+	ShaderBuffer::ShaderBuffer()
+	{
+		mBuffer = nullptr;
+	}
+
 	ShaderBuffer::~ShaderBuffer()
 	{
-		delete mBuffer;
+		if (mBuffer != nullptr)
+			delete mBuffer;
 	}
 
 	void ShaderBuffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags propertyFlags)

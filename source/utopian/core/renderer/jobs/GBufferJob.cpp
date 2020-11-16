@@ -87,7 +87,12 @@ namespace Utopian
 		mSettingsBlock.data.normalMapping = jobInput.renderingSettings.normalMapping;
 		mSettingsBlock.UpdateMemory();
 
-		mAnimationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
+		// Note: use hardcoded size if no Terrain is available
+		if (jobInput.sceneInfo.terrain != nullptr)
+			mAnimationParametersBlock.data.terrainSize = jobInput.sceneInfo.terrain->GetTerrainSize();
+		else
+			mAnimationParametersBlock.data.terrainSize = 128.0 * 511;
+
 		mAnimationParametersBlock.data.strength = jobInput.renderingSettings.windStrength;
 		mAnimationParametersBlock.data.frequency = jobInput.renderingSettings.windFrequency;
 		mAnimationParametersBlock.data.enabled = jobInput.renderingSettings.windEnabled;

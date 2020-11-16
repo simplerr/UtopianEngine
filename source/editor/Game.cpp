@@ -5,6 +5,7 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CRigidBody.h"
 #include "core/renderer/Renderer.h"
+#include "core/renderer/RenderSettings.h"
 #include "core/World.h"
 #include "core/Engine.h"
 #include "core/Log.h"
@@ -17,10 +18,13 @@
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
 {
-	// Start Utopian Engine
+	Utopian::RenderingSettings renderingSettings;
+	renderingSettings.terrainEnabled = false;
+	renderingSettings.waterEnabled = false;
+
 	Utopian::gEngine().Start(window, "Utopian Engine (v0.2)");
 	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
-	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>());
+	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>(renderingSettings));
 	Utopian::gEngine().StartModules();
 
 	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);

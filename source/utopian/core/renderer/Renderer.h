@@ -81,6 +81,9 @@ namespace Utopian
 		/** Returns the configured rendering settings. */
 		const RenderingSettings& GetRenderingSettings() const;
 
+		/** Sets the rendering settings. */
+		void SetRenderingSettings(const RenderingSettings& renderingSettings);
+
 		const SharedShaderVariables& GetSharedShaderVariables() const;
 
 		/** Instancing experimentation. */

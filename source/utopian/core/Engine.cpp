@@ -208,10 +208,16 @@ namespace Utopian
 		return Engine::Instance();
 	}
 
+	DeferredRenderingPlugin::DeferredRenderingPlugin(const RenderingSettings& renderingSettings)
+	{
+		mRenderingSettings = renderingSettings;
+	}
+
 	void DeferredRenderingPlugin::Start(Engine* engine)
 	{
 		gRenderer().Start(engine->GetVulkanApp());
 		gRenderer().SetUiOverlay(engine->GetImGuiRenderer());
+		gRenderer().SetRenderingSettings(mRenderingSettings);
 
 		// Todo: There is a dependency between loading the actors from Lua and the terrain creation
 		// Terrain needs to be created before World::Instance().LoadScene();

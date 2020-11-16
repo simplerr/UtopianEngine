@@ -109,7 +109,6 @@ namespace Utopian
 		mSettingsBlock.data.viewportSize = glm::vec2(mWidth, mHeight);
 		mSettingsBlock.data.tessellationFactor = jobInput.renderingSettings.tessellationFactor;
 		mSettingsBlock.data.edgeSize = 200.0f;
-		mSettingsBlock.data.amplitude = jobInput.sceneInfo.terrain->GetAmplitudeScaling();
 		mSettingsBlock.data.textureScaling = jobInput.renderingSettings.terrainTextureScaling;
 		mSettingsBlock.data.bumpmapAmplitude = jobInput.renderingSettings.terrainBumpmapAmplitude;
 		mSettingsBlock.data.wireframe = jobInput.renderingSettings.terrainWireframe;

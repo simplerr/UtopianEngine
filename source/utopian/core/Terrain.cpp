@@ -65,13 +65,6 @@ namespace Utopian
 		if (gInput().KeyPressed('U'))
 			UpdatePhysicsHeightmap();
 
-		//gRenderer().GetMainCamera()->SetPosition(glm::vec3(cameraPos.x, height + 500, cameraPos.z));
-
-		/*Vk::UIOverlay::TextV("Terrain cam pos: %.4f, %.4f", TransformToUv(cameraPos.x, 0).x, TransformToUv(0, cameraPos.z).y);
-		Vk::UIOverlay::TextV("Height: %.2f", height);
-		Vk::UIOverlay::TextV("Intersection: %.2f, %.2f, %.2f", intersection.x, intersection.y, intersection.z);
-		Vk::UIOverlay::TextV("Brush pos: %.4f, %.4f", brushPos.x, brushPos.y);*/
-		// Display Actor creation list
 		ImGuiRenderer::BeginWindow("Terrain debug", glm::vec2(300.0f, 10.0f), 400.0f);
 
 		ImVec2 textureSize = ImVec2(256, 256);

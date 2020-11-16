@@ -55,12 +55,6 @@ namespace Utopian
 		mVulkanApp = vulkanApp;
 		mDevice = vulkanApp->GetDevice();
 
-		// Default rendering settings
-		mRenderingSettings.deferredPipeline = true;
-		mRenderingSettings.fogColor = glm::vec4(0.426f, 0.440f, 0.532f, 1.0f);
-		mRenderingSettings.fogStart = 24000.0f;
-		mRenderingSettings.fogDistance = 18000.0f;
-
 		mSceneInfo.directionalLight = nullptr;
 
 		// Todo: Figure out where these belong
@@ -79,7 +73,11 @@ namespace Utopian
 	void Renderer::PostWorldInit()
 	{
 		mInstancingManager = std::make_shared<InstancingManager>(this);
-		mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
+
+		if (mRenderingSettings.terrainEnabled)
+			mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
+		else
+			mSceneInfo.terrain = nullptr;
 
 		ScriptExports::SetTerrain(GetTerrain());
 
@@ -93,8 +91,10 @@ namespace Utopian
 	{
 		UpdateCascades();
 
+		if (mSceneInfo.terrain != nullptr)
+			mSceneInfo.terrain->Update();
+
 		mMainCamera->UpdateFrustum();
-		mSceneInfo.terrain->Update();
 		mJobGraph->Update();
 
 		//BuildAllInstances();
@@ -467,6 +467,11 @@ namespace Utopian
 	const RenderingSettings& Renderer::GetRenderingSettings() const
 	{
 		return mRenderingSettings;
+	}
+
+	void Renderer::SetRenderingSettings(const RenderingSettings& renderingSettings)
+	{
+		mRenderingSettings = renderingSettings;
 	}
 
 	const SharedShaderVariables& Renderer::GetSharedShaderVariables() const

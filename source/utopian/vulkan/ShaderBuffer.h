@@ -44,6 +44,7 @@ namespace Utopian::Vk
 	class ShaderBuffer
 	{
 	public:
+		ShaderBuffer();
 		virtual ~ShaderBuffer();
 
 		// [NOTE] This has to be called after elements have been added to vectors, since GetSize() needs to return the correct size

@@ -5,10 +5,10 @@ namespace Utopian
 {
 	struct RenderingSettings
 	{
-		glm::vec4 fogColor;
-		bool deferredPipeline;
-		float fogStart;
-		float fogDistance;
+		glm::vec4 fogColor = glm::vec4(0.426f, 0.440f, 0.532f, 1.0f);
+		bool deferredPipeline = true;
+		float fogStart = 24000.0f;;
+		float fogDistance = 18000.0f;
 		float ssaoRadius = 6.0f;
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
@@ -20,6 +20,7 @@ namespace Utopian
 		bool ssrEnabled = true;
 		bool skyboxReflections = true;
 		bool waterEnabled = true;
+		bool terrainEnabled = true;
 		bool fxaaEnabled = true;
 		bool fxaaDebug = false;
 		bool godRaysEnabled = true;
