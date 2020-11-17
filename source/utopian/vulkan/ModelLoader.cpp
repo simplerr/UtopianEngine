@@ -18,7 +18,7 @@
 #include "../external/assimp/assimp/scene.h"
 
 #define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/grid.png"
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/prototype/Light/texture_06.png"
 
 namespace Utopian::Vk
 {
