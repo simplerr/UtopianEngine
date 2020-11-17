@@ -18,7 +18,7 @@
 #include "../external/assimp/assimp/scene.h"
 
 #define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/prototype/Light/texture_06.png"
+#define PLACEHOLDER_TEXTURE_PATH "data/textures/prototype/Light/texture_12.png"
 
 namespace Utopian::Vk
 {
@@ -269,7 +269,7 @@ namespace Utopian::Vk
 			for (int z = 0; z < numCells; z++)
 			{
 				Vk::Vertex vertex;
-				const float originOffset = (cellSize * numCells) / 2.0f - cellSize/2;
+				const float originOffset = (cellSize * numCells) / 2.0f - cellSize / 2;
 				vertex.Pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
 				vertex.Normal = glm::vec3(0.0f, -1.0f, 0.0f);
 				vertex.Tex = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
@@ -350,57 +350,83 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadDebugBoxTriangles()
+	StaticModel* ModelLoader::LoadBox()
 	{
 		// Check if the model already is loaded
-		if (mModelMap.find("debug_box_triangles") != mModelMap.end())
-			return mModelMap["debug_box_triangles"];
+		if (mModelMap.find("box") != mModelMap.end())
+			return mModelMap["box"];
 
 		StaticModel* model = new StaticModel();
 		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
-		mesh->AddVertex(-0.5f, -0.5f, 0.5f);	// 0
-		mesh->AddVertex(0.5f, -0.5f, 0.5f);		// 1
-		mesh->AddVertex(0.5f, 0.5f, 0.5f);		// 2
-		mesh->AddVertex(-0.5f, 0.5f, 0.5f);		// 3
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
 
 		// Back
-		mesh->AddVertex(-0.5f, -0.5f, -0.5f);	// 4
-		mesh->AddVertex(0.5f, -0.5f, -0.5f);	// 5
-		mesh->AddVertex(0.5f, 0.5f, -0.5f);		// 6
-		mesh->AddVertex(-0.5f, 0.5f, -0.5f);	// 7
-
-		// Front
-		mesh->AddTriangle(0, 2, 1);
-		mesh->AddTriangle(2, 0, 3);
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f)));
 
 		// Top
-		mesh->AddTriangle(1, 6, 5);
-		mesh->AddTriangle(6, 1, 2);
-
-		// Back
-		mesh->AddTriangle(7, 5, 6);
-		mesh->AddTriangle(5, 7, 4);
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
 		// Bottom
-		mesh->AddTriangle(4, 3, 0);
-		mesh->AddTriangle(3, 4, 7);
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
 		// Left
-		mesh->AddTriangle(4, 1, 5);
-		mesh->AddTriangle(1, 4, 0);
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
 		// Right
-		mesh->AddTriangle(3, 6, 2);
-		mesh->AddTriangle(6, 3, 7);
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+		mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
+		// Front
+		mesh->AddTriangle(1, 0, 2);
+		mesh->AddTriangle(3, 2, 0);
+
+		// Back
+		mesh->AddTriangle(5, 6, 4);
+		mesh->AddTriangle(7, 4, 6);
+
+		// Top
+		mesh->AddTriangle(9, 8, 10);
+		mesh->AddTriangle(11, 10, 8);
+
+		// Bottom
+		mesh->AddTriangle(13, 14, 12);
+		mesh->AddTriangle(15, 12, 14);
+
+		// Left
+		mesh->AddTriangle(17, 18, 16);
+		mesh->AddTriangle(19, 16, 18);
+
+		// Right
+		mesh->AddTriangle(21, 20, 22);
+		mesh->AddTriangle(23, 22, 20);
+
+		mesh->LoadTextures(PLACEHOLDER_TEXTURE_PATH);
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-		mModelMap["debug_box_triangles"] = model;
+		mModelMap["box"] = model;
 		return model;
+
 	}
 
 	std::string ModelLoader::GetPath(aiMaterial* material, aiTextureType textureType, std::string filename)
