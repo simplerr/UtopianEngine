@@ -2,49 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "Camera 1",
-		components = 
-		{
-			CCamera = 
-			{
-				far_plane = 51200,
-				fov = 60,
-				look_at_x = 121.77127075195,
-				look_at_y = -768.64642333984,
-				look_at_z = -756.98364257813,
-				near_plane = 1,
-			},
-			CCatmullSpline = 
-			{
-				draw_debug = 0,
-				filename = "data/camera_spline.txt",
-				time_per_segment = 2187.412109375,
-			},
-			CNoClip = 
-			{
-				speed = 1,
-			},
-			CPlayerControl = 
-			{
-				empty = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 0.9553365111351,
-				orientation_x = -0.29552018642426,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 0.0,
-				pos_y = 3600.0,
-				pos_z = 0.0,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-	}, 
-	[0] = 
-	{
 		actor_name = "Directional light",
 		components = 
 		{
@@ -91,6 +48,49 @@ actor_list =
 				scale_x = 1.2000000476837,
 				scale_y = 1.2000000476837,
 				scale_z = 1.2000000476837,
+			},
+		},
+	}, 
+	[0] = 
+	{
+		actor_name = "Camera 1",
+		components = 
+		{
+			CCamera = 
+			{
+				far_plane = 51200,
+				fov = 60,
+				look_at_x = 121.77127075195,
+				look_at_y = -768.64642333984,
+				look_at_z = -756.98364257813,
+				near_plane = 1,
+			},
+			CCatmullSpline = 
+			{
+				draw_debug = 0,
+				filename = "data/camera_spline.txt",
+				time_per_segment = 2187.412109375,
+			},
+			CNoClip = 
+			{
+				speed = 0.03999999910593,
+			},
+			CPlayerControl = 
+			{
+				empty = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.9553365111351,
+				orientation_x = -0.29552018642426,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -5,
+				pos_y = 4,
+				pos_z = -5,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
 	},

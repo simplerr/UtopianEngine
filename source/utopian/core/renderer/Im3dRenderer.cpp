@@ -61,14 +61,6 @@ namespace Utopian
 
 	void Im3dRenderer::EndFrame()
 	{
-		// Testing
-		//Im3d::PushLayerId(5);
-		Im3d::SetSize(1.0f);
-
-		Im3d::SetSize(3.0f);
-		Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(500.0f), 5.0f, Im3d::Color_Green);
-		Im3d::DrawPoint(glm::vec3(0.0f, 500.0f, 0.0f), 20.0f, Im3d::Color_Red);
-
 		Im3d::EndFrame();
 	}
 

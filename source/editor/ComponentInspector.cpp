@@ -62,7 +62,7 @@ namespace Utopian
 	RenderableInspector::RenderableInspector(CRenderable* renderable)
 	{
 		mRenderable = renderable;
-		mTextureTiling = renderable->GetTextureTiling();
+		mTextureTiling = renderable->GetTextureTiling().x;
 		mDeferred = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_DEFERRED);
 		mColor = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
 		mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
@@ -178,9 +178,9 @@ namespace Utopian
 			ImGui::SliderFloat("Brightness", &color.w, 0.0f, 100.0, "%.1f");
 			mRenderable->SetColor(color);
 
-			ImGui::SliderInt("Tiling", &mTextureTiling.x, 1, 200);
+			ImGui::SliderFloat("Tiling", &mTextureTiling, 0.5, 50);
 
-			mRenderable->SetTileFactor(glm::vec2(mTextureTiling.x, mTextureTiling.y));
+			mRenderable->SetTileFactor(glm::vec2(mTextureTiling));
 
 			if (ImGui::CollapsingHeader("Textures"))
 			{

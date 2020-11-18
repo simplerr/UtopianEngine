@@ -24,6 +24,8 @@ public:
 	virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
 	void InitScene();
+	void AddGround();
+	void AddBoxes();
 
 	// Move all of these to other locations
 	SharedPtr<Utopian::Editor> mEditor;

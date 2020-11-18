@@ -6,6 +6,28 @@
 
 namespace Utopian
 {
+	struct GBufferPushConstants
+	{
+		GBufferPushConstants(glm::mat4 _world, glm::vec4 _color = glm::vec4(1.0f), glm::vec2 tiling = glm::vec2(1.0f, 1.0f))
+		{
+			world = _world;
+			color = _color;
+
+			textureTiling = tiling;
+
+			// Note: This needs to be done to have the physical world match the rendered world.
+			// See https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/ for more information.
+			world[3][0] = -world[3][0];
+			world[3][1] = -world[3][1];
+			world[3][2] = -world[3][2];
+		}
+	
+		glm::mat4 world;
+		glm::vec4 color; // r, g, b, brightness
+		glm::vec2 textureTiling;
+		glm::vec2 pad;
+	};
+
 	GBufferJob::GBufferJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
@@ -177,7 +199,7 @@ namespace Utopian
 			for (Vk::Mesh* mesh : model->mMeshes)
 			{
 				// Push the world matrix constant
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+				GBufferPushConstants pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
 
 				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 				VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };

@@ -12,12 +12,10 @@ layout (location = 4) in vec3 InTangentL;
 layout (location = 5) in vec3 InBitangentL;
 
 layout (push_constant) uniform PushConstants {
-	 mat4 world;
-	 vec4 color;
-	 
-	 // These exceeds the 128 byte limit
-	 // vec2 textureTiling;
-	 // vec2 pad;
+	mat4 world;
+	vec4 color;
+	vec2 textureTiling;
+	vec2 pad;
 } pushConstants;
 
 layout (location = 0) out vec4 OutColor;
@@ -28,7 +26,7 @@ layout (location = 4) out vec3 OutNormalV;
 layout (location = 5) out vec2 OutTextureTiling;
 layout (location = 6) out mat3 OutTBN;
 
-out gl_PerVertex 
+out gl_PerVertex
 {
 	vec4 gl_Position;
 };
@@ -49,7 +47,7 @@ void main()
 	mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix * pushConstants.world)));
 	OutNormalV = normalMatrix * InNormalL;
 	OutTex = InTex;
-	OutTextureTiling = vec2(1.0, 1.0); //pushConstants.textureTiling;
+	OutTextureTiling = pushConstants.textureTiling;
 
 	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

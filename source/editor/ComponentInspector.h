@@ -54,7 +54,7 @@ namespace Utopian
 		virtual void UpdateUi() override;
 	private:
 		CRenderable* mRenderable;
-		glm::ivec2 mTextureTiling;
+		float mTextureTiling;
 		bool mDeferred;
 		bool mColor;
 		bool mBoundingBox;

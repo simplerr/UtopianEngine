@@ -14,6 +14,8 @@
 #include "core/Window.h"
 #include "vulkan/Debug.h"
 #include "vulkan/ModelLoader.h"
+#include "vulkan/TextureLoader.h"
+#include "core/renderer/Im3dRenderer.h"
 
 Game::Game(Utopian::Window* window)
 	: mWindow(window)
@@ -53,6 +55,11 @@ void Game::DestroyCallback()
 void Game::UpdateCallback()
 {
 	mEditor->Update();
+
+	Im3d::SetSize(3.0f);
+	Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 5.0f, Im3d::Color_Red);
+	Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 5.0f, Im3d::Color_Blue);
+	Im3d::DrawPoint(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, Im3d::Color_Yellow);
 }
 
 void Game::DrawCallback()
@@ -67,14 +74,43 @@ void Game::Run()
 
 void Game::InitScene()
 {
-	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Floor");
-	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 3300, 0.0f));
+	AddGround();
+	AddBoxes();
+}
+
+void Game::AddGround()
+{
+	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Ground");
+	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
 	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
-	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadGrid(100, 32);
+	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
 	renderable->SetModel(model);
+	renderable->SetTileFactor(glm::vec2(50.0f));
+
+	actor->PostInit();
+	Utopian::World::Instance().SynchronizeNodeTransforms();
+
+	// Must be called after PostInit() since it needs the Renderable component
+	rigidBody->SetKinematic(true);
+	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::BOX);
+}
+
+void Game::AddBoxes()
+{
+	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Box");
+	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.5f, 0.5f, 0.5f));
+	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
+
+	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
+	//Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadModel("data/models/cube.obj");
+	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadBox();
+	renderable->SetModel(model);
+	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Orange/texture_01.png"));
+	//renderable->SetTileFactor(glm::vec2(1.0f));
 
 	actor->PostInit();
 	Utopian::World::Instance().SynchronizeNodeTransforms();
