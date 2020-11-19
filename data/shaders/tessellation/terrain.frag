@@ -79,11 +79,11 @@ void main()
 	float roadDisplacement = texture(samplerDisplacement[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).r * ROAD_AMPLITUDE_SCALE;
 
     // Grass color patches
-    float noise1 = clamp((1 - clamp(fbm(InPosW.xz / 1000) * 2, 0, 1)) * 9, 0, 1);
+    float noise1 = clamp((1 - clamp(fbm(InPosW.xz / 8.0f) * 2, 0, 1)) * 9, 0, 1);
     grassDiffuse = mix(grassDiffuse, grassDiffuse + vec3(0.0, 0.03, 0.02), noise1);
 
     // Dirt patches
-    float noise2 = clamp((1 - clamp(fbm(InPosW.xz / 1000 + 500) * 3, 0, 1)) * 9, 0, 1);
+    float noise2 = clamp((1 - clamp(fbm(InPosW.xz / 8.0f + 4.0f) * 4, 0, 1)) * 9, 0, 1);
     grassDiffuse = mix(grassDiffuse, dirtDiffuse * 0.8, noise2);
     grassNormal = mix(grassNormal, dirtNormal, noise2);
     grassDisplacement = mix(grassDisplacement, dirtDisplacement, noise2);

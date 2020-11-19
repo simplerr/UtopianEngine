@@ -7,8 +7,8 @@ namespace Utopian
 	{
 		glm::vec4 fogColor = glm::vec4(0.426f, 0.440f, 0.532f, 1.0f);
 		bool deferredPipeline = true;
-		float fogStart = 24000.0f;;
-		float fogDistance = 18000.0f;
+		float fogStart = 200.0f;
+		float fogDistance = 140.0f;
 		float ssaoRadius = 6.0f;
 		float ssaoBias = 0.0f;
 		int blurRadius = 2;
@@ -33,7 +33,7 @@ namespace Utopian
 		float sunAzimuth = 0.0f;
 		float tessellationFactor = 2.8f;
 		float terrainTextureScaling = 200.0;
-		float terrainBumpmapAmplitude = 10.0;
+		float terrainBumpmapAmplitude = 0.08;
 		bool terrainWireframe = 0;
 		int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
 		float exposure = 1.4f;
@@ -41,6 +41,7 @@ namespace Utopian
 		float windStrength = 5.0f;
 		float windFrequency = 10000.0f;
 		bool windEnabled = true;
+
 		// Water
 		float waterLevel = 0.0f;
 		glm::vec3 waterColor = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -48,10 +49,10 @@ namespace Utopian
 		float waveSpeed = 1.0f;
 		float foamSpeed = 4.0f;
 		float waterDistortionStrength = 0.02f;
-		float shorelineDepth = 150.0f;
+		float shorelineDepth = 1.2f;
 		float waveFrequency = 90.0f;
 		float waterSpecularity = 128.0f;
 		float waterTransparency = 0.0f;
-		float underwaterViewDistance = 1000.0f;
+		float underwaterViewDistance = 8.0f;
 	};
 }

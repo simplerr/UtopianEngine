@@ -99,7 +99,7 @@ vec2 calculateDistortion(vec2 projectedUV, vec2 distortedTexCoords, float depthT
     // Reduce the distortion in relation to distance. Distortion in long distances causes sampling
     // outside of the reflection image in fresnel.frag, and the effect is mostly noticable in close range anyways.
     depthToWater *= -1;
-    const float distortionRange = 2500.0f;
+    const float distortionRange = 20.0f;
     float distanceFadeFactor = smoothstep(1.0f, 0.0f, (depthToWater - distortionRange) / distortionRange);
     distortion *= distanceFadeFactor;
     //OutAlbedo = vec4(vec3(distanceFadeFactor), 1.0f);

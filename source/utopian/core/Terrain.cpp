@@ -24,7 +24,7 @@ namespace Utopian
 	{
 		mDevice = device;
 
-		GeneratePatches(128.0, 512);
+		GeneratePatches(1.0f, 512);
 		GenerateTerrainMaps();
 
 		Vk::gEffectManager().RegisterRecompileCallback(&Terrain::EffectRecomiledCallback, this);
@@ -352,7 +352,7 @@ namespace Utopian
 
 	Ray Terrain::LinearSearch(Ray ray)
 	{
-		float stepSize = 30.0f;
+		float stepSize = 0.25;
 		glm::vec3 nextPoint = ray.origin + ray.direction * stepSize;
 		float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
 		int counter = 0;

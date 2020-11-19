@@ -68,7 +68,7 @@ namespace Utopian
 
 		// Removes the translation components of the matrix to always keep the skydome at the same distance
 		glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		mInputBlock.data.world = glm::scale(world, glm::vec3(2000.0f));
+		mInputBlock.data.world = glm::scale(world, glm::vec3(16.0f));
 		mInputBlock.UpdateMemory();
 
 		mParameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;

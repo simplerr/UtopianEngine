@@ -35,7 +35,7 @@ namespace Utopian
 		brushSettings.operation = BrushSettings::Operation::ADD;
 		brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
 		brushSettings.strength = 2.0f;
-		brushSettings.radius = 350.0f;
+		brushSettings.radius = 3.0f;
 
 		heightToolTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool.ktx");
 		heightToolFlatTexture = Vk::gTextureLoader().LoadTexture("data/textures/height-tool-flat.png");
@@ -62,7 +62,8 @@ namespace Utopian
 		Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
 		intersection = mTerrain->GetIntersectPoint(ray);
 		brushSettings.position = mTerrain->TransformToUv(intersection.x, intersection.z);
-		brushSettings.radius += gInput().MouseDz() / 4.0f;
+		brushSettings.radius += gInput().MouseDz() / 100.0f;
+		brushSettings.radius = glm::clamp(brushSettings.radius, 0.0f, 30.0f);
 
 		UpdateBrushUniform();
 
@@ -99,7 +100,7 @@ namespace Utopian
 	{
 		if (ImGui::CollapsingHeader("Terrain tool", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 3500.0f);
+			ImGui::SliderFloat("Brush radius", &brushSettings.radius, 0.0f, 30.0f);
 			ImGui::SliderFloat("Brush strenth", &brushSettings.strength, 0.0f, 5.0f);
 
 			if (ImGui::ImageButton(textureIdentifiers.heightToolFlat, ImVec2(64, 64)))

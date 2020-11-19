@@ -38,9 +38,9 @@ void main()
 
 	pos.xyz = calculateWavePosition(pos.xz, sharedVariables.time, OutNormalL);
 
-    float textureScaling = ubo_settings.textureScaling;
+	float textureScaling = ubo_settings.textureScaling;
 
-    float finalDisplacement = 0.0f;
+	float finalDisplacement = 0.0f;
 
 	// Displace small details from displacement map along normal
 	vec3 normal = normalize(OutNormalL);

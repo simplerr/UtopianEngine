@@ -20,7 +20,7 @@ layout (std140, set = 0, binding = 7) uniform UBO_settings
 vec3 calculateWavePosition(vec2 pos, float time, inout vec3 normal)
 {
     float timeFactor = 0.002;
-	vec3 wavePosition = gerstner_wave(pos, time * timeFactor, normal).xyz;
+    vec3 wavePosition = gerstner_wave(pos, time * timeFactor, normal).xyz;
     
     return wavePosition;
 }

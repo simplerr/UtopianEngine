@@ -68,8 +68,8 @@ layout(std140, set = 0, binding = 8) uniform UBO_ssrSettings
 // This gives good enough results in most cases
 #define USE_CONSTANT_THICKNESS
 
-#define NEAR 1.0f
-#define FAR 51200.0f
+#define NEAR 0.0078f
+#define FAR 400.0f
 
 // https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html
 const vec4 _ProjectionParams = vec4(1.0f, NEAR, FAR, 1.0f / FAR);

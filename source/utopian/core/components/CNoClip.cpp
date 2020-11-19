@@ -40,6 +40,11 @@ namespace Utopian
 			mTransform->AddTranslation(mSpeed * -right);
 		}
 
+		if (gInput().KeyPressed('J'))
+			SetSpeed(10.0);
+		else if (gInput().KeyPressed('K'))
+			SetSpeed(0.04);
+
 		// Todo: Mousewheel broken
 		if (gInput().KeyDown(VK_RBUTTON))
 		{

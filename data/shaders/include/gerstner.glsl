@@ -84,9 +84,9 @@ struct GerstnerWave {
     float frequency;
     float speed;
 } gerstner_waves[3] = GerstnerWave[3](
-    GerstnerWave(vec2(0.0, -1.0), 5.0, 0.1, 0.01, 1.5),
-    GerstnerWave(vec2(1.0, -1.0), 2.0, 0.5, 0.02, 1.5),
-    GerstnerWave(vec2(1.0, -1.0), 0.5, 0.5, 0.02, 3.5)
+    GerstnerWave(vec2(0.0, -1.0), 0.1, 0.1, 0.2, 0.7),
+    GerstnerWave(vec2(1.0, -1.0), 0.1, 0.5, 0.2, 0.5),
+    GerstnerWave(vec2(1.0, -1.0), 0.025, 0.5, 0.3, 1.5)
 );
 
 vec3 gerstner_wave_normal(vec3 position, float time) {

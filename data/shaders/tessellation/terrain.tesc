@@ -48,7 +48,7 @@ float screenSpaceTessFactor(vec4 p0, vec4 p1)
 bool frustumCheck()
 {
 	// Fixed radius, need to be updated if patch size changes
-	const float radius = 220.0f;
+	const float radius = 1.72;
 	vec4 pos = gl_in[gl_InvocationID].gl_Position;
 
 	// Check sphere against frustum planes

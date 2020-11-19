@@ -38,7 +38,7 @@ namespace Utopian
 		// Note: Todo: Remove this dependency
 		void SetBrushSettings(BrushSettings* brushSettings);
 
-		void AddAssetToUi(uint32_t assetId, std::string previewPath, float scaleFactor = 1.0f, bool animated = true);
+		void AddAssetToUi(uint32_t assetId, std::string previewPath, float scaleFactor = 0.008f, bool animated = true);
 
 		void Update();
 		void RenderUi();

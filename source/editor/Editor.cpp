@@ -167,7 +167,7 @@ namespace Utopian
 				if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
 				{
 					// Models from adventure_village needs to be scaled and rotated
-					transform->SetScale(glm::vec3(50));
+					//transform->SetScale(glm::vec3(50));
 					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
 
 					renderable->LoadModel(mModelPaths[mSelectedModel]);

@@ -21,7 +21,7 @@ namespace Utopian
 	WaterJob::WaterJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		mWaterMesh = GeneratePatches(128.0f, 512);
+		mWaterMesh = GeneratePatches(1.0f, 512);
 
 		// Create sampler that returns 1.0 when sampling outside the depth image
 		// Note: Duplicate from DeferredJob

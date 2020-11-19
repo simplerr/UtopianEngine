@@ -93,7 +93,7 @@ namespace Utopian
 	private:
 		Vk::Device* mDevice;
 		Vk::StaticModel* mQuadModel;
-		float mAmplitudeScaling = 6000.0f;
+		float mAmplitudeScaling = 50;
 		SettingsBlock settingsBlock;
 		SharedPtr<BrushBlock> mBrushBlock;
 
