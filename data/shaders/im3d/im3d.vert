@@ -12,7 +12,7 @@ layout (location = 1) out vec4 OutColor;
 
 void main()
 {
-    OutSize = InPositionSize.w;
+	OutSize = InPositionSize.w;
 	OutColor = InColor.abgr; // Swizzle for correct endianess
 
 	vec3 pos = -InPositionSize.xyz; // Todo: Note the -1

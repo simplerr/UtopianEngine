@@ -1932,8 +1932,8 @@ void Context::gizmoAxisTranslation_Draw(Id _id, const Vec3& _origin, const Vec3&
 		color = Color_GizmoHighlight;
 		pushEnableSorting(false);
 		begin(PrimitiveMode_Lines);
-			vertex(_origin - _axis * 999.0f, m_gizmoSizePixels * 0.5f, _color);
-			vertex(_origin + _axis * 999.0f, m_gizmoSizePixels * 0.5f, _color);
+			vertex(_origin - _axis * 99.0f, m_gizmoSizePixels * 0.5f, _color);
+			vertex(_origin + _axis * 99.0f, m_gizmoSizePixels * 0.5f, _color);
 		end();
 		popEnableSorting();
 	} else if (_id == m_hotId) {
@@ -2126,8 +2126,8 @@ void Context::gizmoAxislAngle_Draw(Id _id, const Vec3& _origin, const Vec3& _axi
 			pushAlpha(Remap(aligned, 1.0f, 0.99f));
 			pushEnableSorting(false);
 			begin(PrimitiveMode_Lines);
-				vertex(_origin - _axis * 999.0f, m_gizmoSizePixels * 0.5f, _color);
-				vertex(_origin + _axis * 999.0f, m_gizmoSizePixels * 0.5f, _color);
+				vertex(_origin - _axis * 99.0f, m_gizmoSizePixels * 0.5f, _color);
+				vertex(_origin + _axis * 99.0f, m_gizmoSizePixels * 0.5f, _color);
 				//vertex(_origin, m_gizmoSizePixels * 0.5f, Color_GizmoHighlight);
 				//vertex(_origin + storedVec * _worldRadius, m_gizmoSizePixels * 0.5f, Color_GizmoHighlight);
 			end();
@@ -2247,8 +2247,8 @@ void Context::gizmoAxisScale_Draw(Id _id, const Vec3& _origin, const Vec3& _axis
 		color = Color_GizmoHighlight;
 		pushEnableSorting(false);
 		begin(PrimitiveMode_Lines);
-			vertex(_origin - _axis * 999.0f, m_gizmoSizePixels * 0.5f, _color);
-			vertex(_origin + _axis * 999.0f, m_gizmoSizePixels * 0.5f, _color);
+			vertex(_origin - _axis * 99.0f, m_gizmoSizePixels * 0.5f, _color);
+			vertex(_origin + _axis * 99.0f, m_gizmoSizePixels * 0.5f, _color);
 		end();
 		popEnableSorting();
 	} else if (_id == m_hotId) {
