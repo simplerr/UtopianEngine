@@ -127,7 +127,7 @@ namespace Utopian
 				mTemplateTypes[mSelectedModel] == RIGID_SPHERE ||
 				mTemplateTypes[mSelectedModel] == RIGID_SPHERE_LIGHT)
 			{
-				float offset = 50.0f;
+				float offset = 0.5f;
 				creationPosition = gRenderer().GetMainCamera()->GetPosition() + offset * gRenderer().GetMainCamera()->GetDirection();
 				addActor = true;
 			}
@@ -166,8 +166,6 @@ namespace Utopian
 				*/
 				if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
 				{
-					// Models from adventure_village needs to be scaled and rotated
-					//transform->SetScale(glm::vec3(50));
 					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
 
 					renderable->LoadModel(mModelPaths[mSelectedModel]);
@@ -186,8 +184,6 @@ namespace Utopian
 				}
 				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
 				{
-					transform->SetScale(glm::vec3(50));
-
 					// Temporary physics testing:
 					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 					rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
@@ -234,7 +230,7 @@ namespace Utopian
 				CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
 				if (rigidBody != nullptr)
 				{
-					const float impulse = 1000.0f;
+					const float impulse = 10.0f;
 					rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
 				}
 			}

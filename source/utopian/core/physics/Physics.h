@@ -46,7 +46,7 @@ namespace Utopian
 
 		btRigidBody* mTerrainBody;
 
-		const glm::vec3 mGravity = glm::vec3(0, -982., 0);
+		const glm::vec3 mGravity = glm::vec3(0, -9.82f, 0);
 		bool mEnabled;
 		bool mDebugDrawEnabled;
 		double mHeightmapCopy[MAP_RESOLUTION * MAP_RESOLUTION];

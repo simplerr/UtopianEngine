@@ -27,11 +27,11 @@ namespace Utopian
 		World::Instance().BindNode(mInternal, GetParent());
 
 		SetMaterial(glm::vec4(1.0f));
-		SetDirection(glm::vec3(0.614f, -0.1f, 0.0f));
-		SetAtt(0.2f, 0.0014f, 0.000007f);
+		SetDirection(glm::vec3(1.0f, 1.0f, 0.0f));
+		SetAtt(0.4f, 0.86f, 0.0f);
 		SetIntensity(0, 0.193, 0);
 		SetType(LightType::POINT_LIGHT);
-		SetRange(10000);
+		SetRange(100.0f);
 		SetSpot(4.0f);
 	}
 

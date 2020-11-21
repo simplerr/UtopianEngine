@@ -21,7 +21,7 @@ Game::Game(Utopian::Window* window)
 	: mWindow(window)
 {
 	Utopian::RenderingSettings renderingSettings;
-	renderingSettings.terrainEnabled = true;
+	renderingSettings.terrainEnabled = false;
 	renderingSettings.waterEnabled = false;
 
 	Utopian::gEngine().Start(window, "Utopian Engine (v0.2)");
