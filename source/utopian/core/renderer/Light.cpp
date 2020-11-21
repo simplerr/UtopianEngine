@@ -6,11 +6,11 @@ namespace Utopian
 	Light::Light()
 	{
 		// Default values
-		SetMaterial(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		SetMaterial(glm::vec4(1.0f));
 		SetDirection(glm::vec3(1.0f, 1.0f, 0.0f));
+		SetAtt(0.4f, 0.86f, 0.0f);
 		SetRange(80.0f);
 		SetSpot(100.0f);
-		SetAtt(0.4f, 0.86f, 0.0f);
 		SetType(Utopian::LightType::DIRECTIONAL_LIGHT);
 		SetIntensity(1.0f, 1.0f, 1.0f);
 	}

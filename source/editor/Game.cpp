@@ -89,6 +89,7 @@ void Game::AddGround()
 	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
 	renderable->SetModel(model);
 	renderable->SetTileFactor(glm::vec2(50.0f));
+	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
 
 	actor->PostInit();
 	Utopian::World::Instance().SynchronizeNodeTransforms();
@@ -109,7 +110,7 @@ void Game::AddBoxes()
 	//Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadModel("data/models/cube.obj");
 	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadBox();
 	renderable->SetModel(model);
-	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Orange/texture_01.png"));
+	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Orange/texture_01.ktx"));
 	//renderable->SetTileFactor(glm::vec2(1.0f));
 
 	actor->PostInit();
