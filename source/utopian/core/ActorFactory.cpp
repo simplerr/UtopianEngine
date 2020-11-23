@@ -36,14 +36,19 @@ namespace Utopian
 			SharedPtr<Actor> actor = Actor::Create(name);
 
 			LuaPlus::LuaObject components = actorData["components"];
+
+			// Add Transform component first. This is needed because other components might,
+			// depend on it during setup, for example camera->LookAt() needs SynchronizeNodeTransforms() to 
+			// be called so that the Camera node can retrieve it's position.
+			// Todo: This dependency should be solved in a better way.
 			for (LuaPlus::LuaTableIterator luaComponent(components); luaComponent; luaComponent.Next())
 			{
 				LuaPlus::LuaObject keyComponent = luaComponent.GetKey();
 				LuaPlus::LuaObject componentData = luaComponent.GetValue();
 
 				std::string name = keyComponent.ToString();
-
-				if (name == "CTransform") {
+				if (name == "CTransform")
+				{
 					glm::vec3 position(componentData["pos_x"].ToNumber(), componentData["pos_y"].ToNumber(), componentData["pos_z"].ToNumber());
 					glm::vec3 scale(componentData["scale_x"].ToNumber(), componentData["scale_y"].ToNumber(), componentData["scale_z"].ToNumber());
 					glm::quat orientation = glm::quat(componentData["orientation_w"].ToNumber(),
@@ -55,7 +60,17 @@ namespace Utopian
 					transform->SetOrientation(orientation);
 					transform->SetScale(scale);
 				}
-				else if (name == "CLight") {
+			}
+
+			for (LuaPlus::LuaTableIterator luaComponent(components); luaComponent; luaComponent.Next())
+			{
+				LuaPlus::LuaObject keyComponent = luaComponent.GetKey();
+				LuaPlus::LuaObject componentData = luaComponent.GetValue();
+
+				std::string name = keyComponent.ToString();
+
+				if (name == "CLight")
+				{
 					glm::vec3 color(componentData["color_r"].ToNumber(), componentData["color_g"].ToNumber(), componentData["color_b"].ToNumber());
 					glm::vec3 att(componentData["att_x"].ToNumber(), componentData["att_y"].ToNumber(), componentData["att_z"].ToNumber());
 					glm::vec3 dir(componentData["dir_x"].ToNumber(), componentData["dir_y"].ToNumber(), componentData["dir_z"].ToNumber());
@@ -73,23 +88,28 @@ namespace Utopian
 					light->SetRange(range);
 					light->SetSpot(spot);
 				}
-				else if (name == "CCamera") {
+				else if (name == "CCamera")
+				{
 					glm::vec3 target(componentData["look_at_x"].ToNumber(), componentData["look_at_y"].ToNumber(), componentData["look_at_z"].ToNumber());
 					float fov = componentData["fov"].ToNumber();
 					float nearPlane = componentData["near_plane"].ToNumber();
 					float farPlane = componentData["far_plane"].ToNumber();
 					CCamera* camera = actor->AddComponent<CCamera>(window, fov, nearPlane, farPlane);
+					World::Instance().SynchronizeNodeTransforms();
 					camera->LookAt(target);
 					camera->SetMainCamera(); // Note: Currently this only suppo
 				}
-				else if (name == "CNoClip") {
+				else if (name == "CNoClip")
+				{
 					float speed = componentData["speed"].ToNumber();
 					CNoClip* noclip = actor->AddComponent<CNoClip>(speed);
 				}
-				else if (name == "CPlayerControl") {
+				else if (name == "CPlayerControl")
+				{
 					CPlayerControl* playerControl = actor->AddComponent<CPlayerControl>();
 				}
-				else if (name == "CRenderable") {
+				else if (name == "CRenderable")
+				{
 					std::string path = componentData["path"].ToString();
 					uint32_t renderFlags = componentData["render_flags"].ToNumber();
 					glm::vec4 color(componentData["color_r"].ToNumber(), componentData["color_g"].ToNumber(), componentData["color_b"].ToNumber(), componentData["color_a"].ToNumber());
@@ -102,10 +122,12 @@ namespace Utopian
 						renderable->SetColor(color);
 					}
 				}
-				else if (name == "CBloomLight") {
+				else if (name == "CBloomLight")
+				{
 					actor->AddComponent<CBloomLight>();
 				}
-				else if (name == "CCatmullSpline") {
+				else if (name == "CCatmullSpline")
+				{
 					std::string filename = componentData["filename"].ToString();
 					float timePerSegment = componentData["time_per_segment"].ToNumber();
 					uint32_t drawDebug = componentData["draw_debug"].ToInteger();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <glm/glm.hpp>
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 
@@ -25,7 +26,7 @@ public:
 private:
 	void InitScene();
 	void AddGround();
-	void AddBoxes();
+	void AddBox(glm::vec3 position, std::string texture);
 
 	// Move all of these to other locations
 	SharedPtr<Utopian::Editor> mEditor;

@@ -75,7 +75,8 @@ void Game::Run()
 void Game::InitScene()
 {
 	AddGround();
-	AddBoxes();
+	AddBox(glm::vec3(0.5f, 0.5f, 0.5f), "data/textures/prototype/Orange/texture_01.ktx");
+	AddBox(glm::vec3(30.5f, 0.5f, 30.5f), "data/textures/prototype/Green/texture_01.png");
 }
 
 void Game::AddGround()
@@ -99,19 +100,16 @@ void Game::AddGround()
 	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::BOX);
 }
 
-void Game::AddBoxes()
+void Game::AddBox(glm::vec3 position, std::string texture)
 {
 	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Box");
-	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.5f, 0.5f, 0.5f));
+	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(position);
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
-	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
-	//Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadModel("data/models/cube.obj");
 	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadBox();
 	renderable->SetModel(model);
-	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Orange/texture_01.ktx"));
-	//renderable->SetTileFactor(glm::vec2(1.0f));
+	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture(texture));
 
 	actor->PostInit();
 	Utopian::World::Instance().SynchronizeNodeTransforms();

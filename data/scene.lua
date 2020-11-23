@@ -60,9 +60,9 @@ actor_list =
 			{
 				far_plane = 400,
 				fov = 60,
-				look_at_x = 121.77127075195,
-				look_at_y = -768.64642333984,
-				look_at_z = -756.98364257813,
+				look_at_x = 0.0,
+				look_at_y = 0.0,
+				look_at_z = 0.0,
 				near_plane = 0.0078,
 			},
 			CCatmullSpline = 
