@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "utility/Module.h"
+#include "utility/Common.h"
 #include "vulkan\VulkanPrerequisites.h"
 
 #define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
@@ -212,7 +213,7 @@ namespace Utopian
 		AssetLoader();
 
 		void AddAsset(uint32_t id, std::string model, std::string texture = "-", std::string normalMap = "-");
-		Vk::StaticModel* LoadAsset(uint32_t assetId);
+		SharedPtr<Vk::StaticModel> LoadAsset(uint32_t assetId);
 		Asset FindAsset(uint32_t id);
 		Asset GetAssetByIndex(uint32_t index) const;
 		uint32_t GetNumAssets() const;

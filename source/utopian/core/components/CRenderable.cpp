@@ -75,7 +75,7 @@ namespace Utopian
 		mInternal->LoadModel(path);
 	}
 
-	void CRenderable::SetModel(Utopian::Vk::StaticModel* model)
+	void CRenderable::SetModel(SharedPtr<Vk::StaticModel> model)
 	{
 		// Note: Todo: How should ActorFactory that loads from Lua handle this?
 		mPath = "Unknown";

@@ -32,7 +32,7 @@ namespace Utopian
 		SharedPtr<Vk::Effect> mEffect;
 		SkydomeInput mInputBlock;
 		ParameterBlock mParameterBlock;
-		Vk::StaticModel* mSkydomeModel;
+		SharedPtr<Vk::StaticModel> mSkydomeModel;
 		float mSunAzimuth;
 	};
 }

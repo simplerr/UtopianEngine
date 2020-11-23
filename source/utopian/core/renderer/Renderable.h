@@ -31,7 +31,7 @@ namespace Utopian
 
 		void LoadModel(std::string path);
 
-		void SetModel(Utopian::Vk::StaticModel* model);
+		void SetModel(SharedPtr<Vk::StaticModel> model);
 		void SetTexture(SharedPtr<Vk::Texture> texture);
 		void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
 		void SetTileFactor(glm::vec2 tileFactor);
@@ -52,7 +52,7 @@ namespace Utopian
 		const bool HasRenderFlags(uint32_t renderFlags) const;
 
 	private:
-		Utopian::Vk::StaticModel* mModel;
+		SharedPtr<Utopian::Vk::StaticModel> mModel;
 		glm::vec4 mColor;
 		glm::vec2 mTextureTileFactor;
 		uint32_t mRenderFlags;

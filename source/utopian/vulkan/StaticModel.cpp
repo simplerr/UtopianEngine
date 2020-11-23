@@ -11,8 +11,8 @@ namespace Utopian::Vk
 
 	StaticModel::~StaticModel()
 	{
-      for (auto mesh : mMeshes)
-         delete mesh;
+		for (auto mesh : mMeshes)
+			delete mesh;
 	}
 
 	void StaticModel::AddMesh(Mesh* mesh)

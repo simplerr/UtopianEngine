@@ -22,7 +22,7 @@ namespace Utopian
 		SharedPtr<Vk::Texture> mSkybox;
 		SharedPtr<Vk::RenderTarget> mRenderTarget;
 		SharedPtr<Vk::Effect> mEffect;
-		Vk::StaticModel* mCubeModel;
+		SharedPtr<Vk::StaticModel> mCubeModel;
 		SkyboxInput mInputBlock;
 	};
 }

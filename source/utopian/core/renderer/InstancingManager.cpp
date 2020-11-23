@@ -256,7 +256,7 @@ namespace Utopian
 
 	Vk::StaticModel* InstanceGroup::GetModel()
 	{
-		return mModel;
+		return mModel.get();
 	}
 
 	bool InstanceGroup::IsAnimated()

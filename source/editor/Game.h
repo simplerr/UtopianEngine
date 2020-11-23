@@ -2,6 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include <vector>
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
 

@@ -44,10 +44,6 @@ namespace Utopian::Vk
 
 	void ModelLoader::CleanupModels(VkDevice device)
 	{
-		for (auto& model : mModelMap)
-		{
-			delete model.second;
-		}
 	}
 
 	ModelLoader& gModelLoader()
@@ -65,13 +61,13 @@ namespace Utopian::Vk
 		return mMeshTexturesDescriptorPool;
 	}
 
-	StaticModel* ModelLoader::LoadModel(std::string filename)
+	SharedPtr<StaticModel> ModelLoader::LoadModel(std::string filename)
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find(filename) != mModelMap.end())
 			return mModelMap[filename];
 
-		StaticModel* model = new StaticModel();
+		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 
 		Assimp::Importer importer;
 
@@ -225,13 +221,13 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadQuad()
+	SharedPtr<StaticModel> ModelLoader::LoadQuad()
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find("quad") != mModelMap.end())
 			return mModelMap["quad"];
 
-		StaticModel* model = new StaticModel();
+		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
@@ -253,7 +249,7 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadGrid(float cellSize, int numCells)
+	SharedPtr<StaticModel> ModelLoader::LoadGrid(float cellSize, int numCells)
 	{
 		std::string name = "grid: " + std::to_string(cellSize) + ", " + std::to_string(numCells);
 
@@ -261,7 +257,7 @@ namespace Utopian::Vk
 		if (mModelMap.find(name) != mModelMap.end())
 			return mModelMap[name];
 
-		StaticModel* model = new StaticModel();
+		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 		Mesh* mesh = new Mesh(mDevice);
 
 		for (int x = 0; x < numCells; x++)
@@ -295,13 +291,13 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadDebugBoxLines()
+	SharedPtr<StaticModel> ModelLoader::LoadDebugBoxLines()
 	{
 		// Check if the model already is loaded
 		if (mModelMap.find("debug_box_lines") != mModelMap.end())
 			return mModelMap["debug_box_lines"];
 
-		StaticModel* model = new StaticModel();
+		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
@@ -350,13 +346,9 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	StaticModel* ModelLoader::LoadBox()
+	SharedPtr<StaticModel> ModelLoader::LoadBox()
 	{
-		// Check if the model already is loaded
-		if (mModelMap.find("box") != mModelMap.end())
-			return mModelMap["box"];
-
-		StaticModel* model = new StaticModel();
+		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 		Mesh* mesh = new Mesh(mDevice);
 
 		// Front
@@ -424,9 +416,7 @@ namespace Utopian::Vk
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-		mModelMap["box"] = model;
 		return model;
-
 	}
 
 	std::string ModelLoader::GetPath(aiMaterial* material, aiTextureType textureType, std::string filename)

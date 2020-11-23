@@ -42,7 +42,7 @@ namespace Utopian
 
 	Utopian::Vk::StaticModel* Renderable::GetModel()
 	{
-		return mModel;
+		return mModel.get();
 	}
 
 	void Renderable::LoadModel(std::string path)
@@ -50,7 +50,7 @@ namespace Utopian
 		mModel = Vk::gModelLoader().LoadModel(path);
 	}
 
-	void Renderable::SetModel(Utopian::Vk::StaticModel* model)
+	void Renderable::SetModel(SharedPtr<Vk::StaticModel> model)
 	{
 		mModel = model;
 	}

@@ -87,7 +87,7 @@ void Game::AddGround()
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
 	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
-	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
+	auto model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
 	renderable->SetModel(model);
 	renderable->SetTileFactor(glm::vec2(50.0f));
 	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
@@ -107,7 +107,7 @@ void Game::AddBox(glm::vec3 position, std::string texture)
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
-	Utopian::Vk::StaticModel* model = Utopian::Vk::gModelLoader().LoadBox();
+	auto model = Utopian::Vk::gModelLoader().LoadBox();
 	renderable->SetModel(model);
 	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture(texture));
 

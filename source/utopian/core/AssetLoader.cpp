@@ -194,13 +194,13 @@ namespace Utopian
 		assert(0);
 	}
 
-	Vk::StaticModel* AssetLoader::LoadAsset(uint32_t assetId)
+	SharedPtr<Vk::StaticModel> AssetLoader::LoadAsset(uint32_t assetId)
 	{
 		Asset asset = FindAsset(assetId);
 
 		std::string fullModelPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.model;
 
-		Vk::StaticModel* model = Vk::gModelLoader().LoadModel(fullModelPath);
+		SharedPtr<Vk::StaticModel> model = Vk::gModelLoader().LoadModel(fullModelPath);
 
 		// Some assets are not properly storing texture paths so we need to set them manually
 		if (asset.diffuseTexture != "-")

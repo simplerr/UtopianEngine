@@ -28,11 +28,11 @@ namespace Utopian::Vk
       ~ModelLoader();
       void CleanupModels(VkDevice device);
 
-      StaticModel* LoadModel(std::string filename);
-      StaticModel* LoadBox();
-      StaticModel* LoadQuad();
-      StaticModel* LoadGrid(float cellSize, int numCells);
-      StaticModel* LoadDebugBoxLines();		// Use with VK_PRIMITIVE_TOPOLOGY_LINE_LIST
+      SharedPtr<StaticModel> LoadModel(std::string filename);
+      SharedPtr<StaticModel> LoadBox();
+      SharedPtr<StaticModel> LoadQuad();
+      SharedPtr<StaticModel> LoadGrid(float cellSize, int numCells);
+      SharedPtr<StaticModel> LoadDebugBoxLines();
 
       SharedPtr<DescriptorSetLayout> GetMeshTextureDescriptorSetLayout();
       SharedPtr<DescriptorPool> GetMeshTextureDescriptorPool();
@@ -40,8 +40,8 @@ namespace Utopian::Vk
       std::string GetPath(aiMaterial* material, aiTextureType textureType, std::string filename);
       int FindValidPath(aiString* texturePath, std::string modelPath);
       bool TryLongerPath(char* szTemp, aiString* p_szString);
-      std::map<std::string, StaticModel*> mModelMap;
-      StaticModel* mPlaceholderModel = nullptr;
+      std::map<std::string, SharedPtr<StaticModel>> mModelMap;
+      SharedPtr<StaticModel> mPlaceholderModel = nullptr;
 
       Device* mDevice;
       

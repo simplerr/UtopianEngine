@@ -51,7 +51,7 @@ namespace Utopian
 
 	private:
 		SharedPtr<Vk::Buffer> mInstanceBuffer;
-		Vk::StaticModel* mModel;
+		SharedPtr<Vk::StaticModel> mModel;
 		std::vector<InstanceDataGPU> mInstances; // Uploaded to GPU
 		std::vector<InstanceData> mInstanceData;
 		uint32_t mAssetId;

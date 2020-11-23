@@ -22,7 +22,7 @@ namespace Utopian
 		LuaPlus::LuaObject GetLuaObject() override;
 
 		void LoadModel(std::string path);
-		void SetModel(Vk::StaticModel* model);
+		void SetModel(SharedPtr<Vk::StaticModel> model);
 
 		/**
 		 * @brief Set the texture to use when drawing
