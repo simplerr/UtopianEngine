@@ -17,9 +17,6 @@
 #include "../external/assimp/assimp/postprocess.h"
 #include "../external/assimp/assimp/scene.h"
 
-#define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/prototype/Light/texture_12.png"
-
 namespace Utopian::Vk
 {
 	ModelLoader::ModelLoader(Device* device)
@@ -346,8 +343,12 @@ namespace Utopian::Vk
 		return model;
 	}
 
-	SharedPtr<StaticModel> ModelLoader::LoadBox()
+	SharedPtr<StaticModel> ModelLoader::LoadBox(std::string texture)
 	{
+		std::string name = "box: " + texture;
+		if (mModelMap.find(name) != mModelMap.end())
+			return mModelMap[name];
+
 		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 		Mesh* mesh = new Mesh(mDevice);
 
@@ -411,11 +412,14 @@ namespace Utopian::Vk
 		mesh->AddTriangle(21, 20, 22);
 		mesh->AddTriangle(23, 22, 20);
 
-		mesh->LoadTextures(PLACEHOLDER_TEXTURE_PATH);
+		mesh->LoadTextures(texture);
 		mesh->BuildBuffers(mDevice);
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
+
+		mModelMap[name] = model;
+
 		return model;
 	}
 
