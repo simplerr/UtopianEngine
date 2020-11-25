@@ -20,7 +20,7 @@ namespace Utopian
 		void Init(const std::vector<Vk::Vertex>& vertices);
 		void Init(glm::vec3 position, glm::vec3 extents);
 		void Update(glm::mat4 worldMatrix);
-		bool RayIntersect(const Ray& ray, float& dist);
+		bool RayIntersect(const Ray& ray, float& dist, glm::vec3& normal);
 
 		float GetWidth() const;
 		float GetHeight() const;

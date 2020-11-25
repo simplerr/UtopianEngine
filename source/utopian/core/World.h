@@ -18,6 +18,18 @@ namespace Utopian
 		Actor* actor;
 	};
 
+	struct IntersectionInfo
+	{
+		IntersectionInfo() {
+			actor = nullptr;
+			distance = FLT_MAX;
+		}
+
+		SharedPtr<Actor> actor;
+		glm::vec3 normal;
+		float distance;
+	};
+
 	/*
 		Manages all Entities and Components, also synchronizes the position of every
 		SceneNode bound to SceneEntities.
@@ -42,7 +54,7 @@ namespace Utopian
 		void RemoveActors();
 		void LoadScene();
 
-		SharedPtr<Actor> RayIntersection(const Ray& ray, float& distance);
+		IntersectionInfo RayIntersection(const Ray& ray);
 		std::vector<SharedPtr<Actor>>& GetActors();
 		uint32_t GetActorIndex(SharedPtr<Actor> actor);
 

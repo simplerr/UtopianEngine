@@ -32,11 +32,10 @@ namespace Utopian
 		// Removes the Actor and all of it's components
 	}
 
-	SharedPtr<Actor> World::RayIntersection(const Ray& ray, float& distance)
+	IntersectionInfo World::RayIntersection(const Ray& ray)
 	{
-		SharedPtr<Actor> selectedActor = nullptr;
+		IntersectionInfo intersectInfo;
 
-		float minDistance = FLT_MAX;
 		for (auto& actor : mActors)
 		{
 			if (actor->HasComponent<CRenderable>())
@@ -44,15 +43,20 @@ namespace Utopian
 				BoundingBox boundingBox = actor->GetBoundingBox();
 
 				float dist = FLT_MAX;
-				if (boundingBox.RayIntersect(ray, dist))
+				glm::vec3 normal;
+				if (boundingBox.RayIntersect(ray, dist, normal))
 				{
-					selectedActor = actor;
-					distance = dist;
+					if (dist < intersectInfo.distance)
+					{
+						intersectInfo.actor = actor;
+						intersectInfo.distance = dist;
+						intersectInfo.normal = normal;
+					}
 				}
 			}
 		}
 
-		return selectedActor;
+		return intersectInfo;
 	}
 
 	std::vector<SharedPtr<Actor>>& World::GetActors()

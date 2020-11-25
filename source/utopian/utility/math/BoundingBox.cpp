@@ -90,20 +90,25 @@ namespace Utopian
 		mMax = max;
 	}
 
-	bool BoundingBox::RayIntersect(const Ray& ray, float& dist)
+	bool BoundingBox::RayIntersect(const Ray& ray, float& dist, glm::vec3& normal)
 	{
 		glm::vec3 min = mMin;
 		glm::vec3 max = mMax;
 
+		float left = (min.x - ray.origin.x) / ray.direction.x;
+		float right = (max.x - ray.origin.x) / ray.direction.x;
 
-		float tmin = (min.x - ray.origin.x) / ray.direction.x;
-		float tmax = (max.x - ray.origin.x) / ray.direction.x;
+		float tmin = left;
+		float tmax = right;
 
 		if (tmin > tmax)
 			std::swap(tmin, tmax);
 
-		float tymin = (min.y - ray.origin.y) / ray.direction.y;
-		float tymax = (max.y - ray.origin.y) / ray.direction.y;
+		float bottom = (min.y - ray.origin.y) / ray.direction.y;
+		float top = (max.y - ray.origin.y) / ray.direction.y;
+
+		float tymax = top;
+		float tymin = bottom;
 
 		if (tymin > tymax)
 			std::swap(tymin, tymax);
@@ -117,8 +122,11 @@ namespace Utopian
 		if (tymax < tmax)
 			tmax = tymax;
 
-		float tzmin = (min.z - ray.origin.z) / ray.direction.z;
-		float tzmax = (max.z - ray.origin.z) / ray.direction.z;
+		float front = (min.z - ray.origin.z) / ray.direction.z;
+		float back = (max.z - ray.origin.z) / ray.direction.z;
+
+		float tzmin = front;
+		float tzmax = back;
 
 		if (tzmin > tzmax)
 			std::swap(tzmin, tzmax);
@@ -133,6 +141,20 @@ namespace Utopian
 			tmax = tzmax;
 
 		dist = tmin;
+
+		// Get the normal
+		if (tmin == left)
+			normal = glm::vec3(-1.0f, 0.0f, 0.0f);
+		else if (tmin == right)
+			normal = glm::vec3(1.0f, 0.0f, 0.0f);
+		else if (tmin == top)
+			normal = glm::vec3(0.0f, 1.0f, 0.0f);
+		else if (tmin == bottom)
+			normal = glm::vec3(0.0f, -1.0f, 0.0f);
+		else if (tmin == front)
+			normal = glm::vec3(0.0f, 0.0f, -1.0f);
+		else if (tmin == back)
+			normal = glm::vec3(0.0f, 0.0f, 1.0f);
 
 		return true;
 	}
