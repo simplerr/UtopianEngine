@@ -4,10 +4,12 @@
 #include "core/components/Actor.h"
 #include "core/physics/Physics.h"
 #include "core/physics/BulletHelpers.h"
+#include "vulkan/StaticModel.h"
 #include "imgui/imgui.h"
 #include "im3d/im3d.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "btBulletDynamicsCommon.h"
+#include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <glm/gtc/quaternion.hpp>
 
 namespace Utopian
@@ -94,11 +96,30 @@ namespace Utopian
 		BoundingBox aabb = mRenderable->GetBoundingBox();
 
 		if (mCollisionShapeType == CollisionShapeType::BOX)
+		{
 			mCollisionShape = new btBoxShape(btVector3(aabb.GetWidth() / 2.0f, aabb.GetHeight() / 2.0f, aabb.GetDepth() / 2.0f));
-		else
+			mCollisionShape->calculateLocalInertia(mass, localInertia);
+		}
+		else if (mCollisionShapeType == CollisionShapeType::SPHERE)
+		{
 			mCollisionShape = new btSphereShape(aabb.GetWidth() / 2.0f);
+			mCollisionShape->calculateLocalInertia(mass, localInertia);
+		}
+		else if (mCollisionShapeType == CollisionShapeType::MESH)
+		{
+			Vk::Mesh* mesh = mRenderable->GetInternal()->GetModel()->mMeshes[0];
+			btTriangleMesh* triangleMesh = new btTriangleMesh();
 
-		mCollisionShape->calculateLocalInertia(mass, localInertia);
+			for (uint32_t i = 0; i < mesh->GetNumIndices() - 3; i += 3)
+			{
+				btVector3 v1 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i]].Pos);
+				btVector3 v2 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i+1]].Pos);
+				btVector3 v3 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i+2]].Pos);
+				triangleMesh->addTriangle(v1, v2, v3, true);
+			}
+
+			mCollisionShape = new btBvhTriangleMeshShape(triangleMesh, true);
+		}
 
 		btRigidBody::btRigidBodyConstructionInfo constructionInfo(mass, motionState, mCollisionShape, localInertia);
 		constructionInfo.m_mass = mass;

@@ -19,7 +19,8 @@ namespace Utopian
 	enum CollisionShapeType
 	{
 		BOX,
-		SPHERE
+		SPHERE,
+		MESH
 	};
 
 	class CRigidBody : public Component
