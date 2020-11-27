@@ -153,6 +153,7 @@ namespace Utopian
 		if (mVulkanApp->PreviousFrameComplete())
 		{
 			mImGuiRenderer->GarbageCollect();
+			mPreFrameCallback();
 
 			gTimer().FrameEnd();
 

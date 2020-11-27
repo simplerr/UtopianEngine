@@ -87,6 +87,15 @@ namespace Utopian
 			mDestroyCallback = std::bind(std::forward<Args>(args)...);
 		}
 
+		/** Registers a callback function to be called before each frame begins.
+		  * Inside of this function Vulkan resources will not be used in a command
+		  * buffer and can modified. */
+		template<class ...Args>
+		void RegisterPreFrameCallback(Args &&...args)
+		{
+			mPreFrameCallback = std::bind(std::forward<Args>(args)...);
+		}
+
 		/** Starts all the modules included in the engine. */
 		void StartModules();
 
@@ -117,6 +126,7 @@ namespace Utopian
 		std::function<void()> mUpdateCallback;
 		std::function<void()> mRenderCallback;
 		std::function<void()> mDestroyCallback;
+		std::function<void()> mPreFrameCallback;
 		std::string mAppName;
 	};
 
