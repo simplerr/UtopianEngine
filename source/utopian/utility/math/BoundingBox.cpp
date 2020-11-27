@@ -11,6 +11,10 @@ namespace Utopian
 		{
 			Vk::Vertex vertex = vertices[i];
 
+			// Note: Todo: The physical representation does not match
+			// the one used for rendering.
+			vertex.Pos = vertex.Pos *= -1;
+
 			if (vertex.Pos.x < min.x)
 				min.x = vertex.Pos.x;
 			else if (vertex.Pos.x > max.x)
