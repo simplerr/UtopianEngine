@@ -32,6 +32,7 @@ namespace Utopian
 			LuaPlus::LuaObject actorData = luaActor.GetValue();
 
 			std::string name = actorData["actor_name"].ToString();
+			SceneLayer sceneLayer = actorData["scene_layer"].ToNumber();
 
 			SharedPtr<Actor> actor = Actor::Create(name);
 
@@ -154,6 +155,7 @@ namespace Utopian
 			LuaPlus::LuaObject luaActor;
 			luaActor.AssignNewTable(gLuaManager().GetLuaState());
 			luaActor.SetString("actor_name", actor->GetName().c_str());
+			luaActor.SetNumber("scene_layer", actor->GetSceneLayer());
 
 			LuaPlus::LuaObject luaComponentTable;
 			luaComponentTable.AssignNewTable(gLuaManager().GetLuaState());

@@ -32,25 +32,28 @@ namespace Utopian
 		// Removes the Actor and all of it's components
 	}
 
-	IntersectionInfo World::RayIntersection(const Ray& ray)
+	IntersectionInfo World::RayIntersection(const Ray& ray, SceneLayer sceneLayer)
 	{
 		IntersectionInfo intersectInfo;
 
 		for (auto& actor : mActors)
 		{
-			if (actor->HasComponent<CRenderable>())
+			if (sceneLayer == DefaultSceneLayer || actor->GetSceneLayer() == sceneLayer)
 			{
-				BoundingBox boundingBox = actor->GetBoundingBox();
-
-				float dist = FLT_MAX;
-				glm::vec3 normal;
-				if (boundingBox.RayIntersect(ray, dist, normal))
+				if (actor->HasComponent<CRenderable>())
 				{
-					if (dist < intersectInfo.distance)
+					BoundingBox boundingBox = actor->GetBoundingBox();
+
+					float dist = FLT_MAX;
+					glm::vec3 normal;
+					if (boundingBox.RayIntersect(ray, dist, normal))
 					{
-						intersectInfo.actor = actor;
-						intersectInfo.distance = dist;
-						intersectInfo.normal = normal;
+						if (dist < intersectInfo.distance)
+						{
+							intersectInfo.actor = actor;
+							intersectInfo.distance = dist;
+							intersectInfo.normal = normal;
+						}
 					}
 				}
 			}

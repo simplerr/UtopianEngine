@@ -29,8 +29,11 @@ namespace Utopian
 		void SetAlive(bool alive);
 		bool IsAlive() const;
 
+		void SetSceneLayer(SceneLayer sceneLayer);
+
 		BoundingBox GetBoundingBox() const;
 		Transform& GetTransform();
+		SceneLayer GetSceneLayer() const;
 
 		/*
 		 * Component management functions
@@ -91,5 +94,6 @@ namespace Utopian
 		std::vector<Component*> mComponents;
 		bool mAlive;
 		bool mHasTransform;
+		SceneLayer mSceneLayer;
 	};
 }

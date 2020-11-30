@@ -8,11 +8,11 @@ namespace Utopian
 		: Object(name)
 	{
 		SetAlive(true);
+		SetSceneLayer(0u);
 	}
 
 	Actor::~Actor()
 	{
-		volatile int test = 0;
 	}
 
 	SharedPtr<Actor> Actor::Create(std::string name)
@@ -74,5 +74,15 @@ namespace Utopian
 	std::vector<Component*>& Actor::GetComponents()
 	{
 		return mComponents;
+	}
+
+	void Actor::SetSceneLayer(SceneLayer sceneLayer)
+	{
+		mSceneLayer = sceneLayer;
+	}
+
+	SceneLayer Actor::GetSceneLayer() const
+	{
+		return mSceneLayer;
 	}
 }

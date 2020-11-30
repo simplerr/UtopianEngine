@@ -95,7 +95,7 @@ namespace Utopian::Vk
 
 		Queue* queue = mDevice->GetQueue();
 		Debug::ErrorCheck(mSwapChain.acquireNextImage(GetImageAvailableSemaphore()->GetVkHandle(),
-													        &mFrameBuffers->currentFrameBuffer));
+													  &mFrameBuffers->currentFrameBuffer));
 	}
 
 	void VulkanBase::SubmitFrame()

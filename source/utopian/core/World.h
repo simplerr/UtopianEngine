@@ -12,6 +12,9 @@ namespace Utopian
 	class Actor;
 	class SceneNode;
 
+	typedef uint32_t SceneLayer;
+	const SceneLayer DefaultSceneLayer = 0u;
+
 	struct BoundNode
 	{
 		SharedPtr<SceneNode> node;
@@ -54,7 +57,7 @@ namespace Utopian
 		void RemoveActors();
 		void LoadScene();
 
-		IntersectionInfo RayIntersection(const Ray& ray);
+		IntersectionInfo RayIntersection(const Ray& ray, SceneLayer sceneLayer = DefaultSceneLayer);
 		std::vector<SharedPtr<Actor>>& GetActors();
 		uint32_t GetActorIndex(SharedPtr<Actor> actor);
 
