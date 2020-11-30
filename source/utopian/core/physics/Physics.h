@@ -28,6 +28,8 @@ namespace Utopian
 
 		void SetHeightmap(const float* heightmap, const uint32_t size, float scale, float terrainSize);
 
+		bool RayIntersection(const Ray& ray);
+
 		bool IsEnabled() const;
 		bool IsDebugDrawEnabled() const;
 

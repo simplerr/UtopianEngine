@@ -1,7 +1,10 @@
 #include "core/physics/Physics.h"
 #include "core/physics/PhysicsDebugDraw.h"
+#include "core/Log.h"
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include <core/physics/BulletHelpers.h>
 #include <limits>
 
 namespace Utopian
@@ -158,6 +161,32 @@ namespace Utopian
 	void Physics::Draw()
 	{
 
+	}
+
+	bool Physics::RayIntersection(const Ray& ray)
+	{
+		const float maxRayDistance = 1000.0f;
+		btVector3 from = ToBulletVec3(ray.origin);
+		btVector3 to = ToBulletVec3(ray.direction * maxRayDistance);
+
+		btCollisionWorld::ClosestRayResultCallback closestResults(from, to);
+		closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+
+		mDynamicsWorld->rayTest(from, to, closestResults);
+
+		if (closestResults.hasHit())
+		{
+			void* userPtr = closestResults.m_collisionObject->getUserPointer();
+			glm::vec3 n = ToVec3(closestResults.m_hitNormalWorld);
+			glm::vec3 p = ToVec3(closestResults.m_hitPointWorld);
+
+			UTO_LOG("nx: " + std::to_string(n.x) + " ny: " + std::to_string(n.y) + " nz: " + std::to_string(n.z));
+			UTO_LOG("px: " + std::to_string(p.x) + " py: " + std::to_string(p.y) + " pz: " + std::to_string(p.z));
+			UTO_LOG("ptr: " + std::to_string((uint64_t)userPtr));
+			return true;
+		}
+
+		return false;
 	}
 
 	btDiscreteDynamicsWorld* Physics::GetDynamicsWorld() const
