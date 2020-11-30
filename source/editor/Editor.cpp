@@ -15,6 +15,7 @@
 #include "editor/ActorInspector.h"
 #include "editor/TerrainTool.h"
 #include "editor/FoliageTool.h"
+#include "editor/PrototypeTool.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
 #include "core/physics/Physics.h"
@@ -39,6 +40,8 @@ namespace Utopian
 			mFoliageTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
 		}
 
+		mPrototypeTool = std::make_shared<PrototypeTool>();
+
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
 
@@ -55,6 +58,11 @@ namespace Utopian
 		delete mActorInspector;
 	}
 
+	void Editor::PreFrame()
+	{
+		mPrototypeTool->PreFrame();
+	}
+
 	void Editor::Update()
 	{
 		if (mTerrain != nullptr)
@@ -62,6 +70,8 @@ namespace Utopian
 			mTerrainTool->Update();
 			mFoliageTool->Update();
 		}
+
+		mPrototypeTool->Update(mWorld, mSelectedActor);
 
 		// Gizmo
 		// Only move actors with renderables for now
@@ -81,13 +91,17 @@ namespace Utopian
 		if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
 		{
 			Ray ray = mCamera->GetPickingRay();
+			IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
 
-			float distance = FLT_MAX;
-			SharedPtr<Actor> selectedActor = mWorld->RayIntersection(ray, distance);
-			if (selectedActor != nullptr && selectedActor.get() != mSelectedActor)
+			if (intersectInfo.actor != nullptr)
 			{
-				mSelectedActorIndex = mWorld->GetActorIndex(selectedActor);
-				OnActorSelected(selectedActor.get());
+				mPrototypeTool->ActorSelected(intersectInfo.actor.get(), intersectInfo.normal);
+
+				if (intersectInfo.actor.get() != mSelectedActor)
+				{
+					mSelectedActorIndex = mWorld->GetActorIndex(intersectInfo.actor);
+					OnActorSelected(intersectInfo.actor.get());
+				}
 			}
 		}
 
@@ -135,13 +149,12 @@ namespace Utopian
 			{
 				glm::vec3 intersection = glm::vec3(FLT_MAX);
 
-				float distance = FLT_MAX;
-				auto actor = mWorld->RayIntersection(ray, distance);
+				IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
 
 				// Todo: Only check intersection against specific layer
-				if (actor != nullptr)
+				if (intersectInfo.actor != nullptr)
 				{
-					intersection = ray.origin + ray.direction * distance;
+					intersection = ray.origin + ray.direction * intersectInfo.distance;
 					addActor = true;
 				}
 				else if (mTerrain != nullptr)
@@ -348,6 +361,8 @@ namespace Utopian
 			mTerrainTool->RenderUi();
 			mFoliageTool->RenderUi();
 		}
+
+		mPrototypeTool->RenderUi();
 
 		RenderActorCreationUi();
 		RenderActorSelectionUi();

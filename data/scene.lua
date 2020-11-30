@@ -50,6 +50,7 @@ actor_list =
 				scale_z = 1.2000000476837,
 			},
 		},
+		scene_layer = 0,
 	}, 
 	[0] = 
 	{
@@ -60,10 +61,10 @@ actor_list =
 			{
 				far_plane = 400,
 				fov = 60,
-				look_at_x = 0.0,
-				look_at_y = 0.0,
-				look_at_z = 0.0,
-				near_plane = 0.0078,
+				look_at_x = 0,
+				look_at_y = 0,
+				look_at_z = 0,
+				near_plane = 0.0077999997884035,
 			},
 			CCatmullSpline = 
 			{
@@ -85,14 +86,15 @@ actor_list =
 				orientation_x = -0.29552018642426,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = -5,
-				pos_y = 4,
-				pos_z = -5,
+				pos_x = -20.002490997314,
+				pos_y = 8.3596115112305,
+				pos_z = 28.593864440918,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
 			},
 		},
+		scene_layer = 0,
 	},
 }
 

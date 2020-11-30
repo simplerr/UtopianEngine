@@ -32,6 +32,7 @@ Game::Game(Utopian::Window* window)
 	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
 	Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
 	Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);
+	Utopian::gEngine().RegisterPreFrameCallback(&Game::PreFrameCallback, this);
 
 	InitScene();
 
@@ -65,6 +66,11 @@ void Game::UpdateCallback()
 void Game::DrawCallback()
 {
 	mEditor->Draw();
+}
+
+void Game::PreFrameCallback()
+{
+	mEditor->PreFrame();
 }
 
 void Game::Run()
@@ -107,9 +113,8 @@ void Game::AddBox(glm::vec3 position, std::string texture)
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
-	auto model = Utopian::Vk::gModelLoader().LoadBox();
+	auto model = Utopian::Vk::gModelLoader().LoadBox(texture);
 	renderable->SetModel(model);
-	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture(texture));
 
 	actor->PostInit();
 	Utopian::World::Instance().SynchronizeNodeTransforms();

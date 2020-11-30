@@ -13,6 +13,7 @@ namespace Utopian
 	class Terrain;
 	class TerrainTool;
 	class FoliageTool;
+	class PrototypeTool;
 	class ImGuiRenderer;
 
 	enum ActorTemplate
@@ -33,6 +34,7 @@ namespace Utopian
 		void Update();
 		void UpdateUi();
 		void Draw();
+		void PreFrame();
 
 		void AddActorCreation(std::string path, ActorTemplate actorTemplate = STATIC_MODEL);
 	private:
@@ -50,8 +52,9 @@ namespace Utopian
 		ActorInspector* mActorInspector;
 		SharedPtr<TerrainTool> mTerrainTool;
 		SharedPtr<FoliageTool> mFoliageTool;
+		SharedPtr<PrototypeTool> mPrototypeTool;
 		Actor* mSelectedActor;
-      	Console mConsole;
+		Console mConsole;
 		int mSelectedActorIndex = 0;
 
 		std::vector<const char*> mModelPaths;

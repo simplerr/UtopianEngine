@@ -22,6 +22,7 @@ public:
 	void DestroyCallback();
 	void UpdateCallback();
 	void DrawCallback();
+	void PreFrameCallback();
 
 	virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 private:
