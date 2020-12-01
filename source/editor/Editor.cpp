@@ -71,8 +71,6 @@ namespace Utopian
 			mFoliageTool->Update();
 		}
 
-		mPrototypeTool->Update(mWorld, mSelectedActor);
-
 		// Gizmo
 		// Only move actors with renderables for now
 		if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
@@ -273,6 +271,8 @@ namespace Utopian
 		{
 			Vk::gEffectManager().RecompileModifiedShaders();
 		}
+
+		mPrototypeTool->Update(mWorld, mSelectedActor);
 
 		// The UI needs to be updated after updating the selected actor since otherwise
 		// the texture descriptor set for the UI can be freed when still being used in a command buffer.

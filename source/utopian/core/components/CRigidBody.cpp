@@ -115,7 +115,7 @@ namespace Utopian
 				btVector3 v1 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i]].Pos);
 				btVector3 v2 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i+1]].Pos);
 				btVector3 v3 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i+2]].Pos);
-				triangleMesh->addTriangle(v1, v2, v3, true);
+				triangleMesh->addTriangle(-v1, -v2, -v3, true); // Note: negative signs, this is correct for prototype tool meshes
 			}
 
 			mCollisionShape = new btBvhTriangleMeshShape(triangleMesh, true);

@@ -80,8 +80,8 @@ void Game::Run()
 
 void Game::InitScene()
 {
-	AddGround();
-	AddBox(glm::vec3(0.5f, 0.5f, 0.5f), "data/textures/prototype/Orange/texture_01.ktx");
+	//AddGround();
+	AddBox(glm::vec3(0.0f, 0.0f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
 	AddBox(glm::vec3(30.5f, 0.5f, 30.5f), "data/textures/prototype/Green/texture_01.png");
 }
 
@@ -103,7 +103,6 @@ void Game::AddGround()
 
 	// Must be called after PostInit() since it needs the Renderable component
 	rigidBody->SetKinematic(true);
-	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::BOX);
 }
 
 void Game::AddBox(glm::vec3 position, std::string texture)
@@ -116,12 +115,13 @@ void Game::AddBox(glm::vec3 position, std::string texture)
 	auto model = Utopian::Vk::gModelLoader().LoadBox(texture);
 	renderable->SetModel(model);
 
+	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::MESH);
+
 	actor->PostInit();
 	Utopian::World::Instance().SynchronizeNodeTransforms();
 
 	// Must be called after PostInit() since it needs the Renderable component
 	rigidBody->SetKinematic(true);
-	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::BOX);
 }
 
 void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

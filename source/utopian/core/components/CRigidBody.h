@@ -69,8 +69,8 @@ namespace Utopian
 			return GetStaticType();
 		}
 
-	private:
 		void AddToWorld();
+	private:
 		void RemoveFromWorld();
 		void UpdateKinematicFlag();
 	private:

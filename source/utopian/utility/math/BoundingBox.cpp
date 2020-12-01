@@ -7,6 +7,8 @@ namespace Utopian
 		glm::vec3 min = glm::vec3(FLT_MAX);
 		glm::vec3 max = glm::vec3(-FLT_MAX);
 
+		mVertices.clear();
+
 		for (int i = 0; i < vertices.size(); i++)
 		{
 			Vk::Vertex vertex = vertices[i];
@@ -51,6 +53,8 @@ namespace Utopian
 	{
 		mMin = position;
 		mMax = position + extents;
+
+		mVertices.clear();
 
 		// Front
 		mVertices.push_back(glm::vec3(mMin.x, mMin.y, mMax.z));
