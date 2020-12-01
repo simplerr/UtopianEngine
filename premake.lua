@@ -81,6 +81,7 @@ project "Engine"
       libdirs { "libs/luaplus" }
       libdirs { "libs/vulkan" }
       libdirs { "libs/ktx" }
+      libdirs { "libs/OpenMesh" }
    
       -- "Debug"
       filter "configurations:Debug"
@@ -101,6 +102,8 @@ project "Engine"
          links { "vulkan-1" }
          links { "assimp" }
          links { "libktx.gl" }
+         links { "OpenMeshCored" }
+         links { "OpenMeshToolsd" }
    
       -- "Release"
       filter "configurations:Release"
