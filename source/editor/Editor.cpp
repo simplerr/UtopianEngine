@@ -93,7 +93,7 @@ namespace Utopian
 
 			if (intersectInfo.actor != nullptr)
 			{
-				mPrototypeTool->ActorSelected(intersectInfo.actor.get(), intersectInfo.normal);
+				mPrototypeTool->ActorSelected(intersectInfo.actor.get());
 
 				if (intersectInfo.actor.get() != mSelectedActor)
 				{

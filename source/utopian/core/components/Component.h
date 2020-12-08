@@ -22,8 +22,9 @@ namespace Utopian
 			PLAYER_CONTROL,
 			RANDOM_PATHS,
 			BLOOM_LIGHT,
-			RIGID_BODY, 
-			CATMULL_SPLINE
+			RIGID_BODY,
+			CATMULL_SPLINE,
+			POLYMESH
 		};
 
 		Component(Actor* parent);

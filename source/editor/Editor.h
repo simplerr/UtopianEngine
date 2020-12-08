@@ -14,6 +14,7 @@ namespace Utopian
 	class TerrainTool;
 	class FoliageTool;
 	class PrototypeTool;
+	class PrototypeTool2;
 	class ImGuiRenderer;
 
 	enum ActorTemplate

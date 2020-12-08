@@ -4,6 +4,7 @@
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CRigidBody.h"
+#include "core/components/CPolyMesh.h"
 #include "core/renderer/Renderer.h"
 #include "core/renderer/RenderSettings.h"
 #include "core/World.h"
@@ -91,6 +92,7 @@ void Game::AddGround()
 	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
+	Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
 
 	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
 	auto model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
@@ -111,6 +113,7 @@ void Game::AddBox(glm::vec3 position, std::string texture)
 	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(position);
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
+	Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
 
 	auto model = Utopian::Vk::gModelLoader().LoadBox(texture);
 	renderable->SetModel(model);
