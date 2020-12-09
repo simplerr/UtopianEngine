@@ -71,17 +71,28 @@ namespace Utopian
 			mFoliageTool->Update();
 		}
 
+		if (gInput().KeyPressed('G'))
+			mSelectionType = OBJECT_SELECTION;
+		else if (gInput().KeyPressed('E'))
+			mSelectionType = EDGE_SELECTION;
+		else if (gInput().KeyPressed('F'))
+			mSelectionType = FACE_SELECTION;
+
+		mPrototypeTool->SetSelectionType(mSelectionType);
+
 		// Gizmo
-		// Only move actors with renderables for now
-		if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
+		if (mSelectionType == OBJECT_SELECTION)
 		{
-			Transform& transform = mSelectedActor->GetTransform();
-			Im3d::Mat4 im3dTransform = Im3d::Mat4(transform.GetWorldMatrix());
-			if (Im3d::Gizmo("TransformGizmo", im3dTransform))
+			if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
 			{
-				transform.SetPosition(im3dTransform.getTranslation());
-				transform.SetScale(im3dTransform.getScale());
-				transform.SetOrientation(Math::GetQuaternion(im3dTransform));
+				Transform& transform = mSelectedActor->GetTransform();
+				Im3d::Mat4 im3dTransform = Im3d::Mat4(transform.GetWorldMatrix());
+				if (Im3d::Gizmo("TransformGizmo", im3dTransform))
+				{
+					transform.SetPosition(im3dTransform.getTranslation());
+					transform.SetScale(im3dTransform.getScale());
+					transform.SetOrientation(Math::GetQuaternion(im3dTransform));
+				}
 			}
 		}
 

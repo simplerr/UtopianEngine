@@ -26,6 +26,13 @@ namespace Utopian
 		RIGID_SPHERE_LIGHT
 	};
 
+	enum SelectionType
+	{
+		OBJECT_SELECTION,
+		FACE_SELECTION,
+		EDGE_SELECTION
+	};
+
 	class Editor
 	{
 	public:
@@ -56,6 +63,7 @@ namespace Utopian
 		SharedPtr<PrototypeTool> mPrototypeTool;
 		Actor* mSelectedActor;
 		Console mConsole;
+		SelectionType mSelectionType = OBJECT_SELECTION;
 		int mSelectedActorIndex = 0;
 
 		std::vector<const char*> mModelPaths;

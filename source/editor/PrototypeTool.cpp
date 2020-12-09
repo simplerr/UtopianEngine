@@ -66,39 +66,13 @@ namespace Utopian
 
    void PrototypeTool::Update(World* world, Actor* selectedActor)
    {
-      // Transform edge
-      if (gInput().KeyPressed('N') || gInput().KeyPressed('M'))
-      {
-         glm::vec3 normal = mSelectedMesh->GetSelectedFaceNormal();
-         float operation = gInput().KeyPressed('N') ? 1 : -1;
-
-         mSelectedMesh->MoveSelectedEdge(normal * operation * 0.25f);
-      }
-
-      // Transform face
-      if (gInput().KeyPressed('T') || gInput().KeyPressed('Y'))
-      {
-         glm::vec3 normal = mSelectedMesh->GetSelectedFaceNormal();
-         float operation = gInput().KeyPressed('T') ? 1 : -1;
-
-         mSelectedMesh->MoveSelectedFace(normal * operation * 0.25f);
-      }
-
-      // Scale face
-      if (gInput().KeyPressed('F') || gInput().KeyPressed('G'))
-      {
-         float operation = gInput().KeyPressed('F') ? 1 : -1;
-
-         mSelectedMesh->ScaleSelectedFace(operation * 0.2f);
-      }
-
       // Add face
       if (gInput().KeyPressed('R'))
       {
          mSelectedMesh->ExtrudeSelectedFace(1.0f);
       }
 
-      if (gInput().KeyPressed(VK_LBUTTON))
+      if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
       {
          Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
          mSelectedMesh->SelectFace(ray);
@@ -111,19 +85,68 @@ namespace Utopian
 
       if (mSelected)
       {
-          glm::vec3 v0, v1, v2, v3;
-          mSelectedMesh->GetSelectedFaceVertices(v0, v1, v2, v3);
-
-          // Face highlight
-          Im3d::PushColor(Im3d::Color_Yellow);
-          Im3d::DrawQuadFilled(v0, v1, v2, v3);
-          Im3d::PopColor();
-
-          // Edge highlight
-          mSelectedMesh->GetSelectedEdgeVertices(v0, v1);
-          Im3d::DrawLine(v0, v1, 6.0f, Im3d::Color_Green);
+         if (mSelectionType == FACE_SELECTION)
+            DrawFaceGizmo();
+         else if (mSelectionType == EDGE_SELECTION)
+            DrawEdgeGizmo();
       }
+   }
 
+   void PrototypeTool::DrawFaceGizmo()
+   {
+      // Face highlight
+      glm::vec3 v0, v1, v2, v3;
+      mSelectedMesh->GetSelectedFaceVertices(v0, v1, v2, v3);
+      Im3d::PushColor(Im3d::Color_Yellow);
+      Im3d::DrawQuadFilled(v0, v1, v2, v3);
+      Im3d::PopColor();
+
+      glm::vec3 faceCenter = mSelectedMesh->GetSelectedFaceCenter();
+      glm::mat4 transform = glm::translate(glm::mat4(), faceCenter);
+      Im3d::Mat4 im3dTransform = Im3d::Mat4(transform);
+      static glm::vec3 prevScale = glm::vec3(1.0f);
+
+      if (Im3d::Gizmo("FaceGizmo", im3dTransform))
+      {
+         glm::vec3 newFaceCenter = im3dTransform.getTranslation();
+         glm::vec3 delta = newFaceCenter - faceCenter;
+         mSelectedMesh->MoveSelectedFace(delta);
+
+         glm::vec3 newScale = im3dTransform.getScale();
+         glm::vec3 deltaScale = newScale - prevScale;
+         mSelectedMesh->ScaleSelectedFace(deltaScale.x / 1.0f);
+
+         prevScale.x = newScale.x;
+      }
+      else
+      {
+         prevScale = glm::vec3(1.0f);
+      }
+   }
+
+   void PrototypeTool::DrawEdgeGizmo()
+   {
+      // Edge highlight
+      glm::vec3 v0, v1;
+      mSelectedMesh->GetSelectedEdgeVertices(v0, v1);
+      Im3d::DrawLine(v0, v1, 5.0f, Im3d::Color_Green);
+
+      glm::vec3 delta = v1 - v0;
+      glm::vec3 edgeCenter = v0 + delta * 0.5f;
+
+      glm::mat4 transform = glm::translate(glm::mat4(), edgeCenter);
+      Im3d::Mat4 im3dTransform = Im3d::Mat4(transform);
+      if (Im3d::Gizmo("EdgeGizmo", im3dTransform))
+      {
+         glm::vec3 newFaceCenter = im3dTransform.getTranslation();
+         glm::vec3 delta = newFaceCenter - edgeCenter;
+         mSelectedMesh->MoveSelectedEdge(delta);
+      }
+   }
+
+   void PrototypeTool::SetSelectionType(SelectionType selectionType)
+   {
+      mSelectionType = selectionType;
    }
 
    void PrototypeTool::RenderUi()

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "core/World.h"
+#include "editor/Editor.h"
 
 namespace Utopian
 {
@@ -21,9 +22,14 @@ namespace Utopian
       void RenderUi();
 
       void ActorSelected(Actor* actor);
+      void SetSelectionType(SelectionType selectionType);
+    private:
+      void DrawFaceGizmo();
+      void DrawEdgeGizmo();
     private:
       Actor* mSelectedActor = nullptr;
       CPolyMesh* mSelectedMesh = nullptr;
+      SelectionType mSelectionType = FACE_SELECTION;
       bool mSelected = false;
    };
 }
