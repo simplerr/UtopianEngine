@@ -112,6 +112,9 @@ namespace Utopian
       OpenMesh::Vec3f c = mPolyMesh.calc_face_centroid(mSelectedFace);
       glm::vec3 center = ToGlm(c);
 
+      glm::mat4 worldMatrix = GetParent()->GetTransform().GetWorldMatrix();
+      center = worldMatrix * glm::vec4(center, 1.0f);
+
       return center;
    }
    
@@ -177,16 +180,16 @@ namespace Utopian
             vertices.push_back(pos);
          }
 
+         Ray localRay = ray;
          glm::mat4 inverseWorldMatrix = glm::inverse(GetParent()->GetTransform().GetWorldMatrix());
-         ray.origin = inverseWorldMatrix * glm::vec4(ray.origin, 1.0f);
-         ray.direction = inverseWorldMatrix * glm::vec4(ray.direction, 0.0f);
+         localRay.origin = inverseWorldMatrix * glm::vec4(localRay.origin, 1.0f);
+         localRay.direction = inverseWorldMatrix * glm::vec4(localRay.direction, 0.0f);
 
          float distance;
          glm::vec3 intersectPoint;
-         if (ray.TriangleIntersect(vertices[0], vertices[2], vertices[1], intersectPoint, distance) ||
-               ray.TriangleIntersect(vertices[0], vertices[3], vertices[2], intersectPoint, distance))
+         if (localRay.TriangleIntersect(vertices[0], vertices[2], vertices[1], intersectPoint, distance) ||
+               localRay.TriangleIntersect(vertices[0], vertices[3], vertices[2], intersectPoint, distance))
          {
-
             if (distance < closestDistance)
             {
                closestFace = face;

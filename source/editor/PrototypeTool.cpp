@@ -110,6 +110,10 @@ namespace Utopian
       {
          glm::vec3 newFaceCenter = im3dTransform.getTranslation();
          glm::vec3 delta = newFaceCenter - faceCenter;
+
+         // Translate delta to model space
+         glm::mat4 world = mSelectedActor->GetTransform().GetWorldMatrix();
+         delta = glm::inverse(world) * glm::vec4(delta, 0.0f);
          mSelectedMesh->MoveSelectedFace(delta);
 
          glm::vec3 newScale = im3dTransform.getScale();
@@ -140,6 +144,10 @@ namespace Utopian
       {
          glm::vec3 newFaceCenter = im3dTransform.getTranslation();
          glm::vec3 delta = newFaceCenter - edgeCenter;
+
+         // Translate delta to model space
+         glm::mat4 world = mSelectedActor->GetTransform().GetWorldMatrix();
+         delta = glm::inverse(world) * glm::vec4(delta, 0.0f);
          mSelectedMesh->MoveSelectedEdge(delta);
       }
    }
