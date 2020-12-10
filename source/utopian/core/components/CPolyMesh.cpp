@@ -303,7 +303,7 @@ namespace Utopian
       vertices[2] = mPolyMesh.add_vertex(mPolyMesh.point(vertices[1]) + normal * extrusion);
       vertices[3] = mPolyMesh.add_vertex(mPolyMesh.point(vertices[0]) + normal * extrusion);
       vertices[6] = mPolyMesh.add_vertex(mPolyMesh.point(vertices[5]) + normal * extrusion);
-      vertices[7] = mPolyMesh.add_vertex(mPolyMesh.point(vertices[4]) + normal * 1.0f);
+      vertices[7] = mPolyMesh.add_vertex(mPolyMesh.point(vertices[4]) + normal * extrusion);
 
       return vertices;
    }

@@ -66,12 +66,6 @@ namespace Utopian
 
    void PrototypeTool::Update(World* world, Actor* selectedActor)
    {
-      // Add face
-      if (gInput().KeyPressed('R'))
-      {
-         mSelectedMesh->ExtrudeSelectedFace(1.0f);
-      }
-
       if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
       {
          Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
@@ -106,6 +100,8 @@ namespace Utopian
       Im3d::Mat4 im3dTransform = Im3d::Mat4(transform);
       static glm::vec3 prevScale = glm::vec3(1.0f);
 
+      static bool alreadyExtruded = false;
+
       if (Im3d::Gizmo("FaceGizmo", im3dTransform))
       {
          glm::vec3 newFaceCenter = im3dTransform.getTranslation();
@@ -121,9 +117,16 @@ namespace Utopian
          mSelectedMesh->ScaleSelectedFace(deltaScale.x / 1.0f);
 
          prevScale.x = newScale.x;
+
+         if (gInput().KeyDown(VK_SHIFT) && !alreadyExtruded)
+         {
+            mSelectedMesh->ExtrudeSelectedFace(0.0f);
+            alreadyExtruded = true;
+         }
       }
       else
       {
+         alreadyExtruded = false;
          prevScale = glm::vec3(1.0f);
       }
    }
