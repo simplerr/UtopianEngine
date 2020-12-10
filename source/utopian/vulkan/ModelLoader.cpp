@@ -345,10 +345,6 @@ namespace Utopian::Vk
 
 	SharedPtr<StaticModel> ModelLoader::LoadBox(std::string texture)
 	{
-		std::string name = "box: " + texture;
-		if (mModelMap.find(name) != mModelMap.end())
-			return mModelMap[name];
-
 		SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
 		Mesh* mesh = new Mesh(mDevice);
 
@@ -417,8 +413,6 @@ namespace Utopian::Vk
 		model->AddMesh(mesh);
 
 		model->Init(mDevice);
-
-		mModelMap[name] = model;
 
 		return model;
 	}

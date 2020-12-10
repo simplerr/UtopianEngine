@@ -81,9 +81,10 @@ void Game::Run()
 
 void Game::InitScene()
 {
-	//AddGround();
-	AddBox(glm::vec3(0.0f, 0.0f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
-	AddBox(glm::vec3(30.5f, 0.5f, 30.5f), "data/textures/prototype/Green/texture_01.png");
+	AddGround();
+	AddBox(glm::vec3(0.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
+	AddBox(glm::vec3(3.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
+	AddBox(glm::vec3(7.5f, 0.5f, 7.5f), "data/textures/prototype/Green/texture_01.png");
 }
 
 void Game::AddGround()
@@ -92,7 +93,6 @@ void Game::AddGround()
 	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
-	Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
 
 	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
 	auto model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
