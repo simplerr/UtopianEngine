@@ -26,6 +26,7 @@ namespace Utopian
     private:
       void DrawFaceGizmo();
       void DrawEdgeGizmo();
+      void UpdateRigidBody();
     private:
       Actor* mSelectedActor = nullptr;
       CPolyMesh* mSelectedMesh = nullptr;

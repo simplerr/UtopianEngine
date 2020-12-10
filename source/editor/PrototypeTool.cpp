@@ -101,6 +101,7 @@ namespace Utopian
       static glm::vec3 prevScale = glm::vec3(1.0f);
 
       static bool alreadyExtruded = false;
+      static bool meshModified = false;
 
       if (Im3d::Gizmo("FaceGizmo", im3dTransform))
       {
@@ -118,16 +119,25 @@ namespace Utopian
 
          prevScale.x = newScale.x;
 
+         // Extrude face
          if (gInput().KeyDown(VK_SHIFT) && !alreadyExtruded)
          {
             mSelectedMesh->ExtrudeSelectedFace(0.0f);
             alreadyExtruded = true;
          }
+
+         meshModified = true;
       }
       else
       {
          alreadyExtruded = false;
          prevScale = glm::vec3(1.0f);
+
+         if (meshModified)
+         {
+            UpdateRigidBody();
+            meshModified = false;
+         }
       }
    }
 
@@ -137,6 +147,8 @@ namespace Utopian
       glm::vec3 v0, v1;
       mSelectedMesh->GetSelectedEdgeVertices(v0, v1);
       Im3d::DrawLine(v0, v1, 5.0f, Im3d::Color_Green);
+
+      static bool meshModified = false;
 
       glm::vec3 delta = v1 - v0;
       glm::vec3 edgeCenter = v0 + delta * 0.5f;
@@ -152,7 +164,23 @@ namespace Utopian
          glm::mat4 world = mSelectedActor->GetTransform().GetWorldMatrix();
          delta = glm::inverse(world) * glm::vec4(delta, 0.0f);
          mSelectedMesh->MoveSelectedEdge(delta);
+
+         meshModified = true;
       }
+      else
+      {
+         if (meshModified)
+         {
+            UpdateRigidBody();
+            meshModified = false;
+         }
+      }
+   }
+
+   void PrototypeTool::UpdateRigidBody()
+   {
+      CRigidBody* rigidBody = mSelectedActor->GetComponent<CRigidBody>();
+      rigidBody->AddToWorld();
    }
 
    void PrototypeTool::SetSelectionType(SelectionType selectionType)
