@@ -46,35 +46,25 @@ namespace Utopian
       if (mSelectedMesh != nullptr)
       {
          mSelectedMesh->PreFrame();
-
-         if (gInput().KeyPressed('N') || gInput().KeyPressed('M') || 
-            gInput().KeyPressed('T') || gInput().KeyPressed('Y') || 
-            gInput().KeyPressed('F') || gInput().KeyPressed('G') || 
-            gInput().KeyPressed('J') || gInput().KeyPressed('K') || 
-            gInput().KeyPressed('R'))
-         {
-            CRigidBody* rigidBody = mSelectedActor->GetComponent<CRigidBody>();
-            rigidBody->AddToWorld();
-         }
       }
    }
 
    void PrototypeTool::ActorSelected(Actor* actor)
    {
-      CRenderable* renderable = actor->GetComponent<CRenderable>();
-      mSelectedActor = actor;
-      mSelectedMesh = actor->GetComponent<CPolyMesh>();
-      mSelected = true;
+      if (actor != nullptr && actor->HasComponent<CPolyMesh>())
+      {
+         mSelectedActor = actor;
+         mSelectedMesh = actor->GetComponent<CPolyMesh>();
+      }
+      else
+      {
+         mSelectedActor = nullptr;
+         mSelectedMesh = nullptr;
+      }
    }
 
-   void PrototypeTool::Update(World* world, Actor* selectedActor)
+   void PrototypeTool::Update(World* world)
    {
-      if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
-      {
-         Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
-         mSelectedMesh->SelectFace(ray);
-      }
-
       // Add polymesh to level
       if (gInput().KeyPressed('X') && gInput().KeyDown(VK_LCONTROL))
       {
@@ -84,14 +74,21 @@ namespace Utopian
          position += glm::vec3(0.0f, 0.5f, 0.0f);
          AddPolymesh(position, "data/textures/prototype/Orange/texture_01.ktx");
       }
-      
-      if (gInput().KeyPressed('U'))
-      {
-         mSelectedMesh->WriteToFile("polymesh.obj");
-      }
 
-      if (mSelected)
+      if (mSelectedMesh != nullptr)
       {
+         // Select mesh face
+         if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
+         {
+            Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+            mSelectedMesh->SelectFace(ray);
+         }
+
+         if (gInput().KeyPressed('U'))
+         {
+            mSelectedMesh->WriteToFile("polymesh.obj");
+         }
+
          if (mSelectionType == FACE_SELECTION)
             DrawFaceGizmo();
          else if (mSelectionType == EDGE_SELECTION)

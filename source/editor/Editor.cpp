@@ -263,6 +263,7 @@ namespace Utopian
 		{
 			mSelectedActor->SetAlive(false);
 			OnActorSelected(nullptr);
+			mPrototypeTool->ActorSelected(nullptr);
 		}
 
 		float mouseDz = gInput().MouseDz();
@@ -283,7 +284,7 @@ namespace Utopian
 			Vk::gEffectManager().RecompileModifiedShaders();
 		}
 
-		mPrototypeTool->Update(mWorld, mSelectedActor);
+		mPrototypeTool->Update(mWorld);
 
 		// The UI needs to be updated after updating the selected actor since otherwise
 		// the texture descriptor set for the UI can be freed when still being used in a command buffer.

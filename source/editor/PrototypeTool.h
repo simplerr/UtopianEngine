@@ -17,7 +17,7 @@ namespace Utopian
       PrototypeTool();
       ~PrototypeTool();
 
-      void Update(World* world, Actor* selectedActor);
+      void Update(World* world);
       void PreFrame();
       void RenderUi();
 
@@ -32,6 +32,5 @@ namespace Utopian
       Actor* mSelectedActor = nullptr;
       CPolyMesh* mSelectedMesh = nullptr;
       SelectionType mSelectionType = FACE_SELECTION;
-      bool mSelected = false;
    };
 }
