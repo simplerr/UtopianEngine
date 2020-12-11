@@ -82,9 +82,6 @@ void Game::Run()
 void Game::InitScene()
 {
 	AddGround();
-	AddBox(glm::vec3(0.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
-	AddBox(glm::vec3(3.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
-	AddBox(glm::vec3(7.5f, 0.5f, 7.5f), "data/textures/prototype/Green/texture_01.png");
 }
 
 void Game::AddGround()
@@ -99,26 +96,6 @@ void Game::AddGround()
 	renderable->SetModel(model);
 	renderable->SetTileFactor(glm::vec2(50.0f));
 	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
-
-	actor->PostInit();
-	Utopian::World::Instance().SynchronizeNodeTransforms();
-
-	// Must be called after PostInit() since it needs the Renderable component
-	rigidBody->SetKinematic(true);
-}
-
-void Game::AddBox(glm::vec3 position, std::string texture)
-{
-	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Box");
-	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(position);
-	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
-	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
-	Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
-
-	auto model = Utopian::Vk::gModelLoader().LoadBox(texture);
-	renderable->SetModel(model);
-
-	rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::MESH);
 
 	actor->PostInit();
 	Utopian::World::Instance().SynchronizeNodeTransforms();

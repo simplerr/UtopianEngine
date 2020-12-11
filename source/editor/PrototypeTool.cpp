@@ -31,6 +31,9 @@ namespace Utopian
    PrototypeTool::PrototypeTool()
    {
       //gPhysics().EnableDebugDraw(true);
+      AddPolymesh(glm::vec3(0.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
+      AddPolymesh(glm::vec3(3.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
+      AddPolymesh(glm::vec3(7.5f, 0.5f, 7.5f), "data/textures/prototype/Green/texture_01.png");
    }
 
    PrototypeTool::~PrototypeTool()
@@ -71,6 +74,16 @@ namespace Utopian
          Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
          mSelectedMesh->SelectFace(ray);
       }
+
+      // Add polymesh to level
+      if (gInput().KeyPressed('X') && gInput().KeyDown(VK_LCONTROL))
+      {
+         Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+         IntersectionInfo intersectInfo = gWorld().RayIntersection(ray);
+         glm::vec3 position = ray.origin + ray.direction * intersectInfo.distance;
+         position += glm::vec3(0.0f, 0.5f, 0.0f);
+         AddPolymesh(position, "data/textures/prototype/Orange/texture_01.ktx");
+      }
       
       if (gInput().KeyPressed('U'))
       {
@@ -84,6 +97,26 @@ namespace Utopian
          else if (mSelectionType == EDGE_SELECTION)
             DrawEdgeGizmo();
       }
+   }
+
+   void PrototypeTool::AddPolymesh(glm::vec3 position, std::string texture)
+   {
+      SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Polymesh");
+      Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(position);
+      Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+      Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
+      Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
+
+      auto model = Utopian::Vk::gModelLoader().LoadBox(texture);
+      renderable->SetModel(model);
+
+      rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::MESH);
+
+      actor->PostInit();
+      Utopian::World::Instance().SynchronizeNodeTransforms();
+
+      // Must be called after PostInit() since it needs the Renderable component
+      rigidBody->SetKinematic(true);
    }
 
    void PrototypeTool::DrawFaceGizmo()

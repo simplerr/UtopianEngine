@@ -23,6 +23,7 @@ namespace Utopian
 
       void ActorSelected(Actor* actor);
       void SetSelectionType(SelectionType selectionType);
+      void AddPolymesh(glm::vec3 position, std::string texture);
     private:
       void DrawFaceGizmo();
       void DrawEdgeGizmo();
