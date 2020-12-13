@@ -261,11 +261,22 @@ namespace Utopian
          std::vector<uint32_t> indices;
 
          uint32_t uvIndex = 0u;
+         // If no texture tiling is desired:
+         // glm::vec2 texCoords[4] = {
+         //    glm::vec2(0.0f, 0.0f),
+         //    glm::vec2(1.0f, 0.0f),
+         //    glm::vec2(1.0f, 1.0f),
+         //    glm::vec2(0.0f, 1.0f)
+         // };
+
+         auto halfEdges = face.halfedges();
+         float faceWidth = mPolyMesh.calc_edge_length(*halfEdges.begin());
+         float faceHeight = mPolyMesh.calc_edge_length(*(++halfEdges.begin()));
          glm::vec2 texCoords[4] = {
             glm::vec2(0.0f, 0.0f),
-            glm::vec2(1.0f, 0.0f),
-            glm::vec2(1.0f, 1.0f),
-            glm::vec2(0.0f, 1.0f)
+            glm::vec2(faceHeight, 0.0f),
+            glm::vec2(faceHeight, faceWidth),
+            glm::vec2(0.0f, faceWidth)
          };
 
          for (const auto& vertex : face.vertices())
@@ -411,7 +422,6 @@ namespace Utopian
       vertexHandles.push_back(vhandle[4]);
       mPolyMesh.add_face(vertexHandles);
    }
-
 
    void CPolyMesh::WriteToFile(std::string file)
    {
