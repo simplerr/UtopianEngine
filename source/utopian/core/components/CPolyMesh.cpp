@@ -269,20 +269,31 @@ namespace Utopian
          //    glm::vec2(0.0f, 1.0f)
          // };
 
-         auto halfEdges = face.halfedges();
-         float faceWidth = mPolyMesh.calc_edge_length(*halfEdges.begin());
-         float faceHeight = mPolyMesh.calc_edge_length(*(++halfEdges.begin()));
-         glm::vec2 texCoords[4] = {
-            glm::vec2(0.0f, 0.0f),
-            glm::vec2(faceHeight, 0.0f),
-            glm::vec2(faceHeight, faceWidth),
-            glm::vec2(0.0f, faceWidth)
-         };
-
          for (const auto& vertex : face.vertices())
          {
             glm::vec3 pos = ToGlm(mPolyMesh.point(vertex));
-            glm::vec2 texCoord = texCoords[uvIndex];
+            glm::vec2 texCoord;
+
+            // Use vertex position as texture coordinates from the
+            // axis the face is the most aligned with
+            float maxResult = FLT_MIN;
+            float dotResult = abs(glm::dot(normal, glm::vec3(1.0f, 0.0f, 0.0f)));
+            if (dotResult > maxResult) {
+               texCoord = glm::vec2(pos.z, pos.y);
+               maxResult = dotResult;
+            }
+
+            dotResult = abs(glm::dot(normal, glm::vec3(0.0f, 0.0f, 1.0f)));
+            if (dotResult > maxResult) {
+               texCoord = glm::vec2(pos.x, pos.y);
+               maxResult = dotResult;
+            }
+
+            dotResult = abs(glm::dot(normal, glm::vec3(0.0f, 1.0f, 0.0f)));
+            if (dotResult > maxResult) {
+               texCoord = glm::vec2(pos.x, pos.z);
+               maxResult = dotResult;
+            }
             
             mesh->AddVertex(Vk::Vertex(-pos, -normal, texCoord));
 
