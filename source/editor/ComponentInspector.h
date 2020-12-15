@@ -12,6 +12,7 @@ namespace Utopian
 	class CLight;
 	class CRigidBody;
 	class CCatmullSpline;
+	class CPolyMesh;
 
 	class ComponentInspector
 	{
@@ -95,5 +96,15 @@ namespace Utopian
 		virtual void UpdateUi() override;
 	private:
 		CCatmullSpline* mCatmullSpline;
+	};
+
+	class PolyMeshInspector : public ComponentInspector
+	{
+	public:
+		PolyMeshInspector(CPolyMesh* polyMesh);
+
+		virtual void UpdateUi() override;
+	private:
+		CPolyMesh* mPolyMesh;
 	};
 }

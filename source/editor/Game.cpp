@@ -91,6 +91,8 @@ void Game::AddGround()
 	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
 	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
+	actor->SetSerialize(false);
+
 	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
 	auto model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
 	renderable->SetModel(model);

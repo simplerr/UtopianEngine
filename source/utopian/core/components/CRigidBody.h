@@ -26,6 +26,8 @@ namespace Utopian
 	class CRigidBody : public Component
 	{
 	public:
+		CRigidBody(Actor* parent, CollisionShapeType collisionShape, float mass, float friction,
+	 			   float rollingFriction, float restitution, bool kinematic);
 		CRigidBody(Actor* parent);
 		~CRigidBody();
 

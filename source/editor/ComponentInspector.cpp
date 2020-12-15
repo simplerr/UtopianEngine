@@ -296,4 +296,17 @@ namespace Utopian
 			mCatmullSpline->SetTimePerSegment(timePerSegment);
 		}
 	}
+
+	PolyMeshInspector::PolyMeshInspector(CPolyMesh* polyMesh)
+	{
+		mPolyMesh = polyMesh;
+	}
+
+	void PolyMeshInspector::UpdateUi()
+	{
+		if (ImGui::CollapsingHeader("PolyMesh", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("PolyMesh inspector");
+		}
+	}
 }

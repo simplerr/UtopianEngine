@@ -29,6 +29,9 @@ namespace Utopian
 		void SetAlive(bool alive);
 		bool IsAlive() const;
 
+		void SetSerialize(bool serialize);
+		bool ShouldSerialize() const;
+
 		void SetSceneLayer(SceneLayer sceneLayer);
 
 		BoundingBox GetBoundingBox() const;
@@ -94,6 +97,7 @@ namespace Utopian
 		std::vector<Component*> mComponents;
 		bool mAlive;
 		bool mHasTransform;
+		bool mSerialize; // Controls if the actor should be saved to the scene file
 		SceneLayer mSceneLayer;
 	};
 }

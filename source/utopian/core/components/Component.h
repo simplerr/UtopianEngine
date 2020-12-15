@@ -36,6 +36,7 @@ namespace Utopian
 		virtual void PostInit() = 0;
 
 		virtual LuaPlus::LuaObject GetLuaObject() { return LuaPlus::LuaObject(); };
+		virtual void SerializeData() { };
 
 		const virtual Utopian::BoundingBox GetBoundingBox() const;
 

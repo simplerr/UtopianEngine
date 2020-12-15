@@ -49,15 +49,15 @@ namespace Utopian::Math
       return random;
    }
 
-   int32_t GetRandom(int32_t min, int32_t max)
+   uint64_t GetRandom(uint64_t min, uint64_t max)
    {
       min = glm::min(min, max);
       max = glm::max(min, max);
 
       std::random_device rd;
       std::mt19937 mt(rd());
-      std::uniform_real_distribution<double> dist(min, max);
-      int32_t random = (int32_t)dist(mt);
+      std::uniform_int_distribution<uint64_t> dist(min, max);
+      uint64_t random = (uint64_t)dist(mt);
 
       return random;
    }

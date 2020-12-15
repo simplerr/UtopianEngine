@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <string.h>
 #include "core/components/Component.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
@@ -16,12 +17,14 @@ namespace Utopian
    {
    public:
       CPolyMesh(Actor* parent);
+      CPolyMesh(Actor* parent, std::string modelPath, std::string texturePath);
       ~CPolyMesh();
 
       void Update() override;
       void OnCreated() override;
       void OnDestroyed() override;
       void PostInit() override;
+      void SerializeData() override;
 
       void PreFrame();
 
@@ -39,6 +42,13 @@ namespace Utopian
       void ExtrudeSelectedFace(float extrusion);
       void SelectFace(Ray ray);
       void WriteToFile(std::string file);
+      void LoadFromFile(std::string file);
+
+      std::string GetModelPath() const;
+      std::string GetTexturePath() const;
+
+      void SetModelPath(std::string modelPath);
+      void SetTexturePath(std::string texturePath);
 
       // Type identification
       static uint32_t GetStaticType() {
@@ -56,11 +66,15 @@ namespace Utopian
       std::vector<PolyMesh::VertexHandle> AddExtrusionVertices(float extrusion);
       OpenMesh::SmartFaceHandle AddExtrusionFaces(std::vector<PolyMesh::VertexHandle>& vertices);
 
-
    private:
       PolyMesh mPolyMesh;
       OpenMesh::SmartFaceHandle mSelectedFace;
       OpenMesh::SmartHalfedgeHandle mSelectedEdge;
       bool mRebuildMeshBuffer = false;
+      std::string mModelPath;
+      std::string mTexturePath;
+
+      // Todo: "Fix component PostInit order #120"
+      bool mFirstFrame = true;
    };
 }

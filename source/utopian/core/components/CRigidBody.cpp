@@ -37,6 +37,21 @@ namespace Utopian
 		mRigidBody->SetQuaternion(quaternion);
 	}
 
+	CRigidBody::CRigidBody(Actor* parent, CollisionShapeType collisionShape, float mass, float friction,
+	 					   float rollingFriction, float restitution, bool kinematic)
+		: Component(parent)
+	{
+		SetName("CRigidBody");
+
+		mCollisionShapeType = collisionShape;
+		mMass = mass;
+		mFriction = friction;
+		mRollingFriction = rollingFriction;
+		mRestitution = restitution;
+		mIsKinematic = kinematic;
+		mRigidBody = nullptr;
+	}
+
 	CRigidBody::CRigidBody(Actor* parent)
 		: Component(parent)
 	{
@@ -214,7 +229,12 @@ namespace Utopian
 		LuaPlus::LuaObject luaObject;
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-		luaObject.SetNumber("empty", 0.0f);
+		luaObject.SetNumber("collisionShapeType", mCollisionShapeType);
+		luaObject.SetNumber("mass", mMass);
+		luaObject.SetNumber("friction", mFriction);
+		luaObject.SetNumber("rollingFriction", mRollingFriction);
+		luaObject.SetNumber("restitution", mRestitution);
+		luaObject.SetBoolean("kinematic", mIsKinematic);
 
 		return luaObject;
 	}

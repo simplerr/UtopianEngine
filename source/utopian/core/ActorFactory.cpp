@@ -10,6 +10,9 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CBloomLight.h"
 #include "core/components/CCatmullSpline.h"
+#include "core/components/CRigidBody.h"
+#include "core/components/CPolyMesh.h"
+#include "vulkan/ModelLoader.h"
 #include "core/Log.h"
 
 namespace Utopian
@@ -115,13 +118,17 @@ namespace Utopian
 					uint32_t renderFlags = componentData["render_flags"].ToNumber();
 					glm::vec4 color(componentData["color_r"].ToNumber(), componentData["color_g"].ToNumber(), componentData["color_b"].ToNumber(), componentData["color_a"].ToNumber());
 
-					// Todo: Note: This is a special case a model has been loaded by for example ModelLoader::LoadGrid()
+					CRenderable* renderable = actor->AddComponent<CRenderable>();
+					renderable->SetRenderFlags(renderFlags);
+					renderable->SetColor(color);
+
 					if (path != "Unknown") {
-						CRenderable* renderable = actor->AddComponent<CRenderable>();
 						renderable->LoadModel(path);
-						renderable->SetRenderFlags(renderFlags);
-						renderable->SetColor(color);
 					}
+					else {
+						renderable->SetModel(Vk::gModelLoader().LoadBox());
+					}
+					// Todo: Should support loading grids etc. as well.
 				}
 				else if (name == "CBloomLight")
 				{
@@ -135,6 +142,25 @@ namespace Utopian
 					CCatmullSpline* catmullSpline = actor->AddComponent<CCatmullSpline>(filename);
 					catmullSpline->SetTimePerSegment(timePerSegment);
 					catmullSpline->SetDrawDebug(drawDebug);
+				}
+				else if (name == "CRigidBody")
+				{
+					CollisionShapeType collisionShape = (CollisionShapeType)componentData["collisionShapeType"].ToNumber();
+					float mass = componentData["mass"].ToNumber();
+					float friction = componentData["friction"].ToNumber();
+					float rollingFriction = componentData["rollingFriction"].ToNumber();
+					float restitution = componentData["restitution"].ToNumber();
+					bool kinematic = componentData["kinematic"].GetBoolean();
+
+					Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>(collisionShape, mass, friction,
+																							  rollingFriction, restitution,
+																							  kinematic);
+				}
+				else if (name == "CPolyMesh")
+				{
+					std::string modelPath = componentData["modelPath"].ToString();
+					std::string texturePath = componentData["texturePath"].ToString();
+					Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>(modelPath, texturePath);
 				}
 			}
 
@@ -152,6 +178,9 @@ namespace Utopian
 		uint32_t counter = 0;
 		for (auto& actor : actors)
 		{
+			if (!actor->ShouldSerialize())
+				continue;
+
 			LuaPlus::LuaObject luaActor;
 			luaActor.AssignNewTable(gLuaManager().GetLuaState());
 			luaActor.SetString("actor_name", actor->GetName().c_str());
@@ -168,6 +197,9 @@ namespace Utopian
 
 				if (!luaObject.IsNil())
 					luaComponentTable.SetObject(name.c_str(), luaObject);
+
+				// Any extra data required by the component is saved here
+				component->SerializeData();
 			}
 
 			luaActor.SetObject("components", luaComponentTable);

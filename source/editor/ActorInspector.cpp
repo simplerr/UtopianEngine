@@ -5,6 +5,7 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CRigidBody.h"
 #include "core/components/CCatmullSpline.h"
+#include "core/components/CPolyMesh.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
 #include "core/renderer/ImGuiRenderer.h"
@@ -91,6 +92,12 @@ namespace Utopian
 		CCatmullSpline* catmullSpline = mActor->GetComponent<CCatmullSpline>();
 		if (catmullSpline != nullptr) {
 			CatmullSplineInspector* inspector = new CatmullSplineInspector(catmullSpline);
+			mComponentInspectors.push_back(inspector);
+		}
+
+		CPolyMesh* polyMesh = mActor->GetComponent<CPolyMesh>();
+		if (polyMesh != nullptr) {
+			PolyMeshInspector* inspector = new PolyMeshInspector(polyMesh);
 			mComponentInspectors.push_back(inspector);
 		}
 	}

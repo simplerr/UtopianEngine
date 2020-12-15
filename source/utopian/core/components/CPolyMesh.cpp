@@ -8,6 +8,9 @@
 #include <OpenMesh/Core/Mesh/Handles.hh>
 #include <OpenMesh/Core/Mesh/SmartHandles.hh>
 #include <core/components/CRenderable.h>
+#include <core/components/CRigidBody.h>
+#include <core/components/Component.h>
+#include <vulkan/TextureLoader.h>
 #include "OpenMesh/Core/IO/MeshIO.hh"
 
 namespace Utopian
@@ -24,7 +27,32 @@ namespace Utopian
    {
       SetName("CPolyMesh");
 
+      uint64_t id = Math::GetRandom();
+      std::string name = "polymesh-" + std::to_string(id) + ".obj";
+
+      SetModelPath("data/models/polymesh/" + name);
+      SetTexturePath("data/textures/prototype/Orange/texture_01.ktx");
+
+      mPolyMesh.request_face_status();
+      mPolyMesh.request_edge_status();
+      mPolyMesh.request_vertex_status();
+
       CreateCube();
+   }
+   
+   CPolyMesh::CPolyMesh(Actor* parent, std::string modelPath, std::string texturePath)
+      : Component(parent)
+   {
+      SetName("CPolyMesh");
+
+      SetModelPath(modelPath);
+      SetTexturePath(texturePath);
+
+      mPolyMesh.request_face_status();
+      mPolyMesh.request_edge_status();
+      mPolyMesh.request_vertex_status();
+
+      LoadFromFile(modelPath);
    }
 
    CPolyMesh::~CPolyMesh()
@@ -33,7 +61,15 @@ namespace Utopian
 
    void CPolyMesh::Update()
    {
-      
+      if (mFirstFrame)
+      {
+         // Update rigid body collision shape
+         // Note: Should be in PostInit() but the CRigidBodys PostInit is not 
+         // guaranteed to been called before CPolyMesh::PostInit
+         CRigidBody* rigidBody = GetParent()->GetComponent<CRigidBody>();
+         rigidBody->AddToWorld();
+         mFirstFrame = false;
+      }
    }
 
    void CPolyMesh::OnCreated()
@@ -46,6 +82,15 @@ namespace Utopian
 
    void CPolyMesh::PostInit()
    {
+      CRenderable* renderable = GetParent()->GetComponent<CRenderable>();
+      renderable->SetTexture(Vk::gTextureLoader().LoadTexture(mTexturePath));
+
+      UpdateMeshBuffer();
+   }
+
+   void CPolyMesh::SerializeData()
+   {
+      WriteToFile(GetModelPath());
    }
 
    void CPolyMesh::PreFrame()
@@ -62,7 +107,8 @@ namespace Utopian
       LuaPlus::LuaObject luaObject;
       luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-      luaObject.SetNumber("empty", 0.0f);
+      luaObject.SetString("modelPath", mModelPath.c_str());
+      luaObject.SetString("texturePath", mTexturePath.c_str());
 
       return luaObject;
    }
@@ -374,10 +420,6 @@ namespace Utopian
 
    void CPolyMesh::CreateCube()
    {
-      mPolyMesh.request_face_status();
-      mPolyMesh.request_edge_status();
-      mPolyMesh.request_vertex_status();
-
       // Generate vertices
       PolyMesh::VertexHandle vhandle[8];
       vhandle[0] = mPolyMesh.add_vertex(PolyMesh::Point(-0.5, -0.5f,  0.5f));
@@ -436,14 +478,35 @@ namespace Utopian
 
    void CPolyMesh::WriteToFile(std::string file)
    {
-      UTO_LOG("vertices: " + std::to_string(mPolyMesh.n_vertices()));
-      UTO_LOG("half edges: " + std::to_string(mPolyMesh.n_halfedges()));
-      UTO_LOG("edges: " + std::to_string(mPolyMesh.n_edges()));
-      UTO_LOG("faces: " + std::to_string(mPolyMesh.n_faces()));
-
       if (!OpenMesh::IO::write_mesh(mPolyMesh, file))
       {
          UTO_LOG("Cannot write mesh to file " + file);
       }
+   }
+
+   void CPolyMesh::LoadFromFile(std::string file)
+   {
+      OpenMesh::IO::read_mesh(mPolyMesh, file);
+      mRebuildMeshBuffer = true;
+   }
+
+   std::string CPolyMesh::GetModelPath() const
+   {
+      return mModelPath;
+   }
+
+   std::string CPolyMesh::GetTexturePath() const
+   {
+      return mTexturePath;
+   }
+
+   void CPolyMesh::SetModelPath(std::string modelPath)
+   {
+      mModelPath = modelPath;
+   }
+
+   void CPolyMesh::SetTexturePath(std::string texturePath)
+   {
+      mTexturePath = texturePath;
    }
 }

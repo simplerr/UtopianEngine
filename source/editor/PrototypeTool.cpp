@@ -31,9 +31,9 @@ namespace Utopian
    PrototypeTool::PrototypeTool()
    {
       //gPhysics().EnableDebugDraw(true);
-      AddPolymesh(glm::vec3(0.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
-      AddPolymesh(glm::vec3(3.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
-      AddPolymesh(glm::vec3(7.5f, 0.5f, 7.5f), "data/textures/prototype/Green/texture_01.png");
+      //AddPolymesh(glm::vec3(0.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
+      //AddPolymesh(glm::vec3(3.0f, 0.5f, 0.0f), "data/textures/prototype/Orange/texture_01.ktx");
+      //AddPolymesh(glm::vec3(7.5f, 0.5f, 7.5f), "data/textures/prototype/Green/texture_01.png");
    }
 
    PrototypeTool::~PrototypeTool()
@@ -82,11 +82,6 @@ namespace Utopian
          {
             Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
             mSelectedMesh->SelectFace(ray);
-         }
-
-         if (gInput().KeyPressed('U'))
-         {
-            mSelectedMesh->WriteToFile("polymesh.obj");
          }
 
          if (mSelectionType == FACE_SELECTION)

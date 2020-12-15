@@ -19,7 +19,7 @@ namespace Utopian::Math
    float GetRandom(float min, float max);
 
    // Returns a random integer
-   int32_t GetRandom(int32_t min, int32_t max);
+   uint64_t GetRandom(uint64_t min = 0u, uint64_t max = std::numeric_limits<std::uint64_t>::max());
 
    // Returns a random vec3
    glm::vec3 GetRandomVec3(float min, float max);

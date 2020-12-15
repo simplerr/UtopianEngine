@@ -8,6 +8,7 @@ namespace Utopian
 		: Object(name)
 	{
 		SetAlive(true);
+		SetSerialize(true);
 		SetSceneLayer(0u);
 	}
 
@@ -42,6 +43,16 @@ namespace Utopian
 	bool Actor::IsAlive() const
 	{
 		return mAlive;
+	}
+
+	void Actor::SetSerialize(bool serialize)
+	{
+		mSerialize = serialize;
+	}
+
+	bool Actor::ShouldSerialize() const
+	{
+		return mSerialize;
 	}
 
 	BoundingBox Actor::GetBoundingBox() const
