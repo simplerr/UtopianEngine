@@ -6,10 +6,13 @@
 #include "core/components/CRenderable.h"
 #include "core/components/CRigidBody.h"
 #include "core/components/CCatmullSpline.h"
+#include "core/components/CPolyMesh.h"
 #include "core/components/Actor.h"
+#include "core/Log.h"
 #include <glm/gtc/quaternion.hpp>
 #include "vulkan/StaticModel.h"
 #include "vulkan/Texture.h"
+#include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Image.h"
 #include "core/renderer/Renderer.h"
 #include <algorithm>
@@ -300,6 +303,20 @@ namespace Utopian
 	PolyMeshInspector::PolyMeshInspector(CPolyMesh* polyMesh)
 	{
 		mPolyMesh = polyMesh;
+
+		AddTexture("data/textures/prototype/Orange/texture_01.ktx");
+		AddTexture("data/textures/prototype/Green/texture_01.png");
+		AddTexture("data/textures/prototype/Dark/texture_01.png");
+		AddTexture("data/textures/prototype/Purple/texture_03.png");
+	}
+
+	void PolyMeshInspector::AddTexture(std::string filename)
+	{
+		UiTexture uiTexture;
+		uiTexture.texture = Vk::gTextureLoader().LoadTexture(filename);
+		uiTexture.identifier = gRenderer().GetUiOverlay()->AddImage(uiTexture.texture->GetImage());
+
+		mTextures.push_back(uiTexture);
 	}
 
 	void PolyMeshInspector::UpdateUi()
@@ -307,6 +324,18 @@ namespace Utopian
 		if (ImGui::CollapsingHeader("PolyMesh", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::Text("PolyMesh inspector");
+
+			for (auto& uiTexture : mTextures)
+			{
+				if (ImGui::ImageButton(uiTexture.identifier, ImVec2(64, 64)))
+				{
+					CRenderable* renderable = mPolyMesh->GetParent()->GetComponent<CRenderable>();
+					renderable->SetTexture(Vk::gTextureLoader().LoadTexture(uiTexture.texture->GetPath()));
+					mPolyMesh->SetTexturePath(uiTexture.texture->GetPath());
+				}
+
+				ImGui::SameLine();
+			}
 		}
 	}
 }

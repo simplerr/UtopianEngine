@@ -2,6 +2,7 @@
 #include "core/Transform.h"
 #include "core/LightData.h"
 #include "imgui/imgui.h"
+#include "vulkan/Texture.h"
 #include <string>
 #include <vector>
 
@@ -100,11 +101,19 @@ namespace Utopian
 
 	class PolyMeshInspector : public ComponentInspector
 	{
+		struct UiTexture
+		{
+			ImTextureID identifier;
+			SharedPtr<Vk::Texture> texture;
+		};
 	public:
 		PolyMeshInspector(CPolyMesh* polyMesh);
 
 		virtual void UpdateUi() override;
+
+		void AddTexture(std::string filename);
 	private:
 		CPolyMesh* mPolyMesh;
+		std::vector<UiTexture> mTextures;
 	};
 }

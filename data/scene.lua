@@ -7,6 +7,94 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
+				modelPath = "data/models/polymesh/polymesh-763776444039001202.obj",
+				texturePath = "data/textures/prototype/Green/texture_01.png",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 1,
+			},
+			CRigidBody = 
+			{
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 13.171571731567,
+				pos_y = 0.53593099117279,
+				pos_z = -18.1155834198,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Camera 1",
+		components = 
+		{
+			CCamera = 
+			{
+				far_plane = 400,
+				fov = 60,
+				look_at_x = 0,
+				look_at_y = 0,
+				look_at_z = 0,
+				near_plane = 0.0077999997884035,
+			},
+			CCatmullSpline = 
+			{
+				draw_debug = 0,
+				filename = "data/camera_spline.txt",
+				time_per_segment = 2187.412109375,
+			},
+			CNoClip = 
+			{
+				speed = 0.03999999910593,
+			},
+			CPlayerControl = 
+			{
+				empty = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 0.9553365111351,
+				orientation_x = -0.29552018642426,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -19.881471633911,
+				pos_y = 20.555540084839,
+				pos_z = 17.665748596191,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
 				modelPath = "data/models/polymesh/polymesh-12512079723111979634.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
@@ -52,7 +140,7 @@ actor_list =
 			CPolyMesh = 
 			{
 				modelPath = "data/models/polymesh/polymesh-3951816049023924530.obj",
-				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+				texturePath = "data/textures/prototype/Purple/texture_03.png",
 			},
 			CRenderable = 
 			{
@@ -79,7 +167,7 @@ actor_list =
 				orientation_y = 0,
 				orientation_z = 0,
 				pos_x = -0.99975764751434,
-				pos_y = 1.7164533138275,
+				pos_y = 4.1865921020508,
 				pos_z = 3.0855898857117,
 				scale_x = 1,
 				scale_y = 1,
@@ -87,8 +175,8 @@ actor_list =
 			},
 		},
 		scene_layer = 0,
-	},
-	
+	}, 
+	[0] = 
 	{
 		actor_name = "Directional light",
 		components = 
@@ -136,94 +224,6 @@ actor_list =
 				scale_x = 1.2000000476837,
 				scale_y = 1.2000000476837,
 				scale_z = 1.2000000476837,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
-		actor_name = "Polymesh",
-		components = 
-		{
-			CPolyMesh = 
-			{
-				modelPath = "data/models/polymesh/polymesh-763776444039001202.obj",
-				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
-			},
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "Unknown",
-				render_flags = 1,
-			},
-			CRigidBody = 
-			{
-				collisionShapeType = 2,
-				friction = 0.5,
-				kinematic = true,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 13.171571731567,
-				pos_y = 0.53593099117279,
-				pos_z = -18.1155834198,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	}, 
-	[0] = 
-	{
-		actor_name = "Camera 1",
-		components = 
-		{
-			CCamera = 
-			{
-				far_plane = 400,
-				fov = 60,
-				look_at_x = 0,
-				look_at_y = 0,
-				look_at_z = 0,
-				near_plane = 0.0077999997884035,
-			},
-			CCatmullSpline = 
-			{
-				draw_debug = 0,
-				filename = "data/camera_spline.txt",
-				time_per_segment = 2187.412109375,
-			},
-			CNoClip = 
-			{
-				speed = 0.03999999910593,
-			},
-			CPlayerControl = 
-			{
-				empty = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 0.9553365111351,
-				orientation_x = -0.29552018642426,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 10.752745628357,
-				pos_y = 12.838685035706,
-				pos_z = -15.013296127319,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
 			},
 		},
 		scene_layer = 0,

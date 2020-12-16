@@ -49,6 +49,9 @@ namespace Utopian::Vk
 			texture = LoadTextureSTB(path);
 		}
 
+		mTextureMap[path] = texture;
+		texture->SetPath(path);
+
 		if (texture != nullptr)
 			texture->UpdateDescriptor();
 
@@ -172,9 +175,6 @@ namespace Utopian::Vk
 		SharedPtr<Texture> texture = CreateTexture(data, VK_FORMAT_R8G8B8A8_UNORM,
 												   width, height, 1, pixelSize,
 												   VK_IMAGE_ASPECT_COLOR_BIT, "Texture: " + path);
-
-		mTextureMap[path] = texture;
-		texture->SetPath(path);
 
 		stbi_image_free(pixels);
 		delete[] data;
