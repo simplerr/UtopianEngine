@@ -28,7 +28,7 @@ namespace Utopian
 			distance = FLT_MAX;
 		}
 
-		SharedPtr<Actor> actor;
+		Actor* actor;
 		glm::vec3 normal;
 		float distance;
 	};
@@ -59,7 +59,7 @@ namespace Utopian
 
 		IntersectionInfo RayIntersection(const Ray& ray, SceneLayer sceneLayer = DefaultSceneLayer);
 		std::vector<SharedPtr<Actor>>& GetActors();
-		uint32_t GetActorIndex(SharedPtr<Actor> actor);
+		uint32_t GetActorIndex(Actor* actor);
 
 		/* The bound SceneNodes transform will be synchronized with the Sceneactor in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* actor);

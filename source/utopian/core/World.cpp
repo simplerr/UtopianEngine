@@ -8,6 +8,7 @@
 #include "core/ActorFactory.h"
 #include "core/ScriptExports.h"
 #include "core/LuaManager.h"
+#include "core/physics/Physics.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Utopian
@@ -34,6 +35,9 @@ namespace Utopian
 
 	IntersectionInfo World::RayIntersection(const Ray& ray, SceneLayer sceneLayer)
 	{
+		return gPhysics().RayIntersection(ray);
+
+#ifdef OLD_RAY_INTERSECTION
 		IntersectionInfo intersectInfo;
 
 		for (auto& actor : mActors)
@@ -50,7 +54,7 @@ namespace Utopian
 					{
 						if (dist < intersectInfo.distance)
 						{
-							intersectInfo.actor = actor;
+							intersectInfo.actor = actor.get();
 							intersectInfo.distance = dist;
 							intersectInfo.normal = normal;
 						}
@@ -60,6 +64,7 @@ namespace Utopian
 		}
 
 		return intersectInfo;
+#endif
 	}
 
 	std::vector<SharedPtr<Actor>>& World::GetActors()
@@ -67,11 +72,11 @@ namespace Utopian
 		return mActors;
 	}
 
-	uint32_t World::GetActorIndex(SharedPtr<Actor> actor)
+	uint32_t World::GetActorIndex(Actor* actor)
 	{
 		for (uint32_t index = 0; index < mActors.size(); index++)
 		{
-			if (actor == mActors[index])
+			if (actor == mActors[index].get())
 				return index;
 		}
 

@@ -4,6 +4,7 @@
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include <core/components/CRigidBody.h>
 #include <core/physics/BulletHelpers.h>
 #include <limits>
 
@@ -163,8 +164,9 @@ namespace Utopian
 
 	}
 
-	bool Physics::RayIntersection(const Ray& ray)
+	IntersectionInfo Physics::RayIntersection(const Ray& ray)
 	{
+		IntersectionInfo intersectInfo;
 		const float maxRayDistance = 1000.0f;
 		btVector3 from = ToBulletVec3(ray.origin);
 		btVector3 to = ToBulletVec3(ray.direction * maxRayDistance);
@@ -180,13 +182,17 @@ namespace Utopian
 			glm::vec3 n = ToVec3(closestResults.m_hitNormalWorld);
 			glm::vec3 p = ToVec3(closestResults.m_hitPointWorld);
 
-			UTO_LOG("nx: " + std::to_string(n.x) + " ny: " + std::to_string(n.y) + " nz: " + std::to_string(n.z));
-			UTO_LOG("px: " + std::to_string(p.x) + " py: " + std::to_string(p.y) + " pz: " + std::to_string(p.z));
-			UTO_LOG("ptr: " + std::to_string((uint64_t)userPtr));
-			return true;
+			CRigidBody* rigidBody = static_cast<CRigidBody*>(userPtr);
+			intersectInfo.actor = rigidBody->GetParent();
+			intersectInfo.normal = n; // Todo: Note: Normal calculation is incorrect when objects are rotated
+			intersectInfo.distance = glm::distance(ray.origin, p);
+
+			// UTO_LOG("nx: " + std::to_string(n.x) + " ny: " + std::to_string(n.y) + " nz: " + std::to_string(n.z));
+			// UTO_LOG("px: " + std::to_string(p.x) + " py: " + std::to_string(p.y) + " pz: " + std::to_string(p.z));
+			// UTO_LOG("ptr: " + std::to_string((uint64_t)userPtr));
 		}
 
-		return false;
+		return intersectInfo;
 	}
 
 	btDiscreteDynamicsWorld* Physics::GetDynamicsWorld() const

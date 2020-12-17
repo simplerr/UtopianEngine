@@ -3,6 +3,7 @@
 #include "utility/Module.h"
 #include "utility/Timer.h"
 #include "utopian/core/Terrain.h"
+#include "utopian/core/World.h"
 
 class btBroadphaseInterface;
 class btCollisionDispatcher;
@@ -28,7 +29,7 @@ namespace Utopian
 
 		void SetHeightmap(const float* heightmap, const uint32_t size, float scale, float terrainSize);
 
-		bool RayIntersection(const Ray& ray);
+		IntersectionInfo RayIntersection(const Ray& ray);
 
 		bool IsEnabled() const;
 		bool IsDebugDrawEnabled() const;

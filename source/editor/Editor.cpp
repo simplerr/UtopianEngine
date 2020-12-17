@@ -104,12 +104,12 @@ namespace Utopian
 
 			if (intersectInfo.actor != nullptr)
 			{
-				mPrototypeTool->ActorSelected(intersectInfo.actor.get());
+				mPrototypeTool->ActorSelected(intersectInfo.actor);
 
-				if (intersectInfo.actor.get() != mSelectedActor)
+				if (intersectInfo.actor != mSelectedActor)
 				{
 					mSelectedActorIndex = mWorld->GetActorIndex(intersectInfo.actor);
-					OnActorSelected(intersectInfo.actor.get());
+					OnActorSelected(intersectInfo.actor);
 				}
 			}
 		}
@@ -134,7 +134,7 @@ namespace Utopian
 				CRenderable* renderable = newActor->AddComponent<CRenderable>();
 				renderable->LoadModel(originalPath);
 
-				mSelectedActorIndex = mWorld->GetActorIndex(newActor);
+				mSelectedActorIndex = mWorld->GetActorIndex(newActor.get());
 				OnActorSelected(newActor.get());
 			}
 		}
@@ -189,6 +189,8 @@ namespace Utopian
 				if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
 				{
 					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+
+					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 
 					renderable->LoadModel(mModelPaths[mSelectedModel]);
 				}
@@ -254,6 +256,13 @@ namespace Utopian
 				{
 					const float impulse = 10.0f;
 					rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
+
+					// Hack:
+					if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
+					{
+						// Must be called after PostInit() since it needs the Renderable component
+						rigidBody->SetKinematic(true);
+					}
 				}
 			}
 		}
