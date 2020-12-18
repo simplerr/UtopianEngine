@@ -46,6 +46,13 @@ namespace Utopian
 
 		void AddActorCreation(std::string path, ActorTemplate actorTemplate = STATIC_MODEL);
 	private:
+		void UpdateSelectionType();
+		void DrawGizmo();
+		void SelectActor();
+		void AddActorToScene();
+		void RemoveActorFromScene();
+		void ScaleSelectedActor();
+
 		bool IsActorSelected();
 		void OnActorSelected(Actor* actor);
 		void RenderActorCreationUi();

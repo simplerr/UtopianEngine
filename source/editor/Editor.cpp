@@ -45,7 +45,7 @@ namespace Utopian
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
 
-		mSelectedModel = 2; // Sphere
+		mSelectedModel = 4; // Physics sphere
 
 		AddPaths();
 	}
@@ -71,6 +71,34 @@ namespace Utopian
 			mFoliageTool->Update();
 		}
 
+		UpdateSelectionType();
+		DrawGizmo();
+		SelectActor();
+		AddActorToScene();
+		RemoveActorFromScene();
+		ScaleSelectedActor();
+
+		// Hide/show UI
+		if (gInput().KeyPressed('H'))
+		{
+			mImGuiRenderer->ToggleVisible();
+		}
+
+		// Recompile shaders
+		if (gInput().KeyPressed('R'))
+		{
+			Vk::gEffectManager().RecompileModifiedShaders();
+		}
+
+		mPrototypeTool->Update(mWorld);
+
+		// The UI needs to be updated after updating the selected actor since otherwise
+		// the texture descriptor set for the UI can be freed when still being used in a command buffer.
+		UpdateUi();
+	}
+
+	void Editor::UpdateSelectionType()
+	{
 		if (gInput().KeyPressed('G'))
 			mSelectionType = OBJECT_SELECTION;
 		else if (gInput().KeyPressed('E'))
@@ -79,8 +107,10 @@ namespace Utopian
 			mSelectionType = FACE_SELECTION;
 
 		mPrototypeTool->SetSelectionType(mSelectionType);
-
-		// Gizmo
+	}
+	
+	void Editor::DrawGizmo()
+	{
 		if (mSelectionType == OBJECT_SELECTION)
 		{
 			if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
@@ -95,8 +125,10 @@ namespace Utopian
 				}
 			}
 		}
+	}
 
-		// Was an Entity selected?
+	void Editor::SelectActor()
+	{
 		if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
 		{
 			Ray ray = mCamera->GetPickingRay();
@@ -113,8 +145,11 @@ namespace Utopian
 				}
 			}
 		}
-
-		// Copy selected actor, only static models are copied properly
+	}
+	
+	void Editor::AddActorToScene()
+	{
+		// Copy selected actor (only static models are copied properly)
 		if (gInput().KeyPressed('C') && gInput().KeyDown(VK_LCONTROL))
 		{
 			if (mSelectedActor != nullptr)
@@ -182,6 +217,7 @@ namespace Utopian
 				CRenderable* renderable = actor->AddComponent<CRenderable>();
 
 				/*
+				* Todo:
 				* These are just some example templates for creating actors
 				* It will be extended so that new actor templates can be 
 				* configured completly in Lua and show up in the editor.
@@ -208,7 +244,6 @@ namespace Utopian
 				}
 				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
 				{
-					// Temporary physics testing:
 					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 					rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
 
@@ -220,7 +255,6 @@ namespace Utopian
 
 					transform->SetScale(glm::vec3(scale));
 
-					// Temporary physics testing:
 					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 					rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
 					renderable->LoadModel(mModelPaths[mSelectedModel]);
@@ -230,7 +264,6 @@ namespace Utopian
 				{
 					transform->SetScale(glm::vec3(20));
 
-					// Temporary physics testing:
 					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
 					rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
 					renderable->LoadModel("data/models/sphere_lowres.obj");
@@ -249,8 +282,6 @@ namespace Utopian
 				World::Instance().SynchronizeNodeTransforms();
 				actor->PostInit();
 
-				// Shoot rigid bodies but place static objects
-				// Todo: Improve this
 				CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
 				if (rigidBody != nullptr)
 				{
@@ -266,43 +297,29 @@ namespace Utopian
 				}
 			}
 		}
+	}
 
-		// Remove actor from scene
+	void Editor::RemoveActorFromScene()
+	{
 		if (gInput().KeyPressed(VK_DELETE) && mSelectedActor != nullptr)
 		{
 			mSelectedActor->SetAlive(false);
 			OnActorSelected(nullptr);
 			mPrototypeTool->ActorSelected(nullptr);
 		}
+	}
 
+	void Editor::ScaleSelectedActor()
+	{
 		float mouseDz = gInput().MouseDz();
 		if (mouseDz != 0.0f && mSelectedActor != nullptr)
 		{
 			mSelectedActor->GetTransform().AddScale(glm::vec3(mouseDz * MWHEEL_SCALE_FACTOR));
 		}
-
-		// Hide/show UI
-		if (gInput().KeyPressed('H'))
-		{
-			mImGuiRenderer->ToggleVisible();
-		}
-
-		// Recompile shaders
-		if (gInput().KeyPressed('R'))
-		{
-			Vk::gEffectManager().RecompileModifiedShaders();
-		}
-
-		mPrototypeTool->Update(mWorld);
-
-		// The UI needs to be updated after updating the selected actor since otherwise
-		// the texture descriptor set for the UI can be freed when still being used in a command buffer.
-		UpdateUi();
 	}
 
 	void Editor::RenderActorCreationUi()
 	{
-		// Display Actor creation list
 		if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::PushItemWidth(ImGui::GetWindowWidth());
@@ -340,7 +357,6 @@ namespace Utopian
 
 	void Editor::RenderActorSelectionUi()
 	{
-		// Display Actor creation list
 		if (ImGui::CollapsingHeader("Actors in scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ImGui::PushItemWidth(ImGui::GetWindowWidth());
@@ -439,8 +455,8 @@ namespace Utopian
 
 		mSelectedActor = actor;
 
-      if (mSelectedActor != nullptr)
-		   UTO_LOG("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
+		if (mSelectedActor != nullptr)
+			UTO_LOG("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
 
 		// Enable bounding box rendering
 		//auto renderable = mSelectedActor->GetComponent<CRenderable>();

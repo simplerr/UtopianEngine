@@ -250,20 +250,15 @@ namespace Utopian
          auto n = mPolyMesh.calc_normal(closestFace);
          glm::vec3 normal = glm::vec3(n[0], n[1], n[2]);
 
-         UTO_LOG("nx: " + std::to_string(normal.x) +
-               " ny: " + std::to_string(normal.y) +
-               " nz: " + std::to_string(normal.z) +
-               " distance: " + std::to_string(closestDistance));
+         // UTO_LOG("nx: " + std::to_string(normal.x) +
+         //       " ny: " + std::to_string(normal.y) +
+         //       " nz: " + std::to_string(normal.z) +
+         //       " distance: " + std::to_string(closestDistance));
 
          mSelectedFace = closestFace;
 
          mSelectedEdge = GetClosestEdge(mSelectedFace, closestIntersectionPoint);
       }
-      else
-      {
-         UTO_LOG("No hit!");
-      }
-      
    }
 
    OpenMesh::SmartHalfedgeHandle CPolyMesh::GetClosestEdge(const OpenMesh::SmartFaceHandle& face, glm::vec3 point)
