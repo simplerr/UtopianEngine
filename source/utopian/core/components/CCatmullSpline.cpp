@@ -10,7 +10,7 @@
 #include "glm/gtx/spline.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
-#define NEW_SEGMENT_LENGTH 250.0f
+#define NEW_SEGMENT_LENGTH 5.0f
 
 namespace Utopian
 {
