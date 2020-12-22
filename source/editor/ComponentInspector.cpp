@@ -305,9 +305,14 @@ namespace Utopian
 		mPolyMesh = polyMesh;
 
 		AddTexture("data/textures/prototype/Orange/texture_01.ktx");
-		AddTexture("data/textures/prototype/Green/texture_01.png");
-		AddTexture("data/textures/prototype/Dark/texture_01.png");
-		AddTexture("data/textures/prototype/Purple/texture_03.png");
+		AddTexture("data/textures/prototype/Orange/texture_02.ktx");
+		AddTexture("data/textures/prototype/Orange/texture_09.ktx");
+		AddTexture("data/textures/prototype/Green/texture_02.ktx");
+		AddTexture("data/textures/prototype/Green/texture_09.ktx");
+		AddTexture("data/textures/prototype/Dark/texture_01.ktx");
+		AddTexture("data/textures/prototype/Purple/texture_02.ktx");
+		AddTexture("data/textures/prototype/Light/texture_02.ktx");
+		AddTexture("data/textures/prototype/Light/texture_12.ktx");
 	}
 
 	void PolyMeshInspector::AddTexture(std::string filename)
@@ -325,6 +330,7 @@ namespace Utopian
 		{
 			ImGui::Text("PolyMesh inspector");
 
+			uint32_t i = 1;
 			for (auto& uiTexture : mTextures)
 			{
 				if (ImGui::ImageButton(uiTexture.identifier, ImVec2(64, 64)))
@@ -334,7 +340,10 @@ namespace Utopian
 					mPolyMesh->SetTexturePath(uiTexture.texture->GetPath());
 				}
 
-				ImGui::SameLine();
+				if (i % 3 != 0)
+					ImGui::SameLine();
+
+				i++;
 			}
 		}
 	}
