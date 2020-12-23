@@ -24,21 +24,25 @@ layout (push_constant) uniform PushConstants {
 
 void main(void)
 {	
-	float normalLength = 1.5;
+	float normalLength = 0.5;
 	for(int i=0; i<gl_in.length(); i++)
 	{
 		vec3 pos = gl_in[i].gl_Position.xyz;
 		vec3 normal = normalize(inNormal[i].xyz);
+		vec4 posW = pushConstants.world * vec4(pos, 1.0f);
+		vec3 normalW = mat3(transpose(inverse(pushConstants.world))) * normal;
+		normalW = normalize(normalW);
 
-		gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * vec4(pos, 1.0);
+		mat4 viewProjection = sharedVariables.projectionMatrix * sharedVariables.viewMatrix;
+
+		gl_Position = viewProjection * posW;
 		gl_PointSize = 1;
 		outColor = vec3(1.0, 0.0, 0.0);
 		EmitVertex();
 
-		// Todo: Correct this calculation so that the scaling does not affect normal length
-		gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * vec4(pos + normal * normalLength, 1.0);
+		gl_Position = viewProjection * vec4(posW.xyz + normalW * normalLength, 1.0f);
 
-		outColor = vec3(0.0, 0.0, 1.0);
+		outColor = vec3(0.0, 1.0, 0.0);
 		EmitVertex();
 
 		EndPrimitive();
