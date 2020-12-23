@@ -94,9 +94,9 @@ void Game::AddGround()
 	actor->SetSerialize(false);
 
 	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
-	auto model = Utopian::Vk::gModelLoader().LoadGrid(100, 2);
+	auto model = Utopian::Vk::gModelLoader().LoadGrid(1000, 2);
 	renderable->SetModel(model);
-	renderable->SetTileFactor(glm::vec2(50.0f));
+	renderable->SetTileFactor(glm::vec2(500.0f));
 	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
 
 	actor->PostInit();
