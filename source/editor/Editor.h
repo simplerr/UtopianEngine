@@ -83,6 +83,6 @@ namespace Utopian
 		std::vector<ActorTemplate> mTemplateTypes;
 		int mSelectedModel = 0;
 
-		const float MWHEEL_SCALE_FACTOR = 0.025f;
+		const float MWHEEL_SCALE_FACTOR = 0.0025f;
 	};
 }

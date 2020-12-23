@@ -311,10 +311,13 @@ namespace Utopian
 
 	void Editor::ScaleSelectedActor()
 	{
-		float mouseDz = gInput().MouseDz();
-		if (mouseDz != 0.0f && mSelectedActor != nullptr)
+		if (!ImGuiRenderer::IsMouseInsideUi())
 		{
-			mSelectedActor->GetTransform().AddScale(glm::vec3(mouseDz * MWHEEL_SCALE_FACTOR));
+			float mouseDz = gInput().MouseDz();
+			if (mouseDz != 0.0f && mSelectedActor != nullptr)
+			{
+				mSelectedActor->GetTransform().AddScale(glm::vec3(mouseDz * MWHEEL_SCALE_FACTOR));
+			}
 		}
 	}
 
