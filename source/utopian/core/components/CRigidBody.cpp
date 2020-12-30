@@ -120,6 +120,11 @@ namespace Utopian
 			mCollisionShape = new btSphereShape(aabb.GetWidth() / 2.0f);
 			mCollisionShape->calculateLocalInertia(mass, localInertia);
 		}
+		else if (mCollisionShapeType == CollisionShapeType::CAPSULE)
+		{
+			mCollisionShape = new btCapsuleShape(0.25f, 1.0f);
+			mCollisionShape->calculateLocalInertia(mass, localInertia);
+		}
 		else if (mCollisionShapeType == CollisionShapeType::MESH)
 		{
 			Vk::Mesh* mesh = mRenderable->GetInternal()->GetModel()->mMeshes[0];
@@ -217,6 +222,24 @@ namespace Utopian
 	{
 		mRigidBody->activate(true);
 		mRigidBody->applyCentralForce(ToBulletVec3(force));
+	}
+
+	void CRigidBody::SetVelocityXZ(const glm::vec3 velocity)
+	{
+		glm::vec3 currentVelocity = ToVec3(mRigidBody->getLinearVelocity());
+		mRigidBody->activate(true);
+		mRigidBody->setLinearVelocity(ToBulletVec3(velocity + currentVelocity.y));
+	}
+
+	void CRigidBody::SetAngularVelocity(const glm::vec3 angularVelocity)
+	{
+		mRigidBody->setAngularVelocity(ToBulletVec3(angularVelocity));
+		mRigidBody->setAngularFactor(0.0f);
+	}
+
+	glm::vec3 CRigidBody::GetVelocity() const
+	{
+		return ToVec3(mRigidBody->getLinearVelocity());
 	}
 
 	const Utopian::Transform& CRigidBody::GetTransform() const

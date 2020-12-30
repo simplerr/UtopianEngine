@@ -14,6 +14,7 @@ namespace Utopian
 	class CRigidBody;
 	class CCatmullSpline;
 	class CPolyMesh;
+	class CPlayerControl;
 
 	class ComponentInspector
 	{
@@ -115,5 +116,15 @@ namespace Utopian
 	private:
 		CPolyMesh* mPolyMesh;
 		std::vector<UiTexture> mTextures;
+	};
+
+	class PlayerControllerInspector : public ComponentInspector
+	{
+	public:
+		PlayerControllerInspector(CPlayerControl* playerController);
+
+		virtual void UpdateUi() override;
+	private:
+		CPlayerControl* mPlayerController;
 	};
 }

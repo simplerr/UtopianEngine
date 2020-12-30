@@ -7,6 +7,7 @@
 #include "core/components/CRigidBody.h"
 #include "core/components/CCatmullSpline.h"
 #include "core/components/CPolyMesh.h"
+#include "core/components/CPlayerControl.h"
 #include "core/components/Actor.h"
 #include "core/Log.h"
 #include <glm/gtc/quaternion.hpp>
@@ -249,7 +250,7 @@ namespace Utopian
 
 			ImGui::Checkbox("Kinematic", &isKinematic);
 			ImGui::SliderFloat("Mass", &mass, 0.0f, 100.0f);
-			ImGui::SliderFloat("Friction", &friction, 0.01f, 10.0f);
+			ImGui::SliderFloat("Friction", &friction, 0.00f, 10.0f);
 			ImGui::SliderFloat("Rolling friction", &rollingFriction, 0.01f, 10.0f);
 			ImGui::SliderFloat("Restitution", &restitution, 0.05f, 1.0f);
 
@@ -345,6 +346,26 @@ namespace Utopian
 
 				i++;
 			}
+		}
+	}
+
+	PlayerControllerInspector::PlayerControllerInspector(CPlayerControl* playerController)
+	{
+		mPlayerController = playerController;
+	}
+
+	void PlayerControllerInspector::UpdateUi()
+	{
+		if (ImGui::CollapsingHeader("Player controller", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			float speed = mPlayerController->GetSpeed();
+			float jumpStrength = mPlayerController->GetJumpStrength();
+
+			ImGui::SliderFloat("Speed", &speed, 0.5f, 10.0f);
+			ImGui::SliderFloat("Jump strength", &jumpStrength, 0.5f, 20.0f);
+
+			mPlayerController->SetSpeed(speed);
+			mPlayerController->SetJumpStrength(jumpStrength);
 		}
 	}
 }

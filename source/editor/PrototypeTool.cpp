@@ -103,12 +103,13 @@ namespace Utopian
       renderable->SetModel(model);
 
       rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::MESH);
-
+      
       actor->PostInit();
       Utopian::World::Instance().SynchronizeNodeTransforms();
 
       // Must be called after PostInit() since it needs the Renderable component
       rigidBody->SetKinematic(true);
+      rigidBody->SetFriction(0.5f);
    }
 
    void PrototypeTool::DrawFaceGizmo()

@@ -20,7 +20,8 @@ namespace Utopian
 	{
 		BOX,
 		SPHERE,
-		MESH
+		MESH,
+		CAPSULE
 	};
 
 	class CRigidBody : public Component
@@ -41,11 +42,14 @@ namespace Utopian
 		void SetQuaternion(const glm::quat& quaternion);
 		void ApplyCentralImpulse(const glm::vec3 impulse);
 		void ApplyCentralForce(const glm::vec3 force);
+		void SetVelocityXZ(const glm::vec3 velocity);
+		void SetAngularVelocity(const glm::vec3 angularVelocity);
 
 		float GetMass() const;
 		float GetFriction() const;
 		float GetRollingFriction() const;
 		float GetRestitution() const;
+		glm::vec3 GetVelocity() const;
 		bool IsKinematic() const;
 		bool IsActive() const;
 

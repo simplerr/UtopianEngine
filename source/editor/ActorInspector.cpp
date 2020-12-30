@@ -6,6 +6,7 @@
 #include "core/components/CRigidBody.h"
 #include "core/components/CCatmullSpline.h"
 #include "core/components/CPolyMesh.h"
+#include "core/components/CPlayerControl.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
 #include "core/renderer/ImGuiRenderer.h"
@@ -98,6 +99,12 @@ namespace Utopian
 		CPolyMesh* polyMesh = mActor->GetComponent<CPolyMesh>();
 		if (polyMesh != nullptr) {
 			PolyMeshInspector* inspector = new PolyMeshInspector(polyMesh);
+			mComponentInspectors.push_back(inspector);
+		}
+
+		CPlayerControl* playerController = mActor->GetComponent<CPlayerControl>();
+		if (playerController != nullptr) {
+			PlayerControllerInspector* inspector = new PlayerControllerInspector(playerController);
 			mComponentInspectors.push_back(inspector);
 		}
 	}
