@@ -28,7 +28,7 @@ namespace Utopian
 	{
 	public:
 		CRigidBody(Actor* parent, CollisionShapeType collisionShape, float mass, float friction,
-	 			   float rollingFriction, float restitution, bool kinematic);
+	 			   float rollingFriction, float restitution, bool kinematic, glm::vec3 anisotropicFriction);
 		CRigidBody(Actor* parent);
 		~CRigidBody();
 
@@ -48,6 +48,7 @@ namespace Utopian
 		float GetMass() const;
 		float GetFriction() const;
 		float GetRollingFriction() const;
+		glm::vec3 GetAnisotropicFriction() const;
 		float GetRestitution() const;
 		glm::vec3 GetVelocity() const;
 		bool IsKinematic() const;
@@ -56,6 +57,7 @@ namespace Utopian
 		void SetMass(float mass);
 		void SetFriction(float friction);
 		void SetRollingFriction(float rollingFriction);
+		void SetAnisotropicFriction(const glm::vec3 anisotropicFriction);
 		void SetRestitution(float restitution);
 		void SetKinematic(bool isKinematic);
 
@@ -89,6 +91,7 @@ namespace Utopian
 		float mMass;
 		float mFriction;
 		float mRollingFriction;
+		glm::vec3 mAnisotropicFriction;
 		float mRestitution;
 		bool mIsKinematic;
 	};

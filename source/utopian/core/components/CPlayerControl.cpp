@@ -110,6 +110,6 @@ namespace Utopian
 
 	float CPlayerControl::GetJumpStrength() const
 	{
-		return mJumpStrength;	
+		return mJumpStrength;
 	}
 }

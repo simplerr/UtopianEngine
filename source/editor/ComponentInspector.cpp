@@ -247,17 +247,20 @@ namespace Utopian
 			float rollingFriction = mRigidBody->GetRollingFriction();
 			float restitution = mRigidBody->GetRestitution();
 			bool isKinematic = mRigidBody->IsKinematic();
+			glm::vec3 anisotropicFriction = mRigidBody->GetAnisotropicFriction();
 
 			ImGui::Checkbox("Kinematic", &isKinematic);
 			ImGui::SliderFloat("Mass", &mass, 0.0f, 100.0f);
 			ImGui::SliderFloat("Friction", &friction, 0.00f, 10.0f);
 			ImGui::SliderFloat("Rolling friction", &rollingFriction, 0.01f, 10.0f);
+			ImGui::SliderFloat3("Anisotropic friction", &anisotropicFriction.x, 0.0f, 1.0f);
 			ImGui::SliderFloat("Restitution", &restitution, 0.05f, 1.0f);
 
 			mRigidBody->SetKinematic(isKinematic);
 			mRigidBody->SetMass(mass);
 			mRigidBody->SetFriction(friction);
 			mRigidBody->SetRollingFriction(rollingFriction);
+			mRigidBody->SetAnisotropicFriction(anisotropicFriction);
 			mRigidBody->SetRestitution(restitution);
 		}
 	}

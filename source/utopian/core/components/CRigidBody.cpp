@@ -38,7 +38,7 @@ namespace Utopian
 	}
 
 	CRigidBody::CRigidBody(Actor* parent, CollisionShapeType collisionShape, float mass, float friction,
-	 					   float rollingFriction, float restitution, bool kinematic)
+	 					   float rollingFriction, float restitution, bool kinematic, glm::vec3 anisotropicFriction)
 		: Component(parent)
 	{
 		SetName("CRigidBody");
@@ -49,6 +49,7 @@ namespace Utopian
 		mRollingFriction = rollingFriction;
 		mRestitution = restitution;
 		mIsKinematic = kinematic;
+		mAnisotropicFriction = anisotropicFriction;
 		mRigidBody = nullptr;
 	}
 
@@ -61,6 +62,7 @@ namespace Utopian
 		mMass = 1.0f;
 		mFriction = 0.5f;
 		mRollingFriction = 0.0f;
+		mAnisotropicFriction = glm::vec3(1.0f);
 		mRestitution = 0.0f;
 		mIsKinematic = false;
 		mRigidBody = nullptr;
@@ -149,6 +151,7 @@ namespace Utopian
 
 		mRigidBody = new btRigidBody(constructionInfo);
 		mRigidBody->setUserPointer(this);
+		mRigidBody->setAnisotropicFriction(ToBulletVec3(mAnisotropicFriction));
 		mRigidBody->activate();
 
 		// Initial position
@@ -258,6 +261,9 @@ namespace Utopian
 		luaObject.SetNumber("rollingFriction", mRollingFriction);
 		luaObject.SetNumber("restitution", mRestitution);
 		luaObject.SetBoolean("kinematic", mIsKinematic);
+		luaObject.SetNumber("anisotropic_friciton_x", mAnisotropicFriction.x);
+		luaObject.SetNumber("anisotropic_friciton_y", mAnisotropicFriction.y);
+		luaObject.SetNumber("anisotropic_friciton_z", mAnisotropicFriction.z);
 
 		return luaObject;
 	}
@@ -275,6 +281,11 @@ namespace Utopian
 	float CRigidBody::GetRollingFriction() const
 	{
 		return mRollingFriction;
+	}
+
+	glm::vec3 CRigidBody::GetAnisotropicFriction() const
+	{
+		return mAnisotropicFriction;
 	}
 
 	float CRigidBody::GetRestitution() const
@@ -312,6 +323,12 @@ namespace Utopian
 	{
 		mRollingFriction = rollingFriction;
 		mRigidBody->setRollingFriction(rollingFriction);
+	}
+
+	void CRigidBody::SetAnisotropicFriction(const glm::vec3 anisotropicFriction)
+	{
+		mAnisotropicFriction = anisotropicFriction;
+		mRigidBody->setAnisotropicFriction(ToBulletVec3(anisotropicFriction));
 	}
 
 	void CRigidBody::SetRestitution(float restitution)

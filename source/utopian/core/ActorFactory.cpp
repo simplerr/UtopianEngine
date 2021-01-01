@@ -151,10 +151,13 @@ namespace Utopian
 					float rollingFriction = componentData["rollingFriction"].ToNumber();
 					float restitution = componentData["restitution"].ToNumber();
 					bool kinematic = componentData["kinematic"].GetBoolean();
+					glm::vec3 anisotropicFriction(componentData["anisotropic_friciton_x"].ToNumber(),
+					 							  componentData["anisotropic_friciton_y"].ToNumber(),
+												  componentData["anisotropic_friciton_z"].ToNumber());
 
 					Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>(collisionShape, mass, friction,
 																							  rollingFriction, restitution,
-																							  kinematic);
+																							  kinematic, anisotropicFriction);
 				}
 				else if (name == "CPolyMesh")
 				{
