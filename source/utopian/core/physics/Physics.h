@@ -1,4 +1,5 @@
 #pragma once
+#include <core/components/CRigidBody.h>
 #include <glm/glm.hpp>
 #include "utility/Module.h"
 #include "utility/Timer.h"
@@ -30,6 +31,7 @@ namespace Utopian
 		void SetHeightmap(const float* heightmap, const uint32_t size, float scale, float terrainSize);
 
 		IntersectionInfo RayIntersection(const Ray& ray);
+		bool IsOnGround(CRigidBody* rigidBody);
 
 		bool IsEnabled() const;
 		bool IsDebugDrawEnabled() const;

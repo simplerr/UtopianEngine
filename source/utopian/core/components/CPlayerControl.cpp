@@ -6,6 +6,7 @@
 #include "core/components/CRigidBody.h"
 #include "core/components/Actor.h"
 #include "core/Input.h"
+#include "core/physics/Physics.h"
 
 namespace Utopian
 {
@@ -61,7 +62,7 @@ namespace Utopian
 		}
 
 		// Jump
-		if (gInput().KeyPressed(VK_SPACE))
+		if (gInput().KeyPressed(VK_SPACE) && gPhysics().IsOnGround(mRigidBody))
 		{
 			mRigidBody->ApplyCentralImpulse(mRigidBody->GetMass() * glm::vec3(0.0f, mJumpStrength, 0.0f));
 		}

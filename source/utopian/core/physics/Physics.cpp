@@ -195,6 +195,47 @@ namespace Utopian
 		return intersectInfo;
 	}
 
+	bool Physics::IsOnGround(CRigidBody* rigidBody)
+	{
+		bool onGround = false;
+
+		int numManifolds = mDynamicsWorld->getDispatcher()->getNumManifolds();
+		for (int i = 0; i < numManifolds; i++)
+		{
+			btPersistentManifold* contactManifold = mDynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			if (contactManifold->getNumContacts() > 0)
+			{
+				const btCollisionObject* objectA = contactManifold->getBody0();
+				const btCollisionObject* objectB = contactManifold->getBody1();
+
+				btRigidBody* otherBody = nullptr;
+				float sign = 1.0f;
+				if (objectA->getUserPointer() == rigidBody)
+					otherBody = static_cast<btRigidBody*>((btCollisionObject*)(objectB));
+				else if (objectB->getUserPointer() == rigidBody) {
+					otherBody = static_cast<btRigidBody*>((btCollisionObject*)(objectA));
+					sign = -1.0f;
+				}
+
+				if (otherBody != nullptr)
+				{
+					glm::vec3 normal = sign * ToVec3(contactManifold->getContactPoint(0).m_normalWorldOnB);
+
+					const float threshold = 0.001f;
+					if (glm::dot(normal, glm::vec3(0.0f, 1.0f, 0.0f)) > threshold)
+					{
+						onGround = true;
+						// UTO_LOG("Player collision! nx: " + std::to_string(normal.x) +
+						// 		" ny: " + std::to_string(normal.y) +
+						// 		" nz: " + std::to_string(normal.z));
+					}
+				}
+			}
+		}
+
+		return onGround;
+	}
+
 	btDiscreteDynamicsWorld* Physics::GetDynamicsWorld() const
 	{
 		return mDynamicsWorld;
