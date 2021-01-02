@@ -50,7 +50,7 @@ namespace Utopian
 		float foamSpeed = 4.0f;
 		float waterDistortionStrength = 0.02f;
 		float shorelineDepth = 1.2f;
-		float waveFrequency = 90.0f;
+		float waveFrequency = 0.3f;
 		float waterSpecularity = 128.0f;
 		float waterTransparency = 0.0f;
 		float underwaterViewDistance = 8.0f;

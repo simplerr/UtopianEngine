@@ -175,14 +175,14 @@ namespace Utopian
 
 		if (ImGui::CollapsingHeader("Water settings", ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -80.0f, 80.0f);
+			ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -15.0f, 15.0f);
 			ImGui::ColorEdit3("Water color", &mRenderingSettings.waterColor.x);
 			ImGui::ColorEdit3("Foam color", &mRenderingSettings.foamColor.x);
 			ImGui::SliderFloat("Wave speed", &mRenderingSettings.waveSpeed, 0.1f, 10.0f);
 			ImGui::SliderFloat("Foam speed", &mRenderingSettings.foamSpeed, 0.1f, 10.0f);
 			ImGui::SliderFloat("Distortion strength", &mRenderingSettings.waterDistortionStrength, 0.005f, 0.1f);
 			ImGui::SliderFloat("Shoreline depth", &mRenderingSettings.shorelineDepth, 0.0f, 8.0f);
-			ImGui::SliderFloat("Wave frequency", &mRenderingSettings.waveFrequency, 0.0f, 1000.0f);
+			ImGui::SliderFloat("Wave frequency", &mRenderingSettings.waveFrequency, 0.0f, 5.0f);
 			ImGui::SliderFloat("Water specularity", &mRenderingSettings.waterSpecularity, 1.0f, 1024.0f);
 			ImGui::SliderFloat("Water transparency", &mRenderingSettings.waterTransparency, 0.0f, 1.0f);
 			ImGui::SliderFloat("Underwater view distance", &mRenderingSettings.underwaterViewDistance, 0.0f, 40.0f);

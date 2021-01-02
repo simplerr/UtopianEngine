@@ -56,7 +56,8 @@ vec4 calculateFoam(float waterDepth)
 
     /* Shoreline */
     float timeOffset = sharedVariables.time * timeScaling * ubo_waterParameters.foamSpeed;
-    vec2 scaledprojectedUV = InTex * 950.0f;
+    const float foamSize = 3.0f;
+    vec2 scaledprojectedUV = InPosW.xz * foamSize;
     float channelA = texture(foamMaskSampler, scaledprojectedUV - vec2(timeOffset, cos(InTex.x))).r;
     float channelB = texture(foamMaskSampler, scaledprojectedUV * 0.5 + vec2(sin(InTex.y), timeOffset)).b;
 
@@ -118,8 +119,7 @@ void main()
     vec2 projectedUV = ndc / 2 + 0.5f;
 
     /* Calculate distorted texture coordinates for normals and reflection/refraction distortion */
-    const float textureScaling = 90.0f;
-    vec2 texCoord = InTex * ubo_waterParameters.waveFrequnecy;
+    vec2 texCoord = InPosW.xz * ubo_waterParameters.waveFrequnecy;
     float offset = sharedVariables.time * timeScaling * ubo_waterParameters.waveSpeed;
     vec2 distortedTexCoords = texture(dudvSampler, vec2(texCoord.x + offset, texCoord.y)).rg * 0.1f;
     distortedTexCoords = texCoord + vec2(distortedTexCoords.x, distortedTexCoords.y + offset);

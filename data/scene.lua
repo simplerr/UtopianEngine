@@ -2,48 +2,6 @@ actor_list =
 {
 	
 	{
-		actor_name = "TestBox2",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/CrateSquare_1.obj",
-				render_flags = 1,
-			},
-			CRigidBody = 
-			{
-				anisotropic_friciton_x = 1,
-				anisotropic_friciton_y = 1,
-				anisotropic_friciton_z = 1,
-				collisionShapeType = 0,
-				friction = 0.5,
-				kinematic = false,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = -5.8967382088326e-09,
-				orientation_x = 0.96268057823181,
-				orientation_y = -7.963267378841e-09,
-				orientation_z = 0.27064025402069,
-				pos_x = 1.9535983800888,
-				pos_y = 0.87340414524078,
-				pos_z = 16.481653213501,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
 		actor_name = "Polymesh",
 		components = 
 		{
@@ -192,16 +150,16 @@ actor_list =
 			{
 				far_plane = 400,
 				fov = 60,
-				look_at_x = 10.188196182251,
-				look_at_y = 6.8503322601318,
-				look_at_z = 1.9245694875717,
+				look_at_x = -2.1985194683075,
+				look_at_y = 0.98862808942795,
+				look_at_z = 7.6998615264893,
 				near_plane = 0.0077999997884035,
 			},
 			CCatmullSpline = 
 			{
 				draw_debug = 0,
 				filename = "data/camera_spline.txt",
-				time_per_segment = 2084.6149902344,
+				time_per_segment = 1673.4270019531,
 			},
 			CNoClip = 
 			{
@@ -239,17 +197,17 @@ actor_list =
 				orientation_x = 1,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = -11.631568908691,
-				pos_y = 1.7388391494751,
-				pos_z = 12.767889976501,
+				pos_x = -3.4016230106354,
+				pos_y = 0.75,
+				pos_z = 17.356393814087,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
 			},
 		},
 		scene_layer = 0,
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "Directional light",
 		components = 
@@ -297,6 +255,48 @@ actor_list =
 				scale_x = 1.2000000476837,
 				scale_y = 1.2000000476837,
 				scale_z = 1.2000000476837,
+			},
+		},
+		scene_layer = 0,
+	}, 
+	[0] = 
+	{
+		actor_name = "TestBox2",
+		components = 
+		{
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateSquare_1.obj",
+				render_flags = 1,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 0,
+				friction = 0.5,
+				kinematic = false,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 5.8498230259829e-08,
+				orientation_x = 0.87007093429565,
+				orientation_y = 4.4259074627462e-08,
+				orientation_z = -0.49292653799057,
+				pos_x = -0.8915342092514,
+				pos_y = 0.87339705228806,
+				pos_z = 11.72416973114,
+				scale_x = 0.99999940395355,
+				scale_y = 0.99999213218689,
+				scale_z = 0.99999570846558,
 			},
 		},
 		scene_layer = 0,
