@@ -28,7 +28,7 @@ namespace Utopian
 	class DeferredRenderingPlugin : public EnginePlugin
 	{
 	public:
-		DeferredRenderingPlugin(const RenderingSettings& renderingSettings);
+		DeferredRenderingPlugin(const std::string& settingsFile);
 		virtual void Start(Engine* engine) override;
 		virtual void PostInit(Engine* engine) override;
 		virtual void Destroy() override;
@@ -38,7 +38,10 @@ namespace Utopian
 		virtual void EndFrame() override;
 
 	private:
+		void LoadSettingsFromFile();
+	private:
 		RenderingSettings mRenderingSettings;
+		std::string mSettingsFile;
 	};
 
 	class ECSPlugin : public EnginePlugin

@@ -20,6 +20,7 @@
 #include "vulkan/Debug.h"
 #include "vulkan/VulkanApp.h"
 #include "imgui/imgui.h"
+#include <core/renderer/RenderSettings.h>
 
 namespace Utopian
 {
@@ -209,13 +210,16 @@ namespace Utopian
 		return Engine::Instance();
 	}
 
-	DeferredRenderingPlugin::DeferredRenderingPlugin(const RenderingSettings& renderingSettings)
+	DeferredRenderingPlugin::DeferredRenderingPlugin(const std::string& settingsFile)
 	{
-		mRenderingSettings = renderingSettings;
+		mRenderingSettings = RenderingSettings();
+		mSettingsFile = settingsFile;
 	}
 
 	void DeferredRenderingPlugin::Start(Engine* engine)
 	{
+		LoadSettingsFromFile();
+
 		gRenderer().Start(engine->GetVulkanApp());
 		gRenderer().SetUiOverlay(engine->GetImGuiRenderer());
 		gRenderer().SetRenderingSettings(mRenderingSettings);
@@ -253,6 +257,70 @@ namespace Utopian
 	void DeferredRenderingPlugin::EndFrame()
 	{
 		gRenderer().EndUiFrame();
+	}
+
+	void DeferredRenderingPlugin::LoadSettingsFromFile()
+	{
+		gLuaManager().ExecuteFile(mSettingsFile.c_str());
+
+		LuaPlus::LuaObject luaSettings = gLuaManager().GetLuaState()->GetGlobal("settings");
+		if (luaSettings.IsNil())
+			assert(0);
+
+		mRenderingSettings.fogColor = glm::vec4(luaSettings["fogColor_r"].ToNumber(),
+												luaSettings["fogColor_g"].ToNumber(),
+												luaSettings["fogColor_b"].ToNumber(), 1.0f);
+		mRenderingSettings.deferredPipeline = luaSettings["deferredPipeline"].GetBoolean();
+		mRenderingSettings.fogStart = luaSettings["fogStart"].ToNumber();
+		mRenderingSettings.fogDistance = luaSettings["fogDistance"].ToNumber();
+		mRenderingSettings.ssaoRadius = luaSettings["ssaoRadius"].ToNumber();
+		mRenderingSettings.ssaoBias = luaSettings["ssaoBias"].ToNumber();
+		mRenderingSettings.blurRadius = luaSettings["blurRadius"].ToNumber();
+		mRenderingSettings.grassViewDistance = luaSettings["grassViewDistance"].ToNumber();
+		mRenderingSettings.blockViewDistance = luaSettings["blockViewDistance"].ToNumber();
+		mRenderingSettings.shadowsEnabled = luaSettings["shadowsEnabled"].GetBoolean();
+		mRenderingSettings.normalMapping = luaSettings["normalMapping"].GetBoolean();
+		mRenderingSettings.ssaoEnabled = luaSettings["ssaoEnabled"].GetBoolean();
+		mRenderingSettings.ssrEnabled = luaSettings["ssrEnabled"].GetBoolean();
+		mRenderingSettings.skyboxReflections = luaSettings["skyboxReflections"].GetBoolean();
+		mRenderingSettings.waterEnabled = luaSettings["waterEnabled"].GetBoolean();
+		mRenderingSettings.terrainEnabled = luaSettings["terrainEnabled"].GetBoolean();
+		mRenderingSettings.fxaaEnabled = luaSettings["fxaaEnabled"].GetBoolean();
+		mRenderingSettings.fxaaDebug = luaSettings["fxaaDebug"].GetBoolean();
+		mRenderingSettings.godRaysEnabled = luaSettings["godRaysEnabled"].GetBoolean();
+		mRenderingSettings.fxaaThreshold = luaSettings["fxaaThreshold"].ToNumber();
+		mRenderingSettings.shadowSampleSize = luaSettings["shadowSampleSize"].ToNumber();
+		mRenderingSettings.cascadeColorDebug = luaSettings["cascadeColorDebug"].ToNumber();
+		mRenderingSettings.cascadeSplitLambda = luaSettings["cascadeSplitLambda"].ToNumber();
+		mRenderingSettings.sunSpeed = luaSettings["sunSpeed"].ToNumber();
+		mRenderingSettings.sunInclination = luaSettings["sunInclination"].ToNumber();
+		mRenderingSettings.sunAzimuth = luaSettings["sunAzimuth"].ToNumber();
+		mRenderingSettings.tessellationFactor = luaSettings["tessellationFactor"].ToNumber();
+		mRenderingSettings.terrainTextureScaling = luaSettings["terrainTextureScaling"].ToNumber();
+		mRenderingSettings.terrainBumpmapAmplitude = luaSettings["terrainBumpmapAmplitude"].ToNumber();
+		mRenderingSettings.terrainWireframe = luaSettings["terrainWireframe"].ToNumber();
+		mRenderingSettings.tonemapping = luaSettings["tonemapping"].ToNumber();
+		mRenderingSettings.exposure = luaSettings["exposure"].ToNumber();
+		mRenderingSettings.bloomThreshold = luaSettings["bloomThreshold"].ToNumber();
+		mRenderingSettings.windStrength = luaSettings["windStrength"].ToNumber();
+		mRenderingSettings.windFrequency = luaSettings["windFrequency"].ToNumber();
+		mRenderingSettings.windEnabled = luaSettings["windEnabled"].ToNumber();
+		mRenderingSettings.numWaterCells = luaSettings["numWaterCells"].ToNumber();
+		mRenderingSettings.waterLevel = luaSettings["waterLevel"].ToNumber();
+		mRenderingSettings.waterColor = glm::vec3(luaSettings["waterColor_x"].ToNumber(),
+												  luaSettings["waterColor_y"].ToNumber(),
+												  luaSettings["waterColor_z"].ToNumber());
+		mRenderingSettings.foamColor = glm::vec3(luaSettings["foamColor_x"].ToNumber(),
+												 luaSettings["foamColor_y"].ToNumber(),
+												 luaSettings["foamColor_z"].ToNumber());
+		mRenderingSettings.waveSpeed = luaSettings["waveSpeed"].ToNumber();
+		mRenderingSettings.foamSpeed = luaSettings["foamSpeed"].ToNumber();
+		mRenderingSettings.waterDistortionStrength = luaSettings["waterDistortionStrength"].ToNumber();
+		mRenderingSettings.shorelineDepth = luaSettings["shorelineDepth"].ToNumber();
+		mRenderingSettings.waveFrequency = luaSettings["waveFrequency"].ToNumber();
+		mRenderingSettings.waterSpecularity = luaSettings["waterSpecularity"].ToNumber();
+		mRenderingSettings.waterTransparency = luaSettings["waterTransparency"].ToNumber();
+		mRenderingSettings.underwaterViewDistance = luaSettings["underwaterViewDistance"].ToNumber();
 	}
 
 	void ECSPlugin::Start(Engine* engine)
