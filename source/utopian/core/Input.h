@@ -28,6 +28,7 @@ namespace Utopian
 		float	MouseDy();
 		float	MouseDz();
 		void	SetMousePosition(glm::vec3 pos);
+		void 	SetVisibleCursor(bool visible);
 
 		LRESULT HandleMessages(UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -39,9 +40,11 @@ namespace Utopian
 
 		/** Registers a callback which returns true if the UI want to capture keyboard input. */
 		void RegisterUiCaptureCallback(std::function<bool(void)> callback);
+		
 
 	private:
 		bool IsLetter(char key);
+		void LockCursorPosition();
 	private:
 		unsigned char mLastKeyState[256];
 		unsigned char mKeyState[256];
@@ -53,6 +56,8 @@ namespace Utopian
 		std::function<bool(void)> mIsMouseInsideUiCallback;
 		std::function<void(char)> mKeydownCallback;
 		std::function<bool(void)> mIsUiCapturingKeyboardCallback;
+
+		bool mVisibleCursor;
 	};
 
 	Input& gInput();

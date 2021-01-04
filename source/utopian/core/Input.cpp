@@ -1,5 +1,7 @@
 #include "core/Input.h"
 #include "core/Camera.h"
+#include "core/Engine.h"
+#include "vulkan/VulkanApp.h"
 #include "imgui/imgui.h"
 
 namespace Utopian
@@ -26,6 +28,8 @@ namespace Utopian
 		mMouseDelta = glm::vec2(0.0f);
 		mMousePosition = glm::vec2(-1.0f);
 		mMouseWheelDelta = 0.0f;
+
+		mVisibleCursor = true;
 	}
 
 	//! Cleanup.
@@ -83,6 +87,9 @@ namespace Utopian
 			mMousePosition.x = x;
 			mMousePosition.y = y;
 
+			if (!mVisibleCursor)
+				LockCursorPosition();
+
 			break;
 		}
 		case WM_MOUSEWHEEL:
@@ -104,6 +111,24 @@ namespace Utopian
 		}
 
 		return 0;
+	}
+
+	void Input::LockCursorPosition()
+	{
+		Utopian::Window* window = Utopian::gEngine().GetVulkanApp()->GetWindow();
+		HWND hwnd = window->GetHwnd();
+
+		if (GetFocus() == hwnd)
+		{
+			int width = window->GetWidth();
+			int height = window->GetHeight();
+			POINT forcedPos = {width / 2, height / 2};
+			ClientToScreen(hwnd, &forcedPos);
+
+			SetCursorPos(forcedPos.x, forcedPos.y);
+			mMousePosition.x = width / 2;
+			mMousePosition.y = height / 2;
+		}
 	}
 
 	//! Checks if the key was pressed.
@@ -254,5 +279,11 @@ namespace Utopian
 	bool Input::IsLetter(char key)
 	{
 		return (key >= 65 && key <= 90);
+	}
+
+	void Input::SetVisibleCursor(bool visible)
+	{
+		mVisibleCursor = visible;
+		ShowCursor(mVisibleCursor);
 	}
 }

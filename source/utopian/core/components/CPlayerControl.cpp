@@ -27,6 +27,7 @@ namespace Utopian
 		if (gInput().KeyPressed('V'))
 		{
 			mRigidBody->SetKinematic(!mRigidBody->IsKinematic());
+			gInput().SetVisibleCursor(mRigidBody->IsKinematic());
 		}
 
 		glm::vec3 velocity = glm::vec3(0.0f);
