@@ -12,7 +12,7 @@ settings =
     grassViewDistance = 0,
     blockViewDistance = 2,
     shadowsEnabled = true,
-    normalMapping = true,
+    normalMapping = false,
     ssaoEnabled = false,
     ssrEnabled = true,
     skyboxReflections = true,
@@ -39,7 +39,7 @@ settings =
     windFrequency = 10000.0,
     windEnabled = true,
     -- Water
-    numWaterCells = 40,
+    numWaterCells = 512,
     waterLevel = 0.5,
     waterColor_x = 0.0,
     waterColor_y = 0.0,

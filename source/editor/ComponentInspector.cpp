@@ -363,12 +363,18 @@ namespace Utopian
 		{
 			float speed = mPlayerController->GetSpeed();
 			float jumpStrength = mPlayerController->GetJumpStrength();
+			float airAccelerate = mPlayerController->GetAirAccelerate();
+			float airSpeedCap = mPlayerController->GetAirSpeedCap();
 
 			ImGui::SliderFloat("Speed", &speed, 0.5f, 10.0f);
 			ImGui::SliderFloat("Jump strength", &jumpStrength, 0.5f, 20.0f);
+			ImGui::SliderFloat("Air accelerate", &airAccelerate, 0.005f, 0.3f);
+			ImGui::SliderFloat("Air speed cap", &airSpeedCap, 0.05f, 1.0f);
 
 			mPlayerController->SetSpeed(speed);
 			mPlayerController->SetJumpStrength(jumpStrength);
+			mPlayerController->SetAirAccelerate(airAccelerate);
+			mPlayerController->SetAirSpeedCap(airSpeedCap);
 		}
 	}
 }

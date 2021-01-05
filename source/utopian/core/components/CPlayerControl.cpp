@@ -7,6 +7,9 @@
 #include "core/components/Actor.h"
 #include "core/Input.h"
 #include "core/physics/Physics.h"
+#include "core/Object.h"
+#include "core/Log.h"
+#include <glm/geometric.hpp>
 
 namespace Utopian
 {
@@ -30,37 +33,7 @@ namespace Utopian
 			gInput().SetVisibleCursor(mRigidBody->IsKinematic());
 		}
 
-		glm::vec3 velocity = glm::vec3(0.0f);
-		glm::vec3 direction = mCamera->GetDirection();
-		direction = glm::normalize(glm::vec3(direction.x, 0.0f, direction.z));
-
-		if (gInput().KeyDown('A'))
-		{
-			velocity += mSpeed * mCamera->GetRight();
-		}
-		else if (gInput().KeyDown('D'))
-		{
-			velocity -= mSpeed * mCamera->GetRight();
-		}
-
-		if (gInput().KeyDown('W'))
-		{
-			velocity += mSpeed * direction;
-		}
-		else if (gInput().KeyDown('S'))
-		{
-			velocity -= mSpeed * direction;
-		}
-
-		// Movement in XZ
-		if (velocity != glm::vec3(0.0f))
-		{
-			glm::vec3 currentVelocity = mRigidBody->GetVelocity();
-			currentVelocity = glm::vec3(currentVelocity.x, 0.0f, currentVelocity.z);
-			glm::vec3 delta = velocity - currentVelocity;
-			glm::vec3 impulse = mRigidBody->GetMass() * delta;
-			mRigidBody->ApplyCentralImpulse(impulse);
-		}
+		HandleMovement();
 
 		// Jump
 		if (gInput().KeyPressed(VK_SPACE) && gPhysics().IsOnGround(mRigidBody))
@@ -70,6 +43,108 @@ namespace Utopian
 
 		// No rotation
 		mRigidBody->SetAngularVelocity(glm::vec3(0.0f));
+	}
+
+	/**
+	 * This function implements Quake style movement with similar airstrafing calculations.
+	 * References:
+	 * https://github.com/ValveSoftware/source-sdk-2013/blob/master/mp/src/game/shared/gamemovement.cpp
+	 * https://web.archive.org/web/20190428135531/http://www.funender.com/quake/articles/strafing_theory.html
+	 * https://www.jwchong.com/hl/strafing.html
+	 * http://adrianb.io/2015/02/14/bunnyhop.html
+	 * https://steamcommunity.com/sharedfiles/filedetails/?id=184184420
+	 */
+	void CPlayerControl::HandleMovement()
+	{
+		glm::vec3 wishVel = CalculateWishVelocity();
+		glm::vec3 wishDir = glm::normalize(wishVel);
+		float wishSpeed = glm::length(wishVel);
+
+		const float maxSpeed = 3.0f;
+		if (wishSpeed > maxSpeed)
+			wishSpeed = maxSpeed;
+
+		if (wishVel != glm::vec3(0.0f))
+		{
+			glm::vec3 acceleration = glm::vec3(0.0f);
+
+			if (gPhysics().IsOnGround(mRigidBody))
+			{
+				acceleration = Accelerate(wishDir, wishSpeed, mGroundAcceleration, false);
+			}
+			else
+			{
+				acceleration = Accelerate(wishDir, wishSpeed, mAirAcceleration, true);
+			}
+
+			if (acceleration != glm::vec3(0.0f))
+			{
+				glm::vec3 impulse = mRigidBody->GetMass() * acceleration;
+				mRigidBody->ApplyCentralImpulse(impulse);
+			}
+		}
+	}
+
+	glm::vec3 CPlayerControl::CalculateWishVelocity()
+	{
+		glm::vec3 forward = glm::normalize(glm::vec3(mCamera->GetDirection().x, 0.0f, mCamera->GetDirection().z));
+		glm::vec3 right = glm::normalize(glm::vec3(mCamera->GetRight().x, 0.0f, mCamera->GetRight().z));
+
+		float forwardMove = 0.0f;
+		float sideMove = 0.0f;
+
+		if (gInput().KeyDown('A'))
+			sideMove = mSpeed;
+		else if (gInput().KeyDown('D'))
+			sideMove = -mSpeed;
+
+		if (gInput().KeyDown('W'))
+			forwardMove = mSpeed;
+		else if (gInput().KeyDown('S'))
+			forwardMove = -mSpeed;
+
+		glm::vec3 wishVel = forward * forwardMove + right * sideMove;
+		wishVel.y = 0.0f;
+
+		return wishVel;
+	}
+
+	glm::vec3 CPlayerControl::Accelerate(glm::vec3 wishDir, float wishSpeed, float airAccelerate, bool inAir)
+	{
+		float wishSpd = wishSpeed;
+
+		// Cap speed
+		if (inAir)
+		{
+			if (wishSpd > mAirSpeedCap)
+				wishSpd = mAirSpeedCap;
+		}
+
+		// Project current velocity on wishDir vector
+		float projVel = glm::dot(mRigidBody->GetVelocity(), wishDir);
+
+		// See how much to add
+		float addSpeed = wishSpd - projVel;
+
+		// If not adding any, done.
+		if (addSpeed <= 0)
+			return glm::vec3(0.0f);
+
+		// Determine acceleration speed after acceleration
+		float accelSpeed = airAccelerate * wishSpeed; // * gpGlobals->frametime * player->m_surfaceFriction;
+
+		// Cap speed
+		if (accelSpeed > addSpeed)
+			accelSpeed = addSpeed;
+
+		glm::vec3 xzVel = mRigidBody->GetVelocity();
+		xzVel.y = 0.0f;
+		UTO_LOG("realVel" + std::to_string(glm::length(xzVel)));
+		UTO_LOG("projVel" + std::to_string(projVel));
+
+		glm::vec3 acceleration = accelSpeed * wishDir;
+
+		return acceleration;
 	}
 
 	void CPlayerControl::PostInit()
@@ -105,6 +180,16 @@ namespace Utopian
 		mJumpStrength = jumpStrength;	
 	}
 
+	void CPlayerControl::SetAirAccelerate(float airAccelerate)
+	{
+		mAirAcceleration = airAccelerate;
+	}
+
+	void CPlayerControl::SetAirSpeedCap(float airSpeedCap)
+	{
+		mAirSpeedCap = airSpeedCap;
+	}
+
 	float CPlayerControl::GetSpeed() const
 	{
 		return mSpeed;
@@ -113,5 +198,15 @@ namespace Utopian
 	float CPlayerControl::GetJumpStrength() const
 	{
 		return mJumpStrength;
+	}
+
+	float CPlayerControl::GetAirAccelerate() const
+	{
+		return mAirAcceleration;
+	}
+
+	float CPlayerControl::GetAirSpeedCap() const
+	{
+		return mAirSpeedCap;
 	}
 }

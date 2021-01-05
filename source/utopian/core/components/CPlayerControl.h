@@ -28,9 +28,13 @@ namespace Utopian
 		
 		void SetSpeed(float speed);
 		void SetJumpStrength(float jumpStrength);
+		void SetAirAccelerate(float airAccelerate);
+		void SetAirSpeedCap(float airSpeedCap);
 
 		float GetSpeed() const;
 		float GetJumpStrength() const;
+		float GetAirAccelerate() const;
+		float GetAirSpeedCap() const;
 
 		// Type identification
 		static uint32_t GetStaticType() {
@@ -42,12 +46,20 @@ namespace Utopian
 		}
 
 	private:
+		void HandleMovement();
+		glm::vec3 CalculateWishVelocity();
+		glm::vec3 Accelerate(glm::vec3 wishDir, float wishSpeed, float airAccelerate, bool inAir);
+	private:
 		CCamera* mCamera; // For convenience
 		CNoClip* mNoClip;
 		COrbit* mOrbit;
 		CTransform* mTransform;
 		CRigidBody* mRigidBody;
-		float mSpeed = 5.0f;
+		float mSpeed = 3.0f;
 		float mJumpStrength = 5.0f;
+
+		float mGroundAcceleration = 0.1f;
+		float mAirAcceleration = 0.1f;
+		float mAirSpeedCap = 0.3f;
 	};
 }

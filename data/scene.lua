@@ -7,100 +7,6 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-1152098208628123170.obj",
-				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
-			},
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "Unknown",
-				render_flags = 1,
-			},
-			CRigidBody = 
-			{
-				anisotropic_friciton_x = 1,
-				anisotropic_friciton_y = 1,
-				anisotropic_friciton_z = 1,
-				collisionShapeType = 2,
-				friction = 0.5,
-				kinematic = true,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = -3.8527290821075,
-				pos_y = 0.50011348724365,
-				pos_z = 0.64655685424805,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
-		actor_name = "Polymesh",
-		components = 
-		{
-			CPolyMesh = 
-			{
-				modelPath = "data/models/polymesh/polymesh-763776444039001202.obj",
-				texturePath = "data/textures/prototype/Dark/texture_01.ktx",
-			},
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "Unknown",
-				render_flags = 1,
-			},
-			CRigidBody = 
-			{
-				anisotropic_friciton_x = 1,
-				anisotropic_friciton_y = 1,
-				anisotropic_friciton_z = 1,
-				collisionShapeType = 2,
-				friction = 0.52399998903275,
-				kinematic = true,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 13.171571731567,
-				pos_y = 0.5,
-				pos_z = -18.1155834198,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
-		actor_name = "Polymesh",
-		components = 
-		{
-			CPolyMesh = 
-			{
 				modelPath = "data/models/polymesh/polymesh-11995561671828378483.obj",
 				texturePath = "data/textures/prototype/Orange/texture_02.ktx",
 			},
@@ -168,7 +74,7 @@ actor_list =
 			CPlayerControl = 
 			{
 				jumpStrength = 5,
-				speed = 5,
+				speed = 3,
 			},
 			CRenderable = 
 			{
@@ -186,7 +92,7 @@ actor_list =
 				anisotropic_friciton_z = 1,
 				collisionShapeType = 3,
 				friction = 2.308000087738,
-				kinematic = false,
+				kinematic = true,
 				mass = 1,
 				restitution = 0,
 				rollingFriction = 0,
@@ -197,9 +103,9 @@ actor_list =
 				orientation_x = 1,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = -3.4016230106354,
-				pos_y = 0.75,
-				pos_z = 17.356393814087,
+				pos_x = -10.30110168457,
+				pos_y = 1.7304968833923,
+				pos_z = 6.9976201057434,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
@@ -258,8 +164,8 @@ actor_list =
 			},
 		},
 		scene_layer = 0,
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "TestBox2",
 		components = 
@@ -287,16 +193,157 @@ actor_list =
 			},
 			CTransform = 
 			{
-				orientation_w = 5.8498230259829e-08,
-				orientation_x = 0.87007093429565,
-				orientation_y = 4.4259074627462e-08,
-				orientation_z = -0.49292653799057,
-				pos_x = -0.8915342092514,
-				pos_y = 0.87339705228806,
-				pos_z = 11.72416973114,
+				orientation_w = -1.5922953622294e-08,
+				orientation_x = 0.87245875597,
+				orientation_y = -7.0248784567184e-09,
+				orientation_z = -0.48868778347969,
+				pos_x = -0.96662944555283,
+				pos_y = 0.8733971118927,
+				pos_z = 11.758335113525,
 				scale_x = 0.99999940395355,
 				scale_y = 0.99999213218689,
 				scale_z = 0.99999570846558,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-1152098208628123170.obj",
+				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 1,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -3.8527290821075,
+				pos_y = 0.50011348724365,
+				pos_z = 0.64655685424805,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-5991306841899554099.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 1,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -8.0206155776978,
+				pos_y = 1.4624359607697,
+				pos_z = 8.8663606643677,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	}, 
+	[0] = 
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-763776444039001202.obj",
+				texturePath = "data/textures/prototype/Dark/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 1,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.52399998903275,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 13.171571731567,
+				pos_y = 0.5,
+				pos_z = -18.1155834198,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
 		scene_layer = 0,
