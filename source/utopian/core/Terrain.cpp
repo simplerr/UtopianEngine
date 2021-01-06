@@ -16,6 +16,7 @@
 #include "core/physics/Physics.h"
 #include "core/Input.h"
 #include "core/Camera.h"
+#include "core/Log.h"
 #include "core/renderer/ImGuiRenderer.h"
 
 namespace Utopian
@@ -153,27 +154,40 @@ namespace Utopian
 
 	void Terrain::RetrieveHeightmap()
 	{
-		hostImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32_SFLOAT);
+		// Check if the device supports blitting to linear images
+		// Todo: See issue #123
+		VkFormatProperties formatProps;
+		vkGetPhysicalDeviceFormatProperties(mDevice->GetPhysicalDevice(), VK_FORMAT_R32_SFLOAT, &formatProps);
+		if (!(formatProps.linearTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT))
+		{
+			UTO_LOG("Error creating heightmap host image. The device not support blitting to linear images.");
+			hostImage = nullptr;
+		}
+		else
+		{
+			hostImage = gRendererUtility().CreateHostVisibleImage(mDevice, heightmapImage, MAP_RESOLUTION, MAP_RESOLUTION, VK_FORMAT_R32_SFLOAT);
 
-		// Get layout of the image (including row pitch)
-		VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
-		VkSubresourceLayout subResourceLayout;
-		vkGetImageSubresourceLayout(mDevice->GetVkDevice(), hostImage->GetVkHandle(), &subResource, &subResourceLayout);
+			// Get layout of the image (including row pitch)
+			VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
+			VkSubresourceLayout subResourceLayout;
+			vkGetImageSubresourceLayout(mDevice->GetVkDevice(), hostImage->GetVkHandle(), &subResource, &subResourceLayout);
 
-		const char* data;
-		hostImage->MapMemory((void**)&data);
-		data += subResourceLayout.offset;
+			const char* data;
+			hostImage->MapMemory((void**)&data);
+			data += subResourceLayout.offset;
 
-		assert(subResourceLayout.rowPitch == MAP_RESOLUTION * sizeof(float));
-		assert(subResourceLayout.size == MAP_RESOLUTION * MAP_RESOLUTION * sizeof(float));
+			assert(subResourceLayout.rowPitch == MAP_RESOLUTION * sizeof(float));
+			assert(subResourceLayout.size == MAP_RESOLUTION * MAP_RESOLUTION * sizeof(float));
 
-		// Since the image tiling is linear we can use memcpy
-		memcpy(heightmap.data(), data, subResourceLayout.size);
+			// Since the image tiling is linear we can use memcpy
+			memcpy(heightmap.data(), data, subResourceLayout.size);
 
-		hostImage->UnmapMemory();
+			hostImage->UnmapMemory();
 
-		// Note: Todo: Hidden dependency to Renderer
-		gRenderer().UpdateInstanceAltitudes();
+			// Note: Todo: Hidden dependency to Renderer
+			gRenderer().UpdateInstanceAltitudes();
+
+		}
 	}
 
 	void Terrain::UpdatePhysicsHeightmap()
@@ -326,6 +340,10 @@ namespace Utopian
 
 	float Terrain::GetHeight(float x, float z)
 	{
+		// If the creation of the host image failed
+		if (hostImage == nullptr)
+			return 0.0f;
+
 		float height = -1.0f;
 
 		glm::vec2 uv = TransformToUv(x, z);
