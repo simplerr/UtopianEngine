@@ -34,12 +34,7 @@ namespace Utopian
 		}
 
 		HandleMovement();
-
-		// Jump
-		if (gInput().KeyPressed(VK_SPACE) && gPhysics().IsOnGround(mRigidBody))
-		{
-			mRigidBody->ApplyCentralImpulse(mRigidBody->GetMass() * glm::vec3(0.0f, mJumpStrength, 0.0f));
-		}
+		HandleJumping();
 
 		// No rotation
 		mRigidBody->SetAngularVelocity(glm::vec3(0.0f));
@@ -137,14 +132,54 @@ namespace Utopian
 		if (accelSpeed > addSpeed)
 			accelSpeed = addSpeed;
 
-		glm::vec3 xzVel = mRigidBody->GetVelocity();
-		xzVel.y = 0.0f;
-		UTO_LOG("realVel" + std::to_string(glm::length(xzVel)));
-		UTO_LOG("projVel" + std::to_string(projVel));
-
 		glm::vec3 acceleration = accelSpeed * wishDir;
 
 		return acceleration;
+	}
+
+	/**
+	 * This function implements a state machine for jumping to change
+	 * the friction when in the air to allow bhopping.
+	 * Note: A temporary hack, does not mirror Quake implementation.
+	 */
+	void CPlayerControl::HandleJumping()
+	{
+		bool onGround = gPhysics().IsOnGround(mRigidBody);
+
+		// Now the rigid body is fully in the air
+		if (mMovementState == POST_JUMP && !onGround)
+		{
+			mMovementState = AIR;
+		}
+
+		// Keep zero friction a short time after landing to allow bhopping
+		if (mMovementState == AIR && onGround)
+		{
+			mLandingTimestamp = gTimer().GetTimestamp();
+			mMovementState = REDUCED_FRICTION;
+		}
+
+		// Restore friction
+		if (mMovementState == REDUCED_FRICTION && gTimer().GetElapsedTime(mLandingTimestamp) > mReducedFrictionTime)
+		{
+			mMovementState = GROUND;
+			mRigidBody->SetFriction(mFrictionRestoreValue);
+		}
+
+		// Jump with space and mwheelup
+		if ((gInput().KeyPressed(VK_SPACE) || gInput().MouseDz() > 0.0f) &&
+			((mMovementState == REDUCED_FRICTION) ||
+			 (mMovementState == GROUND)))
+		{
+			if (mMovementState == GROUND)
+				mFrictionRestoreValue = mRigidBody->GetFriction();
+
+			mRigidBody->ApplyCentralImpulse(mRigidBody->GetMass() * glm::vec3(0.0f, mJumpStrength, 0.0f));
+			mRigidBody->SetFriction(0.0f);
+
+			// Not in the air directly
+			mMovementState = POST_JUMP;
+		}
 	}
 
 	void CPlayerControl::PostInit()
@@ -154,6 +189,13 @@ namespace Utopian
 		mOrbit = GetParent()->GetComponent<COrbit>();
 		mNoClip = GetParent()->GetComponent<CNoClip>();
 		mRigidBody = GetParent()->GetComponent<CRigidBody>();
+
+		if (gPhysics().IsOnGround(mRigidBody))
+			mMovementState = GROUND;
+		else
+			mMovementState = AIR;
+
+		mFrictionRestoreValue = mRigidBody->GetFriction();
 
 		if (mOrbit != nullptr)
 			mOrbit->SetActive(false);
@@ -208,5 +250,10 @@ namespace Utopian
 	float CPlayerControl::GetAirSpeedCap() const
 	{
 		return mAirSpeedCap;
+	}
+
+	MovementState CPlayerControl::GetMovementState() const
+	{
+		return mMovementState;
 	}
 }
