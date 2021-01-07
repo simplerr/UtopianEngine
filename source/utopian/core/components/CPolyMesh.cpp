@@ -298,10 +298,13 @@ namespace Utopian
       {
          auto n = mPolyMesh.calc_normal(face);
          glm::vec3 normal = glm::vec3(n[0], n[1], n[2]);
+         
+         // Calculate tangent and bitangent vectors from two arbitrary vertices on the plane
+         glm::vec3 v1 = ToGlm(mPolyMesh.point(face.vertices().begin()));
+         glm::vec3 v2 = ToGlm(mPolyMesh.point(++face.vertices().begin()));
+         glm::vec3 tangent = glm::vec3(glm::normalize(v1 - v2));
+         glm::vec3 bitangent = glm::cross(normal, tangent);
 
-         std::vector<uint32_t> indices;
-
-         uint32_t uvIndex = 0u;
          // If no texture tiling is desired:
          // glm::vec2 texCoords[4] = {
          //    glm::vec2(0.0f, 0.0f),
@@ -309,6 +312,9 @@ namespace Utopian
          //    glm::vec2(1.0f, 1.0f),
          //    glm::vec2(0.0f, 1.0f)
          // };
+
+         std::vector<uint32_t> indices;
+         uint32_t uvIndex = 0u;
 
          for (const auto& vertex : face.vertices())
          {
@@ -336,7 +342,7 @@ namespace Utopian
                maxResult = dotResult;
             }
             
-            mesh->AddVertex(Vk::Vertex(-pos, -normal, texCoord));
+            mesh->AddVertex(Vk::Vertex(-pos, -normal, texCoord, tangent, bitangent));
 
             indices.push_back(faceOffset++);
             uvIndex++;

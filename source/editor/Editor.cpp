@@ -478,6 +478,7 @@ namespace Utopian
 		AddActorCreation("data/models/adventure_village/CrateLong.obj", ActorTemplate::RIGID_BOX);
 		AddActorCreation("data/models/adventure_village/Barrel.obj", ActorTemplate::RIGID_BOX);
 		AddActorCreation("data/models/adventure_village/Barrel_1.obj", ActorTemplate::RIGID_BOX);
+		AddActorCreation("data/models/sponza/sponza.obj");
 		AddActorCreation("data/models/adventure_village/CellarEntrance.obj");
 		AddActorCreation("data/models/adventure_village/CellarEntrance_1.obj");
 		AddActorCreation("data/models/adventure_village/Chimney1.obj");
