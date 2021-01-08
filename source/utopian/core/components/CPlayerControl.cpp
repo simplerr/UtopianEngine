@@ -35,6 +35,7 @@ namespace Utopian
 
 		HandleMovement();
 		HandleJumping();
+		DrawJumpTrail();
 
 		// No rotation
 		mRigidBody->SetAngularVelocity(glm::vec3(0.0f));
@@ -55,9 +56,8 @@ namespace Utopian
 		glm::vec3 wishDir = glm::normalize(wishVel);
 		float wishSpeed = glm::length(wishVel);
 
-		const float maxSpeed = 3.0f;
-		if (wishSpeed > maxSpeed)
-			wishSpeed = maxSpeed;
+		if (wishSpeed > mMaxSpeed)
+			wishSpeed = mMaxSpeed;
 
 		if (wishVel != glm::vec3(0.0f))
 		{
@@ -89,14 +89,14 @@ namespace Utopian
 		float sideMove = 0.0f;
 
 		if (gInput().KeyDown('A'))
-			sideMove = mSpeed;
+			sideMove = mMaxSpeed;
 		else if (gInput().KeyDown('D'))
-			sideMove = -mSpeed;
+			sideMove = -mMaxSpeed;
 
 		if (gInput().KeyDown('W'))
-			forwardMove = mSpeed;
+			forwardMove = mMaxSpeed;
 		else if (gInput().KeyDown('S'))
-			forwardMove = -mSpeed;
+			forwardMove = -mMaxSpeed;
 
 		glm::vec3 wishVel = forward * forwardMove + right * sideMove;
 		wishVel.y = 0.0f;
@@ -146,26 +146,6 @@ namespace Utopian
 	{
 		bool onGround = gPhysics().IsOnGround(mRigidBody);
 
-		// Now the rigid body is fully in the air
-		if (mMovementState == POST_JUMP && !onGround)
-		{
-			mMovementState = AIR;
-		}
-
-		// Keep zero friction a short time after landing to allow bhopping
-		if (mMovementState == AIR && onGround)
-		{
-			mLandingTimestamp = gTimer().GetTimestamp();
-			mMovementState = REDUCED_FRICTION;
-		}
-
-		// Restore friction
-		if (mMovementState == REDUCED_FRICTION && gTimer().GetElapsedTime(mLandingTimestamp) > mReducedFrictionTime)
-		{
-			mMovementState = GROUND;
-			mRigidBody->SetFriction(mFrictionRestoreValue);
-		}
-
 		// Jump with space and mwheelup
 		if ((gInput().KeyPressed(VK_SPACE) || gInput().MouseDz() > 0.0f) &&
 			((mMovementState == REDUCED_FRICTION) ||
@@ -177,8 +157,62 @@ namespace Utopian
 			mRigidBody->ApplyCentralImpulse(mRigidBody->GetMass() * glm::vec3(0.0f, mJumpStrength, 0.0f));
 			mRigidBody->SetFriction(0.0f);
 
-			// Not in the air directly
+			// Not in the air immediately
 			mMovementState = POST_JUMP;
+
+			mJumpPosition = GetParent()->GetTransform().GetPosition();
+			mJumpTrailPoints.clear();
+		}
+
+		// Now the rigid body is fully in the air
+		if (mMovementState == POST_JUMP && !onGround)
+		{
+			mMovementState = AIR;
+		}
+
+		// Add points to the jump trail
+		if (mMovementState == AIR)
+		{
+			static Timestamp lastTimestamp = gTimer().GetTimestamp();
+
+			const float trailFrequency = 0.1f;
+			if (gTimer().GetElapsedTime(lastTimestamp) > trailFrequency)
+			{
+				TrailingPoint point = { GetParent()->GetTransform().GetPosition(), Im3d::Color_Yellow };
+				glm::vec3 vel = mRigidBody->GetVelocity();
+				vel.y = 0.0f;
+				point.color = glm::length(vel) > 4.0 ? Im3d::Color_Green : point.color;
+
+				mJumpTrailPoints.push_back(point);
+				lastTimestamp = gTimer().GetTimestamp();
+			}
+		}
+
+		// Keep zero friction a short time after landing to allow bhopping
+		if (mMovementState == AIR && onGround)
+		{
+			mLandingTimestamp = gTimer().GetTimestamp();
+			mMovementState = REDUCED_FRICTION;
+
+			glm::vec3 jumpDelta = GetParent()->GetTransform().GetPosition() - mJumpPosition;
+			jumpDelta.y = 0.0f;
+			float jumpDistance = glm::length(jumpDelta);
+			UTO_LOG("Jump distance: " + std::to_string(jumpDistance));
+		}
+
+		// Restore friction
+		if (mMovementState == REDUCED_FRICTION && gTimer().GetElapsedTime(mLandingTimestamp) > mReducedFrictionTime)
+		{
+			mMovementState = GROUND;
+			mRigidBody->SetFriction(mFrictionRestoreValue);
+		}
+	}
+
+	void CPlayerControl::DrawJumpTrail()
+	{
+		for (const auto& point : mJumpTrailPoints)
+		{
+			Im3d::DrawPoint(point.pos, 20.0f, point.color);
 		}
 	}
 
@@ -206,15 +240,15 @@ namespace Utopian
 		LuaPlus::LuaObject luaObject;
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-		luaObject.SetNumber("speed", mSpeed);
+		luaObject.SetNumber("maxSpeed", mMaxSpeed);
 		luaObject.SetNumber("jumpStrength", mJumpStrength);
 
 		return luaObject;
 	}
 
-	void CPlayerControl::SetSpeed(float speed)
+	void CPlayerControl::SetMaxSpeed(float maxSpeed)
 	{
-		mSpeed = speed;
+		mMaxSpeed = maxSpeed;
 	}
 
 	void CPlayerControl::SetJumpStrength(float jumpStrength)
@@ -232,9 +266,9 @@ namespace Utopian
 		mAirSpeedCap = airSpeedCap;
 	}
 
-	float CPlayerControl::GetSpeed() const
+	float CPlayerControl::GetMaxSpeed() const
 	{
-		return mSpeed;
+		return mMaxSpeed;
 	}
 
 	float CPlayerControl::GetJumpStrength() const
@@ -255,5 +289,13 @@ namespace Utopian
 	MovementState CPlayerControl::GetMovementState() const
 	{
 		return mMovementState;
+	}
+
+	float CPlayerControl::GetCurrentSpeed() const
+	{
+		glm::vec3 vel = mRigidBody->GetVelocity();
+		vel.y = 0.0f;
+
+		return glm::length(vel);
 	}
 }
