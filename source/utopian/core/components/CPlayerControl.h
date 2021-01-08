@@ -1,5 +1,6 @@
 #pragma once
 #include <core/components/CRigidBody.h>
+#include "core/renderer/ScreenQuadRenderer.h"
 #include <glm/glm.hpp>
 #include "core/components/Component.h"
 #include "vulkan/VulkanPrerequisites.h"
@@ -40,6 +41,7 @@ namespace Utopian
 		void SetJumpStrength(float jumpStrength);
 		void SetAirAccelerate(float airAccelerate);
 		void SetAirSpeedCap(float airSpeedCap);
+		void SetPlayMode(bool playMode);
 
 		float GetMaxSpeed() const;
 		float GetJumpStrength() const;
@@ -90,5 +92,12 @@ namespace Utopian
 		};
 
 		std::vector<TrailingPoint> mJumpTrailPoints;
+
+		struct Crosshair {
+			SharedPtr<Vk::Texture> texture;
+			SharedPtr<ScreenQuad> quad;
+		};
+
+		Crosshair mCrosshair;
 	};
 }

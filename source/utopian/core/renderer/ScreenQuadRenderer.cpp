@@ -29,6 +29,7 @@ namespace Utopian
 		Vk::EffectCreateInfo effectDesc;
 		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/screenquad/screenquad.vert";
 		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/screenquad/screenquad.frag";
+		effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 
 		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(vulkanApp->GetDevice(), vulkanApp->GetRenderPass(), effectDesc);
 

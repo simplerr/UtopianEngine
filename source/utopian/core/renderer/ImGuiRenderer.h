@@ -45,6 +45,7 @@ namespace Utopian
 		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth);
 		static void EndWindow();
 		void ToggleVisible();
+		void SetVisible(bool visible);
 
 		// Frees UI textures.
 		// Needs to be called when the textures are not in an active command buffer

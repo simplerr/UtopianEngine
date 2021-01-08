@@ -1,3 +1,4 @@
+#include <glm/geometric.hpp>
 #include "core/components/COrbit.h"
 #include "core/components/CNoClip.h"
 #include "core/components/CTransform.h"
@@ -9,7 +10,10 @@
 #include "core/physics/Physics.h"
 #include "core/Object.h"
 #include "core/Log.h"
-#include <glm/geometric.hpp>
+#include "core/renderer/ScreenQuadRenderer.h"
+#include "core/renderer/ImGuiRenderer.h"
+#include "core/renderer/Renderer.h"
+#include "vulkan/TextureLoader.h"
 
 namespace Utopian
 {
@@ -25,15 +29,50 @@ namespace Utopian
 	{
 	}
 
+	void CPlayerControl::PostInit()
+	{
+		mTransform = GetParent()->GetComponent<CTransform>();
+		mCamera = GetParent()->GetComponent<CCamera>();
+		mOrbit = GetParent()->GetComponent<COrbit>();
+		mNoClip = GetParent()->GetComponent<CNoClip>();
+		mRigidBody = GetParent()->GetComponent<CRigidBody>();
+
+		if (gPhysics().IsOnGround(mRigidBody))
+			mMovementState = GROUND;
+		else
+			mMovementState = AIR;
+
+		mFrictionRestoreValue = mRigidBody->GetFriction();
+
+		if (mOrbit != nullptr)
+			mOrbit->SetActive(false);
+
+		const uint32_t size = 50;
+		mCrosshair.texture = Vk::gTextureLoader().LoadTexture("data/textures/crosshair.png");
+		mCrosshair.quad = gScreenQuadUi().AddQuad((gRenderer().GetWindowWidth() / 2) - (size / 2),
+												  (gRenderer().GetWindowHeight() / 2) - (size / 2),
+												  size, size, mCrosshair.texture.get(), 1u);
+		mCrosshair.quad->visible = false;
+	}
+
+	void CPlayerControl::SetPlayMode(bool playMode)
+	{
+		// Todo: This should not be here, a better place is needed for managing
+		// edit vs play mode
+		mRigidBody->SetKinematic(playMode);
+		gInput().SetVisibleCursor(playMode);
+		mCrosshair.quad->visible = !playMode;
+		gRenderer().GetUiOverlay()->SetVisible(playMode);
+	}
+
 	void CPlayerControl::Update()
 	{
 		// If not kinematic then the CNoClip component will control the 
 		// components movement instead.
 		if (gInput().KeyPressed('V'))
-		{
-			mRigidBody->SetKinematic(!mRigidBody->IsKinematic());
-			gInput().SetVisibleCursor(mRigidBody->IsKinematic());
-		}
+			SetPlayMode(!mRigidBody->IsKinematic());
+		else if(gInput().KeyPressed(VK_ESCAPE))
+			SetPlayMode(!mRigidBody->IsKinematic());
 
 		HandleMovement();
 		HandleJumping();
@@ -216,25 +255,6 @@ namespace Utopian
 		{
 			Im3d::DrawPoint(point.pos, 20.0f, point.color);
 		}
-	}
-
-	void CPlayerControl::PostInit()
-	{
-		mTransform = GetParent()->GetComponent<CTransform>();
-		mCamera = GetParent()->GetComponent<CCamera>();
-		mOrbit = GetParent()->GetComponent<COrbit>();
-		mNoClip = GetParent()->GetComponent<CNoClip>();
-		mRigidBody = GetParent()->GetComponent<CRigidBody>();
-
-		if (gPhysics().IsOnGround(mRigidBody))
-			mMovementState = GROUND;
-		else
-			mMovementState = AIR;
-
-		mFrictionRestoreValue = mRigidBody->GetFriction();
-
-		if (mOrbit != nullptr)
-			mOrbit->SetActive(false);
 	}
 
 	LuaPlus::LuaObject CPlayerControl::GetLuaObject()

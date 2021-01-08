@@ -404,6 +404,12 @@ namespace Utopian
         mCommandBuffer->SetActive(mImguiVisible);
     }
 
+    void ImGuiRenderer::SetVisible(bool visible)
+    {
+        mImguiVisible = visible;
+        mCommandBuffer->SetActive(mImguiVisible);
+    }
+
     bool ImGuiRenderer::IsMouseInsideUi()
     {
         return mImguiVisible && ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
