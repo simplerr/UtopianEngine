@@ -110,7 +110,10 @@ namespace Utopian
 				}
 				else if (name == "CPlayerControl")
 				{
-					CPlayerControl* playerControl = actor->AddComponent<CPlayerControl>();
+					float maxSpeed = componentData["maxSpeed"].ToNumber();
+					float jumpStrength = componentData["jumpStrength"].ToNumber();
+
+					CPlayerControl* playerControl = actor->AddComponent<CPlayerControl>(maxSpeed, jumpStrength);
 				}
 				else if (name == "CRenderable")
 				{

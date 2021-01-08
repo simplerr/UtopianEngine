@@ -28,7 +28,7 @@ namespace Utopian
 	class CPlayerControl : public Component
 	{
 	public:
-		CPlayerControl(Actor* parent);
+		CPlayerControl(Actor* parent, float maxSpeed, float jumpStrength);
 		~CPlayerControl();
 
 		void Update() override;

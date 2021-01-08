@@ -13,10 +13,12 @@
 
 namespace Utopian
 {
-	CPlayerControl::CPlayerControl(Actor* parent)
+	CPlayerControl::CPlayerControl(Actor* parent, float maxSpeed, float jumpStrength)
 		: Component(parent)
 	{
 		SetName("CPlayerControl");
+		mMaxSpeed = maxSpeed;
+		mJumpStrength = jumpStrength;
 	}
 
 	CPlayerControl::~CPlayerControl()
