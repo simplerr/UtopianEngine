@@ -1,7 +1,8 @@
 #pragma once
-#include <core/components/CRigidBody.h>
-#include "core/renderer/ScreenQuadRenderer.h"
 #include <glm/glm.hpp>
+#include "core/components/CRigidBody.h"
+#include "core/renderer/ScreenQuadRenderer.h"
+#include "core/renderer/Renderable.h"
 #include "core/components/Component.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
@@ -65,6 +66,7 @@ namespace Utopian
 		glm::vec3 CalculateWishVelocity();
 		glm::vec3 Accelerate(glm::vec3 wishDir, float wishSpeed, float airAccelerate, bool inAir);
 		void DrawJumpTrail();
+		void UpdateViewmodel();
 	private:
 		CCamera* mCamera; // For convenience
 		CNoClip* mNoClip;
@@ -99,5 +101,10 @@ namespace Utopian
 		};
 
 		Crosshair mCrosshair;
+		SharedPtr<Renderable> mViewmodel;
+
+	public:
+		float handY = -.154f;
+		float handZ = 0.066f;
 	};
 }

@@ -29,7 +29,6 @@ namespace Utopian
 		// Getters
 		const Transform& GetTransform() const;
 		const glm::vec3& GetPosition() const;
-		const glm::vec3& GetRotation() const;
 		const glm::vec3& GetScale() const;
 		const glm::mat4& GetWorldMatrix() const;
 		uint32_t GetId() const;

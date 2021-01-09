@@ -1,4 +1,6 @@
+#include <glm/ext/scalar_constants.hpp>
 #include <glm/geometric.hpp>
+#include <vulkan/ModelLoader.h>
 #include "core/components/COrbit.h"
 #include "core/components/CNoClip.h"
 #include "core/components/CTransform.h"
@@ -10,6 +12,7 @@
 #include "core/physics/Physics.h"
 #include "core/Object.h"
 #include "core/Log.h"
+#include "core/Camera.h"
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "core/renderer/ImGuiRenderer.h"
 #include "core/renderer/Renderer.h"
@@ -23,6 +26,12 @@ namespace Utopian
 		SetName("CPlayerControl");
 		mMaxSpeed = maxSpeed;
 		mJumpStrength = jumpStrength;
+
+		SharedPtr<Vk::StaticModel> model = Vk::gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
+		mViewmodel = Renderable::Create();
+		mViewmodel->SetModel(model);
+		mViewmodel->AddRotation(glm::vec3(glm::pi<float>(), 0.0f, 0.0f));
+		mViewmodel->SetVisible(false);
 	}
 
 	CPlayerControl::~CPlayerControl()
@@ -62,12 +71,13 @@ namespace Utopian
 		mRigidBody->SetKinematic(playMode);
 		gInput().SetVisibleCursor(playMode);
 		mCrosshair.quad->visible = !playMode;
+		mViewmodel->SetVisible(!playMode);
 		gRenderer().GetUiOverlay()->SetVisible(playMode);
 	}
 
 	void CPlayerControl::Update()
 	{
-		// If not kinematic then the CNoClip component will control the 
+		// If not kinematic then the CNoClip component will control the
 		// components movement instead.
 		if (gInput().KeyPressed('V'))
 			SetPlayMode(!mRigidBody->IsKinematic());
@@ -77,6 +87,7 @@ namespace Utopian
 		HandleMovement();
 		HandleJumping();
 		DrawJumpTrail();
+		UpdateViewmodel();
 
 		// No rotation
 		mRigidBody->SetAngularVelocity(glm::vec3(0.0f));
@@ -257,6 +268,22 @@ namespace Utopian
 		}
 	}
 
+	void CPlayerControl::UpdateViewmodel()
+	{
+		// Position
+		glm::vec3 cameraDir = gRenderer().GetMainCamera()->GetDirection();
+		glm::vec3 handPos = gRenderer().GetMainCamera()->GetPosition();
+		handPos.y += handY;
+		handPos += cameraDir * handZ;
+		mViewmodel->SetPosition(handPos);
+
+		// Rotation
+		float rotationY = glm::atan(cameraDir.z, cameraDir.x);
+		mViewmodel->SetRotation(glm::vec3(glm::pi<float>(),
+								rotationY - (glm::pi<float>() / 2.0f),
+								0.0f));
+	}
+
 	LuaPlus::LuaObject CPlayerControl::GetLuaObject()
 	{
 		LuaPlus::LuaObject luaObject;
@@ -275,7 +302,7 @@ namespace Utopian
 
 	void CPlayerControl::SetJumpStrength(float jumpStrength)
 	{
-		mJumpStrength = jumpStrength;	
+		mJumpStrength = jumpStrength;
 	}
 
 	void CPlayerControl::SetAirAccelerate(float airAccelerate)

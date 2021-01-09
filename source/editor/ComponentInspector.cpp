@@ -372,6 +372,8 @@ namespace Utopian
 			ImGui::SliderFloat("Air speed cap", &airSpeedCap, 0.05f, 1.0f);
 			ImGui::Text("Movement state: %u", mPlayerController->GetMovementState());
 			ImGui::Text("Speed %.2f", mPlayerController->GetCurrentSpeed());
+			ImGui::SliderFloat("Hand Z", &mPlayerController->handZ, -0.50f, 1.0f);
+			ImGui::SliderFloat("Hand Y", &mPlayerController->handY, -1.00f, 1.0f);
 
 			mPlayerController->SetMaxSpeed(maxSpeed);
 			mPlayerController->SetJumpStrength(jumpStrength);
