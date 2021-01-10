@@ -22,13 +22,13 @@ workspace "UtopianEngine"
    -- "Debug"
    filter "configurations:Debug"
       defines { "DEBUG" }
-      flags { "MultiProcessorCompile", "LinkTimeOptimization" }
+      flags { "MultiProcessorCompile", }
       symbols "On"
     
    -- "Release"
    filter "configurations:Release"
       defines { "NDEBUG" }
-      flags { "MultiProcessorCompile" }
+      flags { "MultiProcessorCompile", "LinkTimeOptimization" }
       symbols "Off"
       optimize "Full"
 
