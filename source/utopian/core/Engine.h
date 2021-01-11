@@ -126,10 +126,10 @@ namespace Utopian
 		SharedPtr<ImGuiRenderer> mImGuiRenderer;
 		std::vector<SharedPtr<EnginePlugin>> mPlugins;
 		Window* mWindow;
-		std::function<void()> mUpdateCallback;
-		std::function<void()> mRenderCallback;
-		std::function<void()> mDestroyCallback;
-		std::function<void()> mPreFrameCallback;
+		std::function<void()> mUpdateCallback = nullptr;
+		std::function<void()> mRenderCallback = nullptr;
+		std::function<void()> mDestroyCallback = nullptr;
+		std::function<void()> mPreFrameCallback = nullptr;
 		std::string mAppName;
 	};
 
