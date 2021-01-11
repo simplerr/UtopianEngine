@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "utility/Common.h"
-#include "LuaPlus.h"
+#include <LuaPlus.h>
 
 namespace Utopian
 {

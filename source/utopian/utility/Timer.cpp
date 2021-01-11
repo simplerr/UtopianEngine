@@ -43,7 +43,7 @@ namespace Utopian
 			mFrameCounter = 0;
 
 			// Add FPS to the log
-			mFpsLog.push_back(mFramesPerSecond);
+			mFpsLog.push_back((float)mFramesPerSecond);
 
 			return mFramesPerSecond;
 		}

@@ -76,7 +76,7 @@ namespace Utopian::Vk
 			std::vector<AssimpMesh> assimpMeshes;
 
 			// Loop over all meshes
-			for (int meshId = 0; meshId < scene->mNumMeshes; meshId++)
+			for (unsigned int meshId = 0u; meshId < scene->mNumMeshes; meshId++)
 			{
 				Mesh* mesh = new Mesh(mDevice);
 				aiMesh* assimpMesh = scene->mMeshes[meshId];
@@ -86,7 +86,7 @@ namespace Utopian::Vk
 				scene->mMaterials[assimpMesh->mMaterialIndex]->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 
 				// Load vertices
-				for (int vertexId = 0; vertexId < assimpMesh->mNumVertices; vertexId++)
+				for (unsigned int vertexId = 0u; vertexId < assimpMesh->mNumVertices; vertexId++)
 				{
 					aiVector3D pos = assimpMesh->mVertices[vertexId];
 					aiVector3D normal = assimpMesh->mNormals[vertexId];
@@ -109,9 +109,9 @@ namespace Utopian::Vk
 				}
 
 				// Load indices
-				for (int faceId = 0; faceId < assimpMesh->mNumFaces; faceId++)
+				for (unsigned int faceId = 0u; faceId < assimpMesh->mNumFaces; faceId++)
 				{
-					for (int indexId = 0; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId+=3)
+					for (unsigned int indexId = 0u; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId+=3)
 					{
 						mesh->AddTriangle(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
 					}
@@ -141,9 +141,9 @@ namespace Utopian::Vk
 					// Note: Instead of calling LoadTexture() something similar to FindFile(diffuseTexturePath) could be used
 					if (texture == nullptr)
 					{
-						uint32_t idx = diffuseTexturePath.rfind("\\");
+						uint32_t idx = (uint32_t)diffuseTexturePath.rfind("\\");
 						std::string textureName = diffuseTexturePath.substr(idx+1);
-						idx = filename.rfind("/");
+						idx = (uint32_t)filename.rfind("/");
 						diffuseTexturePath = filename.substr(0, idx) + "/Textures/" + textureName;
 
 						texture = gTextureLoader().LoadTexture(diffuseTexturePath);
@@ -151,7 +151,7 @@ namespace Utopian::Vk
 						// Try removing _H from the filename
 						if (texture == nullptr)
 						{
-							idx = diffuseTexturePath.rfind("_H.tga");
+							idx = (uint32_t)diffuseTexturePath.rfind("_H.tga");
 							if (idx != std::string::npos)
 							{
 								diffuseTexturePath = diffuseTexturePath.substr(0, idx) + ".tga";
@@ -160,7 +160,7 @@ namespace Utopian::Vk
 
 							if (texture == nullptr)
 							{
-								idx = diffuseTexturePath.rfind("_H.png");
+								idx = (uint32_t)diffuseTexturePath.rfind("_H.png");
 								if (idx != std::string::npos)
 								{
 									diffuseTexturePath = diffuseTexturePath.substr(0, idx) + ".png";

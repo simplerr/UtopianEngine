@@ -255,7 +255,7 @@ namespace Utopian
 		LuaPlus::LuaObject luaObject;
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-		luaObject.SetNumber("collisionShapeType", mCollisionShapeType);
+		luaObject.SetNumber("collisionShapeType", (lua_Number)mCollisionShapeType);
 		luaObject.SetNumber("mass", mMass);
 		luaObject.SetNumber("friction", mFriction);
 		luaObject.SetNumber("rollingFriction", mRollingFriction);

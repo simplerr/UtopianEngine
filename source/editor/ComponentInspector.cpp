@@ -51,11 +51,11 @@ namespace Utopian
 			ImGui::Text("Rotation");
 			ImGui::SameLine();
 			ImGui::PushItemWidth(1.0f);
-			ImGui::InputFloat("X", &rotate.x, 0.15);
+			ImGui::InputFloat("X", &rotate.x, 0.15f);
 			ImGui::SameLine();
-			ImGui::InputFloat("Y", &rotate.y, 0.15);
+			ImGui::InputFloat("Y", &rotate.y, 0.15f);
 			ImGui::SameLine();
-			ImGui::InputFloat("Z", &rotate.z, 0.15);
+			ImGui::InputFloat("Z", &rotate.z, 0.15f);
 			ImGui::PopItemWidth();
 
 			mComponent->AddRotation(rotate, localRotate);

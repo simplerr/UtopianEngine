@@ -50,7 +50,7 @@ namespace Utopian::Vk
 		// Setup a single subpass reference																			
 		VkSubpassDescription subpassDescription = {};
 		subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpassDescription.colorAttachmentCount = colorReferences.size();							
+		subpassDescription.colorAttachmentCount = (uint32_t)colorReferences.size();
 		subpassDescription.pColorAttachments = colorReferences.data();				
 		subpassDescription.pDepthStencilAttachment = depthReferences.data();	
 		subpassDescription.inputAttachmentCount = 0;				
@@ -75,7 +75,7 @@ namespace Utopian::Vk
 	void RenderPass::AddColorAttachment(VkFormat format, VkImageLayout finalImageLayout, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkImageLayout initialImageLayout)
 	{
 		VkAttachmentReference colorReference = {};
-		colorReference.attachment = attachments.size();
+		colorReference.attachment = (uint32_t)attachments.size();
 		colorReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		colorReferences.push_back(colorReference);
@@ -101,7 +101,7 @@ namespace Utopian::Vk
 	void RenderPass::AddDepthAttachment(VkFormat format, VkAttachmentLoadOp loadOp, VkAttachmentStoreOp storeOp, VkImageLayout finalImageLayout, VkImageLayout initialImageLayout)
 	{
 		VkAttachmentReference depthReference = {};
-		depthReference.attachment = attachments.size();
+		depthReference.attachment = (uint32_t)attachments.size();
 		depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 		depthReferences.push_back(depthReference);
@@ -126,6 +126,6 @@ namespace Utopian::Vk
 
 	uint32_t RenderPass::GetNumColorAttachments() const
 	{
-		return colorReferences.size();
+		return (uint32_t)colorReferences.size();
 	}
 }

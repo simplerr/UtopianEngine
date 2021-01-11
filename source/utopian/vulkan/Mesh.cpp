@@ -61,8 +61,8 @@ namespace Utopian::Vk
 
 	void Mesh::BuildBuffers(Device* device)
 	{
-		mVerticesCount = vertexVector.size();
-		mIndicesCount = indexVector.size();
+		mVerticesCount = (uint32_t)vertexVector.size();
+		mIndicesCount = (uint32_t)indexVector.size();
 
 		uint32_t vertexBufferSize = mVerticesCount * sizeof(Vertex);
 		uint32_t indexBufferSize = mIndicesCount * sizeof(uint32_t);

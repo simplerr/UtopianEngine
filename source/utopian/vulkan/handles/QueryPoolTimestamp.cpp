@@ -24,7 +24,7 @@ namespace Utopian::Vk
                                               sizeof(uint64_t), &startTimestamp, sizeof(uint64_t),
                                               VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
    
-      return startTimestamp / 1e6;
+      return (float)(startTimestamp / 1e6);
    }
 
    float QueryPoolTimestamp::GetEndTimestamp()
@@ -33,7 +33,7 @@ namespace Utopian::Vk
       Debug::ErrorCheck(vkGetQueryPoolResults(GetVkDevice(), mHandle, 1, 1,
                                               sizeof(uint64_t), &endTimestamp, sizeof(uint64_t),
                                               VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
-      return endTimestamp / 1e6;
+      return (float)(endTimestamp / 1e6);
    }
 
    float QueryPoolTimestamp::GetElapsedTime()

@@ -43,7 +43,7 @@ namespace Utopian
 
         // Dimensions
         ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize = ImVec2(width, height);
+        io.DisplaySize = ImVec2((float)width, (float)height);
         io.FontGlobalScale = mScale;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
@@ -118,7 +118,7 @@ namespace Utopian
         mCommandBuffer->Begin(mVulkanApp->GetRenderPass(), mVulkanApp->GetCurrentFrameBuffer());
 
         mCommandBuffer->CmdSetViewPort(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
-        mCommandBuffer->CmdSetScissor(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
+        mCommandBuffer->CmdSetScissor((uint32_t)ImGui::GetIO().DisplaySize.x, (uint32_t)ImGui::GetIO().DisplaySize.y);
 
         mCommandBuffer->CmdBindPipeline(mImguiEffect->GetPipeline());
 
@@ -268,7 +268,7 @@ namespace Utopian
         double delta = gTimer().GetElapsedTime(mLastFrameTime);
         delta /= 1000.0f; // To seconds
         mLastFrameTime = gTimer().GetTimestamp();
-        io.DeltaTime = delta;
+        io.DeltaTime = (float)delta;
 
         // Update mouse state
         glm::vec2 mousePos = gInput().GetMousePosition();
@@ -440,7 +440,7 @@ namespace Utopian
         // Clear garbage collected textures
         if (mTextureDescriptorsToFree.size() > 0)
         {
-            vkFreeDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), mTextureDescriptorPool->GetVkHandle(), mTextureDescriptorsToFree.size(), mTextureDescriptorsToFree.data());
+            vkFreeDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), mTextureDescriptorPool->GetVkHandle(), (uint32_t)mTextureDescriptorsToFree.size(), mTextureDescriptorsToFree.data());
             mTextureDescriptorsToFree.clear();
         }
     }

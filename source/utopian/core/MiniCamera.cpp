@@ -6,10 +6,10 @@
 MiniCamera::MiniCamera(glm::vec3 position, glm::vec3 target, int nearPlane, int farPlane, float speed, int windowWidth, int windowHeight)
 	: mPosition(position), mTarget(target), mSpeed(speed)
 {
-	mLastCursorPos = glm::vec2(windowWidth / 2, windowHeight / 2);
+	mLastCursorPos = glm::vec2(windowWidth / 2.0f, windowHeight / 2.0f);
 	mWindowSize = glm::vec2(windowWidth, windowHeight);
 
-	mUp = glm::vec3(0, -1, 0);
+	mUp = glm::vec3(0.0f, -1.0f, 0.0f);
 
 	glm::vec3 ds = mTarget - mPosition;
 	mYaw = atan2(ds.x, ds.z);
@@ -92,6 +92,6 @@ glm::mat4 MiniCamera::GetView()
 glm::mat4 MiniCamera::GetProjection()
 {
 	// Note: should be floats but it gives weird distortion effect
-	glm::mat4 projectionMatrix = glm::perspective(90, (int)mWindowSize.x / (int)mWindowSize.y, mNear, mFar);
+	glm::mat4 projectionMatrix = glm::perspective(90, (int)(mWindowSize.x / mWindowSize.y), mNear, mFar);
 	return projectionMatrix;
 }

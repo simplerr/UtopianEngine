@@ -74,7 +74,7 @@ namespace Utopian
 	void ScreenQuadRenderer::Render(Vk::VulkanApp* vulkanApp)
 	{
 		mCommandBuffer->Begin(vulkanApp->GetRenderPass(), vulkanApp->GetCurrentFrameBuffer());
-		mCommandBuffer->CmdSetViewPort(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight());
+		mCommandBuffer->CmdSetViewPort((float)vulkanApp->GetWindowWidth(), (float)vulkanApp->GetWindowHeight());
 		mCommandBuffer->CmdSetScissor(vulkanApp->GetWindowWidth(), vulkanApp->GetWindowHeight());
 
 		mCommandBuffer->CmdBindPipeline(mEffect->GetPipeline());

@@ -142,12 +142,12 @@ namespace Utopian::Vk
 		deviceInfo.queueCreateInfoCount = 1;
 		deviceInfo.pQueueCreateInfos = &queueInfo;
 		deviceInfo.pEnabledFeatures = &mEnabledFeatures;
-		deviceInfo.enabledExtensionCount = enabledExtensions.size();
+		deviceInfo.enabledExtensionCount = (uint32_t)enabledExtensions.size();
 		deviceInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 		if (enableValidation)
 		{
-			deviceInfo.enabledLayerCount = Debug::validation_layers.size();
+			deviceInfo.enabledLayerCount = (uint32_t)Debug::validation_layers.size();
 			deviceInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
 		
@@ -163,7 +163,7 @@ namespace Utopian::Vk
 			std::vector<VkExtensionProperties> extensions(extCount);
 			if (vkEnumerateDeviceExtensionProperties(mPhysicalDevice, nullptr, &extCount, &extensions.front()) == VK_SUCCESS)
 			{
-				for (auto ext : extensions)
+				for (const auto& ext : extensions)
 				{
 					mSupportedExtensions.push_back(ext.extensionName);
 				}
@@ -317,7 +317,7 @@ namespace Utopian::Vk
 				totalBudget.usage += budget[i].usage;
 				totalBudget.budget += budget[i].budget;
 			}
-			deviceMemoryUsage += budget[i].usage;
+			deviceMemoryUsage += (uint32_t)budget[i].usage;
 		}
 
 		return totalBudget;

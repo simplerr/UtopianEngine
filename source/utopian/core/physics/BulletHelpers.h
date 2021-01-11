@@ -17,7 +17,7 @@ namespace Utopian
 
 	inline glm::quat ToQuaternion(const btQuaternion& quaternion)
 	{
-		return glm::quat(quaternion.getW(), quaternion.getX(), quaternion.getY(), quaternion.getZ());
+		return glm::quat((float)quaternion.getW(), (float)quaternion.getX(), (float)quaternion.getY(), (float)quaternion.getZ());
 	}
 
 	inline btVector3 ToBulletVec3(glm::vec3 vector)

@@ -89,7 +89,7 @@ namespace Utopian
 		return mWorld;
 	}
 
-	const glm::mat4& Transform::GetWorldInverseTransposeMatrix() const
+	glm::mat4 Transform::GetWorldInverseTransposeMatrix() const
 	{
 		return glm::inverseTranspose(mWorld);
 	}

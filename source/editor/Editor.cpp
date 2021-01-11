@@ -327,7 +327,7 @@ namespace Utopian
 		{
 			ImGui::PushItemWidth(ImGui::GetWindowWidth());
 			ImGui::Text("Models:");
-			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), mModelPaths.size());
+			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), (int)mModelPaths.size());
 
 			if (ImGui::Button("Save scene"))
 			{
@@ -372,7 +372,7 @@ namespace Utopian
 				actorNames.push_back(strdup(name.c_str()));
 			}
 
-			if (ImGui::ListBox("Actors", &mSelectedActorIndex, actorNames.data(), actorNames.size()))
+			if (ImGui::ListBox("Actors", &mSelectedActorIndex, actorNames.data(), (int)actorNames.size()))
 			{
 				OnActorSelected(actors[mSelectedActorIndex].get());
 			}

@@ -31,7 +31,7 @@ namespace Utopian::Vk
 		VkPipelineLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		createInfo.pNext = NULL;
-		createInfo.setLayoutCount = mDescriptorSetLayouts.size();
+		createInfo.setLayoutCount = (uint32_t)mDescriptorSetLayouts.size();
 		createInfo.pSetLayouts = mDescriptorSetLayouts.data();
 
 		if (mPushConstantActive)

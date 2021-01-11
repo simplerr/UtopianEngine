@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LuaPlus.h"
+#include <LuaPlus.h>
 #include "utility/Module.h"
 #include <string>
 

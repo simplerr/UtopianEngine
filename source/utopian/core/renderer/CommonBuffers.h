@@ -22,7 +22,7 @@ namespace Utopian
 
 			// Map and update number of lights
 			dataOffset += dataSize;
-			dataSize = lights.size() * sizeof(Utopian::LightData);
+			dataSize = (uint32_t)lights.size() * sizeof(Utopian::LightData);
 			mBuffer->MapMemory((void**)&mapped);
 			memcpy(&mapped[dataOffset], lights.data(), dataSize);
 			mBuffer->UnmapMemory();

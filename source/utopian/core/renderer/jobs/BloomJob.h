@@ -15,7 +15,7 @@ namespace Utopian
 			UNIFORM_PARAM(int, size)
 		UNIFORM_BLOCK_END()
 
-		#define OFFSCREEN_RATIO 2.0f
+		#define OFFSCREEN_RATIO 2u
 
 		BloomJob(Vk::Device* device, uint32_t width, uint32_t height);
 		~BloomJob();

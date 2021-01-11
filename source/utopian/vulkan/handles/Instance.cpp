@@ -36,12 +36,12 @@ namespace Utopian::Vk
 		createInfo.pNext = &Debug::debugUtilsCreateInfo;
 		createInfo.flags = 0;
 		createInfo.pApplicationInfo = &appInfo;
-		createInfo.enabledExtensionCount = enabledExtensions.size();
+		createInfo.enabledExtensionCount = (uint32_t)enabledExtensions.size();
 		createInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
 		if (enableValidation)
 		{
-			createInfo.enabledLayerCount = Debug::validation_layers.size();
+			createInfo.enabledLayerCount = (uint32_t)Debug::validation_layers.size();
 			createInfo.ppEnabledLayerNames = Debug::validation_layers.data();
 		}
 

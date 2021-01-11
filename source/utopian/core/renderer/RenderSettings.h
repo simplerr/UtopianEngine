@@ -20,7 +20,7 @@ namespace Utopian
 		bool ssrEnabled = true;
 		bool skyboxReflections = true;
 		bool waterEnabled = true;
-		bool terrainEnabled = true;
+		bool terrainEnabled = false;
 		bool fxaaEnabled = true;
 		bool fxaaDebug = false;
 		bool godRaysEnabled = true;
@@ -32,8 +32,8 @@ namespace Utopian
 		float sunInclination = -35.0f;
 		float sunAzimuth = 0.0f;
 		float tessellationFactor = 2.8f;
-		float terrainTextureScaling = 200.0;
-		float terrainBumpmapAmplitude = 0.08;
+		float terrainTextureScaling = 200.0f;
+		float terrainBumpmapAmplitude = 0.08f;
 		bool terrainWireframe = 0;
 		int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
 		float exposure = 1.4f;

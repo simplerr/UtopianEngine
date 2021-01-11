@@ -116,7 +116,7 @@ namespace Utopian
 		return mTransform.GetWorldMatrix();
 	}
 
-	const glm::mat4& CTransform::GetWorldInverseTransposeMatrix() const
+	glm::mat4 CTransform::GetWorldInverseTransposeMatrix() const
 	{
 		return mTransform.GetWorldInverseTransposeMatrix();
 	}

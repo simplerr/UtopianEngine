@@ -54,7 +54,7 @@ namespace Utopian::Vk
 	{
 		VkDescriptorSetLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		createInfo.bindingCount = mLayoutBindings.size();
+		createInfo.bindingCount = (uint32_t)mLayoutBindings.size();
 		createInfo.pBindings = mLayoutBindings.data();
 
 		Debug::ErrorCheck(vkCreateDescriptorSetLayout(GetVkDevice(), &createInfo, nullptr, &mHandle));

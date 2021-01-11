@@ -28,8 +28,8 @@ namespace Utopian
 		const glm::vec3& GetPosition() const;
 		const glm::vec3& GetScale() const;
 		const glm::mat4& GetWorldMatrix() const;
-		const glm::mat4& GetWorldInverseTransposeMatrix() const;
 		const glm::quat& GetOrientation() const;
+		glm::mat4 GetWorldInverseTransposeMatrix() const;
 
 		void RebuildWorldMatrix();
 	//private:

@@ -21,8 +21,8 @@ namespace Utopian
 		// Get the cursor starting position.
 		POINT mousePosition;
 		GetCursorPos(&mousePosition);
-		mMousePosition.x = mousePosition.x;
-		mMousePosition.y = mousePosition.y;
+		mMousePosition.x = (float)mousePosition.x;
+		mMousePosition.y = (float)mousePosition.y;
 
 		// No delta movement to start with
 		mMouseDelta = glm::vec2(0.0f);
@@ -51,7 +51,7 @@ namespace Utopian
 		memcpy(mLastKeyState, mKeyState, sizeof(mKeyState));
 
 		// Get the current keyboard state.
-		GetKeyboardState(mKeyState);
+		(void)GetKeyboardState(mKeyState);
 	}
 
 	//! Draws debug information.
@@ -76,16 +76,16 @@ namespace Utopian
 			int y = HIWORD(lParam);
 
 			if (mMousePosition.x == -1 && mMousePosition.y == -1) {
-				mMousePosition.x = x;
-				mMousePosition.y = y;
+				mMousePosition.x = (float)x;
+				mMousePosition.y = (float)y;
 				break;
 			}
 
 			mMouseDelta.x = x - mMousePosition.x;
 			mMouseDelta.y = mMousePosition.y - y;		// Other way around
 
-			mMousePosition.x = x;
-			mMousePosition.y = y;
+			mMousePosition.x = (float)x;
+			mMousePosition.y = (float)y;
 
 			if (!mVisibleCursor)
 				LockCursorPosition();
@@ -97,8 +97,8 @@ namespace Utopian
 			break;
 		case WM_KEYDOWN:
 		{
-			char key = wParam;
-			if (IsLetter(wParam))
+			char key = (char)wParam;
+			if (IsLetter((char)wParam))
 			{
 				// Change to non captial letter
 				if (!KeyDown(VK_SHIFT, false))
@@ -126,8 +126,8 @@ namespace Utopian
 			ClientToScreen(hwnd, &forcedPos);
 
 			SetCursorPos(forcedPos.x, forcedPos.y);
-			mMousePosition.x = width / 2;
-			mMousePosition.y = height / 2;
+			mMousePosition.x = width / 2.0f;
+			mMousePosition.y = height / 2.0f;
 		}
 	}
 

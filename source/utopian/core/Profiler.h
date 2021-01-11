@@ -41,7 +41,6 @@ namespace Utopian
 		MiniPlot mFpsPlot;
 		std::vector<float> mFrameTimes;
 		Vk::VulkanApp* mVulkanApp;
-		bool mVisible;
 	};
 
 	Profiler& gProfiler();

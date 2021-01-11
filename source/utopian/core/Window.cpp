@@ -31,10 +31,10 @@ namespace Utopian
 		}
 
 		RECT clientRect;
-		clientRect.left = GetSystemMetrics(SM_CXSCREEN) / 2 - mWidth / 2.0f;
-		clientRect.right = GetSystemMetrics(SM_CXSCREEN) / 2 + mWidth / 2.0f;
-		clientRect.top = GetSystemMetrics(SM_CYSCREEN) / 2 - mHeight / 2.0f;
-		clientRect.bottom = GetSystemMetrics(SM_CYSCREEN) / 2 + mHeight / 2.0f;
+		clientRect.left = GetSystemMetrics(SM_CXSCREEN) / 2 - mWidth / 2;
+		clientRect.right = GetSystemMetrics(SM_CXSCREEN) / 2 + mWidth / 2;
+		clientRect.top = GetSystemMetrics(SM_CYSCREEN) / 2 - mHeight / 2;
+		clientRect.bottom = GetSystemMetrics(SM_CYSCREEN) / 2 + mHeight / 2;
 
 		DWORD style = true ? WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN : WS_POPUP | WS_VISIBLE | WS_SYSMENU | WS_CLIPCHILDREN;
 

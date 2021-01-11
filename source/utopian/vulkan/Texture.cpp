@@ -83,6 +83,6 @@ namespace Utopian::Vk
 	
 	uint32_t TextureArray::GetNumImages() const
 	{
-		return mImageInfos.size();
+		return (uint32_t)mImageInfos.size();
 	}
 }

@@ -39,8 +39,8 @@ namespace Utopian::Vk
 			}
 		}
 
-		mVerticesCount = vertexVector.size();
-		mIndicesCount = indexVector.size();
+		mVerticesCount = (uint32_t)vertexVector.size();
+		mIndicesCount = (uint32_t)indexVector.size();
 
 		mBoundingBox.Init(vertexVector);
 	}

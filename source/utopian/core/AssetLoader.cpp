@@ -234,6 +234,6 @@ namespace Utopian
 
 	uint32_t AssetLoader::GetNumAssets() const
 	{
-		return mAssets.size();
+		return (uint32_t)mAssets.size();
 	}
 }

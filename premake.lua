@@ -5,6 +5,7 @@ workspace "UtopianEngine"
    platforms "x64"
    startproject "Editor"
    characterset "ASCII"
+   buildoptions "/Zc:__cplusplus"
 
    -- Defines
    defines
@@ -16,7 +17,9 @@ workspace "UtopianEngine"
       "_WINDOWS",
       "VK_USE_PLATFORM_WIN32_KHR",
       "_USE_MATH_DEFINES",
-      "NOMINMAX"
+      "NOMINMAX",
+      "_CRT_SECURE_NO_WARNINGS",
+      --"LUA_FLOAT_TYPE=1", -- Results in incorrect reading from scene.lua file
    }
 
    -- "Debug"
@@ -24,6 +27,12 @@ workspace "UtopianEngine"
       defines { "DEBUG" }
       flags { "MultiProcessorCompile", }
       symbols "On"
+      linkoptions { "-IGNORE:4099" } -- Ignore "Missing .pdb debug file" warnings for libs used
+      linkoptions { "-IGNORE:4006" } -- Ignore "Already defined in" warnings (some Assimp function are defined twice)
+      
+      disablewarnings { "26812" } -- Ignore "Prefer enum class over enum"
+      disablewarnings { "4715" } -- Ignore "Not all control paths return a value"
+      disablewarnings { "26495" } -- Ignore "Always initialize a member variable"
     
    -- "Release"
    filter "configurations:Release"
@@ -98,7 +107,6 @@ project "Engine"
          links { "HLSLd" }
          links { "OGLCompilerd" }
          links { "SPIRVd" }
-         links { "SPVRemapperd" }
          links { "vulkan-1" }
          links { "assimp" }
          links { "libktx.gl" }

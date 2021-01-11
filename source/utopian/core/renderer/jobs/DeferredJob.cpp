@@ -72,7 +72,7 @@ namespace Utopian
 			light_ubo.lights.push_back(light->GetLightData());
 		}
 
-		light_ubo.constants.numLights = light_ubo.lights.size();
+		light_ubo.constants.numLights = (float)light_ubo.lights.size();
 		light_ubo.UpdateMemory();
 
 		// Note: Todo: Temporary

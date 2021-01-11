@@ -310,9 +310,9 @@ namespace Utopian
 
 		// Indices
 		const uint32_t w = (numCells - 1);
-		for (auto x = 0; x < w; x++)
+		for (auto x = 0u; x < w; x++)
 		{
-			for (auto z = 0; z < w; z++)
+			for (auto z = 0u; z < w; z++)
 			{
 				uint32_t v1 = (x + z * numCells);
 				uint32_t v2 = v1 + numCells;
@@ -348,8 +348,8 @@ namespace Utopian
 
 		glm::vec2 uv = TransformToUv(x, z);
 
-		uint32_t col = floorf(uv.x * hostImage->GetWidth());
-		uint32_t row = floorf(uv.y * hostImage->GetHeight());
+		uint32_t col = (uint32_t)floorf(uv.x * hostImage->GetWidth());
+		uint32_t row = (uint32_t)floorf(uv.y * hostImage->GetHeight());
 
 		if (row >= 0 && col >= 0 && row < hostImage->GetWidth() && col < hostImage->GetHeight())
 		{

@@ -29,7 +29,7 @@ namespace Utopian
 		SetMaterial(glm::vec4(1.0f));
 		SetDirection(glm::vec3(1.0f, 1.0f, 0.0f));
 		SetAtt(0.4f, 0.86f, 0.0f);
-		SetIntensity(0, 0.193, 0);
+		SetIntensity(0.0f, 0.193f, 0.0f);
 		SetType(LightType::POINT_LIGHT);
 		SetRange(100.0f);
 		SetSpot(4.0f);

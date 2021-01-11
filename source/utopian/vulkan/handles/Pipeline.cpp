@@ -102,7 +102,7 @@ namespace Utopian::Vk
 
 		VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 		colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		colorBlendState.attachmentCount = blendAttachmentState.size();
+		colorBlendState.attachmentCount = (uint32_t)blendAttachmentState.size();
 		colorBlendState.pAttachments = blendAttachmentState.data();
 
 		// Viewport state
@@ -118,7 +118,7 @@ namespace Utopian::Vk
 		dynamicStateEnables.push_back(VK_DYNAMIC_STATE_SCISSOR);
 		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		dynamicState.pDynamicStates = dynamicStateEnables.data();
-		dynamicState.dynamicStateCount = dynamicStateEnables.size();
+		dynamicState.dynamicStateCount = (uint32_t)dynamicStateEnables.size();
 
 		// Multi sampling state
 		VkPipelineMultisampleStateCreateInfo multisampleState = {};
@@ -144,7 +144,7 @@ namespace Utopian::Vk
 		pipelineCreateInfo.pViewportState = &viewportState;
 		pipelineCreateInfo.pDynamicState = &dynamicState;
 		pipelineCreateInfo.pMultisampleState = &multisampleState;
-		pipelineCreateInfo.stageCount = shader->shaderStages.size();
+		pipelineCreateInfo.stageCount = (uint32_t)shader->shaderStages.size();
 		pipelineCreateInfo.pStages = shader->shaderStages.data();
 
 		// Create the pipeline

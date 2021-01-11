@@ -222,7 +222,7 @@ namespace Utopian::Vk
 
 	uint32_t Effect::GetNumDescriptorSets() const
 	{
-		return mVkDescriptorSets.size();
+		return (uint32_t)mVkDescriptorSets.size();
 	}
 
 	ShaderCreateInfo Effect::GetShaderCreateInfo() const

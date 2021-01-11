@@ -37,7 +37,7 @@ namespace Utopian
 			std::string name = gAssetLoader().GetAssetByIndex(i).model;
 			name = ExtractFilename(name);
 
-			mAssetNames.push_back(strdup(name.c_str()));
+			mAssetNames.push_back(_strdup(name.c_str()));
 		}
 
 		AddAssetToUi(7, "data/textures/thumbnails/7.png");
@@ -46,7 +46,7 @@ namespace Utopian
 		AddAssetToUi(23, "data/textures/thumbnails/23.png");
 		AddAssetToUi(27, "data/textures/thumbnails/27.png");
 		AddAssetToUi(67, "data/textures/thumbnails/67.png");
-		AddAssetToUi(104, "data/textures/thumbnails/104.png", 0.04 / 128.0f, false);
+		AddAssetToUi(104, "data/textures/thumbnails/104.png", 0.04f / 128.0f, false);
 		AddAssetToUi(136, "data/textures/thumbnails/136.png");
 		AddAssetToUi(145, "data/textures/thumbnails/145.png");
 		AddAssetToUi(149, "data/textures/thumbnails/149.png");
@@ -147,7 +147,7 @@ namespace Utopian
 			if (ImGui::CollapsingHeader("All available assets"))
 			{
 				int selectedAsset = mSelectedUiAsset.assetId;
-				if (ImGui::ListBox("", &selectedAsset, mAssetNames.data(), mAssetNames.size(), 20))
+				if (ImGui::ListBox("", &selectedAsset, mAssetNames.data(), (int)mAssetNames.size(), 20))
 				{
 					UiAsset uiAsset;
 					uiAsset.assetId = selectedAsset;

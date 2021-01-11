@@ -25,7 +25,7 @@ namespace Utopian
 			mBuffer->UnmapMemory();
 
 			dataOffset += dataSize;
-			dataSize = spheres.size() * sizeof(SphereInfo);
+			dataSize = (uint32_t)spheres.size() * sizeof(SphereInfo);
 			mBuffer->MapMemory((void**)&mapped);
 			memcpy(&mapped[dataOffset], spheres.data(), dataSize);
 			mBuffer->UnmapMemory();

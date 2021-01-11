@@ -170,7 +170,7 @@ namespace Utopian
 			}
 
 			ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 600.0f);
-			ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 0.0078f, 0.4);
+			ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 0.0078f, 0.4f);
 		}
 
 		if (ImGui::CollapsingHeader("Water settings", ImGuiTreeNodeFlags_DefaultOpen))

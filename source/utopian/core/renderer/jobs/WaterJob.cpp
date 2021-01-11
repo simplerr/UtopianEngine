@@ -147,7 +147,7 @@ namespace Utopian
 			mLightBlock.lights.push_back(light->GetLightData());
 		}
 
-		mLightBlock.constants.numLights = mLightBlock.lights.size();
+		mLightBlock.constants.numLights = (float)mLightBlock.lights.size();
 		mLightBlock.UpdateMemory();
 
 		renderTarget->Begin("Water Tessellation pass", glm::vec4(0.0f, 0.7f, 0.7f, 1.0f));
@@ -203,9 +203,9 @@ namespace Utopian
 
 		// Indices
 		const uint32_t w = (numCells - 1);
-		for (auto x = 0; x < w; x++)
+		for (uint32_t x = 0u; x < w; x++)
 		{
-			for (auto z = 0; z < w; z++)
+			for (uint32_t z = 0u; z < w; z++)
 			{
 				uint32_t v1 = (x + z * numCells);
 				uint32_t v2 = v1 + numCells;

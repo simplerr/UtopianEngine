@@ -9,7 +9,7 @@
 #include "utility/Module.h"
 #include "utility/Common.h"
 
-class aiMaterial;
+struct aiMaterial;
 
 #define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
 #define PLACEHOLDER_TEXTURE_PATH "data/textures/prototype/Light/texture_12.png"

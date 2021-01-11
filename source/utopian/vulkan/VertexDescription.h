@@ -93,7 +93,7 @@ namespace Utopian::Vk
 			bindingDescriptions.push_back(bindingDescription);
 
 			// Update the binding count
-			inputState.vertexBindingDescriptionCount = bindingDescriptions.size();
+			inputState.vertexBindingDescriptionCount = (uint32_t)bindingDescriptions.size();
 			inputState.pVertexBindingDescriptions = bindingDescriptions.data();
 		}
 
@@ -104,14 +104,14 @@ namespace Utopian::Vk
 			VkVertexInputAttributeDescription attributeDescription;
 
 			attributeDescription.binding = binding;
-			attributeDescription.location = attributeDescriptions.size();
+			attributeDescription.location = (uint32_t)attributeDescriptions.size();
 			attributeDescription.format = attribute.GetFormat();
 			attributeDescription.offset = offsets[binding]; // NOTE: This returns 0 when empty
 
 			attributeDescriptions.push_back(attributeDescription);
 
 			// Update the attribute count
-			inputState.vertexAttributeDescriptionCount = attributeDescriptions.size();
+			inputState.vertexAttributeDescriptionCount = (uint32_t)attributeDescriptions.size();
 			inputState.pVertexAttributeDescriptions = attributeDescriptions.data();
 
 			offsets[binding] += attribute.GetSize();

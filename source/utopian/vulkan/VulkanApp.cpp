@@ -95,7 +95,7 @@ namespace Utopian::Vk
 		// ...
 
 		// Execute render commands from the secondary command buffer
-		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), commandBuffers.size(), commandBuffers.data());
+		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), (uint32_t)commandBuffers.size(), commandBuffers.data());
 
 		// End command buffer recording & the render pass
 		mPrimaryCommandBuffer->CmdEndRenderPass();

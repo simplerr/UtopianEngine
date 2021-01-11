@@ -503,7 +503,7 @@ namespace Utopian::Vk
 		// are added in the same order as their layout location.
 		// Therefor they are added to a map which is sorted on the location index.
 		std::map<uint32_t, const glslang::TType*> inputMap;
-		for (uint32_t i = 0; i < program.getNumLiveAttributes(); i++)
+		for (uint32_t i = 0u; i < (uint32_t)program.getNumLiveAttributes(); i++)
 		{
 			const glslang::TType* ttype = program.getAttributeTType(i);
 			uint32_t location = ttype->getQualifier().layoutLocation;

@@ -28,9 +28,8 @@ namespace Utopian::Vk
 	void Buffer::Create(Device* device, VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, void* data)
 	{
 		mDevice = device;
-		mSize = size;
+		mSize = (uint32_t)size;
 
-		VkMemoryRequirements memReqs;
 		VkMemoryAllocateInfo memAllocInfo = {};
 		memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memAllocInfo.pNext = NULL;

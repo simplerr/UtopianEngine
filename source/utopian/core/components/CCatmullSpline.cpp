@@ -150,7 +150,7 @@ namespace Utopian
 	glm::vec3 CCatmullSpline::GetPosition(float time) const
 	{
 		float splineTime = fmod(time, GetTotalTime());
-		int n = 1 + ((int)splineTime / mTimePerSegment); // n=1 is the first segment
+		int n = 1 + (int)((int)splineTime / mTimePerSegment); // n=1 is the first segment
 
 		float segmentTime = fmod(splineTime, mTimePerSegment);
 		glm::vec3 position = glm::catmullRom(mControlPoints[n-1], mControlPoints[n], mControlPoints[n+1], mControlPoints[n+2], segmentTime / mTimePerSegment);

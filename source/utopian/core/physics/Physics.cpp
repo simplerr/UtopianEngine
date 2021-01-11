@@ -135,8 +135,8 @@ namespace Utopian
 		btVector3 localScaling = btVector3(gridScaling, scale, gridScaling);
 		terrainShape->setLocalScaling(localScaling);
 
-		float minHeightScaled = minHeight * scale;
-		float maxHeightScaled = maxHeight * scale;
+		float minHeightScaled = (float)minHeight * scale;
+		float maxHeightScaled = (float)maxHeight * scale;
 
 		btTransform groundTransform;
 		groundTransform.setIdentity();

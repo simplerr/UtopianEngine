@@ -32,12 +32,12 @@ namespace Utopian::Vk
 		VkPipelineLayoutCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		createInfo.pNext = NULL;
-		createInfo.setLayoutCount = descriptorSetLayouts.size();
+		createInfo.setLayoutCount = (uint32_t)descriptorSetLayouts.size();
 		createInfo.pSetLayouts = descriptorSetLayouts.data();
 
 		if (mPushConstantRanges.size() > 0)
 		{
-			createInfo.pushConstantRangeCount = mPushConstantRanges.size();
+			createInfo.pushConstantRangeCount = (uint32_t)mPushConstantRanges.size();
 			createInfo.pPushConstantRanges = mPushConstantRanges.data();
 		}
 
@@ -107,6 +107,6 @@ namespace Utopian::Vk
 
 	uint32_t PipelineInterface::GetNumDescriptorSets() const
 	{
-		return mDescriptorSetLayouts.size();
+		return (uint32_t)mDescriptorSetLayouts.size();
 	}
 }

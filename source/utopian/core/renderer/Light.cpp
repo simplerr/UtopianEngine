@@ -89,7 +89,7 @@ namespace Utopian
 
 	void Light::SetType(Utopian::LightType type)
 	{
-		mLightData.type = type;
+		mLightData.type = (float)type;
 	}
 
 	void Light::SetIntensity(float ambient, float diffuse, float specular)
@@ -139,6 +139,6 @@ namespace Utopian
 
 	int Light::GetType() const
 	{
-		return mLightData.type;
+		return (int)mLightData.type;
 	}
 }

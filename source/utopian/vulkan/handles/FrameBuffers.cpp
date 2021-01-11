@@ -59,7 +59,7 @@ namespace Utopian::Vk
 		VkFramebufferCreateInfo createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		createInfo.renderPass = renderPass->GetVkHandle();
-		createInfo.attachmentCount = mAttachments.size();
+		createInfo.attachmentCount = (uint32_t)mAttachments.size();
 		createInfo.pAttachments = mAttachments.data();
 		createInfo.width = width;
 		createInfo.height = height;

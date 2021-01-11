@@ -246,7 +246,7 @@ namespace Utopian
 
 	uint32_t InstanceGroup::GetNumInstances()
 	{
-		return mInstances.size();
+		return (uint32_t)mInstances.size();
 	}
 
 	Vk::Buffer* InstanceGroup::GetBuffer()

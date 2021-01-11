@@ -15,7 +15,7 @@ namespace Utopian
 
    bool Ray::TriangleIntersect(const glm::vec3 &v0, const glm::vec3 &v1, const glm::vec3 &v2, glm::vec3& intersectPoint, float &distance)
    {
-      const float EPSILON = 0.0000001;
+      const float EPSILON = 0.0000001f;
       glm::vec3 edge1, edge2, h, s, q;
       float a, f, u, v;
       edge1 = v1 - v0;
@@ -25,7 +25,7 @@ namespace Utopian
       if (a > -EPSILON && a < EPSILON)
          return false; // This ray is parallel to this triangle
 
-      f = 1.0 / a;
+      f = 1.0f / a;
       s = origin - v0;
       u = f * glm::dot(s, h);
       if (u < 0.0 || u > 1.0)

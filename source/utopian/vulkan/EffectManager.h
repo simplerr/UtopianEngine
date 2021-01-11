@@ -14,7 +14,7 @@ namespace Utopian::Vk
 	struct TrackedEffect
 	{
 		SharedPtr<Effect> effect;
-		time_t lastModification;
+		time_t lastModification = 0u;
 	};
 
 	class EffectManager : public Module<EffectManager>

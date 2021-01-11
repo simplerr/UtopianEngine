@@ -22,7 +22,7 @@ public:
 	virtual void UpdateMemory(VkDevice device)
 	{
 		uint8_t* mapped;
-		uint32_t size = vertices.size() * sizeof(GeometryVertex);
+		uint32_t size = (uint32_t)vertices.size() * sizeof(GeometryVertex);
 		mBuffer->MapMemory((void**)&mapped);
 		memcpy(mapped, vertices.data(), size);
 		mBuffer->UnmapMemory();
@@ -30,7 +30,7 @@ public:
 
 	virtual int GetSize()
 	{
-		return vertices.size() * sizeof(GeometryVertex);
+		return (int)vertices.size() * sizeof(GeometryVertex);
 	}
 
 	std::vector<GeometryVertex> vertices;

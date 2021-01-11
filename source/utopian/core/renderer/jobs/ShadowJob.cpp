@@ -19,7 +19,7 @@ namespace Utopian
 		mRenderPass = std::make_shared<Vk::RenderPass>(device);
 		mRenderPass->AddColorAttachment(depthColorImage->GetFormat(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		mRenderPass->AddDepthAttachment(mDepthImage->GetFormat());
-      mRenderPass->Create();
+		mRenderPass->Create();
 
       for (uint32_t i = 0; i < mRenderPass->GetNumColorAttachments(); i++)
       {
@@ -106,12 +106,12 @@ namespace Utopian
          renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
          renderPassBeginInfo.renderArea.extent.width = SHADOWMAP_DIMENSION;
          renderPassBeginInfo.renderArea.extent.height = SHADOWMAP_DIMENSION;
-         renderPassBeginInfo.clearValueCount = mClearValues.size();
+         renderPassBeginInfo.clearValueCount = (uint32_t)mClearValues.size();
          renderPassBeginInfo.pClearValues = mClearValues.data();
          renderPassBeginInfo.framebuffer = mFrameBuffers[cascadeIndex]->GetFrameBuffer(0);
 
          mCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-         mCommandBuffer->CmdSetViewPort(SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
+         mCommandBuffer->CmdSetViewPort((float)SHADOWMAP_DIMENSION, (float)SHADOWMAP_DIMENSION);
          mCommandBuffer->CmdSetScissor(SHADOWMAP_DIMENSION, SHADOWMAP_DIMENSION);
 
 			if (IsEnabled())

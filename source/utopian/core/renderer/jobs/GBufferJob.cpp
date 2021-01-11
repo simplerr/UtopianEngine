@@ -128,12 +128,12 @@ namespace Utopian
 			{
 				mFoliageSpheresBlock.spheres[nextSphereIndex].position = renderable->GetPosition();
 				mFoliageSpheresBlock.spheres[nextSphereIndex].radius = renderable->GetBoundingBox().GetRadius();
-				mFoliageSpheresBlock.constants.padding = glm::vec3(13.37);
+				mFoliageSpheresBlock.constants.padding = glm::vec3(13.37f);
 				nextSphereIndex++;
 			}
 		}
 
-		mFoliageSpheresBlock.constants.numSpheres = nextSphereIndex;
+		mFoliageSpheresBlock.constants.numSpheres = (float)nextSphereIndex;
 		if (mFoliageSpheresBlock.constants.numSpheres > 0)
 			mFoliageSpheresBlock.UpdateMemory();
 

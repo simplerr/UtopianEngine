@@ -162,7 +162,7 @@ void MarchingCubes::InitMarchingCubesJob(Vk::Device* device, uint32_t width, uin
 	mMarchingCubesJob.inputUBO.data.offsets[6] = glm::vec4(mVoxelSize, mVoxelSize, mVoxelSize, 0);
 	mMarchingCubesJob.inputUBO.data.offsets[7] = glm::vec4(0, mVoxelSize, mVoxelSize, 0);
 	mMarchingCubesJob.inputUBO.data.color = glm::vec4(0, 1, 0, 1);
-	mMarchingCubesJob.inputUBO.data.voxelSize = mVoxelSize;
+	mMarchingCubesJob.inputUBO.data.voxelSize = (float)mVoxelSize;
 	mMarchingCubesJob.inputUBO.data.viewDistance = mViewDistance;
 	mMarchingCubesJob.inputUBO.data.voxelsInBlock = mVoxelsInBlock;
 	mMarchingCubesJob.inputUBO.data.flatNormals = false;
@@ -191,7 +191,7 @@ void MarchingCubes::InitTerrainJob(Vk::Device* device, uint32_t width, uint32_t 
 	mTerrainJob.renderTarget->AddWriteOnlyColorAttachment(mTerrainJob.colorImage);
 	mTerrainJob.renderTarget->AddWriteOnlyColorAttachment(mTerrainJob.positionImage, VK_IMAGE_LAYOUT_GENERAL);
 	mTerrainJob.renderTarget->AddWriteOnlyDepthAttachment(mTerrainJob.depthImage);
-	mTerrainJob.renderTarget->SetClearColor(47.0 / 255.0, 141.0 / 255.0, 1.0f);
+	mTerrainJob.renderTarget->SetClearColor(47.0f / 255.0f, 141.0f / 255.0f, 1.0f);
 	mTerrainJob.renderTarget->Create();
 
 	Vk::EffectCreateInfo effectDesc;
@@ -233,9 +233,9 @@ void MarchingCubes::InitIntersectionJob(Vk::Device* device, uint32_t width, uint
 
 glm::ivec3 MarchingCubes::GetBlockCoordinate(glm::vec3 position)
 {
-	int32_t blockX = position.x / (float)(mVoxelSize * mVoxelsInBlock);
-	int32_t blockY = position.y / (float)(mVoxelSize * mVoxelsInBlock);
-	int32_t blockZ = position.z / (float)(mVoxelSize * mVoxelsInBlock);
+	int32_t blockX = (int32_t)(position.x / (float)(mVoxelSize * mVoxelsInBlock));
+	int32_t blockY = (int32_t)(position.y / (float)(mVoxelSize * mVoxelsInBlock));
+	int32_t blockZ = (int32_t)(position.z / (float)(mVoxelSize * mVoxelsInBlock));
 
 	return glm::ivec3(blockX, blockY, blockZ);
 }
@@ -253,7 +253,7 @@ void MarchingCubes::RunNoiseJob()
 void MarchingCubes::RunBrushJob()
 {
 	glm::vec3 target = mIntersectionJob.brushPos;
-	glm::vec3 localPosition = target - glm::vec3((800 - mViewDistance) * mVoxelsInBlock * mVoxelSize);
+	glm::vec3 localPosition = target - glm::vec3((800.0f - mViewDistance) * mVoxelsInBlock * mVoxelSize);
 	glm::ivec3 startCoord = (localPosition / (float)mVoxelSize) - mBrushJob.textureRegion / 2.0f;
 
 	mBrushJob.inputUBO.data.startCoord = startCoord;
@@ -324,7 +324,7 @@ void MarchingCubes::UpdateBlockList()
 												   coord.z * mVoxelsInBlock * mVoxelSize);
 
 					glm::vec3 color = glm::vec3((rand() % 100) / 100.0f, (rand() % 100) / 100.0f, (rand() % 100) / 100.0f);
-					Block* block = new Block(mVulkanApp->GetDevice(), position, color, mVoxelsInBlock, mVoxelSize);
+					Block* block = new Block(mVulkanApp->GetDevice(), position, color, mVoxelsInBlock, (float)mVoxelSize);
 
 					mBlockList[blockKey] = block;
 
@@ -352,7 +352,7 @@ void MarchingCubes::RunMarchingCubesJob()
 		{
 			mMarchingCubesJob.inputUBO.data.projection = mCamera->GetProjection();
 			mMarchingCubesJob.inputUBO.data.view = mCamera->GetView();
-			mMarchingCubesJob.inputUBO.data.voxelSize = mVoxelSize;
+			mMarchingCubesJob.inputUBO.data.voxelSize = (float)mVoxelSize;
 			mMarchingCubesJob.inputUBO.data.time = gTimer().GetTime();
 			mMarchingCubesJob.inputUBO.UpdateMemory();
 

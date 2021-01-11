@@ -9,7 +9,7 @@
 
 namespace LegitProfiler
 {
-   class ProfilerTask;
+   struct ProfilerTask;
 }
 
 namespace Utopian::Vk

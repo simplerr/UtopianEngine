@@ -72,10 +72,10 @@ namespace Utopian
 		mSSRSettingsBlock.data._PixelStride = 1;
 		mSSRSettingsBlock.data._PixelStrideZCuttoff = 100.0f;
 		mSSRSettingsBlock.data._MaxRayDistance = 2000.0f;
-		mSSRSettingsBlock.data._ScreenEdgeFadeStart = 0.90;
+		mSSRSettingsBlock.data._ScreenEdgeFadeStart = 0.90f;
 		mSSRSettingsBlock.data._EyeFadeStart = 0.0f;
 		mSSRSettingsBlock.data._EyeFadeEnd = 1.0f;
-		mSSRSettingsBlock.data._GeometryThickness = 0.16;
+		mSSRSettingsBlock.data._GeometryThickness = 0.16f;
 
 		// const uint32_t size = 640;
 		// gScreenQuadUi().AddQuad(100, 100, size, size, ssrImage.get(), mTraceRenderTarget->GetSampler());

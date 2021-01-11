@@ -44,16 +44,16 @@ namespace Utopian
          /* GPU frame time */
          float frameTime = 0.0f;
          for (auto& iter : mProfilerTasks)
-            frameTime += iter.GetLength() * 1000.0f;
+            frameTime += (float)iter.GetLength() * 1000.0f;
 
          mFrametimePlot.AddData(frameTime);
 
          /* GPU memory usage */
          VmaBudget budget = mVulkanApp->GetDevice()->GetMemoryBudget(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
-         mMemoryUsagePlot.AddData(budget.allocationBytes / 1000000u);
+         mMemoryUsagePlot.AddData(budget.allocationBytes / 1000000.0f);
 
          /* FPS */
-         mFpsPlot.AddData(gTimer().GetFPS());
+         mFpsPlot.AddData((float)gTimer().GetFPS());
 
          ImGui::Begin("Profiling data");
          mFrametimePlot.Render("GPU frame time", 0.0f, 2.0f);
@@ -117,7 +117,7 @@ namespace Utopian
       if (mEntries.size() != 0)
       {
          ImGui::Text("%s: %.2f", label.c_str(), mEntries.at(mEntries.size() - 1));
-         ImGui::PlotLines("", mEntries.data(), mEntries.size(), 0, "", minScale, maxScale, ImVec2(0.0f, 40.0f));
+         ImGui::PlotLines("", mEntries.data(), (int)mEntries.size(), 0, "", minScale, maxScale, ImVec2(0.0f, 40.0f));
       }
    }
 

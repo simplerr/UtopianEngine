@@ -6,7 +6,7 @@
 namespace Utopian
 {
 	class Renderer;
-	class SceneInfo;
+	struct SceneInfo;
 
 	class InstancingManager
 	{

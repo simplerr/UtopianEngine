@@ -60,6 +60,6 @@ namespace Utopian::Vk
 	void QueryPoolStatistics::Reset(CommandBuffer* commandBuffer)
 	{
 		VkCommandBuffer cmdBuffer = commandBuffer->GetVkHandle();
-		vkCmdResetQueryPool(cmdBuffer, mHandle, 0, mStatistics.size());
+		vkCmdResetQueryPool(cmdBuffer, mHandle, 0, (uint32_t)mStatistics.size());
 	}
 }

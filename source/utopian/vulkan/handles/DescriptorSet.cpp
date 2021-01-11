@@ -222,7 +222,7 @@ namespace Utopian::Vk
 
 	void DescriptorSet::UpdateDescriptorSets()
 	{
-		vkUpdateDescriptorSets(mDevice->GetVkDevice(), mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
+		vkUpdateDescriptorSets(mDevice->GetVkDevice(), (uint32_t)mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
 	}
 
 	VkDescriptorSet DescriptorSet::GetVkHandle() const
@@ -262,7 +262,7 @@ namespace Utopian::Vk
 			VkDescriptorPoolCreateInfo createInfo = {};
 			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 			createInfo.maxSets = maxSets;
-			createInfo.poolSizeCount = mDescriptorSizes.size();
+			createInfo.poolSizeCount = (uint32_t)mDescriptorSizes.size();
 			createInfo.pPoolSizes = mDescriptorSizes.data();
 			createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 

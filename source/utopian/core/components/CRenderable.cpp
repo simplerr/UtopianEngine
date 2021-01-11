@@ -58,7 +58,7 @@ namespace Utopian
 		luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
 		luaObject.SetString("path", GetPath().c_str());
-		luaObject.SetNumber("render_flags", GetRenderFlags());
+		luaObject.SetNumber("render_flags", (lua_Number)GetRenderFlags());
 
 		glm::vec4 color = GetColor();
 		luaObject.SetNumber("color_r", color.r);

@@ -42,7 +42,7 @@ namespace Utopian::Vk
 			enabledValidationFeatures.push_back(VK_VALIDATION_FEATURE_ENABLE_GPU_ASSISTED_EXT);
 #endif
 			validationFeatures.sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT;
-			validationFeatures.enabledValidationFeatureCount = enabledValidationFeatures.size();
+			validationFeatures.enabledValidationFeatureCount = (uint32_t)enabledValidationFeatures.size();
 			validationFeatures.pEnabledValidationFeatures = enabledValidationFeatures.data();
 			debugUtilsCreateInfo.pNext = &validationFeatures;
 

@@ -35,7 +35,7 @@ namespace Utopian
 			LuaPlus::LuaObject actorData = luaActor.GetValue();
 
 			std::string name = actorData["actor_name"].ToString();
-			SceneLayer sceneLayer = actorData["scene_layer"].ToNumber();
+			SceneLayer sceneLayer = (SceneLayer)actorData["scene_layer"].ToInteger();
 
 			SharedPtr<Actor> actor = Actor::Create(name);
 
@@ -55,10 +55,10 @@ namespace Utopian
 				{
 					glm::vec3 position(componentData["pos_x"].ToNumber(), componentData["pos_y"].ToNumber(), componentData["pos_z"].ToNumber());
 					glm::vec3 scale(componentData["scale_x"].ToNumber(), componentData["scale_y"].ToNumber(), componentData["scale_z"].ToNumber());
-					glm::quat orientation = glm::quat(componentData["orientation_w"].ToNumber(),
-													  componentData["orientation_x"].ToNumber(),
-													  componentData["orientation_y"].ToNumber(),
-													  componentData["orientation_z"].ToNumber());
+					glm::quat orientation = glm::quat((float)componentData["orientation_w"].ToNumber(),
+													  (float)componentData["orientation_x"].ToNumber(),
+													  (float)componentData["orientation_y"].ToNumber(),
+													  (float)componentData["orientation_z"].ToNumber());
 
 					CTransform* transform = actor->AddComponent<CTransform>(position);
 					transform->SetOrientation(orientation);
@@ -79,9 +79,9 @@ namespace Utopian
 					glm::vec3 att(componentData["att_x"].ToNumber(), componentData["att_y"].ToNumber(), componentData["att_z"].ToNumber());
 					glm::vec3 dir(componentData["dir_x"].ToNumber(), componentData["dir_y"].ToNumber(), componentData["dir_z"].ToNumber());
 					glm::vec3 intensity(componentData["intensity_x"].ToNumber(), componentData["intensity_y"].ToNumber(), componentData["intensity_z"].ToNumber());
-					uint32_t type = componentData["type"].ToInteger();
-					float spot = componentData["spot"].ToNumber();
-					float range = componentData["range"].ToNumber();
+					uint32_t type = (uint32_t)componentData["type"].ToInteger();
+					float spot = (float)componentData["spot"].ToNumber();
+					float range = (float)componentData["range"].ToNumber();
 
 					CLight* light = actor->AddComponent<CLight>();
 					light->SetMaterial(glm::vec4(color, 1.0f));
@@ -95,9 +95,9 @@ namespace Utopian
 				else if (name == "CCamera")
 				{
 					glm::vec3 target(componentData["look_at_x"].ToNumber(), componentData["look_at_y"].ToNumber(), componentData["look_at_z"].ToNumber());
-					float fov = componentData["fov"].ToNumber();
-					float nearPlane = componentData["near_plane"].ToNumber();
-					float farPlane = componentData["far_plane"].ToNumber();
+					float fov = (float)componentData["fov"].ToNumber();
+					float nearPlane = (float)componentData["near_plane"].ToNumber();
+					float farPlane = (float)componentData["far_plane"].ToNumber();
 					CCamera* camera = actor->AddComponent<CCamera>(window, fov, nearPlane, farPlane);
 					World::Instance().SynchronizeNodeTransforms();
 					camera->LookAt(target);
@@ -105,20 +105,20 @@ namespace Utopian
 				}
 				else if (name == "CNoClip")
 				{
-					float speed = componentData["speed"].ToNumber();
+					float speed = (float)componentData["speed"].ToNumber();
 					CNoClip* noclip = actor->AddComponent<CNoClip>(speed);
 				}
 				else if (name == "CPlayerControl")
 				{
-					float maxSpeed = componentData["maxSpeed"].ToNumber();
-					float jumpStrength = componentData["jumpStrength"].ToNumber();
+					float maxSpeed = (float)componentData["maxSpeed"].ToNumber();
+					float jumpStrength = (float)componentData["jumpStrength"].ToNumber();
 
 					CPlayerControl* playerControl = actor->AddComponent<CPlayerControl>(maxSpeed, jumpStrength);
 				}
 				else if (name == "CRenderable")
 				{
 					std::string path = componentData["path"].ToString();
-					uint32_t renderFlags = componentData["render_flags"].ToNumber();
+					uint32_t renderFlags = (uint32_t)componentData["render_flags"].ToInteger();
 					glm::vec4 color(componentData["color_r"].ToNumber(), componentData["color_g"].ToNumber(), componentData["color_b"].ToNumber(), componentData["color_a"].ToNumber());
 
 					CRenderable* renderable = actor->AddComponent<CRenderable>();
@@ -140,8 +140,8 @@ namespace Utopian
 				else if (name == "CCatmullSpline")
 				{
 					std::string filename = componentData["filename"].ToString();
-					float timePerSegment = componentData["time_per_segment"].ToNumber();
-					uint32_t drawDebug = componentData["draw_debug"].ToInteger();
+					float timePerSegment = (float)componentData["time_per_segment"].ToNumber();
+					uint32_t drawDebug = (uint32_t)componentData["draw_debug"].ToInteger();
 					CCatmullSpline* catmullSpline = actor->AddComponent<CCatmullSpline>(filename);
 					catmullSpline->SetTimePerSegment(timePerSegment);
 					catmullSpline->SetDrawDebug(drawDebug);
@@ -149,10 +149,10 @@ namespace Utopian
 				else if (name == "CRigidBody")
 				{
 					CollisionShapeType collisionShape = (CollisionShapeType)componentData["collisionShapeType"].ToNumber();
-					float mass = componentData["mass"].ToNumber();
-					float friction = componentData["friction"].ToNumber();
-					float rollingFriction = componentData["rollingFriction"].ToNumber();
-					float restitution = componentData["restitution"].ToNumber();
+					float mass = (float)componentData["mass"].ToNumber();
+					float friction = (float)componentData["friction"].ToNumber();
+					float rollingFriction = (float)componentData["rollingFriction"].ToNumber();
+					float restitution = (float)componentData["restitution"].ToNumber();
 					bool kinematic = componentData["kinematic"].GetBoolean();
 					glm::vec3 anisotropicFriction(componentData["anisotropic_friciton_x"].ToNumber(),
 					 							  componentData["anisotropic_friciton_y"].ToNumber(),
@@ -190,7 +190,7 @@ namespace Utopian
 			LuaPlus::LuaObject luaActor;
 			luaActor.AssignNewTable(gLuaManager().GetLuaState());
 			luaActor.SetString("actor_name", actor->GetName().c_str());
-			luaActor.SetNumber("scene_layer", actor->GetSceneLayer());
+			luaActor.SetNumber("scene_layer", (lua_Number)actor->GetSceneLayer());
 
 			LuaPlus::LuaObject luaComponentTable;
 			luaComponentTable.AssignNewTable(gLuaManager().GetLuaState());

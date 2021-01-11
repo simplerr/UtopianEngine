@@ -13,7 +13,7 @@ namespace Utopian
 		SetRadius(15000);
 
 		// Random orbit position
-		mCounter = rand() % 100;
+		mCounter = (float)(rand() % 100);
 	}
 
 	COrbit::~COrbit()

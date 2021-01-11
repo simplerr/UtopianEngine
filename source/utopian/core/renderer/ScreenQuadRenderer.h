@@ -12,6 +12,7 @@ namespace Utopian
 	{
 	public:
 		ScreenQuad(uint32_t l, uint32_t t, uint32_t w, uint32_t h, uint32_t layer) {
+			descriptorSet = nullptr;
 			left = l;
 			top = t;
 			width = w;
