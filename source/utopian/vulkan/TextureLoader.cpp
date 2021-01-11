@@ -9,6 +9,7 @@
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
 #include "utility/Utility.h"
+#include <vulkan/vulkan_core.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
 #include <gli/gli.hpp>
@@ -227,6 +228,16 @@ namespace Utopian::Vk
 		sampler->createInfo.minLod = 0.0f;
 		sampler->createInfo.maxLod = 1.0f;
 		sampler->createInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+
+		// Check if linear filtering is supported
+		VkFormatProperties formatProps;
+		vkGetPhysicalDeviceFormatProperties(mDevice->GetPhysicalDevice(), format, &formatProps);
+		if (!(formatProps.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT))
+		{
+			sampler->createInfo.magFilter = VK_FILTER_NEAREST;
+			sampler->createInfo.minFilter = VK_FILTER_NEAREST;
+		}
+
 		sampler->Create();
 
 		SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
