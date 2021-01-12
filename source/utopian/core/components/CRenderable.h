@@ -38,6 +38,7 @@ namespace Utopian
 		// Render flag settings
 		void SetRenderFlags(uint32_t renderFlags);
 		void AppendRenderFlags(uint32_t renderFlags);
+		void RemoveRenderFlags(uint32_t renderFlags);
 		uint32_t GetRenderFlags() const;
 		const bool HasRenderFlags(uint32_t renderFlags) const;
 		const bool IsPushingFoliage() const;

@@ -72,6 +72,7 @@ namespace Utopian
 		mBoundingBox = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_BOUNDING_BOX);
 		mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 		mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
+		mCastShadow = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_CAST_SHADOW);
 
 		std::vector<Vk::Mesh*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
 		std::vector<Vk::Texture*> allTextures;
@@ -168,6 +169,18 @@ namespace Utopian
 					flag |= RenderFlags::RENDER_FLAG_WIREFRAME;
 				else
 					flag &= ~RenderFlags::RENDER_FLAG_WIREFRAME;
+
+				mRenderable->SetRenderFlags(flag);
+			}
+
+			if (ImGui::Checkbox("Cast shadow", &mCastShadow))
+			{
+				uint32_t flag = mRenderable->GetRenderFlags();
+
+				if (mCastShadow)
+					flag |= RenderFlags::RENDER_FLAG_CAST_SHADOW;
+				else
+					flag &= ~RenderFlags::RENDER_FLAG_CAST_SHADOW;
 
 				mRenderable->SetRenderFlags(flag);
 			}

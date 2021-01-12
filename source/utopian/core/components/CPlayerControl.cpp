@@ -1,3 +1,4 @@
+#include <core/renderer/Renderable.h>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/geometric.hpp>
 #include <vulkan/ModelLoader.h>
@@ -32,6 +33,7 @@ namespace Utopian
 		mViewmodel->SetModel(model);
 		mViewmodel->AddRotation(glm::vec3(glm::pi<float>(), 0.0f, 0.0f));
 		mViewmodel->SetVisible(false);
+		mViewmodel->RemoveRenderFlags(RENDER_FLAG_CAST_SHADOW);
 	}
 
 	CPlayerControl::~CPlayerControl()

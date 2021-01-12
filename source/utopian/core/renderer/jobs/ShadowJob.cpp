@@ -135,26 +135,26 @@ namespace Utopian
 						for (Vk::Mesh* mesh : model->mMeshes)
 						{
 							CascadePushConst pushConst(glm::mat4(), cascadeIndex);
-                     mCommandBuffer->CmdPushConstants(mEffectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
+							mCommandBuffer->CmdPushConstants(mEffectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
 							VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 							VkDescriptorSet descriptorSets[2] = { mEffectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-                     mCommandBuffer->CmdBindDescriptorSet(mEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+							mCommandBuffer->CmdBindDescriptorSet(mEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-                     mCommandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-                     mCommandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
-                     mCommandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                     mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+							mCommandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+							mCommandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+							mCommandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+							mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
 						}
 					}
 				}
 
-            mCommandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+				mCommandBuffer->CmdBindPipeline(mEffect->GetPipeline());
 
 				/* Render all renderables */
 				for (auto& renderable : jobInput.sceneInfo.renderables)
 				{
-					if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+					if (!renderable->IsVisible() || !renderable->HasRenderFlags(RENDER_FLAG_CAST_SHADOW))
 						continue;
 
 					Vk::StaticModel* model = renderable->GetModel();
@@ -162,26 +162,26 @@ namespace Utopian
 					for (Vk::Mesh* mesh : model->mMeshes)
 					{
 						CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
-                  mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
+						mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
 						VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
 						VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-                  mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+						mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-                  mCommandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-                  mCommandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                  mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+						mCommandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+						mCommandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+						mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
 					}
 				}
 			}
 
-         mCommandBuffer->CmdEndRenderPass();
+			mCommandBuffer->CmdEndRenderPass();
 		}
 
-      mQueryPool->End(mCommandBuffer.get());
-      Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
+		mQueryPool->End(mCommandBuffer.get());
+		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
 
-      mCommandBuffer->Submit(GetWaitSemahore(), GetCompletedSemahore());
-	   gProfiler().AddProfilerTask("Cascade pass: ", mQueryPool->GetStartTimestamp(), mQueryPool->GetEndTimestamp(), glm::vec4(1.0, 1.0, 0.0, 1.0));
+		mCommandBuffer->Submit(GetWaitSemahore(), GetCompletedSemahore());
+		gProfiler().AddProfilerTask("Cascade pass: ", mQueryPool->GetStartTimestamp(), mQueryPool->GetEndTimestamp(), glm::vec4(1.0, 1.0, 0.0, 1.0));
 	}
 }

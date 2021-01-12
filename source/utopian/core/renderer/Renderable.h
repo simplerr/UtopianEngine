@@ -16,6 +16,7 @@ namespace Utopian
 		RENDER_FLAG_NORMAL_DEBUG = 4,
 		RENDER_FLAG_BOUNDING_BOX = 8,
 		RENDER_FLAG_WIREFRAME = 16,
+		RENDER_FLAG_CAST_SHADOW = 32,
 	};
 
 	class Renderable : public SceneNode
@@ -40,6 +41,7 @@ namespace Utopian
 		void SetPushFoliage(bool push);
 		void SetRenderFlags(uint32_t renderFlags);
 		void AppendRenderFlags(uint32_t renderFlags);
+		void RemoveRenderFlags(uint32_t renderFlags);
 
 		Utopian::Vk::StaticModel* GetModel();
 		const BoundingBox GetBoundingBox() const;

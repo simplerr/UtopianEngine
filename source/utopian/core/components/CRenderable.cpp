@@ -114,7 +114,12 @@ namespace Utopian
 
 	void CRenderable::AppendRenderFlags(uint32_t renderFlags)
 	{
-		mInternal->SetRenderFlags(mInternal->GetRenderFlags() | renderFlags);
+		mInternal->AppendRenderFlags(renderFlags);
+	}
+
+	void CRenderable::RemoveRenderFlags(uint32_t renderFlags)
+	{
+		mInternal->RemoveRenderFlags(renderFlags);
 	}
 
 	void CRenderable::EnableBoundingBox()

@@ -9,7 +9,7 @@ namespace Utopian
 {
 	Renderable::Renderable()
 	{
-		SetRenderFlags(RENDER_FLAG_DEFERRED);
+		SetRenderFlags(RENDER_FLAG_DEFERRED | RENDER_FLAG_CAST_SHADOW);
 		SetTileFactor(glm::vec2(1.0f, 1.0f));
 		SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		SetVisible(true);
@@ -93,6 +93,11 @@ namespace Utopian
 	void Renderable::AppendRenderFlags(uint32_t renderFlags)
 	{
 		mRenderFlags |= renderFlags;
+	}
+
+	void Renderable::RemoveRenderFlags(uint32_t renderFlags)
+	{
+		mRenderFlags &= (~renderFlags);
 	}
 
 	const BoundingBox Renderable::GetBoundingBox() const

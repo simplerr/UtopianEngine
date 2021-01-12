@@ -63,6 +63,7 @@ namespace Utopian
 		bool mBoundingBox;
 		bool mDebugNormals;
 		bool mWireframe;
+		bool mCastShadow;
 
 		// For ImGui debug drawing
 		std::vector<TextureInfo> textureInfos;
