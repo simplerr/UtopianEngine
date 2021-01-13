@@ -41,31 +41,34 @@ namespace Utopian
 		mRenderTarget->Begin("Geometry thickness pass", glm::vec4(0.5, 1.0, 1.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
-		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-
-		// Todo: Instanced objects
-
-		/* Render all renderables */
-		for (auto& renderable : jobInput.sceneInfo.renderables)
+		if (IsEnabled())
 		{
-			if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
-				continue;
+			// Todo: Should this be moved to the effect instead?
+			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
 
-			Vk::StaticModel * model = renderable->GetModel();
+			// Todo: Instanced objects
 
-			for (Vk::Mesh* mesh : model->mMeshes)
+			/* Render all renderables */
+			for (auto& renderable : jobInput.sceneInfo.renderables)
 			{
-				Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
-				commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+				if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
+					continue;
 
-				VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-				VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-				commandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+				Vk::StaticModel * model = renderable->GetModel();
 
-				commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-				commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-				commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				for (Vk::Mesh* mesh : model->mMeshes)
+				{
+					Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+					commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+
+					VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
+					VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
+					commandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+					commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
+					commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+				}
 			}
 		}
 

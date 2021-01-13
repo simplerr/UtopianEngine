@@ -47,11 +47,14 @@ namespace Utopian
 		mRenderTarget->Begin("SSAO blur pass", glm::vec4(0.5, 1.0, 0.0, 1.0));
 		Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
-		// Todo: Should this be moved to the effect instead?
-		commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mEffect);
+		if (IsEnabled())
+		{
+			// Todo: Should this be moved to the effect instead?
+			commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(mEffect);
 
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+			gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		}
 
 		mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
 	}

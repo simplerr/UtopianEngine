@@ -124,13 +124,17 @@ namespace Utopian
 		mSkyParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
 		mSkyParameterBlock.data.onlySun = false;
 		mSkyParameterBlock.UpdateMemory();
-
+		
 		mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.2, 1.0, 0.0, 1.0));
-		Vk::CommandBuffer* commandBuffer = mTraceRenderTarget->GetCommandBuffer();
 
-		commandBuffer->CmdBindPipeline(mTraceSSREffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mTraceSSREffect);
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		if (IsEnabled())
+		{
+			Vk::CommandBuffer* commandBuffer = mTraceRenderTarget->GetCommandBuffer();
+
+			commandBuffer->CmdBindPipeline(mTraceSSREffect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(mTraceSSREffect);
+			gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		}
 
 		mTraceRenderTarget->End(GetWaitSemahore(), mTracePassSemaphore);
 	}
@@ -138,11 +142,14 @@ namespace Utopian
 	void SSRJob::RenderBlurPass(const JobInput& jobInput)
 	{
 		mBlurRenderTarget->Begin("SSR blur pass", glm::vec4(0.5, 0.7, 0.3, 1.0));
-		Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
 
-		commandBuffer->CmdBindPipeline(mBlurSSREffect->GetPipeline());
-		commandBuffer->CmdBindDescriptorSets(mBlurSSREffect);
-		gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		if (IsEnabled())
+		{
+			Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
+			commandBuffer->CmdBindPipeline(mBlurSSREffect->GetPipeline());
+			commandBuffer->CmdBindDescriptorSets(mBlurSSREffect);
+			gRendererUtility().DrawFullscreenQuad(commandBuffer);
+		}
 
 		mBlurRenderTarget->End(mTracePassSemaphore, GetCompletedSemahore());
 	}

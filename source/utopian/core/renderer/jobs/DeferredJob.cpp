@@ -58,36 +58,43 @@ namespace Utopian
 
 	void DeferredJob::Render(const JobInput& jobInput)
 	{
-		// Settings data
-		settings_ubo.data.fogColor = jobInput.renderingSettings.fogColor;
-		settings_ubo.data.fogStart = jobInput.renderingSettings.fogStart;
-		settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
-		settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
-		settings_ubo.UpdateMemory();
+		static bool first = true;
 
-		// Light array
-		light_ubo.lights.clear();
-		for (auto& light : jobInput.sceneInfo.lights)
+		if (first)
 		{
-			light_ubo.lights.push_back(light->GetLightData());
+			// Settings data
+			settings_ubo.data.fogColor = jobInput.renderingSettings.fogColor;
+			settings_ubo.data.fogStart = jobInput.renderingSettings.fogStart;
+			settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
+			settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
+			settings_ubo.UpdateMemory();
+
+			// Light array
+			light_ubo.lights.clear();
+			for (auto& light : jobInput.sceneInfo.lights)
+			{
+				light_ubo.lights.push_back(light->GetLightData());
+			}
+
+			light_ubo.constants.numLights = (float)light_ubo.lights.size();
+			light_ubo.UpdateMemory();
+
+			// Note: Todo: Temporary
+			for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
+			{
+				cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
+				cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
+			}
+
+			// Note: This should probably be moved. We need the fragment position in view space
+			// when comparing it's Z value to find out which shadow map cascade it should sample from.
+			cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+			cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
+			cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
+			cascade_ubo.UpdateMemory();
+
+			first = true;
 		}
-
-		light_ubo.constants.numLights = (float)light_ubo.lights.size();
-		light_ubo.UpdateMemory();
-
-		// Note: Todo: Temporary
-		for (uint32_t i = 0; i < SHADOW_MAP_CASCADE_COUNT; i++)
-		{
-			cascade_ubo.data.cascadeSplits[i] = jobInput.sceneInfo.cascades[i].splitDepth;
-			cascade_ubo.data.cascadeViewProjMat[i] = jobInput.sceneInfo.cascades[i].viewProjMatrix;
-		}
-
-		// Note: This should probably be moved. We need the fragment position in view space
-		// when comparing it's Z value to find out which shadow map cascade it should sample from.
-		cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
-		cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
-		cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
-		cascade_ubo.UpdateMemory();
 
 		// End of temporary
 
