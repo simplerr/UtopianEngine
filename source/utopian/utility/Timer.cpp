@@ -3,87 +3,65 @@
 
 namespace Utopian
 {
+	Timer::Timer()
+	{
+		mStartTime = gTimer().GetTimestamp();
+	}
+
 	Timer& gTimer()
 	{
 		return Timer::Instance();
 	}
 
-	void Timer::FrameBegin()
+	void Timer::CalculateFrameTime()
 	{
-		mFrameBegin = std::chrono::high_resolution_clock::now();
-		mFirstFrame = false;
-	}
+		// Raw frame time calculation
+		static Timestamp previousTimestamp = gTimer().GetTimestamp();
+		mFrameTime = gTimer().GetElapsedTime(previousTimestamp);
+		previousTimestamp = gTimer().GetTimestamp();
 
-	uint32_t Timer::FrameEnd()
-	{
-		// FrameBegin() needs to be called first
-		if (mFirstFrame)
-			return -1;
-
-		mFrameCounter++;
-		auto frameEnd = std::chrono::high_resolution_clock::now();
-		auto tDiff = std::chrono::duration<double, std::milli>(frameEnd - mFrameBegin).count();
-		mFrameTime = (float)tDiff / 1000.0f;
-
-		// Convert to clamped timer value
-		mTimer += mTimerSpeed * mFrameTime;
-		if (mTimer > 1.0)
+		// Average frame time calculation
+		static Timestamp previousSampleTimestamp = gTimer().GetTimestamp();
+		if (gTimer().GetElapsedTime(previousSampleTimestamp) > mFrameTimeSamplePeriod)
 		{
-			mTimer -= 1.0f;
+			mAverageFrameTime = 0.0;
+			for (uint32_t i = 0u; i < mFrameTimeList.size(); i++)
+			{
+				mAverageFrameTime += mFrameTimeList[i];
+			}
+
+			mAverageFrameTime /= mFrameTimeList.size();
+			mFrameTimeList.clear();
+
+			previousSampleTimestamp = gTimer().GetTimestamp();
 		}
 
-		mFpsTimer += (float)tDiff;
-		mLifetimeTimer += (float)tDiff;
-
-		// Increment frameCounter for 1 second, then update the FPS
-		if (mFpsTimer > 1000.0f)
-		{
-			mFramesPerSecond = mFrameCounter;
-			mFpsTimer = 0.0f;
-			mFrameCounter = 0;
-
-			// Add FPS to the log
-			mFpsLog.push_back((float)mFramesPerSecond);
-
-			return mFramesPerSecond;
-		}
-
-		return -1;
+		mFrameTimeList.push_back(mFrameTime);
 	}
 
-	uint32_t Timer::GetFPS() const
-	{
-		return mFramesPerSecond;
-	}
-
-	float Timer::GetTime() const
-	{
-		return mLifetimeTimer;
-	}
-
-	void Timer::PrintLog(std::ofstream& fout) const
-	{
-		fout << "Capture time: " << mLifetimeTimer / 1000.0f << " seconds" << std::endl;
-
-		float sum = 0.0f;
-		for (int i = 0; i < mFpsLog.size(); i++)
-		{
-			//fout << mFpsLog[i] << std::endl;
-			sum += mFpsLog[i];
-		}
-
-		fout << "Average FPS: " << sum / mFpsLog.size() << std::endl;
-	}
-
-	void Timer::ResetLifetimeCounter()
-	{
-		mLifetimeTimer = 0;
-		mFpsLog.clear();
-	}
-	
-	float Timer::GetFrameTime() const
+	double Timer::GetFrameTime() const
 	{
 		return mFrameTime;
+	}
+	
+	double Timer::GetFps() const
+	{
+		return 1000.0f / GetFrameTime();
+	}
+
+	double Timer::GetAverageFrameTime() const
+	{
+		return mAverageFrameTime;
+	}
+	
+	double Timer::GetAverageFps() const
+	{
+		return 1000.0f / GetAverageFrameTime();
+	}
+
+	double Timer::GetTime() const
+	{
+		return GetElapsedTime(mStartTime);
 	}
 
 	Timestamp Timer::GetTimestamp() const

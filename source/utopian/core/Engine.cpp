@@ -158,8 +158,6 @@ namespace Utopian
 			if (mPreFrameCallback != nullptr)
 				mPreFrameCallback();
 
-			gTimer().FrameEnd();
-
 			mVulkanApp->PrepareFrame();
 
 			for(auto& plugin : mPlugins)
@@ -173,7 +171,8 @@ namespace Utopian
 			mVulkanApp->Render();
 
 			mVulkanApp->SubmitFrame();
-			gTimer().FrameBegin();
+
+			gTimer().CalculateFrameTime();
 		}
 	}
 	

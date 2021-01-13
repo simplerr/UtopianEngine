@@ -53,7 +53,7 @@ namespace Utopian
          mMemoryUsagePlot.AddData(budget.allocationBytes / 1000000.0f);
 
          /* FPS */
-         mFpsPlot.AddData((float)gTimer().GetFPS());
+         mFpsPlot.AddData((float)gTimer().GetAverageFps());
 
          ImGui::Begin("Profiling data");
          mFrametimePlot.Render("GPU frame time", 0.0f, 2.0f);
@@ -123,7 +123,7 @@ namespace Utopian
 
    void MiniPlot::AddData(float data)
    {
-      float currentTimeMs = gTimer().GetTime();
+      float currentTimeMs = (float)gTimer().GetTime();
       if (currentTimeMs - mLastAddTimestamp > mUpdateIntervalMs)
       {
          mEntries.push_back(data);

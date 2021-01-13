@@ -54,7 +54,7 @@ namespace Utopian
 	void SkydomeJob::Render(const JobInput& jobInput)
 	{
 		// Move sun
-		mSunAzimuth += Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;
+		mSunAzimuth += (float)Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;
 
 		// Calculate light direction
 		float sunInclination = glm::radians(jobInput.renderingSettings.sunInclination);

@@ -353,7 +353,7 @@ void MarchingCubes::RunMarchingCubesJob()
 			mMarchingCubesJob.inputUBO.data.projection = mCamera->GetProjection();
 			mMarchingCubesJob.inputUBO.data.view = mCamera->GetView();
 			mMarchingCubesJob.inputUBO.data.voxelSize = (float)mVoxelSize;
-			mMarchingCubesJob.inputUBO.data.time = gTimer().GetTime();
+			mMarchingCubesJob.inputUBO.data.time = (float)gTimer().GetTime();
 			mMarchingCubesJob.inputUBO.UpdateMemory();
 
 			// Reset block vertex count

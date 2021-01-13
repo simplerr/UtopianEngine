@@ -131,6 +131,7 @@ namespace Utopian
 		std::function<void()> mDestroyCallback = nullptr;
 		std::function<void()> mPreFrameCallback = nullptr;
 		std::string mAppName;
+		double mFrameTime = 0.0;
 	};
 
 	/** Returns an instance to the Engine module. */

@@ -3,7 +3,6 @@
 #include <chrono>
 #include <cstdint>
 #include <vector>
-#include <fstream>
 #include "utility\Module.h"
 
 namespace Utopian
@@ -13,35 +12,39 @@ namespace Utopian
 	class Timer : public Module<Timer>
 	{
 	public:
-		void		FrameBegin();
-		uint32_t	FrameEnd();				// Returns the FPS if 1000.0f milliseconds have passed
+		Timer();
 
-		uint32_t	GetFPS() const;
-		float		GetTime() const;
-		float		GetFrameTime() const;
+		/** Should be called after swapchain presentation. */
+		void CalculateFrameTime();
 
-		void		PrintLog(std::ofstream& fout) const;
-		void		ResetLifetimeCounter();
+		/** Returns the raw frame time for the current frame. */
+		double GetFrameTime() const;
 
-		// Standalone interfaces for retrieving timestamps,
-		// rest of Timer is in need of a rewrite
+		/** Returns the raw FPS for the current frame. */
+		double GetFps() const;
+
+		/** Returns the average frame time over 1s. */
+		double GetAverageFrameTime() const;
+
+		/** Returns the average FPS over 1s. */
+		double GetAverageFps() const;
+
+		/** Returns the time since application start. */
+		double GetTime() const;
+
+		/** Returns the current timestamp using a high resolution timer. */
 		Timestamp GetTimestamp() const;
+
+		/** Returns the elapsed time between now and timestamp. */
 		double GetElapsedTime(Timestamp timestamp) const;
 
 	private:
-		std::chrono::high_resolution_clock::time_point mFrameBegin;
-
-		float		mFrameTime = 1.0f;		// Last frame time, measured using a high performance timer (if available)
-		uint32_t	mFrameCounter = 0;		// Frame counter to display fps
-		float		mTimer = 0.0f;			// Defines a frame rate independent timer value clamped from -1.0...1.0
-		float		mTimerSpeed = 0.25f;	// Multiplier for speeding up (or slowing down) the global timer
-		float		mFpsTimer = 0.0f;		// FPS timer (one second interval)
-		float		mLifetimeTimer = 0.0f;
-		uint32_t	mFramesPerSecond;
-		bool		mFirstFrame = true;
-
-		std::vector<float> mFpsLog;
+		Timestamp mStartTime;
+		std::vector<double> mFrameTimeList;
+		double mFrameTime = 0.0;
+ 		double mAverageFrameTime = 0.0;
+		float mFrameTimeSamplePeriod = 1000.0f;
 	};
 
 	Timer& gTimer();
-}	// VulkanLib namespace
+}

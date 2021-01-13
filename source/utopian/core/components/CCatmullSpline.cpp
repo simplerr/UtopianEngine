@@ -32,7 +32,7 @@ namespace Utopian
 
 	void CCatmullSpline::Update()
 	{
-		float time = gTimer().GetTime();
+		float time = (float)gTimer().GetTime();
 
 		if (IsDrawingDebug())
 		{

@@ -34,6 +34,7 @@
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "core/Log.h"
 #include "utility/math/Helpers.h"
+#include "utility/Timer.h"
 #include "core/Input.h"
 
 #include <fstream>
@@ -207,7 +208,8 @@ namespace Utopian
 
 		ImGuiRenderer::TextV(std::string("Vulkan " + GetDevice()->GetVulkanVersion().version).c_str());
 		ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
-		ImGuiRenderer::TextV("FPS: %u", Timer::Instance().GetFPS());
+		ImGuiRenderer::TextV("Frametime: %.2f", Timer::Instance().GetAverageFrameTime());
+		ImGuiRenderer::TextV("FPS: %.2f", Timer::Instance().GetAverageFps());
 		ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 		ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
 		ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
@@ -332,7 +334,7 @@ namespace Utopian
 			mSceneInfo.sharedVariables.data.inverseProjectionMatrix = glm::inverse(glm::mat3(mMainCamera->GetProjection()));
 			mSceneInfo.sharedVariables.data.eyePos = glm::vec4(mMainCamera->GetPosition(), 1.0f);
 			mSceneInfo.sharedVariables.data.mouseUV = gInput().GetMousePosition();
-			mSceneInfo.sharedVariables.data.time = gTimer().GetTime();
+			mSceneInfo.sharedVariables.data.time = (float)gTimer().GetTime();
 			mSceneInfo.sharedVariables.data.viewportSize = glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
 			mSceneInfo.sharedVariables.UpdateMemory();
 
