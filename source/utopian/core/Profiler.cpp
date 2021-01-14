@@ -3,6 +3,7 @@
 #include "imgui/imgui.h"
 #include "core/renderer/ImGuiRenderer.h"
 #include "utility/Timer.h"
+#include "utility/Common.h"
 #include "utility/math/Helpers.h"
 #include "core/Input.h"
 #include "vulkan/handles/Device.h"
@@ -17,11 +18,12 @@ namespace Utopian
 	Profiler::Profiler(Vk::VulkanApp* vulkanApp)
 	{
       mEnabled = true;
-      mProfilerWindow.gpuGraph.SetMaxFrameTime(2.0f);
+      mProfilerWindow.gpuGraph.SetMaxFrameTime(10.0f);
       mFrametimePlot.Configure(20, 30.0f);
       mFpsPlot.Configure(20, 30.0f);
       mMemoryUsagePlot.Configure(20, 300.0f);
       mVulkanApp = vulkanApp;
+      mDropFrame = true;
 	}
 
 	Profiler::~Profiler()
@@ -35,11 +37,15 @@ namespace Utopian
      
       if (mEnabled)
       {
-         static uint32_t period;
+         static uint32_t period = 0u;
          if (period % 50 == 0)
             mProfilerWindow.gpuGraph.LoadFrameData(mProfilerTasks.data(), mProfilerTasks.size());
 
          period++;
+
+         // Drop initial frames, note: arbitrary value (Issue: #126)
+         if (period > 150)
+            mDropFrame = false;
 
          /* GPU frame time */
          float frameTime = 0.0f;
@@ -63,17 +69,31 @@ namespace Utopian
 
          mProfilerWindow.Render();
       }
-	}
+   }
 
-   void Profiler::AddProfilerTask(const std::string& name, float start, float end, const glm::vec4& color)
+   void Profiler::AddProfilerTask(const std::string& name, float taskTime, const glm::vec4& color)
    {
+      // Sometimes the recieved end timestamp is 0 resulting in very large endTime which
+      // destroys the graph. This is a workaround to cap endTime if it becomes very large.
+      // Root cause is likely synchronization issue or missuse of timestamp queries.
+      // Issue: #126
+      if (taskTime > 25.0f)
+         return;
+
+      // The first frames gives unexpectedly long execution time for the
+      // different GPU jobs. This hides it by not updating profiling in the beginning of application execution.
+      // Issue: #126
+      if (mDropFrame)
+          taskTime = 0.0f;
+
       bool found = false;
       for (auto& task : mProfilerTasks)
       {
          if (task.name == name)
          {
             task.startTime = 0;
-            task.endTime = (end - start) / 1000.0f; // To seconds
+            task.endTime = taskTime / MS_PER_S;
+
             found = true;
             break;
          }
@@ -83,8 +103,10 @@ namespace Utopian
       {
          LegitProfiler::ProfilerTask task;
          task.name = name;
+
          task.startTime = 0;
-         task.endTime = (end - start) / 1000.0f; // To seconds
+         task.endTime = taskTime / MS_PER_S;
+
          task.color = ((uint32_t(color.a * 255) << 24) | (uint32_t(color.b * 255) << 16) | (uint32_t(color.g * 255) << 8) | (uint32_t(color.r * 255)));
             
          mProfilerTasks.push_back(task);
@@ -94,6 +116,11 @@ namespace Utopian
    void Profiler::SetEnabled(bool enabled)
    {
       mEnabled = enabled;
+   }
+
+   bool Profiler::IsEnabled() const
+   {
+      return mEnabled;
    }
 
    MiniPlot::MiniPlot()

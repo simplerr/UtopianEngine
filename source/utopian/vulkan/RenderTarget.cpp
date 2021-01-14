@@ -123,7 +123,8 @@ namespace Utopian::Vk
 
       mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
 
-      gProfiler().AddProfilerTask(mDebugName, mTimestampQueryPool->GetStartTimestamp(), mTimestampQueryPool->GetEndTimestamp(), mDebugColor);
+      if (gProfiler().IsEnabled())
+         gProfiler().AddProfilerTask(mDebugName, mTimestampQueryPool->GetElapsedTime(), mDebugColor);
    }
 
    void RenderTarget::EndAndFlush()

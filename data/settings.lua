@@ -39,7 +39,7 @@ settings =
     windFrequency = 10000.0,
     windEnabled = true,
     -- Water
-    numWaterCells = 512,
+    numWaterCells = 32,
     waterLevel = 0.5,
     waterColor_x = 0.0,
     waterColor_y = 0.0,

@@ -16,8 +16,7 @@ namespace Utopian::Vk
       void End(CommandBuffer* commandBuffer);
       void Reset(CommandBuffer* commandBuffer);
 
-      float GetStartTimestamp();
-      float GetEndTimestamp();
+      /** Returns the elapsed time in milliseconds. */
       float GetElapsedTime();
 
    private:

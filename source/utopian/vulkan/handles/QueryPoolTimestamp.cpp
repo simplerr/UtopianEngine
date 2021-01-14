@@ -17,29 +17,17 @@ namespace Utopian::Vk
       Debug::ErrorCheck(vkCreateQueryPool(device->GetVkDevice(), &queryPoolInfo, NULL, &mHandle));
    }
 
-   float QueryPoolTimestamp::GetStartTimestamp()
-   {
-      uint64_t startTimestamp;
-      Debug::ErrorCheck(vkGetQueryPoolResults(GetVkDevice(), mHandle, 0, 1,
-                                              sizeof(uint64_t), &startTimestamp, sizeof(uint64_t),
-                                              VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
-   
-      return (float)(startTimestamp / 1e6);
-   }
-
-   float QueryPoolTimestamp::GetEndTimestamp()
-   {
-      uint64_t endTimestamp;
-      Debug::ErrorCheck(vkGetQueryPoolResults(GetVkDevice(), mHandle, 1, 1,
-                                              sizeof(uint64_t), &endTimestamp, sizeof(uint64_t),
-                                              VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
-      return (float)(endTimestamp / 1e6);
-   }
-
    float QueryPoolTimestamp::GetElapsedTime()
    {
-      float delta = GetEndTimestamp() - GetStartTimestamp();
-      return delta;
+      std::array<uint64_t, 2> timestamps;
+      Debug::ErrorCheck(vkGetQueryPoolResults(GetVkDevice(), mHandle, 0, 2,
+                                              2 * sizeof(uint64_t), &timestamps, sizeof(uint64_t),
+                                              VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT));
+
+      float timestampPeriod = GetDevice()->GetProperties().limits.timestampPeriod;
+      float duration = ((timestamps[1] - timestamps[0]) * timestampPeriod) / NS_PER_MS;
+
+      return duration;
    }
 
    void QueryPoolTimestamp::Begin(CommandBuffer* commandBuffer)

@@ -59,7 +59,10 @@ namespace Utopian::Vk
 		void DumpMemoryStats(std::string filename);
 
 		/* Returns device memory properties. */
-		VkPhysicalDeviceMemoryProperties GetMemoryProperties() const;
+		const VkPhysicalDeviceMemoryProperties& GetMemoryProperties() const;
+
+		/* Returns physical device properties. */
+		const VkPhysicalDeviceProperties& GetProperties() const;
 
 		/** Returns the command pool from the device which new command buffers can be allocated from. */
 		CommandPool* GetCommandPool() const;

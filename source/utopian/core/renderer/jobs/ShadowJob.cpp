@@ -182,6 +182,8 @@ namespace Utopian
 		Vk::DebugLabel::EndRegion(mCommandBuffer->GetVkHandle());
 
 		mCommandBuffer->Submit(GetWaitSemahore(), GetCompletedSemahore());
-		gProfiler().AddProfilerTask("Cascade pass: ", mQueryPool->GetStartTimestamp(), mQueryPool->GetEndTimestamp(), glm::vec4(1.0, 1.0, 0.0, 1.0));
+
+		if (gProfiler().IsEnabled())
+			gProfiler().AddProfilerTask("Cascade pass: ", mQueryPool->GetElapsedTime(), glm::vec4(1.0, 1.0, 0.0, 1.0));
 	}
 }

@@ -209,9 +209,14 @@ namespace Utopian::Vk
 		return false;
 	}
 
-	VkPhysicalDeviceMemoryProperties Device::GetMemoryProperties() const
+	const VkPhysicalDeviceMemoryProperties& Device::GetMemoryProperties() const
 	{
 		return mDeviceMemoryProperties;
+	}
+
+	const VkPhysicalDeviceProperties& Device::GetProperties() const
+	{
+		return mPhysicalDeviceProperties;
 	}
 
 	Queue* Device::GetQueue() const
