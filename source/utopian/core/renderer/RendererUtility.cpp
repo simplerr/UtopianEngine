@@ -138,7 +138,7 @@ namespace Utopian
 		info.format = format;
 		info.properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
 		info.finalImageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		info.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		info.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		info.name = "Host visible image";
 
 		SharedPtr<Vk::Image> hostVisibleImage = std::make_shared<Vk::Image>(info, device);
@@ -151,17 +151,26 @@ namespace Utopian
 
 	void RendererUtility::CopyImage(Vk::Device* device, Vk::Image& dstImage, Vk::Image& srcImage)
 	{
+		bool supportsBlit = true;
+
 		VkFormatProperties formatProps;
 
 		// Check if the device supports blitting from optimal images (the swapchain images are in optimal format)
 		vkGetPhysicalDeviceFormatProperties(device->GetPhysicalDevice(), srcImage.GetFormat(), &formatProps);
 		if (!(formatProps.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT)) {
-			assert(0);
+			supportsBlit = false;
 		}
 
 		// Check if the device supports blitting to linear images 
 		vkGetPhysicalDeviceFormatProperties(device->GetPhysicalDevice(), dstImage.GetFormat(), &formatProps);
 		if (!(formatProps.linearTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT)) {
+			supportsBlit = false;
+		}
+
+		// When using vkCmdCopyImage the images needs to have the same dimensions and format
+		if (!supportsBlit && (dstImage.GetWidth() != srcImage.GetWidth() ||
+			dstImage.GetHeight() != srcImage.GetHeight() ||
+			srcImage.GetFormat() != dstImage.GetFormat())) {
 			assert(0);
 		}
 
@@ -170,7 +179,10 @@ namespace Utopian
 		dstImage.LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 		srcImage.LayoutTransition(commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
 
-		srcImage.Blit(commandBuffer, &dstImage);
+		if (supportsBlit)
+			srcImage.Blit(commandBuffer, &dstImage);
+		else
+		 	srcImage.Copy(commandBuffer, &dstImage);
 
 		dstImage.LayoutTransition(commandBuffer, dstImage.GetFinalLayout());
 		srcImage.LayoutTransition(commandBuffer, srcImage.GetFinalLayout());

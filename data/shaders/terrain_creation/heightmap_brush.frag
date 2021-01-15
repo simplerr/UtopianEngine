@@ -3,7 +3,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 layout (location = 0) in vec2 InTex;
-layout (location = 0) out vec4 OutFragColor;
+layout (location = 0) out float OutHeight;
 
 layout (std140, set = 0, binding = 0) uniform UBO_brush 
 {
@@ -30,5 +30,5 @@ void main()
     if (ubo_brush.operation == 0)
         height *= -1;
 
-    OutFragColor = vec4(height);
+    OutHeight = height;
 }
