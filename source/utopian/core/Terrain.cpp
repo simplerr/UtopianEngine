@@ -101,24 +101,24 @@ namespace Utopian
 	void Terrain::SaveHeightmap(std::string filename)
 	{
 		uint32_t resolution = GetMapResolution();
-		gRendererUtility().SaveToFile(mDevice, GetHeightmapImage(), filename, resolution, resolution);
+		gRendererUtility().SaveToFile(mDevice, GetHeightmapImage(), filename, resolution, resolution, VK_FORMAT_R32_SFLOAT);
 	}
 
 	void Terrain::SaveBlendmap(std::string filename)
 	{
 		uint32_t resolution = GetMapResolution();
-		gRendererUtility().SaveToFile(mDevice, GetBlendmapImage(), filename, resolution, resolution);
+		gRendererUtility().SaveToFile(mDevice, GetBlendmapImage(), filename, resolution, resolution, VK_FORMAT_R32G32B32A32_SFLOAT);
 	}
 
 	void Terrain::LoadHeightmap(std::string filename)
 	{
-		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32G32B32A32_SFLOAT);
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32_SFLOAT, false);
 		gRendererUtility().CopyImage(mDevice, *heightmapImage, texture->GetImage());
 	}
 
 	void Terrain::LoadBlendmap(std::string filename)
 	{
-		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32G32B32A32_SFLOAT);
+		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32G32B32A32_SFLOAT, false);
 		gRendererUtility().CopyImage(mDevice, *blendmapImage, texture->GetImage());
 	}
 

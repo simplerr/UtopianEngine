@@ -32,10 +32,10 @@ namespace Utopian::Vk
 		return TextureLoader::Instance();
 	}
 
-	SharedPtr<Texture> TextureLoader::LoadTexture(std::string path, VkFormat format)
+	SharedPtr<Texture> TextureLoader::LoadTexture(std::string path, VkFormat format, bool useCache)
 	{
 		// Check if the model is loaded already
-		if (mTextureMap.find(path) != mTextureMap.end())
+		if (useCache && (mTextureMap.find(path) != mTextureMap.end()))
 			return mTextureMap[path];
 
 		std::string extension = GetFileExtension(path);
@@ -50,11 +50,12 @@ namespace Utopian::Vk
 			texture = LoadTextureSTB(path);
 		}
 
-		mTextureMap[path] = texture;
 		texture->SetPath(path);
 
 		if (texture != nullptr)
 			texture->UpdateDescriptor();
+
+		mTextureMap[path] = texture;
 
 		return texture;
 	}

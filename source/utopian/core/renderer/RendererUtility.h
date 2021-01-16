@@ -19,11 +19,15 @@ namespace Utopian
 
 		/** Functions for copying images. */
 		void CopyImage(Vk::Device* device, Vk::Image& dstImage, Vk::Image& srcImage);
-		void SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height);
-		SharedPtr<Vk::Image> CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage, uint32_t width, uint32_t height, VkFormat format);
+
+		void SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename,
+						uint32_t width, uint32_t height, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
+
+		SharedPtr<Vk::Image> CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage,
+													uint32_t width, uint32_t height, VkFormat format);
 
 	private:
-		void SaveToFileKtx(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout);
+		void SaveToFileKtx(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout, VkFormat format);
 		void SaveToFilePpm(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout);
 	};
 

@@ -14,7 +14,9 @@
 
 namespace Utopian
 {
+	// Can be found in external\gli\gli\gl.hpp
 	#define GL_RGBA32F 0x8814		// same as GL_RGBA32F_EXT and GL_RGBA32F_ARB
+	#define GL_R32F    0x822E
 
 	RendererUtility& gRendererUtility()
 	{
@@ -51,14 +53,8 @@ namespace Utopian
 		blendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 	}
 
-	void RendererUtility::SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height)
+	void RendererUtility::SaveToFile(Vk::Device* device, const SharedPtr<Vk::Image>& image, std::string filename, uint32_t width, uint32_t height, VkFormat format)
 	{
-		VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
-
-		// Use higher precision when saving to .ktx to meet heightmap precision requirements
-		if (GetFileExtension(filename) == ".ktx")
-			format = VK_FORMAT_R32G32B32A32_SFLOAT;
-
 		SharedPtr<Vk::Image> hostVisibleImage = CreateHostVisibleImage(device, image, width, height, format);
 
 		// Get layout of the image (including row pitch)
@@ -71,7 +67,7 @@ namespace Utopian
 		data += subResourceLayout.offset;
 
 		if (GetFileExtension(filename) == ".ktx")
-			SaveToFileKtx(filename, data, width, height, subResourceLayout);
+			SaveToFileKtx(filename, data, width, height, subResourceLayout, format);
 		else if (GetFileExtension(filename) == ".ppm")
 			SaveToFilePpm(filename, data, width, height, subResourceLayout);
 		else if (GetFileExtension(filename) == ".png")
@@ -82,11 +78,18 @@ namespace Utopian
 		hostVisibleImage->UnmapMemory();
 	}
 
-	void RendererUtility::SaveToFileKtx(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout)
+	void RendererUtility::SaveToFileKtx(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout, VkFormat format)
 	{
 		ktxTexture* texture;
 		ktxTextureCreateInfo createInfo;
-		createInfo.glInternalformat = GL_RGBA32F; // Matches VK_FORMAT_R32G32B32A32_SFLOAT
+
+		if (format == VK_FORMAT_R32_SFLOAT)
+			createInfo.glInternalformat = GL_R32F;
+		else if (format == VK_FORMAT_R32G32B32A32_SFLOAT)
+			createInfo.glInternalformat = GL_RGBA32F;
+		else
+			assert(0);
+
 		createInfo.baseWidth = 512;
 		createInfo.baseHeight = 512;
 		createInfo.baseDepth = 1;
