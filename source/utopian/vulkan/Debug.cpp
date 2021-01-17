@@ -75,9 +75,26 @@ namespace Utopian::Vk
 			const VkDebugUtilsMessengerCallbackDataEXT* callbackData,
 			void* userData)
 		{
-         	// Ignore: vkCreateCommandPool(): VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT is set. Consider resetting entire pool instead.
-         	if ((uint32_t)callbackData->messageIdNumber == 0x8728E724)
-            	return VK_FALSE;
+			// Ignore: vkCreateCommandPool(): VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT is set. Consider resetting entire pool instead.
+			// To make life easier.
+			if ((uint32_t)callbackData->messageIdNumber == 0x8728E724)
+				return VK_FALSE;
+
+			// Ignore: Attempting to enable extension VK_EXT_debug_utils, but this extension is intended to support the following uses :
+			// use by applications when debugging, and it is strongly recommended that they be otherwise avoided.
+			// It is used as intentional.
+			if ((uint32_t)callbackData->messageIdNumber == 0x2DC65EF4)
+				return VK_FALSE;
+
+			// Ignore: vkGetFenceStatus(): Returned non-success return code VK_NOT_READY.
+			// vkGetFenceStatus() is expected to return VK_NOT_READY some times.
+			if ((uint32_t)callbackData->messageIdNumber == 0x8928392F)
+				return VK_FALSE;
+
+			// Ignore: vkQueuePresentKHR(): Returned error VK_ERROR_OUT_OF_DATE_KHR. 
+			// This only happens at shutdown.
+			if ((uint32_t)callbackData->messageIdNumber == 0x5F379B89)
+				return VK_FALSE;
 
 			std::ostringstream stream;
 
@@ -120,7 +137,7 @@ namespace Utopian::Vk
 						name = callbackData->pCmdBufLabels[label].pLabelName;
 
 					stream << "Command Buffer Label[" << label << "]: " << name << std::endl;
-			 	}
+				}
 			}
 
 			stream << "-------------------------" << std::endl;

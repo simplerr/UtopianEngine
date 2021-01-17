@@ -124,7 +124,12 @@ namespace Utopian::Vk
       mCommandBuffer->Submit(waitSemaphore, signalSemaphore);
 
       if (gProfiler().IsEnabled())
+      {   
          gProfiler().AddProfilerTask(mDebugName, mTimestampQueryPool->GetElapsedTime(), mDebugColor);
+
+         if (mStatisticsQueryPool != nullptr)
+             mStatisticsQueryPool->RetreiveResults();
+      }
    }
 
    void RenderTarget::EndAndFlush()
@@ -172,7 +177,6 @@ namespace Utopian::Vk
       if (mStatisticsQueryPool != nullptr)
       {
          mStatisticsQueryPool->End(mCommandBuffer.get());
-		   mStatisticsQueryPool->RetreiveResults();
       }
    }
 
