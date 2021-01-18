@@ -35,7 +35,7 @@ namespace Utopian
       if (gInput().KeyPressed('P'))
          mEnabled = !mEnabled;
      
-      if (mEnabled)
+      if (mEnabled && ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
       {
          static uint32_t period = 0u;
          if (period % 50 == 0)

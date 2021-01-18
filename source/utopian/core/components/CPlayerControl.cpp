@@ -74,7 +74,11 @@ namespace Utopian
 		gInput().SetVisibleCursor(playMode);
 		mCrosshair.quad->visible = !playMode;
 		mViewmodel->SetVisible(!playMode);
-		gRenderer().GetUiOverlay()->SetVisible(playMode);
+
+		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+			ImGuiRenderer::SetMode(UI_MODE_GAME);
+		else
+			ImGuiRenderer::SetMode(UI_MODE_EDITOR);
 	}
 
 	void CPlayerControl::Update()
@@ -93,6 +97,14 @@ namespace Utopian
 
 		// No rotation
 		mRigidBody->SetAngularVelocity(glm::vec3(0.0f));
+
+		if (ImGuiRenderer::GetMode() == UI_MODE_GAME)
+		{
+			ImGuiRenderer::BeginWindow("CPlayerControl UI", glm::vec2(800, 800), 300.0f,
+										ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
+			ImGui::Text("Speed: %.2f m/s", GetCurrentSpeed());
+			ImGuiRenderer::EndWindow();
+		}
 	}
 
 	/**

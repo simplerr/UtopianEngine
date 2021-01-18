@@ -105,6 +105,24 @@ namespace Utopian
 
 	void Renderer::UpdateUi()
 	{
+		ImGuiRenderer::BeginWindow("Utopian Engine (v0.2)", glm::vec2(10, 10), 350.0f,
+								   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
+
+		glm::vec3 pos = mMainCamera->GetPosition();
+		glm::vec3 dir = mMainCamera->GetDirection();
+
+		ImGuiRenderer::TextV(std::string("Vulkan " + GetDevice()->GetVulkanVersion().version).c_str());
+		ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
+		ImGuiRenderer::TextV("Frametime: %.2f", Timer::Instance().GetAverageFrameTime());
+		ImGuiRenderer::TextV("FPS: %.2f", Timer::Instance().GetAverageFps());
+		ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+		ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
+		ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
+
+		ImGuiRenderer::EndWindow();
+		if (ImGuiRenderer::GetMode() != UI_MODE_EDITOR)
+			return;
+
 		// Draw UI overlay for rendering settings
 		// It's expected that each rendering node might have it's own settings that can be configured
 		ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
@@ -198,21 +216,6 @@ namespace Utopian
 		mJobGraph->EnableJob(JobGraph::JobIndex::OPAQUE_COPY_INDEX, mRenderingSettings.waterEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
 		mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
-
-		ImGuiRenderer::EndWindow();
-
-		ImGuiRenderer::BeginWindow("Utopian Engine (v0.2)", glm::vec2(10, 10), 350.0f);
-
-		glm::vec3 pos = mMainCamera->GetPosition();
-		glm::vec3 dir = mMainCamera->GetDirection();
-
-		ImGuiRenderer::TextV(std::string("Vulkan " + GetDevice()->GetVulkanVersion().version).c_str());
-		ImGuiRenderer::TextV("Time: %.2f", Timer::Instance().GetTime());
-		ImGuiRenderer::TextV("Frametime: %.2f", Timer::Instance().GetAverageFrameTime());
-		ImGuiRenderer::TextV("FPS: %.2f", Timer::Instance().GetAverageFps());
-		ImGuiRenderer::TextV("Camera pos = (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-		ImGuiRenderer::TextV("Camera dir = (%.2f, %.2f, %.2f)", dir.x, dir.y, dir.z);
-		ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
 
 		if (ImGui::Button("Dump memory statistics"))
 		{

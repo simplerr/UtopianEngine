@@ -335,7 +335,6 @@ namespace Utopian
 	{
 		ActorFactory::LoadFromFile(engine->GetVulkanApp()->GetWindow(), "data/scene.lua");
 		gWorld().LoadScene();
-		gWorld().Update();
 
 		ScriptExports::Register();
 		ScriptImports::Register();

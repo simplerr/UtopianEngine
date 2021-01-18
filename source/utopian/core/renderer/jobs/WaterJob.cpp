@@ -172,15 +172,17 @@ namespace Utopian
 
 	void WaterJob::Update()
 	{
-		// Display Actor creation list
-		ImGuiRenderer::BeginWindow("Water Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
+		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+		{
+			ImGuiRenderer::BeginWindow("Water Tessellation statistics", glm::vec2(300.0f, 10.0f), 400.0f);
 
-		ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
-		ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
-		ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
-		ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
+			ImGuiRenderer::TextV("VS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::INPUT_ASSEMBLY_VERTICES_INDEX));
+			ImGuiRenderer::TextV("TC invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_CONTROL_SHADER_PATCHES_INDEX));
+			ImGuiRenderer::TextV("TE invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::TESSELLATION_EVALUATION_SHADER_INVOCATIONS_INDEX));
+			ImGuiRenderer::TextV("FS invocations: %u", mQueryPool->GetStatistics(Vk::QueryPoolStatistics::StatisticsIndex::FRAGMENT_SHADER_INVOCATIONS_INDEX));
 
-		ImGuiRenderer::EndWindow();
+			ImGuiRenderer::EndWindow();
+		}
 	}
 
 	Vk::Mesh* WaterJob::GeneratePatches(float cellSize, int numCells)

@@ -81,7 +81,10 @@ namespace Utopian
 		// Hide/show UI
 		if (gInput().KeyPressed('H'))
 		{
-			mImGuiRenderer->ToggleVisible();
+			if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+				ImGuiRenderer::SetMode(UI_MODE_GAME);
+			else
+				ImGuiRenderer::SetMode(UI_MODE_EDITOR);
 		}
 
 		// Recompile shaders
@@ -94,7 +97,8 @@ namespace Utopian
 
 		// The UI needs to be updated after updating the selected actor since otherwise
 		// the texture descriptor set for the UI can be freed when still being used in a command buffer.
-		UpdateUi();
+		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+			UpdateUi();
 	}
 
 	void Editor::UpdateSelectionType()

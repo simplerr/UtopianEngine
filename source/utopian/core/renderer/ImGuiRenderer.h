@@ -20,6 +20,12 @@ namespace Utopian
 {
 	class Texture;
 
+	enum UiMode
+	{
+		UI_MODE_EDITOR,
+		UI_MODE_GAME
+	};
+
 	class ImGuiRenderer 
 	{
 	public:
@@ -42,10 +48,13 @@ namespace Utopian
 
 		// Utility helper functions
 		static void TextV(const char* format, ...);
-		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth);
+		static void BeginWindow(std::string label, glm::vec2 position, float itemWidth, ImGuiWindowFlags flags = 0);
 		static void EndWindow();
 		void ToggleVisible();
 		void SetVisible(bool visible);
+
+		static UiMode GetMode();
+		static void SetMode(UiMode mode);
 
 		// Frees UI textures.
 		// Needs to be called when the textures are not in an active command buffer
@@ -84,5 +93,6 @@ namespace Utopian
 		Timestamp mLastFrameTime;
 		std::vector<VkDescriptorSet> mTextureDescriptorsToFree;
 		static bool mImguiVisible;
+		static UiMode mUiMode;
 	};
 }

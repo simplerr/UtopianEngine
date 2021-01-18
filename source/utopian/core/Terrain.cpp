@@ -66,27 +66,30 @@ namespace Utopian
 		if (gInput().KeyPressed('U'))
 			UpdatePhysicsHeightmap();
 
-		ImGuiRenderer::BeginWindow("Terrain debug", glm::vec2(300.0f, 10.0f), 400.0f);
+		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+		{
+			ImGuiRenderer::BeginWindow("Terrain debug", glm::vec2(300.0f, 10.0f), 400.0f);
 
-		ImVec2 textureSize = ImVec2(256, 256);
-		ImGui::BeginGroup();
-		ImGui::Text("Heightmap");
-		ImGui::Image(mDebugDescriptorSets.heightmap, textureSize);
-		ImGui::EndGroup();
+			ImVec2 textureSize = ImVec2(256, 256);
+			ImGui::BeginGroup();
+			ImGui::Text("Heightmap");
+			ImGui::Image(mDebugDescriptorSets.heightmap, textureSize);
+			ImGui::EndGroup();
 
-		ImGui::SameLine();
+			ImGui::SameLine();
 
-		ImGui::BeginGroup();
-		ImGui::Text("Normal map");
-		ImGui::Image(mDebugDescriptorSets.normalmap, textureSize);
-		ImGui::EndGroup();
+			ImGui::BeginGroup();
+			ImGui::Text("Normal map");
+			ImGui::Image(mDebugDescriptorSets.normalmap, textureSize);
+			ImGui::EndGroup();
 
-		ImGui::BeginGroup();
-		ImGui::Text("Blend map");
-		ImGui::Image(mDebugDescriptorSets.blendmap, textureSize);
-		ImGui::EndGroup();
+			ImGui::BeginGroup();
+			ImGui::Text("Blend map");
+			ImGui::Image(mDebugDescriptorSets.blendmap, textureSize);
+			ImGui::EndGroup();
 
-		ImGuiRenderer::EndWindow();
+			ImGuiRenderer::EndWindow();
+		}
 	}
 
 	void Terrain::AddMaterial(std::string name, std::string diffuse, std::string normal, std::string displacement)

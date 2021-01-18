@@ -30,6 +30,7 @@
 namespace Utopian
 {
     bool ImGuiRenderer::mImguiVisible = true;
+    UiMode ImGuiRenderer::mUiMode = UI_MODE_EDITOR;
 
     ImGuiRenderer::ImGuiRenderer(Vk::VulkanApp* vulkanApp, uint32_t width, uint32_t height)
         : mVulkanApp(vulkanApp)
@@ -63,6 +64,8 @@ namespace Utopian
         gInput().RegisterMouseInsideUiCallback(&ImGuiRenderer::IsMouseInsideUi);
         gInput().RegisterKeydownCallback(&ImGuiRenderer::KeydownCallback);
         gInput().RegisterUiCaptureCallback(&ImGuiRenderer::IsKeyboardCapture);
+
+        mUiMode = UI_MODE_EDITOR;
     }
 
     /** Free up all Vulkan resources acquired by the UI overlay */
@@ -382,12 +385,12 @@ namespace Utopian
         va_end(args);
     }
 
-    void ImGuiRenderer::BeginWindow(std::string label, glm::vec2 position, float itemWidth)
+    void ImGuiRenderer::BeginWindow(std::string label, glm::vec2 position, float itemWidth, ImGuiWindowFlags flags)
     {
         //ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
         ImGui::SetNextWindowPos(ImVec2(position.x, position.y), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-        ImGui::Begin(label.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::Begin(label.c_str(), nullptr, flags | ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::PushItemWidth(itemWidth);
     }
 
@@ -443,6 +446,16 @@ namespace Utopian
             vkFreeDescriptorSets(mVulkanApp->GetDevice()->GetVkDevice(), mTextureDescriptorPool->GetVkHandle(), (uint32_t)mTextureDescriptorsToFree.size(), mTextureDescriptorsToFree.data());
             mTextureDescriptorsToFree.clear();
         }
+    }
+
+    UiMode ImGuiRenderer::GetMode()
+    {
+        return mUiMode;
+    }
+
+    void ImGuiRenderer::SetMode(UiMode mode)
+    {
+        mUiMode = mode;
     }
 
     void ImGuiRenderer::SetDarkTheme()

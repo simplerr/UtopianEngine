@@ -101,35 +101,37 @@ namespace Utopian
 			job->Update();
 		}
 
-		// Display Actor creation list
-		ImGuiRenderer::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
+		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+		{
+			ImGuiRenderer::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
 
-		ImVec2 textureSize = ImVec2(256, 256);
-		ImGui::BeginGroup();
-		ImGui::Text("Position");
-		ImGui::Image(mDebugDescriptorSets.position, textureSize);
-		ImGui::EndGroup();
+			ImVec2 textureSize = ImVec2(256, 256);
+			ImGui::BeginGroup();
+			ImGui::Text("Position");
+			ImGui::Image(mDebugDescriptorSets.position, textureSize);
+			ImGui::EndGroup();
 
-		ImGui::SameLine();
+			ImGui::SameLine();
 
-		ImGui::BeginGroup();
-		ImGui::Text("Normal");
-		ImGui::Image(mDebugDescriptorSets.normal, textureSize);
-		ImGui::EndGroup();
+			ImGui::BeginGroup();
+			ImGui::Text("Normal");
+			ImGui::Image(mDebugDescriptorSets.normal, textureSize);
+			ImGui::EndGroup();
 
-		ImGui::BeginGroup();
-		ImGui::Text("Normal view space");
-		ImGui::Image(mDebugDescriptorSets.normalView, textureSize);
-		ImGui::EndGroup();
+			ImGui::BeginGroup();
+			ImGui::Text("Normal view space");
+			ImGui::Image(mDebugDescriptorSets.normalView, textureSize);
+			ImGui::EndGroup();
 
-		ImGui::SameLine();
+			ImGui::SameLine();
 
-		ImGui::BeginGroup();
-		ImGui::Text("Albedo");
-		ImGui::Image(mDebugDescriptorSets.albedo, textureSize);
-		ImGui::EndGroup();
+			ImGui::BeginGroup();
+			ImGui::Text("Albedo");
+			ImGui::Image(mDebugDescriptorSets.albedo, textureSize);
+			ImGui::EndGroup();
 
-		ImGuiRenderer::EndWindow();
+			ImGuiRenderer::EndWindow();
+		}
 	}
 
 	void JobGraph::AddJob(BaseJob* job)

@@ -158,7 +158,7 @@ namespace Utopian
 	{
 		static bool displayConfiguration = false;
 
-		if (displayConfiguration)
+		if (displayConfiguration && ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
 		{
 			ImGuiRenderer::BeginWindow("SSR settings", glm::vec2(500.0f, 10.0f), 400.0f);
 			ImGui::SliderFloat("_Iterations: ", &mSSRSettingsBlock.data._Iterations, 1, 1000);
