@@ -50,12 +50,12 @@ namespace Utopian::Vk
 			texture = LoadTextureSTB(path);
 		}
 
-		texture->SetPath(path);
-
 		if (texture != nullptr)
+		{
+			texture->SetPath(path);
 			texture->UpdateDescriptor();
-
-		mTextureMap[path] = texture;
+			mTextureMap[path] = texture;
+		}
 
 		return texture;
 	}
