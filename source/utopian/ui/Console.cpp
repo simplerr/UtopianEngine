@@ -52,7 +52,7 @@ namespace Utopian
    void Console::Draw(const char* title, bool* p_open)
    {
       ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-      if (!ImGui::Begin(title, p_open))
+      if (!ImGui::Begin(title, p_open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground))
       {
          ImGui::End();
          return;
@@ -74,7 +74,7 @@ namespace Utopian
 
       // Reserve enough left-over height for 1 separator + 1 input text
       const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-      ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
+      ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBackground);
       if (ImGui::BeginPopupContextWindow())
       {
          if (ImGui::Selectable("Clear")) ClearLog();

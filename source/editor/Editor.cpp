@@ -98,7 +98,17 @@ namespace Utopian
 		// The UI needs to be updated after updating the selected actor since otherwise
 		// the texture descriptor set for the UI can be freed when still being used in a command buffer.
 		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+		{
 			UpdateUi();
+
+			// Workaround: The real console window is transparent and not supposed to be docked since
+			// it also should be displayed when in the game mode. This creates and empty window that
+			// take up an area in the dock space. The real console should be placed on top of this window.
+			ImGuiRenderer::BeginWindow("Console", glm::vec2(200, 800), 300.0f, ImGuiWindowFlags_NoTitleBar);
+			ImGuiRenderer::EndWindow();
+		}
+
+		mConsole.Draw("Transparent Console", nullptr);
 	}
 
 	void Editor::UpdateSelectionType()
@@ -431,8 +441,6 @@ namespace Utopian
 		}
 
 		ImGuiRenderer::EndWindow();
-
-      mConsole.Draw("Console", nullptr);
 	}
 
 	void Editor::Draw()
