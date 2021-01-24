@@ -120,6 +120,9 @@ namespace Utopian
 		else if (gInput().KeyPressed('F'))
 			mSelectionType = FACE_SELECTION;
 
+		if (gInput().KeyPressed('G') || gInput().KeyPressed('E') || gInput().KeyPressed('F'))
+			Im3d::ResetSelectedGizmo();
+
 		mPrototypeTool->SetSelectionType(mSelectionType);
 	}
 	
