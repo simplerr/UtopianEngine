@@ -1,4 +1,3 @@
-
 #include "utility/Platform.h"
 #include "core/Window.h"
 #include "Game.h"
@@ -15,7 +14,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {
-	Utopian::Window window = Utopian::Window(2000, 1260);
+	Utopian::Window window = Utopian::Window("data/window.cfg");
 
 	window.SetupWindow(hInstance, WndProc);
 

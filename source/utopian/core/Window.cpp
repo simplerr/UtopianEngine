@@ -1,10 +1,33 @@
 #include "core/Window.h"
 #include <sstream>
+#include <fstream>
+#include <string.h>
 
 namespace Utopian
 {
 	Window::Window(int width, int height)
 	{
+		mWidth = width;
+		mHeight = height;
+		mMode = WINDOWED;
+	}
+
+	Window::Window(std::string configFile)
+	{
+		std::ifstream fin(configFile);
+		uint32_t width, height;
+		std::string mode;
+		fin >> width >> height >> mode;
+
+		if (mode == "windowed") {
+			mMode = WINDOWED;
+		}
+		else if (mode == "fullscreen-windowed") {
+			mMode = FULLSCREEN_WINDOWED;
+			width = GetSystemMetrics(SM_CXSCREEN);
+			height = GetSystemMetrics(SM_CYSCREEN);
+		}
+
 		mWidth = width;
 		mHeight = height;
 	}
@@ -36,7 +59,11 @@ namespace Utopian
 		clientRect.top = GetSystemMetrics(SM_CYSCREEN) / 2 - mHeight / 2;
 		clientRect.bottom = GetSystemMetrics(SM_CYSCREEN) / 2 + mHeight / 2;
 
-		DWORD style = true ? WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN : WS_POPUP | WS_VISIBLE | WS_SYSMENU | WS_CLIPCHILDREN;
+		DWORD style;
+		if (mMode == WINDOWED)
+			style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN;
+		else if(mMode == FULLSCREEN_WINDOWED)
+			style = WS_POPUP | WS_VISIBLE | WS_SYSMENU | WS_CLIPCHILDREN;
 
 		AdjustWindowRect(&clientRect, style, false);
 		int width = clientRect.right - clientRect.left;

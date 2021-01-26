@@ -8,7 +8,14 @@ namespace Utopian
 	class Window
 	{
 	public:
+		enum WindowMode
+		{
+			WINDOWED,
+			FULLSCREEN_WINDOWED
+		};
+
 		Window(int width, int height);
+		Window(std::string configFile);
 
 		HWND SetupWindow(HINSTANCE hInstance, WNDPROC wndProc);
 
@@ -25,6 +32,7 @@ namespace Utopian
 	private:
 		HWND mWindow;
 		HINSTANCE mWindowInstance;
+		WindowMode mMode;
 		int mWidth;
 		int mHeight;
 	};
