@@ -78,6 +78,13 @@ namespace Utopian
 		RemoveActorFromScene();
 		ScaleSelectedActor();
 
+		// Deselect Actor
+		if (gInput().KeyPressed(VK_ESCAPE))
+		{
+			OnActorSelected(nullptr);
+			mPrototypeTool->ActorSelected(nullptr);
+		}
+
 		// Hide/show UI
 		if (gInput().KeyPressed('H'))
 		{

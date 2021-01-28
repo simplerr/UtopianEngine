@@ -85,9 +85,7 @@ namespace Utopian
 	{
 		// If not kinematic then the CNoClip component will control the
 		// components movement instead.
-		if (gInput().KeyPressed('V'))
-			SetPlayMode(!mRigidBody->IsKinematic());
-		else if(gInput().KeyPressed(VK_ESCAPE))
+		if (gInput().KeyPressed('V') || gInput().KeyPressed(VK_ESCAPE))
 			SetPlayMode(!mRigidBody->IsKinematic());
 
 		HandleMovement();
