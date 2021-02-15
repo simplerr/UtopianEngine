@@ -73,6 +73,7 @@ namespace Utopian
 		mDebugNormals = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_NORMAL_DEBUG);
 		mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
 		mCastShadow = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_CAST_SHADOW);
+		mVisible = renderable->IsVisible();
 
 		std::vector<Vk::Mesh*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
 		std::vector<Vk::Texture*> allTextures;
@@ -113,6 +114,11 @@ namespace Utopian
 	{
 		if (ImGui::CollapsingHeader("Renderable", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			if (ImGui::Checkbox("Visible", &mVisible))
+			{
+				mRenderable->SetVisible(mVisible);
+			}
+
 			if (ImGui::Checkbox("Deferred", &mDeferred))
 			{
 				uint32_t flag = mRenderable->GetRenderFlags();

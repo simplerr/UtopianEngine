@@ -7,6 +7,8 @@
 #include "utility/Common.h"
 #include "utility/math/Ray.h"
 
+#define PHYSICS_INTERSECTION
+
 namespace Utopian
 {
 	class Actor;
@@ -26,11 +28,13 @@ namespace Utopian
 		IntersectionInfo() {
 			actor = nullptr;
 			distance = FLT_MAX;
+			hit = false;
 		}
 
 		Actor* actor;
 		glm::vec3 normal;
 		float distance;
+		bool hit;
 	};
 
 	/*
@@ -46,6 +50,7 @@ namespace Utopian
 		void Update();
 		void AddActor(const SharedPtr<Actor>& actor);
 		void AddComponent(const SharedPtr<Component>& component);
+		void SetPlayerActor(Actor* playerActor);
 
 		// The transforms from the Actors needds to update the transforms of the SceneNodes
 		// CRigidBody needs the correct bounding box which only is available of they have been synchronized.
@@ -60,6 +65,7 @@ namespace Utopian
 		IntersectionInfo RayIntersection(const Ray& ray, SceneLayer sceneLayer = DefaultSceneLayer);
 		std::vector<SharedPtr<Actor>>& GetActors();
 		uint32_t GetActorIndex(Actor* actor);
+		Actor* GetPlayerActor();
 
 		/* The bound SceneNodes transform will be synchronized with the Sceneactor in Update() */
 		void BindNode(const SharedPtr<SceneNode>& node, Actor* actor);
@@ -68,6 +74,7 @@ namespace Utopian
 		std::vector<SharedPtr<Actor>> mActors;
 		std::vector<SharedPtr<Component>> mComponents;
 		std::map<SceneNode*, BoundNode> mBoundNodes;
+		Actor* mPlayerActor;
 	};
 
 	World& gWorld();

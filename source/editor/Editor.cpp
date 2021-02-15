@@ -10,6 +10,7 @@
 #include "core/components/CBloomLight.h"
 #include "core/components/CRandomPaths.h"
 #include "core/components/CRigidBody.h"
+#include "core/components/CSpawnPoint.h"
 #include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
@@ -42,6 +43,7 @@ namespace Utopian
 
 		mPrototypeTool = std::make_shared<PrototypeTool>();
 
+		AddActorCreation("Spawn point", ActorTemplate::SPAWN_POINT);
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
 
@@ -302,6 +304,18 @@ namespace Utopian
 					light->SetMaterial(color);
 					renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
 				}
+				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)
+				{
+					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+
+					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+
+					actor->AddComponent<CSpawnPoint>();
+
+					renderable->LoadModel("data/models/teapot.obj");
+					renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
+					renderable->SetColor(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+				}
 
 				World::Instance().SynchronizeNodeTransforms();
 				actor->PostInit();
@@ -313,7 +327,8 @@ namespace Utopian
 					rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
 
 					// Hack:
-					if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
+					if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL ||
+						(mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT))
 					{
 						// Must be called after PostInit() since it needs the Renderable component
 						rigidBody->SetKinematic(true);

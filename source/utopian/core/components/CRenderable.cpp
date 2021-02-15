@@ -107,6 +107,11 @@ namespace Utopian
 		mInternal->SetPushFoliage(push);
 	}
 
+	void CRenderable::SetVisible(bool visible)
+	{
+		mInternal->SetVisible(visible);
+	}
+
 	void CRenderable::SetRenderFlags(uint32_t renderFlags)
 	{
 		mInternal->SetRenderFlags(renderFlags);
@@ -160,6 +165,11 @@ namespace Utopian
 	const bool CRenderable::IsPushingFoliage() const
 	{
 		return mInternal->IsPushingFoliage();
+	}
+
+	const bool CRenderable::IsVisible() const
+	{
+		return mInternal->IsVisible();
 	}
 
 	glm::vec4 CRenderable::GetColor() const

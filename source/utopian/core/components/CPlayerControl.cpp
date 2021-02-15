@@ -34,6 +34,9 @@ namespace Utopian
 		mViewmodel->AddRotation(glm::vec3(glm::pi<float>(), 0.0f, 0.0f));
 		mViewmodel->SetVisible(false);
 		mViewmodel->RemoveRenderFlags(RENDER_FLAG_CAST_SHADOW);
+
+		// Update the Player reference in World
+		gWorld().SetPlayerActor(parent);
 	}
 
 	CPlayerControl::~CPlayerControl()
@@ -98,7 +101,7 @@ namespace Utopian
 
 		if (ImGuiRenderer::GetMode() == UI_MODE_GAME)
 		{
-			ImGuiRenderer::BeginWindow("CPlayerControl UI", glm::vec2(800, 800), 300.0f,
+			ImGuiRenderer::BeginWindow("CPlayerControl UI", glm::vec2(gRenderer().GetWindowWidth() / 2, 800), 300.0f,
 										ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
 			ImGui::Text("Speed: %.2f m/s", GetCurrentSpeed());
 			ImGuiRenderer::EndWindow();

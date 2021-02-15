@@ -35,11 +35,11 @@ namespace Utopian
 
 	IntersectionInfo World::RayIntersection(const Ray& ray, SceneLayer sceneLayer)
 	{
-		return gPhysics().RayIntersection(ray);
-
-#ifdef OLD_RAY_INTERSECTION
 		IntersectionInfo intersectInfo;
-
+#define PHYSICS_INTERSECTION
+#ifdef PHYSICS_INTERSECTION
+		intersectInfo = gPhysics().RayIntersection(ray);
+#else
 		for (auto& actor : mActors)
 		{
 			if (sceneLayer == DefaultSceneLayer || actor->GetSceneLayer() == sceneLayer)
@@ -62,9 +62,8 @@ namespace Utopian
 				}
 			}
 		}
-
-		return intersectInfo;
 #endif
+		return intersectInfo;
 	}
 
 	std::vector<SharedPtr<Actor>>& World::GetActors()
@@ -81,6 +80,11 @@ namespace Utopian
 		}
 
 		assert(0 && "Actor not found");
+	}
+
+	Actor* World::GetPlayerActor()
+	{
+		return mPlayerActor;
 	}
 
 	void World::BindNode(const SharedPtr<SceneNode>& node, Actor* actor)
@@ -162,6 +166,11 @@ namespace Utopian
 	{
 		component->OnCreated();
 		mComponents.push_back(component);
+	}
+
+	void World::SetPlayerActor(Actor* playerActor)
+	{
+		mPlayerActor = playerActor;
 	}
 
 	void World::LoadScene()

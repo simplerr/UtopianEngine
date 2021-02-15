@@ -12,6 +12,7 @@
 #include "core/components/CCatmullSpline.h"
 #include "core/components/CRigidBody.h"
 #include "core/components/CPolyMesh.h"
+#include "core/components/CSpawnPoint.h"
 #include "vulkan/ModelLoader.h"
 #include "core/Log.h"
 
@@ -167,6 +168,10 @@ namespace Utopian
 					std::string modelPath = componentData["modelPath"].ToString();
 					std::string texturePath = componentData["texturePath"].ToString();
 					Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>(modelPath, texturePath);
+				}
+				else if (name == "CSpawnPoint")
+				{
+					actor->AddComponent<CSpawnPoint>();
 				}
 			}
 

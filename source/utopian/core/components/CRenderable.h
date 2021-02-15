@@ -34,6 +34,7 @@ namespace Utopian
 		void SetTileFactor(glm::vec2 tileFactor);
 		void SetColor(glm::vec4 color);
 		void SetPushFoliage(bool push);
+		void SetVisible(bool visible);
 
 		// Render flag settings
 		void SetRenderFlags(uint32_t renderFlags);
@@ -42,6 +43,7 @@ namespace Utopian
 		uint32_t GetRenderFlags() const;
 		const bool HasRenderFlags(uint32_t renderFlags) const;
 		const bool IsPushingFoliage() const;
+		const bool IsVisible() const;
 
 		// Todo: Remove
 		void EnableBoundingBox();

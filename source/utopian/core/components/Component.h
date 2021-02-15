@@ -24,7 +24,8 @@ namespace Utopian
 			BLOOM_LIGHT,
 			RIGID_BODY,
 			CATMULL_SPLINE,
-			POLYMESH
+			POLYMESH,
+			SPAWN_POINT
 		};
 
 		Component(Actor* parent);
