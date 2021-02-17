@@ -306,15 +306,9 @@ namespace Utopian
 				}
 				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)
 				{
-					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-
-					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-
+					//transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+					renderable->LoadModel("data/models/spawn_cylinder.fbx");
 					actor->AddComponent<CSpawnPoint>();
-
-					renderable->LoadModel("data/models/teapot.obj");
-					renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
-					renderable->SetColor(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 				}
 
 				World::Instance().SynchronizeNodeTransforms();
@@ -327,8 +321,7 @@ namespace Utopian
 					rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
 
 					// Hack:
-					if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL ||
-						(mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT))
+					if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
 					{
 						// Must be called after PostInit() since it needs the Renderable component
 						rigidBody->SetKinematic(true);

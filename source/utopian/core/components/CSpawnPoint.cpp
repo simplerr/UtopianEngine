@@ -28,7 +28,7 @@ namespace Utopian
 			CRigidBody* rigidBody = playerActor->GetComponent<CRigidBody>();
 
 			rigidBody->SetKinematic(true);
-			transform.SetPosition(mTransform->GetPosition());
+			transform.SetPosition(mTransform->GetPosition() + glm::vec3(0.0f, 0.5f, 0.0f));
 			rigidBody->SetKinematic(false);
 		}
 

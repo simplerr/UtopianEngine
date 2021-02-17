@@ -35,16 +35,13 @@ namespace Utopian
 
 	IntersectionInfo World::RayIntersection(const Ray& ray, SceneLayer sceneLayer)
 	{
-		IntersectionInfo intersectInfo;
-#define PHYSICS_INTERSECTION
-#ifdef PHYSICS_INTERSECTION
-		intersectInfo = gPhysics().RayIntersection(ray);
-#else
+		IntersectionInfo intersectInfo = gPhysics().RayIntersection(ray);
+
 		for (auto& actor : mActors)
 		{
 			if (sceneLayer == DefaultSceneLayer || actor->GetSceneLayer() == sceneLayer)
 			{
-				if (actor->HasComponent<CRenderable>())
+				if (actor->HasComponent<CRenderable>() && !actor->HasComponent<CRigidBody>())
 				{
 					BoundingBox boundingBox = actor->GetBoundingBox();
 
@@ -62,7 +59,7 @@ namespace Utopian
 				}
 			}
 		}
-#endif
+
 		return intersectInfo;
 	}
 
