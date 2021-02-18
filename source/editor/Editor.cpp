@@ -11,6 +11,7 @@
 #include "core/components/CRandomPaths.h"
 #include "core/components/CRigidBody.h"
 #include "core/components/CSpawnPoint.h"
+#include "core/components/CFinishPoint.h"
 #include "core/renderer/ImGuiRenderer.h"
 #include "vulkan/EffectManager.h"
 #include "editor/ActorInspector.h"
@@ -44,6 +45,7 @@ namespace Utopian
 		mPrototypeTool = std::make_shared<PrototypeTool>();
 
 		AddActorCreation("Spawn point", ActorTemplate::SPAWN_POINT);
+		AddActorCreation("Finish point", ActorTemplate::FINISH_POINT);
 		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
 		AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
 
@@ -306,9 +308,14 @@ namespace Utopian
 				}
 				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)
 				{
-					//transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-					renderable->LoadModel("data/models/spawn_cylinder.fbx");
+					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+					renderable->LoadModel("data/models/spawn_cone.fbx");
 					actor->AddComponent<CSpawnPoint>();
+				}
+				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::FINISH_POINT)
+				{
+					renderable->LoadModel("data/models/spawn_cylinder.fbx");
+					actor->AddComponent<CFinishPoint>();
 				}
 
 				World::Instance().SynchronizeNodeTransforms();

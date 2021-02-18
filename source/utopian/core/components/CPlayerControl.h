@@ -36,6 +36,9 @@ namespace Utopian
 		void Update() override;
 		void PostInit() override;
 
+		void StartLevelTimer();
+		void StopLevelTimer();
+
 		LuaPlus::LuaObject GetLuaObject() override;
 		
 		void SetMaxSpeed(float maxSpeed);
@@ -98,10 +101,14 @@ namespace Utopian
 		struct Crosshair {
 			SharedPtr<Vk::Texture> texture;
 			SharedPtr<ScreenQuad> quad;
-		};
+		} mCrosshair;
 
-		Crosshair mCrosshair;
 		SharedPtr<Renderable> mViewmodel;
+
+		struct LevelTimer {
+			Timestamp startTime;
+			bool active = false;
+		} mLevelTimer;
 
 	public:
 		float handY = -.154f;

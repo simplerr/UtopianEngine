@@ -32,10 +32,10 @@ namespace Utopian
 		/** Returns the time since application start. */
 		double GetTime() const;
 
-		/** Returns the current timestamp using a high resolution timer. */
+		/** Returns the current timestamp in milliseconds. */
 		Timestamp GetTimestamp() const;
 
-		/** Returns the elapsed time between now and timestamp. */
+		/** Returns the elapsed time between now and timestamp in milliseconds. */
 		double GetElapsedTime(Timestamp timestamp) const;
 
 	private:

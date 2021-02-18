@@ -24,7 +24,8 @@ namespace Utopian
 		RIGID_BOX,
 		RIGID_SPHERE,
 		RIGID_SPHERE_LIGHT,
-		SPAWN_POINT
+		SPAWN_POINT,
+		FINISH_POINT
 	};
 
 	enum SelectionType

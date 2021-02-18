@@ -13,6 +13,7 @@
 #include "core/components/CRigidBody.h"
 #include "core/components/CPolyMesh.h"
 #include "core/components/CSpawnPoint.h"
+#include "core/components/CFinishPoint.h"
 #include "vulkan/ModelLoader.h"
 #include "core/Log.h"
 
@@ -172,6 +173,10 @@ namespace Utopian
 				else if (name == "CSpawnPoint")
 				{
 					actor->AddComponent<CSpawnPoint>();
+				}
+				else if (name == "CFinishPoint")
+				{
+					actor->AddComponent<CFinishPoint>();
 				}
 			}
 

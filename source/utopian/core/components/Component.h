@@ -25,7 +25,8 @@ namespace Utopian
 			RIGID_BODY,
 			CATMULL_SPLINE,
 			POLYMESH,
-			SPAWN_POINT
+			SPAWN_POINT,
+			FINISH_POINT
 		};
 
 		Component(Actor* parent);

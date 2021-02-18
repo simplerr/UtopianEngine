@@ -1,6 +1,6 @@
 #include "core/components/CSpawnPoint.h"
 #include "core/components/CTransform.h"
-#include "core/components/CRenderable.h"
+#include <core/components/CPlayerControl.h>
 #include <core/components/CRigidBody.h>
 #include "core/components/Actor.h"
 #include "core/Input.h"
@@ -28,15 +28,12 @@ namespace Utopian
 			CRigidBody* rigidBody = playerActor->GetComponent<CRigidBody>();
 
 			rigidBody->SetKinematic(true);
-			transform.SetPosition(mTransform->GetPosition() + glm::vec3(0.0f, 0.5f, 0.0f));
+			transform.SetPosition(mTransform->GetPosition() + glm::vec3(0.0f, 0.0f, 0.0f));
 			rigidBody->SetKinematic(false);
-		}
 
-		// Hack: Only render spawn point in editor mode
-		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
-			mRenderable->SetVisible(true);
-		else
-			mRenderable->SetVisible(false);
+			CPlayerControl* playerControl = playerActor->GetComponent<CPlayerControl>();
+			playerControl->StartLevelTimer();
+		}
 	}
 
 	void CSpawnPoint::OnCreated()
@@ -50,7 +47,6 @@ namespace Utopian
 	void CSpawnPoint::PostInit()
 	{
 		mTransform = GetParent()->GetComponent<CTransform>();
-		mRenderable = GetParent()->GetComponent<CRenderable>();
 	}
 
 	LuaPlus::LuaObject CSpawnPoint::GetLuaObject()

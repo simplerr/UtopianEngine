@@ -6,12 +6,13 @@ namespace Utopian
 {
 	class Actor;
 	class CTransform;
+	class CRenderable;
 
-	class CSpawnPoint : public Component
+	class CFinishPoint : public Component
 	{
 	public:
-		CSpawnPoint(Actor* parent);
-		~CSpawnPoint();
+		CFinishPoint(Actor* parent);
+		~CFinishPoint();
 
 		void Update() override;
 		void OnCreated() override;
@@ -22,7 +23,7 @@ namespace Utopian
 
 		// Type identification
 		static uint32_t GetStaticType() {
-			return Component::ComponentType::SPAWN_POINT;
+			return Component::ComponentType::FINISH_POINT;
 		}
 
 		virtual uint32_t GetType() {

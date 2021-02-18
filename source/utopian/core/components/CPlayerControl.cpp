@@ -101,9 +101,16 @@ namespace Utopian
 
 		if (ImGuiRenderer::GetMode() == UI_MODE_GAME)
 		{
-			ImGuiRenderer::BeginWindow("CPlayerControl UI", glm::vec2(gRenderer().GetWindowWidth() / 2, 800), 300.0f,
+			glm::vec2 pos = glm::vec2(gRenderer().GetWindowWidth() / 2, gRenderer().GetWindowHeight() - 200);
+			ImGuiRenderer::BeginWindow("CPlayerControl UI", pos, 300.0f,
 										ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoInputs);
 			ImGui::Text("Speed: %.2f m/s", GetCurrentSpeed());
+
+			if (mLevelTimer.active)
+				ImGui::Text("Time: %.1f", gTimer().GetElapsedTime(mLevelTimer.startTime) / 1000.0f);
+			else
+				ImGui::Text("Time: 0.0");
+
 			ImGuiRenderer::EndWindow();
 		}
 	}
@@ -297,6 +304,22 @@ namespace Utopian
 		mViewmodel->SetRotation(glm::vec3(glm::pi<float>(),
 								rotationY - (glm::pi<float>() / 2.0f),
 								0.0f));
+	}
+
+	void CPlayerControl::StartLevelTimer()
+	{
+		mLevelTimer.startTime = gTimer().GetTimestamp();
+		mLevelTimer.active = true;
+	}
+
+	void CPlayerControl::StopLevelTimer()
+	{
+		if (mLevelTimer.active)
+		{
+			mLevelTimer.active = false;
+			float elapsedTime = gTimer().GetElapsedTime(mLevelTimer.startTime) / 1000.0f;
+			UTO_LOG("Finished the level in " + std::to_string(elapsedTime) + " seconds!");
+		}
 	}
 
 	LuaPlus::LuaObject CPlayerControl::GetLuaObject()
