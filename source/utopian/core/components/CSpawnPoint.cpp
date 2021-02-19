@@ -21,7 +21,7 @@ namespace Utopian
 
 	void CSpawnPoint::Update()
 	{
-		if (gInput().KeyPressed('R'))
+		if (gInput().KeyPressed('Y'))
 		{
 			Actor* playerActor = gWorld().GetPlayerActor();
 			Transform& transform = playerActor->GetTransform();

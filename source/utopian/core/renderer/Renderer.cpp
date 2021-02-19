@@ -143,10 +143,6 @@ namespace Utopian
 			ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
 			ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
 			ImGui::Checkbox("Wind enabled", &mRenderingSettings.windEnabled);
-
-			static bool debugQuads = true;
-			ImGui::Checkbox("Debug quads", &debugQuads);
-			gScreenQuadUi().SetVisible(0, debugQuads);
 		}
 
 		if (ImGui::CollapsingHeader("Fog settings"))

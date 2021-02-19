@@ -18,7 +18,7 @@ namespace Utopian
 	Profiler::Profiler(Vk::VulkanApp* vulkanApp)
 	{
       mEnabled = true;
-      mProfilerWindow.gpuGraph.SetMaxFrameTime(10.0f);
+      mProfilerWindow.gpuGraph.SetMaxFrameTime(15.0f);
       mFrametimePlot.Configure(20, 30.0f);
       mFpsPlot.Configure(20, 30.0f);
       mMemoryUsagePlot.Configure(20, 300.0f);

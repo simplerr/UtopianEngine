@@ -2,6 +2,401 @@ actor_list =
 {
 	
 	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-14962720857644198438.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -9.6054649353027,
+				pos_y = 0.48543787002563,
+				pos_z = -6.3559951782227,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Camera 1",
+		components = 
+		{
+			CCamera = 
+			{
+				far_plane = 400,
+				fov = 60,
+				look_at_x = 2.100462436676,
+				look_at_y = 2.3531634807587,
+				look_at_z = 15.106662750244,
+				near_plane = 0.0077999997884035,
+			},
+			CCatmullSpline = 
+			{
+				draw_debug = 0,
+				filename = "data/camera_spline.txt",
+				time_per_segment = 1673.4270019531,
+			},
+			CNoClip = 
+			{
+				speed = 0.00999999884516,
+			},
+			CPlayerControl = 
+			{
+				jumpStrength = 5,
+				maxSpeed = 3,
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/adventure_village/CrateSquare_1.obj",
+				render_flags = 0,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 0,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 3,
+				friction = 0,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = -4.5765169431888e-08,
+				orientation_x = 1,
+				orientation_y = 0.00010023209324572,
+				orientation_z = 1.1216278773818e-11,
+				pos_x = 1.771199464798,
+				pos_y = 2.3405447006226,
+				pos_z = 15.102579116821,
+				scale_x = 2.5,
+				scale_y = 2.4999995231628,
+				scale_z = 2.4999992847443,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-15909781919773930011.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -7.0740914344788,
+				pos_y = 0.54308176040649,
+				pos_z = -12.849181175232,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-15852522237019152163.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -4.8218832015991,
+				pos_y = 0.56670999526978,
+				pos_z = -14.896398544312,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-5338942149808433577.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -2.5106909275055,
+				pos_y = 0.57490539550781,
+				pos_z = -13.613739013672,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-17494236645830452077.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 0.30923891067505,
+				pos_y = 0.5531325340271,
+				pos_z = -13.527480125427,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-14058412295566265402.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 4.7348132133484,
+				pos_y = 0.57039928436279,
+				pos_z = -13.835952758789,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-361444286399873313.obj",
+				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 10.838806152344,
+				pos_y = 0.55425071716309,
+				pos_z = -12.363789558411,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
 		actor_name = "Directional light",
 		components = 
 		{
@@ -17,12 +412,12 @@ actor_list =
 				color_b = 0.88532823324203,
 				color_g = 0.93212097883224,
 				color_r = 0.9367088675499,
-				dir_x = 0.70710676908493,
-				dir_y = 0.70710676908493,
-				dir_z = -0,
+				dir_x = -0.5735764503479,
+				dir_y = 0.81915205717087,
+				dir_z = 0,
 				intensity_x = 0.34900000691414,
 				intensity_y = 0.84300005435944,
-				intensity_z = 0,
+				intensity_z = 0.58300000429153,
 				range = 100000,
 				spot = 4,
 				type = 0,
@@ -50,39 +445,11 @@ actor_list =
 				scale_z = 1.2000000476837,
 			},
 		},
+		scene_layer = 0,
 	},
 	
 	{
 		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/CrateLong_reflective.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 750.86083984375,
-				pos_y = 59.161010742188,
-				pos_z = -219.58293151855,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "Sponza",
 		components = 
 		{
 			CRenderable = 
@@ -92,137 +459,160 @@ actor_list =
 				color_g = 1,
 				color_r = 1,
 				path = "data/models/sponza/sponza.obj",
-				render_flags = 1,
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 0,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
 			},
 			CTransform = 
 			{
-				orientation_w = -0.0042035197839141,
-				orientation_x = 0.99999117851257,
+				orientation_w = -4.3711388286738e-08,
+				orientation_x = 1,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 0,
-				pos_y = 0,
-				pos_z = -112.08429718018,
+				pos_x = 3.3784289360046,
+				pos_y = 0.022975921630859,
+				pos_z = 11.372664451599,
+				scale_x = 0.0099999997764826,
+				scale_y = 0.0099999997764826,
+				scale_z = 0.0099999997764826,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-11459721058600981566.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -10.140538215637,
+				pos_y = 0.46309232711792,
+				pos_z = 2.0035486221313,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
 			},
 		},
+		scene_layer = 0,
 	},
 	
 	{
-		actor_name = "EditorActor",
+		actor_name = "Polymesh",
 		components = 
 		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-12131933794639897382.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
 			CRenderable = 
 			{
 				color_a = 1,
-				color_b = 0,
+				color_b = 1,
 				color_g = 1,
-				color_r = 0,
-				path = "data/models/sphere_lowres.obj",
-				render_flags = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
 			},
 			CTransform = 
 			{
-				orientation_w = -0.25387027859688,
-				orientation_x = 0.052028991281986,
-				orientation_y = -0.034035313874483,
-				orientation_z = 0.96523803472519,
-				pos_x = 809.93402099609,
-				pos_y = 87.239349365234,
-				pos_z = -157.49926757813,
-				scale_x = 19.999998092651,
-				scale_y = 19.999988555908,
-				scale_z = 20,
-			},
-		},
-	},
-	
-	{
-		actor_name = "Camera 1",
-		components = 
-		{
-			CCamera = 
-			{
-				far_plane = 51200,
-				fov = 60,
-				look_at_x = 121.77127075195,
-				look_at_y = -768.64642333984,
-				look_at_z = -756.98364257813,
-				near_plane = 1,
-			},
-			CCatmullSpline = 
-			{
-				draw_debug = 0,
-				filename = "data/camera_spline.txt",
-				time_per_segment = 2187.412109375,
-			},
-			CNoClip = 
-			{
-				speed = 1,
-			},
-			CPlayerControl = 
-			{
-				empty = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 0.9553365111351,
-				orientation_x = -0.29552018642426,
+				orientation_w = 1,
+				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 236.3876953125,
-				pos_y = 421.77536010742,
-				pos_z = -122.07766723633,
+				pos_x = -9.96790599823,
+				pos_y = 0.46485710144043,
+				pos_z = -3.4508171081543,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
 			},
 		},
+		scene_layer = 0,
 	},
 	
 	{
-		actor_name = "EditorActor",
+		actor_name = "Polymesh",
 		components = 
 		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-11791782650475262833.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
 			CRenderable = 
 			{
 				color_a = 1,
 				color_b = 1,
 				color_g = 1,
 				color_r = 1,
-				path = "data/models/adventure_village/HouseBricksThin_1.obj",
-				render_flags = 1,
+				path = "Unknown",
+				render_flags = 33,
 			},
-			CTransform = 
+			CRigidBody = 
 			{
-				orientation_w = 0.097430571913719,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0.99524229764938,
-				pos_x = 117.19053649902,
-				pos_y = -6.1823120117188,
-				pos_z = -130.04898071289,
-				scale_x = 14.499996185303,
-				scale_y = 8.4000005722046,
-				scale_z = 15.5,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/PlantA.obj",
-				render_flags = 1,
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
 			},
 			CTransform = 
 			{
@@ -230,14 +620,48 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 1045.8708496094,
-				pos_y = -1544.6199951172,
-				pos_z = -52.53687286377,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
+				pos_x = -11.881070137024,
+				pos_y = 0.53875350952148,
+				pos_z = -9.5229444503784,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "EditorActor",
+		components = 
+		{
+			CFinishPoint = 
+			{
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "data/models/spawn_cylinder.fbx",
+				render_flags = 33,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 11.787244796753,
+				pos_y = 4.4414415359497,
+				pos_z = -9.5761432647705,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
 	},
 	
 	{
@@ -250,8 +674,11 @@ actor_list =
 				color_b = 1,
 				color_g = 1,
 				color_r = 1,
-				path = "data/models/adventure_village/PlantA.obj",
-				render_flags = 1,
+				path = "data/models/spawn_cone.fbx",
+				render_flags = 33,
+			},
+			CSpawnPoint = 
+			{
 			},
 			CTransform = 
 			{
@@ -259,28 +686,46 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 997.83081054688,
-				pos_y = -1520.8354492188,
-				pos_z = -101.49221038818,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
+				pos_x = -8.2169675827026,
+				pos_y = 1.6335691213608,
+				pos_z = 5.9963049888611,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
+		scene_layer = 0,
 	},
 	
 	{
-		actor_name = "EditorActor",
+		actor_name = "Polymesh",
 		components = 
 		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-16056933003588629411.obj",
+				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
+			},
 			CRenderable = 
 			{
 				color_a = 1,
 				color_b = 1,
 				color_g = 1,
 				color_r = 1,
-				path = "data/models/adventure_village/PlantA.obj",
-				render_flags = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
 			},
 			CTransform = 
 			{
@@ -288,144 +733,46 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 988.75799560547,
-				pos_y = -1527.4547119141,
-				pos_z = -169.39596557617,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
+				pos_x = -10.265775680542,
+				pos_y = 0.52943706512451,
+				pos_z = -13.699447631836,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/PlantA_1.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 994.04364013672,
-				pos_y = -1519.5942382813,
-				pos_z = -204.61752319336,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/CrateLong_reflective.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 1944.0385742188,
-				pos_y = -1832.6387939453,
-				pos_z = -75.396484375,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/CrateLong_reflective.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 20672.2578125,
-				pos_y = -1410.9807128906,
-				pos_z = -259.05453491211,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
-	},
-	
-	{
-		actor_name = "EditorActor",
-		components = 
-		{
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "data/models/adventure_village/ShopSign_1.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 1012.2759399414,
-				pos_y = 174.23913574219,
-				pos_z = 4.5795555114746,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
-			},
-		},
+		scene_layer = 0,
 	}, 
 	[0] = 
 	{
-		actor_name = "EditorActor",
+		actor_name = "Polymesh",
 		components = 
 		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-12020006925761106761.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
 			CRenderable = 
 			{
 				color_a = 1,
 				color_b = 1,
 				color_g = 1,
 				color_r = 1,
-				path = "data/models/adventure_village/CrateLong_reflective.obj",
-				render_flags = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
 			},
 			CTransform = 
 			{
@@ -433,14 +780,15 @@ actor_list =
 				orientation_x = 0,
 				orientation_y = 0,
 				orientation_z = 0,
-				pos_x = 844.65533447266,
-				pos_y = 14.064889907837,
-				pos_z = -95.484016418457,
-				scale_x = 50,
-				scale_y = 50,
-				scale_z = 50,
+				pos_x = -12.136655807495,
+				pos_y = 0.44529247283936,
+				pos_z = -0.16549825668335,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
 			},
 		},
+		scene_layer = 0,
 	},
 }
 

@@ -183,10 +183,14 @@ namespace Utopian
 			glm::vec3 p = ToVec3(closestResults.m_hitPointWorld);
 
 			CRigidBody* rigidBody = static_cast<CRigidBody*>(userPtr);
-			intersectInfo.actor = rigidBody->GetParent();
-			intersectInfo.normal = n; // Todo: Note: Normal calculation is incorrect when objects are rotated
-			intersectInfo.distance = glm::distance(ray.origin, p);
-			intersectInfo.hit = true;
+
+			if (rigidBody != nullptr)
+			{
+				intersectInfo.actor = rigidBody->GetParent();
+				intersectInfo.normal = n; // Todo: Note: Normal calculation is incorrect when objects are rotated
+				intersectInfo.distance = glm::distance(ray.origin, p);
+				intersectInfo.hit = true;
+			}
 
 			// UTO_LOG("nx: " + std::to_string(n.x) + " ny: " + std::to_string(n.y) + " nz: " + std::to_string(n.z));
 			// UTO_LOG("px: " + std::to_string(p.x) + " py: " + std::to_string(p.y) + " pz: " + std::to_string(p.z));
