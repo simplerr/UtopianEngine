@@ -22,7 +22,7 @@ namespace Utopian::Vk
 	VulkanBase::VulkanBase(Utopian::Window* window, bool enableValidation)
 		: mWindow(window)
 	{
-		mInstance = new Instance("Utopian Engine (v0.2)", enableValidation);
+		mInstance = new Instance("Utopian Engine (v0.3)", enableValidation);
 		Debug::InitDebug(mInstance);
 
 		mDevice = new Device(mInstance);

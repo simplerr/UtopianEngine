@@ -25,7 +25,7 @@ Game::Game(Utopian::Window* window)
 	renderingSettings.terrainEnabled = false;
 	renderingSettings.waterEnabled = true;
 
-	Utopian::gEngine().Start(window, "Utopian Engine (v0.2)");
+	Utopian::gEngine().Start(window, "Utopian Engine (v0.3)");
 	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
 	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>("data/settings.lua"));
 	Utopian::gEngine().StartModules();

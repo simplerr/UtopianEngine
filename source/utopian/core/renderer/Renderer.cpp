@@ -105,7 +105,7 @@ namespace Utopian
 
 	void Renderer::UpdateUi()
 	{
-		ImGuiRenderer::BeginWindow("Utopian Engine (v0.2)", glm::vec2(10, 10), 350.0f,
+		ImGuiRenderer::BeginWindow("Utopian Engine (v0.3)", glm::vec2(10, 10), 350.0f,
 								   ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground);
 
 		glm::vec3 pos = mMainCamera->GetPosition();

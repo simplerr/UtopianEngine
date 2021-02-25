@@ -6,8 +6,11 @@ It is written in C++ and uses Vulkan as the rendering API.
 
 ## Media
 
+[Demo on youtube](https://youtu.be/428gfVBfCms)
+
 ![Image](data/printscreens/readme-print.png)
 ![Image](data/printscreens/terrain-texturing-2.png)
+![Image](data/printscreens/prototype-level.png)
 ![Image](data/printscreens/water-ssr-8.png)
 ![Image](data/printscreens/marching-cubes.png)
 
@@ -16,6 +19,7 @@ It is written in C++ and uses Vulkan as the rendering API.
 + Deferred shading
 + Casacade shadow mapping
 + Screen Space Reflections
++ Quake inspired player movement
 + Normal mapping
 + God rays
 + SSAO
@@ -28,8 +32,12 @@ It is written in C++ and uses Vulkan as the rendering API.
 + ImGui user interface
 + ECS layer
 + Terrain tesselation
++ Terrain tools
 + Displacement mapping
 + Water
++ Prototype level editor
++ Vegetation wind effect
++ Bullet Physics integration
 
 ## Planned features
 + Atmospheric scattering
