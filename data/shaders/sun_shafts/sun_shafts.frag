@@ -18,9 +18,8 @@ layout (location = 0) out vec4 OutFragColor;
 
 void main() 
 {
-	//
 	ivec2 texDim = textureSize(sunSampler, 0);
-	vec2 radialSize = vec2(1.0 / texDim.s, 1.0 / texDim.t); 
+	vec2 radialSize = vec2(1.0 / texDim.s, 1.0 / texDim.t);
 	
 	vec2 uv = InTex;
 
@@ -37,7 +36,7 @@ void main()
  
 #define samples 64
 
-	for (int i = 0; i < samples; i++) 
+	for (int i = 0; i < samples; i++)
 	{
 		float scale = 1.0 - radialBlurScale * (float(i) / float(samples-1));
 		color += texture(sunSampler, uv * scale + ubo_parameters.radialOrigin);
@@ -45,32 +44,3 @@ void main()
  
 	OutFragColor = (color / samples) * radialBlurStrength;
 }
-
-// void main()
-// {
-// 	#define NUM_SAMPLES 32
-// 	vec2 lightPos = vec2(0.5, 0.5);
-// 	float density = 1.0;
-// 	float illuminationDecay = 1.0;
-// 	float decay = 1.0;
-// 	float weight = 1.0;
-// 	float exposure = 1.0 / 5;
-
-// 	vec2 uv = InTex;
-// 	vec2 deltaTextCoord = vec2(uv - lightPos.st);
-// 	deltaTextCoord *= 1.0 /  (float(NUM_SAMPLES) * density);
-
-// 	vec4 color = vec4(0.0);
-// 	for(int i=0; i < NUM_SAMPLES ; i++)
-// 	{
-// 		uv -= deltaTextCoord;
-
-// 		color += texture(sunSampler, uv) * illuminationDecay * weight;
-
-// 		illuminationDecay *= decay;
-// 	}
-
-// 	color *= exposure;
-	
-// 	OutFragColor = color;
-// }

@@ -22,6 +22,7 @@
 #include "core/renderer/jobs/SunShaftJob.h"
 #include "core/renderer/jobs/TonemapJob.h"
 #include "core/renderer/jobs/WaterJob.h"
+#include "core/renderer/jobs/AtmosphereJob.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
@@ -50,7 +51,15 @@ namespace Utopian
 		AddJob(new DeferredJob(device, width, height));
 		//AddJob(new GrassJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
 		//AddJob(new SkyboxJob(device, width, height));
+
+// Todo: make configurable
+#define ATMOSPHERE
+#ifndef ATMOSPHERE
 		AddJob(new SkydomeJob(device, width, height));
+#else
+		AddJob(new AtmosphereJob(device, width, height));
+#endif
+
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new OpaqueCopyJob(device, width, height));
 		AddJob(new GeometryThicknessJob(device, width, height));

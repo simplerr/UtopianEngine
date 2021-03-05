@@ -98,5 +98,11 @@ namespace Utopian
 		glm::mat4 projectionMatrix;
 		glm::vec3 eyePos;
 		SharedShaderVariables sharedVariables;
+
+		struct SunInfo
+		{
+			float azimuth = 0.0f;
+			glm::vec3 direction;
+		} sunInfo;
 	};
 }

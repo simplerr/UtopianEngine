@@ -91,6 +91,7 @@ namespace Utopian
 	void Renderer::Update()
 	{
 		UpdateCascades();
+		UpdateSun();
 
 		if (mSceneInfo.terrain != nullptr)
 			mSceneInfo.terrain->Update();
@@ -313,6 +314,22 @@ namespace Utopian
 
 			lastSplitDist = cascadeSplits[i];
 		}
+	}
+
+	void Renderer::UpdateSun()
+	{
+		// Move sun
+		mSceneInfo.sunInfo.azimuth += (float)Timer::Instance().GetTime() / 10000000 * mRenderingSettings.sunSpeed;
+
+		// Calculate light direction
+		float sunInclination = glm::radians(mRenderingSettings.sunInclination);
+
+		mSceneInfo.sunInfo.direction = glm::vec3(sin(sunInclination) * cos(mSceneInfo.sunInfo.azimuth),
+												 cos(sunInclination),
+												 sin(sunInclination) * sin(mSceneInfo.sunInfo.azimuth));
+
+		// Note: Negation of Z
+		mSceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * mSceneInfo.sunInfo.direction);
 	}
 
 	void Renderer::Render()

@@ -110,6 +110,9 @@ namespace Utopian
 		/** Updates the cascade shadow mapping frustum splits. */
 		void UpdateCascades();
 
+		/** Updates the sun position. */
+		void UpdateSun();
+
 	private:
 		SharedPtr<JobGraph> mJobGraph;
 		SharedPtr<InstancingManager> mInstancingManager;

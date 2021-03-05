@@ -1,6 +1,7 @@
 #include "core/renderer/jobs/SunShaftJob.h"
 #include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/SkydomeJob.h"
+#include "core/renderer/jobs/AtmosphereJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/Camera.h"
 
@@ -9,7 +10,7 @@ namespace Utopian
 	SunShaftJob::SunShaftJob(Vk::Device* device, uint32_t width, uint32_t height)
 		: BaseJob(device, width, height)
 	{
-		mSunAzimuth = 0.0f;
+		
 	}
 
 	SunShaftJob::~SunShaftJob()
@@ -19,7 +20,22 @@ namespace Utopian
 	void SunShaftJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
 	{
 		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-		SkydomeJob* skydomeJob = static_cast<SkydomeJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+
+		// A workaround since both SkydomeJob and Atmosphere can produce the sun image,
+		// depending on the job graph configuration
+		SharedPtr<Vk::Image> sunImage = nullptr;
+		SkydomeJob* skydomeJob = dynamic_cast<SkydomeJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+		if (skydomeJob != nullptr)
+		{
+			sunImage = skydomeJob->sunImage;
+		}
+		else
+		{
+			AtmosphereJob* atmosphereJob = dynamic_cast<AtmosphereJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+			sunImage = atmosphereJob->sunImage;
+		}
+
+		assert(sunImage);
 
 		// Note: Todo: Probably don't need to be the native window size
 		mRadialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -35,29 +51,20 @@ namespace Utopian
 
 		mRadialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 		mRadialBlurEffect->BindUniformBuffer("UBO_parameters", mRadialBlurParameters);
-		mRadialBlurEffect->BindCombinedImage("sunSampler", *skydomeJob->sunImage, *mRadialBlurRenderTarget->GetSampler());
+		mRadialBlurEffect->BindCombinedImage("sunSampler", *sunImage, *mRadialBlurRenderTarget->GetSampler());
 
 		mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 	}
 
 	void SunShaftJob::Render(const JobInput& jobInput)
 	{
-		// Move sun
-		mSunAzimuth += (float)Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;
-
-		// Calculate light direction
 		float sunInclination = glm::radians(jobInput.renderingSettings.sunInclination);
-
-		// Note: Todo: Why negative azimuth?
-		mSunDir = glm::vec3(sin(sunInclination) * cos(-mSunAzimuth),
-			cos(sunInclination),
-			sin(sunInclination) * sin(-mSunAzimuth));
-
-		// Calculate sun screen space position
+		glm::vec3 sunDir = jobInput.sceneInfo.sunInfo.direction;
 		float skydomeRadius = mSkydomeModel->GetBoundingBox().GetWidth() / 2.0f;
-		// Note: Todo: Why -X -Z here?
+
+		// Note: Todo: Why -X here?
 		// Note: Todo: Why - camera position?
-		glm::vec3 sunWorldPos = glm::vec3(-1, 1, -1) * mSunDir * skydomeRadius * mSkydomeScale - jobInput.sceneInfo.eyePos;;
+		glm::vec3 sunWorldPos = glm::vec3(-1, 1, 1) * sunDir * skydomeRadius * mSkydomeScale - jobInput.sceneInfo.eyePos;
 		glm::vec4 clipPos = jobInput.sceneInfo.projectionMatrix * jobInput.sceneInfo.viewMatrix * glm::vec4(sunWorldPos, 1.0f);
 		glm::vec4 ndcPos = clipPos / clipPos.w;
 		glm::vec2 texCoord = glm::vec2(ndcPos) / 2.0f + 0.5f;

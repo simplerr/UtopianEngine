@@ -26,8 +26,6 @@ namespace Utopian
 
 		// Todo: Note: This should not be here
 		SharedPtr<Vk::StaticModel> mSkydomeModel;
-		float mSunAzimuth;
-		glm::vec3 mSunDir;
 		const float mSkydomeScale = 1000.0f;
 	};
 }

@@ -11,7 +11,6 @@ namespace Utopian
 	{
 		mParameterBlock.data.inclination = 90.0f;
 		mParameterBlock.data.azimuth = 0.0f;
-		mSunAzimuth = 0.0f;
 
 		sunImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R8G8B8A8_UNORM, "Skydome sun image");
 	}
@@ -53,27 +52,14 @@ namespace Utopian
 
 	void SkydomeJob::Render(const JobInput& jobInput)
 	{
-		// Move sun
-		mSunAzimuth += (float)Timer::Instance().GetTime() / 10000000 * jobInput.renderingSettings.sunSpeed;
-
-		// Calculate light direction
-		float sunInclination = glm::radians(jobInput.renderingSettings.sunInclination);
-
-		glm::vec3 sunDir = glm::vec3(sin(sunInclination) * cos(mSunAzimuth),
-			cos(sunInclination),
-			sin(sunInclination) * sin(mSunAzimuth));
-
-		// Note: Negation of Z
-		jobInput.sceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * sunDir);
-
 		// Removes the translation components of the matrix to always keep the skydome at the same distance
 		glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		mInputBlock.data.world = glm::scale(world, glm::vec3(16.0f));
 		mInputBlock.UpdateMemory();
 
 		mParameterBlock.data.sphereRadius = mSkydomeModel->GetBoundingBox().GetHeight() / 2.0f;
-		mParameterBlock.data.inclination = sunInclination;
-		mParameterBlock.data.azimuth = mSunAzimuth;
+		mParameterBlock.data.inclination = glm::radians(jobInput.renderingSettings.sunInclination);
+		mParameterBlock.data.azimuth = jobInput.sceneInfo.sunInfo.azimuth;
 		mParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
 		mParameterBlock.data.onlySun = false;
 		mParameterBlock.UpdateMemory();

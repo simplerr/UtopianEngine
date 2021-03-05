@@ -33,6 +33,5 @@ namespace Utopian
 		SkydomeInput mInputBlock;
 		ParameterBlock mParameterBlock;
 		SharedPtr<Vk::StaticModel> mSkydomeModel;
-		float mSunAzimuth;
 	};
 }
