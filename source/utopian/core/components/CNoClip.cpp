@@ -6,90 +6,90 @@
 
 namespace Utopian
 {
-	CNoClip::CNoClip(Actor* parent, float speed)
-		: Component(parent)
-	{
-		SetName("CNoClip");
-		SetSpeed(speed);
-		SetSensitivity(0.2f);
-	}
+   CNoClip::CNoClip(Actor* parent, float speed)
+      : Component(parent)
+   {
+      SetName("CNoClip");
+      SetSpeed(speed);
+      SetSensitivity(0.2f);
+   }
 
-	CNoClip::~CNoClip()
-	{
-	}
+   CNoClip::~CNoClip()
+   {
+   }
 
-	void CNoClip::Update()
-	{
-		if (gInput().KeyDown('W')) {
-			glm::vec3 dir = mCamera->GetDirection();
-			mTransform->AddTranslation(mSpeed * dir);
+   void CNoClip::Update()
+   {
+      if (gInput().KeyDown('W')) {
+         glm::vec3 dir = mCamera->GetDirection();
+         mTransform->AddTranslation(mSpeed * dir);
 
-		}
-		if (gInput().KeyDown('S')) {
-			glm::vec3 dir = mCamera->GetDirection();
-			mTransform->AddTranslation(mSpeed * -dir);
+      }
+      if (gInput().KeyDown('S')) {
+         glm::vec3 dir = mCamera->GetDirection();
+         mTransform->AddTranslation(mSpeed * -dir);
 
-		}
-		if (gInput().KeyDown('A')) {
-			glm::vec3 right = mCamera->GetRight();
-			mTransform->AddTranslation(mSpeed * right);
+      }
+      if (gInput().KeyDown('A')) {
+         glm::vec3 right = mCamera->GetRight();
+         mTransform->AddTranslation(mSpeed * right);
 
-		}
-		if (gInput().KeyDown('D')) {
-			glm::vec3 right = mCamera->GetRight();
-			mTransform->AddTranslation(mSpeed * -right);
-		}
+      }
+      if (gInput().KeyDown('D')) {
+         glm::vec3 right = mCamera->GetRight();
+         mTransform->AddTranslation(mSpeed * -right);
+      }
 
-		// Todo: Mousewheel broken
-		if (gInput().KeyDown(VK_RBUTTON))
-		{
-			float deltaYaw = gInput().MouseDx() * mSensitivity;
-			float deltaPitch = gInput().MouseDy() * mSensitivity;
-			mCamera->AddOrientation(deltaYaw, deltaPitch);
-		}
-	}
+      // Todo: Mousewheel broken
+      if (gInput().KeyDown(VK_RBUTTON))
+      {
+         float deltaYaw = gInput().MouseDx() * mSensitivity;
+         float deltaPitch = gInput().MouseDy() * mSensitivity;
+         mCamera->AddOrientation(deltaYaw, deltaPitch);
+      }
+   }
 
-	void CNoClip::OnCreated()
-	{
-	}
+   void CNoClip::OnCreated()
+   {
+   }
 
-	void CNoClip::OnDestroyed()
-	{
-	}
+   void CNoClip::OnDestroyed()
+   {
+   }
 
-	void CNoClip::PostInit()
-	{
-		mCamera = GetParent()->GetComponent<CCamera>();
-		mTransform = GetParent()->GetComponent<CTransform>();
-	}
+   void CNoClip::PostInit()
+   {
+      mCamera = GetParent()->GetComponent<CCamera>();
+      mTransform = GetParent()->GetComponent<CTransform>();
+   }
 
-	LuaPlus::LuaObject CNoClip::GetLuaObject()
-	{
-		LuaPlus::LuaObject luaObject;
-		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+   LuaPlus::LuaObject CNoClip::GetLuaObject()
+   {
+      LuaPlus::LuaObject luaObject;
+      luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-		luaObject.SetNumber("speed", GetSpeed());
+      luaObject.SetNumber("speed", GetSpeed());
 
-		return luaObject;
-	}
+      return luaObject;
+   }
 
-	void CNoClip::SetSpeed(float speed)
-	{
-		mSpeed = speed;
-	}
+   void CNoClip::SetSpeed(float speed)
+   {
+      mSpeed = speed;
+   }
 
-	void CNoClip::SetSensitivity(float sensitivity)
-	{
-		mSensitivity = sensitivity;
-	}
+   void CNoClip::SetSensitivity(float sensitivity)
+   {
+      mSensitivity = sensitivity;
+   }
 
-	float CNoClip::GetSpeed() const
-	{
-		return mSpeed;
-	}
+   float CNoClip::GetSpeed() const
+   {
+      return mSpeed;
+   }
 
-	float CNoClip::GetSensitivity() const
-	{
-		return mSensitivity;
-	}
+   float CNoClip::GetSensitivity() const
+   {
+      return mSensitivity;
+   }
 }

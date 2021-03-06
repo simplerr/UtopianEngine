@@ -11,6 +11,6 @@ std::string ReadFile(std::string filename);
 
 namespace Utopian
 {
-	std::string ExtractFilename(std::string path);
-	std::string GetFileExtension(std::string filename);
+   std::string ExtractFilename(std::string path);
+   std::string GetFileExtension(std::string filename);
 }

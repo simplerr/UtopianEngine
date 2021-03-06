@@ -10,13 +10,13 @@
 
 namespace Utopian
 {
-	Profiler& gProfiler()
-	{
-		return Profiler::Instance();
-	}
+   Profiler& gProfiler()
+   {
+      return Profiler::Instance();
+   }
 
-	Profiler::Profiler(Vk::VulkanApp* vulkanApp)
-	{
+   Profiler::Profiler(Vk::VulkanApp* vulkanApp)
+   {
       mEnabled = true;
       mProfilerWindow.gpuGraph.SetMaxFrameTime(15.0f);
       mFrametimePlot.Configure(20, 30.0f);
@@ -24,14 +24,14 @@ namespace Utopian
       mMemoryUsagePlot.Configure(20, 300.0f);
       mVulkanApp = vulkanApp;
       mDropFrame = true;
-	}
+   }
 
-	Profiler::~Profiler()
-	{
-	}
+   Profiler::~Profiler()
+   {
+   }
 
-	void Profiler::Update()
-	{
+   void Profiler::Update()
+   {
       if (gInput().KeyPressed('P'))
          mEnabled = !mEnabled;
      

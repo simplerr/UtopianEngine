@@ -6,22 +6,22 @@
 
 namespace Utopian
 {
-	/* 
-		ObjectManager is responsible for the lifetime of every Object.
-	*/
-	class ObjectManager : public Module<ObjectManager>
-	{
-	public:
-		ObjectManager();
-		~ObjectManager();
+   /* 
+      ObjectManager is responsible for the lifetime of every Object.
+   */
+   class ObjectManager : public Module<ObjectManager>
+   {
+   public:
+      ObjectManager();
+      ~ObjectManager();
 
-		void RegisterObject(const SharedPtr<Object>& object);
+      void RegisterObject(const SharedPtr<Object>& object);
 
-		Object& GetObjectHandle(uint32_t id);
+      Object& GetObjectHandle(uint32_t id);
 
-		void PrintObjects();
-	private:
-		std::map<uint32_t, SharedPtr<Object>> mObjects;
-		uint32_t mNextAvailableId;
-	};
+      void PrintObjects();
+   private:
+      std::map<uint32_t, SharedPtr<Object>> mObjects;
+      uint32_t mNextAvailableId;
+   };
 }

@@ -31,71 +31,71 @@ Vulkan Tutorial: https://vulkan-tutorial.com/
 
 namespace Utopian::Vk
 {
-	/** Base class that contains common code for creating a Vulkan application. */
-	class VulkanBase
-	{
-	public:
-		VulkanBase(Utopian::Window* window, bool enableValidation);
-		virtual ~VulkanBase();
+   /** Base class that contains common code for creating a Vulkan application. */
+   class VulkanBase
+   {
+   public:
+      VulkanBase(Utopian::Window* window, bool enableValidation);
+      virtual ~VulkanBase();
 
-		virtual void Prepare();
-		virtual void Render() = 0;
+      virtual void Prepare();
+      virtual void Render() = 0;
 
-		/** To be called at the start of a frame. */
-		void PrepareFrame();
+      /** To be called at the start of a frame. */
+      void PrepareFrame();
 
-		/** To be called at the end of a frame. */
-		void SubmitFrame();
+      /** To be called at the end of a frame. */
+      void SubmitFrame();
 
-		Device* GetDevice();
-		RenderPass* GetRenderPass();
-		VkFramebuffer GetCurrentFrameBuffer();
-		VkFormat GetColorFormat();
-		VkFormat GetDepthFormat();
+      Device* GetDevice();
+      RenderPass* GetRenderPass();
+      VkFramebuffer GetCurrentFrameBuffer();
+      VkFormat GetColorFormat();
+      VkFormat GetDepthFormat();
 
-		uint32_t GetWindowWidth();
-		uint32_t GetWindowHeight();
+      uint32_t GetWindowWidth();
+      uint32_t GetWindowHeight();
 
-		/** Returns the semaphore that is signaled when a new swapchain image is ready for use. */
-		const SharedPtr<Semaphore>& GetImageAvailableSemaphore() const;
+      /** Returns the semaphore that is signaled when a new swapchain image is ready for use. */
+      const SharedPtr<Semaphore>& GetImageAvailableSemaphore() const;
 
-		/** Returns the semaphore that is signaled when the submitted primary command buffer is executed, i.e 
-		 * the image can be presented. */
-		const SharedPtr<Semaphore>& GetRenderCompleteSemaphore() const;
+      /** Returns the semaphore that is signaled when the submitted primary command buffer is executed, i.e 
+       * the image can be presented. */
+      const SharedPtr<Semaphore>& GetRenderCompleteSemaphore() const;
 
-		/** Returns the semaphore which the primary command buffer submission is waiting on. */
-		const SharedPtr<Semaphore>& GetWaitSubmitSemaphore() const;
+      /** Returns the semaphore which the primary command buffer submission is waiting on. */
+      const SharedPtr<Semaphore>& GetWaitSubmitSemaphore() const;
 
-		/** Sets the semaphore which the primary command buffer submission will wait on. This can
-		 * be GetImageAvailableSemaphore() directly or a semaphore signaled by another primary command buffer. */
-		void SetWaitSubmitSemaphore(const SharedPtr<Semaphore>& waitSemaphore);
+      /** Sets the semaphore which the primary command buffer submission will wait on. This can
+       * be GetImageAvailableSemaphore() directly or a semaphore signaled by another primary command buffer. */
+      void SetWaitSubmitSemaphore(const SharedPtr<Semaphore>& waitSemaphore);
 
-		bool PreviousFrameComplete();
+      bool PreviousFrameComplete();
 
-		Window* GetWindow();
+      Window* GetWindow();
 
-		virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	private:
-		void SetupSwapchain();
+      virtual void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+   private:
+      void SetupSwapchain();
 
-	protected:
-		// Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
-		VulkanSwapChain					mSwapChain;
-		FrameBuffers*					mFrameBuffers = nullptr;
-		Instance*						mInstance = nullptr;
-		Device*							mDevice = nullptr;
-		Window*							mWindow = nullptr;
-		Image*							mDepthStencil = nullptr;
-		SharedPtr<Semaphore>			mImageAvailable = nullptr;
-		SharedPtr<Semaphore>			mRenderComplete = nullptr;
-		SharedPtr<Semaphore>			mWaitSubmitSemaphore = nullptr;
-		SharedPtr<Fence>				mWaitFence = nullptr;
+   protected:
+      // Swap chain magic by Sascha Willems (https://github.com/SaschaWillems/Vulkan)
+      VulkanSwapChain            mSwapChain;
+      FrameBuffers*              mFrameBuffers = nullptr;
+      Instance*                  mInstance = nullptr;
+      Device*                    mDevice = nullptr;
+      Window*                    mWindow = nullptr;
+      Image*                     mDepthStencil = nullptr;
+      SharedPtr<Semaphore>       mImageAvailable = nullptr;
+      SharedPtr<Semaphore>       mRenderComplete = nullptr;
+      SharedPtr<Semaphore>       mWaitSubmitSemaphore = nullptr;
+      SharedPtr<Fence>           mWaitFence = nullptr;
 
-		// Note: Todo: Used by legacy effects
-		RenderPass*						mRenderPass = nullptr;
+      // Note: Todo: Used by legacy effects
+      RenderPass*                mRenderPass = nullptr;
 
-		VkFormat						mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
-		VkFormat						mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
-	};
-}	// VulkanLib namespace
+      VkFormat                   mColorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+      VkFormat                   mDepthFormat = VK_FORMAT_D32_SFLOAT_S8_UINT;
+   };
+}  // VulkanLib namespace
 #pragma once

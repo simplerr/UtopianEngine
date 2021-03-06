@@ -7,23 +7,23 @@ RayTrace* gApp = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (gApp != nullptr)
-		gApp->HandleMessages(hwnd, msg, wParam, lParam);
+   if (gApp != nullptr)
+      gApp->HandleMessages(hwnd, msg, wParam, lParam);
 
-	return DefWindowProc(hwnd, msg, wParam, lParam);
+   return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {
-	Utopian::Window window = Utopian::Window(2000, 1260);
+   Utopian::Window window = Utopian::Window(2000, 1260);
 
-	window.SetupWindow(hInstance, WndProc);
+   window.SetupWindow(hInstance, WndProc);
 
-	gApp = new RayTrace(&window);
-	gApp->Run();
+   gApp = new RayTrace(&window);
+   gApp->Run();
 
-	delete gApp;
+   delete gApp;
 
-	return 0;
+   return 0;
 }
 

@@ -28,602 +28,602 @@
 
 namespace Utopian
 {
-	Editor::Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, Terrain* terrain)
-		: mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
-	{
-		mSelectedActor = nullptr;
-		mSelectedActorIndex = 0u;
-		mActorInspector = new ActorInspector();
-
-		if (terrain != nullptr)
-		{
-			mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
-			mFoliageTool = std::make_shared<FoliageTool>(terrain, gRenderer().GetDevice());
-			mFoliageTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
-		}
-
-		mPrototypeTool = std::make_shared<PrototypeTool>();
-
-		AddActorCreation("Spawn point", ActorTemplate::SPAWN_POINT);
-		AddActorCreation("Finish point", ActorTemplate::FINISH_POINT);
-		AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
-		AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
-
-		mSelectedModel = 4; // Physics sphere
-
-		AddPaths();
-	}
-
-	Editor::~Editor()
-	{
-		for (uint32_t i = 0; i < mModelPaths.size(); i++)
-			delete mModelPaths[i];
-
-		delete mActorInspector;
-	}
-
-	void Editor::PreFrame()
-	{
-		mPrototypeTool->PreFrame();
-	}
-
-	void Editor::Update()
-	{
-		if (mTerrain != nullptr)
-		{
-			mTerrainTool->Update();
-			mFoliageTool->Update();
-		}
-
-		UpdateSelectionType();
-		DrawGizmo();
-		SelectActor();
-		AddActorToScene();
-		RemoveActorFromScene();
-		ScaleSelectedActor();
-
-		// Deselect Actor
-		if (gInput().KeyPressed(VK_ESCAPE))
-		{
-			OnActorSelected(nullptr);
-			mPrototypeTool->ActorSelected(nullptr);
-		}
-
-		// Hide/show UI
-		if (gInput().KeyPressed('H'))
-		{
-			if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
-				ImGuiRenderer::SetMode(UI_MODE_GAME);
-			else
-				ImGuiRenderer::SetMode(UI_MODE_EDITOR);
-		}
-
-		// Recompile shaders
-		if (gInput().KeyPressed('R'))
-		{
-			Vk::gEffectManager().RecompileModifiedShaders();
-		}
-
-		mPrototypeTool->Update(mWorld);
-
-		// The UI needs to be updated after updating the selected actor since otherwise
-		// the texture descriptor set for the UI can be freed when still being used in a command buffer.
-		if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
-		{
-			UpdateUi();
-
-			// Workaround: The real console window is transparent and not supposed to be docked since
-			// it also should be displayed when in the game mode. This creates and empty window that
-			// take up an area in the dock space. The real console should be placed on top of this window.
-			ImGuiRenderer::BeginWindow("Console", glm::vec2(200, 800), 300.0f, ImGuiWindowFlags_NoTitleBar);
-			ImGuiRenderer::EndWindow();
-		}
-
-		mConsole.Draw("Transparent Console", nullptr);
-	}
-
-	void Editor::UpdateSelectionType()
-	{
-		if (gInput().KeyPressed('G'))
-			mSelectionType = OBJECT_SELECTION;
-		else if (gInput().KeyPressed('E'))
-			mSelectionType = EDGE_SELECTION;
-		else if (gInput().KeyPressed('F'))
-			mSelectionType = FACE_SELECTION;
-
-		if (gInput().KeyPressed('G') || gInput().KeyPressed('E') || gInput().KeyPressed('F'))
-			Im3d::ResetSelectedGizmo();
-
-		mPrototypeTool->SetSelectionType(mSelectionType);
-	}
-	
-	void Editor::DrawGizmo()
-	{
-		if (mSelectionType == OBJECT_SELECTION)
-		{
-			if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
-			{
-				Transform& transform = mSelectedActor->GetTransform();
-				Im3d::Mat4 im3dTransform = Im3d::Mat4(transform.GetWorldMatrix());
-				if (Im3d::Gizmo("TransformGizmo", im3dTransform))
-				{
-					transform.SetPosition(im3dTransform.getTranslation());
-					transform.SetScale(im3dTransform.getScale());
-					transform.SetOrientation(Math::GetQuaternion(im3dTransform));
-				}
-			}
-		}
-	}
-
-	void Editor::SelectActor()
-	{
-		if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
-		{
-			Ray ray = mCamera->GetPickingRay();
-			IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
-
-			if (intersectInfo.actor != nullptr)
-			{
-				mPrototypeTool->ActorSelected(intersectInfo.actor);
-
-				if (intersectInfo.actor != mSelectedActor)
-				{
-					mSelectedActorIndex = mWorld->GetActorIndex(intersectInfo.actor);
-					OnActorSelected(intersectInfo.actor);
-				}
-			}
-		}
-	}
-	
-	void Editor::AddActorToScene()
-	{
-		// Copy selected actor (only static models are copied properly)
-		if (gInput().KeyPressed('C') && gInput().KeyDown(VK_LCONTROL))
-		{
-			if (mSelectedActor != nullptr)
-			{
-				SharedPtr<Actor> newActor = Actor::Create("CopiedActor");
-
-				Transform originalTransform = mSelectedActor->GetTransform();
-				glm::vec3 pos = originalTransform.GetPosition();
-				glm::quat orientation = originalTransform.GetOrientation();
-				glm::vec3 scale = originalTransform.GetScale();
-
-				CTransform* transform = newActor->AddComponent<CTransform>(pos);
-				transform->SetOrientation(orientation);
-				transform->SetScale(scale);
-
-				std::string originalPath = mSelectedActor->GetComponent<CRenderable>()->GetPath();
-				CRenderable* renderable = newActor->AddComponent<CRenderable>();
-				renderable->LoadModel(originalPath);
-
-				mSelectedActorIndex = mWorld->GetActorIndex(newActor.get());
-				OnActorSelected(newActor.get());
-			}
-		}
-		else if (gInput().KeyPressed('C')) // Add new actor to scene
-		{
-			Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
-
-			// Shoot rigid bodies but place static objects
-			// Todo: Refactor
-			glm::vec3 creationPosition;
-			bool addActor = false;
-			if (mTemplateTypes[mSelectedModel] == RIGID_BOX ||
-				mTemplateTypes[mSelectedModel] == RIGID_SPHERE ||
-				mTemplateTypes[mSelectedModel] == RIGID_SPHERE_LIGHT)
-			{
-				float offset = 0.5f;
-				creationPosition = gRenderer().GetMainCamera()->GetPosition() + offset * gRenderer().GetMainCamera()->GetDirection();
-				addActor = true;
-			}
-			else
-			{
-				glm::vec3 intersection = glm::vec3(FLT_MAX);
-
-				IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
-
-				// Todo: Only check intersection against specific layer
-				if (intersectInfo.actor != nullptr)
-				{
-					intersection = ray.origin + ray.direction * intersectInfo.distance;
-					addActor = true;
-				}
-				else if (mTerrain != nullptr)
-				{
-					intersection = mTerrain->GetIntersectPoint(ray);
-					addActor = true;
-				}
-
-				creationPosition = intersection;
-			}
-
-			if (addActor)
-			{
-				SharedPtr<Actor> actor = Actor::Create("EditorActor");
-				CTransform* transform = actor->AddComponent<CTransform>(creationPosition);
-				CRenderable* renderable = actor->AddComponent<CRenderable>();
-
-				/*
-				* Todo:
-				* These are just some example templates for creating actors
-				* It will be extended so that new actor templates can be 
-				* configured completly in Lua and show up in the editor.
-				*/
-				if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
-				{
-					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-
-					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-
-					renderable->LoadModel(mModelPaths[mSelectedModel]);
-				}
-				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_POINT_LIGHT)
-				{
-					renderable->LoadModel("data/models/teapot.obj");
-					renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
-
-					CLight* light = actor->AddComponent<CLight>();
-					CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
-
-					glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
-					light->SetMaterial(color);
-					renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
-				}
-				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
-				{
-					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-					rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
-
-					renderable->LoadModel(mModelPaths[mSelectedModel]);
-				}
-				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE)
-				{
-					float scale = Math::GetRandom(20.0, 20.0f);
-
-					transform->SetScale(glm::vec3(scale));
-
-					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-					rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
-					renderable->LoadModel(mModelPaths[mSelectedModel]);
-					renderable->SetPushFoliage(true);
-				}
-				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE_LIGHT)
-				{
-					transform->SetScale(glm::vec3(20));
-
-					CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-					rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
-					renderable->LoadModel("data/models/sphere_lowres.obj");
-					renderable->SetPushFoliage(true);
-					renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
-
-					// Copy paste from static light
-					CLight* light = actor->AddComponent<CLight>();
-					CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
-
-					glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
-					light->SetMaterial(color);
-					renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
-				}
-				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)
-				{
-					transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-					renderable->LoadModel("data/models/spawn_cone.fbx");
-					actor->AddComponent<CSpawnPoint>();
-				}
-				else if (mTemplateTypes[mSelectedModel] == ActorTemplate::FINISH_POINT)
-				{
-					renderable->LoadModel("data/models/spawn_cylinder.fbx");
-					actor->AddComponent<CFinishPoint>();
-				}
-
-				World::Instance().SynchronizeNodeTransforms();
-				actor->PostInit();
-
-				CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
-				if (rigidBody != nullptr)
-				{
-					const float impulse = 10.0f;
-					rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
-
-					// Hack:
-					if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
-					{
-						// Must be called after PostInit() since it needs the Renderable component
-						rigidBody->SetKinematic(true);
-					}
-				}
-			}
-		}
-	}
-
-	void Editor::RemoveActorFromScene()
-	{
-		if (gInput().KeyPressed(VK_DELETE) && mSelectedActor != nullptr)
-		{
-			mSelectedActor->SetAlive(false);
-			OnActorSelected(nullptr);
-			mPrototypeTool->ActorSelected(nullptr);
-		}
-	}
-
-	void Editor::ScaleSelectedActor()
-	{
-		if (!ImGuiRenderer::IsMouseInsideUi())
-		{
-			float mouseDz = gInput().MouseDz();
-			if (mouseDz != 0.0f && mSelectedActor != nullptr)
-			{
-				mSelectedActor->GetTransform().AddScale(glm::vec3(mouseDz * MWHEEL_SCALE_FACTOR));
-			}
-		}
-	}
-
-	void Editor::RenderActorCreationUi()
-	{
-		if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::PushItemWidth(ImGui::GetWindowWidth());
-			ImGui::Text("Models:");
-			ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), (int)mModelPaths.size());
-
-			if (ImGui::Button("Save scene"))
-			{
-				ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
-				gRenderer().SaveInstancesToFile("data/instances.txt");
-
-				if(mTerrain != nullptr)
-				{
-					mTerrain->SaveHeightmap("data/heightmap.ktx");
-					mTerrain->SaveBlendmap("data/blendmap.ktx");
-				}
-			}
-
-			if (ImGui::Button("Clear scene"))
-				World::Instance().RemoveActors();
-
-			if (ImGui::Button("Reload foliage"))
-			{
-				World::Instance().RemoveActors();
-				World::Instance().LoadScene();
-			}
-
-			if (ImGui::Button("Reload scene"))
-			{
-				World::Instance().RemoveActors();
-				World::Instance().LoadScene();
-			}
-		}
-	}
-
-	void Editor::RenderActorSelectionUi()
-	{
-		if (ImGui::CollapsingHeader("Actors in scene", ImGuiTreeNodeFlags_DefaultOpen))
-		{
-			ImGui::PushItemWidth(ImGui::GetWindowWidth());
-			std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
-			std::vector<const char*> actorNames;
-
-			for (auto actor : actors)
-			{
-				std::string name = actor->GetName();
-				actorNames.push_back(strdup(name.c_str()));
-			}
-
-			if (ImGui::ListBox("Actors", &mSelectedActorIndex, actorNames.data(), (int)actorNames.size()))
-			{
-				OnActorSelected(actors[mSelectedActorIndex].get());
-			}
-
-			for (uint32_t i = 0; i < actorNames.size(); i++)
-				delete actorNames[i];
-		}
-	}
-
-	void Editor::UpdateUi()
-	{
-		// UI containing settings, terrain and foliage tools
-		ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
-
-		bool physicsEnabled = gPhysics().IsEnabled();
-		bool debugDrawEnabled = gPhysics().IsDebugDrawEnabled();
-		ImGui::Checkbox("Simulate physics", &physicsEnabled);
-		ImGui::Checkbox("Physics debug draw", &debugDrawEnabled);
-		gPhysics().EnableSimulation(physicsEnabled);
-		gPhysics().EnableDebugDraw(debugDrawEnabled);
-
-		ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.70f);
-
-		if (mTerrain != nullptr)
-		{
-			mTerrainTool->RenderUi();
-			mFoliageTool->RenderUi();
-		}
-
-		mPrototypeTool->RenderUi();
-
-		RenderActorCreationUi();
-		RenderActorSelectionUi();
-
-		ImGuiRenderer::EndWindow();
-
-		// Needs to be called after RenderActorSelectionUi() otherwhise the UI textures
-		// will be in use in the ImGuiRenderer command queue.
-		// Todo: Fix. Issue #91.
-		mActorInspector->UpdateUi();
-
-		ImGuiRenderer::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
-
-		if (ImGui::Button("Recompile modified shaders"))
-		{
-			Vk::gEffectManager().RecompileModifiedShaders();
-		}
-
-		if (ImGui::Button("Recompile all shaders"))
-		{
-			Vk::gEffectManager().RecompileAllShaders();
-		}
-
-		ImGuiRenderer::EndWindow();
-	}
-
-	void Editor::Draw()
-	{
-	}
-
-	void Editor::AddActorCreation(std::string path, ActorTemplate actorTemplate)
-	{
-		mModelPaths.push_back(strdup(path.c_str()));
-		mTemplateTypes.push_back(actorTemplate);
-	}
-
-	bool Editor::IsActorSelected()
-	{
-		return mSelectedActor != nullptr;
-	}
-
-	void Editor::OnActorSelected(Actor* actor)
-	{
-		// Todo: Remove?
-		if (IsActorSelected())
-		{
-			auto renderable = mSelectedActor->GetComponent<CRenderable>();
-			if (renderable != nullptr)
-				renderable->DisableBoundingBox();
-		}
-
-		mSelectedActor = actor;
-
-		if (mSelectedActor != nullptr)
-			UTO_LOG("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
-
-		// Enable bounding box rendering
-		//auto renderable = mSelectedActor->GetComponent<CRenderable>();
-		//renderable->EnableBoundingBox();
-
-		// Create inspector UI
-		mActorInspector->SetActor(mSelectedActor);
-	}
-
-	void Editor::AddPaths()
-	{
-		// Add paths to models that can be loaded
-		AddActorCreation("data/models/sheep/sheep.obj");
-		AddActorCreation("data/models/adventure_village/CrateLong_reflective.obj");
-		AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);
-		AddActorCreation("data/models/adventure_village/CrateLong.obj", ActorTemplate::RIGID_BOX);
-		AddActorCreation("data/models/adventure_village/Barrel.obj", ActorTemplate::RIGID_BOX);
-		AddActorCreation("data/models/adventure_village/Barrel_1.obj", ActorTemplate::RIGID_BOX);
-		AddActorCreation("data/models/sponza/sponza.obj");
-		AddActorCreation("data/models/fps_hands/hands.obj");
-		AddActorCreation("data/models/adventure_village/CellarEntrance.obj");
-		AddActorCreation("data/models/adventure_village/CellarEntrance_1.obj");
-		AddActorCreation("data/models/adventure_village/Chimney1.obj");
-		AddActorCreation("data/models/adventure_village/Chimney1_1.obj");
-		AddActorCreation("data/models/adventure_village/Chimney2.obj");
-		AddActorCreation("data/models/adventure_village/Chimney2_1.obj");
-		AddActorCreation("data/models/adventure_village/Chimney3.obj");
-		AddActorCreation("data/models/adventure_village/Chimney3_1.obj");
-		AddActorCreation("data/models/adventure_village/Chimney4.obj");
-		AddActorCreation("data/models/adventure_village/Chimney4_1.obj");
-		AddActorCreation("data/models/adventure_village/ChimneyBase.obj");
-		AddActorCreation("data/models/adventure_village/ChimneyBase_1.obj");
-		AddActorCreation("data/models/adventure_village/CrateLong_1.obj");
-		AddActorCreation("data/models/adventure_village/CrateLongB.obj");
-		AddActorCreation("data/models/adventure_village/CrateLongB_1.obj");
-		AddActorCreation("data/models/adventure_village/CrateSquare.obj");
-		AddActorCreation("data/models/adventure_village/CrateSquare_1.obj");
-		AddActorCreation("data/models/adventure_village/CrateSquareB.obj");
-		AddActorCreation("data/models/adventure_village/CrateSquareB_1.obj");
-		AddActorCreation("data/models/adventure_village/DoorStone.obj");
-		AddActorCreation("data/models/adventure_village/DoorStone_1.obj");
-		AddActorCreation("data/models/adventure_village/DoorStoneLarge.obj");
-		AddActorCreation("data/models/adventure_village/DoorStoneLarge_1.obj");
-		AddActorCreation("data/models/adventure_village/DoorWood.obj");
-		AddActorCreation("data/models/adventure_village/DoorWood_1.obj");
-		AddActorCreation("data/models/adventure_village/ElevatorBeam.obj");
-		AddActorCreation("data/models/adventure_village/ElevatorBeam_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseAttic.obj");
-		AddActorCreation("data/models/adventure_village/HouseAttic_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseAtticSmall.obj");
-		AddActorCreation("data/models/adventure_village/HouseAtticSmall_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseBricksLarge.obj");
-		AddActorCreation("data/models/adventure_village/HouseBricksLarge_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseBricksNormal.obj");
-		AddActorCreation("data/models/adventure_village/HouseBricksNormal_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseBricksThin.obj");
-		AddActorCreation("data/models/adventure_village/HouseBricksThin_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseExtensionRoof.obj");
-		AddActorCreation("data/models/adventure_village/HouseExtensionRoof_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseStuccoNormal.obj");
-		AddActorCreation("data/models/adventure_village/HouseStuccoNormal_1.obj");
-		AddActorCreation("data/models/adventure_village/HouseTower.obj");
-		AddActorCreation("data/models/adventure_village/HouseTower_1.obj");
-		AddActorCreation("data/models/adventure_village/Note.obj");
-		AddActorCreation("data/models/adventure_village/PlantA.obj");
-		AddActorCreation("data/models/adventure_village/PlantA_1.obj");
-		AddActorCreation("data/models/adventure_village/PlantB.obj");
-		AddActorCreation("data/models/adventure_village/PlantC.obj");
-		AddActorCreation("data/models/adventure_village/PlantC_1.obj");
-		AddActorCreation("data/models/adventure_village/PlantC_2.obj");
-		AddActorCreation("data/models/adventure_village/PlantD.obj");
-		AddActorCreation("data/models/adventure_village/PosterBoard.obj");
-		AddActorCreation("data/models/adventure_village/PosterBoard_1.obj");
-		AddActorCreation("data/models/adventure_village/SewerDrain.obj");
-		AddActorCreation("data/models/adventure_village/SewerDrain_1.obj");
-		AddActorCreation("data/models/adventure_village/ShopSign.obj");
-		AddActorCreation("data/models/adventure_village/ShopSign_1.obj");
-		AddActorCreation("data/models/adventure_village/SignPost.obj");
-		AddActorCreation("data/models/adventure_village/SignPost_1.obj");
-		AddActorCreation("data/models/adventure_village/StaircaseLarge.obj");
-		AddActorCreation("data/models/adventure_village/StaircaseLarge_1.obj");
-		AddActorCreation("data/models/adventure_village/StaircaseMedium.obj");
-		AddActorCreation("data/models/adventure_village/StaircaseMedium_1.obj");
-		AddActorCreation("data/models/adventure_village/StaircaseSmall.obj");
-		AddActorCreation("data/models/adventure_village/StaircaseSmall_1.obj");
-		AddActorCreation("data/models/adventure_village/StoneBench.obj");
-		AddActorCreation("data/models/adventure_village/StoneFence.obj");
-		AddActorCreation("data/models/adventure_village/StoneFence_1.obj");
-		AddActorCreation("data/models/adventure_village/StonePillar.obj");
-		AddActorCreation("data/models/adventure_village/StonePillar_1.obj");
-		AddActorCreation("data/models/adventure_village/StonePlatform.obj");
-		AddActorCreation("data/models/adventure_village/StonePlatform_1.obj");
-		AddActorCreation("data/models/adventure_village/StonePlatform_centered.obj");
-		AddActorCreation("data/models/adventure_village/StonePlatformArches.obj");
-		AddActorCreation("data/models/adventure_village/StonePlatformArches_1.obj");
-		AddActorCreation("data/models/adventure_village/StoneWall.obj");
-		AddActorCreation("data/models/adventure_village/StoneWall_1.obj");
-		AddActorCreation("data/models/adventure_village/StreetLightSmall.obj");
-		AddActorCreation("data/models/adventure_village/StreetLightSmall_1.obj");
-		AddActorCreation("data/models/adventure_village/StreetLightTall.obj");
-		AddActorCreation("data/models/adventure_village/StreetLightTall_1.obj");
-		AddActorCreation("data/models/adventure_village/Tree.obj");
-		AddActorCreation("data/models/adventure_village/TreeLog.obj");
-		AddActorCreation("data/models/adventure_village/TreeLog_1.obj");
-		AddActorCreation("data/models/adventure_village/TreeLogPile.obj");
-		AddActorCreation("data/models/adventure_village/TreeLogPile_1.obj");
-		AddActorCreation("data/models/adventure_village/TreeLogPile_2.obj");
-		AddActorCreation("data/models/adventure_village/TreeLogPile_3.obj");
-		AddActorCreation("data/models/adventure_village/Well.obj");
-		AddActorCreation("data/models/adventure_village/Well_1.obj");
-		AddActorCreation("data/models/adventure_village/Wheel.obj");
-		AddActorCreation("data/models/adventure_village/Wheel_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowA.obj");
-		AddActorCreation("data/models/adventure_village/WindowA_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowB.obj");
-		AddActorCreation("data/models/adventure_village/WindowB_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowC.obj");
-		AddActorCreation("data/models/adventure_village/WindowC_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowD.obj");
-		AddActorCreation("data/models/adventure_village/WindowD_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowE.obj");
-		AddActorCreation("data/models/adventure_village/WindowE_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowF.obj");
-		AddActorCreation("data/models/adventure_village/WindowF_1.obj");
-		AddActorCreation("data/models/adventure_village/WindowG.obj");
-		AddActorCreation("data/models/adventure_village/WindowG_1.obj");
-		AddActorCreation("data/models/adventure_village/WoodBench.obj");
-		AddActorCreation("data/models/adventure_village/WoodBench_1.obj");
-	}
+   Editor::Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, Terrain* terrain)
+      : mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
+   {
+      mSelectedActor = nullptr;
+      mSelectedActorIndex = 0u;
+      mActorInspector = new ActorInspector();
+
+      if (terrain != nullptr)
+      {
+         mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
+         mFoliageTool = std::make_shared<FoliageTool>(terrain, gRenderer().GetDevice());
+         mFoliageTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
+      }
+
+      mPrototypeTool = std::make_shared<PrototypeTool>();
+
+      AddActorCreation("Spawn point", ActorTemplate::SPAWN_POINT);
+      AddActorCreation("Finish point", ActorTemplate::FINISH_POINT);
+      AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
+      AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
+
+      mSelectedModel = 4; // Physics sphere
+
+      AddPaths();
+   }
+
+   Editor::~Editor()
+   {
+      for (uint32_t i = 0; i < mModelPaths.size(); i++)
+         delete mModelPaths[i];
+
+      delete mActorInspector;
+   }
+
+   void Editor::PreFrame()
+   {
+      mPrototypeTool->PreFrame();
+   }
+
+   void Editor::Update()
+   {
+      if (mTerrain != nullptr)
+      {
+         mTerrainTool->Update();
+         mFoliageTool->Update();
+      }
+
+      UpdateSelectionType();
+      DrawGizmo();
+      SelectActor();
+      AddActorToScene();
+      RemoveActorFromScene();
+      ScaleSelectedActor();
+
+      // Deselect Actor
+      if (gInput().KeyPressed(VK_ESCAPE))
+      {
+         OnActorSelected(nullptr);
+         mPrototypeTool->ActorSelected(nullptr);
+      }
+
+      // Hide/show UI
+      if (gInput().KeyPressed('H'))
+      {
+         if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+            ImGuiRenderer::SetMode(UI_MODE_GAME);
+         else
+            ImGuiRenderer::SetMode(UI_MODE_EDITOR);
+      }
+
+      // Recompile shaders
+      if (gInput().KeyPressed('R'))
+      {
+         Vk::gEffectManager().RecompileModifiedShaders();
+      }
+
+      mPrototypeTool->Update(mWorld);
+
+      // The UI needs to be updated after updating the selected actor since otherwise
+      // the texture descriptor set for the UI can be freed when still being used in a command buffer.
+      if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+      {
+         UpdateUi();
+
+         // Workaround: The real console window is transparent and not supposed to be docked since
+         // it also should be displayed when in the game mode. This creates and empty window that
+         // take up an area in the dock space. The real console should be placed on top of this window.
+         ImGuiRenderer::BeginWindow("Console", glm::vec2(200, 800), 300.0f, ImGuiWindowFlags_NoTitleBar);
+         ImGuiRenderer::EndWindow();
+      }
+
+      mConsole.Draw("Transparent Console", nullptr);
+   }
+
+   void Editor::UpdateSelectionType()
+   {
+      if (gInput().KeyPressed('G'))
+         mSelectionType = OBJECT_SELECTION;
+      else if (gInput().KeyPressed('E'))
+         mSelectionType = EDGE_SELECTION;
+      else if (gInput().KeyPressed('F'))
+         mSelectionType = FACE_SELECTION;
+
+      if (gInput().KeyPressed('G') || gInput().KeyPressed('E') || gInput().KeyPressed('F'))
+         Im3d::ResetSelectedGizmo();
+
+      mPrototypeTool->SetSelectionType(mSelectionType);
+   }
+   
+   void Editor::DrawGizmo()
+   {
+      if (mSelectionType == OBJECT_SELECTION)
+      {
+         if (IsActorSelected() && mSelectedActor->GetComponent<CRenderable>() != nullptr)
+         {
+            Transform& transform = mSelectedActor->GetTransform();
+            Im3d::Mat4 im3dTransform = Im3d::Mat4(transform.GetWorldMatrix());
+            if (Im3d::Gizmo("TransformGizmo", im3dTransform))
+            {
+               transform.SetPosition(im3dTransform.getTranslation());
+               transform.SetScale(im3dTransform.getScale());
+               transform.SetOrientation(Math::GetQuaternion(im3dTransform));
+            }
+         }
+      }
+   }
+
+   void Editor::SelectActor()
+   {
+      if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
+      {
+         Ray ray = mCamera->GetPickingRay();
+         IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
+
+         if (intersectInfo.actor != nullptr)
+         {
+            mPrototypeTool->ActorSelected(intersectInfo.actor);
+
+            if (intersectInfo.actor != mSelectedActor)
+            {
+               mSelectedActorIndex = mWorld->GetActorIndex(intersectInfo.actor);
+               OnActorSelected(intersectInfo.actor);
+            }
+         }
+      }
+   }
+   
+   void Editor::AddActorToScene()
+   {
+      // Copy selected actor (only static models are copied properly)
+      if (gInput().KeyPressed('C') && gInput().KeyDown(VK_LCONTROL))
+      {
+         if (mSelectedActor != nullptr)
+         {
+            SharedPtr<Actor> newActor = Actor::Create("CopiedActor");
+
+            Transform originalTransform = mSelectedActor->GetTransform();
+            glm::vec3 pos = originalTransform.GetPosition();
+            glm::quat orientation = originalTransform.GetOrientation();
+            glm::vec3 scale = originalTransform.GetScale();
+
+            CTransform* transform = newActor->AddComponent<CTransform>(pos);
+            transform->SetOrientation(orientation);
+            transform->SetScale(scale);
+
+            std::string originalPath = mSelectedActor->GetComponent<CRenderable>()->GetPath();
+            CRenderable* renderable = newActor->AddComponent<CRenderable>();
+            renderable->LoadModel(originalPath);
+
+            mSelectedActorIndex = mWorld->GetActorIndex(newActor.get());
+            OnActorSelected(newActor.get());
+         }
+      }
+      else if (gInput().KeyPressed('C')) // Add new actor to scene
+      {
+         Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
+
+         // Shoot rigid bodies but place static objects
+         // Todo: Refactor
+         glm::vec3 creationPosition;
+         bool addActor = false;
+         if (mTemplateTypes[mSelectedModel] == RIGID_BOX ||
+             mTemplateTypes[mSelectedModel] == RIGID_SPHERE ||
+             mTemplateTypes[mSelectedModel] == RIGID_SPHERE_LIGHT)
+         {
+            float offset = 0.5f;
+            creationPosition = gRenderer().GetMainCamera()->GetPosition() + offset * gRenderer().GetMainCamera()->GetDirection();
+            addActor = true;
+         }
+         else
+         {
+            glm::vec3 intersection = glm::vec3(FLT_MAX);
+
+            IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
+
+            // Todo: Only check intersection against specific layer
+            if (intersectInfo.actor != nullptr)
+            {
+               intersection = ray.origin + ray.direction * intersectInfo.distance;
+               addActor = true;
+            }
+            else if (mTerrain != nullptr)
+            {
+               intersection = mTerrain->GetIntersectPoint(ray);
+               addActor = true;
+            }
+
+            creationPosition = intersection;
+         }
+
+         if (addActor)
+         {
+            SharedPtr<Actor> actor = Actor::Create("EditorActor");
+            CTransform* transform = actor->AddComponent<CTransform>(creationPosition);
+            CRenderable* renderable = actor->AddComponent<CRenderable>();
+
+            /*
+            * Todo:
+            * These are just some example templates for creating actors
+            * It will be extended so that new actor templates can be 
+            * configured completly in Lua and show up in the editor.
+            */
+            if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
+            {
+               transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+
+               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+
+               renderable->LoadModel(mModelPaths[mSelectedModel]);
+            }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_POINT_LIGHT)
+            {
+               renderable->LoadModel("data/models/teapot.obj");
+               renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
+
+               CLight* light = actor->AddComponent<CLight>();
+               CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
+
+               glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
+               light->SetMaterial(color);
+               renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
+            }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
+            {
+               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+               rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
+
+               renderable->LoadModel(mModelPaths[mSelectedModel]);
+            }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE)
+            {
+               float scale = Math::GetRandom(20.0, 20.0f);
+
+               transform->SetScale(glm::vec3(scale));
+
+               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+               rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
+               renderable->LoadModel(mModelPaths[mSelectedModel]);
+               renderable->SetPushFoliage(true);
+            }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE_LIGHT)
+            {
+               transform->SetScale(glm::vec3(20));
+
+               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+               rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
+               renderable->LoadModel("data/models/sphere_lowres.obj");
+               renderable->SetPushFoliage(true);
+               renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
+
+               // Copy paste from static light
+               CLight* light = actor->AddComponent<CLight>();
+               CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
+
+               glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
+               light->SetMaterial(color);
+               renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
+            }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)
+            {
+               transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+               renderable->LoadModel("data/models/spawn_cone.fbx");
+               actor->AddComponent<CSpawnPoint>();
+            }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::FINISH_POINT)
+            {
+               renderable->LoadModel("data/models/spawn_cylinder.fbx");
+               actor->AddComponent<CFinishPoint>();
+            }
+
+            World::Instance().SynchronizeNodeTransforms();
+            actor->PostInit();
+
+            CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
+            if (rigidBody != nullptr)
+            {
+               const float impulse = 10.0f;
+               rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
+
+               // Hack:
+               if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
+               {
+                  // Must be called after PostInit() since it needs the Renderable component
+                  rigidBody->SetKinematic(true);
+               }
+            }
+         }
+      }
+   }
+
+   void Editor::RemoveActorFromScene()
+   {
+      if (gInput().KeyPressed(VK_DELETE) && mSelectedActor != nullptr)
+      {
+         mSelectedActor->SetAlive(false);
+         OnActorSelected(nullptr);
+         mPrototypeTool->ActorSelected(nullptr);
+      }
+   }
+
+   void Editor::ScaleSelectedActor()
+   {
+      if (!ImGuiRenderer::IsMouseInsideUi())
+      {
+         float mouseDz = gInput().MouseDz();
+         if (mouseDz != 0.0f && mSelectedActor != nullptr)
+         {
+            mSelectedActor->GetTransform().AddScale(glm::vec3(mouseDz * MWHEEL_SCALE_FACTOR));
+         }
+      }
+   }
+
+   void Editor::RenderActorCreationUi()
+   {
+      if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
+      {
+         ImGui::PushItemWidth(ImGui::GetWindowWidth());
+         ImGui::Text("Models:");
+         ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), (int)mModelPaths.size());
+
+         if (ImGui::Button("Save scene"))
+         {
+            ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
+            gRenderer().SaveInstancesToFile("data/instances.txt");
+
+            if(mTerrain != nullptr)
+            {
+               mTerrain->SaveHeightmap("data/heightmap.ktx");
+               mTerrain->SaveBlendmap("data/blendmap.ktx");
+            }
+         }
+
+         if (ImGui::Button("Clear scene"))
+            World::Instance().RemoveActors();
+
+         if (ImGui::Button("Reload foliage"))
+         {
+            World::Instance().RemoveActors();
+            World::Instance().LoadScene();
+         }
+
+         if (ImGui::Button("Reload scene"))
+         {
+            World::Instance().RemoveActors();
+            World::Instance().LoadScene();
+         }
+      }
+   }
+
+   void Editor::RenderActorSelectionUi()
+   {
+      if (ImGui::CollapsingHeader("Actors in scene", ImGuiTreeNodeFlags_DefaultOpen))
+      {
+         ImGui::PushItemWidth(ImGui::GetWindowWidth());
+         std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
+         std::vector<const char*> actorNames;
+
+         for (auto actor : actors)
+         {
+            std::string name = actor->GetName();
+            actorNames.push_back(strdup(name.c_str()));
+         }
+
+         if (ImGui::ListBox("Actors", &mSelectedActorIndex, actorNames.data(), (int)actorNames.size()))
+         {
+            OnActorSelected(actors[mSelectedActorIndex].get());
+         }
+
+         for (uint32_t i = 0; i < actorNames.size(); i++)
+            delete actorNames[i];
+      }
+   }
+
+   void Editor::UpdateUi()
+   {
+      // UI containing settings, terrain and foliage tools
+      ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
+
+      bool physicsEnabled = gPhysics().IsEnabled();
+      bool debugDrawEnabled = gPhysics().IsDebugDrawEnabled();
+      ImGui::Checkbox("Simulate physics", &physicsEnabled);
+      ImGui::Checkbox("Physics debug draw", &debugDrawEnabled);
+      gPhysics().EnableSimulation(physicsEnabled);
+      gPhysics().EnableDebugDraw(debugDrawEnabled);
+
+      ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.70f);
+
+      if (mTerrain != nullptr)
+      {
+         mTerrainTool->RenderUi();
+         mFoliageTool->RenderUi();
+      }
+
+      mPrototypeTool->RenderUi();
+
+      RenderActorCreationUi();
+      RenderActorSelectionUi();
+
+      ImGuiRenderer::EndWindow();
+
+      // Needs to be called after RenderActorSelectionUi() otherwhise the UI textures
+      // will be in use in the ImGuiRenderer command queue.
+      // Todo: Fix. Issue #91.
+      mActorInspector->UpdateUi();
+
+      ImGuiRenderer::BeginWindow("Effects", glm::vec2(10, 800), 300.0f);
+
+      if (ImGui::Button("Recompile modified shaders"))
+      {
+         Vk::gEffectManager().RecompileModifiedShaders();
+      }
+
+      if (ImGui::Button("Recompile all shaders"))
+      {
+         Vk::gEffectManager().RecompileAllShaders();
+      }
+
+      ImGuiRenderer::EndWindow();
+   }
+
+   void Editor::Draw()
+   {
+   }
+
+   void Editor::AddActorCreation(std::string path, ActorTemplate actorTemplate)
+   {
+      mModelPaths.push_back(strdup(path.c_str()));
+      mTemplateTypes.push_back(actorTemplate);
+   }
+
+   bool Editor::IsActorSelected()
+   {
+      return mSelectedActor != nullptr;
+   }
+
+   void Editor::OnActorSelected(Actor* actor)
+   {
+      // Todo: Remove?
+      if (IsActorSelected())
+      {
+         auto renderable = mSelectedActor->GetComponent<CRenderable>();
+         if (renderable != nullptr)
+            renderable->DisableBoundingBox();
+      }
+
+      mSelectedActor = actor;
+
+      if (mSelectedActor != nullptr)
+         UTO_LOG("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
+
+      // Enable bounding box rendering
+      //auto renderable = mSelectedActor->GetComponent<CRenderable>();
+      //renderable->EnableBoundingBox();
+
+      // Create inspector UI
+      mActorInspector->SetActor(mSelectedActor);
+   }
+
+   void Editor::AddPaths()
+   {
+      // Add paths to models that can be loaded
+      AddActorCreation("data/models/sheep/sheep.obj");
+      AddActorCreation("data/models/adventure_village/CrateLong_reflective.obj");
+      AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);
+      AddActorCreation("data/models/adventure_village/CrateLong.obj", ActorTemplate::RIGID_BOX);
+      AddActorCreation("data/models/adventure_village/Barrel.obj", ActorTemplate::RIGID_BOX);
+      AddActorCreation("data/models/adventure_village/Barrel_1.obj", ActorTemplate::RIGID_BOX);
+      AddActorCreation("data/models/sponza/sponza.obj");
+      AddActorCreation("data/models/fps_hands/hands.obj");
+      AddActorCreation("data/models/adventure_village/CellarEntrance.obj");
+      AddActorCreation("data/models/adventure_village/CellarEntrance_1.obj");
+      AddActorCreation("data/models/adventure_village/Chimney1.obj");
+      AddActorCreation("data/models/adventure_village/Chimney1_1.obj");
+      AddActorCreation("data/models/adventure_village/Chimney2.obj");
+      AddActorCreation("data/models/adventure_village/Chimney2_1.obj");
+      AddActorCreation("data/models/adventure_village/Chimney3.obj");
+      AddActorCreation("data/models/adventure_village/Chimney3_1.obj");
+      AddActorCreation("data/models/adventure_village/Chimney4.obj");
+      AddActorCreation("data/models/adventure_village/Chimney4_1.obj");
+      AddActorCreation("data/models/adventure_village/ChimneyBase.obj");
+      AddActorCreation("data/models/adventure_village/ChimneyBase_1.obj");
+      AddActorCreation("data/models/adventure_village/CrateLong_1.obj");
+      AddActorCreation("data/models/adventure_village/CrateLongB.obj");
+      AddActorCreation("data/models/adventure_village/CrateLongB_1.obj");
+      AddActorCreation("data/models/adventure_village/CrateSquare.obj");
+      AddActorCreation("data/models/adventure_village/CrateSquare_1.obj");
+      AddActorCreation("data/models/adventure_village/CrateSquareB.obj");
+      AddActorCreation("data/models/adventure_village/CrateSquareB_1.obj");
+      AddActorCreation("data/models/adventure_village/DoorStone.obj");
+      AddActorCreation("data/models/adventure_village/DoorStone_1.obj");
+      AddActorCreation("data/models/adventure_village/DoorStoneLarge.obj");
+      AddActorCreation("data/models/adventure_village/DoorStoneLarge_1.obj");
+      AddActorCreation("data/models/adventure_village/DoorWood.obj");
+      AddActorCreation("data/models/adventure_village/DoorWood_1.obj");
+      AddActorCreation("data/models/adventure_village/ElevatorBeam.obj");
+      AddActorCreation("data/models/adventure_village/ElevatorBeam_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseAttic.obj");
+      AddActorCreation("data/models/adventure_village/HouseAttic_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseAtticSmall.obj");
+      AddActorCreation("data/models/adventure_village/HouseAtticSmall_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseBricksLarge.obj");
+      AddActorCreation("data/models/adventure_village/HouseBricksLarge_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseBricksNormal.obj");
+      AddActorCreation("data/models/adventure_village/HouseBricksNormal_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseBricksThin.obj");
+      AddActorCreation("data/models/adventure_village/HouseBricksThin_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseExtensionRoof.obj");
+      AddActorCreation("data/models/adventure_village/HouseExtensionRoof_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseStuccoNormal.obj");
+      AddActorCreation("data/models/adventure_village/HouseStuccoNormal_1.obj");
+      AddActorCreation("data/models/adventure_village/HouseTower.obj");
+      AddActorCreation("data/models/adventure_village/HouseTower_1.obj");
+      AddActorCreation("data/models/adventure_village/Note.obj");
+      AddActorCreation("data/models/adventure_village/PlantA.obj");
+      AddActorCreation("data/models/adventure_village/PlantA_1.obj");
+      AddActorCreation("data/models/adventure_village/PlantB.obj");
+      AddActorCreation("data/models/adventure_village/PlantC.obj");
+      AddActorCreation("data/models/adventure_village/PlantC_1.obj");
+      AddActorCreation("data/models/adventure_village/PlantC_2.obj");
+      AddActorCreation("data/models/adventure_village/PlantD.obj");
+      AddActorCreation("data/models/adventure_village/PosterBoard.obj");
+      AddActorCreation("data/models/adventure_village/PosterBoard_1.obj");
+      AddActorCreation("data/models/adventure_village/SewerDrain.obj");
+      AddActorCreation("data/models/adventure_village/SewerDrain_1.obj");
+      AddActorCreation("data/models/adventure_village/ShopSign.obj");
+      AddActorCreation("data/models/adventure_village/ShopSign_1.obj");
+      AddActorCreation("data/models/adventure_village/SignPost.obj");
+      AddActorCreation("data/models/adventure_village/SignPost_1.obj");
+      AddActorCreation("data/models/adventure_village/StaircaseLarge.obj");
+      AddActorCreation("data/models/adventure_village/StaircaseLarge_1.obj");
+      AddActorCreation("data/models/adventure_village/StaircaseMedium.obj");
+      AddActorCreation("data/models/adventure_village/StaircaseMedium_1.obj");
+      AddActorCreation("data/models/adventure_village/StaircaseSmall.obj");
+      AddActorCreation("data/models/adventure_village/StaircaseSmall_1.obj");
+      AddActorCreation("data/models/adventure_village/StoneBench.obj");
+      AddActorCreation("data/models/adventure_village/StoneFence.obj");
+      AddActorCreation("data/models/adventure_village/StoneFence_1.obj");
+      AddActorCreation("data/models/adventure_village/StonePillar.obj");
+      AddActorCreation("data/models/adventure_village/StonePillar_1.obj");
+      AddActorCreation("data/models/adventure_village/StonePlatform.obj");
+      AddActorCreation("data/models/adventure_village/StonePlatform_1.obj");
+      AddActorCreation("data/models/adventure_village/StonePlatform_centered.obj");
+      AddActorCreation("data/models/adventure_village/StonePlatformArches.obj");
+      AddActorCreation("data/models/adventure_village/StonePlatformArches_1.obj");
+      AddActorCreation("data/models/adventure_village/StoneWall.obj");
+      AddActorCreation("data/models/adventure_village/StoneWall_1.obj");
+      AddActorCreation("data/models/adventure_village/StreetLightSmall.obj");
+      AddActorCreation("data/models/adventure_village/StreetLightSmall_1.obj");
+      AddActorCreation("data/models/adventure_village/StreetLightTall.obj");
+      AddActorCreation("data/models/adventure_village/StreetLightTall_1.obj");
+      AddActorCreation("data/models/adventure_village/Tree.obj");
+      AddActorCreation("data/models/adventure_village/TreeLog.obj");
+      AddActorCreation("data/models/adventure_village/TreeLog_1.obj");
+      AddActorCreation("data/models/adventure_village/TreeLogPile.obj");
+      AddActorCreation("data/models/adventure_village/TreeLogPile_1.obj");
+      AddActorCreation("data/models/adventure_village/TreeLogPile_2.obj");
+      AddActorCreation("data/models/adventure_village/TreeLogPile_3.obj");
+      AddActorCreation("data/models/adventure_village/Well.obj");
+      AddActorCreation("data/models/adventure_village/Well_1.obj");
+      AddActorCreation("data/models/adventure_village/Wheel.obj");
+      AddActorCreation("data/models/adventure_village/Wheel_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowA.obj");
+      AddActorCreation("data/models/adventure_village/WindowA_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowB.obj");
+      AddActorCreation("data/models/adventure_village/WindowB_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowC.obj");
+      AddActorCreation("data/models/adventure_village/WindowC_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowD.obj");
+      AddActorCreation("data/models/adventure_village/WindowD_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowE.obj");
+      AddActorCreation("data/models/adventure_village/WindowE_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowF.obj");
+      AddActorCreation("data/models/adventure_village/WindowF_1.obj");
+      AddActorCreation("data/models/adventure_village/WindowG.obj");
+      AddActorCreation("data/models/adventure_village/WindowG_1.obj");
+      AddActorCreation("data/models/adventure_village/WoodBench.obj");
+      AddActorCreation("data/models/adventure_village/WoodBench_1.obj");
+   }
 }

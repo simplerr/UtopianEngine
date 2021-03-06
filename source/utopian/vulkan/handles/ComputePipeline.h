@@ -5,15 +5,15 @@
 
 namespace Utopian::Vk
 {
-	/** Todo: Note: Legacy. */
-	class ComputePipeline : public Handle<VkPipeline>
-	{
-	public:
-		ComputePipeline(Device* device, PipelineInterface* pipelineInterface, Shader* shader);
+   /** Todo: Note: Legacy. */
+   class ComputePipeline : public Handle<VkPipeline>
+   {
+   public:
+      ComputePipeline(Device* device, PipelineInterface* pipelineInterface, Shader* shader);
 
-		void Create();
-	private:
-		PipelineInterface* mPipelineInterface = nullptr;
-		Shader* mShader = nullptr;
-	};
+      void Create();
+   private:
+      PipelineInterface* mPipelineInterface = nullptr;
+      Shader* mShader = nullptr;
+   };
 }

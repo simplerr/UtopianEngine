@@ -4,41 +4,41 @@
 
 namespace Utopian::Vk
 {
-	Fence::Fence(Device* device, VkFenceCreateFlags flags)
-		: Handle(device, vkDestroyFence)
-	{
-		VkFenceCreateInfo fenceCreateInfo = {};
-		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		fenceCreateInfo.flags = flags;
+   Fence::Fence(Device* device, VkFenceCreateFlags flags)
+      : Handle(device, vkDestroyFence)
+   {
+      VkFenceCreateInfo fenceCreateInfo = {};
+      fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+      fenceCreateInfo.flags = flags;
 
-		vkCreateFence(GetVkDevice(), &fenceCreateInfo, NULL, &mHandle);
-	}
+      vkCreateFence(GetVkDevice(), &fenceCreateInfo, NULL, &mHandle);
+   }
 
-	void Fence::Create(VkFenceCreateFlags flags)
-	{
-		VkFenceCreateInfo fenceCreateInfo = {};
-		fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		fenceCreateInfo.flags = flags;
+   void Fence::Create(VkFenceCreateFlags flags)
+   {
+      VkFenceCreateInfo fenceCreateInfo = {};
+      fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+      fenceCreateInfo.flags = flags;
 
-		vkCreateFence(GetVkDevice(), &fenceCreateInfo, NULL, &mHandle);
-	}
+      vkCreateFence(GetVkDevice(), &fenceCreateInfo, NULL, &mHandle);
+   }
 
-	void Fence::Wait()
-	{
-		// Wait for fence to signal that all command buffers are ready
-		VkResult fenceRes;
-		do
-		{
-			fenceRes = vkWaitForFences(GetVkDevice(), 1, &mHandle, VK_TRUE, 100000000);
-		} while (fenceRes == VK_TIMEOUT);
+   void Fence::Wait()
+   {
+      // Wait for fence to signal that all command buffers are ready
+      VkResult fenceRes;
+      do
+      {
+         fenceRes = vkWaitForFences(GetVkDevice(), 1, &mHandle, VK_TRUE, 100000000);
+      } while (fenceRes == VK_TIMEOUT);
 
-		Debug::ErrorCheck(fenceRes);
+      Debug::ErrorCheck(fenceRes);
 
-		Reset();
-	}
+      Reset();
+   }
 
-	void Fence::Reset()
-	{
-		vkResetFences(GetVkDevice(), 1, &mHandle);
-	}
+   void Fence::Reset()
+   {
+      vkResetFences(GetVkDevice(), 1, &mHandle);
+   }
 }

@@ -12,27 +12,27 @@
 
 namespace Utopian
 {
-	class BoundingBox
-	{
-	public:
-		BoundingBox() {}
+   class BoundingBox
+   {
+   public:
+      BoundingBox() {}
 
-		void Init(const std::vector<Vk::Vertex>& vertices);
-		void Init(glm::vec3 position, glm::vec3 extents);
-		void Update(glm::mat4 worldMatrix);
-		bool RayIntersect(const Ray& ray, float& dist, glm::vec3& normal);
+      void Init(const std::vector<Vk::Vertex>& vertices);
+      void Init(glm::vec3 position, glm::vec3 extents);
+      void Update(glm::mat4 worldMatrix);
+      bool RayIntersect(const Ray& ray, float& dist, glm::vec3& normal);
 
-		float GetWidth() const;
-		float GetHeight() const;
-		float GetDepth() const;
-		float GetRadius() const;
-		glm::vec3 GetMin() const;
-		glm::vec3 GetMax() const;
+      float GetWidth() const;
+      float GetHeight() const;
+      float GetDepth() const;
+      float GetRadius() const;
+      glm::vec3 GetMin() const;
+      glm::vec3 GetMax() const;
 
-	private:
-		std::vector<glm::vec3> mVertices;
+   private:
+      std::vector<glm::vec3> mVertices;
 
-		glm::vec3 mMin;
-		glm::vec3 mMax;
-	};
+      glm::vec3 mMin;
+      glm::vec3 mMax;
+   };
 }

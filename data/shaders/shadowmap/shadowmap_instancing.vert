@@ -12,30 +12,30 @@ layout (location = 6) in mat4 InInstanceWorld;
 
 layout (std140, set = 0, binding = 0) uniform UBO_cascadeTransforms 
 {
-	mat4 viewProjection[4];
+   mat4 viewProjection[4];
 } cascade_transforms;
 
 layout (push_constant) uniform PushConstants {
-	mat4 world; // Used by shadowmap.vert
-	uint cascadeIndex;
+   mat4 world; // Used by shadowmap.vert
+   uint cascadeIndex;
 } pushConstants;
 
 layout (location = 0) out vec2 OutTex;
 
-out gl_PerVertex 
+out gl_PerVertex
 {
-	vec4 gl_Position;
+   vec4 gl_Position;
 };
 
 void main() 
 {
-	OutTex = InTex;
+   OutTex = InTex;
 
-	// Note: workaround to avoid glslang to optimize unused inputs
-	vec3 temp = InColor;
-	temp = InNormalL;
-	vec3 temp2 = InTangentL;
-	temp2 = InBitangentL;
+   // Note: workaround to avoid glslang to optimize unused inputs
+   vec3 temp = InColor;
+   temp = InNormalL;
+   vec3 temp2 = InTangentL;
+   temp2 = InBitangentL;
 
-	gl_Position = cascade_transforms.viewProjection[pushConstants.cascadeIndex] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
+   gl_Position = cascade_transforms.viewProjection[pushConstants.cascadeIndex] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
 }

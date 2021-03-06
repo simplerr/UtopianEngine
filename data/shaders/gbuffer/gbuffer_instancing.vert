@@ -24,26 +24,26 @@ layout (location = 6) out mat3 OutTBN;
 
 out gl_PerVertex 
 {
-	vec4 gl_Position;
+   vec4 gl_Position;
 };
 
 void main()
 {
-	// Todo: Workaround since glslang reflection removes unused vertex input
-	vec3 color = InColor;
+   // Todo: Workaround since glslang reflection removes unused vertex input
+   vec3 color = InColor;
 
-	vec3 T = normalize(mat3(InInstanceWorld) * InTangentL);
-	vec3 B = normalize(mat3(InInstanceWorld) * InBitangentL);
-	vec3 N = normalize(mat3(InInstanceWorld) * InNormalL);
-	OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
+   vec3 T = normalize(mat3(InInstanceWorld) * InTangentL);
+   vec3 B = normalize(mat3(InInstanceWorld) * InBitangentL);
+   vec3 N = normalize(mat3(InInstanceWorld) * InNormalL);
+   OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
 
-	OutColor = vec4(1.0);
-	OutPosW = (InInstanceWorld * vec4(InPosL.xyz, 1.0)).xyz;
-	OutNormalW = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
-	mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix * InInstanceWorld)));
-	OutNormalV = normalMatrix * InNormalL;
-	OutTex = InTex;
-	OutTextureTiling = vec2(1.0, 1.0);
+   OutColor = vec4(1.0);
+   OutPosW = (InInstanceWorld * vec4(InPosL.xyz, 1.0)).xyz;
+   OutNormalW = transpose(inverse(mat3(InInstanceWorld))) * InNormalL;
+   mat3 normalMatrix = transpose(inverse(mat3(sharedVariables.viewMatrix * InInstanceWorld)));
+   OutNormalV = normalMatrix * InNormalL;
+   OutTex = InTex;
+   OutTextureTiling = vec2(1.0, 1.0);
 
-	gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * InInstanceWorld * vec4(InPosL.xyz, 1.0);
+   gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * InInstanceWorld * vec4(InPosL.xyz, 1.0);
 }

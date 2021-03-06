@@ -16,28 +16,28 @@ layout (location = 5) in vec3 InBitangentL;
 
 layout (set = 0, binding = 0) uniform UBO_input
 {
-	mat4 world;
+   mat4 world;
 } input_ubo;
 
 layout (location = 0) out vec3 outUVW;
 
 out gl_PerVertex
 {
-	vec4 gl_Position;
+   vec4 gl_Position;
 };
 
-void main() 
+void main()
 {
-	// Note: workaround to avoid glslang to optimize unused inputs
-	vec3 temp = InColor;
-	temp = InNormalL;
-	vec2 temp1 = InTex;
-	vec3 temp2 = InTangentL;
-	temp2 = InBitangentL;
+   // Note: workaround to avoid glslang to optimize unused inputs
+   vec3 temp = InColor;
+   temp = InNormalL;
+   vec2 temp1 = InTex;
+   vec3 temp2 = InTangentL;
+   temp2 = InBitangentL;
 
-	outUVW = InPosL;
+   outUVW = InPosL;
 
-	// Removes the translation components of the matrix to always keep the skybox at the same distance
-	mat4 viewNoTranslation = mat4(mat3(sharedVariables.viewMatrix));
-	gl_Position = sharedVariables.projectionMatrix * viewNoTranslation * input_ubo.world * vec4(InPosL.xyz, 1.0);
+   // Removes the translation components of the matrix to always keep the skybox at the same distance
+   mat4 viewNoTranslation = mat4(mat3(sharedVariables.viewMatrix));
+   gl_Position = sharedVariables.projectionMatrix * viewNoTranslation * input_ubo.world * vec4(InPosL.xyz, 1.0);
 }

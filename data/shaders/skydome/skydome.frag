@@ -15,8 +15,8 @@ layout (location = 1) out vec4 OutSun;
 
 void main()
 {
-	SkyOutput skyOutput = GetSkyColor(normalize(InPosL), sharedVariables.eyePos.xyz, sharedVariables.time);
+   SkyOutput skyOutput = GetSkyColor(normalize(InPosL), sharedVariables.eyePos.xyz, sharedVariables.time);
 
-	OutFragColor = skyOutput.skyColor;
-	OutSun = skyOutput.sunColor;
+   OutFragColor = skyOutput.skyColor;
+   OutSun = skyOutput.sunColor;
 }

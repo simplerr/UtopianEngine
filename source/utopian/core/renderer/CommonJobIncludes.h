@@ -1,7 +1,7 @@
 #pragma once
 
 /* 
-	Contains includes that are shared between most of the jobs
+   Contains includes that are shared between most of the jobs
 */
 
 #include "core/renderer/Renderable.h"

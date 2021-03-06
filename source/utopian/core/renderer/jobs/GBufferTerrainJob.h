@@ -8,44 +8,44 @@
 
 namespace Utopian
 {
-	class Terrain;
+   class Terrain;
 
-	class GBufferTerrainJob : public BaseJob
-	{
-	public:
-		UNIFORM_BLOCK_BEGIN(FrustumPlanes)
-			UNIFORM_PARAM(glm::vec4, frustumPlanes[6])
-		UNIFORM_BLOCK_END()
+   class GBufferTerrainJob : public BaseJob
+   {
+   public:
+      UNIFORM_BLOCK_BEGIN(FrustumPlanes)
+         UNIFORM_PARAM(glm::vec4, frustumPlanes[6])
+      UNIFORM_BLOCK_END()
 
-		UNIFORM_BLOCK_BEGIN(SettingsBlock)
-			UNIFORM_PARAM(glm::vec2, viewportSize)
-			UNIFORM_PARAM(float, edgeSize)
-			UNIFORM_PARAM(float, tessellationFactor)
-			UNIFORM_PARAM(float, amplitude)
-			UNIFORM_PARAM(float, textureScaling)
-			UNIFORM_PARAM(float, bumpmapAmplitude)
-			UNIFORM_PARAM(int, wireframe)
-		UNIFORM_BLOCK_END()
+      UNIFORM_BLOCK_BEGIN(SettingsBlock)
+         UNIFORM_PARAM(glm::vec2, viewportSize)
+         UNIFORM_PARAM(float, edgeSize)
+         UNIFORM_PARAM(float, tessellationFactor)
+         UNIFORM_PARAM(float, amplitude)
+         UNIFORM_PARAM(float, textureScaling)
+         UNIFORM_PARAM(float, bumpmapAmplitude)
+         UNIFORM_PARAM(int, wireframe)
+      UNIFORM_BLOCK_END()
 
-		GBufferTerrainJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height);
-		~GBufferTerrainJob();
+      GBufferTerrainJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height);
+      ~GBufferTerrainJob();
 
-		void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
-		void Render(const JobInput& jobInput) override;
-		void Update() override;
+      void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
+      void Render(const JobInput& jobInput) override;
+      void Update() override;
 
-		SharedPtr<Vk::RenderTarget> renderTarget;
-	private:
-		SharedPtr<Vk::Effect> mEffect;
-		SharedPtr<Vk::QueryPoolStatistics> mQueryPool;
-		SharedPtr<Vk::Sampler> mSampler;
-		FrustumPlanes mFrustumPlanesBlock;
-		SettingsBlock mSettingsBlock;
-		Terrain::BrushBlock mBrushBlock;
-		Terrain* mTerrain;
+      SharedPtr<Vk::RenderTarget> renderTarget;
+   private:
+      SharedPtr<Vk::Effect> mEffect;
+      SharedPtr<Vk::QueryPoolStatistics> mQueryPool;
+      SharedPtr<Vk::Sampler> mSampler;
+      FrustumPlanes mFrustumPlanesBlock;
+      SettingsBlock mSettingsBlock;
+      Terrain::BrushBlock mBrushBlock;
+      Terrain* mTerrain;
 
-		Vk::TextureArray mDiffuseTextureArray;
-		Vk::TextureArray mNormalTextureArray;
-		Vk::TextureArray mDisplacementTextureArray;
-	};
+      Vk::TextureArray mDiffuseTextureArray;
+      Vk::TextureArray mNormalTextureArray;
+      Vk::TextureArray mDisplacementTextureArray;
+   };
 }

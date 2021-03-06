@@ -19,94 +19,94 @@
 #include "core/renderer/Im3dRenderer.h"
 
 Game::Game(Utopian::Window* window)
-	: mWindow(window)
+   : mWindow(window)
 {
-	Utopian::RenderingSettings renderingSettings;
-	renderingSettings.terrainEnabled = false;
-	renderingSettings.waterEnabled = true;
+   Utopian::RenderingSettings renderingSettings;
+   renderingSettings.terrainEnabled = false;
+   renderingSettings.waterEnabled = true;
 
-	Utopian::gEngine().Start(window, "Utopian Engine (v0.3)");
-	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
-	Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>("data/settings.lua"));
-	Utopian::gEngine().StartModules();
+   Utopian::gEngine().Start(window, "Utopian Engine (v0.3)");
+   Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
+   Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>("data/settings.lua"));
+   Utopian::gEngine().StartModules();
 
-	Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
-	Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
-	Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);
-	Utopian::gEngine().RegisterPreFrameCallback(&Game::PreFrameCallback, this);
+   Utopian::gEngine().RegisterUpdateCallback(&Game::UpdateCallback, this);
+   Utopian::gEngine().RegisterRenderCallback(&Game::DrawCallback, this);
+   Utopian::gEngine().RegisterDestroyCallback(&Game::DestroyCallback, this);
+   Utopian::gEngine().RegisterPreFrameCallback(&Game::PreFrameCallback, this);
 
-	InitScene();
+   InitScene();
 
-	// Note: Needs to be called after a camera have been added to the scene
-	mEditor = std::make_shared<Utopian::Editor>(Utopian::gRenderer().GetUiOverlay(),
-												Utopian::gRenderer().GetMainCamera(),
-												&Utopian::World::Instance(),
-												Utopian::Renderer::Instance().GetTerrain());
+   // Note: Needs to be called after a camera have been added to the scene
+   mEditor = std::make_shared<Utopian::Editor>(Utopian::gRenderer().GetUiOverlay(),
+                                               Utopian::gRenderer().GetMainCamera(),
+                                               &Utopian::World::Instance(),
+                                               Utopian::Renderer::Instance().GetTerrain());
 }
 
 Game::~Game()
 {
-	Utopian::gEngine().Destroy();
+   Utopian::gEngine().Destroy();
 }
 
 void Game::DestroyCallback()
 {
-	mEditor = nullptr;
+   mEditor = nullptr;
 }
 
 void Game::UpdateCallback()
 {
-	mEditor->Update();
+   mEditor->Update();
 
-	Im3d::SetSize(3.0f);
-	Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 5.0f, Im3d::Color_Red);
-	Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 5.0f, Im3d::Color_Blue);
-	Im3d::DrawPoint(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, Im3d::Color_Yellow);
+   Im3d::SetSize(3.0f);
+   Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 5.0f, Im3d::Color_Red);
+   Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f), 5.0f, Im3d::Color_Blue);
+   Im3d::DrawPoint(glm::vec3(0.0f, 0.0f, 0.0f), 20.0f, Im3d::Color_Yellow);
 }
 
 void Game::DrawCallback()
 {
-	mEditor->Draw();
+   mEditor->Draw();
 }
 
 void Game::PreFrameCallback()
 {
-	mEditor->PreFrame();
+   mEditor->PreFrame();
 }
 
 void Game::Run()
 {
-	Utopian::gEngine().Run();
+   Utopian::gEngine().Run();
 }
 
 void Game::InitScene()
 {
-	AddGround();
+   AddGround();
 }
 
 void Game::AddGround()
 {
-	SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Ground");
-	Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
-	Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
-	Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
+   SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Ground");
+   Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
+   Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();
+   Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
 
-	actor->SetSerialize(false);
+   actor->SetSerialize(false);
 
-	// Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
-	auto model = Utopian::Vk::gModelLoader().LoadGrid(1000, 2);
-	renderable->SetModel(model);
-	renderable->SetTileFactor(glm::vec2(500.0f));
-	renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
+   // Needs to be called before PostInit() since CRigidBody calculates AABB from loaded model
+   auto model = Utopian::Vk::gModelLoader().LoadGrid(1000, 2);
+   renderable->SetModel(model);
+   renderable->SetTileFactor(glm::vec2(500.0f));
+   renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
 
-	actor->PostInit();
-	Utopian::World::Instance().SynchronizeNodeTransforms();
+   actor->PostInit();
+   Utopian::World::Instance().SynchronizeNodeTransforms();
 
-	// Must be called after PostInit() since it needs the Renderable component
-	rigidBody->SetKinematic(true);
+   // Must be called after PostInit() since it needs the Renderable component
+   rigidBody->SetKinematic(true);
 }
 
 void Game::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
+   Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
 }

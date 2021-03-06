@@ -9,17 +9,17 @@ layout (location = 1) in vec2 InTex;
 layout (location = 0) out vec2 OutTex;
 
 layout(push_constant) uniform PushConsts {
-	 mat4 world;		
-	 vec3 color;
+   mat4 world;
+   vec3 color;
 } pushConsts;
 
 out gl_PerVertex
 {
-	vec4 gl_Position;
+   vec4 gl_Position;
 };
 
 void main(void)
 {
-	OutTex = InTex;
-	gl_Position = pushConsts.world * vec4(InPosL.xyz, 1.0);
+   OutTex = InTex;
+   gl_Position = pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

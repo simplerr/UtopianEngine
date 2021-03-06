@@ -10,18 +10,18 @@ layout (set = 1, binding = 0) uniform sampler2D textureSampler[2];
 
 layout (location = 0) out vec4 OutColor;
 
-void main() 
+void main()
 {
-	// Note: Unclear why clamp is needed
-	vec4 color = texture(textureSampler[clamp(InTexId, 0, 1)], InTex);
+   // Note: Unclear why clamp is needed
+   vec4 color = texture(textureSampler[clamp(InTexId, 0, 1)], InTex);
 
-	// Discard fragment if it's outside grass view distance
-	if (InEyeDist > InViewDistance)
-	 	discard;
+   // Discard fragment if it's outside grass view distance
+   if (InEyeDist > InViewDistance)
+      discard;
 
-	if (color.a < 0.1f)
-	 	discard;
+   if (color.a < 0.1f)
+      discard;
 
-	color.xyz *= InColor.xyz;
-	OutColor = color * InColor.a;
+   color.xyz *= InColor.xyz;
+   OutColor = color * InColor.a;
 }

@@ -10,9 +10,9 @@ layout (location = 0) out vec4 OutColor;
 
 void main()
 {
-    OutColor = InColor;
+   OutColor = InColor;
 
-    float d = abs(InEdgeDistance) / InSize;
-    d = smoothstep(1.0, 1.0 - (kAntialiasing / InSize), d);
-    OutColor.a *= d;
+   float d = abs(InEdgeDistance) / InSize;
+   d = smoothstep(1.0, 1.0 - (kAntialiasing / InSize), d);
+   OutColor.a *= d;
 }

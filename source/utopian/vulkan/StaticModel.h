@@ -13,24 +13,24 @@
 
 namespace Utopian::Vk
 {
-	class StaticModel
-	{
-	public:
-		StaticModel();
-		~StaticModel();
+   class StaticModel
+   {
+   public:
+      StaticModel();
+      ~StaticModel();
 
-		void AddMesh(Mesh* mesh);
-		void Init(Device* device);		// Gets called in ModelLoader::LoadModel()
+      void AddMesh(Mesh* mesh);
+      void Init(Device* device);    // Gets called in ModelLoader::LoadModel()
 
-		int GetNumIndices();
-		int GetNumVertics();
-		BoundingBox GetBoundingBox();
+      int GetNumIndices();
+      int GetNumVertics();
+      BoundingBox GetBoundingBox();
 
-		std::vector<Mesh*> mMeshes;
-	private:
-		uint32_t mIndicesCount;
-		uint32_t mVerticesCount;
+      std::vector<Mesh*> mMeshes;
+   private:
+      uint32_t mIndicesCount;
+      uint32_t mVerticesCount;
 
-		BoundingBox mBoundingBox;
-	};
-}	// VulkanLib namespace
+      BoundingBox mBoundingBox;
+   };
+}  // VulkanLib namespace

@@ -3,23 +3,23 @@
 
 namespace Utopian
 {
-	class Actor;
-	class ComponentInspector;
+   class Actor;
+   class ComponentInspector;
 
-	class ActorInspector
-	{
-	public:
-		ActorInspector();
-		~ActorInspector();
+   class ActorInspector
+   {
+   public:
+      ActorInspector();
+      ~ActorInspector();
 
-		void UpdateUi();
+      void UpdateUi();
 
-		void SetActor(Actor* actor);
-	private:
-		void AddInspectors();
-		void ClearInspectors();
-		std::vector<ComponentInspector*> mComponentInspectors;
-		Actor* mActor;
-		char mActorName[256];
-	};
+      void SetActor(Actor* actor);
+   private:
+      void AddInspectors();
+      void ClearInspectors();
+      std::vector<ComponentInspector*> mComponentInspectors;
+      Actor* mActor;
+      char mActorName[256];
+   };
 }

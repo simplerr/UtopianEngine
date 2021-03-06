@@ -13,21 +13,21 @@ layout (set = 1, binding = 2) uniform sampler2D specularSampler;
 
 float linearDepth(float depth)
 {
-	float z = depth * 2.0f - 1.0f; 
-	return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));	
+   float z = depth * 2.0f - 1.0f; 
+   return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));  
 }
 
-void main() 
+void main()
 {
-	vec4 color = texture(texSampler, InTex);
+   vec4 color = texture(texSampler, InTex);
 
-	// Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
-	vec4 hack = texture(normalSampler, InTex);
-	vec4 hack2 = texture(specularSampler, InTex);
+   // Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
+   vec4 hack = texture(normalSampler, InTex);
+   vec4 hack2 = texture(specularSampler, InTex);
 
-	if (color.a < 0.01f)
-		discard;
+   if (color.a < 0.01f)
+      discard;
 
-	OutColor = gl_FragCoord.z;
-	//OutColorDebug = linearDepth(gl_FragCoord.z) / FAR_PLANE; // Use this if perspective projection matrix
+   OutColor = gl_FragCoord.z;
+   //OutColorDebug = linearDepth(gl_FragCoord.z) / FAR_PLANE; // Use this if perspective projection matrix
 }

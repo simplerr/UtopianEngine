@@ -9,51 +9,51 @@
 
 namespace Utopian
 {
-	CSpawnPoint::CSpawnPoint(Actor* parent)
-		: Component(parent)
-	{
-		SetName("CSpawnPoint");
-	}
+   CSpawnPoint::CSpawnPoint(Actor* parent)
+      : Component(parent)
+   {
+      SetName("CSpawnPoint");
+   }
 
-	CSpawnPoint::~CSpawnPoint()
-	{
-	}
+   CSpawnPoint::~CSpawnPoint()
+   {
+   }
 
-	void CSpawnPoint::Update()
-	{
-		if (gInput().KeyPressed('Y'))
-		{
-			Actor* playerActor = gWorld().GetPlayerActor();
-			Transform& transform = playerActor->GetTransform();
-			CRigidBody* rigidBody = playerActor->GetComponent<CRigidBody>();
+   void CSpawnPoint::Update()
+   {
+      if (gInput().KeyPressed('Y'))
+      {
+         Actor* playerActor = gWorld().GetPlayerActor();
+         Transform& transform = playerActor->GetTransform();
+         CRigidBody* rigidBody = playerActor->GetComponent<CRigidBody>();
 
-			rigidBody->SetKinematic(true);
-			transform.SetPosition(mTransform->GetPosition() + glm::vec3(0.0f, 0.0f, 0.0f));
-			rigidBody->SetKinematic(false);
+         rigidBody->SetKinematic(true);
+         transform.SetPosition(mTransform->GetPosition() + glm::vec3(0.0f, 0.0f, 0.0f));
+         rigidBody->SetKinematic(false);
 
-			CPlayerControl* playerControl = playerActor->GetComponent<CPlayerControl>();
-			playerControl->StartLevelTimer();
-		}
-	}
+         CPlayerControl* playerControl = playerActor->GetComponent<CPlayerControl>();
+         playerControl->StartLevelTimer();
+      }
+   }
 
-	void CSpawnPoint::OnCreated()
-	{
-	}
+   void CSpawnPoint::OnCreated()
+   {
+   }
 
-	void CSpawnPoint::OnDestroyed()
-	{
-	}
+   void CSpawnPoint::OnDestroyed()
+   {
+   }
 
-	void CSpawnPoint::PostInit()
-	{
-		mTransform = GetParent()->GetComponent<CTransform>();
-	}
+   void CSpawnPoint::PostInit()
+   {
+      mTransform = GetParent()->GetComponent<CTransform>();
+   }
 
-	LuaPlus::LuaObject CSpawnPoint::GetLuaObject()
-	{
-		LuaPlus::LuaObject luaObject;
-		luaObject.AssignNewTable(gLuaManager().GetLuaState());
+   LuaPlus::LuaObject CSpawnPoint::GetLuaObject()
+   {
+      LuaPlus::LuaObject luaObject;
+      luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-		return luaObject;
-	}
+      return luaObject;
+   }
 }

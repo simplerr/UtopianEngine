@@ -6,21 +6,21 @@ class Module
 {
 public:
 
-	static T& Instance()
-	{
-		return *_Instance();
-	}
+   static T& Instance()
+   {
+      return *_Instance();
+   }
 
-	static T* InstancePtr()
-	{
-		return _Instance();
-	}
-	
-	template<class ...Args>
-	static void Start(Args &&...args)
-	{
-		_Instance() = new T(std::forward<Args>(args)...);
-	}
+   static T* InstancePtr()
+   {
+      return _Instance();
+   }
+   
+   template<class ...Args>
+   static void Start(Args &&...args)
+   {
+      _Instance() = new T(std::forward<Args>(args)...);
+   }
 
    void Destroy()
    {
@@ -28,24 +28,24 @@ public:
    }
 
 protected:
-	Module()
-	{
+   Module()
+   {
 
-	}
+   }
 
-	virtual ~Module()
-	{
-		_Instance() = nullptr;
-	}
+   virtual ~Module()
+   {
+      _Instance() = nullptr;
+   }
 
-	Module(const Module&) { }
-	Module& operator=(const Module&) { return *this; }
+   Module(const Module&) { }
+   Module& operator=(const Module&) { return *this; }
 
-	/** Returns a singleton instance of this module. */
-	static T*& _Instance()
-	{
-		static T* inst = nullptr;
-		return inst;
-	}
+   /** Returns a singleton instance of this module. */
+   static T*& _Instance()
+   {
+      static T* inst = nullptr;
+      return inst;
+   }
 private:
 };

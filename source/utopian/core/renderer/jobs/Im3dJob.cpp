@@ -7,7 +7,7 @@
 
 namespace Utopian
 {
-    Im3dJob::Im3dJob(Vk::Device* device, uint32_t width, uint32_t height)
+   Im3dJob::Im3dJob(Vk::Device* device, uint32_t width, uint32_t height)
       : BaseJob(device, width, height)
    {
    }

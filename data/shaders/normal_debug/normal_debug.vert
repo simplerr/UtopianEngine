@@ -14,12 +14,12 @@ layout (location = 0) out vec3 outNormal;
 
 void main(void)
 {
-	// Note: workaround to avoid glslang to optimize unused inputs
-	vec3 temp = InColor;
-	vec2 temp1 = InTex;
-	vec3 temp2 = InTangentL;
-	temp2 = InBitangentL;
+   // Note: workaround to avoid glslang to optimize unused inputs
+   vec3 temp = InColor;
+   vec2 temp1 = InTex;
+   vec3 temp2 = InTangentL;
+   temp2 = InBitangentL;
 
-	outNormal = InNormalL;
-	gl_Position = vec4(InPosL.xyz, 1.0);
+   outNormal = InNormalL;
+   gl_Position = vec4(InPosL.xyz, 1.0);
 }

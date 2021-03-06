@@ -7,88 +7,88 @@
 
 namespace Utopian::Vk
 {
-	/**
-	 * Base class for all the Vulkan wrappers which contains their
-	 * Vulkan object and handles their destruction.
-	 */
-	template<typename T>
-	class Handle
-	{
-	public:
-		Handle()
-		{
-			mDevice = VK_NULL_HANDLE;
-			mHandle = VK_NULL_HANDLE;
-			mDestroyFunc = nullptr;
-		}
+   /**
+    * Base class for all the Vulkan wrappers which contains their
+    * Vulkan object and handles their destruction.
+    */
+   template<typename T>
+   class Handle
+   {
+   public:
+      Handle()
+      {
+         mDevice = VK_NULL_HANDLE;
+         mHandle = VK_NULL_HANDLE;
+         mDestroyFunc = nullptr;
+      }
 
-		virtual ~Handle()
-		{
-			// Some handles will need a custom destroy function, like CommandBuffer
-			// If there's no mDestroyFunc the derived handle class is trusted to handle destruction
-			if (mDestroyFunc == nullptr)
-				return;
+      virtual ~Handle()
+      {
+         // Some handles will need a custom destroy function, like CommandBuffer
+         // If there's no mDestroyFunc the derived handle class is trusted to handle destruction
+         if (mDestroyFunc == nullptr)
+            return;
 
-			assert(mDevice);
-			assert(mDestroyFunc);
+         assert(mDevice);
+         assert(mDestroyFunc);
 
          if (mHandle != nullptr)
-			   mDestroyFunc(mDevice->GetVkDevice(), mHandle, nullptr);
+            mDestroyFunc(mDevice->GetVkDevice(), mHandle, nullptr);
 
-			mHandle = VK_NULL_HANDLE;
-		}
+         mHandle = VK_NULL_HANDLE;
+      }
 
-		Handle(Device* device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
-		{
-			mDevice = device;
-			mDestroyFunc = destroyFunction;
-		}
+      Handle(Device* device, std::function<void(VkDevice, T, VkAllocationCallbacks*)> destroyFunction)
+      {
+         mDevice = device;
+         mDestroyFunc = destroyFunction;
+      }
 
-		/** Returns the Vulkan handle. */
-		T GetVkHandle() const
-		{
-			return mHandle;
-		}
+      /** Returns the Vulkan handle. */
+      T GetVkHandle() const
+      {
+         return mHandle;
+      }
 
-		/** Returns a pointer to the Vulkan handle. */
-		T* GetVkHandlePtr()
-		{
-			return &mHandle;
-		}
+      /** Returns a pointer to the Vulkan handle. */
+      T* GetVkHandlePtr()
+      {
+         return &mHandle;
+      }
 
-		/** Returns the Vulkan device. */
-		VkDevice GetVkDevice() const
-		{
-			return mDevice->GetVkDevice();
-		}
+      /** Returns the Vulkan device. */
+      VkDevice GetVkDevice() const
+      {
+         return mDevice->GetVkDevice();
+      }
 
-		/** Returns device wrapper. */
-		Device* GetDevice()
-		{
-			return mDevice;
-		}
+      /** Returns device wrapper. */
+      Device* GetDevice()
+      {
+         return mDevice;
+      }
 
-		std::string GetDebugName() const
-		{
-			return mName;
-		}
+      std::string GetDebugName() const
+      {
+         return mName;
+      }
 
-		/** Sets the device. */
-		void SetDevice(Device* device)
-		{
-			mDevice = device;
-		}
+      /** Sets the device. */
+      void SetDevice(Device* device)
+      {
+         mDevice = device;
+      }
 
-		void SetDebugName(std::string name)
-		{
-			mName = name;
-		}
+      void SetDebugName(std::string name)
+      {
+         mName = name;
+      }
 
-	protected:
-		T mHandle = VK_NULL_HANDLE;
-	private:
-		std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;
-		Device* mDevice = nullptr;
-		std::string mName = "Vulkan Handle";
-	};
+   protected:
+      T mHandle = VK_NULL_HANDLE;
+   private:
+      std::function<void(VkDevice, T, VkAllocationCallbacks*)> mDestroyFunc;
+      Device* mDevice = nullptr;
+      std::string mName = "Vulkan Handle";
+   };
 }

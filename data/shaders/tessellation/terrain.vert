@@ -16,17 +16,17 @@ layout (location = 1) out vec2 OutTex;
 
 void main()
 {
-	OutNormalL = InNormalL;
-    OutTex = InTex;
-    gl_Position = vec4(InPosL.xyz, 1.0);
+   OutNormalL = InNormalL;
+   OutTex = InTex;
+   gl_Position = vec4(InPosL.xyz, 1.0);
 
-    // Need to displace the Y coordinate here so that the tessellation factor
-    // calculation in the .tesc shader works as expected. Otherwise all vertices will
-    // have y=0.0.
-    gl_Position.y = getHeight(OutTex);
+   // Need to displace the Y coordinate here so that the tessellation factor
+   // calculation in the .tesc shader works as expected. Otherwise all vertices will
+   // have y=0.0.
+   gl_Position.y = getHeight(OutTex);
 
-	// Note: workaround to avoid glslang to optimize unused inputs
-	vec3 temp = InColor;
-	vec3 temp2 = InTangentL;
-	temp2 = InBitangentL;
+   // Note: workaround to avoid glslang to optimize unused inputs
+   vec3 temp = InColor;
+   vec3 temp2 = InTangentL;
+   temp2 = InBitangentL;
 }

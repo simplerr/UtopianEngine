@@ -17,56 +17,56 @@
 // Forward declarations
 namespace Utopian::Vk
 {
-	// Handles
-	class Buffer;
-	class CommandBuffer;
-	class CommandPool;
-	class ComputePipeline;
-	class DescriptorSet;
-	class DescriptorPool;
-	class DescriptorSetLayout;
-	class Fence;
-	class FrameBuffers;
-	class Image;
-	class Instance;
-	class Effect;
-	class PipelineLayout;
-	class Queue;
-	class RenderPass;
-	class Sampler;
-	class Semaphore;
-	class Texture;
-	class Texture;
-	class Pipeline;
-	class QueryPoolStatistics;
-	class QueryPoolTimestamp;
+   // Handles
+   class Buffer;
+   class CommandBuffer;
+   class CommandPool;
+   class ComputePipeline;
+   class DescriptorSet;
+   class DescriptorPool;
+   class DescriptorSetLayout;
+   class Fence;
+   class FrameBuffers;
+   class Image;
+   class Instance;
+   class Effect;
+   class PipelineLayout;
+   class Queue;
+   class RenderPass;
+   class Sampler;
+   class Semaphore;
+   class Texture;
+   class Texture;
+   class Pipeline;
+   class QueryPoolStatistics;
+   class QueryPoolTimestamp;
 
-	// Other
-	class Device;
-	class Mesh;
-	class ModelLoader;
-	class PipelineInterface;
-	class VulkanApp;
-	class RenderTarget;
-	class ScreenQuadRenderer;
-	class ShaderBuffer;
-	class ShaderFactory;
-	class StaticModel;
-	class TextureLoader;
-	struct Vertex;
-	class VertexAttribute;
-	class VertexDescription;
-	class VulkanBase;
-	class Shader;
-	class ScreenQuad;
-	class BasicRenderTarget;
-	class CubeMapTexture;
-	class TextureArray;
+   // Other
+   class Device;
+   class Mesh;
+   class ModelLoader;
+   class PipelineInterface;
+   class VulkanApp;
+   class RenderTarget;
+   class ScreenQuadRenderer;
+   class ShaderBuffer;
+   class ShaderFactory;
+   class StaticModel;
+   class TextureLoader;
+   struct Vertex;
+   class VertexAttribute;
+   class VertexDescription;
+   class VulkanBase;
+   class Shader;
+   class ScreenQuad;
+   class BasicRenderTarget;
+   class CubeMapTexture;
+   class TextureArray;
 }
 
 namespace Utopian
 {
-	// Should be moved
-	class Window;
-	class Camera;
+   // Should be moved
+   class Window;
+   class Camera;
 }

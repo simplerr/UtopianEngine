@@ -6,88 +6,88 @@
 
 namespace Utopian
 {
-	GrassJob::GrassJob(Vk::Device* device, uint32_t width, uint32_t height)
-		: BaseJob(device, width, height)
-	{
-		//effect->BindCombinedImage("textureSampler", todo)
-	}
+   GrassJob::GrassJob(Vk::Device* device, uint32_t width, uint32_t height)
+      : BaseJob(device, width, height)
+   {
+      //effect->BindCombinedImage("textureSampler", todo)
+   }
 
-	GrassJob::~GrassJob()
-	{
-	}
+   GrassJob::~GrassJob()
+   {
+   }
 
-	void GrassJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
-	{
-		DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
+   void GrassJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
-		mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-		mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-		mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
-		mRenderTarget->SetClearColor(1, 1, 1, 1);
-		mRenderTarget->Create();
+      mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
+      mRenderTarget->SetClearColor(1, 1, 1, 1);
+      mRenderTarget->Create();
 
-		Vk::EffectCreateInfo effectDesc;
-		effectDesc.shaderDesc.vertexShaderPath = "data/shaders/grass/grass.vert";
-		effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/grass/grass.frag";
-		effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-		effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+      Vk::EffectCreateInfo effectDesc;
+      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/grass/grass.vert";
+      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/grass/grass.frag";
+      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+      effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
       effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
 
-		SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
-		vertexDescription->AddBinding(BINDING_0, sizeof(GrassInstance), VK_VERTEX_INPUT_RATE_INSTANCE);
-		vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());	// Location 0 : InstancePos
-		vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());	// Location 1 : Color
-		vertexDescription->AddAttribute(BINDING_0, Vk::S32Attribute());	// Location 2 : InTexId
-		effectDesc.pipelineDesc.OverrideVertexInput(vertexDescription);
+      SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>();
+      vertexDescription->AddBinding(BINDING_0, sizeof(GrassInstance), VK_VERTEX_INPUT_RATE_INSTANCE);
+      vertexDescription->AddAttribute(BINDING_0, Vk::Vec4Attribute());  // Location 0 : InstancePos
+      vertexDescription->AddAttribute(BINDING_0, Vk::Vec3Attribute());  // Location 1 : Color
+      vertexDescription->AddAttribute(BINDING_0, Vk::S32Attribute());   // Location 2 : InTexId
+      effectDesc.pipelineDesc.OverrideVertexInput(vertexDescription);
 
-		mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
-		mGrassSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      mGrassSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-		mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-		mEffect->BindUniformBuffer("UBO_grassSettings", mGrassSettingsBlock);
+      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mEffect->BindUniformBuffer("UBO_grassSettings", mGrassSettingsBlock);
 
-		// Need clamp to edge when using transparent textures to not get artifacts at the top
-		mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
-		mSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		mSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-		mSampler->Create();
+      // Need clamp to edge when using transparent textures to not get artifacts at the top
+      mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
+      mSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mSampler->Create();
 
-		SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
-		SharedPtr<Vk::Texture> texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
-		Vk::TextureArray textureArray;
-		textureArray.AddTexture(texture);
-		textureArray.AddTexture(texture2);
+      SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture("data/textures/billboards/grass_2.png");
+      SharedPtr<Vk::Texture> texture2 = Vk::gTextureLoader().LoadTexture("data/textures/billboards/n_grass_diff_0_03.png");
+      Vk::TextureArray textureArray;
+      textureArray.AddTexture(texture);
+      textureArray.AddTexture(texture2);
 
-		mEffect->BindCombinedImage("textureSampler", textureArray);
+      mEffect->BindCombinedImage("textureSampler", textureArray);
 
-		SetWaitSemaphore(deferredJob->GetCompletedSemahore());
-	}
+      SetWaitSemaphore(deferredJob->GetCompletedSemahore());
+   }
 
-	void GrassJob::Render(const JobInput& jobInput)
-	{
-		//viewProjectionBlock.data.grassViewDistance = jobInput.renderingSettings.grassViewDistance;
-		//viewProjectionBlock.UpdateMemory();
+   void GrassJob::Render(const JobInput& jobInput)
+   {
+      //viewProjectionBlock.data.grassViewDistance = jobInput.renderingSettings.grassViewDistance;
+      //viewProjectionBlock.UpdateMemory();
 
-		///* Render instances */
-		//renderTarget->Begin("Grass pass", glm::vec4(0.0, 0.0, 0.0, 1.0));
-		//Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+      ///* Render instances */
+      //renderTarget->Begin("Grass pass", glm::vec4(0.0, 0.0, 0.0, 1.0));
+      //Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
-		//commandBuffer->CmdBindPipeline(effect->GetPipeline());
-		//commandBuffer->CmdBindDescriptorSets(effect);
+      //commandBuffer->CmdBindPipeline(effect->GetPipeline());
+      //commandBuffer->CmdBindDescriptorSets(effect);
 
-		//// Loop over all blocks and render their grass instance buffers
-		//auto blocks = jobInput.sceneInfo.terrain->GetBlocks();
+      //// Loop over all blocks and render their grass instance buffers
+      //auto blocks = jobInput.sceneInfo.terrain->GetBlocks();
 
-		//for (auto& iter : blocks)
-		//{
-		//	if (iter.second->grassGenerated && iter.second->grassVisible)
-		//	{
-		//		commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
-		//		commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
-		//	}
-		//}
+      //for (auto& iter : blocks)
+      //{
+      // if (iter.second->grassGenerated && iter.second->grassVisible)
+      // {
+      //    commandBuffer->CmdBindVertexBuffer(0, 1, iter.second->instanceBuffer.get());
+      //    commandBuffer->CmdDraw(4, iter.second->grassInstances.size(), 0, 0);
+      // }
+      //}
 
-		//renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());;
-	}
+      //renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());;
+   }
 }

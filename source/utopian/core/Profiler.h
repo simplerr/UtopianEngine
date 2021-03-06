@@ -23,28 +23,28 @@ namespace Utopian
       float mLastAddTimestamp = 0.0f;
    };
 
-	class Profiler : public Module<Profiler>
-	{
-	public:
-		Profiler(Vk::VulkanApp* vulkanApp);
-		~Profiler();
+   class Profiler : public Module<Profiler>
+   {
+   public:
+      Profiler(Vk::VulkanApp* vulkanApp);
+      ~Profiler();
 
-		void Update();
-		void AddProfilerTask(const std::string& name, float taskTime, const glm::vec4& color);
-		void SetEnabled(bool enabled);
+      void Update();
+      void AddProfilerTask(const std::string& name, float taskTime, const glm::vec4& color);
+      void SetEnabled(bool enabled);
 
-		bool IsEnabled() const;
-	private:
-		LegitProfiler::ProfilersWindow mProfilerWindow;
-		std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
-		bool mEnabled;
-		MiniPlot mFrametimePlot;
-		MiniPlot mMemoryUsagePlot;
-		MiniPlot mFpsPlot;
-		std::vector<float> mFrameTimes;
-		Vk::VulkanApp* mVulkanApp;
-		bool mDropFrame;
-	};
+      bool IsEnabled() const;
+   private:
+      LegitProfiler::ProfilersWindow mProfilerWindow;
+      std::vector<LegitProfiler::ProfilerTask> mProfilerTasks;
+      bool mEnabled;
+      MiniPlot mFrametimePlot;
+      MiniPlot mMemoryUsagePlot;
+      MiniPlot mFpsPlot;
+      std::vector<float> mFrameTimes;
+      Vk::VulkanApp* mVulkanApp;
+      bool mDropFrame;
+   };
 
-	Profiler& gProfiler();
+   Profiler& gProfiler();
 }

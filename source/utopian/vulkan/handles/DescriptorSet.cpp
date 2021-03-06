@@ -10,263 +10,263 @@
 
 namespace Utopian::Vk
 {
-	DescriptorSet::DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
-	{
-		Create(device, setLayout, descriptorPool);
-	}
+   DescriptorSet::DescriptorSet(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
+   {
+      Create(device, setLayout, descriptorPool);
+   }
 
-	DescriptorSet::DescriptorSet(Device* device, Effect* effect, uint32_t set, DescriptorPool* descriptorPool)
-	{
-		mShader = effect->GetShader();
+   DescriptorSet::DescriptorSet(Device* device, Effect* effect, uint32_t set, DescriptorPool* descriptorPool)
+   {
+      mShader = effect->GetShader();
 
-		Create(device, effect->GetPipelineInterface()->GetDescriptorSetLayout(set), descriptorPool);
-	}
+      Create(device, effect->GetPipelineInterface()->GetDescriptorSetLayout(set), descriptorPool);
+   }
 
-	DescriptorSet::~DescriptorSet()
-	{
-		// The descriptor set should be freed once the descriptor pool is released
-	}
+   DescriptorSet::~DescriptorSet()
+   {
+      // The descriptor set should be freed once the descriptor pool is released
+   }
 
-	void DescriptorSet::Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
-	{
-		mDevice = device;
-		mSetLayout = (DescriptorSetLayout*)setLayout;
+   void DescriptorSet::Create(Device* device, DescriptorSetLayout* setLayout, DescriptorPool* descriptorPool)
+   {
+      mDevice = device;
+      mSetLayout = (DescriptorSetLayout*)setLayout;
 
-		VkDescriptorSetLayout setLayoutVk = setLayout->GetVkHandle();
+      VkDescriptorSetLayout setLayoutVk = setLayout->GetVkHandle();
 
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptorPool->GetVkHandle();
-		allocInfo.descriptorSetCount = 1;
-		allocInfo.pSetLayouts = &setLayoutVk;
+      VkDescriptorSetAllocateInfo allocInfo = {};
+      allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+      allocInfo.descriptorPool = descriptorPool->GetVkHandle();
+      allocInfo.descriptorSetCount = 1;
+      allocInfo.pSetLayouts = &setLayoutVk;
 
-		Debug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &mDescriptorSet));
-	}
+      Debug::ErrorCheck(vkAllocateDescriptorSets(mDevice->GetVkDevice(), &allocInfo, &mDescriptorSet));
+   }
 
-	void DescriptorSet::BindUniformBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
-	{
-		bool existing = false;
-		for (int i = 0; i < mWriteDescriptorSets.size(); i++)
-		{
-			if (mWriteDescriptorSets[i].dstBinding == binding)
-			{
-				mWriteDescriptorSets[i].pBufferInfo = bufferInfo;
-				existing = true;
-			}
-		}
+   void DescriptorSet::BindUniformBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
+   {
+      bool existing = false;
+      for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+      {
+         if (mWriteDescriptorSets[i].dstBinding == binding)
+         {
+            mWriteDescriptorSets[i].pBufferInfo = bufferInfo;
+            existing = true;
+         }
+      }
 
-		if (!existing)
-		{
-			VkWriteDescriptorSet writeDescriptorSet = {};
-			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			writeDescriptorSet.dstSet = mDescriptorSet;
-			writeDescriptorSet.descriptorCount = 1;
-			writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			writeDescriptorSet.pBufferInfo = bufferInfo;
-			writeDescriptorSet.dstBinding = binding;
+      if (!existing)
+      {
+         VkWriteDescriptorSet writeDescriptorSet = {};
+         writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+         writeDescriptorSet.dstSet = mDescriptorSet;
+         writeDescriptorSet.descriptorCount = 1;
+         writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+         writeDescriptorSet.pBufferInfo = bufferInfo;
+         writeDescriptorSet.dstBinding = binding;
 
-			mWriteDescriptorSets.push_back(writeDescriptorSet);
-		}
-	}
+         mWriteDescriptorSets.push_back(writeDescriptorSet);
+      }
+   }
 
-	void DescriptorSet::BindStorageBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
-	{
-		bool existing = false;
-		for (int i = 0; i < mWriteDescriptorSets.size(); i++)
-		{
-			if (mWriteDescriptorSets[i].dstBinding == binding)
-			{
-				mWriteDescriptorSets[i].pBufferInfo = bufferInfo;
-				existing = true;
-			}
-		}
+   void DescriptorSet::BindStorageBuffer(uint32_t binding, const VkDescriptorBufferInfo* bufferInfo)
+   {
+      bool existing = false;
+      for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+      {
+         if (mWriteDescriptorSets[i].dstBinding == binding)
+         {
+            mWriteDescriptorSets[i].pBufferInfo = bufferInfo;
+            existing = true;
+         }
+      }
 
-		if (!existing)
-		{
-			VkWriteDescriptorSet writeDescriptorSet = {};
-			writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			writeDescriptorSet.dstSet = mDescriptorSet;
-			writeDescriptorSet.descriptorCount = 1;
-			writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-			writeDescriptorSet.pBufferInfo = bufferInfo;
-			writeDescriptorSet.dstBinding = binding;
+      if (!existing)
+      {
+         VkWriteDescriptorSet writeDescriptorSet = {};
+         writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+         writeDescriptorSet.dstSet = mDescriptorSet;
+         writeDescriptorSet.descriptorCount = 1;
+         writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+         writeDescriptorSet.pBufferInfo = bufferInfo;
+         writeDescriptorSet.dstBinding = binding;
 
-			mWriteDescriptorSets.push_back(writeDescriptorSet);
-		}
-	}
+         mWriteDescriptorSets.push_back(writeDescriptorSet);
+      }
+   }
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
-	{
-		VkWriteDescriptorSet writeDescriptorSet = {};
-		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = mDescriptorSet;
-		writeDescriptorSet.descriptorCount = descriptorCount;
-		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		writeDescriptorSet.pImageInfo = imageInfo;
-		writeDescriptorSet.dstBinding = binding;				
+   void DescriptorSet::BindCombinedImage(uint32_t binding, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
+   {
+      VkWriteDescriptorSet writeDescriptorSet = {};
+      writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      writeDescriptorSet.dstSet = mDescriptorSet;
+      writeDescriptorSet.descriptorCount = descriptorCount;
+      writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      writeDescriptorSet.pImageInfo = imageInfo;
+      writeDescriptorSet.dstBinding = binding;           
 
-		mWriteDescriptorSets.push_back(writeDescriptorSet);
-	}
+      mWriteDescriptorSets.push_back(writeDescriptorSet);
+   }
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, VkSampler sampler, VkImageLayout imageLayout)
-	{
-		/* Check if the VkDescriptorImageInfo already is added to the map.
-		Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
-		Image and Sampler from each other. The same Image should be able to use with
-		different samples and vice versa.
-		*/
-		if (mImageInfoMap.find(binding) != mImageInfoMap.end())
-		{
-			mImageInfoMap[binding].sampler = sampler;
-			mImageInfoMap[binding].imageView = imageView;
-		}
-		else
-		{
-			VkDescriptorImageInfo imageInfo = {};
-			imageInfo.sampler = sampler;
-			imageInfo.imageView = imageView;
-			imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+   void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, VkSampler sampler, VkImageLayout imageLayout)
+   {
+      /* Check if the VkDescriptorImageInfo already is added to the map.
+      Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
+      Image and Sampler from each other. The same Image should be able to use with
+      different samples and vice versa.
+      */
+      if (mImageInfoMap.find(binding) != mImageInfoMap.end())
+      {
+         mImageInfoMap[binding].sampler = sampler;
+         mImageInfoMap[binding].imageView = imageView;
+      }
+      else
+      {
+         VkDescriptorImageInfo imageInfo = {};
+         imageInfo.sampler = sampler;
+         imageInfo.imageView = imageView;
+         imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 
-			mImageInfoMap[binding] = imageInfo;
-		}
+         mImageInfoMap[binding] = imageInfo;
+      }
 
-		VkWriteDescriptorSet writeDescriptorSet = {};
-		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = mDescriptorSet;
-		writeDescriptorSet.descriptorCount = 1;
-		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
-		writeDescriptorSet.dstBinding = binding;
+      VkWriteDescriptorSet writeDescriptorSet = {};
+      writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      writeDescriptorSet.dstSet = mDescriptorSet;
+      writeDescriptorSet.descriptorCount = 1;
+      writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+      writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
+      writeDescriptorSet.dstBinding = binding;
 
-		mWriteDescriptorSets.push_back(writeDescriptorSet);
-	}
+      mWriteDescriptorSets.push_back(writeDescriptorSet);
+   }
 
-	void DescriptorSet::BindImage(uint32_t binding, VkImageView imageView, VkImageLayout imageLayout)
-	{
-		/* Check if the VkDescriptorImageInfo already is added to the map.
-		Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
-		Image and Sampler from each other. The same Image should be able to use with
-		different samples and vice versa.
-		*/
-		if (mImageInfoMap.find(binding) != mImageInfoMap.end())
-		{
-			mImageInfoMap[binding].sampler = VK_NULL_HANDLE;
-			mImageInfoMap[binding].imageView = imageView;
-		}
-		else
-		{
-			VkDescriptorImageInfo imageInfo = {};
-			imageInfo.sampler = VK_NULL_HANDLE;
-			imageInfo.imageView = imageView;
-			imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+   void DescriptorSet::BindImage(uint32_t binding, VkImageView imageView, VkImageLayout imageLayout)
+   {
+      /* Check if the VkDescriptorImageInfo already is added to the map.
+      Letting DescriptorSet handle the VkDescriptorImageInfo makes decouples
+      Image and Sampler from each other. The same Image should be able to use with
+      different samples and vice versa.
+      */
+      if (mImageInfoMap.find(binding) != mImageInfoMap.end())
+      {
+         mImageInfoMap[binding].sampler = VK_NULL_HANDLE;
+         mImageInfoMap[binding].imageView = imageView;
+      }
+      else
+      {
+         VkDescriptorImageInfo imageInfo = {};
+         imageInfo.sampler = VK_NULL_HANDLE;
+         imageInfo.imageView = imageView;
+         imageInfo.imageLayout = imageLayout; // Default is VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 
-			mImageInfoMap[binding] = imageInfo;
-		}
+         mImageInfoMap[binding] = imageInfo;
+      }
 
-		VkWriteDescriptorSet writeDescriptorSet = {};
-		writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		writeDescriptorSet.dstSet = mDescriptorSet;
-		writeDescriptorSet.descriptorCount = 1;
-		writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-		writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
-		writeDescriptorSet.dstBinding = binding;
+      VkWriteDescriptorSet writeDescriptorSet = {};
+      writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      writeDescriptorSet.dstSet = mDescriptorSet;
+      writeDescriptorSet.descriptorCount = 1;
+      writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+      writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
+      writeDescriptorSet.dstBinding = binding;
 
-		mWriteDescriptorSets.push_back(writeDescriptorSet);
-	}
+      mWriteDescriptorSets.push_back(writeDescriptorSet);
+   }
 
-	void DescriptorSet::BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler)
-	{
-		BindCombinedImage(binding, image.GetView(), sampler.GetVkHandle(), image.GetFinalLayout());
-	}
+   void DescriptorSet::BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler)
+   {
+      BindCombinedImage(binding, image.GetView(), sampler.GetVkHandle(), image.GetFinalLayout());
+   }
 
-	void DescriptorSet::BindImage(uint32_t binding, const Image& image)
-	{
-		BindImage(binding, image.GetView(), image.GetFinalLayout());
-	}
+   void DescriptorSet::BindImage(uint32_t binding, const Image& image)
+   {
+      BindImage(binding, image.GetView(), image.GetFinalLayout());
+   }
 
-	void DescriptorSet::BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
-	{
-		assert(mShader != nullptr);
-		BindUniformBuffer(mShader->NameToBinding(name), bufferInfo);
-	}
+   void DescriptorSet::BindUniformBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
+   {
+      assert(mShader != nullptr);
+      BindUniformBuffer(mShader->NameToBinding(name), bufferInfo);
+   }
 
-	void DescriptorSet::BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
-	{
-		assert(mShader != nullptr);
-		BindStorageBuffer(mShader->NameToBinding(name), bufferInfo);
-	}
+   void DescriptorSet::BindStorageBuffer(std::string name, const VkDescriptorBufferInfo* bufferInfo)
+   {
+      assert(mShader != nullptr);
+      BindStorageBuffer(mShader->NameToBinding(name), bufferInfo);
+   }
 
-	void DescriptorSet::BindCombinedImage(std::string name, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
-	{
-		assert(mShader != nullptr);
-		BindCombinedImage(mShader->NameToBinding(name), imageInfo, descriptorCount);
-	}
+   void DescriptorSet::BindCombinedImage(std::string name, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
+   {
+      assert(mShader != nullptr);
+      BindCombinedImage(mShader->NameToBinding(name), imageInfo, descriptorCount);
+   }
 
-	void DescriptorSet::BindCombinedImage(std::string name, const Image& image, const Sampler& sampler)
-	{
-		assert(mShader != nullptr);
-		BindCombinedImage(mShader->NameToBinding(name), image, sampler);
-	}
+   void DescriptorSet::BindCombinedImage(std::string name, const Image& image, const Sampler& sampler)
+   {
+      assert(mShader != nullptr);
+      BindCombinedImage(mShader->NameToBinding(name), image, sampler);
+   }
 
-	void DescriptorSet::BindCombinedImage(std::string name, VkImageView imageView, VkSampler sampler)
-	{
-		assert(mShader != nullptr);
-		BindCombinedImage(mShader->NameToBinding(name), imageView, sampler);
-	}
+   void DescriptorSet::BindCombinedImage(std::string name, VkImageView imageView, VkSampler sampler)
+   {
+      assert(mShader != nullptr);
+      BindCombinedImage(mShader->NameToBinding(name), imageView, sampler);
+   }
 
-	void DescriptorSet::BindImage(std::string name, const Image& image)
-	{
-		assert(mShader != nullptr);
-		BindImage(mShader->NameToBinding(name), image);
-	}
+   void DescriptorSet::BindImage(std::string name, const Image& image)
+   {
+      assert(mShader != nullptr);
+      BindImage(mShader->NameToBinding(name), image);
+   }
 
-	void DescriptorSet::UpdateDescriptorSets()
-	{
-		vkUpdateDescriptorSets(mDevice->GetVkDevice(), (uint32_t)mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
-	}
+   void DescriptorSet::UpdateDescriptorSets()
+   {
+      vkUpdateDescriptorSets(mDevice->GetVkDevice(), (uint32_t)mWriteDescriptorSets.size(), mWriteDescriptorSets.data(), 0, NULL);
+   }
 
-	VkDescriptorSet DescriptorSet::GetVkHandle() const
-	{
-		return mDescriptorSet;
-	}
+   VkDescriptorSet DescriptorSet::GetVkHandle() const
+   {
+      return mDescriptorSet;
+   }
 
-	void DescriptorSet::SetShader(Shader* shader)
-	{
-		mShader = shader;
-	}
+   void DescriptorSet::SetShader(Shader* shader)
+   {
+      mShader = shader;
+   }
 
-	DescriptorPool::DescriptorPool(Device* device)
-		: Handle(device, vkDestroyDescriptorPool)
-	{
+   DescriptorPool::DescriptorPool(Device* device)
+      : Handle(device, vkDestroyDescriptorPool)
+   {
 
-	}
+   }
 
-	void DescriptorPool::AddDescriptor(VkDescriptorType type, uint32_t count)
-	{
-		VkDescriptorPoolSize descriptorSize = {};
-		descriptorSize.type = type;
-		descriptorSize.descriptorCount = count;
-		mDescriptorSizes.push_back(descriptorSize);
-	}
+   void DescriptorPool::AddDescriptor(VkDescriptorType type, uint32_t count)
+   {
+      VkDescriptorPoolSize descriptorSize = {};
+      descriptorSize.type = type;
+      descriptorSize.descriptorCount = count;
+      mDescriptorSizes.push_back(descriptorSize);
+   }
 
-	void DescriptorPool::Create()
-	{
-		uint32_t maxSets = 0;
-		for (auto descriptorSize : mDescriptorSizes) 
-		{
-			maxSets += descriptorSize.descriptorCount;
-		}
+   void DescriptorPool::Create()
+   {
+      uint32_t maxSets = 0;
+      for (auto descriptorSize : mDescriptorSizes) 
+      {
+         maxSets += descriptorSize.descriptorCount;
+      }
 
-		if (maxSets > 0)
-		{
-			VkDescriptorPoolCreateInfo createInfo = {};
-			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			createInfo.maxSets = maxSets;
-			createInfo.poolSizeCount = (uint32_t)mDescriptorSizes.size();
-			createInfo.pPoolSizes = mDescriptorSizes.data();
-			createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+      if (maxSets > 0)
+      {
+         VkDescriptorPoolCreateInfo createInfo = {};
+         createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+         createInfo.maxSets = maxSets;
+         createInfo.poolSizeCount = (uint32_t)mDescriptorSizes.size();
+         createInfo.pPoolSizes = mDescriptorSizes.data();
+         createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
-			Debug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
-		}
-	}
+         Debug::ErrorCheck(vkCreateDescriptorPool(GetDevice()->GetVkDevice(), &createInfo, nullptr, &mHandle));
+      }
+   }
 }

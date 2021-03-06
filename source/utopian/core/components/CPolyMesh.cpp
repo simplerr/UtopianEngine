@@ -234,7 +234,7 @@ namespace Utopian
          float distance;
          glm::vec3 intersectPoint;
          if (localRay.TriangleIntersect(vertices[0], vertices[2], vertices[1], intersectPoint, distance) ||
-               localRay.TriangleIntersect(vertices[0], vertices[3], vertices[2], intersectPoint, distance))
+             localRay.TriangleIntersect(vertices[0], vertices[3], vertices[2], intersectPoint, distance))
          {
             if (distance < closestDistance)
             {
@@ -440,7 +440,7 @@ namespace Utopian
       vertexHandles.push_back(vhandle[2]);
       vertexHandles.push_back(vhandle[3]);
       mPolyMesh.add_face(vertexHandles);
-      
+
       vertexHandles.clear();
       vertexHandles.push_back(vhandle[7]);
       vertexHandles.push_back(vhandle[6]);

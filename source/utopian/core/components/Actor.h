@@ -11,93 +11,93 @@
 
 namespace Utopian
 {
-	class CTransform;
+   class CTransform;
 
-	class Actor : public Object
-	{
-	public:
-		Actor(std::string name);
-		~Actor();
+   class Actor : public Object
+   {
+   public:
+      Actor(std::string name);
+      ~Actor();
 
-		static SharedPtr<Actor> Create(std::string name);
+      static SharedPtr<Actor> Create(std::string name);
 
-		// Calls PostInit() on all added components.
-		// The reason is that some components depend on others and fetch
-		// them during initialization.
-		void PostInit();
+      // Calls PostInit() on all added components.
+      // The reason is that some components depend on others and fetch
+      // them during initialization.
+      void PostInit();
 
-		void SetAlive(bool alive);
-		bool IsAlive() const;
+      void SetAlive(bool alive);
+      bool IsAlive() const;
 
-		void SetSerialize(bool serialize);
-		bool ShouldSerialize() const;
+      void SetSerialize(bool serialize);
+      bool ShouldSerialize() const;
 
-		void SetSceneLayer(SceneLayer sceneLayer);
+      void SetSceneLayer(SceneLayer sceneLayer);
 
-		BoundingBox GetBoundingBox() const;
-		Transform& GetTransform();
-		SceneLayer GetSceneLayer() const;
+      BoundingBox GetBoundingBox() const;
+      Transform& GetTransform();
+      SceneLayer GetSceneLayer() const;
 
-		/*
-		 * Component management functions
-		*/
-		template<class T, class... Args>
-		T* AddComponent(Args &&... args)
-		{
-			static_assert((std::is_base_of<Component, T>::value), "Specified type is not a valid Component.");
+      /*
+       * Component management functions
+      */
+      template<class T, class... Args>
+      T* AddComponent(Args &&... args)
+      {
+         static_assert((std::is_base_of<Component, T>::value), "Specified type is not a valid Component.");
 
-			SharedPtr<T> newComponent(new T(this, std::forward<Args>(args)...));
+         SharedPtr<T> newComponent(new T(this, std::forward<Args>(args)...));
 
-			World::Instance().AddComponent(newComponent);
-			//World::Instance().NotifyComponentCreated(newComponent.get());
+         World::Instance().AddComponent(newComponent);
+         //World::Instance().NotifyComponentCreated(newComponent.get());
 
-			mComponents.push_back(newComponent.get());
+         mComponents.push_back(newComponent.get());
 
-			return newComponent.get();
-		}
+         return newComponent.get();
+      }
 
-		template <typename T>
-		bool HasComponent() const
-		{
-			bool result = false;
-			for(auto& entry : mComponents)
-			{
-				if (entry->GetType() == T::GetStaticType())
-					result = true;
-			}
+      template <typename T>
+      bool HasComponent() const
+      {
+         bool result = false;
+         for(auto& entry : mComponents)
+         {
+            if (entry->GetType() == T::GetStaticType())
+               result = true;
+         }
 
-			return result;
-		}
+         return result;
+      }
 
-		template <typename T>
-		T* GetComponent() const
-		{
-			static_assert((std::is_base_of<Component, T>::value), "Specified type is not a valid Component.");
+      template <typename T>
+      T* GetComponent() const
+      {
+         static_assert((std::is_base_of<Component, T>::value), "Specified type is not a valid Component.");
 
-			T* component = GetComponent<T>(0);// T::GetType());
+         T* component = GetComponent<T>(0);// T::GetType());
 
-			return component;
-		}
+         return component;
+      }
 
-		template <typename T>
-		T* GetComponent(uint32_t type) const
-		{
-			for(auto& entry : mComponents)
-			{
-				if (entry->GetType() == T::GetStaticType())
-					return dynamic_cast<T*>(entry);
-			}
+      template <typename T>
+      T* GetComponent(uint32_t type) const
+      {
+         for(auto& entry : mComponents)
+         {
+            if (entry->GetType() == T::GetStaticType())
+               return dynamic_cast<T*>(entry);
+         }
 
-			return nullptr;
-		}
+         return nullptr;
+      }
 
-		std::vector<Component*>& GetComponents();
+      std::vector<Component*>& GetComponents();
 
-	private:
-		std::vector<Component*> mComponents;
-		bool mAlive;
-		bool mHasTransform;
-		bool mSerialize; // Controls if the actor should be saved to the scene file
-		SceneLayer mSceneLayer;
-	};
+   private:
+      std::vector<Component*> mComponents;
+      bool mAlive;
+      bool mHasTransform;
+      bool mSerialize; // Controls if the actor should be saved to the scene file
+      SceneLayer mSceneLayer;
+   };
 }

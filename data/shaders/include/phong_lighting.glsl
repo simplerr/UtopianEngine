@@ -2,164 +2,164 @@
 
 layout (std140, set = 0, binding = 1) uniform UBO_lights 
 {
-	// Constants
-	float numLights;
-	vec3 garbage;
+   // Constants
+   float numLights;
+   vec3 garbage;
 
-	Light lights[10];
+   Light lights[10];
 } light_ubo;
 
 //! Computes the colors for directional light.
 void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
-	Light light = light_ubo.lights[lightIndex];
+   Light light = light_ubo.lights[lightIndex];
 
-	// Initialize outputs.
-	ambient = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	spec    = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+   // Initialize outputs.
+   ambient = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+   diffuse = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+   spec    = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// The light vector aims opposite the direction the light rays travel.
-	vec3 lightVec = normalize(light.dir);
+   // The light vector aims opposite the direction the light rays travel.
+   vec3 lightVec = normalize(light.dir);
 
-	// Add ambient term.
-	ambient = material.ambient * light.material.ambient * light.intensity.x;	
+   // Add ambient term.
+   ambient = material.ambient * light.material.ambient * light.intensity.x;   
 
-	float diffuseFactor = max(dot(lightVec, normal), 0.0f);
+   float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
-	vec3 v = reflect(lightVec, normal);
-	float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
-				
-	diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-	spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+   vec3 v = reflect(lightVec, normal);
+   float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+
+   diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+   spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
 }
 
 //! Computes the colors for a point light.
 void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
-	Light light = light_ubo.lights[lightIndex];
+   Light light = light_ubo.lights[lightIndex];
 
-	// Initialize outputs.
-	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   // Initialize outputs.
+   ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// The vector from the surface to the light.
-	// Todo: Note: Unclear
-	pos.xyz *= -1.0f;
-	normal.xz *= -1.0f;
-	vec3 lightVec = light.pos - pos;
-		
-	// The distance from surface to light.
-	float d = length(lightVec);
-	
-	// Range test.
-	if( d > light.range )
- 		return;
-		
-	// Normalize the light vector.
-	lightVec = normalize(lightVec);
-	
-	// Ambient term.
-	ambient = material.ambient * light.material.ambient * light.intensity.x;	
+   // The vector from the surface to the light.
+   // Todo: Note: Unclear
+   pos.xyz *= -1.0f;
+   normal.xz *= -1.0f;
+   vec3 lightVec = light.pos - pos;
+      
+   // The distance from surface to light.
+   float d = length(lightVec);
 
-	// Add diffuse and specular term, provided the surface is in 
-	// the line of site of the light.
+   // Range test.
+   if( d > light.range )
+      return;
 
-	float diffuseFactor = max(dot(lightVec, normal), 0.0f);
+   // Normalize the light vector.
+   lightVec = normalize(lightVec);
 
-	vec3 v         = reflect(-lightVec, normal);
-	float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+   // Ambient term.
+   ambient = material.ambient * light.material.ambient * light.intensity.x;   
 
-	diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-	spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+   // Add diffuse and specular term, provided the surface is in 
+   // the line of site of the light.
 
-	// Attenuate
-	// See http://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation for good constant values
-	float att = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
+   float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
-	ambient *= att;
-	diffuse *= att;
-	spec    *= att;
+   vec3 v = reflect(-lightVec, normal);
+   float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+
+   diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+   spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+
+   // Attenuate
+   // See http://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation for good constant values
+   float att = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
+
+   ambient *= att;
+   diffuse *= att;
+   spec    *= att;
 }
 
 //! Computes the colors for a spot light.
 void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
-	Light light = light_ubo.lights[lightIndex];
+   Light light = light_ubo.lights[lightIndex];
 
-	// Initialize outputs.
-	ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   // Initialize outputs.
+   ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// The vector from the surface to the light.
-	// Todo: Note: Unclear
-	pos.xyz *= -1.0f;
-	normal.xz *= -1.0f;
-	vec3 lightVec = light.pos - pos;
-		
-	// The distance from surface to light.
-	float d = length(lightVec);
-	
-	// Range test.
-	if(d > light.range)
-		return;
-		
-	// Normalize the light vector.
-	lightVec = normalize(lightVec);
-	
-	// Ambient term.
-	ambient = material.ambient * light.material.ambient * light.intensity.x;	
+   // The vector from the surface to the light.
+   // Todo: Note: Unclear
+   pos.xyz *= -1.0f;
+   normal.xz *= -1.0f;
+   vec3 lightVec = light.pos - pos;
+      
+   // The distance from surface to light.
+   float d = length(lightVec);
+   
+   // Range test.
+   if(d > light.range)
+      return;
 
-	// Add diffuse and specular term, provided the surface is in 
-	// the line of site of the light.
+   // Normalize the light vector.
+   lightVec = normalize(lightVec);
 
-	float diffuseFactor = max(dot(lightVec, normal), 0.0f);
+   // Ambient term.
+   ambient = material.ambient * light.material.ambient * light.intensity.x;   
 
-	vec3 v         = reflect(-lightVec, normal);
-	float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
-				
-	diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-	spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
-	
-	// Scale by spotlight factor and attenuate.
-	float spot = pow(max(dot(lightVec, normalize(light.dir)), 0.0f), light.spot);
+   // Add diffuse and specular term, provided the surface is in 
+   // the line of site of the light.
 
-	// Scale by spotlight factor and attenuate.
-	float att = spot / dot(light.att, vec3(1.0f, d, d*d));
+   float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
-	ambient *= spot;
-	diffuse *= att;
-	spec    *= att;
+   vec3 v = reflect(-lightVec, normal);
+   float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
+            
+   diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
+   spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+   
+   // Scale by spotlight factor and attenuate.
+   float spot = pow(max(dot(lightVec, normalize(light.dir)), 0.0f), light.spot);
+
+   // Scale by spotlight factor and attenuate.
+   float att = spot / dot(light.att, vec3(1.0f, d, d*d));
+
+   ambient *= spot;
+   diffuse *= att;
+   spec    *= att;
 }
 
 //! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
 void ApplyLighting(Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
-				   float shadow, out vec4 litColor)
+                   float shadow, out vec4 litColor)
 {
-	// Start with a sum of zero. 
-	vec4 ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	vec4 diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-	vec4 spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   // Start with a sum of zero. 
+   vec4 ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   vec4 diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+   vec4 spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// Loop through all lights
-	for(int i = 0; i < light_ubo.numLights; i++)
-	{
-		// Sum the light contribution from each light source.
-		vec4 A, D, S;
+   // Loop through all lights
+   for(int i = 0; i < light_ubo.numLights; i++)
+   {
+      // Sum the light contribution from each light source.
+      vec4 A, D, S;
 
-		if(light_ubo.lights[i].type == 0.0f)			// Directional light
-			ComputeDirectionalLight(material, i, normalW, toEyeW, A, D, S);
-		else if(light_ubo.lights[i].type == 1.0f)		// Point light
-			ComputePointLight(material, i, posW, normalW, toEyeW, A, D, S);
-		else if(light_ubo.lights[i].type == 2.0f)		// Spot light
-			ComputeSpotLight(material, i, posW, normalW, toEyeW, A, D, S);
+      if(light_ubo.lights[i].type == 0.0f)         // Directional light
+         ComputeDirectionalLight(material, i, normalW, toEyeW, A, D, S);
+      else if(light_ubo.lights[i].type == 1.0f)    // Point light
+         ComputePointLight(material, i, posW, normalW, toEyeW, A, D, S);
+      else if(light_ubo.lights[i].type == 2.0f)    // Spot light
+         ComputeSpotLight(material, i, posW, normalW, toEyeW, A, D, S);
 
-		ambient += A;  
-		diffuse += shadow*D;
-		spec    += shadow*S;
-	}
-	   
-	litColor = texColor*(ambient + diffuse) + spec;
+      ambient += A;
+      diffuse += shadow*D;
+      spec    += shadow*S;
+   }
+
+   litColor = texColor*(ambient + diffuse) + spec;
 }

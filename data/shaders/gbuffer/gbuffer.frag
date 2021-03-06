@@ -25,9 +25,9 @@ layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D specularSampler;
 
-layout (std140, set = 0, binding = 1) uniform UBO_settings 
+layout (std140, set = 0, binding = 1) uniform UBO_settings
 {
-	int normalMapping;
+   int normalMapping;
 } settings_ubo;
 
 const float NEAR_PLANE = 10.0f; //todo: specialization const
@@ -35,40 +35,40 @@ const float FAR_PLANE = 256000.0f; //todo: specialization const
 
 float linearDepth(float depth)
 {
-	float z = depth * 2.0f - 1.0f; 
-	return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));	
+   float z = depth * 2.0f - 1.0f; 
+   return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));
 }
 
 void main() 
 {
-	vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
-	vec4 specular = texture(specularSampler, InTex * InTextureTiling);
+   vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
+   vec4 specular = texture(specularSampler, InTex * InTextureTiling);
 
-	if (diffuse.a < 0.01f)
-		discard;
-	
-	// Multiply with the brightness of the mesh
-	diffuse.rgb *= InColor.a;
+   if (diffuse.a < 0.01f)
+      discard;
+   
+   // Multiply with the brightness of the mesh
+   diffuse.rgb *= InColor.a;
 
-	outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
+   outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
 
-	if (settings_ubo.normalMapping == 1)
-	{
-		vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
+   if (settings_ubo.normalMapping == 1)
+   {
+      vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
 
-		// Transform normal from tangent to world space
-		normal = normalize(normal * 2.0 - 1.0);
-		normal = normalize(InTBN * normal);
+      // Transform normal from tangent to world space
+      normal = normalize(normal * 2.0 - 1.0);
+      normal = normalize(InTBN * normal);
 
-		outNormal = vec4(normalize(normal), 1.0f);
-	}
-	else
-	{
-		outNormal = vec4(normalize(InNormalW), 1.0f);
-	}
+      outNormal = vec4(normalize(normal), 1.0f);
+   }
+   else
+   {
+      outNormal = vec4(normalize(InNormalW), 1.0f);
+   }
 
-	outNormal.y *= -1.0f;
-	outAlbedo = vec4(diffuse.rgb, 1.0f);
-	outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
-	outSpecular = vec4(specular.r, MATERIAL_TYPE_OBJECT, 0, 0);
+   outNormal.y *= -1.0f;
+   outAlbedo = vec4(diffuse.rgb, 1.0f);
+   outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
+   outSpecular = vec4(specular.r, MATERIAL_TYPE_OBJECT, 0, 0);
 }

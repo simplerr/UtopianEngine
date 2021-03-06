@@ -7,10 +7,10 @@ layout (location = 0) in vec2 InTex;
 
 layout (location = 0) out vec4 OutColor;
 
-void main() 
+void main()
 {
-    vec3 color = mix(vec3(1,0,0), vec3(0, 1, 0), vec3(InTex.x));
-    color = mix(color, vec3(0, 0, 1), vec3(InTex.y));
+   vec3 color = mix(vec3(1,0,0), vec3(0, 1, 0), vec3(InTex.x));
+   color = mix(color, vec3(0, 0, 1), vec3(InTex.y));
 
-    OutColor = vec4(color, 1);
+   OutColor = vec4(color, 1);
 }

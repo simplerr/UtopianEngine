@@ -21,19 +21,19 @@ namespace Utopian
       void SetupConsole(std::string title);
       void AddMessage(std::string message);
 
-		template<class ...Args>
-		void RegisterUserLogCallback(Args &&...args)
-		{
-			mUserLogCallback = std::bind(std::forward<Args>(args)...);
+      template<class ...Args>
+      void RegisterUserLogCallback(Args &&...args)
+      {
+         mUserLogCallback = std::bind(std::forward<Args>(args)...);
 
          for (const auto& entry : mStartupEntries)
             mUserLogCallback(entry);
-		}
+      }
 
       void UnregisterUserCallback();
 
    private:
-		std::function<void(std::string)> mUserLogCallback;
+      std::function<void(std::string)> mUserLogCallback;
       std::vector<std::string> mStartupEntries;
    };
 

@@ -25,106 +25,106 @@
 
 #define VK_FLAGS_NONE 0
 #define VERTEX_BUFFER_BIND_ID 0
-#define VULKAN_ENABLE_VALIDATION true		// Debug validation layers toggle (affects performance a lot)
+#define VULKAN_ENABLE_VALIDATION true     // Debug validation layers toggle (affects performance a lot)
 
 namespace Utopian::Vk
 {
-	VulkanApp::VulkanApp(Window* window)
-		: VulkanBase(window, VULKAN_ENABLE_VALIDATION)
-	{
-		mSecondaryCommandBuffers.resize(0);
-		SetClearColor(ColorRGB(47, 141, 255));
-	}
+   VulkanApp::VulkanApp(Window* window)
+      : VulkanBase(window, VULKAN_ENABLE_VALIDATION)
+   {
+      mSecondaryCommandBuffers.resize(0);
+      SetClearColor(ColorRGB(47, 141, 255));
+   }
 
-	VulkanApp::~VulkanApp()
-	{
-		delete mPrimaryCommandBuffer;
-	}
+   VulkanApp::~VulkanApp()
+   {
+      delete mPrimaryCommandBuffer;
+   }
 
-	void VulkanApp::Prepare()
-	{
-		VulkanBase::Prepare();
+   void VulkanApp::Prepare()
+   {
+      VulkanBase::Prepare();
 
-		mPrimaryCommandBuffer = new CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-	}
+      mPrimaryCommandBuffer = new CommandBuffer(mDevice, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+   }
 
-	void VulkanApp::SetClearColor(glm::vec4 color)
-	{
-		mClearColor = color;
-	}
+   void VulkanApp::SetClearColor(glm::vec4 color)
+   {
+      mClearColor = color;
+   }
 
-	glm::vec4 VulkanApp::GetClearColor()
-	{
-		return mClearColor;
-	}
+   glm::vec4 VulkanApp::GetClearColor()
+   {
+      return mClearColor;
+   }
 
-	void VulkanApp::AddSecondaryCommandBuffer(CommandBuffer* commandBuffer)
-	{
-		mSecondaryCommandBuffers.push_back(commandBuffer);
-	}
+   void VulkanApp::AddSecondaryCommandBuffer(CommandBuffer* commandBuffer)
+   {
+      mSecondaryCommandBuffers.push_back(commandBuffer);
+   }
 
-	void VulkanApp::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
-	{
-		VkClearValue clearValues[2];
-		clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, 1.0f };
-		clearValues[1].depthStencil = { 1.0f, 0 };
+   void VulkanApp::RecordRenderingCommandBuffer(VkFramebuffer frameBuffer)
+   {
+      VkClearValue clearValues[2];
+      clearValues[0].color = { mClearColor.r, mClearColor.g, mClearColor.b, 1.0f };
+      clearValues[1].depthStencil = { 1.0f, 0 };
 
-		VkRenderPassBeginInfo renderPassBeginInfo = {};
-		renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
-		renderPassBeginInfo.renderArea.extent.width = GetWindowWidth();
-		renderPassBeginInfo.renderArea.extent.height = GetWindowHeight();
-		renderPassBeginInfo.clearValueCount = 2;
-		renderPassBeginInfo.pClearValues = clearValues;
-		renderPassBeginInfo.framebuffer = frameBuffer;
+      VkRenderPassBeginInfo renderPassBeginInfo = {};
+      renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+      renderPassBeginInfo.renderPass = mRenderPass->GetVkHandle();
+      renderPassBeginInfo.renderArea.extent.width = GetWindowWidth();
+      renderPassBeginInfo.renderArea.extent.height = GetWindowHeight();
+      renderPassBeginInfo.clearValueCount = 2;
+      renderPassBeginInfo.pClearValues = clearValues;
+      renderPassBeginInfo.framebuffer = frameBuffer;
 
-		// Begin command buffer recording & the render pass
-		mPrimaryCommandBuffer->Begin();
-		mPrimaryCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);	// VK_SUBPASS_CONTENTS_INLINE
+      // Begin command buffer recording & the render pass
+      mPrimaryCommandBuffer->Begin();
+      mPrimaryCommandBuffer->CmdBeginRenderPass(&renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);   // VK_SUBPASS_CONTENTS_INLINE
 
-		std::vector<VkCommandBuffer> commandBuffers;
-		for (CommandBuffer* commandBuffer : mSecondaryCommandBuffers)
-		{
-			if (commandBuffer->IsActive()) 
-			{
-				commandBuffers.push_back(commandBuffer->GetVkHandle());
-			}
-		}
+      std::vector<VkCommandBuffer> commandBuffers;
+      for (CommandBuffer* commandBuffer : mSecondaryCommandBuffers)
+      {
+         if (commandBuffer->IsActive()) 
+         {
+            commandBuffers.push_back(commandBuffer->GetVkHandle());
+         }
+      }
 
-		// This is where multithreaded command buffers can be added
-		// ...
+      // This is where multithreaded command buffers can be added
+      // ...
 
-		// Execute render commands from the secondary command buffer
-		vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), (uint32_t)commandBuffers.size(), commandBuffers.data());
+      // Execute render commands from the secondary command buffer
+      vkCmdExecuteCommands(mPrimaryCommandBuffer->GetVkHandle(), (uint32_t)commandBuffers.size(), commandBuffers.data());
 
-		// End command buffer recording & the render pass
-		mPrimaryCommandBuffer->CmdEndRenderPass();
-		mPrimaryCommandBuffer->End();
-	}
+      // End command buffer recording & the render pass
+      mPrimaryCommandBuffer->CmdEndRenderPass();
+      mPrimaryCommandBuffer->End();
+   }
 
-	void VulkanApp::Render()
-	{
-		// When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
-		// When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-		// The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
-		// VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
-		RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
+   void VulkanApp::Render()
+   {
+      // When presenting (vkQueuePresentKHR) the swapchain image has to be in the VK_IMAGE_LAYOUT_PRESENT_SRC_KHR format
+      // When rendering to the swapchain image has to be in the VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+      // The transition between these to formats is performed by using image memory barriers (VkImageMemoryBarrier)
+      // VkImageMemoryBarrier have oldLayout and newLayout fields that are used 
+      RecordRenderingCommandBuffer(mFrameBuffers->GetCurrent());
 
-		mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, mWaitFence.get(), GetWaitSubmitSemaphore(), GetRenderCompleteSemaphore());
-	}
+      mDevice->GetQueue()->Submit(mPrimaryCommandBuffer, mWaitFence.get(), GetWaitSubmitSemaphore(), GetRenderCompleteSemaphore());
+   }
 
-	void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-	{
-		switch (msg)
-		{
-		case WM_KEYDOWN:
-			if (wParam == VK_SPACE)
-			{
-			}
-			break;
-		}
+   void VulkanApp::HandleMessages(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+   {
+      switch (msg)
+      {
+      case WM_KEYDOWN:
+         if (wParam == VK_SPACE)
+         {
+         }
+         break;
+      }
 
-		// Default message handling
-		VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
-	}
-}	// VulkanLib namespace
+      // Default message handling
+      VulkanBase::HandleMessages(hwnd, msg, wParam, lParam);
+   }
+}  // VulkanLib namespace

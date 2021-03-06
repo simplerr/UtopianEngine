@@ -17,78 +17,78 @@ layout (set = 0, binding = 0, rgba8) uniform writeonly image2D outputImage;
 
 layout (std140, set = 0, binding = 1) uniform UBO_input
 {
-    vec4 eye;
-    vec4 ray00;
-    vec4 ray01;
-    vec4 ray10;
-    vec4 ray11;
+   vec4 eye;
+   vec4 ray00;
+   vec4 ray01;
+   vec4 ray10;
+   vec4 ray11;
 } camera_ubo;
 
 layout (std140, set = 0, binding = 2) uniform UBO_settings
 {
-	int maxTraceDepth;
+   int maxTraceDepth;
 } settings_ubo;
 
 struct Ray
 {
-	vec3 origin;
-	vec3 direction;
-	int type;
+   vec3 origin;
+   vec3 direction;
+   int type;
 };
 
 struct hitinfo {
-	vec2 lambda;
-	int index;
-	int type;			// 0 = sphere, 1 = box, 2 = light
-	vec3 intersection;
-	vec3 normal;
-	vec3 eyeDirection;
-	vec3 material;
-	float reflectivity;
-	bool isDiffuse;
+   vec2 lambda;
+   int index;
+   int type;            // 0 = sphere, 1 = box, 2 = light
+   vec3 intersection;
+   vec3 normal;
+   vec3 eyeDirection;
+   vec3 material;
+   float reflectivity;
+   bool isDiffuse;
 };
 
 struct Node {
-	Ray ray;
-	vec3 color;
-	vec3 reflectionColor;
-	vec3 refractionColor;
-	float reflection;
-	float refraction;
-	int parent;
-	int depth;
-	bool isDiffuse;
+   Ray ray;
+   vec3 color;
+   vec3 reflectionColor;
+   vec3 refractionColor;
+   float reflection;
+   float refraction;
+   int parent;
+   int depth;
+   bool isDiffuse;
 };
 
 struct Material
 {
-	vec3 color;
-	float reflectivity;
-	bool isDiffuse;
-	int special;			// 0 = standard, 1 = checkers
+   vec3 color;
+   float reflectivity;
+   bool isDiffuse;
+   int special;         // 0 = standard, 1 = checkers
 };
 
 // Light source
 struct Light {
-	vec3 position;
-	vec3 direction;
-	vec3 color;
-	vec3 intensity;			// x = ambient, y = diffuse, z = specular
-	int type;				// 0 = directional, 1 = point light, 2 = spot light
-	float spot;
-	float specularFactor;
+   vec3 position;
+   vec3 direction;
+   vec3 color;
+   vec3 intensity;      // x = ambient, y = diffuse, z = specular
+   int type;            // 0 = directional, 1 = point light, 2 = spot light
+   float spot;
+   float specularFactor;
 };
 
 struct Box {
-	vec3 min;
-	vec3 max;
-	Material material;
+   vec3 min;
+   vec3 max;
+   Material material;
 };
 
 struct Sphere {
-	vec3 center;
-	float radius;
-	Material material;
+   vec3 center;
+   float radius;
+   Material material;
 };
 
 const int numLights = 1;
@@ -97,265 +97,268 @@ const int numSpheres = 5;
 const float side = 50.0f;
 
 Box boxList[] = {
-	{vec3(0, -0.1, 0), vec3(side, 0.0, side), { vec3(0.3, 0.3, 0.3), 1, true, 1}},
-	{vec3(0, side , 0), vec3(side, side-0.1, side), {vec3(0.5, 0, 0), 0, true, 0}},
-	{vec3(-0.1, 0, 0), vec3(0, side, side), {vec3(0, 0.5, 0), 0, true, 0}},
-	{vec3(side, 0, 0), vec3(side-0.1, side, side), {vec3(0.0, 0.0, 0.5), 0, true, 0}},
-	{vec3(0, 0, -0.1), vec3(side, side, 0), {vec3(0.5, 0.5, 0), 0, true, 0}},
-	{vec3(0, 0, side), vec3(side, side, side-0.1), {vec3(0, 0.5, 0.5), 0, true, 0}},
+   {vec3(0, -0.1, 0), vec3(side, 0.0, side), { vec3(0.3, 0.3, 0.3), 1, true, 1}},
+   {vec3(0, side , 0), vec3(side, side-0.1, side), {vec3(0.5, 0, 0), 0, true, 0}},
+   {vec3(-0.1, 0, 0), vec3(0, side, side), {vec3(0, 0.5, 0), 0, true, 0}},
+   {vec3(side, 0, 0), vec3(side-0.1, side, side), {vec3(0.0, 0.0, 0.5), 0, true, 0}},
+   {vec3(0, 0, -0.1), vec3(side, side, 0), {vec3(0.5, 0.5, 0), 0, true, 0}},
+   {vec3(0, 0, side), vec3(side, side, side-0.1), {vec3(0, 0.5, 0.5), 0, true, 0}},
 };
 
 const Sphere sphereList[] = {
-	{vec3(side/2 + 5, 10, side/2 + 5), 4, {vec3(0, 0, 0), 1, false, 0}},
-	{vec3(side/2 - 10, 4, side/2 + 1), 3, {vec3(0, 0, 0), 0.5, false, 0}},
-	{vec3(side/2, 11, side/2 + 15), 3, {vec3(0, 0, 1), 1, false, 0}},
-	{vec3(side/2 + 10, 7, side/2 - 15), 5, {vec3(1, 1, 0), 1, true, 0}},
-	{vec3(side/2 - 8, 7, side/2 - 12), 3, {vec3(0, 0, 0), 0, false, 0}}
+   {vec3(side/2 + 5, 10, side/2 + 5), 4, {vec3(0, 0, 0), 1, false, 0}},
+   {vec3(side/2 - 10, 4, side/2 + 1), 3, {vec3(0, 0, 0), 0.5, false, 0}},
+   {vec3(side/2, 11, side/2 + 15), 3, {vec3(0, 0, 1), 1, false, 0}},
+   {vec3(side/2 + 10, 7, side/2 - 15), 5, {vec3(1, 1, 0), 1, true, 0}},
+   {vec3(side/2 - 8, 7, side/2 - 12), 3, {vec3(0, 0, 0), 0, false, 0}}
 };
 
 const Light lightList[] = {
-	{vec3(side/2, 25, side/2), vec3(0, 0, 1), vec3(1, 1, 1), vec3(0.2, 1, 1), POINT_LIGHT, 1.0, 256},
-	{vec3(side/2, 25, 25), vec3(0, -1, 0), vec3(0, 0, 1), vec3(0.2, 1, 1), DIRECTIONAL_LIGHT, 10.0, 256},
+   {vec3(side/2, 25, side/2), vec3(0, 0, 1), vec3(1, 1, 1), vec3(0.2, 1, 1), POINT_LIGHT, 1.0, 256},
+   {vec3(side/2, 25, 25), vec3(0, -1, 0), vec3(0, 0, 1), vec3(0.2, 1, 1), DIRECTIONAL_LIGHT, 10.0, 256},
 };
 
 // Instead of recursion a stack is used
 Node stack[TRACE_DEPTH * 2 + 1];
 
 float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
 vec2 intersectBox(vec3 origin, vec3 dir, const Box b) {
-	vec3 tMin = (b.min - origin) / dir;
-	vec3 tMax = (b.max - origin) / dir;
-	vec3 t1 = min(tMin, tMax);
-	vec3 t2 = max(tMin, tMax);
-	float tNear = max(max(t1.x, t1.y), t1.z);
-	float tFar = min(min(t2.x, t2.y), t2.z);
-	return vec2(tNear, tFar);
+   vec3 tMin = (b.min - origin) / dir;
+   vec3 tMax = (b.max - origin) / dir;
+   vec3 t1 = min(tMin, tMax);
+   vec3 t2 = max(tMin, tMax);
+   float tNear = max(max(t1.x, t1.y), t1.z);
+   float tFar = min(min(t2.x, t2.y), t2.z);
+   return vec2(tNear, tFar);
 }
 
 // Calculates the normal at the intersection point between a ray and a box
 vec3 calculateBoxNormal(vec3 hitpoint, int box_index)
 {
-	vec3 normal;
-	vec3 localPoint = hitpoint - boxList[box_index].min;
-	float min = 9999;
-	vec3 extents = boxList[box_index].max - boxList[box_index].min;
+   vec3 normal;
+   vec3 localPoint = hitpoint - boxList[box_index].min;
+   float min = 9999;
+   vec3 extents = boxList[box_index].max - boxList[box_index].min;
 
-	float dist = abs(extents.x - localPoint.x);
-	if(dist < min)
-	{
-		min = dist;
-		normal = sign(localPoint.x) * vec3(1, 0, 0);
-	}
+   float dist = abs(extents.x - localPoint.x);
+   if(dist < min)
+   {
+      min = dist;
+      normal = sign(localPoint.x) * vec3(1, 0, 0);
+   }
 
-	dist = abs(extents.y - localPoint.y);
-	if(dist < min)
-	{
-		min = dist;
-		normal = sign(localPoint.y) * vec3(0, 1, 0);
-	}
+   dist = abs(extents.y - localPoint.y);
+   if(dist < min)
+   {
+      min = dist;
+      normal = sign(localPoint.y) * vec3(0, 1, 0);
+   }
 
-	dist = abs(extents.z - localPoint.z);
-	if(dist < min)
-	{
-		min = dist;
-		normal = sign(localPoint.z) * vec3(0, 0, 1);
-	}
+   dist = abs(extents.z - localPoint.z);
+   if(dist < min)
+   {
+      min = dist;
+      normal = sign(localPoint.z) * vec3(0, 0, 1);
+   }
 
-	return normal;
+   return normal;
 }
 
 vec3 GetMaterialColor(vec3 position, Material material)
 {
-	if(material.special == 1)	// Checkers
-	{
-		int square = int(floor(position.x)) + int(floor(position.z));
-		
-		if(square % 2 == 0)
-			return material.color;
-		else
-			return vec3(1);
-	}	
+   if(material.special == 1)  // Checkers
+   {
+      int square = int(floor(position.x)) + int(floor(position.z));
+      
+      if(square % 2 == 0)
+         return material.color;
+      else
+         return vec3(1);
+   }
 
-	return material.color;
+   return material.color;
 }
 
 bool intersectBoxes(vec3 origin, vec3 dir, out hitinfo info) {
-	info.lambda = vec2(MAX_SCENE_BOUNDS, MAX_SCENE_BOUNDS);
-	float closest = MAX_SCENE_BOUNDS;
-	bool found = false;
-	for (int i = 0; i < numBoxes; i++) {
-		vec2 lambda = intersectBox(origin, dir, boxList[i]);
-		if (lambda.x > 0.0 && lambda.x < lambda.y && lambda.x < closest) {
-			// Calculate hit information
-			info.lambda = lambda;
-			info.index = i;
-			info.intersection = origin + dir * info.lambda.x;
-			info.normal = calculateBoxNormal(info.intersection, info.index);
-			info.material = GetMaterialColor(info.intersection, boxList[i].material);
-			info.type = 1;
-			info.eyeDirection = normalize(camera_ubo.eye.xyz - info.intersection);
-			info.reflectivity = boxList[i].material.reflectivity;
-			info.isDiffuse = boxList[i].material.isDiffuse;
+   info.lambda = vec2(MAX_SCENE_BOUNDS, MAX_SCENE_BOUNDS);
+   float closest = MAX_SCENE_BOUNDS;
+   bool found = false;
+   for (int i = 0; i < numBoxes; i++)
+   {
+      vec2 lambda = intersectBox(origin, dir, boxList[i]);
+      if (lambda.x > 0.0 && lambda.x < lambda.y && lambda.x < closest)
+      {
+         // Calculate hit information
+         info.lambda = lambda;
+         info.index = i;
+         info.intersection = origin + dir * info.lambda.x;
+         info.normal = calculateBoxNormal(info.intersection, info.index);
+         info.material = GetMaterialColor(info.intersection, boxList[i].material);
+         info.type = 1;
+         info.eyeDirection = normalize(camera_ubo.eye.xyz - info.intersection);
+         info.reflectivity = boxList[i].material.reflectivity;
+         info.isDiffuse = boxList[i].material.isDiffuse;
 
-			closest = lambda.x;
-			found = true;
-		}
-	}
-	return found;
+         closest = lambda.x;
+         found = true;
+      }
+   }
+   return found;
 }
 
 bool SphereIntersection(Sphere sphere, vec3 origin, vec3 dir, out vec2 lambda)
 {
-	float t0, t1;
+   float t0, t1;
 
-	// geometric solution
-    vec3 L = sphere.center - origin; 
-    float tca = dot(L, dir); 
-    if (tca < 0) 
-		return false;
+   // geometric solution
+   vec3 L = sphere.center - origin;
+   float tca = dot(L, dir);
+   if (tca < 0)
+      return false;
 
-    float d2 = dot(L, L) - tca * tca; 
+   float d2 = dot(L, L) - tca * tca; 
 
-    if (d2 > pow(sphere.radius, 2)) 
-		return false;
+   if (d2 > pow(sphere.radius, 2))
+      return false;
 
-    float thc = sqrt(pow(sphere.radius, 2) - d2); 
-    t0 = tca - thc; 
-    t1 = tca + thc; 
+   float thc = sqrt(pow(sphere.radius, 2) - d2);
+   t0 = tca - thc;
+   t1 = tca + thc;
 
-	if(t0 < 0)
-	{
-		float tmp = t0;
-		t0 = t1;
-		t1 = tmp;
+   if(t0 < 0)
+   {
+      float tmp = t0;
+      t0 = t1;
+      t1 = tmp;
 
-		if(t0 < 0)
-			return false;
-	}
+      if(t0 < 0)
+         return false;
+   }
 
-	if (t0 > 0.0 && t0 < t1)
-	{
-		lambda.x = t0;
-		lambda.y = t1;
-		return true;
-	}
+   if (t0 > 0.0 && t0 < t1)
+   {
+      lambda.x = t0;
+      lambda.y = t1;
+      return true;
+   }
 
-	return false;
+   return false;
 }
 
 bool intersectSpheres(vec3 origin, vec3 dir, out hitinfo info) {
-	info.lambda = vec2(MAX_SCENE_BOUNDS, MAX_SCENE_BOUNDS);
-	float closest = MAX_SCENE_BOUNDS;
-	bool found = false;
-	for (int i = 0; i < numSpheres; i++) 
-	{
-		vec2 lambda;
+   info.lambda = vec2(MAX_SCENE_BOUNDS, MAX_SCENE_BOUNDS);
+   float closest = MAX_SCENE_BOUNDS;
+   bool found = false;
+   for (int i = 0; i < numSpheres; i++) 
+   {
+      vec2 lambda;
 
-		// Is it the closest sphere?
-		if(SphereIntersection(sphereList[i], origin, dir, lambda) && lambda.x < closest) {
-			// Calculate hit information
-			info.lambda = lambda;//vec2(t0, t1);
-			info.index = i;
-			info.intersection = origin + dir * info.lambda.x;
-			info.normal = normalize(info.intersection - sphereList[info.index].center);
-			info.eyeDirection = normalize(camera_ubo.eye.xyz - info.intersection);
-			info.material = GetMaterialColor(info.intersection, sphereList[info.index].material);
-			info.type = 0;
-			info.reflectivity = sphereList[info.index].material.reflectivity;
-			info.isDiffuse = sphereList[info.index].material.isDiffuse;
+      // Is it the closest sphere?
+      if(SphereIntersection(sphereList[i], origin, dir, lambda) && lambda.x < closest)
+      {
+         // Calculate hit information
+         info.lambda = lambda;//vec2(t0, t1);
+         info.index = i;
+         info.intersection = origin + dir * info.lambda.x;
+         info.normal = normalize(info.intersection - sphereList[info.index].center);
+         info.eyeDirection = normalize(camera_ubo.eye.xyz - info.intersection);
+         info.material = GetMaterialColor(info.intersection, sphereList[info.index].material);
+         info.type = 0;
+         info.reflectivity = sphereList[info.index].material.reflectivity;
+         info.isDiffuse = sphereList[info.index].material.isDiffuse;
 
-			// Update the closest distance
-			closest = lambda.x;
-		}
+         // Update the closest distance
+         closest = lambda.x;
+      }
 
-		found = true;
-	}
+      found = true;
+   }
 
-	return found;
+   return found;
 }
 
 bool IntersectLights(vec3 origin, vec3 dir, out hitinfo info)
 {
-	info.lambda = vec2(MAX_SCENE_BOUNDS, MAX_SCENE_BOUNDS);
+   info.lambda = vec2(MAX_SCENE_BOUNDS, MAX_SCENE_BOUNDS);
 
-	for (int i = 0; i < numLights; i++) 
-	{
-		vec2 lambda;
+   for (int i = 0; i < numLights; i++) 
+   {
+      vec2 lambda;
 
-		// Is it the closest sphere?
-		Sphere sphere = {lightList[i].position, 1, {vec3(1, 0, 0), 1, true, 0}};
-		if(SphereIntersection(sphere, origin, dir, lambda))
-		{
-			info.lambda = lambda;
-			info.index = i;
-			info.type = 2;
-			return true;
-		}
-	}
+      // Is it the closest sphere?
+      Sphere sphere = {lightList[i].position, 1, {vec3(1, 0, 0), 1, true, 0}};
+      if(SphereIntersection(sphere, origin, dir, lambda))
+      {
+         info.lambda = lambda;
+         info.index = i;
+         info.type = 2;
+         return true;
+      }
+   }
 
-	return false;
+   return false;
 }
 
 bool closestObjectIntersection(vec3 origin, vec3 dir, out hitinfo info)
 {
-	// Check intersection with spheres
-	hitinfo sphereInfo;
-	bool sphereIntersection = intersectSpheres(origin, dir, sphereInfo);
+   // Check intersection with spheres
+   hitinfo sphereInfo;
+   bool sphereIntersection = intersectSpheres(origin, dir, sphereInfo);
 
-	// Check intersection with boxes
-	hitinfo boxInfo;
-	bool boxIntersection = intersectBoxes(origin, dir, boxInfo);
+   // Check intersection with boxes
+   hitinfo boxInfo;
+   bool boxIntersection = intersectBoxes(origin, dir, boxInfo);
 
-	// [NOTE][TODO] Temporary
-	hitinfo lightInfo;
-	bool lightIntersection = IntersectLights(origin, dir, lightInfo);
+   // [NOTE][TODO] Temporary
+   hitinfo lightInfo;
+   bool lightIntersection = IntersectLights(origin, dir, lightInfo);
 
-	// No intersection
-	if(!sphereIntersection && !boxIntersection && !lightIntersection)
-		return false;
+   // No intersection
+   if(!sphereIntersection && !boxIntersection && !lightIntersection)
+      return false;
 
-	// A sphere is closest
-	if(sphereInfo.lambda.x < boxInfo.lambda.x && sphereInfo.lambda.x < lightInfo.lambda.x)
-	{
-		info = sphereInfo;
-		return true;
-	}
-	// A box is closest
-	else if(boxInfo.lambda.x < sphereInfo.lambda.x && boxInfo.lambda.x < lightInfo.lambda.x)
-	{
-		info = boxInfo;
-		return true;
-	}
-	else if(lightIntersection)
-	{
-		info = lightInfo;
-		return true;
-	}
+   // A sphere is closest
+   if(sphereInfo.lambda.x < boxInfo.lambda.x && sphereInfo.lambda.x < lightInfo.lambda.x)
+   {
+      info = sphereInfo;
+      return true;
+   }
+   // A box is closest
+   else if(boxInfo.lambda.x < sphereInfo.lambda.x && boxInfo.lambda.x < lightInfo.lambda.x)
+   {
+      info = boxInfo;
+      return true;
+   }
+   else if(lightIntersection)
+   {
+      info = lightInfo;
+      return true;
+   }
 }
 
 void ComputeLighting(vec3 material, Light light, vec3 intersection, vec3 normal, vec3 toEye, out vec3 ambient, out vec3 diffuse, out vec3 specular)
 {
-	vec3 lightVec;
-	float lightDistance;
-	
-	if(light.type == DIRECTIONAL_LIGHT)
-		lightVec = normalize(-light.direction);
-	else
-	{
-		lightVec = light.position - intersection;
-		lightDistance = length(lightVec);
-		lightVec = normalize(lightVec);
-	}
+   vec3 lightVec;
+   float lightDistance;
 
-	// Ambient
-	ambient = material * light.color * light.intensity.x;
-			
-	// Diffuse
-	normal = normalize(normal);
-	float diffuseFactor = dot(lightVec, normal);
+   if(light.type == DIRECTIONAL_LIGHT)
+      lightVec = normalize(-light.direction);
+   else
+   {
+      lightVec = light.position - intersection;
+      lightDistance = length(lightVec);
+      lightVec = normalize(lightVec);
+   }
+
+   // Ambient
+   ambient = material * light.color * light.intensity.x;
+
+   // Diffuse
+   normal = normalize(normal);
+   float diffuseFactor = dot(lightVec, normal);
 
     vec3 v = reflect(-lightVec, normal);
     float specularFactor = pow(max(dot(v, toEye), 0.0f), light.specularFactor);
@@ -363,182 +366,180 @@ void ComputeLighting(vec3 material, Light light, vec3 intersection, vec3 normal,
     diffuse = diffuseFactor * material * light.color * light.intensity.y;
     specular = specularFactor * material * light.color * light.intensity.z;
 
-	if(light.type == POINT_LIGHT || light.type == SPOT_LIGHT)
-	{
-		// Scale by spotlight factor 
-		float spot;
-		if(light.type == 1)
-			spot = 1.0;
-		else if(light.type == 2)
-			spot = pow(max(dot(-lightVec, light.direction), 0.0f), light.spot);
+   if(light.type == POINT_LIGHT || light.type == SPOT_LIGHT)
+   {
+      // Scale by spotlight factor 
+      float spot;
+      if(light.type == 1)
+         spot = 1.0;
+      else if(light.type == 2)
+         spot = pow(max(dot(-lightVec, light.direction), 0.0f), light.spot);
 
-		// Attenuate
-		vec3 tmpAtt = vec3(0.01f, 0.001, .005);
-		float att = spot / dot(tmpAtt, vec3(1.0f, lightDistance, lightDistance*lightDistance));	// light.att
+      // Attenuate
+      vec3 tmpAtt = vec3(0.01f, 0.001, .005);
+      float att = spot / dot(tmpAtt, vec3(1.0f, lightDistance, lightDistance*lightDistance));   // light.att
 
-		ambient *= spot;
-		diffuse *= att;
-		specular *= att;
-	}
+      ambient *= spot;
+      diffuse *= att;
+      specular *= att;
+   }
 }
 
 float ComputeShadow(Light light, vec3 position, int index)
 {
-	float shadowFactor = 0.0;
-	vec3 lightDirection;
+   float shadowFactor = 0.0;
+   vec3 lightDirection;
 
-	if(light.type == DIRECTIONAL_LIGHT)
-		lightDirection = -light.direction;		// [NOTE] The - sign
-	else
-		lightDirection = light.position - position;
+   if(light.type == DIRECTIONAL_LIGHT)
+      lightDirection = -light.direction;     // [NOTE] The - sign
+   else
+      lightDirection = light.position - position;
 
 
-	int samples = 5;
-	for(int i = 0; i < samples; i++)
-	{
-		vec2 co = vec2(i/2, i%2);
-		vec3 aliasingPos = position + vec3(2*rand(co) - 1, 2*rand(co) - 1, 2*rand(co) - 1) / vec3(10);
-		vec3 aliasingDir = normalize(lightDirection  + vec3(2*rand(co) - 1, 2*rand(co) - 1, 2*rand(co) - 1) / vec3(10));
+   int samples = 5;
+   for(int i = 0; i < samples; i++)
+   {
+      vec2 co = vec2(i/2, i%2);
+      vec3 aliasingPos = position + vec3(2*rand(co) - 1, 2*rand(co) - 1, 2*rand(co) - 1) / vec3(10);
+      vec3 aliasingDir = normalize(lightDirection  + vec3(2*rand(co) - 1, 2*rand(co) - 1, 2*rand(co) - 1) / vec3(10));
 
-		hitinfo tmpIntersectInfo;
-		if(closestObjectIntersection(aliasingPos + aliasingDir*1, aliasingDir, tmpIntersectInfo) && tmpIntersectInfo.type != 2) // [NOTE][TODO][HAX] The light source itself is an intersection, need to test against type == 2, bad!
-		{
-			// Obstructing object be infront of light source
-			if(dot(tmpIntersectInfo.intersection - light.position, aliasingDir) < 0)
-				shadowFactor += 0.8 / samples;// / samples;
-		}
-	}
+      hitinfo tmpIntersectInfo;
+      if(closestObjectIntersection(aliasingPos + aliasingDir*1, aliasingDir, tmpIntersectInfo) && tmpIntersectInfo.type != 2) // [NOTE][TODO][HAX] The light source itself is an intersection, need to test against type == 2, bad!
+      {
+         // Obstructing object be infront of light source
+         if(dot(tmpIntersectInfo.intersection - light.position, aliasingDir) < 0)
+            shadowFactor += 0.8 / samples;// / samples;
+      }
+   }
 
-	return shadowFactor;
+   return shadowFactor;
 }
 
 vec3 CalculateColor(hitinfo intersectInfo)
 {
-	vec3 finalColor = vec3(0);
+   vec3 finalColor = vec3(0);
 
-	if(intersectInfo.type == 2)	// Light
-		return lightList[intersectInfo.index].color;
+   if(intersectInfo.type == 2)   // Light
+      return lightList[intersectInfo.index].color;
 
-	for(int i = 0; i < numLights; i++)
-	{
-		vec3 ambient = vec3(0.0);
-		vec3 diffuse = vec3(0.0);
-		vec3 specular = vec3(0.0);
-		float shadowFactor = 1;
+   for(int i = 0; i < numLights; i++)
+   {
+      vec3 ambient = vec3(0.0);
+      vec3 diffuse = vec3(0.0);
+      vec3 specular = vec3(0.0);
+      float shadowFactor = 1;
 
-		// Shadow component
-		shadowFactor = ComputeShadow(lightList[i], intersectInfo.intersection, intersectInfo.index);
+      // Shadow component
+      shadowFactor = ComputeShadow(lightList[i], intersectInfo.intersection, intersectInfo.index);
 
-		ComputeLighting(intersectInfo.material, lightList[i], intersectInfo.intersection, intersectInfo.normal, intersectInfo.eyeDirection, ambient, diffuse, specular);
+      ComputeLighting(intersectInfo.material, lightList[i], intersectInfo.intersection, intersectInfo.normal, intersectInfo.eyeDirection, ambient, diffuse, specular);
 
-		// Add to the final color
-		finalColor += (ambient + diffuse + specular) * (1 - shadowFactor);// * parentReflectivity * frac;
-	}
+      // Add to the final color
+      finalColor += (ambient + diffuse + specular) * (1 - shadowFactor);// * parentReflectivity * frac;
+   }
 
-	return finalColor;
+   return finalColor;
 }
 
 vec3 RayTrace(Ray ray)
 {
-	int currentNode = 0;
-	int numNodes = 1; // Works as stack pointer	
+   int currentNode = 0;
+   int numNodes = 1; // Works as stack pointer  
 
-	float frac = 1.0;
-	
-	// Start with only the primary ray
-	stack[currentNode].ray = ray;
-	stack[currentNode].depth = 1;
+   float frac = 1.0;
 
-	for(currentNode = 0; currentNode < numNodes; currentNode++)
-	{
-		// Find closest object intersecting the ray
-		hitinfo intersectInfo;
-		if(closestObjectIntersection(stack[currentNode].ray.origin, stack[currentNode].ray.direction, intersectInfo)) 
-		{
-			// Only create new rays if max depth isn't exceeded
-			if(!intersectInfo.isDiffuse && intersectInfo.type != 2 && stack[currentNode].depth < settings_ubo.maxTraceDepth) // && 0 == 1
-			{
-				// [TODO] Compute the diffuse color even if it reflects and refracts
-				stack[currentNode].color = CalculateColor(intersectInfo);
-				stack[currentNode].isDiffuse = false;
-				stack[currentNode].refraction = 1.0;
-				stack[currentNode].reflection = intersectInfo.reflectivity;
+   // Start with only the primary ray
+   stack[currentNode].ray = ray;
+   stack[currentNode].depth = 1;
 
-				// Add reflection ray to top of the stack
-				vec3 reflection = reflect(stack[currentNode].ray.direction, intersectInfo.normal);
-				stack[numNodes + 0].ray = Ray(intersectInfo.intersection, reflection, REFLECTION_RAY);
+   for(currentNode = 0; currentNode < numNodes; currentNode++)
+   {
+      // Find closest object intersecting the ray
+      hitinfo intersectInfo;
+      if(closestObjectIntersection(stack[currentNode].ray.origin, stack[currentNode].ray.direction, intersectInfo)) 
+      {
+         // Only create new rays if max depth isn't exceeded
+         if(!intersectInfo.isDiffuse && intersectInfo.type != 2 && stack[currentNode].depth < settings_ubo.maxTraceDepth) // && 0 == 1
+         {
+            // [TODO] Compute the diffuse color even if it reflects and refracts
+            stack[currentNode].color = CalculateColor(intersectInfo);
+            stack[currentNode].isDiffuse = false;
+            stack[currentNode].refraction = 1.0;
+            stack[currentNode].reflection = intersectInfo.reflectivity;
 
-				// Add refraction ray to top of the stack
-				vec3 refraction = refract(stack[currentNode].ray.direction, intersectInfo.normal, 0.99); // [NOTE] 0.98 is temp
-				stack[numNodes + 1].ray = Ray(intersectInfo.intersection + refraction, refraction, REFRACTION_RAY);
+            // Add reflection ray to top of the stack
+            vec3 reflection = reflect(stack[currentNode].ray.direction, intersectInfo.normal);
+            stack[numNodes + 0].ray = Ray(intersectInfo.intersection, reflection, REFLECTION_RAY);
 
-				// Set depth and parent on the new rays
-				stack[numNodes + 0].depth = stack[currentNode].depth + 1;
-				stack[numNodes + 0].parent = currentNode;
-				stack[numNodes + 1].depth = stack[currentNode].depth + 1;
-				stack[numNodes + 1].parent = currentNode;
+            // Add refraction ray to top of the stack
+            vec3 refraction = refract(stack[currentNode].ray.direction, intersectInfo.normal, 0.99); // [NOTE] 0.98 is temp
+            stack[numNodes + 1].ray = Ray(intersectInfo.intersection + refraction, refraction, REFRACTION_RAY);
 
-				// Two new rays added
-				numNodes += 2;
+            // Set depth and parent on the new rays
+            stack[numNodes + 0].depth = stack[currentNode].depth + 1;
+            stack[numNodes + 0].parent = currentNode;
+            stack[numNodes + 1].depth = stack[currentNode].depth + 1;
+            stack[numNodes + 1].parent = currentNode;
 
-				
-			}
-			// Max depth reached or 100% diffuse, calculate color
-			else
-			{	
-				stack[currentNode].color = CalculateColor(intersectInfo);
-				stack[currentNode].isDiffuse = true;
-			}
-		}
-		else
-		{
-			// Ray didn't hit anything, set node color to black
-			stack[currentNode].color = vec3(1, 1, 1);
-			stack[currentNode].isDiffuse = true;
-		}
-	}	
-	
-	// Loop backwards over all nodes and update the parents colors
-	for(int child = currentNode - 1; child > 0; child--)
-	{
-		vec3 color = stack[child].color;
-		int parent = stack[child].parent;
+            // Two new rays added
+            numNodes += 2;
+         }
+         // Max depth reached or 100% diffuse, calculate color
+         else
+         {
+            stack[currentNode].color = CalculateColor(intersectInfo);
+            stack[currentNode].isDiffuse = true;
+         }
+      }
+      else
+      {
+         // Ray didn't hit anything, set node color to black
+         stack[currentNode].color = vec3(1, 1, 1);
+         stack[currentNode].isDiffuse = true;
+      }
+   }
+   
+   // Loop backwards over all nodes and update the parents colors
+   for(int child = currentNode - 1; child > 0; child--)
+   {
+      vec3 color = stack[child].color;
+      int parent = stack[child].parent;
 
-		// [NOTE] Missing somehting here	
-		// [TODO] This should also combine refraction and reflection
-		if(!stack[child].isDiffuse)
-			color = stack[child].color + stack[child].refractionColor * (1.0 - stack[child].reflection) + stack[child].reflectionColor * stack[child].reflection;
+      // [NOTE] Missing somehting here 
+      // [TODO] This should also combine refraction and reflection
+      if(!stack[child].isDiffuse)
+         color = stack[child].color + stack[child].refractionColor * (1.0 - stack[child].reflection) + stack[child].reflectionColor * stack[child].reflection;
 
-		if(stack[child].ray.type == REFLECTION_RAY)
-			stack[parent].reflectionColor = color;
-		else if(stack[child].ray.type == REFRACTION_RAY)
-			stack[parent].refractionColor = color;
-	}		
+      if(stack[child].ray.type == REFLECTION_RAY)
+         stack[parent].reflectionColor = color;
+      else if(stack[child].ray.type == REFRACTION_RAY)
+         stack[parent].refractionColor = color;
+   }
 
-	Node primaryNode = stack[0];
-	if(primaryNode.isDiffuse)
-		return primaryNode.color;
-	else
-	{
-		// Fresnel equation
-		return primaryNode.color + primaryNode.refractionColor * (1.0 - primaryNode.reflection) + primaryNode.reflectionColor * primaryNode.reflection;
-	}
+   Node primaryNode = stack[0];
+   if(primaryNode.isDiffuse)
+      return primaryNode.color;
+   else
+   {
+      // Fresnel equation
+      return primaryNode.color + primaryNode.refractionColor * (1.0 - primaryNode.reflection) + primaryNode.reflectionColor * primaryNode.reflection;
+   }
 }
 
 void main(void)
 {
-    ivec2 dim = imageSize(outputImage);
-    vec2 uv = vec2(gl_GlobalInvocationID.xy) / dim;
+   ivec2 dim = imageSize(outputImage);
+   vec2 uv = vec2(gl_GlobalInvocationID.xy) / dim;
 
-    vec3 ray00 = camera_ubo.ray00.xyz;
-    vec3 ray01 = camera_ubo.ray01.xyz;
-    vec3 ray10 = camera_ubo.ray10.xyz;
-    vec3 ray11 = camera_ubo.ray11.xyz;
+   vec3 ray00 = camera_ubo.ray00.xyz;
+   vec3 ray01 = camera_ubo.ray01.xyz;
+   vec3 ray10 = camera_ubo.ray10.xyz;
+   vec3 ray11 = camera_ubo.ray11.xyz;
 
-    vec3 rayDir = mix(mix(ray00, ray01, uv.y), mix(ray10, ray11, uv.y), uv.x);
+   vec3 rayDir = mix(mix(ray00, ray01, uv.y), mix(ray10, ray11, uv.y), uv.x);
 
-    Ray ray = {camera_ubo.eye.xyz, normalize(rayDir), 0};
-    vec3 color = RayTrace(ray);
+   Ray ray = {camera_ubo.eye.xyz, normalize(rayDir), 0};
+   vec3 color = RayTrace(ray);
 
-    imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), vec4(color, 1.0f));
+   imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), vec4(color, 1.0f));
 }

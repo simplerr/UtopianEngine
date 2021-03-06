@@ -6,40 +6,40 @@
 
 namespace Utopian
 {
-	class Actor;
-	class CCamera;
-	class CTransform;
-	class CLight;
-	class CRenderable;
+   class Actor;
+   class CCamera;
+   class CTransform;
+   class CLight;
+   class CRenderable;
 
-	/*
-	 * Sets the CRenderables color to match the lights color.
-	 */
-	class CBloomLight : public Component
-	{
-	public:
-		CBloomLight(Actor* parent);
-		~CBloomLight();
+   /*
+    * Sets the CRenderables color to match the lights color.
+    */
+   class CBloomLight : public Component
+   {
+   public:
+      CBloomLight(Actor* parent);
+      ~CBloomLight();
 
-		void Update() override;
-		void OnCreated() override;
-		void OnDestroyed() override;
-		void PostInit() override;
+      void Update() override;
+      void OnCreated() override;
+      void OnDestroyed() override;
+      void PostInit() override;
 
-		LuaPlus::LuaObject GetLuaObject() override;
+      LuaPlus::LuaObject GetLuaObject() override;
 
-		// Type identification
-		static uint32_t GetStaticType() {
-			return Component::ComponentType::BLOOM_LIGHT;
-		}
+      // Type identification
+      static uint32_t GetStaticType() {
+         return Component::ComponentType::BLOOM_LIGHT;
+      }
 
-		virtual uint32_t GetType() {
-			return GetStaticType();
-		}
+      virtual uint32_t GetType() {
+         return GetStaticType();
+      }
 
-	private:
-		CTransform* mTransform;
-		CRenderable* mRenderable;
-		CLight* mLight;
-	};
+   private:
+      CTransform* mTransform;
+      CRenderable* mRenderable;
+      CLight* mLight;
+   };
 }

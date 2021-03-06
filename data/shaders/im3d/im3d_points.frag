@@ -9,9 +9,9 @@ layout (location = 0) out vec4 OutColor;
 
 void main()
 {
-    OutColor = InColor;
+   OutColor = InColor;
 
-    float d = length(gl_PointCoord.xy - vec2(0.5));
-    d = smoothstep(0.5, 0.5 - (kAntialiasing / InSize), d);
-    OutColor.a *= d;
+   float d = length(gl_PointCoord.xy - vec2(0.5));
+   d = smoothstep(0.5, 0.5 - (kAntialiasing / InSize), d);
+   OutColor.a *= d;
 }
