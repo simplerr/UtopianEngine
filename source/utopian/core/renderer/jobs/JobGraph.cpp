@@ -29,8 +29,11 @@
 
 namespace Utopian
 {
-	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, uint32_t width, uint32_t height)
+	JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, const RenderingSettings& renderingSettings)
 	{
+		uint32_t width = vulkanApp->GetWindowWidth();
+		uint32_t height = vulkanApp->GetWindowHeight();
+
 		/* Create the G-buffer attachments */
 		mGBuffer.positionImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "G-buffer position image");
 		mGBuffer.normalImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "G-buffer normal (world) image");
@@ -49,16 +52,11 @@ namespace Utopian
 		AddJob(new BlurJob(device, width, height));
 		AddJob(new ShadowJob(device, width, height));
 		AddJob(new DeferredJob(device, width, height));
-		//AddJob(new GrassJob(device, width, height)); // Note: Todo: Removed for syncrhonization testing
-		//AddJob(new SkyboxJob(device, width, height));
 
-// Todo: make configurable
-#define ATMOSPHERE
-#ifndef ATMOSPHERE
-		AddJob(new SkydomeJob(device, width, height));
-#else
-		AddJob(new AtmosphereJob(device, width, height));
-#endif
+		if (renderingSettings.sky == SKY_SIMPLE)
+			AddJob(new SkydomeJob(device, width, height));
+		else
+			AddJob(new AtmosphereJob(device, width, height));
 
 		AddJob(new SunShaftJob(device, width, height));
 		AddJob(new OpaqueCopyJob(device, width, height));

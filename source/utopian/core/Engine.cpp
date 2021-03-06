@@ -268,6 +268,7 @@ namespace Utopian
 		if (luaSettings.IsNil())
 			assert(0);
 
+		mRenderingSettings.sky = luaSettings["sky"].ToString();
 		mRenderingSettings.fogColor = glm::vec4(luaSettings["fogColor_r"].ToNumber(),
 												luaSettings["fogColor_g"].ToNumber(),
 												luaSettings["fogColor_b"].ToNumber(), 1.0f);

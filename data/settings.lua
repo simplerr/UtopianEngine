@@ -1,5 +1,6 @@
 settings = 
 {
+    sky = "atmosphere", -- "simple", "atmosphere"
     fogColor_r = 0.44,
     fogColor_g = 0.5,
     fogColor_b = 0.9,

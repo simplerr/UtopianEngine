@@ -82,7 +82,7 @@ namespace Utopian
 
 		ScriptExports::SetTerrain(GetTerrain());
 
-		mJobGraph = std::make_shared<JobGraph>(mVulkanApp, GetTerrain(), mDevice, mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+		mJobGraph = std::make_shared<JobGraph>(mVulkanApp, GetTerrain(), mDevice, mRenderingSettings);
 
 		LoadInstancesFromFile("data/instances.txt");
 		BuildAllInstances();
