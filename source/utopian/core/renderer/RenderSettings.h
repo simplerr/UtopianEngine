@@ -23,6 +23,7 @@ namespace Utopian
       bool normalMapping = true;
       bool ssaoEnabled = false;
       bool ssrEnabled = true;
+      bool bloomEnabled = true;
       bool skyboxReflections = true;
       bool waterEnabled = true;
       bool terrainEnabled = false;

@@ -284,6 +284,7 @@ namespace Utopian
       mRenderingSettings.normalMapping = luaSettings["normalMapping"].GetBoolean();
       mRenderingSettings.ssaoEnabled = luaSettings["ssaoEnabled"].GetBoolean();
       mRenderingSettings.ssrEnabled = luaSettings["ssrEnabled"].GetBoolean();
+      mRenderingSettings.bloomEnabled = luaSettings["bloomEnabled"].GetBoolean();
       mRenderingSettings.skyboxReflections = luaSettings["skyboxReflections"].GetBoolean();
       mRenderingSettings.waterEnabled = luaSettings["waterEnabled"].GetBoolean();
       mRenderingSettings.terrainEnabled = luaSettings["terrainEnabled"].GetBoolean();
@@ -313,8 +314,8 @@ namespace Utopian
                                                 luaSettings["waterColor_y"].ToNumber(),
                                                 luaSettings["waterColor_z"].ToNumber());
       mRenderingSettings.foamColor = glm::vec3(luaSettings["foamColor_x"].ToNumber(),
-                                     luaSettings["foamColor_y"].ToNumber(),
-                                     luaSettings["foamColor_z"].ToNumber());
+                                               luaSettings["foamColor_y"].ToNumber(),
+                                               luaSettings["foamColor_z"].ToNumber());
       mRenderingSettings.waveSpeed = (float)luaSettings["waveSpeed"].ToNumber();
       mRenderingSettings.foamSpeed = (float)luaSettings["foamSpeed"].ToNumber();
       mRenderingSettings.waterDistortionStrength = (float)luaSettings["waterDistortionStrength"].ToNumber();

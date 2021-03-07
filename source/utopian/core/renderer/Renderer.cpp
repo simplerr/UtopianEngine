@@ -136,6 +136,7 @@ namespace Utopian
          ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
          ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
          ImGui::Checkbox("SSR", &mRenderingSettings.ssrEnabled);
+         ImGui::Checkbox("Bloom", &mRenderingSettings.bloomEnabled);
          ImGui::Checkbox("Skybox reflections", &mRenderingSettings.skyboxReflections);
          ImGui::Checkbox("Water", &mRenderingSettings.waterEnabled);
          ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
@@ -208,6 +209,7 @@ namespace Utopian
       mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::SSR_INDEX, mRenderingSettings.ssrEnabled);
+      mJobGraph->EnableJob(JobGraph::JobIndex::BLOOM_INDEX, mRenderingSettings.bloomEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::GEOMETRY_THICKNESS_INDEX, mRenderingSettings.ssrEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::WATER_INDEX, mRenderingSettings.waterEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::FRESNEL_INDEX, mRenderingSettings.waterEnabled);

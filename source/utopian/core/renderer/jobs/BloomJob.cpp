@@ -27,7 +27,7 @@ namespace Utopian
 
       mExtractRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO);
       mExtractRenderTarget->AddWriteOnlyColorAttachment(mBrightColorsImage);
-      mExtractRenderTarget->SetClearColor(1, 1, 1, 1);
+      mExtractRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       mExtractRenderTarget->Create();
 
       Vk::EffectCreateInfo effectDesc;
@@ -49,7 +49,7 @@ namespace Utopian
 
       mBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO);
       mBlurRenderTarget->AddWriteOnlyColorAttachment(outputImage);
-      mBlurRenderTarget->SetClearColor(1, 1, 1, 1);
+      mBlurRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       mBlurRenderTarget->Create();
 
       Vk::EffectCreateInfo effectDesc;
@@ -79,13 +79,14 @@ namespace Utopian
       mExtractSettings.UpdateMemory();
 
       mExtractRenderTarget->Begin("Bloom extract pass");
-      Vk::CommandBuffer* commandBuffer = mExtractRenderTarget->GetCommandBuffer();
 
-      // Todo: Should this be moved to the effect instead?
-      commandBuffer->CmdBindPipeline(mExtractEffect->GetPipeline());
-      commandBuffer->CmdBindDescriptorSets(mExtractEffect);
-
-      gRendererUtility().DrawFullscreenQuad(commandBuffer);
+      if (IsEnabled())
+      {
+         Vk::CommandBuffer* commandBuffer = mExtractRenderTarget->GetCommandBuffer();
+         commandBuffer->CmdBindPipeline(mExtractEffect->GetPipeline());
+         commandBuffer->CmdBindDescriptorSets(mExtractEffect);
+         gRendererUtility().DrawFullscreenQuad(commandBuffer);
+      }
 
       mExtractRenderTarget->End(GetWaitSemahore(), mWaitExtractPassSemaphore);
    }
@@ -96,13 +97,14 @@ namespace Utopian
       mBlurSettings.UpdateMemory();
 
       mBlurRenderTarget->Begin("Bloom blur pass", glm::vec4(0.1f, 0.5f, 0.9f, 1.0f));
-      Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
 
-      // Todo: Should this be moved to the effect instead?
-      commandBuffer->CmdBindPipeline(mBlurEffect->GetPipeline());
-      commandBuffer->CmdBindDescriptorSets(mBlurEffect);
-
-      gRendererUtility().DrawFullscreenQuad(commandBuffer);
+      if (IsEnabled())
+      {
+         Vk::CommandBuffer* commandBuffer = mBlurRenderTarget->GetCommandBuffer();
+         commandBuffer->CmdBindPipeline(mBlurEffect->GetPipeline());
+         commandBuffer->CmdBindDescriptorSets(mBlurEffect);
+         gRendererUtility().DrawFullscreenQuad(commandBuffer);
+      }
 
       mBlurRenderTarget->End(mWaitExtractPassSemaphore, GetCompletedSemahore());
    }

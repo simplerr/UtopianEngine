@@ -16,6 +16,7 @@ settings =
     normalMapping = false,
     ssaoEnabled = false,
     ssrEnabled = true,
+    bloomEnabled = true,
     skyboxReflections = true,
     waterEnabled = true,
     terrainEnabled = true,
