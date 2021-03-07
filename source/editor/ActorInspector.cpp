@@ -7,6 +7,7 @@
 #include "core/components/CCatmullSpline.h"
 #include "core/components/CPolyMesh.h"
 #include "core/components/CPlayerControl.h"
+#include "core/components/CNoClip.h"
 #include "editor/ComponentInspector.h"
 #include "imgui/imgui.h"
 #include "core/renderer/ImGuiRenderer.h"
@@ -105,6 +106,12 @@ namespace Utopian
       CPlayerControl* playerController = mActor->GetComponent<CPlayerControl>();
       if (playerController != nullptr) {
          PlayerControllerInspector* inspector = new PlayerControllerInspector(playerController);
+         mComponentInspectors.push_back(inspector);
+      }
+
+      CNoClip* noClip = mActor->GetComponent<CNoClip>();
+      if (noClip != nullptr) {
+         NoClipInspector* inspector = new NoClipInspector(noClip);
          mComponentInspectors.push_back(inspector);
       }
    }

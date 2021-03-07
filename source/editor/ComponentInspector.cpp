@@ -8,6 +8,7 @@
 #include "core/components/CCatmullSpline.h"
 #include "core/components/CPolyMesh.h"
 #include "core/components/CPlayerControl.h"
+#include "core/components/CNoClip.h"
 #include "core/components/Actor.h"
 #include "core/Log.h"
 #include <glm/gtc/quaternion.hpp>
@@ -398,6 +399,22 @@ namespace Utopian
          mPlayerController->SetJumpStrength(jumpStrength);
          mPlayerController->SetAirAccelerate(airAccelerate);
          mPlayerController->SetAirSpeedCap(airSpeedCap);
+      }
+   }
+
+   NoClipInspector::NoClipInspector(CNoClip* noClip)
+   {
+      mNoClip = noClip;
+   }
+
+   void NoClipInspector::UpdateUi()
+   {
+      if (ImGui::CollapsingHeader("Noclip", ImGuiTreeNodeFlags_DefaultOpen))
+      {
+         float speed = mNoClip->GetSpeed();
+
+         ImGui::InputFloat("Speed", &speed);
+         mNoClip->SetSpeed(speed);
       }
    }
 }

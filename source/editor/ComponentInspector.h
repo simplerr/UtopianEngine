@@ -15,6 +15,7 @@ namespace Utopian
    class CCatmullSpline;
    class CPolyMesh;
    class CPlayerControl;
+   class CNoClip;
 
    class ComponentInspector
    {
@@ -128,5 +129,15 @@ namespace Utopian
       virtual void UpdateUi() override;
    private:
       CPlayerControl* mPlayerController;
+   };
+
+   class NoClipInspector : public ComponentInspector
+   {
+   public:
+      NoClipInspector(CNoClip* noClip);
+
+      virtual void UpdateUi() override;
+   private:
+      CNoClip* mNoClip;
    };
 }
