@@ -9,7 +9,7 @@ namespace Utopian
 
    struct RenderingSettings
    {
-      std::string sky = SKY_SIMPLE; // "simple", "atmosphere"
+      std::string sky = SKY_SIMPLE;
       glm::vec4 fogColor = glm::vec4(113 / 255.0f, 129 / 255.0f, 232 / 255.0f, 1.0f);
       bool deferredPipeline = true;
       float fogStart = 200.0f;
@@ -23,7 +23,7 @@ namespace Utopian
       bool normalMapping = true;
       bool ssaoEnabled = false;
       bool ssrEnabled = true;
-      bool bloomEnabled = true;
+      bool bloomEnabled = false;
       bool skyboxReflections = true;
       bool waterEnabled = true;
       bool terrainEnabled = false;
@@ -41,7 +41,7 @@ namespace Utopian
       float terrainTextureScaling = 200.0f;
       float terrainBumpmapAmplitude = 0.08f;
       bool terrainWireframe = 0;
-      int tonemapping = 3; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
+      int tonemapping = 2; // 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
       float exposure = 1.4f;
       float bloomThreshold = 1.5f;
       float windStrength = 5.0f;

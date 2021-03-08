@@ -18,7 +18,7 @@ layout (location = 0) out vec4 OutColor;
 
 vec3 ReinhardTonemap(vec3 hdrColor)
 {
-   return hdrColor / (hdrColor + vec3(1.0));;
+   return hdrColor / (hdrColor + vec3(1.0));
 }
 
 // From http://filmicworlds.com/blog/filmic-tonemapping-operators/
@@ -31,7 +31,7 @@ vec3 Uncharted2Tonemap(vec3 hdrColor)
    float E = 0.02;
    float F = 0.30;
    float W = 11.2;
-    vec3 x = hdrColor;
+   vec3 x = hdrColor;
 
    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
@@ -41,9 +41,19 @@ vec3 ExposureTonemap(vec3 hdrColor)
    return vec3(1.0) - exp(-hdrColor * settings_ubo.exposure);
 }
 
+// From https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
+vec3 ACESFilm(vec3 x)
+{
+   float a = 2.51f;
+   float b = 0.03f;
+   float c = 2.43f;
+   float d = 0.59f;
+   float e = 0.14f;
+   return clamp((x*(a*x+b))/(x*(c*x+d)+e), 0.0f, 1.0f);
+}
+
 void main()
 {
-   const float gamma = 2.2;
    vec3 hdrColor = texture(hdrSampler, InTex).rgb;
    vec3 bloomColor = texture(bloomSampler, InTex).rgb;
 
@@ -58,10 +68,16 @@ void main()
       mapped = ExposureTonemap(hdrColor);
    else if (settings_ubo.tonemapping == 3)
       mapped = hdrColor;
+   else if (settings_ubo.tonemapping == 4)
+      mapped = ACESFilm(hdrColor);
 
-   // Gamma correction 
-   if (settings_ubo.tonemapping != 3)
-      mapped = pow(mapped, vec3(1.0 / gamma));
+   // Gamma correction
+   // Note: This makes the image gray and washed out
+   // if (settings_ubo.tonemapping != 3)
+   // {
+   //    const float gamma = 2.2;
+   //    mapped = pow(mapped, vec3(1.0 / gamma));
+   // }
 
    OutColor = vec4(mapped, 1.0);
 }

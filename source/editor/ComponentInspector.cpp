@@ -233,7 +233,7 @@ namespace Utopian
       {
          ImGui::Combo("Type", &mType, "Directional\0Point\0Spot\0");
 
-         ImGui::SliderFloat3("Intensity", &mLightData.intensity.x, 0.0f, 1.0f);
+         ImGui::SliderFloat3("Intensity", &mLightData.intensity.x, 0.0f, 10.0f);
          ImGui::SliderFloat3("Direction", &mLightData.direction.x, -1.0f, 1.0f);
          ImGui::SliderFloat3("Attenuation", &mLightData.att.x, 0.0f, 3.0f);
          ImGui::SliderFloat("Range", &mLightData.range, 0.0f, 10000.0f);

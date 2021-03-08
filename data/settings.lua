@@ -16,7 +16,7 @@ settings =
     normalMapping = false,
     ssaoEnabled = false,
     ssrEnabled = true,
-    bloomEnabled = true,
+    bloomEnabled = false,
     skyboxReflections = true,
     waterEnabled = true,
     terrainEnabled = true,
@@ -34,7 +34,7 @@ settings =
     terrainTextureScaling = 200.0,
     terrainBumpmapAmplitude = 0.08,
     terrainWireframe = 0,
-    tonemapping = 3, -- 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None
+    tonemapping = 2, -- 0 = Reinhard, 1 = Uncharted 2, 2 = Exposure, 3 = None, 4 = ACES
     exposure = 1.4,
     bloomThreshold = 1.5,
     windStrength = 5.0,
