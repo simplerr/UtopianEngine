@@ -5,6 +5,7 @@
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"
 #include "shared_variables.glsl"
+#include "atmosphere/atmosphere_inc.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -24,6 +25,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
    float fogStart;
    float fogDistance;
    int cascadeColorDebug;
+   int atmosphericScattering;
 } settings_ubo;
 
 void main()
@@ -43,9 +45,9 @@ void main()
    float shadow = calculateShadow(position, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
    Material material;
-   material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-   material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-   material.specular = vec4(1.0f, 1.0f, 1.0f, 1024.0f); 
+   material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+   material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+   material.specular = vec4(1.0f, 1.0f, 1.0f, 1024.0f);
 
    vec4 litColor;
    ApplyLighting(material, position, normal, toEyeW, vec4(albedo, 1.0f), shadow, litColor);
@@ -58,6 +60,17 @@ void main()
    litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
 
    float ssao = texture(ssaoSampler, InTex).r;
+
+   // Atmospheric scattering effect
+   // This just includes the first part of the whole effect and should be extended
+   // Todo: Note: Remove this if-statement
+   // Reference: https://github.com/Fewes/MinimalAtmosphere
+   if (settings_ubo.atmosphericScattering == 1)
+   {
+      vec3 sunDir = ubo_parameters.sunDir;
+      vec3 lightTransmittance = Absorb(IntegrateOpticalDepth(position, sunDir));
+      litColor.rgb *= lightTransmittance;
+   }
 
    OutFragColor = litColor * ssao;
 

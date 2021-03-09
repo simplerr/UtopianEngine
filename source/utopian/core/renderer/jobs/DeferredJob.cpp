@@ -43,11 +43,13 @@ namespace Utopian
       light_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       settings_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       cascade_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      atmosphere_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
       mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mEffect->BindUniformBuffer("UBO_lights", light_ubo);
       mEffect->BindUniformBuffer("UBO_settings", settings_ubo);
       mEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
+      mEffect->BindUniformBuffer("UBO_parameters", atmosphere_ubo);
 
       mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
       mEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mSampler);
@@ -63,6 +65,12 @@ namespace Utopian
       settings_ubo.data.fogStart = jobInput.renderingSettings.fogStart;
       settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
       settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
+
+      if (jobInput.renderingSettings.sky == SKY_ATMOSPHERE)
+         settings_ubo.data.atmosphericScattering = true;
+      else
+         settings_ubo.data.atmosphericScattering = false;
+
       settings_ubo.UpdateMemory();
 
       // Light array
@@ -88,6 +96,9 @@ namespace Utopian
       cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
       cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
       cascade_ubo.UpdateMemory();
+
+      atmosphere_ubo.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+      atmosphere_ubo.UpdateMemory();
 
       // End of temporary
 

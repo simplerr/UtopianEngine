@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/renderer/jobs/BaseJob.h"
+#include "core/renderer/jobs/AtmosphereJob.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "core/renderer/CommonBuffers.h"
 
@@ -23,5 +24,6 @@ namespace Utopian
       LightUniformBuffer light_ubo;
       SettingsUniformBuffer settings_ubo;
       CascadeBlock cascade_ubo;
+      AtmosphereJob::ParameterBlock atmosphere_ubo;
    };
 }

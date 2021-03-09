@@ -82,6 +82,7 @@ namespace Utopian
       Vk::gModelLoader().Start(device);
       Vk::gShaderFactory().Start(device);
       Vk::gShaderFactory().AddIncludeDirectory("data/shaders/include");
+      Vk::gShaderFactory().AddIncludeDirectory("data/shaders/");
 
       gTimer().Start();
       gInput().Start();
