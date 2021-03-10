@@ -29,6 +29,7 @@
 #include "../common/sky_color.glsl"
 #include "material_types.glsl"
 #include "shared_variables.glsl"
+#include "atmosphere/atmosphere_inc.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -344,10 +345,29 @@ void main()
    {
       // Sky sphere color
       vec3 toEyeW = normalize(sharedVariables.eyePos.xyz + worldPosition); // Todo: Note: the + sign is due to the fragment world position is negated for some reason
-      vec3 reflection = reflect(toEyeW, worldNormal);
-      reflection.y *= -1; // Note: -1
-      SkyOutput skyColor = GetSkyColor(reflection, sharedVariables.eyePos.xyz, sharedVariables.time);
-      fallbackColor = skyColor.skyColor;
+      vec3 reflectionDir = reflect(toEyeW, worldNormal);
+      reflectionDir.y *= -1; // Note: -1
+
+      // Todo: Note: Remove this if-statement, see Issue #128
+      // Reference: https://github.com/Fewes/MinimalAtmosphere
+      if (ubo_atmosphere.atmosphericScattering == 1)
+      {
+         // New atmosphere technique
+         vec3 rayStart = worldPosition;
+         vec3 rayDir = reflectionDir;
+         float rayLength = 999999999.0f;
+         vec3 lightColor = vec3(1.0f);
+
+         vec3 transmittance;
+         vec3 color = IntegrateScattering(rayStart, rayDir, rayLength, ubo_atmosphere.sunDir, lightColor, transmittance);
+
+         fallbackColor = vec4(color, 1.0f);
+      }
+      else
+      {
+         SkyOutput skyColor = GetSkyColor(reflectionDir, sharedVariables.eyePos.xyz, sharedVariables.time);
+         fallbackColor = skyColor.skyColor;
+      }
    }
 
    reflectionColor = mix(fallbackColor, reflectionColor, alpha);

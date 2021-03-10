@@ -64,6 +64,9 @@ namespace Utopian
       mSkyParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mTraceSSREffect->BindUniformBuffer("UBO_parameters", mSkyParameterBlock);
 
+      atmosphere_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      mTraceSSREffect->BindUniformBuffer("UBO_atmosphere", atmosphere_ubo);
+
       mTraceSSREffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 
       mSSRSettingsBlock.data._Iterations = 420;
@@ -124,6 +127,15 @@ namespace Utopian
       mSkyParameterBlock.data.sunSpeed = jobInput.renderingSettings.sunSpeed;
       mSkyParameterBlock.data.onlySun = false;
       mSkyParameterBlock.UpdateMemory();
+
+      // Todo: Reuse from AtmosphereJob, see Issue #127
+      if (jobInput.renderingSettings.sky == SKY_ATMOSPHERE)
+         atmosphere_ubo.data.atmosphericScattering = true;
+      else
+         atmosphere_ubo.data.atmosphericScattering = false;
+
+      atmosphere_ubo.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+      atmosphere_ubo.UpdateMemory();
       
       mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.2, 1.0, 0.0, 1.0));
 

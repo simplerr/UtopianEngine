@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/renderer/jobs/BaseJob.h"
+#include "core/renderer/jobs/AtmosphereJob.h"
 #include "vulkan/Effect.h"
 
 namespace Utopian
@@ -70,6 +71,7 @@ namespace Utopian
       SharedPtr<Vk::RenderTarget> mBlurRenderTarget;
 
       SkyParameterBlock mSkyParameterBlock;
+      AtmosphereJob::ParameterBlock atmosphere_ubo;
       SSRSettingsBlock mSSRSettingsBlock;
    };
 }

@@ -40,7 +40,7 @@ namespace Utopian
 
       mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
-      mEffect->BindUniformBuffer("UBO_parameters", mParameterBlock);
+      mEffect->BindUniformBuffer("UBO_atmosphere", mParameterBlock);
 
       mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 

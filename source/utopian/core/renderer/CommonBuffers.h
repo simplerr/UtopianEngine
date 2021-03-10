@@ -75,7 +75,6 @@ namespace Utopian
          float fogStart;
          float fogDistance;
          int cascadeColorDebug;
-         int atmosphericScattering;
       } data;
    };
 

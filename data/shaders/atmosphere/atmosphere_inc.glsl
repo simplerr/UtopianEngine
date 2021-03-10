@@ -42,10 +42,11 @@
 #define ATMOSPHERE_DENSITY  1
 #define EXPOSURE            20
 
-layout (set = 0, binding = 9) uniform UBO_parameters
+layout (set = 0, binding = 9) uniform UBO_atmosphere
 {
    vec3 sunDir;
-} ubo_parameters;
+   int atmosphericScattering;
+} ubo_atmosphere;
 
 // -------------------------------------
 // Math
@@ -170,7 +171,9 @@ vec3 IntegrateScattering (vec3 rayStart, vec3 rayDir, float rayLength, vec3 ligh
    float  phaseR   = PhaseRayleigh(costh);
    float  phaseM   = PhaseMie(costh, 0.85);
 
-   int    sampleCount  = 64;
+   // The sample count have been reduced from 64 in order to achieve
+   // better performance while still maintaining visual quality
+   int    sampleCount  = 16;
 
    vec3 opticalDepth = vec3(0);
    vec3 rayleigh     = vec3(0);

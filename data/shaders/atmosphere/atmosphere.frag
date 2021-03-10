@@ -18,7 +18,7 @@ void main()
    vec3 rayStart = sharedVariables.eyePos.xyz;
    vec3 rayDir = normalize(InPosL);
    float rayLength = 999999999.0f;
-   vec3 sunDir = ubo_parameters.sunDir;
+   vec3 sunDir = ubo_atmosphere.sunDir;
    sunDir.z *= -1;
    vec3 lightColor = vec3(1.0f);
 

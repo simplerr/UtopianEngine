@@ -14,6 +14,7 @@ namespace Utopian
 
       UNIFORM_BLOCK_BEGIN(ParameterBlock)
          UNIFORM_PARAM(glm::vec3, sunDir)
+         UNIFORM_PARAM(int, atmosphericScattering);
       UNIFORM_BLOCK_END()
 
       AtmosphereJob(Vk::Device* device, uint32_t width, uint32_t height);

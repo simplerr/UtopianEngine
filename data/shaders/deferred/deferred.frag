@@ -25,7 +25,6 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
    float fogStart;
    float fogDistance;
    int cascadeColorDebug;
-   int atmosphericScattering;
 } settings_ubo;
 
 void main()
@@ -65,9 +64,9 @@ void main()
    // This just includes the first part of the whole effect and should be extended
    // Todo: Note: Remove this if-statement
    // Reference: https://github.com/Fewes/MinimalAtmosphere
-   if (settings_ubo.atmosphericScattering == 1)
+   if (ubo_atmosphere.atmosphericScattering == 1)
    {
-      vec3 sunDir = ubo_parameters.sunDir;
+      vec3 sunDir = ubo_atmosphere.sunDir;
       vec3 lightTransmittance = Absorb(IntegrateOpticalDepth(position, sunDir));
       litColor.rgb *= lightTransmittance;
    }

@@ -49,7 +49,7 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_lights", light_ubo);
       mEffect->BindUniformBuffer("UBO_settings", settings_ubo);
       mEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
-      mEffect->BindUniformBuffer("UBO_parameters", atmosphere_ubo);
+      mEffect->BindUniformBuffer("UBO_atmosphere", atmosphere_ubo);
 
       mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
       mEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mSampler);
@@ -65,11 +65,6 @@ namespace Utopian
       settings_ubo.data.fogStart = jobInput.renderingSettings.fogStart;
       settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
       settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
-
-      if (jobInput.renderingSettings.sky == SKY_ATMOSPHERE)
-         settings_ubo.data.atmosphericScattering = true;
-      else
-         settings_ubo.data.atmosphericScattering = false;
 
       settings_ubo.UpdateMemory();
 
@@ -96,6 +91,12 @@ namespace Utopian
       cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
       cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
       cascade_ubo.UpdateMemory();
+
+      // Todo: Reuse from AtmosphereJob, see Issue #127
+      if (jobInput.renderingSettings.sky == SKY_ATMOSPHERE)
+         atmosphere_ubo.data.atmosphericScattering = true;
+      else
+         atmosphere_ubo.data.atmosphericScattering = false;
 
       atmosphere_ubo.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
       atmosphere_ubo.UpdateMemory();
