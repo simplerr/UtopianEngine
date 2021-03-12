@@ -39,7 +39,7 @@ float linearDepth(float depth)
    return (2.0f * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE));
 }
 
-void main() 
+void main()
 {
    vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
    vec4 specular = texture(specularSampler, InTex * InTextureTiling);

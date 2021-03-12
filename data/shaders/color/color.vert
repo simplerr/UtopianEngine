@@ -31,12 +31,5 @@ void main()
 {
    OutColor = pushConstants.color;
 
-   // Note: workaround to avoid glslang to optimize unused inputs
-   vec3 temp = InColor;
-   temp = InNormalL;
-   vec2 temp1 = InTex;
-   vec3 temp2 = InTangentL;
-   temp2 = InBitangentL;
-
    gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

@@ -33,9 +33,6 @@ out gl_PerVertex
 
 void main()
 {
-   // Todo: Workaround since glslang reflection removes unused vertex input
-   vec3 color = InColor;
-
    vec3 T = normalize(mat3(pushConstants.world) * InTangentL);
    vec3 B = normalize(mat3(pushConstants.world) * InBitangentL);
    vec3 N = normalize(mat3(pushConstants.world) * InNormalL);

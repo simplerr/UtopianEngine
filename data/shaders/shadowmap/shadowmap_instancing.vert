@@ -27,15 +27,9 @@ out gl_PerVertex
    vec4 gl_Position;
 };
 
-void main() 
+void main()
 {
    OutTex = InTex;
-
-   // Note: workaround to avoid glslang to optimize unused inputs
-   vec3 temp = InColor;
-   temp = InNormalL;
-   vec3 temp2 = InTangentL;
-   temp2 = InBitangentL;
 
    gl_Position = cascade_transforms.viewProjection[pushConstants.cascadeIndex] * InInstanceWorld * vec4(InPosL.xyz, 1.0);
 }

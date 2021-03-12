@@ -24,7 +24,7 @@ float eye_z_from_depth(float depth, mat4 Proj)
    return -Proj[3][2] / (Proj[2][2] + depth);
 }
 
-void main() 
+void main()
 {
    vec4 color = texture(texSampler, InTex);
 

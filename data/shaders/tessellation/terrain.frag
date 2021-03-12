@@ -74,8 +74,8 @@ void main()
    float grassDisplacement = texture(samplerDisplacement[0], InTex * textureScaling / GRASS_TEXTURE_SCALE).r * GRASS_AMPLITUDE_SCALE;
    float rockDisplacement = texture(samplerDisplacement[1], InTex * textureScaling / ROCK_TEXTURE_SCALE).r * ROCK_AMPLITUDE_SCALE;
    float dirtDisplacement = texture(samplerDisplacement[2], InTex * textureScaling / DIRT_TEXTURE_SCALE).r * DIRT_AMPLITUDE_SCALE;
-    dirtDisplacement *= 10.0f; // Note this!
-    grassDisplacement *= 10.0f; // Note this!
+   dirtDisplacement *= 10.0f; // Note this!
+   grassDisplacement *= 10.0f; // Note this!
    float roadDisplacement = texture(samplerDisplacement[3], InTex * textureScaling / ROAD_TEXTURE_SCALE).r * ROAD_AMPLITUDE_SCALE;
 
    // Grass color patches

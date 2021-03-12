@@ -19,7 +19,7 @@ layout (push_constant) uniform PushConstants {
 
 layout (location = 0) out vec2 OutTex;
 
-out gl_PerVertex 
+out gl_PerVertex
 {
    vec4 gl_Position;
 };
@@ -27,12 +27,6 @@ out gl_PerVertex
 void main()
 {
    OutTex = InTex;
-
-   // Note: workaround to avoid glslang to optimize unused inputs
-   vec3 temp = InColor;
-   temp = InNormalL;
-   vec3 temp2 = InTangentL;
-   temp2 = InBitangentL;
 
    gl_Position = cascade_transforms.viewProjection[pushConstants.cascadeIndex] * pushConstants.world * vec4(InPosL.xyz, 1.0);
 }

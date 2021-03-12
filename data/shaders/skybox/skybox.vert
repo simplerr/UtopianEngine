@@ -28,13 +28,6 @@ out gl_PerVertex
 
 void main()
 {
-   // Note: workaround to avoid glslang to optimize unused inputs
-   vec3 temp = InColor;
-   temp = InNormalL;
-   vec2 temp1 = InTex;
-   vec3 temp2 = InTangentL;
-   temp2 = InBitangentL;
-
    outUVW = InPosL;
 
    // Removes the translation components of the matrix to always keep the skybox at the same distance

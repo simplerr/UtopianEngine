@@ -14,7 +14,7 @@ layout (location = 0) in vec2 InTex;
 
 layout (location = 0) out vec4 OutFragColor;
 
-void main() 
+void main()
 {
    int blurRange = ubo.blurRadius;
    int n = 0;

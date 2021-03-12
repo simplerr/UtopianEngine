@@ -65,7 +65,7 @@ vec4 ComputePosition(vec3 instancePos, float size, vec2 vertexPos)
    return sharedVariables.projectionMatrix * sharedVariables.viewMatrix * vec4(instancePos - size/2.0f, 1.0f);
 }
 
-void main() 
+void main()
 {
    OutColor = vec4(1, 1, 1, 1);
 

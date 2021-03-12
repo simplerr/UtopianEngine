@@ -29,7 +29,7 @@ float rgb2luma(vec3 rgb)
 }
 
 // Implementation from http://blog.simonrodriguez.fr/articles/30-07-2016_implementing_fxaa.html
-void main() 
+void main()
 {
    vec3 colorCenter = texture(textureSampler, InTex).rgb;
 

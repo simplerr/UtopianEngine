@@ -96,16 +96,18 @@ namespace Utopian::Vk
       /* .MaxCullDistances = */ 8,
       /* .MaxCombinedClipAndCullDistances = */ 8,
       /* .MaxSamples = */ 4,
-      /* .maxMeshOutputVerticesNV = */ 0,    // Note: Set to 0
-      /* .maxMeshOutputPrimitivesNV = */ 0,
-      /* .maxMeshWorkGroupSizeX_NV = */ 0,
-      /* .maxMeshWorkGroupSizeY_NV = */ 0,
-      /* .maxMeshWorkGroupSizeZ_NV = */ 0,
-      /* .maxTaskWorkGroupSizeX_NV = */ 0,
-      /* .maxTaskWorkGroupSizeY_NV = */ 0,
-      /* .maxTaskWorkGroupSizeZ_NV = */ 0,
-      /* .maxMeshViewCountNV = */ 0,
-      /* .limits = */{
+      /* .maxMeshOutputVerticesNV = */ 256,
+      /* .maxMeshOutputPrimitivesNV = */ 512,
+      /* .maxMeshWorkGroupSizeX_NV = */ 32,
+      /* .maxMeshWorkGroupSizeY_NV = */ 1,
+      /* .maxMeshWorkGroupSizeZ_NV = */ 1,
+      /* .maxTaskWorkGroupSizeX_NV = */ 32,
+      /* .maxTaskWorkGroupSizeY_NV = */ 1,
+      /* .maxTaskWorkGroupSizeZ_NV = */ 1,
+      /* .maxMeshViewCountNV = */ 4,
+      /* .maxDualSourceDrawBuffersEXT = */ 1,
+
+      /* .limits = */ {
          /* .nonInductiveForLoops = */ 1,
          /* .whileLoops = */ 1,
          /* .doWhileLoops = */ 1,
@@ -115,8 +117,7 @@ namespace Utopian::Vk
          /* .generalSamplerIndexing = */ 1,
          /* .generalVariableIndexing = */ 1,
          /* .generalConstantMatrixVectorIndexing = */ 1,
-      }
-   };
+    }};
 
    ShaderFactory& gShaderFactory()
    {
@@ -382,7 +383,7 @@ namespace Utopian::Vk
       ShaderReflection reflection;
 
       program.mapIO();
-      program.buildReflection();
+      program.buildReflection(EShReflectionAllBlockVariables | EShReflectionAllIOVariables);
 
       /* Parse uniform blocks */
       int numBlocks = program.getNumLiveUniformBlocks();

@@ -65,10 +65,7 @@ vec2 transformToUv(vec2 posW)
 
 void main()
 {
-   // Todo: Workaround since glslang reflection removes unused vertex input
-   vec3 color = InColor;
    vec3 localPos = InPosL.xyz;
-
    vec3 T = normalize(mat3(InInstanceWorld) * InTangentL);
    vec3 B = normalize(mat3(InInstanceWorld) * InBitangentL);
    vec3 N = normalize(mat3(InInstanceWorld) * InNormalL);

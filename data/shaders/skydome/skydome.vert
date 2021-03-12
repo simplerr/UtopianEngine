@@ -30,12 +30,6 @@ out gl_PerVertex
 
 void main()
 {
-   // Note: workaround to avoid glslang to optimize unused inputs
-   vec3 temp = InColor;
-   temp = InNormalL;
-   vec3 temp2 = InTangentL;
-   temp2 = InBitangentL;
-
    OutPosW = (input_ubo.world * vec4(InPosL.xyz, 1.0)).xyz;
    OutPosL = InPosL.xyz;
    OutTex = InTex;

@@ -22,16 +22,13 @@ layout (location = 4) out vec3 OutNormalV;
 layout (location = 5) out vec2 OutTextureTiling;
 layout (location = 6) out mat3 OutTBN;
 
-out gl_PerVertex 
+out gl_PerVertex
 {
    vec4 gl_Position;
 };
 
 void main()
 {
-   // Todo: Workaround since glslang reflection removes unused vertex input
-   vec3 color = InColor;
-
    vec3 T = normalize(mat3(InInstanceWorld) * InTangentL);
    vec3 B = normalize(mat3(InInstanceWorld) * InBitangentL);
    vec3 N = normalize(mat3(InInstanceWorld) * InNormalL);
