@@ -102,11 +102,14 @@ project "Engine"
          links { "BulletSoftBody_x64_debug" }
          links { "LinearMath_x64_debug" }
          links { "lua53-luaplus-static.debug" }
-         links { "OSDependentd" }
+         links { "GenericCodeGend" }
          links { "glslangd" }
          links { "HLSLd" }
+         links { "MachineIndependentd" }
          links { "OGLCompilerd" }
+         links { "OSDependentd" }
          links { "SPIRVd" }
+         links { "SPVRemapperd" }
          links { "vulkan-1" }
          links { "assimp" }
          links { "libktx.gl" }
