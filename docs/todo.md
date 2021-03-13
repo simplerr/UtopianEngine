@@ -5,8 +5,6 @@
 * Vulkan synchronization
 
 ### New features
-* Atmospheric scattering
-* Border around selected object
 * Fix SSAO performance
 * Prefab system
 * Loading + saving complete scene to file

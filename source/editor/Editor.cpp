@@ -485,22 +485,27 @@ namespace Utopian
 
    void Editor::OnActorSelected(Actor* actor)
    {
-      // Todo: Remove?
       if (IsActorSelected())
       {
          auto renderable = mSelectedActor->GetComponent<CRenderable>();
          if (renderable != nullptr)
+         {
             renderable->DisableBoundingBox();
+            renderable->RemoveRenderFlags(RENDER_FLAG_DRAW_OUTLINE);
+         }
       }
 
       mSelectedActor = actor;
 
       if (mSelectedActor != nullptr)
+      {
          UTO_LOG("Actor \"" + mSelectedActor->GetName() + "\" selected, ID: " + std::to_string(mSelectedActor->GetId()));
 
-      // Enable bounding box rendering
-      //auto renderable = mSelectedActor->GetComponent<CRenderable>();
-      //renderable->EnableBoundingBox();
+         // Enable outline rendering
+         auto renderable = mSelectedActor->GetComponent<CRenderable>();
+         if (renderable != nullptr)
+            renderable->AppendRenderFlags(RENDER_FLAG_DRAW_OUTLINE);
+      }
 
       // Create inspector UI
       mActorInspector->SetActor(mSelectedActor);

@@ -245,6 +245,7 @@ namespace Utopian
       }
 
       // Add points to the jump trail
+#ifdef ENABLE_JUMP_TRAILS
       if (mMovementState == AIR)
       {
          static Timestamp lastTimestamp = gTimer().GetTimestamp();
@@ -261,6 +262,7 @@ namespace Utopian
             lastTimestamp = gTimer().GetTimestamp();
          }
       }
+#endif
 
       // Keep zero friction a short time after landing to allow bhopping
       if (mMovementState == AIR && onGround)

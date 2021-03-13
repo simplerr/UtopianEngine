@@ -26,7 +26,7 @@ namespace Utopian
 
       /**
        * @brief Set the texture to use when drawing
-       * 
+       *
        * @note Assmues the Model only consists of one Mesh
        */
       void SetTexture(SharedPtr<Vk::Texture> texture);

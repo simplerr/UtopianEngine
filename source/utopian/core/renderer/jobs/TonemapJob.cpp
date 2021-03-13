@@ -13,7 +13,7 @@ namespace Utopian
       outputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "Tonemap image");
 
       mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-      mRenderTarget->AddWriteOnlyColorAttachment(outputImage);
+      mRenderTarget->AddWriteOnlyColorAttachment(outputImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 

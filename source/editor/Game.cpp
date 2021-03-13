@@ -86,6 +86,8 @@ void Game::InitScene()
 
 void Game::AddGround()
 {
+   return;
+
    SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Ground");
    Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(glm::vec3(0.0f, 0.0f, 0.0f));
    Utopian::CRenderable* renderable = actor->AddComponent<Utopian::CRenderable>();

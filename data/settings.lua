@@ -57,4 +57,5 @@ settings =
     waterSpecularity = 128.0,
     waterTransparency = 0.0,
     underwaterViewDistance = 8.0,
+    outlineWidth = 1.0,
 }

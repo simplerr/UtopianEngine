@@ -174,6 +174,7 @@ namespace Utopian
          ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
          ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 25.0f);
          ImGui::SliderFloat("Wind frequency", &mRenderingSettings.windFrequency, 0.0f, 30000.0f);
+         ImGui::SliderFloat("Outline width", &mRenderingSettings.outlineWidth, 1.0f, 20.0f);
       }
 
       if (ImGui::CollapsingHeader("Terrain settings"))

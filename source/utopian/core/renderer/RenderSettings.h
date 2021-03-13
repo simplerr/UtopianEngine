@@ -61,5 +61,7 @@ namespace Utopian
       float waterSpecularity = 128.0f;
       float waterTransparency = 0.0f;
       float underwaterViewDistance = 8.0f;
+
+      float outlineWidth = 1.0f;
    };
 }
