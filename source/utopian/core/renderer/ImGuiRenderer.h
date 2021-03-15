@@ -11,6 +11,7 @@
 #include <vulkan/vulkan.h>
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/Effect.h"
@@ -50,6 +51,7 @@ namespace Utopian
       static void TextV(const char* format, ...);
       static void BeginWindow(std::string label, glm::vec2 position, float itemWidth, ImGuiWindowFlags flags = 0);
       static void EndWindow();
+      static void DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 100.0f);
       void ToggleVisible();
       void SetVisible(bool visible);
 

@@ -24,6 +24,7 @@
 #include "utility/math/Helpers.h"
 #include "im3d/im3d.h"
 #include "core/Log.h"
+#include <imgui/imgui.h>
 #include <random>
 
 namespace Utopian
@@ -362,12 +363,65 @@ namespace Utopian
 
    void Editor::RenderActorCreationUi()
    {
-      if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
+      if (ImGui::CollapsingHeader("Create", ImGuiTreeNodeFlags_DefaultOpen))
       {
          ImGui::PushItemWidth(ImGui::GetWindowWidth());
          ImGui::Text("Models:");
-         ImGui::ListBox("", &mSelectedModel, mModelPaths.data(), (int)mModelPaths.size());
+         ImGui::BeginChild(ImGui::GetID("create_object_scroll"), ImVec2(0, 250));
+         for (uint32_t i = 0u; i < mModelPaths.size(); i++)
+         {
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf;
+               if (i == mSelectedModel)
+                  flags |= ImGuiTreeNodeFlags_Selected;
 
+            if (ImGui::TreeNodeEx(mModelPaths[i], flags))
+                  ImGui::TreePop();
+
+            if (ImGui::IsItemClicked())
+            {
+               mSelectedModel = i;
+            }
+         }
+         ImGui::EndChild();
+      }
+   }
+
+   void Editor::RenderActorSelectionUi()
+   {
+      if (ImGui::CollapsingHeader("Hierarchy", ImGuiTreeNodeFlags_DefaultOpen))
+      {
+         ImGui::PushItemWidth(ImGui::GetWindowWidth());
+         std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
+
+         ImGui::BeginChild(ImGui::GetID("scene_hierarchy_scroll"), ImVec2(0, 450));
+         if (ImGui::TreeNodeEx("Root", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth))
+         {
+            for (auto actor : actors)
+            {
+               std::string name = actor->GetName();
+
+               ImGuiTreeNodeFlags flags = 0;
+               if (mSelectedActor == actor.get())
+                  flags = ImGuiTreeNodeFlags_Selected;
+                 
+               if (ImGui::TreeNodeEx(actor.get(), flags, name.c_str()))
+                  ImGui::TreePop();
+
+               if (ImGui::IsItemClicked())
+               {
+                  OnActorSelected(actor.get());
+               }
+            }
+            ImGui::TreePop();
+         }
+         ImGui::EndChild();
+      }
+   }
+
+   void Editor::RenderLoadSaveUi()
+   {
+      if (ImGui::CollapsingHeader("Load and save", ImGuiTreeNodeFlags_DefaultOpen))
+      {
          if (ImGui::Button("Save scene"))
          {
             ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
@@ -397,54 +451,35 @@ namespace Utopian
       }
    }
 
-   void Editor::RenderActorSelectionUi()
-   {
-      if (ImGui::CollapsingHeader("Actors in scene", ImGuiTreeNodeFlags_DefaultOpen))
-      {
-         ImGui::PushItemWidth(ImGui::GetWindowWidth());
-         std::vector<SharedPtr<Actor>>& actors = World::Instance().GetActors();
-         std::vector<const char*> actorNames;
-
-         for (auto actor : actors)
-         {
-            std::string name = actor->GetName();
-            actorNames.push_back(strdup(name.c_str()));
-         }
-
-         if (ImGui::ListBox("Actors", &mSelectedActorIndex, actorNames.data(), (int)actorNames.size()))
-         {
-            OnActorSelected(actors[mSelectedActorIndex].get());
-         }
-
-         for (uint32_t i = 0; i < actorNames.size(); i++)
-            delete actorNames[i];
-      }
-   }
-
    void Editor::UpdateUi()
    {
       // UI containing settings, terrain and foliage tools
-      ImGuiRenderer::BeginWindow("Editor", glm::vec2(200, 800), 300.0f);
-
-      bool physicsEnabled = gPhysics().IsEnabled();
-      bool debugDrawEnabled = gPhysics().IsDebugDrawEnabled();
-      ImGui::Checkbox("Simulate physics", &physicsEnabled);
-      ImGui::Checkbox("Physics debug draw", &debugDrawEnabled);
-      gPhysics().EnableSimulation(physicsEnabled);
-      gPhysics().EnableDebugDraw(debugDrawEnabled);
-
-      ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.70f);
-
-      if (mTerrain != nullptr)
+      ImGuiRenderer::BeginWindow("Terrain", glm::vec2(200, 800), 300.0f);
       {
-         mTerrainTool->RenderUi();
-         mFoliageTool->RenderUi();
-      }
+         bool physicsEnabled = gPhysics().IsEnabled();
+         bool debugDrawEnabled = gPhysics().IsDebugDrawEnabled();
+         ImGui::Checkbox("Simulate physics", &physicsEnabled);
+         ImGui::Checkbox("Physics debug draw", &debugDrawEnabled);
+         gPhysics().EnableSimulation(physicsEnabled);
+         gPhysics().EnableDebugDraw(debugDrawEnabled);
 
-      mPrototypeTool->RenderUi();
+         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.70f);
+
+         if (mTerrain != nullptr)
+         {
+            mTerrainTool->RenderUi();
+            mFoliageTool->RenderUi();
+         }
+
+         mPrototypeTool->RenderUi();
+      }
+      ImGuiRenderer::EndWindow();
+
+      ImGuiRenderer::BeginWindow("Scene", glm::vec2(200, 800), 300.0f);
 
       RenderActorCreationUi();
       RenderActorSelectionUi();
+      RenderLoadSaveUi();
 
       ImGuiRenderer::EndWindow();
 

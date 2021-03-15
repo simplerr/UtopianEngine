@@ -42,25 +42,18 @@ namespace Utopian
 
       if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
       {
-         ImGui::InputFloat3("Position", &mTransform.mPosition.x, 2);
-         ImGui::SliderFloat3("Scale", &mTransform.mScale.x, 0.0f, 100.0f, "%.1f");
+         ImGuiRenderer::DrawVec3Control("Position", mTransform.mPosition);
+         ImGuiRenderer::DrawVec3Control("Scale", mTransform.mScale);
 
-         static bool localRotate = true;
-         ImGui::Checkbox("Local", &localRotate);
+         glm::vec3 rotation = glm::vec3(0.0f);
+         ImGuiRenderer::DrawVec3Control("Rotation", rotation);
 
-         glm::vec3 rotate = glm::vec3(0.0f);
-         ImGui::Text("Rotation");
-         ImGui::SameLine();
-         ImGui::PushItemWidth(1.0f);
-         ImGui::InputFloat("X", &rotate.x, 0.15f);
-         ImGui::SameLine();
-         ImGui::InputFloat("Y", &rotate.y, 0.15f);
-         ImGui::SameLine();
-         ImGui::InputFloat("Z", &rotate.z, 0.15f);
-         ImGui::PopItemWidth();
+         static bool localRotation = true;
+         ImGui::Checkbox("Local rotation", &localRotation);
 
-         mComponent->AddRotation(rotate, localRotate);
+         mComponent->SetPosition(mTransform.mPosition);
          mComponent->SetScale(mTransform.GetScale());
+         mComponent->AddRotation(rotation, localRotation);
       }
    }
 

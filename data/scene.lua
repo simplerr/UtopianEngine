@@ -7,53 +7,6 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-12131933794639897382.obj",
-				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
-			},
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "Unknown",
-				render_flags = 33,
-			},
-			CRigidBody = 
-			{
-				anisotropic_friciton_x = 1,
-				anisotropic_friciton_y = 1,
-				anisotropic_friciton_z = 1,
-				collisionShapeType = 2,
-				friction = 0.5,
-				kinematic = true,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = -9.96790599823,
-				pos_y = 0.46485710144043,
-				pos_z = -3.4508171081543,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
-		actor_name = "Polymesh",
-		components = 
-		{
-			CPolyMesh = 
-			{
 				modelPath = "data/models/polymesh/polymesh-11791782650475262833.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
@@ -397,7 +350,7 @@ actor_list =
 	},
 	
 	{
-		actor_name = "Polymesh",
+		actor_name = "SpawnPlatform",
 		components = 
 		{
 			CPolyMesh = 
@@ -412,7 +365,7 @@ actor_list =
 				color_g = 1,
 				color_r = 1,
 				path = "Unknown",
-				render_flags = 33,
+				render_flags = 97,
 			},
 			CRigidBody = 
 			{
@@ -592,9 +545,9 @@ actor_list =
 				orientation_x = 1,
 				orientation_y = 0.00010023208596976,
 				orientation_z = 1.1216277906456e-11,
-				pos_x = -13.326387405396,
-				pos_y = 6.9313087463379,
-				pos_z = 13.3837890625,
+				pos_x = -10.72438621521,
+				pos_y = 5.5052762031555,
+				pos_z = 15.061596870422,
 				scale_x = 2.4999997615814,
 				scale_y = 2.4999997615814,
 				scale_z = 2.4999997615814,
@@ -839,53 +792,6 @@ actor_list =
 	},
 	
 	{
-		actor_name = "Polymesh",
-		components = 
-		{
-			CPolyMesh = 
-			{
-				modelPath = "data/models/polymesh/polymesh-361444286399873313.obj",
-				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
-			},
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "Unknown",
-				render_flags = 33,
-			},
-			CRigidBody = 
-			{
-				anisotropic_friciton_x = 1,
-				anisotropic_friciton_y = 1,
-				anisotropic_friciton_z = 1,
-				collisionShapeType = 2,
-				friction = 0.5,
-				kinematic = true,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 10.838806152344,
-				pos_y = 0.55425071716309,
-				pos_z = -12.363789558411,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
 		actor_name = "Directional light",
 		components = 
 		{
@@ -977,8 +883,8 @@ actor_list =
 			},
 		},
 		scene_layer = 0,
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "Polymesh",
 		components = 
@@ -1018,6 +924,53 @@ actor_list =
 				pos_x = -10.140538215637,
 				pos_y = 0.46309232711792,
 				pos_z = 2.0035486221313,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	}, 
+	[0] = 
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelPath = "data/models/polymesh/polymesh-12131933794639897382.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = -9.96790599823,
+				pos_y = 0.46485710144043,
+				pos_z = -3.4508171081543,
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,

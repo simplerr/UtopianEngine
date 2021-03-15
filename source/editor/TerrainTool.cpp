@@ -123,13 +123,13 @@ namespace Utopian
             brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
          }
 
-         ImGui::SameLine();
-
          if (ImGui::ImageButton(textureIdentifiers.rock, ImVec2(64, 64)))
          {
             brushSettings.mode = BrushSettings::Mode::BLEND;
             brushSettings.blendLayer = BrushSettings::BlendLayer::ROCK;
          }
+
+         ImGui::SameLine();
 
          if (ImGui::ImageButton(textureIdentifiers.dirt, ImVec2(64, 64)))
          {
@@ -148,7 +148,6 @@ namespace Utopian
          /* Heightmap and Blendmap load/save UI */
          ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
          ImGui::InputText("Heightmap", heightmapPath, IM_ARRAYSIZE(heightmapPath), ImGuiInputTextFlags_EnterReturnsTrue);
-         ImGui::SameLine();
 
          if (ImGui::Button("Save"))
          {
@@ -163,8 +162,6 @@ namespace Utopian
          }
 
          ImGui::InputText("Blendmap", blendmapPath, IM_ARRAYSIZE(blendmapPath), ImGuiInputTextFlags_EnterReturnsTrue);
-
-         ImGui::SameLine();
 
          if (ImGui::Button("Save##blend"))
          {

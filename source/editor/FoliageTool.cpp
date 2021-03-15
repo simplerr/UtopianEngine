@@ -137,7 +137,7 @@ namespace Utopian
                mBrushSettings->mode = BrushSettings::Mode::VEGETATION;
             }
 
-            if ((i % 3 != 0 || i == 0) && i != mUiAssets.size() - 1)
+            if ((i % 3 != 2 || i == 0) && i != mUiAssets.size() - 1)
                ImGui::SameLine();
          }
 

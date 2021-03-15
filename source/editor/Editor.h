@@ -59,6 +59,7 @@ namespace Utopian
       void OnActorSelected(Actor* actor);
       void RenderActorCreationUi();
       void RenderActorSelectionUi();
+      void RenderLoadSaveUi();
 
       void AddPaths();
 

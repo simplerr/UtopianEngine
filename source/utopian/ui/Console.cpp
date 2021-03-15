@@ -51,7 +51,7 @@ namespace Utopian
 
    void Console::Draw(const char* title, bool* p_open)
    {
-      ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
+      ImGui::SetNextWindowSize(ImVec2(520, 200), ImGuiCond_FirstUseEver);
       if (!ImGui::Begin(title, p_open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground))
       {
          ImGui::End();

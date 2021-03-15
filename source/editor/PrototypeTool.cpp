@@ -218,7 +218,7 @@ namespace Utopian
    {
       if (ImGui::CollapsingHeader("Prototype tool", ImGuiTreeNodeFlags_DefaultOpen))
       {
-         ImGui::Text("Hello prototype tool!");
+         ImGui::Text("Empty");
       }
    }
 }

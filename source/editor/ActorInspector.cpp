@@ -32,6 +32,7 @@ namespace Utopian
       if (mActor != nullptr)
       {
          ImGuiRenderer::BeginWindow("Inspector", glm::vec2(1500, 10), 300.0f);
+         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.60f);
 
          // General actor information
          std::string name = mActor->GetName();
