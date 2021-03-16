@@ -331,6 +331,16 @@ namespace Utopian
       AddTexture("data/textures/prototype/Light/texture_02.ktx");
       AddTexture("data/textures/prototype/Light/texture_12.ktx");
    }
+   
+   PolyMeshInspector::~PolyMeshInspector()
+   {
+      for (auto& texture : mTextures)
+      {
+         gRenderer().GetUiOverlay()->FreeTexture(texture.identifier);
+      }
+
+      mTextures.clear();
+   }
 
    void PolyMeshInspector::AddTexture(std::string filename)
    {

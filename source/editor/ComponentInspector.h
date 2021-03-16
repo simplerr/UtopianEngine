@@ -112,6 +112,7 @@ namespace Utopian
       };
    public:
       PolyMeshInspector(CPolyMesh* polyMesh);
+      ~PolyMeshInspector();
 
       virtual void UpdateUi() override;
 
