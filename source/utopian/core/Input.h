@@ -36,7 +36,7 @@ namespace Utopian
       void RegisterMouseInsideUiCallback(std::function<bool(void)> callback);
 
       /** Registers a callback which is used for retrieving key down events. */
-      void RegisterKeydownCallback(std::function<void(char)> callback);
+      void RegisterKeydownCallback(std::function<void(unsigned char)> callback);
 
       /** Registers a callback which returns true if the UI want to capture keyboard input. */
       void RegisterUiCaptureCallback(std::function<bool(void)> callback);

@@ -425,7 +425,7 @@ namespace Utopian
       return io.WantCaptureKeyboard;
    }
 
-   void ImGuiRenderer::KeydownCallback(char key)
+   void ImGuiRenderer::KeydownCallback(unsigned char key)
    {
       ImGuiIO& io = ImGui::GetIO();
       io.AddInputCharacter(key);

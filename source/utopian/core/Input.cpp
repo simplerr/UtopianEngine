@@ -6,6 +6,20 @@
 
 namespace Utopian
 {
+   static unsigned char RemapVirtualKeyToAscii(unsigned char key)
+   {
+      unsigned char ascii = key;
+
+      if (key == VK_OEM_PERIOD)
+         ascii = '.';
+      else if (key == VK_OEM_COMMA)
+         ascii = ',';
+      else if (key == VK_OEM_MINUS)
+         ascii = '-';
+
+      return ascii;
+   }
+
    Input& gInput()
    {
       return Input::Instance();
@@ -97,8 +111,9 @@ namespace Utopian
          break;
       case WM_KEYDOWN:
       {
-         char key = (char)wParam;
-         if (IsLetter((char)wParam))
+         unsigned char key = RemapVirtualKeyToAscii((unsigned char)wParam);
+
+         if (IsLetter(key))
          {
             // Change to non captial letter
             if (!KeyDown(VK_SHIFT, false))
@@ -266,7 +281,7 @@ namespace Utopian
       mIsMouseInsideUiCallback = callback;
    }
 
-   void Input::RegisterKeydownCallback(std::function<void(char)> callback)
+   void Input::RegisterKeydownCallback(std::function<void(unsigned char)> callback)
    {
       mKeydownCallback = callback;
    }
