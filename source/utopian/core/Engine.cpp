@@ -186,9 +186,10 @@ namespace Utopian
       switch (uMsg)
       {
       case WM_CLOSE:
-         DestroyWindow(mWindow->GetHwnd());
          PostQuitMessage(0);
          break;
+      default:
+         DefWindowProc(hWnd, uMsg, wParam, lParam);
       }
    }
 

@@ -99,6 +99,7 @@ namespace Utopian
       {
          if (msg.message == WM_QUIT)
          {
+            DestroyWindow(mWindow);
             closeWindow = true;
          }
          else
