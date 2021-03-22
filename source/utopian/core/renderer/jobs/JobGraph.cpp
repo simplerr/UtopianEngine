@@ -49,8 +49,8 @@ namespace Utopian
       AddJob(gbufferTerrainJob);
 
       AddJob(new GBufferJob(device, width, height));
-      AddJob(new SSAOJob(device, width, height));
-      AddJob(new BlurJob(device, width, height));
+      AddJob(new SSAOJob(device, width / 2, height / 2));
+      AddJob(new BlurJob(device, width / 2, height / 2));
       AddJob(new ShadowJob(device, width, height));
       AddJob(new DeferredJob(device, width, height));
 

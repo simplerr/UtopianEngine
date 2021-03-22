@@ -12,7 +12,7 @@ layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 
-const int KERNEL_SIZE = 64;
+const int KERNEL_SIZE = 32;
 
 layout (std140, set = 0, binding = 0) uniform UBO_parameters
 {

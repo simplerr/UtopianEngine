@@ -5,13 +5,12 @@
 * Vulkan synchronization
 
 ### New features
-* Fix SSAO performance
+* Import glTF models
+* Skinned meshes
+* Physically Based Rendering
 * Prefab system
 * Loading + saving complete scene to file
-* Import glTF models
-* Physically Based Rendering
 * Improve foliage rendering
 * Larger terrain with different patch sizes
-* Skinned meshes
 * Volumetric clouds
 * Particle effects
