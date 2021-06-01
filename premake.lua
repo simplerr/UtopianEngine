@@ -65,7 +65,9 @@ project "Engine"
          "external/imgui/*.h",
          "external/imgui/*.cpp",
          "external/LegitProfiler/*.h",
-         "external/LegitProfiler/*.cpp"
+         "external/LegitProfiler/*.cpp",
+         "external/tinygltf/tiny_gltf.h",
+         "external/tinygltf/json.hpp"
       }
    
       removefiles { "**/marching_cubes_legacy/**" }
@@ -79,6 +81,7 @@ project "Engine"
       includedirs { "external/glm" }
       includedirs { "external/gli" }
       includedirs { "external/assimp" }
+      includedirs { "external/tinygltf" }
       includedirs { "external" }
       includedirs { "source/utopian" }
       includedirs { "source" }

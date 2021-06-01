@@ -10,7 +10,6 @@
 #include "vulkan/handles/Image.h"
 #include "utility/Utility.h"
 #include <vulkan/vulkan_core.h>
-#define STB_IMAGE_IMPLEMENTATION
 #include "../external/stb_image.h"
 #include <gli/gli.hpp>
 #include <gli/type.hpp>

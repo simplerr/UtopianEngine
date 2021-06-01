@@ -18,6 +18,8 @@
 #include "vulkan/TextureLoader.h"
 #include "core/renderer/Im3dRenderer.h"
 
+#include "core/glTFModel.cpp"
+
 Game::Game(Utopian::Window* window)
    : mWindow(window)
 {
@@ -81,6 +83,9 @@ void Game::Run()
 
 void Game::InitScene()
 {
+   Utopian::glTFModel model;
+   model.LoadFromFile("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
+
    AddGround();
 }
 
