@@ -1,0 +1,44 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Solution",
+            "command": "msbuild",
+            "args": [
+                "UtopianEngine.sln",
+                "/property:GenerateFullPaths=true",
+                "/t:build"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Editor",
+            "command": "C:/Git/UtopianEngine/bin/Debug/Editor.exe",
+            "dependsOn": ["Build Solution"],
+        },
+        {
+            "label": "Run PBR demo",
+            "command": "C:/Git/UtopianEngine/bin/Debug/PBR Demo.exe",
+            "dependsOn": ["Build Solution"],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Raytrace demo",
+            "command": "C:/Git/UtopianEngine/bin/Debug/Raytrace Demo.exe",
+            "dependsOn": ["Build Solution"],
+        },
+        {
+            "label": "Run Marching Cubes demo",
+            "command": "C:/Git/UtopianEngine/bin/Debug/Marching Cubes Demo.exe",
+            "dependsOn": ["Build Solution"],
+        }
+    ]
+}
