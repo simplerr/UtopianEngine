@@ -266,3 +266,50 @@ filter "configurations:Debug"
 filter "configurations:Release"
    defines { "NDEBUG" }
    optimize "On"
+
+-- =========================================
+-- ============ PBR demo ============
+-- =========================================
+project "PBR Demo"
+kind "WindowedApp"
+targetdir "bin/%{cfg.buildcfg}"
+
+-- Files
+files
+{
+   -- Editor
+   "source/demos/pbr/**.hpp",
+   "source/demos/pbr/**.h",
+   "source/demos/pbr/**.cpp",
+}
+
+-- Includes
+includedirs { "external/bullet3-2.88" }
+includedirs { "external/luaplus" }
+includedirs { "external/luaplus/lua53-luaplus/src" }
+includedirs { "external/glslang/StandAlone" }
+includedirs { "external/glslang" }
+includedirs { "external/glm" }
+includedirs { "external/gli" }
+includedirs { "external/assimp" }
+includedirs { "external" }
+includedirs { "source/utopian" }
+includedirs { "source" }
+
+-- Libraries
+
+links
+{
+   "Engine"
+}
+
+-- "Debug"
+filter "configurations:Debug"
+   defines { "DEBUG" }
+   symbols "On"
+   debugformat "c7"
+
+-- "Release"
+filter "configurations:Release"
+   defines { "NDEBUG" }
+   optimize "On"
