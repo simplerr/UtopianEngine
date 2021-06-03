@@ -19,6 +19,9 @@ workspace "UtopianEngine"
       "_USE_MATH_DEFINES",
       "NOMINMAX",
       "_CRT_SECURE_NO_WARNINGS",
+      "GLM_FORCE_RADIANS",
+      "GLM_FORCE_RIGHT_HANDED",
+      "GLM_FORCE_DEPTH_ZERO_TO_ONE"
       --"LUA_FLOAT_TYPE=1", -- Results in incorrect reading from scene.lua file
    }
 
@@ -177,139 +180,139 @@ project "Editor"
 -- ============ Raytracing demo ============
 -- =========================================
 project "Raytrace Demo"
-kind "WindowedApp"
-targetdir "bin/%{cfg.buildcfg}"
+   kind "WindowedApp"
+   targetdir "bin/%{cfg.buildcfg}"
 
--- Files
-files
-{
-   -- Editor
-   "source/demos/raytracing/**.hpp",
-   "source/demos/raytracing/**.h",
-   "source/demos/raytracing/**.cpp",
-}
+   -- Files
+   files
+   {
+      -- Editor
+      "source/demos/raytracing/**.hpp",
+      "source/demos/raytracing/**.h",
+      "source/demos/raytracing/**.cpp",
+   }
 
--- Includes
-includedirs { "external/bullet3-2.88" }
-includedirs { "external/luaplus" }
-includedirs { "external/luaplus/lua53-luaplus/src" }
-includedirs { "external/glslang/StandAlone" }
-includedirs { "external/glslang" }
-includedirs { "external/glm" }
-includedirs { "external/gli" }
-includedirs { "external/assimp" }
-includedirs { "external" }
-includedirs { "source/utopian" }
-includedirs { "source" }
+   -- Includes
+   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/luaplus" }
+   includedirs { "external/luaplus/lua53-luaplus/src" }
+   includedirs { "external/glslang/StandAlone" }
+   includedirs { "external/glslang" }
+   includedirs { "external/glm" }
+   includedirs { "external/gli" }
+   includedirs { "external/assimp" }
+   includedirs { "external" }
+   includedirs { "source/utopian" }
+   includedirs { "source" }
 
--- Libraries
+   -- Libraries
 
-links
-{
-   "Engine"
-}
+   links
+   {
+      "Engine"
+   }
 
--- "Debug"
-filter "configurations:Debug"
-   defines { "DEBUG" }
-   symbols "On"
-   debugformat "c7"
+   -- "Debug"
+   filter "configurations:Debug"
+      defines { "DEBUG" }
+      symbols "On"
+      debugformat "c7"
 
--- "Release"
-filter "configurations:Release"
-   defines { "NDEBUG" }
-   optimize "On"
+   -- "Release"
+   filter "configurations:Release"
+      defines { "NDEBUG" }
+      optimize "On"
 
 -- =========================================
 -- ============ Raytracing demo ============
 -- =========================================
 project "Marching Cubes Demo"
-kind "WindowedApp"
-targetdir "bin/%{cfg.buildcfg}"
+   kind "WindowedApp"
+   targetdir "bin/%{cfg.buildcfg}"
 
--- Files
-files
-{
-   -- Editor
-   "source/demos/marching_cubes/**.hpp",
-   "source/demos/marching_cubes/**.h",
-   "source/demos/marching_cubes/**.cpp",
-}
+   -- Files
+   files
+   {
+      -- Editor
+      "source/demos/marching_cubes/**.hpp",
+      "source/demos/marching_cubes/**.h",
+      "source/demos/marching_cubes/**.cpp",
+   }
 
--- Includes
-includedirs { "external/bullet3-2.88" }
-includedirs { "external/luaplus" }
-includedirs { "external/luaplus/lua53-luaplus/src" }
-includedirs { "external/glslang/StandAlone" }
-includedirs { "external/glslang" }
-includedirs { "external/glm" }
-includedirs { "external/gli" }
-includedirs { "external/assimp" }
-includedirs { "external" }
-includedirs { "source/utopian" }
-includedirs { "source" }
+   -- Includes
+   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/luaplus" }
+   includedirs { "external/luaplus/lua53-luaplus/src" }
+   includedirs { "external/glslang/StandAlone" }
+   includedirs { "external/glslang" }
+   includedirs { "external/glm" }
+   includedirs { "external/gli" }
+   includedirs { "external/assimp" }
+   includedirs { "external" }
+   includedirs { "source/utopian" }
+   includedirs { "source" }
 
--- Libraries
+   -- Libraries
 
-links
-{
-   "Engine"
-}
+   links
+   {
+      "Engine"
+   }
 
--- "Debug"
-filter "configurations:Debug"
-   defines { "DEBUG" }
-   symbols "On"
-   debugformat "c7"
+   -- "Debug"
+   filter "configurations:Debug"
+      defines { "DEBUG" }
+      symbols "On"
+      debugformat "c7"
 
--- "Release"
-filter "configurations:Release"
-   defines { "NDEBUG" }
-   optimize "On"
+   -- "Release"
+   filter "configurations:Release"
+      defines { "NDEBUG" }
+      optimize "On"
 
 -- =========================================
 -- ============ PBR demo ============
 -- =========================================
 project "PBR Demo"
-kind "WindowedApp"
-targetdir "bin/%{cfg.buildcfg}"
+   kind "WindowedApp"
+   targetdir "bin/%{cfg.buildcfg}"
 
--- Files
-files
-{
-   -- Editor
-   "source/demos/pbr/**.hpp",
-   "source/demos/pbr/**.h",
-   "source/demos/pbr/**.cpp",
-}
+   -- Files
+   files
+   {
+      -- Editor
+      "source/demos/pbr/**.hpp",
+      "source/demos/pbr/**.h",
+      "source/demos/pbr/**.cpp",
+   }
 
--- Includes
-includedirs { "external/bullet3-2.88" }
-includedirs { "external/luaplus" }
-includedirs { "external/luaplus/lua53-luaplus/src" }
-includedirs { "external/glslang/StandAlone" }
-includedirs { "external/glslang" }
-includedirs { "external/glm" }
-includedirs { "external/gli" }
-includedirs { "external/assimp" }
-includedirs { "external" }
-includedirs { "source/utopian" }
-includedirs { "source" }
+   -- Includes
+   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/luaplus" }
+   includedirs { "external/luaplus/lua53-luaplus/src" }
+   includedirs { "external/glslang/StandAlone" }
+   includedirs { "external/glslang" }
+   includedirs { "external/glm" }
+   includedirs { "external/gli" }
+   includedirs { "external/assimp" }
+   includedirs { "external" }
+   includedirs { "source/utopian" }
+   includedirs { "source" }
 
--- Libraries
+   -- Libraries
 
-links
-{
-   "Engine"
-}
+   links
+   {
+      "Engine"
+   }
 
--- "Debug"
-filter "configurations:Debug"
-   defines { "DEBUG" }
-   symbols "On"
-   debugformat "c7"
+   -- "Debug"
+   filter "configurations:Debug"
+      defines { "DEBUG" }
+      symbols "On"
+      debugformat "c7"
 
--- "Release"
-filter "configurations:Release"
-   defines { "NDEBUG" }
-   optimize "On"
+   -- "Release"
+   filter "configurations:Release"
+      defines { "NDEBUG" }
+      optimize "On"
