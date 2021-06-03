@@ -1,11 +1,14 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RIGHT_HANDED 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
 class MiniCamera
 {
 public:
-   MiniCamera(glm::vec3 position, glm::vec3 target, int nearPlane, int farPlane, float speed, int windowWidth, int windowHeight);
+   MiniCamera(glm::vec3 position, glm::vec3 target, float nearPlane, float farPlane, float speed, int windowWidth, int windowHeight);
 
    void Update();
 
@@ -22,6 +25,7 @@ private:
    float mSpeed;
    float mPitch;
    float mYaw;
-   int mNear;
-   int mFar;
+   float mNear;
+   float mFar;
+   float mFov;
 };

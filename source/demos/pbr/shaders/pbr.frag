@@ -9,5 +9,7 @@ layout (location = 0) out vec4 OutColor;
 
 void main()
 {
-   OutColor = vec4(vec3(InColor.rgb), 1.0f);
+   vec3 lightDir = vec3(0.5, -0.5, -0.5);
+   float diffuseFactor = dot(lightDir, InNormalW) + 0.3;
+   OutColor = vec4(vec3(InColor.rgb * diffuseFactor), 1.0f);
 }

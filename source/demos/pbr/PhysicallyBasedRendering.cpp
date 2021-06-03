@@ -42,7 +42,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   mModel = Utopian::Vk::gModelLoader().LoadBox();
+   mGlTFModel.LoadFromFile("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", mVulkanApp->GetDevice());
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -67,21 +67,24 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(5, 25, 5), glm::vec3(0, 0, 0), 1, 200, 0.1f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 0.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.01f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
+   mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
    mSampler = std::make_shared<Vk::Sampler>(device);
    mVertexInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
    mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
    mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
-   //renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
+   mRenderTarget->AddWriteOnlyDepthAttachment(mDepthImage);
    mRenderTarget->SetClearColor(1, 1, 1, 1);
    mRenderTarget->Create();
 
    Vk::EffectCreateInfo effectDesc;
-   effectDesc.shaderDesc.vertexShaderPath = "source/demos/pbr/shaders/pbr.vert";
-   effectDesc.shaderDesc.fragmentShaderPath = "source/demos/pbr/shaders/pbr.frag";
+   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr.vert";
+   effectDesc.shaderDesc.fragmentShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr.frag";
+   // Note: Not the default winding order
+   effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
    mEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
 
    mEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
@@ -117,14 +120,14 @@ void PhysicallyBasedRendering::DrawCallback()
    mRenderTarget->Begin("PBR pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
    Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
-   Vk::PushConstantBlock pushConsts(glm::mat4(), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-
    commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
    commandBuffer->CmdBindDescriptorSets(mEffect);
+
+   // Todo: Add offset to the CmdPushConstants() API
+   Vk::PushConstantBlock pushConsts(glm::mat4(), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
    commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
-   commandBuffer->CmdBindVertexBuffer(0, 1, mModel->mMeshes[0]->GetVertxBuffer());
-   commandBuffer->CmdBindIndexBuffer(mModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-   commandBuffer->CmdDrawIndexed(mModel->mMeshes[0]->GetNumIndices(), 1, 0, 0, 0);
+
+   mGlTFModel.Render(commandBuffer, mEffect->GetPipelineInterface());
 
    mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mPhysicallyBasedRenderingComplete);
 

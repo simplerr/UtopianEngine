@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <string>
 #include <glm/glm.hpp>
 #include <vulkan/RenderTarget.h>
@@ -7,8 +9,8 @@
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/ShaderBuffer.h"
-#include "vulkan/StaticModel.h"
 #include "utility/Common.h"
+#include "glTFModel.h"
 
 using namespace Utopian;
 
@@ -44,10 +46,11 @@ private:
    SharedPtr<Vk::Effect> mEffect;
    SharedPtr<Vk::Semaphore> mPhysicallyBasedRenderingComplete;
    SharedPtr<Vk::Image> mOutputImage;
+   SharedPtr<Vk::Image> mDepthImage;
    SharedPtr<Vk::Sampler> mSampler;
 
    SharedPtr<MiniCamera> mCamera;
    VertexInputParameters mVertexInputParameters;
 
-   SharedPtr<Vk::StaticModel> mModel;
+   Utopian::glTFModel mGlTFModel;
 };

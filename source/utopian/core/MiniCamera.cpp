@@ -3,12 +3,13 @@
 #include <glm/matrix.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-MiniCamera::MiniCamera(glm::vec3 position, glm::vec3 target, int nearPlane, int farPlane, float speed, int windowWidth, int windowHeight)
+MiniCamera::MiniCamera(glm::vec3 position, glm::vec3 target, float nearPlane, float farPlane, float speed, int windowWidth, int windowHeight)
    : mPosition(position), mTarget(target), mSpeed(speed)
 {
    mLastCursorPos = glm::vec2(windowWidth / 2.0f, windowHeight / 2.0f);
    mWindowSize = glm::vec2(windowWidth, windowHeight);
 
+   // Note: -1 Y axis
    mUp = glm::vec3(0.0f, -1.0f, 0.0f);
 
    glm::vec3 ds = mTarget - mPosition;
@@ -17,6 +18,7 @@ MiniCamera::MiniCamera(glm::vec3 position, glm::vec3 target, int nearPlane, int 
 
    mNear = nearPlane;
    mFar = farPlane;
+   mFov = 60.0f;
 }
 
 void MiniCamera::Update()
@@ -92,6 +94,7 @@ glm::mat4 MiniCamera::GetView()
 glm::mat4 MiniCamera::GetProjection()
 {
    // Note: should be floats but it gives weird distortion effect
-   glm::mat4 projectionMatrix = glm::perspective(90, (int)(mWindowSize.x / mWindowSize.y), mNear, mFar);
+   glm::mat4 projectionMatrix = glm::perspective(glm::radians<float>(mFov), mWindowSize.x / mWindowSize.y, mNear, mFar);
+
    return projectionMatrix;
 }
