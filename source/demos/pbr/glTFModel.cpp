@@ -4,7 +4,12 @@
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/TextureLoader.h"
+#include "vulkan/PipelineInterface.h"
 #include "glTFModel.h"
+
+// Todo: remove
+#include "vulkan/handles/DescriptorSetLayout.h"
+#include "vulkan/handles/DescriptorSet.h"
 
 #define TINYGLTF_IMPLEMENTATION
 #include "tinygltf/tiny_gltf.h"
@@ -47,6 +52,7 @@ namespace Utopian
          }
 
          CreateDeviceBuffers(indexVector, vertexVector, device);
+         CreateTextureDescriptorSet(device);
       }
       else
       {
@@ -60,9 +66,11 @@ namespace Utopian
       {
          tinygltf::Image& glTFImage = input.images[i];
 
-         auto texture = Vk::gTextureLoader().CreateTexture(&glTFImage.image[0], VK_FORMAT_R8G8B8A8_UNORM,
-                                                           glTFImage.width, glTFImage.height, 1, sizeof(uint32_t));
-         mImages.push_back(texture);
+         ShaderTexture shaderTexture;
+
+         shaderTexture.texture = Vk::gTextureLoader().CreateTexture(&glTFImage.image[0], VK_FORMAT_R8G8B8A8_UNORM,
+                                                                    glTFImage.width, glTFImage.height, 1, sizeof(uint32_t));
+         mImages.push_back(shaderTexture);
       }
 
       mImageRefs.resize(input.textures.size());
@@ -284,6 +292,26 @@ namespace Utopian
       cmdBuffer.Flush();
    }
 
+   void glTFModel::CreateTextureDescriptorSet(Vk::Device* device)
+   {
+      // Todo: move these
+      mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(device);
+      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
+      mMeshTexturesDescriptorSetLayout->Create();
+
+      mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(device);
+      mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 15);
+      mMeshTexturesDescriptorPool->Create();
+
+      for (auto& image : mImages)
+      {
+         image.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, mMeshTexturesDescriptorSetLayout.get(),
+                                                                   mMeshTexturesDescriptorPool.get());
+         image.descriptorSet->BindCombinedImage(0, image.texture->GetDescriptor());
+         image.descriptorSet->UpdateDescriptorSets();
+      }
+   }
+
    void glTFModel::Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface)
    {
       // All primitives share the same vertex and index buffers
@@ -300,6 +328,7 @@ namespace Utopian
       if (node.mesh.primitives.size() > 0)
       {
          glm::mat4 nodeMatrix = node.matrix;
+
          // Todo: get parents matrices
 
          commandBuffer->CmdPushConstants(pipelineInterface, VK_SHADER_STAGE_ALL, sizeof(glm::mat4), &nodeMatrix);
@@ -307,6 +336,9 @@ namespace Utopian
          {
             if (primitive.indexCount > 0)
             {
+               int32_t imageRef = mImageRefs[mMaterials[primitive.materialIndex].baseColorTextureIndex];
+               VkDescriptorSet descriptorSet = mImages[imageRef].descriptorSet->GetVkHandle();
+               commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
                commandBuffer->CmdDrawIndexed(primitive.indexCount, 1, primitive.firstIndex, 0, 0);
             }
          }

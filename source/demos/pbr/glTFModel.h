@@ -40,6 +40,13 @@ namespace Utopian
          glm::mat4 matrix;
       };
 
+      // Todo: better name
+      struct ShaderTexture
+      {
+         SharedPtr<Vk::Texture> texture;
+         SharedPtr<Vk::DescriptorSet> descriptorSet;
+      };
+
       glTFModel();
       ~glTFModel();
 
@@ -58,9 +65,10 @@ namespace Utopian
       uint32_t AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
                                std::vector<uint32_t>& indexVector, uint32_t vertexStart);
       void CreateDeviceBuffers(std::vector<uint32_t>& indexVector, std::vector<Vk::Vertex>& vertexVector, Vk::Device* device);
+      void CreateTextureDescriptorSet(Vk::Device* device);
 
    private:
-      std::vector<SharedPtr<Vk::Texture>> mImages;
+      std::vector<ShaderTexture> mImages;
       std::vector<int32_t> mImageRefs;
       std::vector<Material> mMaterials;
       std::vector<Node> mNodes;
@@ -69,5 +77,9 @@ namespace Utopian
       SharedPtr<Vk::Buffer> mIndexBuffer;
       uint32_t mIndicesCount;
       uint32_t mVerticesCount;
+
+      // Todo: move these
+      SharedPtr<Vk::DescriptorSetLayout> mMeshTexturesDescriptorSetLayout;
+      SharedPtr<Vk::DescriptorPool> mMeshTexturesDescriptorPool;
    };
 }
