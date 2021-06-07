@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <vulkan/vulkan_core.h>
 #include "core/Log.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -91,9 +92,11 @@ namespace Utopian
          if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
             mMaterials[i].baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
          }
-
          if (glTFMaterial.values.find("baseColorTexture") != glTFMaterial.values.end()) {
             mMaterials[i].baseColorTextureIndex = glTFMaterial.values["baseColorTexture"].TextureIndex();
+         }
+         if (glTFMaterial.additionalValues.find("normalTexture") != glTFMaterial.additionalValues.end()) {
+            mMaterials[i].normalTextureIndex = glTFMaterial.additionalValues["normalTexture"].TextureIndex();
          }
       }
    }
@@ -162,6 +165,7 @@ namespace Utopian
       const float* positionBuffer = nullptr;
       const float* normalsBuffer = nullptr;
       const float* texCoordsBuffer = nullptr;
+      const float* tangentsBuffer = nullptr;
       size_t vertexCount = 0;
 
       if (glTFPrimitive.attributes.find("POSITION") != glTFPrimitive.attributes.end())
@@ -185,6 +189,12 @@ namespace Utopian
          const tinygltf::BufferView& view = input.bufferViews[accessor.bufferView];
          texCoordsBuffer = reinterpret_cast<const float*>(&(input.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
       }
+      if (glTFPrimitive.attributes.find("TANGENT") != glTFPrimitive.attributes.end())
+      {
+         const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.attributes.find("TANGENT")->second];
+         const tinygltf::BufferView& view = input.bufferViews[accessor.bufferView];
+         tangentsBuffer = reinterpret_cast<const float*>(&(input.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+      }
 
       // Append data to model's vertex buffer
       for (size_t v = 0; v < vertexCount; v++)
@@ -193,6 +203,9 @@ namespace Utopian
          vert.Pos = glm::make_vec3(&positionBuffer[v * 3]);
          vert.Normal = glm::normalize(glm::vec3(normalsBuffer ? glm::make_vec3(&normalsBuffer[v * 3]) : glm::vec3(0.0f)));
          vert.Tex = texCoordsBuffer ? glm::make_vec2(&texCoordsBuffer[v * 2]) : glm::vec3(0.0f);
+
+         // Todo: the tangent should be a vec4, the W-component stores handedness of the tangent
+         vert.Tangent = tangentsBuffer ? glm::make_vec3(&tangentsBuffer[v * 4]) : glm::vec3(0.0f);
          vert.Color = glm::vec3(1.0f);
          vertexVector.push_back(vert);
       }
@@ -297,18 +310,23 @@ namespace Utopian
       // Todo: move these
       mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(device);
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
+      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
       mMeshTexturesDescriptorSetLayout->Create();
 
       mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(device);
-      mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 15);
+      mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 100);
       mMeshTexturesDescriptorPool->Create();
 
-      for (auto& image : mImages)
+      for (auto& material : mMaterials)
       {
-         image.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, mMeshTexturesDescriptorSetLayout.get(),
-                                                                   mMeshTexturesDescriptorPool.get());
-         image.descriptorSet->BindCombinedImage(0, image.texture->GetDescriptor());
-         image.descriptorSet->UpdateDescriptorSets();
+         Vk::Texture* colorTexture = mImages[material.baseColorTextureIndex].texture.get();
+         Vk::Texture* normalTexture = mImages[material.normalTextureIndex].texture.get();
+
+         material.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, mMeshTexturesDescriptorSetLayout.get(),
+                                                                      mMeshTexturesDescriptorPool.get());
+         material.descriptorSet->BindCombinedImage(0, colorTexture->GetDescriptor());
+         material.descriptorSet->BindCombinedImage(1, normalTexture->GetDescriptor());
+         material.descriptorSet->UpdateDescriptorSets();
       }
    }
 
@@ -337,7 +355,7 @@ namespace Utopian
             if (primitive.indexCount > 0)
             {
                int32_t imageRef = mImageRefs[mMaterials[primitive.materialIndex].baseColorTextureIndex];
-               VkDescriptorSet descriptorSet = mImages[imageRef].descriptorSet->GetVkHandle();
+               VkDescriptorSet descriptorSet = mMaterials[primitive.materialIndex].descriptorSet->GetVkHandle();
                commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
                commandBuffer->CmdDrawIndexed(primitive.indexCount, 1, primitive.firstIndex, 0, 0);
             }

@@ -42,7 +42,8 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   mGlTFModel.LoadFromFile("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", mVulkanApp->GetDevice());
+   //mGlTFModel.LoadFromFile("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", mVulkanApp->GetDevice());
+   mGlTFModel.LoadFromFile("data/models/gltf/sponza/sponza.gltf", mVulkanApp->GetDevice());
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -67,7 +68,7 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 0.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.003f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 1.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.003f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");

@@ -15,6 +15,7 @@ layout (location = 1) out vec3 OutNormalW;
 layout (location = 2) out vec3 OutEyePosW;
 layout (location = 3) out vec3 OutColor;
 layout (location = 4) out vec2 OutTex;
+layout (location = 5) out vec3 OutTangentL;
 
 layout (std140, set = 0, binding = 0) uniform UBO_input
 {
@@ -34,9 +35,10 @@ void main(void)
 {
    OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
    OutColor = pushConsts.color.rgb;
-   OutNormalW = InNormalL.xyz;
+   OutNormalW = mat3(pushConsts.world) * InNormalL.xyz;
    OutEyePosW = per_frame_vs.eyePos;
    OutTex = InTex;
+   OutTangentL = InTangentL;
 
    gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

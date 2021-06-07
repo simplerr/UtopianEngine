@@ -18,6 +18,8 @@ namespace Utopian
       {
          glm::vec4 baseColorFactor = glm::vec4(1.0f);
          uint32_t baseColorTextureIndex;
+         uint32_t normalTextureIndex;
+         SharedPtr<Vk::DescriptorSet> descriptorSet;
       };
 
       struct Primitive
@@ -44,7 +46,6 @@ namespace Utopian
       struct ShaderTexture
       {
          SharedPtr<Vk::Texture> texture;
-         SharedPtr<Vk::DescriptorSet> descriptorSet;
       };
 
       glTFModel();
