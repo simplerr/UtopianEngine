@@ -13,7 +13,7 @@ namespace Utopian::Vk
          Color = glm::vec3(1.0f);
          Normal = glm::vec3(0.0f);
          Tex = glm::vec2(0.0f);
-         Tangent = glm::vec3(0.0f);
+         Tangent = glm::vec4(0.0f);
          Bitangent = glm::vec3(0.0f);
       }
 
@@ -22,11 +22,11 @@ namespace Utopian::Vk
       Vertex(float px, float py, float pz, float nx, float ny, float nz)
          : Pos(px, py, pz), Normal(nx, ny, nz) {}
       Vertex(float px, float py, float pz, float nx, float ny, float nz, float tx, float ty, float tz, float bx, float by, float bz, float u, float v, float r, float g, float b)
-         : Pos(px, py, pz), Normal(nx, ny, nz), Tangent(tx, ty, tz), Bitangent(bx, by, bz), Tex(u, v), Color(r, g, b) {}
+         : Pos(px, py, pz), Normal(nx, ny, nz), Tangent(tx, ty, tz, 1.0f), Bitangent(bx, by, bz), Tex(u, v), Color(r, g, b) {}
 
       Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 tex, glm::vec3 tangent = glm::vec3(0.0f),
             glm::vec3 bitangent = glm::vec3(0.0f), glm::vec3 color = glm::vec3(1.0f))
-         : Pos(position), Normal(normal), Tex(tex), Tangent(tangent), Bitangent(bitangent), Color(color) {}
+         : Pos(position), Normal(normal), Tex(tex), Tangent(tangent, 1.0f), Bitangent(bitangent), Color(color) {}
 
       static VertexDescription GetDescription()
       {
@@ -49,7 +49,7 @@ namespace Utopian::Vk
       glm::vec3 Color;
       glm::vec3 Normal;
       glm::vec2 Tex;
-      glm::vec3 Tangent;
+      glm::vec4 Tangent;
       glm::vec3 Bitangent;
    };
 

@@ -7,7 +7,7 @@ layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec3 InTangentL;
+layout (location = 4) in vec4 InTangentL;
 layout (location = 5) in vec3 InBitangentL;
 
 layout (location = 0) out vec3 OutPosW;
@@ -15,7 +15,7 @@ layout (location = 1) out vec3 OutNormalW;
 layout (location = 2) out vec3 OutEyePosW;
 layout (location = 3) out vec3 OutColor;
 layout (location = 4) out vec2 OutTex;
-layout (location = 5) out vec3 OutTangentL;
+layout (location = 5) out vec4 OutTangentL;
 
 layout (std140, set = 0, binding = 0) uniform UBO_input
 {

@@ -205,7 +205,7 @@ namespace Utopian
          vert.Tex = texCoordsBuffer ? glm::make_vec2(&texCoordsBuffer[v * 2]) : glm::vec3(0.0f);
 
          // Todo: the tangent should be a vec4, the W-component stores handedness of the tangent
-         vert.Tangent = tangentsBuffer ? glm::make_vec3(&tangentsBuffer[v * 4]) : glm::vec3(0.0f);
+         vert.Tangent = tangentsBuffer ? glm::make_vec4(&tangentsBuffer[v * 4]) : glm::vec4(0.0f);
          vert.Color = glm::vec3(1.0f);
          vertexVector.push_back(vert);
       }

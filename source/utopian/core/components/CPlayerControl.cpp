@@ -319,7 +319,7 @@ namespace Utopian
       if (mLevelTimer.active)
       {
          mLevelTimer.active = false;
-         float elapsedTime = gTimer().GetElapsedTime(mLevelTimer.startTime) / 1000.0f;
+         float elapsedTime = (float)gTimer().GetElapsedTime(mLevelTimer.startTime) / 1000.0f;
          UTO_LOG("Finished the level in " + std::to_string(elapsedTime) + " seconds!");
       }
    }

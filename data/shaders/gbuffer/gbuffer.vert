@@ -8,7 +8,7 @@ layout (location = 0) in vec3 InPosL;
 layout (location = 1) in vec3 InColor;
 layout (location = 2) in vec3 InNormalL;
 layout (location = 3) in vec2 InTex;
-layout (location = 4) in vec3 InTangentL;
+layout (location = 4) in vec4 InTangentL;
 layout (location = 5) in vec3 InBitangentL;
 
 layout (push_constant) uniform PushConstants {
@@ -33,7 +33,7 @@ out gl_PerVertex
 
 void main()
 {
-   vec3 T = normalize(mat3(pushConstants.world) * InTangentL);
+   vec3 T = normalize(mat3(pushConstants.world) * InTangentL.xyz);
    vec3 B = normalize(mat3(pushConstants.world) * InBitangentL);
    vec3 N = normalize(mat3(pushConstants.world) * InNormalL);
    OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
