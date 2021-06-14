@@ -1,4 +1,5 @@
 #include "PhysicallyBasedRendering.h"
+#include <demos/pbr/glTFModel.h>
 #include <glm/matrix.hpp>
 #include <string>
 #include <time.h>
@@ -23,6 +24,7 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "core/MiniCamera.h"
 #include "core/Engine.h"
+#include "utility/Timer.h"
 
 PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    : mWindow(window)
@@ -42,8 +44,14 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   //mGlTFModel.LoadFromFile("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", mVulkanApp->GetDevice());
-   mGlTFModel.LoadFromFile("data/models/gltf/sponza/sponza.gltf", mVulkanApp->GetDevice());
+   //AddModel("data/models/gltf/sponza/sponza.gltf");
+   //AddModel("data/models/gltf/CesiumMan.gltf");
+   //AddModel("data/models/gltf/SimpleSkin/glTF-Embedded/SimpleSkin.gltf");
+   AddModel("data/models/gltf/Fox/glTF/Fox.gltf");
+   //AddModel("data/models/gltf/VC/glTF/VC.gltf");
+   //AddModel("data/models/gltf/fox_rigged/scene.gltf");
+   //AddModel("data/models/gltf/halo/scene.gltf");
+   //AddModel("data/models/gltf/casual_male/scene.gltf");
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -69,6 +77,7 @@ void PhysicallyBasedRendering::InitResources()
    Vk::Device* device = mVulkanApp->GetDevice();
 
    mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 1.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.003f, width, height);
+   //mCamera = std::make_shared<MiniCamera>(glm::vec3(50.31, 1.0, -20.86), glm::vec3(0, 0, 0), 0.01, 200, 0.003f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
@@ -101,6 +110,15 @@ void PhysicallyBasedRendering::UpdateCallback()
    ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
    ImGuiRenderer::EndWindow();
 
+   static double prevTime = Utopian::gTimer().GetTime();
+   double currentTime = Utopian::gTimer().GetTime();
+   
+   double deltaTime = currentTime - prevTime;
+   prevTime = currentTime;
+
+   for (auto& model : mModels)
+      model.UpdateAnimation((float)deltaTime / 1000.0f);
+
    // Recompile shaders
    if (gInput().KeyPressed('R'))
    {
@@ -128,7 +146,8 @@ void PhysicallyBasedRendering::DrawCallback()
    Vk::PushConstantBlock pushConsts(glm::mat4(), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
    commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
-   mGlTFModel.Render(commandBuffer, mEffect->GetPipelineInterface());
+   for (auto& model : mModels)
+      model.Render(commandBuffer, mEffect->GetPipelineInterface());
 
    mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mPhysicallyBasedRenderingComplete);
 
@@ -144,4 +163,11 @@ void PhysicallyBasedRendering::Run()
 void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
    Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
+}
+
+void PhysicallyBasedRendering::AddModel(std::string filename)
+{
+   Utopian::glTFModel model;
+   model.LoadFromFile(filename, mVulkanApp->GetDevice());
+   mModels.push_back(model);
 }

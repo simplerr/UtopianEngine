@@ -18,10 +18,10 @@ class PhysicallyBasedRendering
 {
 public:
    UNIFORM_BLOCK_BEGIN(VertexInputParameters)
-         UNIFORM_PARAM(glm::mat4, projection)
-         UNIFORM_PARAM(glm::mat4, view)
-         UNIFORM_PARAM(glm::vec3, eyePos)
-         UNIFORM_PARAM(float, pad)
+      UNIFORM_PARAM(glm::mat4, projection)
+      UNIFORM_PARAM(glm::mat4, view)
+      UNIFORM_PARAM(glm::vec3, eyePos)
+      UNIFORM_PARAM(float, pad)
    UNIFORM_BLOCK_END()
 
    PhysicallyBasedRendering(Utopian::Window* window);
@@ -34,6 +34,8 @@ public:
    void DrawCallback();
 
    void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+   void AddModel(std::string filename);
 private:
    void InitResources();
 
@@ -50,5 +52,5 @@ private:
    SharedPtr<MiniCamera> mCamera;
    VertexInputParameters mVertexInputParameters;
 
-   Utopian::glTFModel mGlTFModel;
+   std::vector<Utopian::glTFModel> mModels;
 };

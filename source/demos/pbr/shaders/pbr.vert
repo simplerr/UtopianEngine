@@ -4,11 +4,12 @@
 #extension GL_ARB_shading_language_420pack : enable
 
 layout (location = 0) in vec3 InPosL;
-layout (location = 1) in vec3 InColor;
-layout (location = 2) in vec3 InNormalL;
-layout (location = 3) in vec2 InTex;
+layout (location = 1) in vec3 InNormalL;
+layout (location = 2) in vec2 InTex;
+layout (location = 3) in vec3 InColor;
 layout (location = 4) in vec4 InTangentL;
-layout (location = 5) in vec3 InBitangentL;
+layout (location = 5) in vec4 InIndices;
+layout (location = 6) in vec4 InWeights;
 
 layout (location = 0) out vec3 OutPosW;
 layout (location = 1) out vec3 OutNormalW;
@@ -26,6 +27,10 @@ layout (std140, set = 0, binding = 0) uniform UBO_input
    float pad;
 } per_frame_vs;
 
+layout(std430, set = 1, binding = 0) readonly buffer JointMatrices {
+   mat4 jointMatrices[];
+};
+
 layout(push_constant) uniform PushConsts {
    mat4 world;
    vec4 color;
@@ -33,6 +38,12 @@ layout(push_constant) uniform PushConsts {
 
 void main(void)
 {
+   // Calculate skinned matrix from weights and joint indices of the current vertex
+   mat4 skinMat = InWeights.x * jointMatrices[int(InIndices.x)] +
+                  InWeights.y * jointMatrices[int(InIndices.y)] +
+                  InWeights.z * jointMatrices[int(InIndices.z)] +
+                  InWeights.w * jointMatrices[int(InIndices.w)];
+
    OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
    OutColor = pushConsts.color.rgb;
    OutNormalW = mat3(pushConsts.world) * InNormalL.xyz;
@@ -40,5 +51,5 @@ void main(void)
    OutTex = InTex;
    OutTangentL = InTangentL;
 
-   gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+   gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * skinMat * vec4(InPosL.xyz, 1.0);
 }
