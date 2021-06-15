@@ -57,11 +57,17 @@ PhysicallyBasedRendering::~PhysicallyBasedRendering()
 
 void PhysicallyBasedRendering::DestroyCallback()
 {
-   // Free Vulkan resources
+   // Todo: Remove this when the engine shutdown sequence is improved
+   mRenderTarget = nullptr;
    mEffect = nullptr;
+   mSkinningEffect = nullptr;
    mPhysicallyBasedRenderingComplete = nullptr;
    mOutputImage = nullptr;
+   mDepthImage = nullptr;
    mSampler = nullptr;
+
+   for (auto& sceneNode : mSceneNodes)
+      sceneNode.model = nullptr;
 
    mVertexInputParameters.GetBuffer()->Destroy();
 }
@@ -117,7 +123,7 @@ void PhysicallyBasedRendering::UpdateCallback()
    prevTime = currentTime;
 
    for (auto& sceneNode : mSceneNodes)
-      sceneNode.model.UpdateAnimation((float)deltaTime / 1000.0f);
+      sceneNode.model->UpdateAnimation((float)deltaTime / 1000.0f);
 
    // Recompile shaders
    if (gInput().KeyPressed('R'))
@@ -142,7 +148,7 @@ void PhysicallyBasedRendering::DrawCallback()
    for (auto& sceneNode : mSceneNodes)
    {
       SharedPtr<Vk::Effect> effect = nullptr;
-      if (sceneNode.model.HasSkin())
+      if (sceneNode.model->HasSkin())
          effect = mSkinningEffect;
       else
          effect = mEffect;
@@ -150,7 +156,7 @@ void PhysicallyBasedRendering::DrawCallback()
       commandBuffer->CmdBindPipeline(effect->GetPipeline());
       commandBuffer->CmdBindDescriptorSets(effect);
 
-      sceneNode.model.Render(commandBuffer, effect->GetPipelineInterface(), sceneNode.worldMatrix);
+      sceneNode.model->Render(commandBuffer, effect->GetPipelineInterface(), sceneNode.worldMatrix);
    }
 
    mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mPhysicallyBasedRenderingComplete);
@@ -172,7 +178,8 @@ void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wPara
 void PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
 {
    SceneNode sceneNode;
-   sceneNode.model.LoadFromFile(filename, mVulkanApp->GetDevice());
+   sceneNode.model = std::make_shared<glTFModel>();
+   sceneNode.model->LoadFromFile(filename, mVulkanApp->GetDevice());
    sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), pos) *
                            glm::mat4(rotation) *
                            glm::scale(glm::mat4(1.0f), scale);

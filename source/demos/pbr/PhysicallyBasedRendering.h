@@ -26,7 +26,7 @@ public:
 
    struct SceneNode
    {
-      Utopian::glTFModel model;
+      SharedPtr<Utopian::glTFModel> model;
       glm::mat4 worldMatrix;
    };
 
