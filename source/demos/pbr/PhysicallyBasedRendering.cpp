@@ -44,14 +44,10 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   //AddModel("data/models/gltf/sponza/sponza.gltf");
-   //AddModel("data/models/gltf/CesiumMan.gltf");
-   //AddModel("data/models/gltf/SimpleSkin/glTF-Embedded/SimpleSkin.gltf");
-   AddModel("data/models/gltf/Fox/glTF/Fox.gltf");
-   //AddModel("data/models/gltf/VC/glTF/VC.gltf");
-   //AddModel("data/models/gltf/fox_rigged/scene.gltf");
-   //AddModel("data/models/gltf/halo/scene.gltf");
-   //AddModel("data/models/gltf/casual_male/scene.gltf");
+   AddModel("data/models/gltf/sponza/sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
+   AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
+            glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
+   AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -76,7 +72,7 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 1.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.003f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 1.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.009f, width, height);
    //mCamera = std::make_shared<MiniCamera>(glm::vec3(50.31, 1.0, -20.86), glm::vec3(0, 0, 0), 0.01, 200, 0.003f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
@@ -97,7 +93,11 @@ void PhysicallyBasedRendering::InitResources()
    effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
    mEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
 
+   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr_skinning.vert";
+   mSkinningEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
+
    mEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
+   mSkinningEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
 
    gScreenQuadUi().AddQuad(0, 0, width, height, mOutputImage.get(), mSampler.get());
 }
@@ -116,8 +116,8 @@ void PhysicallyBasedRendering::UpdateCallback()
    double deltaTime = currentTime - prevTime;
    prevTime = currentTime;
 
-   for (auto& model : mModels)
-      model.UpdateAnimation((float)deltaTime / 1000.0f);
+   for (auto& sceneNode : mSceneNodes)
+      sceneNode.model.UpdateAnimation((float)deltaTime / 1000.0f);
 
    // Recompile shaders
    if (gInput().KeyPressed('R'))
@@ -139,15 +139,19 @@ void PhysicallyBasedRendering::DrawCallback()
    mRenderTarget->Begin("PBR pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
    Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
-   commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-   commandBuffer->CmdBindDescriptorSets(mEffect);
+   for (auto& sceneNode : mSceneNodes)
+   {
+      SharedPtr<Vk::Effect> effect = nullptr;
+      if (sceneNode.model.HasSkin())
+         effect = mSkinningEffect;
+      else
+         effect = mEffect;
 
-   // Todo: Add offset to the CmdPushConstants() API
-   Vk::PushConstantBlock pushConsts(glm::mat4(), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-   commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+      commandBuffer->CmdBindPipeline(effect->GetPipeline());
+      commandBuffer->CmdBindDescriptorSets(effect);
 
-   for (auto& model : mModels)
-      model.Render(commandBuffer, mEffect->GetPipelineInterface());
+      sceneNode.model.Render(commandBuffer, effect->GetPipelineInterface(), sceneNode.worldMatrix);
+   }
 
    mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mPhysicallyBasedRenderingComplete);
 
@@ -165,9 +169,12 @@ void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wPara
    Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
 }
 
-void PhysicallyBasedRendering::AddModel(std::string filename)
+void PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
 {
-   Utopian::glTFModel model;
-   model.LoadFromFile(filename, mVulkanApp->GetDevice());
-   mModels.push_back(model);
+   SceneNode sceneNode;
+   sceneNode.model.LoadFromFile(filename, mVulkanApp->GetDevice());
+   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), pos) *
+                           glm::mat4(rotation) *
+                           glm::scale(glm::mat4(1.0f), scale);
+   mSceneNodes.push_back(sceneNode);
 }

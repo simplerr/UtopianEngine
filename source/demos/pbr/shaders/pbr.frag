@@ -9,8 +9,8 @@ layout (location = 5) in vec4 InTangentL;
 
 layout (location = 0) out vec4 OutColor;
 
-layout (set = 2, binding = 0) uniform sampler2D diffuseSampler;
-layout (set = 2, binding = 1) uniform sampler2D normalSampler;
+layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
+layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 
 void main()
 {

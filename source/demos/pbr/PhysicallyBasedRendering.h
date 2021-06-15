@@ -24,6 +24,12 @@ public:
       UNIFORM_PARAM(float, pad)
    UNIFORM_BLOCK_END()
 
+   struct SceneNode
+   {
+      Utopian::glTFModel model;
+      glm::mat4 worldMatrix;
+   };
+
    PhysicallyBasedRendering(Utopian::Window* window);
    ~PhysicallyBasedRendering();
 
@@ -35,7 +41,7 @@ public:
 
    void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-   void AddModel(std::string filename);
+   void AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation = glm::quat());
 private:
    void InitResources();
 
@@ -44,6 +50,7 @@ private:
 
    SharedPtr<Vk::RenderTarget> mRenderTarget;
    SharedPtr<Vk::Effect> mEffect;
+   SharedPtr<Vk::Effect> mSkinningEffect;
    SharedPtr<Vk::Semaphore> mPhysicallyBasedRenderingComplete;
    SharedPtr<Vk::Image> mOutputImage;
    SharedPtr<Vk::Image> mDepthImage;
@@ -52,5 +59,5 @@ private:
    SharedPtr<MiniCamera> mCamera;
    VertexInputParameters mVertexInputParameters;
 
-   std::vector<Utopian::glTFModel> mModels;
+   std::vector<SceneNode> mSceneNodes;
 };

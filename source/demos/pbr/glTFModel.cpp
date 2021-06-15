@@ -586,6 +586,9 @@ namespace Utopian
 
    void glTFModel::UpdateAnimation(float deltaTime)
    {
+      if (mAnimations.size() == 0)
+         return;
+
       if (mActiveAnimation > static_cast<uint32_t>(mAnimations.size()) - 1)
       {
          UTO_LOG("No animation with index " + std::to_string(mActiveAnimation));
@@ -648,7 +651,7 @@ namespace Utopian
       }
    }
 
-   void glTFModel::Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface)
+   void glTFModel::Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, glm::mat4 worldMatrix)
    {
       // All primitives share the same vertex and index buffers
       commandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer.get());
@@ -657,22 +660,23 @@ namespace Utopian
          commandBuffer->CmdBindIndexBuffer(mIndexBuffer.get(), 0, VK_INDEX_TYPE_UINT32);
 
       for (auto& node : mNodes) {
-         RenderNode(commandBuffer, pipelineInterface, node);
+         RenderNode(commandBuffer, pipelineInterface, node, worldMatrix);
       }
    }
 
-   void glTFModel::RenderNode(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, Node* node)
+   void glTFModel::RenderNode(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, Node* node, glm::mat4 worldMatrix)
    {
       if (node->mesh.primitives.size() > 0)
       {
-         glm::mat4 nodeMatrix = node->matrix;
-         glm::mat4 tempScaleFactor = glm::scale(glm::mat4(), glm::vec3(0.01f));
-         nodeMatrix = tempScaleFactor * node->GetLocalMatrix();
+         glm::mat4 nodeMatrix = worldMatrix * node->GetLocalMatrix();
 
          // Todo: get parents matrices
 
-         VkDescriptorSet descriptorSet = mSkins[node->skin].descriptorSet->GetVkHandle();
-         commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
+         if (mSkins.size() != 0)
+         {
+            VkDescriptorSet descriptorSet = mSkins[node->skin].descriptorSet->GetVkHandle();
+            commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 2);
+         }
 
          commandBuffer->CmdPushConstants(pipelineInterface, VK_SHADER_STAGE_ALL, sizeof(glm::mat4), &nodeMatrix);
          for (Primitive& primitive : node->mesh.primitives)
@@ -680,7 +684,7 @@ namespace Utopian
             if (primitive.indexCount > 0 || primitive.vertexCount > 0)
             {
                VkDescriptorSet descriptorSet = mMaterials[primitive.materialIndex].descriptorSet->GetVkHandle();
-               commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 2);
+               commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
 
                if (primitive.hasIndices) 
                   commandBuffer->CmdDrawIndexed(primitive.indexCount, 1, primitive.firstIndex, 0, 0);
@@ -691,7 +695,7 @@ namespace Utopian
       }
 
       for (auto& child : node->children) {
-         RenderNode(commandBuffer, pipelineInterface, child);
+         RenderNode(commandBuffer, pipelineInterface, child, worldMatrix);
       }
    }
 
@@ -729,5 +733,10 @@ namespace Utopian
       }
 
       return nodeFound;
+   }
+
+   bool glTFModel::HasSkin() const
+   {
+      return mHasSkin;
    }
 }

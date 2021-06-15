@@ -27,12 +27,22 @@ layout (std140, set = 0, binding = 0) uniform UBO_input
    float pad;
 } per_frame_vs;
 
+layout(std430, set = 2, binding = 0) readonly buffer JointMatrices {
+   mat4 jointMatrices[];
+};
+
 layout(push_constant) uniform PushConsts {
    mat4 world;
 } pushConsts;
 
 void main(void)
 {
+   // Calculate skinned matrix from weights and joint indices of the current vertex
+   mat4 skinMat = InWeights.x * jointMatrices[int(InIndices.x)] +
+                  InWeights.y * jointMatrices[int(InIndices.y)] +
+                  InWeights.z * jointMatrices[int(InIndices.z)] +
+                  InWeights.w * jointMatrices[int(InIndices.w)];
+
    OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
    OutColor = vec3(1.0f);
    OutNormalW = mat3(pushConsts.world) * InNormalL.xyz;
@@ -40,5 +50,5 @@ void main(void)
    OutTex = InTex;
    OutTangentL = InTangentL;
 
-   gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * vec4(InPosL.xyz, 1.0);
+   gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * skinMat * vec4(InPosL.xyz, 1.0);
 }

@@ -110,9 +110,10 @@ namespace Utopian
 
       void LoadFromFile(std::string filename, Vk::Device* device);
 
-      void Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface);
-      void RenderNode(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, Node* node);
+      void Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, glm::mat4 worldMatrix);
+      void RenderNode(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, Node* node, glm::mat4 worldMatrix);
       void UpdateAnimation(float deltaTime);
+      bool HasSkin() const;
 
    private:
       void LoadImages(tinygltf::Model& input);
