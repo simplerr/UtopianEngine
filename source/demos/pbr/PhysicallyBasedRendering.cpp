@@ -44,10 +44,11 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   AddModel("data/models/gltf/sponza/sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
+   AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
             glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
    AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
+   AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -148,7 +149,7 @@ void PhysicallyBasedRendering::DrawCallback()
    for (auto& sceneNode : mSceneNodes)
    {
       SharedPtr<Vk::Effect> effect = nullptr;
-      if (sceneNode.model->HasSkin())
+      if (sceneNode.model->IsAnimated())
          effect = mSkinningEffect;
       else
          effect = mEffect;
