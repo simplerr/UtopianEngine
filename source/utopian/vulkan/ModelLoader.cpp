@@ -104,7 +104,13 @@ namespace Utopian::Vk
                }
 
                normal = normal.Normalize();
-               Vertex vertex(pos.x, pos.y, pos.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, bitangent.x, bitangent.y, bitangent.z, uv.x, uv.y, color.r, color.g, color.b);
+               Vertex vertex = {};
+               vertex.pos = glm::vec3(pos.x, pos.y, pos.z);
+               vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
+               vertex.tangent = glm::vec4(tangent.x, tangent.y, tangent.z, 1.0f);
+               vertex.bitangent = glm::vec3(bitangent.x, bitangent.y, bitangent.z);
+               vertex.uv = glm::vec2(uv.x, uv.y);
+               vertex.color = glm::vec3(color.r, color.g, color.b);
                mesh->AddVertex(vertex);
             }
 
@@ -228,11 +234,23 @@ namespace Utopian::Vk
       Mesh* mesh = new Mesh(mDevice);
 
       // Front
-      float ANY = 0;
-      mesh->AddVertex(Vertex(-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 0.0f, 0.0f, ANY, ANY, ANY));
-      mesh->AddVertex(Vertex(0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 1.0f, 0.0f, ANY, ANY, ANY));
-      mesh->AddVertex(Vertex(0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 1.0f, 1.0f, ANY, ANY, ANY));
-      mesh->AddVertex(Vertex(-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, ANY, ANY, ANY, ANY, ANY, ANY, 0.0f, 1.0f, ANY, ANY, ANY));
+      Vertex vertex = {};
+      vertex.pos = glm::vec3(-0.5f, -0.5f, 0.5f);
+      vertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
+      vertex.uv = glm::vec2(0.0f, 0.0f);
+      mesh->AddVertex(vertex);
+
+      vertex.pos = glm::vec3(0.5f, -0.5f, 0.5f);
+      vertex.uv = glm::vec2(1.0f, 0.0f);
+      mesh->AddVertex(vertex);
+
+      vertex.pos = glm::vec3(0.5f, 0.5f, 0.5f);
+      vertex.uv = glm::vec2(1.0f, 1.0f);
+      mesh->AddVertex(vertex);
+
+      vertex.pos = glm::vec3(-0.5f, 0.5f, 0.5f);
+      vertex.uv = glm::vec2(0.0f, 1.0f);
+      mesh->AddVertex(vertex);
 
       // Front
       mesh->AddTriangle(1, 2, 0);
@@ -263,11 +281,11 @@ namespace Utopian::Vk
          {
             Vk::Vertex vertex;
             const float originOffset = (cellSize * numCells) / 2.0f - cellSize / 2;
-            vertex.Pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
-            vertex.Normal = glm::vec3(0.0f, -1.0f, 0.0f);
-            vertex.Tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-            vertex.Bitangent = glm::vec3(0.0f, 0.0f, 1.0f);
-            vertex.Tex = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
+            vertex.pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
+            vertex.normal = glm::vec3(0.0f, -1.0f, 0.0f);
+            vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            vertex.bitangent = glm::vec3(0.0f, 0.0f, 1.0f);
+            vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
             mesh->AddVertex(vertex);
          }
       }
@@ -300,16 +318,16 @@ namespace Utopian::Vk
       Mesh* mesh = new Mesh(mDevice);
 
       // Front
-      mesh->AddVertex(-0.5f, -0.5f, 0.5f);   // 0
-      mesh->AddVertex(0.5f, -0.5f, 0.5f);    // 1
-      mesh->AddVertex(0.5f, 0.5f, 0.5f);     // 2
-      mesh->AddVertex(-0.5f, 0.5f, 0.5f);    // 3
+      mesh->AddVertex(glm::vec3(-0.5f, -0.5f, 0.5f));   // 0
+      mesh->AddVertex(glm::vec3(0.5f, -0.5f, 0.5f));    // 1
+      mesh->AddVertex(glm::vec3(0.5f, 0.5f, 0.5f));     // 2
+      mesh->AddVertex(glm::vec3(-0.5f, 0.5f, 0.5f));    // 3
 
       // Back
-      mesh->AddVertex(-0.5f, -0.5f, -0.5f);  // 4
-      mesh->AddVertex(0.5f, -0.5f, -0.5f);   // 5
-      mesh->AddVertex(0.5f, 0.5f, -0.5f);    // 6
-      mesh->AddVertex(-0.5f, 0.5f, -0.5f);   // 7
+      mesh->AddVertex(glm::vec3(-0.5f, -0.5f, -0.5f));  // 4
+      mesh->AddVertex(glm::vec3(0.5f, -0.5f, -0.5f));   // 5
+      mesh->AddVertex(glm::vec3(0.5f, 0.5f, -0.5f));    // 6
+      mesh->AddVertex(glm::vec3(-0.5f, 0.5f, -0.5f));   // 7
 
       // Front
       mesh->AddLine(0, 3);

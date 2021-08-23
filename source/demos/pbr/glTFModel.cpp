@@ -282,7 +282,7 @@ namespace Utopian
          }
       }
 
-      return vertexCount;
+      return (uint32_t)vertexCount;
    }
 
    uint32_t glTFModel::AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,

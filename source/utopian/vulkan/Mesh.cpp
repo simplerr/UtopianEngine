@@ -28,9 +28,9 @@ namespace Utopian::Vk
       vertexVector.push_back(vertex);
    }
 
-   void Mesh::AddVertex(float x, float y, float z)
+   void Mesh::AddVertex(glm::vec3 pos)
    {
-      AddVertex(Vertex(x, y, z));
+      AddVertex(Vertex(pos));
    }
 
    void Mesh::AddLine(uint32_t v1, uint32_t v2)

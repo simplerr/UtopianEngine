@@ -6,27 +6,27 @@
 
 namespace Utopian::Vk
 {
+   /**
+    * The default vertex layout used by the renderer.
+    *
+    * Matches attribute layout in data\shaders\include\vertex.glsl.
+    */
    struct Vertex
    {
       Vertex() {
-         Pos = glm::vec3(0.0f);
-         Color = glm::vec3(1.0f);
-         Normal = glm::vec3(0.0f);
-         Tex = glm::vec2(0.0f);
-         Tangent = glm::vec4(0.0f);
-         Bitangent = glm::vec3(0.0f);
+         pos = glm::vec3(0.0f);
+         color = glm::vec3(1.0f);
+         normal = glm::vec3(0.0f);
+         uv = glm::vec2(0.0f);
+         tangent = glm::vec4(0.0f);
+         bitangent = glm::vec3(0.0f);
       }
 
-      Vertex(glm::vec3 pos) : Pos(pos) {}
-      Vertex(float px, float py, float pz) : Pos(glm::vec3(px, py, pz)) {}
-      Vertex(float px, float py, float pz, float nx, float ny, float nz)
-         : Pos(px, py, pz), Normal(nx, ny, nz) {}
-      Vertex(float px, float py, float pz, float nx, float ny, float nz, float tx, float ty, float tz, float bx, float by, float bz, float u, float v, float r, float g, float b)
-         : Pos(px, py, pz), Normal(nx, ny, nz), Tangent(tx, ty, tz, 1.0f), Bitangent(bx, by, bz), Tex(u, v), Color(r, g, b) {}
+      Vertex(glm::vec3 pos) : pos(pos) {}
 
-      Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 tex, glm::vec3 tangent = glm::vec3(0.0f),
+      Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 uv, glm::vec3 tangent = glm::vec3(0.0f),
             glm::vec3 bitangent = glm::vec3(0.0f), glm::vec3 color = glm::vec3(1.0f))
-         : Pos(position), Normal(normal), Tex(tex), Tangent(tangent, 1.0f), Bitangent(bitangent), Color(color) {}
+         : pos(position), normal(normal), uv(uv), tangent(tangent, 1.0f), bitangent(bitangent), color(color) {}
 
       static VertexDescription GetDescription()
       {
@@ -45,12 +45,12 @@ namespace Utopian::Vk
          return description;
       }
 
-      glm::vec3 Pos;
-      glm::vec3 Color;
-      glm::vec3 Normal;
-      glm::vec2 Tex;
-      glm::vec4 Tangent;
-      glm::vec3 Bitangent;
+      glm::vec3 pos;
+      glm::vec3 color;
+      glm::vec3 normal;
+      glm::vec2 uv;
+      glm::vec4 tangent;
+      glm::vec3 bitangent;
    };
 
    struct ScreenQuadVertex
@@ -59,8 +59,8 @@ namespace Utopian::Vk
       {
          VertexDescription description;
          description.AddBinding(BINDING_0, sizeof(ScreenQuadVertex), VK_VERTEX_INPUT_RATE_VERTEX);
-         description.AddAttribute(BINDING_0, Utopian::Vk::Vec3Attribute());   // InPosL
-         description.AddAttribute(BINDING_0, Utopian::Vk::Vec2Attribute());   // InTex 
+         description.AddAttribute(BINDING_0, Vec3Attribute());   // InPosL
+         description.AddAttribute(BINDING_0, Vec2Attribute());   // InTex
          return description;
       }
 
@@ -74,8 +74,8 @@ namespace Utopian::Vk
       {
          VertexDescription description;
          description.AddBinding(BINDING_0, sizeof(TerrainVertex), VK_VERTEX_INPUT_RATE_VERTEX);
-         description.AddAttribute(BINDING_0, Utopian::Vk::Vec4Attribute());   // InPosL
-         description.AddAttribute(BINDING_0, Utopian::Vk::Vec4Attribute());   // InNormal 
+         description.AddAttribute(BINDING_0, Vec4Attribute());   // InPosL
+         description.AddAttribute(BINDING_0, Vec4Attribute());   // InNormal
          return description;
       }
 

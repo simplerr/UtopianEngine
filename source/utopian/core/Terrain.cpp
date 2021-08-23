@@ -291,9 +291,9 @@ namespace Utopian
          {
             Vk::Vertex vertex;
             const float originOffset = (float)numCells * cellSize / 2.0f;
-            vertex.Pos = glm::vec3(x * cellSize + cellSize / 2.0f - originOffset, 0.0f, z * cellSize + cellSize / 2.0f - originOffset);
-            vertex.Normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            vertex.Tex = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
+            vertex.pos = glm::vec3(x * cellSize + cellSize / 2.0f - originOffset, 0.0f, z * cellSize + cellSize / 2.0f - originOffset);
+            vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+            vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
             mesh->AddVertex(vertex);
          }
       }

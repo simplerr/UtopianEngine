@@ -20,7 +20,7 @@ namespace Utopian::Vk
       ~Mesh();
 
       void AddVertex(Vertex vertex);
-      void AddVertex(float x, float y, float z);
+      void AddVertex(glm::vec3 pos);
       void AddLine(uint32_t v1, uint32_t v2);
       void AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3);
       void AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4);

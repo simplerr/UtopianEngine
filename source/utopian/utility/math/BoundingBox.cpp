@@ -15,22 +15,22 @@ namespace Utopian
 
          // Note: Todo: The physical representation does not match
          // the one used for rendering.
-         vertex.Pos = vertex.Pos *= -1;
+         vertex.pos = vertex.pos *= -1;
 
-         if (vertex.Pos.x < min.x)
-            min.x = vertex.Pos.x;
-         else if (vertex.Pos.x > max.x)
-            max.x = vertex.Pos.x;
+         if (vertex.pos.x < min.x)
+            min.x = vertex.pos.x;
+         else if (vertex.pos.x > max.x)
+            max.x = vertex.pos.x;
 
-         if (vertex.Pos.y < min.y)
-            min.y = vertex.Pos.y;
-         else if (vertex.Pos.y > max.y)
-            max.y = vertex.Pos.y;
+         if (vertex.pos.y < min.y)
+            min.y = vertex.pos.y;
+         else if (vertex.pos.y > max.y)
+            max.y = vertex.pos.y;
 
-         if (vertex.Pos.z < min.z)
-            min.z = vertex.Pos.z;
-         else if (vertex.Pos.z > max.z)
-            max.z = vertex.Pos.z;
+         if (vertex.pos.z < min.z)
+            min.z = vertex.pos.z;
+         else if (vertex.pos.z > max.z)
+            max.z = vertex.pos.z;
       }
 
       mMin = min;
