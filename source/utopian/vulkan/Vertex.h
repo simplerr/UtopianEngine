@@ -15,18 +15,17 @@ namespace Utopian::Vk
    {
       Vertex() {
          pos = glm::vec3(0.0f);
-         color = glm::vec3(1.0f);
          normal = glm::vec3(0.0f);
          uv = glm::vec2(0.0f);
+         color = glm::vec3(1.0f);
          tangent = glm::vec4(0.0f);
-         bitangent = glm::vec3(0.0f);
       }
 
       Vertex(glm::vec3 pos) : pos(pos) {}
 
-      Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 uv, glm::vec3 tangent = glm::vec3(0.0f),
-            glm::vec3 bitangent = glm::vec3(0.0f), glm::vec3 color = glm::vec3(1.0f))
-         : pos(position), normal(normal), uv(uv), tangent(tangent, 1.0f), bitangent(bitangent), color(color) {}
+      Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 uv,
+             glm::vec3 tangent = glm::vec3(0.0f), glm::vec3 color = glm::vec3(1.0f))
+         : pos(position), normal(normal), uv(uv), tangent(tangent, 1.0f), color(color) {}
 
       static VertexDescription GetDescription()
       {
@@ -36,21 +35,19 @@ namespace Utopian::Vk
          // We need to tell Vulkan about the memory layout for each attribute
          // 5 attributes: position, normal, texture coordinates, tangent and color
          // See Vertex struct
-         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 0 : Position
-         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 1 : Color
-         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 2 : Normal
-         description.AddAttribute(BINDING_0, Vec2Attribute()); // Location 3 : Texture
-         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 4 : Tangent
-         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 5 : Bitangent
+         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 0 : InPosL
+         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 1 : InNormalL
+         description.AddAttribute(BINDING_0, Vec2Attribute()); // Location 2 : InTex
+         description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 3 : InColor
+         description.AddAttribute(BINDING_0, Vec4Attribute()); // Location 4 : InTangentL
          return description;
       }
 
       glm::vec3 pos;
-      glm::vec3 color;
       glm::vec3 normal;
       glm::vec2 uv;
+      glm::vec3 color;
       glm::vec4 tangent;
-      glm::vec3 bitangent;
    };
 
    struct ScreenQuadVertex

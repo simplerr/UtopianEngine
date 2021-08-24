@@ -6,7 +6,7 @@
 #include "shared_variables.glsl"
 
 // Instancing input
-layout (location = 6) in mat4 InInstanceWorld;
+layout (location = 5) in mat4 InInstanceWorld;
 
 struct Sphere
 {
@@ -60,8 +60,9 @@ vec2 transformToUv(vec2 posW)
 void main()
 {
    vec3 localPos = InPosL.xyz;
+   vec3 bitangentL = cross(InNormalL, InTangentL.xyz);
    vec3 T = normalize(mat3(InInstanceWorld) * InTangentL.xyz);
-   vec3 B = normalize(mat3(InInstanceWorld) * InBitangentL);
+   vec3 B = normalize(mat3(InInstanceWorld) * bitangentL);
    vec3 N = normalize(mat3(InInstanceWorld) * InNormalL);
    OutTBN = mat3(T, B, N);
    OutPosW = (InInstanceWorld * vec4(localPos, 1.0)).xyz;

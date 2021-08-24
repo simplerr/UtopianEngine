@@ -92,23 +92,18 @@ namespace Utopian::Vk
                aiVector3D normal = assimpMesh->mNormals[vertexId];
                aiVector3D uv = aiVector3D(0, 0, 0);
                aiVector3D tangent = aiVector3D(0, 0, 0);
-               aiVector3D bitangent = aiVector3D(0, 0, 0);
 
                if (assimpMesh->HasTextureCoords(0))
                   uv = assimpMesh->mTextureCoords[0][vertexId];
 
                if (assimpMesh->HasTangentsAndBitangents())
-               {
                   tangent = assimpMesh->mTangents[vertexId];
-                  bitangent = assimpMesh->mBitangents[vertexId];
-               }
 
                normal = normal.Normalize();
                Vertex vertex = {};
                vertex.pos = glm::vec3(pos.x, pos.y, pos.z);
                vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
                vertex.tangent = glm::vec4(tangent.x, tangent.y, tangent.z, 1.0f);
-               vertex.bitangent = glm::vec3(bitangent.x, bitangent.y, bitangent.z);
                vertex.uv = glm::vec2(uv.x, uv.y);
                vertex.color = glm::vec3(color.r, color.g, color.b);
                mesh->AddVertex(vertex);
@@ -284,7 +279,6 @@ namespace Utopian::Vk
             vertex.pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
             vertex.normal = glm::vec3(0.0f, -1.0f, 0.0f);
             vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-            vertex.bitangent = glm::vec3(0.0f, 0.0f, 1.0f);
             vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
             mesh->AddVertex(vertex);
          }

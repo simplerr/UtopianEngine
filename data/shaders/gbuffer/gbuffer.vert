@@ -27,8 +27,9 @@ out gl_PerVertex
 
 void main()
 {
+   vec3 bitangentL = cross(InNormalL, InTangentL.xyz);
    vec3 T = normalize(mat3(pushConstants.world) * InTangentL.xyz);
-   vec3 B = normalize(mat3(pushConstants.world) * InBitangentL);
+   vec3 B = normalize(mat3(pushConstants.world) * bitangentL);
    vec3 N = normalize(mat3(pushConstants.world) * InNormalL);
    OutTBN = mat3(T, B, N); // = transpose(mat3(T, B, N));
 
