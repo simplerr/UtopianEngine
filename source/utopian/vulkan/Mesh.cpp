@@ -56,53 +56,52 @@ namespace Utopian::Vk
 
    void Mesh::BuildBuffers(Device* device)
    {
-      mVerticesCount = (uint32_t)vertexVector.size();
-      mIndicesCount = (uint32_t)indexVector.size();
+      uint32_t vertexBufferSize = GetNumVertices() * sizeof(Vertex);
+      uint32_t indexBufferSize = GetNumIndices() * sizeof(uint32_t);
 
-      uint32_t vertexBufferSize = mVerticesCount * sizeof(Vertex);
-      uint32_t indexBufferSize = mIndicesCount * sizeof(uint32_t);
-
-      // Host visible staging buffers
-      BUFFER_CREATE_INFO stagingVertexCI;
+      Vk::BUFFER_CREATE_INFO stagingVertexCI;
       stagingVertexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
       stagingVertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
       stagingVertexCI.data = vertexVector.data();
       stagingVertexCI.size = vertexBufferSize;
       stagingVertexCI.name = "Staging Vertex buffer: " + mDebugName;
-      Buffer vertexStaging = Buffer(stagingVertexCI, device);
+      Vk::Buffer vertexStaging = Vk::Buffer(stagingVertexCI, device);
 
-      BUFFER_CREATE_INFO stagingIndexCI;
-      stagingIndexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-      stagingIndexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-      stagingIndexCI.data = indexVector.data();
-      stagingIndexCI.size = indexBufferSize;
-      stagingIndexCI.name = "Staging Index buffer: " + mDebugName;
-      Buffer indexStaging = Buffer(stagingIndexCI, device);
-
-      // Device local target buffers
-      BUFFER_CREATE_INFO vertexCI;
+      Vk::BUFFER_CREATE_INFO vertexCI;
       vertexCI.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
       vertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
       vertexCI.data = nullptr;
       vertexCI.size = vertexBufferSize;
       vertexCI.name = "Vertex buffer: " + mDebugName;
-      mVertexBuffer = std::make_shared<Buffer>(vertexCI, device);
-
-      BUFFER_CREATE_INFO indexCI;
-      indexCI.usageFlags = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-      indexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-      indexCI.data = nullptr;
-      indexCI.size = indexBufferSize;
-      indexCI.name = "Index buffer: " + mDebugName;
-      mIndexBuffer = std::make_shared<Buffer>(indexCI, device);
+      mVertexBuffer = std::make_shared<Vk::Buffer>(vertexCI, device);
 
       // Copy from host visible to device local memory
-      CommandBuffer cmdBuffer = CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-
+      Vk::CommandBuffer cmdBuffer = Vk::CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
       vertexStaging.Copy(&cmdBuffer, mVertexBuffer.get());
-      indexStaging.Copy(&cmdBuffer, mIndexBuffer.get());
-
       cmdBuffer.Flush();
+
+      if (GetNumIndices() > 0)
+      {
+         Vk::BUFFER_CREATE_INFO stagingIndexCI;
+         stagingIndexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+         stagingIndexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+         stagingIndexCI.data = indexVector.data();
+         stagingIndexCI.size = indexBufferSize;
+         stagingIndexCI.name = "Staging Index buffer: " + mDebugName;
+         Vk::Buffer indexStaging = Vk::Buffer(stagingIndexCI, device);
+
+         Vk::BUFFER_CREATE_INFO indexCI;
+         indexCI.usageFlags = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+         indexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+         indexCI.data = nullptr;
+         indexCI.size = indexBufferSize;
+         indexCI.name = "Index buffer: " + mDebugName;
+         mIndexBuffer = std::make_shared<Vk::Buffer>(indexCI, device);
+
+         cmdBuffer.Begin();
+         indexStaging.Copy(&cmdBuffer, mIndexBuffer.get());
+         cmdBuffer.Flush();
+      }
    }
 
    void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)
@@ -140,9 +139,14 @@ namespace Utopian::Vk
       return mBoundingBox;
    }
 
-   uint32_t Mesh::GetNumIndices()
+   uint32_t Mesh::GetNumVertices() const
    {
-      return mIndicesCount;
+      return vertexVector.size();
+   }
+
+   uint32_t Mesh::GetNumIndices() const
+   {
+      return indexVector.size();
    }
 
    Buffer* Mesh::GetVertxBuffer()

@@ -8,23 +8,15 @@
 #include "vulkan/Texture.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/Vertex.h"
+#include "vulkan/Mesh.h"
 #include "SkinAnimator.h"
 
 namespace Utopian
 {
-   struct Primitive
-   {
-      uint32_t firstIndex;
-      uint32_t firstVertex;
-      uint32_t indexCount;
-      uint32_t vertexCount;
-      int32_t materialIndex;
-      bool hasIndices;
-   };
-
    struct Mesh
    {
-      std::vector<Primitive> primitives;
+      std::vector<Vk::Mesh*> primitives;
+      std::vector<int32_t> materials;
    };
 
    struct Node
@@ -47,17 +39,6 @@ namespace Utopian
    class glTFModel
    {
    public:
-
-      struct glTFVertex
-      {
-         glm::vec3 pos;
-         glm::vec3 normal;
-         glm::vec2 uv;
-         glm::vec3 color;
-         glm::vec4 tangent;
-         glm::vec4 jointIndices;
-         glm::vec4 jointWeights;
-      };
 
       struct Material
       {
@@ -87,15 +68,15 @@ namespace Utopian
       Node* FindNode(Node* parent, uint32_t index);
 
    private:
+      void DestroyNode(Node* node);
       void LoadImages(tinygltf::Model& input);
       void LoadMaterials(tinygltf::Model& input);
       void LoadNode(const tinygltf::Node& inputNode, const tinygltf::Model& input, Node* parent,
-                    uint32_t nodeIndex, std::vector<uint32_t>& indexVector, std::vector<glTFVertex>& vertexBuffer);
-      uint32_t AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
-                                std::vector<glTFVertex>& vertexBuffer);
-      uint32_t AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
-                               std::vector<uint32_t>& indexVector, uint32_t vertexStart);
-      void CreateDeviceBuffers(std::vector<uint32_t>& indexVector, std::vector<glTFVertex>& vertexVector, Vk::Device* device);
+                    uint32_t nodeIndex, Vk::Device* device);
+      void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
+                            Vk::Mesh* primitive);
+      void AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
+                           Vk::Mesh* primitive);
       void CreateTextureDescriptorSet(Vk::Device* device);
 
       // Helper functions
@@ -107,10 +88,6 @@ namespace Utopian
       std::vector<Material> mMaterials;
       std::vector<Node*> mNodes;
       std::string mFilename;
-      SharedPtr<Vk::Buffer> mVertexBuffer = nullptr;
-      SharedPtr<Vk::Buffer> mIndexBuffer = nullptr;
-      uint32_t mIndicesCount;
-      uint32_t mVerticesCount;
       uint32_t mActiveAnimation = 0;
 
       SharedPtr<SkinAnimator> mSkinAnimator = nullptr;

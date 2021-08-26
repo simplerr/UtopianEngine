@@ -19,6 +19,8 @@ namespace Utopian::Vk
          uv = glm::vec2(0.0f);
          color = glm::vec3(1.0f);
          tangent = glm::vec4(0.0f);
+         jointIndices = glm::vec4(0.0f);
+         jointWeights = glm::vec4(0.0f);
       }
 
       Vertex(glm::vec3 pos) : pos(pos) {}
@@ -40,6 +42,8 @@ namespace Utopian::Vk
          description.AddAttribute(BINDING_0, Vec2Attribute()); // Location 2 : InTex
          description.AddAttribute(BINDING_0, Vec3Attribute()); // Location 3 : InColor
          description.AddAttribute(BINDING_0, Vec4Attribute()); // Location 4 : InTangentL
+         description.AddAttribute(BINDING_0, Vec4Attribute()); // Location 5 : InJointIndices
+         description.AddAttribute(BINDING_0, Vec4Attribute()); // Location 6 : InJointWeights
          return description;
       }
 
@@ -48,6 +52,8 @@ namespace Utopian::Vk
       glm::vec2 uv;
       glm::vec3 color;
       glm::vec4 tangent;
+      glm::vec4 jointIndices;
+      glm::vec4 jointWeights;
    };
 
    struct ScreenQuadVertex

@@ -33,7 +33,23 @@ namespace Utopian
 
    glTFModel::~glTFModel()
    {
+      for (Node* node : mNodes)
+      {
+         DestroyNode(node);
+      }
+   }
 
+   void glTFModel::DestroyNode(Node* node)
+   {
+      for (auto& primitive : node->mesh.primitives)
+      {
+         delete primitive;
+      }
+
+      for (auto& child : node->children)
+      {
+        DestroyNode(child);
+      }
    }
 
    void glTFModel::LoadFromFile(std::string filename, Vk::Device* device)
@@ -51,14 +67,11 @@ namespace Utopian
          LoadImages(glTFInput);
          LoadMaterials(glTFInput);
 
-         std::vector<uint32_t> indexVector;
-         std::vector<glTFVertex> vertexVector;
-
          const tinygltf::Scene& scene = glTFInput.scenes[0];
          for (size_t i = 0; i < scene.nodes.size(); i++)
          {
             const tinygltf::Node node = glTFInput.nodes[scene.nodes[i]];
-            LoadNode(node, glTFInput, nullptr, scene.nodes[i], indexVector, vertexVector);
+            LoadNode(node, glTFInput, nullptr, scene.nodes[i], device);
          }
 
          if (glTFInput.skins.size() > 0)
@@ -69,8 +82,6 @@ namespace Utopian
             for (auto node : mNodes)
                mSkinAnimator->UpdateJoints(node);
          }
-
-         CreateDeviceBuffers(indexVector, vertexVector, device);
 
          // Todo: move these
          CreateTextureDescriptorSet(device);
@@ -122,7 +133,7 @@ namespace Utopian
    }
 
    void glTFModel::LoadNode(const tinygltf::Node& inputNode, const tinygltf::Model& input, Node* parent,
-                            uint32_t nodeIndex, std::vector<uint32_t>& indexVector, std::vector<glTFVertex>& vertexVector)
+                            uint32_t nodeIndex, Vk::Device* device)
    {
       Node* node = new Node();
       node->parent = parent;
@@ -150,7 +161,7 @@ namespace Utopian
       // Load children
       if (inputNode.children.size() > 0) {
          for (size_t i = 0; i < inputNode.children.size(); i++) {
-            LoadNode(input.nodes[inputNode.children[i]], input , node, inputNode.children[i], indexVector, vertexVector);
+            LoadNode(input.nodes[inputNode.children[i]], input , node, inputNode.children[i], device);
          }
       }
 
@@ -160,25 +171,18 @@ namespace Utopian
          const tinygltf::Mesh mesh = input.meshes[inputNode.mesh];
          for (size_t i = 0; i < mesh.primitives.size(); i++)
          {
-            uint32_t indexStart = static_cast<uint32_t>(indexVector.size());
-            uint32_t vertexStart = static_cast<uint32_t>(vertexVector.size());
-
             const tinygltf::Primitive& glTFPrimitive = mesh.primitives[i];
-            uint32_t vertexCount = AppendVertexData(input, glTFPrimitive, vertexVector);
+            Vk::Mesh* primitive = new Vk::Mesh(NULL); // Todo remove the Device* argument
+            AppendVertexData(input, glTFPrimitive, primitive);
 
-            uint32_t indexCount = 0u;
             bool hasIndices = (glTFPrimitive.indices != -1);
             if (hasIndices)
-               indexCount = AppendIndexData(input, glTFPrimitive, indexVector, vertexStart);
+               AppendIndexData(input, glTFPrimitive, primitive);
 
-            Primitive primitive{};
-            primitive.firstIndex = indexStart;
-            primitive.firstVertex = vertexStart;
-            primitive.indexCount = indexCount;
-            primitive.vertexCount = vertexCount;
-            primitive.hasIndices = hasIndices;
-            primitive.materialIndex = glTFPrimitive.material;
+            primitive->BuildBuffers(device);
+
             node->mesh.primitives.push_back(primitive);
+            node->mesh.materials.push_back(glTFPrimitive.material);
          }
       }
 
@@ -204,8 +208,8 @@ namespace Utopian
       return nodeMatrix;
    }
 
-   uint32_t glTFModel::AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
-                                        std::vector<glTFVertex>& vertexVector)
+   void glTFModel::AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
+                                        Vk::Mesh* primitive)
    {
       const float* positionBuffer = nullptr;
       const float* normalsBuffer = nullptr;
@@ -257,7 +261,7 @@ namespace Utopian
 
       for (size_t v = 0; v < vertexCount; v++)
       {
-         glTFVertex vert{};
+         Vk::Vertex vert = {};
          vert.pos = glm::make_vec3(&positionBuffer[v * 3]);
          vert.normal = glm::normalize(glm::vec3(normalsBuffer ? glm::make_vec3(&normalsBuffer[v * 3]) : glm::vec3(0.0f)));
          vert.uv = texCoordsBuffer ? glm::make_vec2(&texCoordsBuffer[v * 2]) : glm::vec3(0.0f);
@@ -265,14 +269,15 @@ namespace Utopian
          vert.color = glm::vec3(1.0f);
          vert.jointIndices = hasSkin ? glm::vec4(glm::make_vec4(&jointIndicesBuffer[v * 4])) : glm::vec4(0.0f);
          vert.jointWeights = hasSkin ? glm::make_vec4(&jointWeightsBuffer[v * 4]) : glm::vec4(0.0f);
-         vertexVector.push_back(vert);
+         primitive->AddVertex(vert);
       }
 
       if (normalsBuffer == nullptr)
       {
          UTO_LOG("Missing normals for model, calculating flat normals");
-         for (size_t v = 0; v < vertexCount; v += 3)
+         for (size_t v = 0; v < primitive->GetNumVertices(); v += 3)
          {
+            std::vector<Vk::Vertex>& vertexVector = primitive->vertexVector;
             glm::vec3 v1 = vertexVector[v].pos - vertexVector[v+1].pos;
             glm::vec3 v2 = vertexVector[v].pos - vertexVector[v+2].pos;
             glm::vec3 normal = glm::cross(v1, v2);
@@ -281,12 +286,10 @@ namespace Utopian
             vertexVector[v+2].normal = normal;
          }
       }
-
-      return (uint32_t)vertexCount;
    }
 
-   uint32_t glTFModel::AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
-                                       std::vector<uint32_t>& indexVector, uint32_t vertexStart)
+   void glTFModel::AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
+                                       Vk::Mesh* primitive)
    {
       const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.indices];
       const tinygltf::BufferView& bufferView = input.bufferViews[accessor.bufferView];
@@ -299,85 +302,30 @@ namespace Utopian
       case TINYGLTF_PARAMETER_TYPE_UNSIGNED_INT: {
          uint32_t* buf = new uint32_t[accessor.count];
          memcpy(buf, &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint32_t));
-         for (size_t index = 0; index < accessor.count; index++) {
-            indexVector.push_back(buf[index] + vertexStart);
+         for (size_t index = 0; index < accessor.count; index += 3) {
+            primitive->AddTriangle(buf[index], buf[index+1], buf[index+2]);
          }
          break;
       }
       case TINYGLTF_PARAMETER_TYPE_UNSIGNED_SHORT: {
          uint16_t* buf = new uint16_t[accessor.count];
          memcpy(buf, &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint16_t));
-         for (size_t index = 0; index < accessor.count; index++) {
-            indexVector.push_back(buf[index] + vertexStart);
+         for (size_t index = 0; index < accessor.count; index += 3) {
+            primitive->AddTriangle(buf[index], buf[index+1], buf[index+2]);
          }
          break;
       }
       case TINYGLTF_PARAMETER_TYPE_UNSIGNED_BYTE: {
          uint8_t* buf = new uint8_t[accessor.count];
          memcpy(buf, &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint8_t));
-         for (size_t index = 0; index < accessor.count; index++) {
-            indexVector.push_back(buf[index] + vertexStart);
+         for (size_t index = 0; index < accessor.count; index += 3) {
+            primitive->AddTriangle(buf[index], buf[index+1], buf[index+2]);
          }
          break;
       }
       default:
          UTO_LOG("Index component type " + std::to_string(accessor.componentType) + " not supported!");
          assert(0);
-      }
-
-      return indexCount;
-   }
-
-   void glTFModel::CreateDeviceBuffers(std::vector<uint32_t>& indexVector, std::vector<glTFVertex>& vertexVector, Vk::Device* device)
-   {
-      mVerticesCount = (uint32_t)vertexVector.size();
-      mIndicesCount = (uint32_t)indexVector.size();
-
-      uint32_t vertexVectorSize = mVerticesCount * sizeof(glTFVertex);
-      uint32_t indexVectorSize = mIndicesCount * sizeof(uint32_t);
-
-      Vk::BUFFER_CREATE_INFO stagingVertexCI;
-      stagingVertexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-      stagingVertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-      stagingVertexCI.data = vertexVector.data();
-      stagingVertexCI.size = vertexVectorSize;
-      stagingVertexCI.name = "Staging Vertex buffer: " + mFilename;
-      Vk::Buffer vertexStaging = Vk::Buffer(stagingVertexCI, device);
-
-      Vk::BUFFER_CREATE_INFO vertexCI;
-      vertexCI.usageFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-      vertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-      vertexCI.data = nullptr;
-      vertexCI.size = vertexVectorSize;
-      vertexCI.name = "Vertex buffer: " + mFilename;
-      mVertexBuffer = std::make_shared<Vk::Buffer>(vertexCI, device);
-
-      // Copy from host visible to device local memory
-      Vk::CommandBuffer cmdBuffer = Vk::CommandBuffer(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
-      vertexStaging.Copy(&cmdBuffer, mVertexBuffer.get());
-      cmdBuffer.Flush();
-
-      if (mIndicesCount > 0)
-      {
-         Vk::BUFFER_CREATE_INFO stagingIndexCI;
-         stagingIndexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-         stagingIndexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-         stagingIndexCI.data = indexVector.data();
-         stagingIndexCI.size = indexVectorSize;
-         stagingIndexCI.name = "Staging Index buffer: " + mFilename;
-         Vk::Buffer indexStaging = Vk::Buffer(stagingIndexCI, device);
-
-         Vk::BUFFER_CREATE_INFO indexCI;
-         indexCI.usageFlags = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-         indexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-         indexCI.data = nullptr;
-         indexCI.size = indexVectorSize;
-         indexCI.name = "Index buffer: " + mFilename;
-         mIndexBuffer = std::make_shared<Vk::Buffer>(indexCI, device);
-
-         cmdBuffer.Begin();
-         indexStaging.Copy(&cmdBuffer, mIndexBuffer.get());
-         cmdBuffer.Flush();
       }
    }
 
@@ -419,12 +367,6 @@ namespace Utopian
 
    void glTFModel::Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, glm::mat4 worldMatrix)
    {
-      // All primitives share the same vertex and index buffers
-      commandBuffer->CmdBindVertexBuffer(0, 1, mVertexBuffer.get());
-
-      if (mIndexBuffer != nullptr)
-         commandBuffer->CmdBindIndexBuffer(mIndexBuffer.get(), 0, VK_INDEX_TYPE_UINT32);
-
       for (auto& node : mNodes) {
          RenderNode(commandBuffer, pipelineInterface, node, worldMatrix);
       }
@@ -445,17 +387,23 @@ namespace Utopian
          }
 
          commandBuffer->CmdPushConstants(pipelineInterface, VK_SHADER_STAGE_ALL, sizeof(glm::mat4), &nodeMatrix);
-         for (Primitive& primitive : node->mesh.primitives)
+         for (uint32_t i = 0; i < node->mesh.primitives.size(); i++)
          {
-            if (primitive.indexCount > 0 || primitive.vertexCount > 0)
-            {
-               VkDescriptorSet descriptorSet = mMaterials[primitive.materialIndex].descriptorSet->GetVkHandle();
-               commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
+            Vk::Mesh* primitive = node->mesh.primitives[i];
 
-               if (primitive.hasIndices) 
-                  commandBuffer->CmdDrawIndexed(primitive.indexCount, 1, primitive.firstIndex, 0, 0);
+            if (primitive->GetNumIndices() > 0 || primitive->GetNumVertices() > 0)
+            {
+               VkDescriptorSet descriptorSet = mMaterials[node->mesh.materials[i]].descriptorSet->GetVkHandle();
+               commandBuffer->CmdBindDescriptorSet(pipelineInterface, 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
+               commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+
+               if (primitive->GetNumIndices() > 0)
+               {
+                  commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+                  commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
+               }
                else
-                  commandBuffer->CmdDraw(primitive.vertexCount, 1, primitive.firstVertex, 0);
+                  commandBuffer->CmdDraw(primitive->GetNumVertices(), 1, 0, 0);
             }
          }
       }

@@ -5,7 +5,7 @@
 #include "vertex.glsl"
 
 // Instancing input
-layout (location = 5) in mat4 InInstanceWorld;
+layout (location = 7) in mat4 InInstanceWorld;
 
 layout (std140, set = 0, binding = 0) uniform UBO_cascadeTransforms 
 {

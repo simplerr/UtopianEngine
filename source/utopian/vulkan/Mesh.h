@@ -35,7 +35,8 @@ namespace Utopian::Vk
 
       BoundingBox GetBoundingBox();
 
-      uint32_t GetNumIndices();
+      uint32_t GetNumIndices() const;
+      uint32_t GetNumVertices() const;
 
       Buffer* GetVertxBuffer();
       Buffer* GetIndexBuffer();
@@ -66,9 +67,6 @@ namespace Utopian::Vk
       SharedPtr<Texture> mSpecularTexture;
 
       BoundingBox mBoundingBox;
-
-      uint32_t mIndicesCount;
-      uint32_t mVerticesCount;
 
       std::string mDebugName = "unnamed";
    };

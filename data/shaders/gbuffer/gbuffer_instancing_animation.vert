@@ -6,7 +6,7 @@
 #include "shared_variables.glsl"
 
 // Instancing input
-layout (location = 5) in mat4 InInstanceWorld;
+layout (location = 7) in mat4 InInstanceWorld;
 
 struct Sphere
 {
