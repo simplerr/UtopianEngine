@@ -13,10 +13,32 @@
 
 namespace Utopian
 {
-   struct Mesh
+   struct Material2
    {
+      glm::vec4 baseColorFactor = glm::vec4(1.0f);
+      SharedPtr<Vk::Texture> colorTexture;
+      SharedPtr<Vk::Texture> normalTexture;
+      SharedPtr<Vk::DescriptorSet> descriptorSet;
+   };
+
+   class Renderable2
+   {
+   public:
+      void AddPrimitive(Vk::Mesh* primitive, Material2 material) {
+         primitives.push_back(primitive);
+         materials.push_back(material);
+      }
+
+   //private:
       std::vector<Vk::Mesh*> primitives;
-      std::vector<int32_t> materials;
+      std::vector<Material2> materials;
+   };
+
+   struct RenderCommand
+   {
+      Renderable2* renderable;
+      VkDescriptorSet skinDescriptorSet;
+      glm::mat4 world;
    };
 
    struct Node
@@ -26,7 +48,7 @@ namespace Utopian
       std::vector<Node*> children;
       std::string name;
       Node* parent;
-      Mesh mesh;
+      Renderable2 renderable;
       uint32_t index;
       int32_t skin = -1;
       glm::vec3 translation = glm::vec3(0.0f);
@@ -35,65 +57,59 @@ namespace Utopian
       glm::mat4 matrix = glm::mat4();
    };
 
-   /* Based on https://github.com/SaschaWillems/Vulkan/tree/master/examples/gltfskinning */
+   /**
+    * Represents all models in the engine, based on the glTF model format.
+    * It can be viewed as a local scene graph containing a hierarchy of nodes.
+    *
+    * Models can be created manually or from the ModelLoader that has both
+    * a glTF loader and an Assimp loader. Skinning is only supported when loaded
+    * as .gltf.
+    *
+    * Example of manual model creation:
+    *
+    * Primitive* primitive = new Primitive();
+    * primitive->AddVertex(glm::vec3(-0.5f, -0.5f, 0.5f));
+    * primitive->AddVertex(glm::vec3(0.5f, -0.5f, 0.5f));
+    * primitive->AddVertex(glm::vec3(0.5f, 0.5f, 0.5f));
+    * primitive->AddVertex(glm::vec3(-0.5f, 0.5f, 0.5f));
+    * primitive->AddTriangle(1, 2, 0);
+    * primitive->AddTriangle(3, 0, 2);
+    * primitive->BuildBuffers(device);
+    *
+    * Renderable renderable;
+    * renderable.AddPrimitive(primitive, gEngine().DefaultMaterial());
+    *
+    * Node* node = new Node();
+    * node->SetRenderable(renderable);
+    *
+    * Model* model = new Model();
+    * model->AddNode(node);
+    */
    class glTFModel
    {
    public:
-
-      struct Material
-      {
-         glm::vec4 baseColorFactor = glm::vec4(1.0f);
-         uint32_t baseColorTextureIndex;
-         uint32_t normalTextureIndex;
-         SharedPtr<Vk::DescriptorSet> descriptorSet;
-      };
-
-      // Todo: better name
-      struct ShaderTexture
-      {
-         SharedPtr<Vk::Texture> texture;
-      };
-
       glTFModel();
       ~glTFModel();
 
-      void LoadFromFile(std::string filename, Vk::Device* device);
+      void AddNode(Node* node);
+      void AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator);
 
-      void Render(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, glm::mat4 worldMatrix);
-      void RenderNode(Vk::CommandBuffer* commandBuffer, Vk::PipelineInterface* pipelineInterface, Node* node, glm::mat4 worldMatrix);
+      void GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix);
+      void AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix);
+
       void UpdateAnimation(float deltaTime);
       bool IsAnimated() const;
 
+      // Used by SkinAnimator to the node to animate
       Node* NodeFromIndex(uint32_t index);
       Node* FindNode(Node* parent, uint32_t index);
 
    private:
       void DestroyNode(Node* node);
-      void LoadImages(tinygltf::Model& input);
-      void LoadMaterials(tinygltf::Model& input);
-      void LoadNode(const tinygltf::Node& inputNode, const tinygltf::Model& input, Node* parent,
-                    uint32_t nodeIndex, Vk::Device* device);
-      void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
-                            Vk::Mesh* primitive);
-      void AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive,
-                           Vk::Mesh* primitive);
-      void CreateTextureDescriptorSet(Vk::Device* device);
-
-      // Helper functions
-      glm::mat4 GetNodeMatrix(Node* node);
 
    private:
-      std::vector<ShaderTexture> mImages;
-      std::vector<int32_t> mImageRefs;
-      std::vector<Material> mMaterials;
       std::vector<Node*> mNodes;
-      std::string mFilename;
-      uint32_t mActiveAnimation = 0;
-
       SharedPtr<SkinAnimator> mSkinAnimator = nullptr;
-
-      // Todo: move these
-      SharedPtr<Vk::DescriptorSetLayout> mMeshTexturesDescriptorSetLayout;
-      SharedPtr<Vk::DescriptorPool> mMeshTexturesDescriptorPool;
+      std::string mFilename;
    };
 }

@@ -2,6 +2,7 @@
 #include "glTFModel.h"
 #include "core/Log.h"
 #include "vulkan/handles/Buffer.h"
+#include "glTFLoader.h"
 
 // Todo: remove
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -13,9 +14,6 @@ namespace Utopian
    {
       LoadSkins(input, model, device);
       LoadAnimations(input, model);
-
-      // Todo: remove
-      CreateSkinningDescriptorSet(device);
    }
 
    SkinAnimator::~SkinAnimator()
@@ -152,16 +150,8 @@ namespace Utopian
       }
    }
 
-   void SkinAnimator::CreateSkinningDescriptorSet(Vk::Device* device)
+   void SkinAnimator::CreateSkinningDescriptorSet(Vk::Device* device, Vk::DescriptorSetLayout* setLayout, Vk::DescriptorPool* pool)
    {
-      mMeshSkinningDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(device);
-      mMeshSkinningDescriptorSetLayout->AddStorageBuffer(0, VK_SHADER_STAGE_ALL, 1); // jointMatrices
-      mMeshSkinningDescriptorSetLayout->Create();
-
-      mMeshSkinningDescriptorPool = std::make_shared<Vk::DescriptorPool>(device);
-      mMeshSkinningDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 100);
-      mMeshSkinningDescriptorPool->Create();
-
       for (auto& skin : mSkins)
       {
          VkDescriptorBufferInfo descriptor;
@@ -169,8 +159,7 @@ namespace Utopian
          descriptor.range = sizeof(glm::mat4) * skin.inverseBindMatrices.size();;
          descriptor.offset = 0;
 
-         skin.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, mMeshSkinningDescriptorSetLayout.get(),
-                                                                  mMeshSkinningDescriptorPool.get());
+         skin.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, setLayout, pool);
          skin.descriptorSet->BindStorageBuffer(0, &descriptor);
          skin.descriptorSet->UpdateDescriptorSets();
       }

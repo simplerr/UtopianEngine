@@ -12,6 +12,11 @@
 
 using namespace Utopian;
 
+namespace Utopian
+{
+   class glTFLoader;
+}
+
 class MiniCamera;
 
 class PhysicallyBasedRendering
@@ -60,4 +65,5 @@ private:
    VertexInputParameters mVertexInputParameters;
 
    std::vector<SceneNode> mSceneNodes;
+   SharedPtr<glTFLoader> mglTFLoader;
 };

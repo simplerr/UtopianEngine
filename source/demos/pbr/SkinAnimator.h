@@ -10,6 +10,7 @@
 namespace Utopian
 {
    class glTFModel;
+   class glTFLoader;
    struct Node;
 
    class SkinAnimator
@@ -57,7 +58,7 @@ namespace Utopian
 
       VkDescriptorSet GetJointMatricesDescriptorSet(int32_t skin);
 
-      void CreateSkinningDescriptorSet(Vk::Device* device);
+      void CreateSkinningDescriptorSet(Vk::Device* device, Vk::DescriptorSetLayout* setLayout, Vk::DescriptorPool* pool);
 
       void UpdateAnimation(float deltaTime);
       void UpdateJoints(Node* node);
@@ -67,9 +68,5 @@ namespace Utopian
       std::vector<Skin> mSkins;
       std::vector<Animation> mAnimations;
       uint32_t mActiveAnimation = 0;
-
-      // Todo: move
-      SharedPtr<Vk::DescriptorSetLayout> mMeshSkinningDescriptorSetLayout;
-      SharedPtr<Vk::DescriptorPool> mMeshSkinningDescriptorPool;
    };
 }
