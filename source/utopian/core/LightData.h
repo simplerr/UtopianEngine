@@ -11,17 +11,17 @@ namespace Utopian
       SPOT_LIGHT
    };
 
-   struct Material
+   struct LightColor
    {
-      Material() {
+      LightColor() {
          //ZeroMemory(this, sizeof(this));
       }
 
-      Material(glm::vec4 color) {
+      LightColor(glm::vec4 color) {
          ambient = diffuse = specular = color;
       }
 
-      Material(glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular) {
+      LightColor(glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular) {
          this->ambient = ambient;
          this->diffuse = diffuse;
          this->specular = specular;
@@ -40,7 +40,7 @@ namespace Utopian
    {
    public:
       // Light color
-      Material material;
+      LightColor lightColor;
 
       // Packed into 4D vector: (position, range)
       glm::vec3 position;

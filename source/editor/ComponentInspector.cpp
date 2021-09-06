@@ -69,7 +69,7 @@ namespace Utopian
       mCastShadow = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_CAST_SHADOW);
       mVisible = renderable->IsVisible();
 
-      std::vector<Vk::Mesh*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
+      std::vector<Primitive*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
       std::vector<Vk::Texture*> allTextures;
 
       for (auto& mesh : meshes)
@@ -232,13 +232,13 @@ namespace Utopian
          ImGui::SliderFloat("Range", &mLightData.range, 0.0f, 10000.0f);
          ImGui::SliderFloat("Spot", &mLightData.spot, 0.0f, 30.0f);
 
-         ImGui::ColorEdit3("Color", &mLightData.material.ambient.x);
-         mLightData.material.diffuse = mLightData.material.ambient;
-         mLightData.material.specular = mLightData.material.ambient;
+         ImGui::ColorEdit3("Color", &mLightData.lightColor.ambient.x);
+         mLightData.lightColor.diffuse = mLightData.lightColor.ambient;
+         mLightData.lightColor.specular = mLightData.lightColor.ambient;
 
          mLight->SetIntensity(mLightData.intensity);
          mLight->SetDirection(mLightData.direction);
-         mLight->SetMaterial(mLightData.material);
+         mLight->SetLightColor(mLightData.lightColor);
          mLight->SetRange(mLightData.range);
          mLight->SetSpot(mLightData.spot);
          mLight->SetAttenuation(mLightData.att);

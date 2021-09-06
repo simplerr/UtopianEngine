@@ -3,7 +3,7 @@
 #include "core/renderer/Renderable.h"
 #include "core/components/CTransform.h"
 #include "core/World.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "im3d/im3d.h"
 
 namespace Utopian

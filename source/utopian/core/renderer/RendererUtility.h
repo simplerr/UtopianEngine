@@ -11,6 +11,7 @@ namespace Utopian
    {
    public:
       void DrawFullscreenQuad(Vk::CommandBuffer* commandBuffer);
+      void DrawPrimitive(Vk::CommandBuffer* commandBuffer, Primitive* primitive);
       //void DrawMesh(...);
 
       /** Blend state helpers. */

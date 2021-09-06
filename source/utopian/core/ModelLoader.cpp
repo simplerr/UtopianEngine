@@ -1,13 +1,16 @@
 #include <vector>
 
-#include "ModelLoader.h"
-#include "TextureLoader.h"
-#include "vulkan/Mesh.h"
+#include "core/renderer/Primitive.h"
+#include "core/Log.h"
+#include "core/renderer/Model.h"
+#include "core/glTFLoader.h"
+#include "core/ModelLoader.h"
+#include "core/renderer/Model.h"
+#include "vulkan/handles/Device.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
-#include "core/Log.h"
-#include "StaticModel.h"
-#include "vulkan/handles/Device.h"
+#include "vulkan/StaticModel.h"
+#include "vulkan/TextureLoader.h"
 
 // TODO: Note that the format should be #include <assimp/Importer.hpp> but something in the project settings is wrong
 #include "../external/assimp/assimp/Importer.hpp"
@@ -20,8 +23,10 @@
 namespace Utopian::Vk
 {
    ModelLoader::ModelLoader(Device* device)
+      : mDevice(device)
    {
-      mDevice = device;
+      mAssimpLoader = std::make_shared<AssimpLoader>(device);
+      mglTFLoader = std::make_shared<glTFLoader>(device);
 
       mMeshTexturesDescriptorSetLayout = std::make_shared<DescriptorSetLayout>(device);
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
@@ -58,6 +63,147 @@ namespace Utopian::Vk
       return mMeshTexturesDescriptorPool;
    }
 
+   SharedPtr<Model> ModelLoader::LoadModel2(std::string filename)
+   {
+      // Check if the model already is loaded
+      if (mModelMap2.find(filename) != mModelMap2.end())
+         return mModelMap2[filename];
+
+      SharedPtr<Model> model = nullptr;
+
+      // Todo: Check file extension
+      model = mAssimpLoader->LoadModel(filename);
+
+      if (model == nullptr)
+      {
+         if (mPlaceholderModel2 == nullptr)
+            mPlaceholderModel2 = LoadModel2(PLACEHOLDER_MODEL_PATH);
+
+         model = mPlaceholderModel2;
+      }
+
+      return model;
+   }
+
+   SharedPtr<Model> ModelLoader::LoadBox2(std::string texture)
+   {
+      Primitive* primitive = new Primitive(mDevice);
+
+      // Front
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
+
+      // Back
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)));
+
+      // Top
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+
+      // Bottom
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+
+      // Left
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+
+      // Right
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+
+      // Front
+      primitive->AddTriangle(2, 0, 1);
+      primitive->AddTriangle(0, 2, 3);
+
+      // Back
+      primitive->AddTriangle(4, 6, 5);
+      primitive->AddTriangle(6, 4, 7);
+
+      // Top
+      primitive->AddTriangle(10, 8, 9);
+      primitive->AddTriangle(8, 10, 11);
+
+      // Bottom
+      primitive->AddTriangle(12, 14, 13);
+      primitive->AddTriangle(14, 12, 15);
+
+      // Left
+      primitive->AddTriangle(16, 18, 17);
+      primitive->AddTriangle(18, 16, 19);
+
+      // Right
+      primitive->AddTriangle(22, 20, 21);
+      primitive->AddTriangle(20, 22, 23);
+
+      primitive->BuildBuffers(mDevice);
+
+      Mesh mesh;
+      mesh.AddPrimitive(primitive, mglTFLoader->GetDefaultMaterial());
+
+      Node* node = new Node();
+      node->mesh = mesh;
+
+      SharedPtr<Model> model = std::make_shared<Model>();
+      model->AddNode(node);
+
+      return model;
+   }
+
+   SharedPtr<Model> ModelLoader::LoadGrid2(float cellSize, int numCells)
+   {
+      Primitive* primitive = new Primitive(mDevice);
+
+      for (int x = 0; x < numCells; x++)
+      {
+         for (int z = 0; z < numCells; z++)
+         {
+            Vk::Vertex vertex;
+            const float originOffset = (cellSize * numCells) / 2.0f - cellSize / 2;
+            vertex.pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
+            vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+            vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
+            primitive->AddVertex(vertex);
+         }
+      }
+
+      for (int x = 0; x < numCells - 1; x++)
+      {
+         for (int z = 0; z < numCells - 1; z++)
+         {
+            primitive->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+            primitive->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+         }
+      }
+
+      primitive->BuildBuffers(mDevice);
+
+      Mesh mesh;
+      mesh.AddPrimitive(primitive, mglTFLoader->GetDefaultMaterial());
+
+      Node* node = new Node();
+      node->mesh = mesh;
+
+      SharedPtr<Model> model = std::make_shared<Model>();
+      model->AddNode(node);
+
+      return model;
+   }
+
    SharedPtr<StaticModel> ModelLoader::LoadModel(std::string filename)
    {
       // Check if the model already is loaded
@@ -73,12 +219,10 @@ namespace Utopian::Vk
 
       if (scene != nullptr)
       {
-         std::vector<AssimpMesh> assimpMeshes;
-
          // Loop over all meshes
          for (unsigned int meshId = 0u; meshId < scene->mNumMeshes; meshId++)
          {
-            Mesh* mesh = new Mesh(mDevice);
+            Primitive* primitive = new Primitive(mDevice);
             aiMesh* assimpMesh = scene->mMeshes[meshId];
 
             // Get the diffuse color
@@ -106,7 +250,7 @@ namespace Utopian::Vk
                vertex.tangent = glm::vec4(tangent.x, tangent.y, tangent.z, 1.0f);
                vertex.uv = glm::vec2(uv.x, uv.y);
                vertex.color = glm::vec3(color.r, color.g, color.b);
-               mesh->AddVertex(vertex);
+               primitive->AddVertex(vertex);
             }
 
             // Load indices
@@ -114,7 +258,7 @@ namespace Utopian::Vk
             {
                for (unsigned int indexId = 0u; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId+=3)
                {
-                  mesh->AddTriangle(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
+                  primitive->AddTriangle(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
                }
             }
 
@@ -196,10 +340,10 @@ namespace Utopian::Vk
                specularTexturePath = GetPath(material, aiTextureType_SPECULAR, filename);
             }
 
-            mesh->LoadTextures(diffuseTexturePath, normalTexturePath, specularTexturePath);
-            mesh->SetDebugName(filename);
-            mesh->BuildBuffers(mDevice);
-            model->AddMesh(mesh);
+            primitive->LoadTextures(diffuseTexturePath, normalTexturePath, specularTexturePath);
+            primitive->SetDebugName(filename);
+            primitive->BuildBuffers(mDevice);
+            model->AddMesh(primitive);
          }
 
          // Add the model to the model map
@@ -219,43 +363,41 @@ namespace Utopian::Vk
       return model;
    }
 
-   SharedPtr<StaticModel> ModelLoader::LoadQuad()
+   SharedPtr<Model> ModelLoader::LoadQuad()
    {
-      // Check if the model already is loaded
-      if (mModelMap.find("quad") != mModelMap.end())
-         return mModelMap["quad"];
+      Utopian::Primitive* primitive = new Utopian::Primitive(nullptr);
 
-      SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
-      Mesh* mesh = new Mesh(mDevice);
-
-      // Front
-      Vertex vertex = {};
+      Vk::Vertex vertex = {};
       vertex.pos = glm::vec3(-0.5f, -0.5f, 0.5f);
       vertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
-      vertex.uv = glm::vec2(0.0f, 0.0f);
-      mesh->AddVertex(vertex);
+      vertex.uv = glm::vec2(0.0f, 1.0f);
+      primitive->AddVertex(vertex);
 
       vertex.pos = glm::vec3(0.5f, -0.5f, 0.5f);
-      vertex.uv = glm::vec2(1.0f, 0.0f);
-      mesh->AddVertex(vertex);
+      vertex.uv = glm::vec2(1.0f, 1.0f);
+      primitive->AddVertex(vertex);
 
       vertex.pos = glm::vec3(0.5f, 0.5f, 0.5f);
-      vertex.uv = glm::vec2(1.0f, 1.0f);
-      mesh->AddVertex(vertex);
+      vertex.uv = glm::vec2(1.0f, 0.0f);
+      primitive->AddVertex(vertex);
 
       vertex.pos = glm::vec3(-0.5f, 0.5f, 0.5f);
-      vertex.uv = glm::vec2(0.0f, 1.0f);
-      mesh->AddVertex(vertex);
+      vertex.uv = glm::vec2(0.0f, 0.0f);
+      primitive->AddVertex(vertex);
 
-      // Front
-      mesh->AddTriangle(1, 2, 0);
-      mesh->AddTriangle(3, 0, 2);
+      primitive->AddTriangle(2, 0, 1);
+      primitive->AddTriangle(0, 2, 3);
+      primitive->BuildBuffers(mDevice);
+      
+      Mesh mesh;
+      mesh.AddPrimitive(primitive, mglTFLoader->GetDefaultMaterial());
+      
+      Node* node = new Node();
+      node->mesh = mesh;
+      
+      SharedPtr<Model> model = std::make_shared<Model>();
+      model->AddNode(node);
 
-      mesh->BuildBuffers(mDevice);
-      model->AddMesh(mesh);
-
-      model->Init(mDevice);
-      mModelMap["quad"] = model;
       return model;
    }
 
@@ -268,7 +410,7 @@ namespace Utopian::Vk
          return mModelMap[name];
 
       SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
-      Mesh* mesh = new Mesh(mDevice);
+      Primitive* primitive = new Primitive(mDevice);
 
       for (int x = 0; x < numCells; x++)
       {
@@ -280,7 +422,7 @@ namespace Utopian::Vk
             vertex.normal = glm::vec3(0.0f, -1.0f, 0.0f);
             vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
             vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
-            mesh->AddVertex(vertex);
+            primitive->AddVertex(vertex);
          }
       }
 
@@ -288,143 +430,88 @@ namespace Utopian::Vk
       {
          for (int z = 0; z < numCells - 1; z++)
          {
-            mesh->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
-            mesh->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+            primitive->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+            primitive->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
          }
       }
 
-      mesh->LoadTextures(PLACEHOLDER_TEXTURE_PATH);
-      mesh->BuildBuffers(mDevice);
-      model->AddMesh(mesh);
+      primitive->LoadTextures(PLACEHOLDER_TEXTURE_PATH);
+      primitive->BuildBuffers(mDevice);
+      model->AddMesh(primitive);
 
       model->Init(mDevice);
       mModelMap[name] = model;
       return model;
    }
 
-   SharedPtr<StaticModel> ModelLoader::LoadDebugBoxLines()
-   {
-      // Check if the model already is loaded
-      if (mModelMap.find("debug_box_lines") != mModelMap.end())
-         return mModelMap["debug_box_lines"];
-
-      SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
-      Mesh* mesh = new Mesh(mDevice);
-
-      // Front
-      mesh->AddVertex(glm::vec3(-0.5f, -0.5f, 0.5f));   // 0
-      mesh->AddVertex(glm::vec3(0.5f, -0.5f, 0.5f));    // 1
-      mesh->AddVertex(glm::vec3(0.5f, 0.5f, 0.5f));     // 2
-      mesh->AddVertex(glm::vec3(-0.5f, 0.5f, 0.5f));    // 3
-
-      // Back
-      mesh->AddVertex(glm::vec3(-0.5f, -0.5f, -0.5f));  // 4
-      mesh->AddVertex(glm::vec3(0.5f, -0.5f, -0.5f));   // 5
-      mesh->AddVertex(glm::vec3(0.5f, 0.5f, -0.5f));    // 6
-      mesh->AddVertex(glm::vec3(-0.5f, 0.5f, -0.5f));   // 7
-
-      // Front
-      mesh->AddLine(0, 3);
-      mesh->AddLine(3, 2);
-      mesh->AddLine(2, 1);
-      mesh->AddLine(1, 0);
-
-      // Top
-      mesh->AddLine(0, 1);
-      mesh->AddLine(1, 5);
-      mesh->AddLine(5, 4);
-      mesh->AddLine(4, 0);
-
-      // Back
-      mesh->AddLine(5, 6);
-      mesh->AddLine(6, 7);
-      mesh->AddLine(7, 4);
-      mesh->AddLine(4, 5);
-
-      // Bottom
-      mesh->AddLine(6, 2);
-      mesh->AddLine(2, 3);
-      mesh->AddLine(3, 7);
-      mesh->AddLine(7, 6);
-
-      // No need to add more lines, a cube is already formed
-
-      mesh->BuildBuffers(mDevice);     
-      model->AddMesh(mesh);
-
-      model->Init(mDevice);
-      mModelMap["debug_box_lines"] = model;
-      return model;
-   }
-
    SharedPtr<StaticModel> ModelLoader::LoadBox(std::string texture)
    {
       SharedPtr<StaticModel> model = std::make_shared<StaticModel>();
-      Mesh* mesh = new Mesh(mDevice);
+      Primitive* primitive = new Primitive(mDevice);
 
       // Front
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
 
       // Back
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f)));
 
       // Top
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
       // Bottom
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
       // Left
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
       // Right
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      mesh->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
 
       // Front
-      mesh->AddTriangle(1, 0, 2);
-      mesh->AddTriangle(3, 2, 0);
+      primitive->AddTriangle(1, 0, 2);
+      primitive->AddTriangle(3, 2, 0);
 
       // Back
-      mesh->AddTriangle(5, 6, 4);
-      mesh->AddTriangle(7, 4, 6);
+      primitive->AddTriangle(5, 6, 4);
+      primitive->AddTriangle(7, 4, 6);
 
       // Top
-      mesh->AddTriangle(9, 8, 10);
-      mesh->AddTriangle(11, 10, 8);
+      primitive->AddTriangle(9, 8, 10);
+      primitive->AddTriangle(11, 10, 8);
 
       // Bottom
-      mesh->AddTriangle(13, 14, 12);
-      mesh->AddTriangle(15, 12, 14);
+      primitive->AddTriangle(13, 14, 12);
+      primitive->AddTriangle(15, 12, 14);
 
       // Left
-      mesh->AddTriangle(17, 18, 16);
-      mesh->AddTriangle(19, 16, 18);
+      primitive->AddTriangle(17, 18, 16);
+      primitive->AddTriangle(19, 16, 18);
 
       // Right
-      mesh->AddTriangle(21, 20, 22);
-      mesh->AddTriangle(23, 22, 20);
+      primitive->AddTriangle(21, 20, 22);
+      primitive->AddTriangle(23, 22, 20);
 
-      mesh->LoadTextures(texture);
-      mesh->BuildBuffers(mDevice);
-      model->AddMesh(mesh);
+      primitive->LoadTextures(texture);
+      primitive->BuildBuffers(mDevice);
+      model->AddMesh(primitive);
 
       model->Init(mDevice);
 

@@ -129,14 +129,14 @@ namespace Utopian
       }
       else if (mCollisionShapeType == CollisionShapeType::MESH)
       {
-         Vk::Mesh* mesh = mRenderable->GetInternal()->GetModel()->mMeshes[0];
+         Primitive* primitive = mRenderable->GetInternal()->GetModel()->mMeshes[0];
          btTriangleMesh* triangleMesh = new btTriangleMesh();
 
-         for (uint32_t i = 0; i < mesh->GetNumIndices() - 3; i += 3)
+         for (uint32_t i = 0; i < primitive->GetNumIndices() - 3; i += 3)
          {
-            btVector3 v1 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i]].pos);
-            btVector3 v2 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i+1]].pos);
-            btVector3 v3 = ToBulletVec3(mesh->vertexVector[mesh->indexVector[i+2]].pos);
+            btVector3 v1 = ToBulletVec3(primitive->vertexVector[primitive->indexVector[i]].pos);
+            btVector3 v2 = ToBulletVec3(primitive->vertexVector[primitive->indexVector[i+1]].pos);
+            btVector3 v3 = ToBulletVec3(primitive->vertexVector[primitive->indexVector[i+2]].pos);
             triangleMesh->addTriangle(-v1, -v2, -v3, true); // Note: negative signs, this is correct for prototype tool meshes
          }
 

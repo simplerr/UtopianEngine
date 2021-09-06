@@ -9,7 +9,7 @@
 
 namespace Utopian
 {
-   class glTFModel;
+   class Model;
    class glTFLoader;
    struct Node;
 
@@ -50,11 +50,11 @@ namespace Utopian
          float currentTime = 0.0f;
       };
 
-      SkinAnimator(tinygltf::Model& input, glTFModel* model, Vk::Device* device);
+      SkinAnimator(tinygltf::Model& input, Model* model, Vk::Device* device);
       ~SkinAnimator();
 
-      void LoadSkins(tinygltf::Model& input, glTFModel* model, Vk::Device* device);
-      void LoadAnimations(tinygltf::Model& input, glTFModel* model);
+      void LoadSkins(tinygltf::Model& input, Model* model, Vk::Device* device);
+      void LoadAnimations(tinygltf::Model& input, Model* model);
 
       VkDescriptorSet GetJointMatricesDescriptorSet(int32_t skin);
 

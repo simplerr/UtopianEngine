@@ -14,7 +14,7 @@
 #include "core/physics/Physics.h"
 #include "utility/math/Ray.h"
 #include "utility/math/Helpers.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/StaticModel.h"
 #include "core/Log.h"

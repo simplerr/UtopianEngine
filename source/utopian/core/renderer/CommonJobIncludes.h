@@ -19,6 +19,6 @@
 #include "vulkan/StaticModel.h"
 #include "vulkan/Vertex.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/EffectManager.h"
 #include "core/renderer/ScreenQuadRenderer.h"

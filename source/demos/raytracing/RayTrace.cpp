@@ -16,7 +16,7 @@
 #include "vulkan/handles/Device.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Sampler.h"

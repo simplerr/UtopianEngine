@@ -3,6 +3,8 @@
 #include "core/renderer/jobs/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Light.h"
+#include "core/renderer/Primitive.h"
+#include "core/renderer/Model.h"
 
 namespace Utopian
 {
@@ -33,7 +35,6 @@ namespace Utopian
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skydome/skydome.vert";
       effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skydome/skydome.frag";
-      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
       effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
       mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
@@ -44,7 +45,7 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
       mEffect->BindUniformBuffer("UBO_parameters", mParameterBlock);
 
-      mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+      mSkydomeModel = Vk::gModelLoader().LoadModel2("data/models/sphere.obj");
 
       // const uint32_t size = 240;
       // gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());
@@ -71,9 +72,10 @@ namespace Utopian
       commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
       commandBuffer->CmdBindDescriptorSets(mEffect);
 
-      commandBuffer->CmdBindVertexBuffer(0, 1, mSkydomeModel->mMeshes[0]->GetVertxBuffer());
-      commandBuffer->CmdBindIndexBuffer(mSkydomeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-      commandBuffer->CmdDrawIndexed(mSkydomeModel->GetNumIndices(), 1, 0, 0, 0);
+      Primitive* primitive = mSkydomeModel->GetFirstPrimitive();
+      commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+      commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+      commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
 
       mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
    }

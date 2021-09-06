@@ -20,7 +20,7 @@ namespace Utopian
    void CBloomLight::Update()
    {
       float renderableBrightness = mRenderable->GetColor().w;
-      glm::vec4 lightColor = mLight->GetMaterial().ambient;
+      glm::vec4 lightColor = mLight->GetLightColor().ambient;
       mRenderable->SetColor(glm::vec4(lightColor.r, lightColor.g, lightColor.b, renderableBrightness));
    }
 

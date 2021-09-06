@@ -14,7 +14,7 @@
 #include "core/Profiler.h"
 #include "core/Log.h"
 #include "vulkan/EffectManager.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/ShaderFactory.h"
 #include "vulkan/Debug.h"

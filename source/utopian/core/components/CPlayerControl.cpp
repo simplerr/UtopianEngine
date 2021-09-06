@@ -1,7 +1,7 @@
 #include <core/renderer/Renderable.h>
 #include <glm/ext/scalar_constants.hpp>
 #include <glm/geometric.hpp>
-#include <vulkan/ModelLoader.h>
+#include <core/ModelLoader.h>
 #include "core/components/COrbit.h"
 #include "core/components/CNoClip.h"
 #include "core/components/CTransform.h"

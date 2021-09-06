@@ -7,7 +7,7 @@
 #include "vulkan/TextureLoader.h"
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/Buffer.h"
-#include "glTFModel.h"
+#include "Model.h"
 
 // Todo: remove
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -26,12 +26,12 @@ namespace Utopian
              matrix;
    }
 
-   glTFModel::glTFModel()
+   Model::Model()
    {
 
    }
 
-   glTFModel::~glTFModel()
+   Model::~Model()
    {
       for (Node* node : mNodes)
       {
@@ -39,12 +39,17 @@ namespace Utopian
       }
    }
 
-   void glTFModel::AddNode(Node* node)
+   void Model::AddNode(Node* node)
    {
       mNodes.push_back(node);
+
+      if (mFirstPrimitive == nullptr && node->mesh.primitives.size() > 0)
+      {
+         mFirstPrimitive = node->mesh.primitives[0];
+      }
    }
 
-   void glTFModel::AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator)
+   void Model::AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator)
    {
       mSkinAnimator = skinAnimator;
 
@@ -53,14 +58,14 @@ namespace Utopian
          mSkinAnimator->UpdateJoints(node);
    }
 
-   void glTFModel::DestroyNode(Node* node)
+   void Model::DestroyNode(Node* node)
    {
-      for (auto& primitive : node->renderable.primitives)
+      for (auto& primitive : node->mesh.primitives)
       {
          delete primitive;
       }
 
-      node->renderable.materials.clear();
+      node->mesh.materials.clear();
 
       for (auto& child : node->children)
       {
@@ -70,7 +75,7 @@ namespace Utopian
       delete node;
    }
 
-   void glTFModel::UpdateAnimation(float deltaTime)
+   void Model::UpdateAnimation(float deltaTime)
    {
       if (IsAnimated())
       {
@@ -81,14 +86,19 @@ namespace Utopian
       }
    }
 
-   void glTFModel::GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix)
+   Primitive* Model::GetFirstPrimitive()
+   {
+      return mFirstPrimitive;
+   }
+
+   void Model::GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix)
    {
       for (auto& node : mNodes) {
          AppendRenderCommands(renderCommands, node, worldMatrix);
       }
    }
 
-   void glTFModel::AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix)
+   void Model::AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix)
    {
       glm::mat4 nodeMatrix = worldMatrix * node->GetLocalMatrix();
 
@@ -96,14 +106,14 @@ namespace Utopian
       command.world = nodeMatrix;
       command.skinDescriptorSet = VK_NULL_HANDLE;
 
-      if (node->renderable.primitives.size() > 0)
+      if (node->mesh.primitives.size() > 0)
       {
          if (IsAnimated())
          {
             command.skinDescriptorSet = mSkinAnimator->GetJointMatricesDescriptorSet(node->skin);
          }
 
-         command.renderable = &node->renderable;
+         command.mesh = &node->mesh;
          renderCommands.push_back(command);
       }
 
@@ -112,7 +122,7 @@ namespace Utopian
       }
    }
 
-   Node* glTFModel::FindNode(Node* parent, uint32_t index)
+   Node* Model::FindNode(Node* parent, uint32_t index)
    {
       Node* nodeFound = nullptr;
 
@@ -132,7 +142,7 @@ namespace Utopian
       return nodeFound;
    }
 
-   Node* glTFModel::NodeFromIndex(uint32_t index)
+   Node* Model::NodeFromIndex(uint32_t index)
    {
       Node *nodeFound = nullptr;
 
@@ -148,8 +158,13 @@ namespace Utopian
       return nodeFound;
    }
 
-   bool glTFModel::IsAnimated() const
+   bool Model::IsAnimated() const
    {
       return (mSkinAnimator != nullptr);
+   }
+
+   BoundingBox Model::GetBoundingBox()
+   {
+      return mBoundingBox;
    }
 }

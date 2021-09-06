@@ -43,7 +43,7 @@ void main()
    uint cascadeIndex = 0;
    float shadow = calculateShadow(position, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
-   Material material;
+   PhongMaterial material;
    material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
    material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
    material.specular = vec4(1.0f, 1.0f, 1.0f, 1024.0f);

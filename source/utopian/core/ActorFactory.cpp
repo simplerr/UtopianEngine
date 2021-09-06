@@ -14,7 +14,7 @@
 #include "core/components/CPolyMesh.h"
 #include "core/components/CSpawnPoint.h"
 #include "core/components/CFinishPoint.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "core/Log.h"
 
 namespace Utopian
@@ -86,7 +86,7 @@ namespace Utopian
                float range = (float)componentData["range"].ToNumber();
 
                CLight* light = actor->AddComponent<CLight>();
-               light->SetMaterial(glm::vec4(color, 1.0f));
+               light->SetLightColor(glm::vec4(color, 1.0f));
                light->SetDirection(dir);
                light->SetAtt(att.x, att.y, att.z);
                light->SetIntensity(intensity);

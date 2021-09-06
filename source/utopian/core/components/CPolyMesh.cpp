@@ -287,10 +287,10 @@ namespace Utopian
    {
       CRenderable* renderable = GetParent()->GetComponent<CRenderable>();
       Vk::StaticModel* model = renderable->GetInternal()->GetModel();
-      Vk::Mesh* mesh = model->mMeshes[0];
+      Primitive* primitive = model->mMeshes[0];
 
-      mesh->vertexVector.clear();
-      mesh->indexVector.clear();
+      primitive->vertexVector.clear();
+      primitive->indexVector.clear();
 
       uint32_t faceOffset = 0u;
 
@@ -342,17 +342,17 @@ namespace Utopian
                maxResult = dotResult;
             }
             
-            mesh->AddVertex(Vk::Vertex(-pos, -normal, texCoord, tangent, bitangent));
+            primitive->AddVertex(Vk::Vertex(-pos, -normal, texCoord, tangent, bitangent));
 
             indices.push_back(faceOffset++);
             uvIndex++;
          }
 
-         mesh->AddTriangle(indices[0], indices[1], indices[2]);
-         mesh->AddTriangle(indices[0], indices[2], indices[3]);
+         primitive->AddTriangle(indices[0], indices[1], indices[2]);
+         primitive->AddTriangle(indices[0], indices[2], indices[3]);
       }
 
-      mesh->BuildBuffers(gRenderer().GetDevice());
+      primitive->BuildBuffers(gRenderer().GetDevice());
       model->Init(gRenderer().GetDevice());
    }
 

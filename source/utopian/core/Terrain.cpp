@@ -1,6 +1,6 @@
 #include "core/Terrain.h"
 #include "core/renderer/RendererUtility.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/CommandBuffer.h"
@@ -8,10 +8,9 @@
 #include "vulkan/Effect.h"
 #include "vulkan/EffectManager.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/StaticModel.h"
 #include "vulkan/Texture.h"
 #include "core/renderer/ScreenQuadRenderer.h"
-#include "vulkan/Mesh.h"
+#include "core/renderer/Primitive.h"
 #include "core/renderer/Renderer.h"
 #include "core/physics/Physics.h"
 #include "core/Input.h"
@@ -57,7 +56,7 @@ namespace Utopian
 
       mMaterials.clear();
 
-      delete mQuadModel;
+      delete mQuadPrimitive;
    }
 
    void Terrain::Update()
@@ -280,9 +279,8 @@ namespace Utopian
    {
       terrainSize = cellSize * (numCells - 1);
 
-      mQuadModel = new Vk::StaticModel();
-      Vk::Mesh* mesh = new Vk::Mesh(mDevice);
-      mesh->SetDebugName("Terrain patches");
+      mQuadPrimitive = new Primitive(mDevice);
+      mQuadPrimitive->SetDebugName("Terrain patches");
 
       // Vertices
       for (auto x = 0; x < numCells; x++)
@@ -294,7 +292,7 @@ namespace Utopian
             vertex.pos = glm::vec3(x * cellSize + cellSize / 2.0f - originOffset, 0.0f, z * cellSize + cellSize / 2.0f - originOffset);
             vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
             vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
-            mesh->AddVertex(vertex);
+            mQuadPrimitive->AddVertex(vertex);
          }
       }
 
@@ -308,12 +306,11 @@ namespace Utopian
             uint32_t v2 = v1 + numCells;
             uint32_t v3 = v2 + 1;
             uint32_t v4 = v1 + 1;
-            mesh->AddQuad(v1, v2, v3, v4);
+            mQuadPrimitive->AddQuad(v1, v2, v3, v4);
          }
       }
 
-      mesh->BuildBuffers(mDevice);
-      mQuadModel->AddMesh(mesh);
+      mQuadPrimitive->BuildBuffers(mDevice);
    }
 
    glm::vec2 Terrain::TransformToUv(float x, float z)
@@ -400,9 +397,9 @@ namespace Utopian
       return blendmapImage;
    }
 
-   Vk::Mesh* Terrain::GetMesh()
+   Primitive* Terrain::GetPrimitive()
    {
-      return mQuadModel->mMeshes[0];
+      return mQuadPrimitive;
    }
 
    uint32_t Terrain::GetMapResolution()

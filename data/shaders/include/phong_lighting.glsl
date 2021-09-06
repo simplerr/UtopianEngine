@@ -10,7 +10,7 @@ layout (std140, set = 0, binding = 1) uniform UBO_lights
 } light_ubo;
 
 //! Computes the colors for directional light.
-void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+void ComputeDirectionalLight(PhongMaterial material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
    Light light = light_ubo.lights[lightIndex];
 
@@ -35,7 +35,7 @@ void ComputeDirectionalLight(Material material, int lightIndex, vec3 normal, vec
 }
 
 //! Computes the colors for a point light.
-void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+void ComputePointLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
    Light light = light_ubo.lights[lightIndex];
 
@@ -84,7 +84,7 @@ void ComputePointLight(Material material, int lightIndex, vec3 pos, vec3 normal,
 }
 
 //! Computes the colors for a spot light.
-void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
+void ComputeSpotLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
 {
    Light light = light_ubo.lights[lightIndex];
 
@@ -135,7 +135,7 @@ void ComputeSpotLight(Material material, int lightIndex, vec3 pos, vec3 normal, 
 }
 
 //! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
-void ApplyLighting(Material material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
+void ApplyLighting(PhongMaterial material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
                    float shadow, out vec4 litColor)
 {
    // Start with a sum of zero. 

@@ -1,5 +1,5 @@
 #include "AssetLoader.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/StaticModel.h"
 

@@ -1,5 +1,5 @@
-//! Corresponds to the C++ class Material. Stores the ambient, diffuse and specular colors for a material.
-struct Material
+//! Corresponds to the C++ class LightColor. Stores the ambient, diffuse and specular colors for a material.
+struct PhongMaterial
 {
    vec4 ambient;
    vec4 diffuse;
@@ -9,7 +9,7 @@ struct Material
 struct Light
 {
    // Color
-   Material material;
+   PhongMaterial material;
 
    vec3 pos;
    float range;
@@ -23,6 +23,6 @@ struct Light
    vec3 intensity;
    float id;
 
-   // Note: this padding corresponds to the padding in Vulkan::Material
+   // Note: this padding corresponds to the padding in Vulkan::LightColor
    vec4 pad;
 };

@@ -3,7 +3,7 @@
 #include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
 #include "core/renderer/ImGuiRenderer.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "vulkan/Vertex.h"
@@ -132,10 +132,10 @@ namespace Utopian
          commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
          commandBuffer->CmdBindDescriptorSets(mEffect);
 
-         Vk::Mesh* mesh = jobInput.sceneInfo.terrain->GetMesh();
-         commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-         commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-         commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+         Primitive* primitive = jobInput.sceneInfo.terrain->GetPrimitive();
+         commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+         commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+         commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
       }
 
       renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());

@@ -3,7 +3,7 @@
 #include "tinygltf/tiny_gltf.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "utility/Common.h"
-#include "glTFModel.h"
+#include "core/renderer/Model.h"
 
 namespace Utopian
 {
@@ -13,16 +13,16 @@ namespace Utopian
       glTFLoader(Vk::Device* device);
       ~glTFLoader();
 
-      SharedPtr<glTFModel> LoadModel(std::string filename, Vk::Device* device);
+      SharedPtr<Model> LoadModel(std::string filename, Vk::Device* device);
 
-      Material2 GetDefaultMaterial();
+      Material GetDefaultMaterial();
 
    private:
-      std::vector<Material2> LoadMaterials(tinygltf::Model& input, glTFModel* model);
-      void LoadNode(glTFModel* model, const tinygltf::Node& inputNode, std::vector<Material2>& loadedMaterials,
+      std::vector<Material> LoadMaterials(tinygltf::Model& input, Model* model);
+      void LoadNode(Model* model, const tinygltf::Node& inputNode, std::vector<Material>& loadedMaterials,
                     const tinygltf::Model& input, Node* parent, uint32_t nodeIndex, Vk::Device* device);
-      void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Vk::Mesh* primitive);
-      void AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Vk::Mesh* primitive);
+      void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive);
+      void AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive);
       void CreateDescriptorPools();
 
    private:

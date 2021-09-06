@@ -8,6 +8,7 @@
 #include <utility/Utility.h>
 #include "ktx.h"
 #include "ktxVulkan.h"
+#include "core/renderer/Primitive.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -26,6 +27,19 @@ namespace Utopian
    void RendererUtility::DrawFullscreenQuad(Vk::CommandBuffer* commandBuffer)
    {
       commandBuffer->CmdDraw(3, 1, 0, 0);
+   }
+
+   void RendererUtility::DrawPrimitive(Vk::CommandBuffer* commandBuffer, Primitive* primitive)
+   {
+      commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+
+      if (primitive->GetNumIndices() > 0)
+      {
+         commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+         commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
+      }
+      else
+         commandBuffer->CmdDraw(primitive->GetNumVertices(), 1, 0, 0);
    }
 
    void RendererUtility::SetAdditiveBlending(VkPipelineColorBlendAttachmentState& blendAttachmentState)

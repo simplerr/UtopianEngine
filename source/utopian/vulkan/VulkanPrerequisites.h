@@ -43,7 +43,6 @@ namespace Utopian::Vk
 
    // Other
    class Device;
-   class Mesh;
    class ModelLoader;
    class PipelineInterface;
    class VulkanApp;
@@ -69,4 +68,5 @@ namespace Utopian
    // Should be moved
    class Window;
    class Camera;
+   class Primitive;
 }

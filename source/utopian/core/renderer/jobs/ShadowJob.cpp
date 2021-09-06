@@ -132,7 +132,7 @@ namespace Utopian
 
                if (instanceBuffer != nullptr && model != nullptr)
                {
-                  for (Vk::Mesh* mesh : model->mMeshes)
+                  for (Primitive* mesh : model->mMeshes)
                   {
                      CascadePushConst pushConst(glm::mat4(), cascadeIndex);
                      mCommandBuffer->CmdPushConstants(mEffectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
@@ -159,7 +159,7 @@ namespace Utopian
 
                Vk::StaticModel* model = renderable->GetModel();
 
-               for (Vk::Mesh* mesh : model->mMeshes)
+               for (Primitive* mesh : model->mMeshes)
                {
                   CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
                   mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);

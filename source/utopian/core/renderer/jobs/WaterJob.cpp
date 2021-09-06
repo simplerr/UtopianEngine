@@ -6,7 +6,7 @@
 #include "core/renderer/Renderer.h"
 #include "vulkan/ShaderFactory.h"
 #include "core/renderer/ImGuiRenderer.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "vulkan/Vertex.h"
@@ -185,9 +185,9 @@ namespace Utopian
       }
    }
 
-   Vk::Mesh* WaterJob::GeneratePatches(float cellSize, int numCells)
+   Primitive* WaterJob::GeneratePatches(float cellSize, int numCells)
    {
-      Vk::Mesh* mesh = new Vk::Mesh(mDevice);
+      Primitive* mesh = new Primitive(mDevice);
 
       // Vertices
       for (auto x = 0; x < numCells; x++)

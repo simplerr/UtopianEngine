@@ -23,7 +23,7 @@ void main()
    vec3 N = normalize(InNormalW);
 
    // No tangent -> no normal mapping
-   if (InTangentL != vec4(0.0f))
+   if (InTangentL.xyz != vec3(0.0f))
    {
       vec3 T = normalize(InTangentL.xyz);
       vec3 B = cross(InNormalW, InTangentL.xyz) * InTangentL.w;
@@ -34,5 +34,4 @@ void main()
    vec3 lightDir = vec3(0.5, 0.5, -0.5);
    float diffuseFactor = max(dot(lightDir, N), 0.0) + 0.2;
    OutColor = vec4(diffuse.rgb * diffuseFactor, 1.0f);
-   //OutColor = vec4(N, 1.0f);
 }

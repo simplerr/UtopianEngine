@@ -8,12 +8,12 @@
 #include "vulkan/Texture.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/Vertex.h"
-#include "vulkan/Mesh.h"
+#include "core/renderer/Primitive.h"
 #include "SkinAnimator.h"
 
 namespace Utopian
 {
-   struct Material2
+   struct Material
    {
       glm::vec4 baseColorFactor = glm::vec4(1.0f);
       SharedPtr<Vk::Texture> colorTexture;
@@ -21,22 +21,22 @@ namespace Utopian
       SharedPtr<Vk::DescriptorSet> descriptorSet;
    };
 
-   class Renderable2
+   class Mesh
    {
    public:
-      void AddPrimitive(Vk::Mesh* primitive, Material2 material) {
+      void AddPrimitive(Primitive* primitive, Material material) {
          primitives.push_back(primitive);
          materials.push_back(material);
       }
 
    //private:
-      std::vector<Vk::Mesh*> primitives;
-      std::vector<Material2> materials;
+      std::vector<Primitive*> primitives;
+      std::vector<Material> materials;
    };
 
    struct RenderCommand
    {
-      Renderable2* renderable;
+      Mesh* mesh;
       VkDescriptorSet skinDescriptorSet;
       glm::mat4 world;
    };
@@ -48,7 +48,7 @@ namespace Utopian
       std::vector<Node*> children;
       std::string name;
       Node* parent;
-      Renderable2 renderable;
+      Mesh mesh;
       uint32_t index;
       int32_t skin = -1;
       glm::vec3 translation = glm::vec3(0.0f);
@@ -85,14 +85,17 @@ namespace Utopian
     * Model* model = new Model();
     * model->AddNode(node);
     */
-   class glTFModel
+   class Model
    {
    public:
-      glTFModel();
-      ~glTFModel();
+      Model();
+      ~Model();
 
       void AddNode(Node* node);
       void AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator);
+
+      /** Convenience function when working with simple models only containing a single primitive. */
+      Primitive* GetFirstPrimitive();
 
       void GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix);
       void AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix);
@@ -104,12 +107,17 @@ namespace Utopian
       Node* NodeFromIndex(uint32_t index);
       Node* FindNode(Node* parent, uint32_t index);
 
+      // Todo: implement
+      BoundingBox GetBoundingBox();
+
    private:
       void DestroyNode(Node* node);
 
    private:
       std::vector<Node*> mNodes;
+      Primitive* mFirstPrimitive = nullptr;
       SharedPtr<SkinAnimator> mSkinAnimator = nullptr;
       std::string mFilename;
+      BoundingBox mBoundingBox;
    };
 }

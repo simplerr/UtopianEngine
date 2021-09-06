@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
-#include "vulkan/Mesh.h"
+#include "core/renderer/Primitive.h"
 #include "utility/math/BoundingBox.h"
 #include "Vertex.h"
 #include "vulkan/VulkanPrerequisites.h"
@@ -15,14 +15,14 @@ namespace Utopian::Vk
       StaticModel();
       ~StaticModel();
 
-      void AddMesh(Mesh* mesh);
+      void AddMesh(Primitive* mesh);
       void Init(Device* device);    // Gets called in ModelLoader::LoadModel()
 
       int GetNumIndices();
       int GetNumVertics();
       BoundingBox GetBoundingBox();
 
-      std::vector<Mesh*> mMeshes;
+      std::vector<Primitive*> mMeshes;
    private:
       uint32_t mIndicesCount;
       uint32_t mVerticesCount;

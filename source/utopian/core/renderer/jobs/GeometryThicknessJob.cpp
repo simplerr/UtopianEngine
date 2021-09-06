@@ -56,7 +56,7 @@ namespace Utopian
 
             Vk::StaticModel * model = renderable->GetModel();
 
-            for (Vk::Mesh* mesh : model->mMeshes)
+            for (Primitive* mesh : model->mMeshes)
             {
                Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
                commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);

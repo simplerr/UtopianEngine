@@ -8,13 +8,14 @@
 #include "vulkan/VulkanApp.h"
 #include "vulkan/ShaderBuffer.h"
 #include "utility/Common.h"
-#include "glTFModel.h"
+#include "core/renderer/Model.h"
 
 using namespace Utopian;
 
 namespace Utopian
 {
    class glTFLoader;
+   class AssimpLoader;
 }
 
 class MiniCamera;
@@ -31,7 +32,7 @@ public:
 
    struct SceneNode
    {
-      SharedPtr<Utopian::glTFModel> model;
+      SharedPtr<Utopian::Model> model;
       glm::mat4 worldMatrix;
    };
 
@@ -66,4 +67,5 @@ private:
 
    std::vector<SceneNode> mSceneNodes;
    SharedPtr<glTFLoader> mglTFLoader;
+   SharedPtr<AssimpLoader> mAssimpLoader;
 };

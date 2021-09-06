@@ -140,7 +140,7 @@ void main()
    float shadow = calculateShadow(InPosW, finalNormal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
    /* Phong lighting */
-   Material material;
+   PhongMaterial material;
    material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
    material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
    material.specular = vec4(1.0f, 1.0f, 1.f, ubo_waterParameters.waterSpecularity); 

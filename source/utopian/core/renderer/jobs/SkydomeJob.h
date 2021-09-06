@@ -4,6 +4,8 @@
 
 namespace Utopian
 {
+   class Model;
+
    class SkydomeJob : public BaseJob
    {
    public:
@@ -32,6 +34,6 @@ namespace Utopian
       SharedPtr<Vk::Effect> mEffect;
       SkydomeInput mInputBlock;
       ParameterBlock mParameterBlock;
-      SharedPtr<Vk::StaticModel> mSkydomeModel;
+      SharedPtr<Model> mSkydomeModel;
    };
 }

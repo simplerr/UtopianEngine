@@ -3,7 +3,7 @@
 #include "vulkan/StaticModel.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "utility/math/BoundingBox.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 
 namespace Utopian
 {

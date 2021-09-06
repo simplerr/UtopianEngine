@@ -61,7 +61,7 @@ namespace Utopian
       SharedPtr<Vk::Image>& GetHeightmapImage();
       SharedPtr<Vk::Image>& GetNormalmapImage();
       SharedPtr<Vk::Image>& GetBlendmapImage();
-      Vk::Mesh* GetMesh();
+      Primitive* GetPrimitive();
       TerrainMaterial GetMaterial(std::string material);
 
       float GetAmplitudeScaling();
@@ -92,7 +92,7 @@ namespace Utopian
 
    private:
       Vk::Device* mDevice;
-      Vk::StaticModel* mQuadModel;
+      Primitive* mQuadPrimitive;
       float mAmplitudeScaling = 50;
       SettingsBlock settingsBlock;
       SharedPtr<BrushBlock> mBrushBlock;

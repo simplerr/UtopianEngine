@@ -5,6 +5,8 @@
 
 namespace Utopian
 {
+   class Model;
+
    class SkyboxJob : public BaseJob
    {
    public:
@@ -22,7 +24,7 @@ namespace Utopian
       SharedPtr<Vk::Texture> mSkybox;
       SharedPtr<Vk::RenderTarget> mRenderTarget;
       SharedPtr<Vk::Effect> mEffect;
-      SharedPtr<Vk::StaticModel> mCubeModel;
+      SharedPtr<Model> mCubeModel;
       SkyboxInput mInputBlock;
    };
 }

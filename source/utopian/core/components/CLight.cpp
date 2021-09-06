@@ -26,7 +26,7 @@ namespace Utopian
 
       World::Instance().BindNode(mInternal, GetParent());
 
-      SetMaterial(glm::vec4(1.0f));
+      SetLightColor(glm::vec4(1.0f));
       SetDirection(glm::vec3(1.0f, 1.0f, 0.0f));
       SetAtt(0.4f, 0.86f, 0.0f);
       SetIntensity(0.0f, 0.193f, 0.0f);
@@ -50,7 +50,7 @@ namespace Utopian
       LuaPlus::LuaObject luaObject;
       luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-      Material material = GetMaterial();
+      LightColor material = GetLightColor();
       luaObject.SetNumber("color_r", material.ambient.r);
       luaObject.SetNumber("color_g", material.ambient.g);
       luaObject.SetNumber("color_b", material.ambient.b);
@@ -77,19 +77,19 @@ namespace Utopian
       return luaObject;
    }
 
-   void CLight::SetMaterials(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
+   void CLight::SetLightColors(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
    {
-      mInternal->SetMaterials(ambient, diffuse, specular);
+      mInternal->SetLightColors(ambient, diffuse, specular);
    }
 
-   void CLight::SetMaterial(const glm::vec4& color)
+   void CLight::SetLightColor(const glm::vec4& color)
    {
-      mInternal->SetMaterial(color);
+      mInternal->SetLightColor(color);
    }
 
-   void CLight::SetMaterial(const Utopian::Material& material)
+   void CLight::SetLightColor(const Utopian::LightColor& lightColor)
    {
-      mInternal->SetMaterial(material);
+      mInternal->SetLightColor(lightColor);
    }
 
    void CLight::SetDirection(const glm::vec3& direction)
@@ -157,9 +157,9 @@ namespace Utopian
       return mInternal->GetIntensity();
    }
 
-   Utopian::Material CLight::GetMaterial() const
+   Utopian::LightColor CLight::GetLightColor() const
    {
-      return mInternal->GetMaterial();
+      return mInternal->GetLightColor();
    }
 
    float CLight::GetRange() const

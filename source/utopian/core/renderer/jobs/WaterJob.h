@@ -48,7 +48,7 @@ namespace Utopian
       SharedPtr<Vk::Image> distortionImage;
    private:
       // Note: Todo: Duplicate from Terrain.h
-      Vk::Mesh* GeneratePatches(float cellSize, int numCells);
+      Primitive* GeneratePatches(float cellSize, int numCells);
    private:
       SharedPtr<Vk::Effect> mEffect;
       SharedPtr<Vk::QueryPoolStatistics> mQueryPool;
@@ -56,7 +56,7 @@ namespace Utopian
       FrustumPlanes mFrustumPlanesBlock;
       SettingsBlock mSettingsBlock;
       WaterParameterBlock mWaterParameterBlock;
-      Vk::Mesh* mWaterMesh;
+      Primitive* mWaterMesh;
       SharedPtr<Vk::Texture> mDuDvTexture;
       SharedPtr<Vk::Texture> mNormalTexture;
       SharedPtr<Vk::Texture> mFoamMaskTexture;

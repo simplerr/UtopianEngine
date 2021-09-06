@@ -1,17 +1,17 @@
 #include <vulkan/vulkan_core.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "core/ModelLoader.h"
+#include "core/renderer/Primitive.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/Debug.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/ModelLoader.h"
 #include "vulkan/Texture.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/CommandBuffer.h"
-#include "Mesh.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
-   Mesh::Mesh(Device* device)
+   Primitive::Primitive(Vk::Device* device)
    {
       mDevice = device;
       mDiffuseTexture = nullptr;
@@ -19,34 +19,34 @@ namespace Utopian::Vk
       mSpecularTexture = nullptr;
    }
 
-   Mesh::~Mesh()
+   Primitive::~Primitive()
    {
    }
 
-   void Mesh::AddVertex(Vertex vertex)
+   void Primitive::AddVertex(Vk::Vertex vertex)
    {
       vertexVector.push_back(vertex);
    }
 
-   void Mesh::AddVertex(glm::vec3 pos)
+   void Primitive::AddVertex(glm::vec3 pos)
    {
-      AddVertex(Vertex(pos));
+      AddVertex(Vk::Vertex(pos));
    }
 
-   void Mesh::AddLine(uint32_t v1, uint32_t v2)
+   void Primitive::AddLine(uint32_t v1, uint32_t v2)
    {
       indexVector.push_back(v1);
       indexVector.push_back(v2);
    }
 
-   void Mesh::AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3)
+   void Primitive::AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3)
    {
       indexVector.push_back(v1);
       indexVector.push_back(v2);
       indexVector.push_back(v3);
    }
 
-   void Mesh::AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
+   void Primitive::AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
    {
       indexVector.push_back(v1);
       indexVector.push_back(v2);
@@ -54,9 +54,9 @@ namespace Utopian::Vk
       indexVector.push_back(v4);
    }
 
-   void Mesh::BuildBuffers(Device* device)
+   void Primitive::BuildBuffers(Vk::Device* device)
    {
-      uint32_t vertexBufferSize = GetNumVertices() * sizeof(Vertex);
+      uint32_t vertexBufferSize = GetNumVertices() * sizeof(Vk::Vertex);
       uint32_t indexBufferSize = GetNumIndices() * sizeof(uint32_t);
 
       Vk::BUFFER_CREATE_INFO stagingVertexCI;
@@ -104,79 +104,79 @@ namespace Utopian::Vk
       }
    }
 
-   void Mesh::BuildBuffers(const std::vector<Vertex>& vertices, std::vector<uint32_t>)
+   void Primitive::BuildBuffers(const std::vector<Vk::Vertex>& vertices, std::vector<uint32_t>)
    {
    }
 
-   void Mesh::SetTexture(SharedPtr<Vk::Texture> texture)
+   void Primitive::SetTexture(SharedPtr<Vk::Texture> texture)
    {
       mDiffuseTexture = texture;
-      CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
+      CreateDescriptorSets(Vk::gModelLoader().GetMeshTextureDescriptorSetLayout(), Vk::gModelLoader().GetMeshTextureDescriptorPool());
    }
 
-   void Mesh::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
+   void Primitive::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
    {
       mSpecularTexture = texture;
-      CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
+      CreateDescriptorSets(Vk::gModelLoader().GetMeshTextureDescriptorSetLayout(), Vk::gModelLoader().GetMeshTextureDescriptorPool());
    }
 
-   VkDescriptorSet Mesh::GetTextureDescriptorSet()
+   VkDescriptorSet Primitive::GetTextureDescriptorSet()
    {
       return mTextureDescriptorSet->GetVkHandle();
    }
 
-   void Mesh::CreateDescriptorSets(SharedPtr<DescriptorSetLayout> descriptorSetLayout, SharedPtr<DescriptorPool> descriptorPool)
+   void Primitive::CreateDescriptorSets(SharedPtr<Vk::DescriptorSetLayout> descriptorSetLayout, SharedPtr<Vk::DescriptorPool> descriptorPool)
    {
-      mTextureDescriptorSet = std::make_shared<DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
+      mTextureDescriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
       mTextureDescriptorSet->BindCombinedImage(0, mDiffuseTexture->GetDescriptor());
       mTextureDescriptorSet->BindCombinedImage(1, mNormalTexture->GetDescriptor());
       mTextureDescriptorSet->BindCombinedImage(2, mSpecularTexture->GetDescriptor());
       mTextureDescriptorSet->UpdateDescriptorSets();
    }
 
-   BoundingBox Mesh::GetBoundingBox()
+   BoundingBox Primitive::GetBoundingBox()
    {
       return mBoundingBox;
    }
 
-   uint32_t Mesh::GetNumVertices() const
+   uint32_t Primitive::GetNumVertices() const
    {
       return vertexVector.size();
    }
 
-   uint32_t Mesh::GetNumIndices() const
+   uint32_t Primitive::GetNumIndices() const
    {
       return indexVector.size();
    }
 
-   Buffer* Mesh::GetVertxBuffer()
+   Vk::Buffer* Primitive::GetVertxBuffer()
    {
       return mVertexBuffer.get();
    }
 
-   Buffer* Mesh::GetIndexBuffer()
+   Vk::Buffer* Primitive::GetIndexBuffer()
    {
       return mIndexBuffer.get();
    }
 
-   Texture* Mesh::GetDiffuseTexture()
+   Vk::Texture* Primitive::GetDiffuseTexture()
    {
        return mDiffuseTexture.get(); 
    }
 
-   Texture* Mesh::GetNormalTexture()
+   Vk::Texture* Primitive::GetNormalTexture()
    {
       return mNormalTexture.get();
    }
 
-   Texture* Mesh::GetSpecularTexture()
+   Vk::Texture* Primitive::GetSpecularTexture()
    {
       return mSpecularTexture.get();
    };
 
-   std::vector<Texture*> Mesh::GetTextures()
+   std::vector<Vk::Texture*> Primitive::GetTextures()
    {
-      std::vector<Texture*> textures;
+      std::vector<Vk::Texture*> textures;
       textures.push_back(mDiffuseTexture.get());
       textures.push_back(mNormalTexture.get());
       textures.push_back(mSpecularTexture.get());
@@ -184,15 +184,15 @@ namespace Utopian::Vk
       return textures;
    }
 
-   void Mesh::LoadTextures(std::string diffusePath, std::string normalPath, std::string specularPath)
+   void Primitive::LoadTextures(std::string diffusePath, std::string normalPath, std::string specularPath)
    {
-      mDiffuseTexture = gTextureLoader().LoadTexture(diffusePath);
-      mNormalTexture = gTextureLoader().LoadTexture(normalPath);
-      mSpecularTexture = gTextureLoader().LoadTexture(specularPath);
-      CreateDescriptorSets(gModelLoader().GetMeshTextureDescriptorSetLayout(), gModelLoader().GetMeshTextureDescriptorPool());
+      mDiffuseTexture = Vk::gTextureLoader().LoadTexture(diffusePath);
+      mNormalTexture = Vk::gTextureLoader().LoadTexture(normalPath);
+      mSpecularTexture = Vk::gTextureLoader().LoadTexture(specularPath);
+      CreateDescriptorSets(Vk::gModelLoader().GetMeshTextureDescriptorSetLayout(), Vk::gModelLoader().GetMeshTextureDescriptorPool());
    }
 
-   void Mesh::SetDebugName(std::string debugName)
+   void Primitive::SetDebugName(std::string debugName)
    {
       mDebugName = debugName;
    }

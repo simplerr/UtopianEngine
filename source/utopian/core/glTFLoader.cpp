@@ -1,9 +1,9 @@
-#include "glTFLoader.h"
-#include "glTFModel.h"
-#include "SkinAnimator.h"
-#include "core/Log.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
+#include "glTFLoader.h"
+#include "core/renderer/Model.h"
+#include "core/renderer/SkinAnimator.h"
+#include "core/Log.h"
 #include "tinygltf/tiny_gltf.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -11,7 +11,7 @@
 
 namespace Utopian
 {
-   class glTFModel;
+   class Model;
    
    glTFLoader::glTFLoader(Vk::Device* device)
       : mDevice(device)
@@ -43,7 +43,7 @@ namespace Utopian
       mMeshSkinningDescriptorPool->Create();
    }
 
-   SharedPtr<glTFModel> glTFLoader::LoadModel(std::string filename, Vk::Device* device)
+   SharedPtr<Model> glTFLoader::LoadModel(std::string filename, Vk::Device* device)
    {
       tinygltf::Model glTFInput;
       tinygltf::TinyGLTF gltfContext;
@@ -51,12 +51,12 @@ namespace Utopian
 
       bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
 
-      SharedPtr<glTFModel> model = nullptr;
+      SharedPtr<Model> model = nullptr;
       if (fileLoaded)
       {
-         model = std::make_shared<glTFModel>();
+         model = std::make_shared<Model>();
 
-         std::vector<Material2> materials = LoadMaterials(glTFInput, model.get());
+         std::vector<Material> materials = LoadMaterials(glTFInput, model.get());
 
          const tinygltf::Scene& scene = glTFInput.scenes[0];
          for (size_t i = 0; i < scene.nodes.size(); i++)
@@ -80,11 +80,11 @@ namespace Utopian
       return model;
    }
 
-   std::vector<Material2> glTFLoader::LoadMaterials(tinygltf::Model& input, glTFModel* model)
+   std::vector<Material> glTFLoader::LoadMaterials(tinygltf::Model& input, Model* model)
    {
       std::vector<SharedPtr<Vk::Texture>> images;
       std::vector<int32_t> imageRefs;
-      std::vector<Material2> loadedMaterials;
+      std::vector<Material> loadedMaterials;
 
       for (size_t i = 0; i < input.images.size(); i++)
       {
@@ -105,7 +105,7 @@ namespace Utopian
       {
          tinygltf::Material glTFMaterial = input.materials[i];
 
-         Material2 material;
+         Material material;
 
          if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
             material.baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
@@ -137,7 +137,7 @@ namespace Utopian
       return loadedMaterials;
    }
 
-   void glTFLoader::LoadNode(glTFModel* model, const tinygltf::Node& inputNode, std::vector<Material2>& loadedMaterials,
+   void glTFLoader::LoadNode(Model* model, const tinygltf::Node& inputNode, std::vector<Material>& loadedMaterials,
                              const tinygltf::Model& input, Node* parent, uint32_t nodeIndex, Vk::Device* device)
    {
       Node* node = new Node();
@@ -177,7 +177,7 @@ namespace Utopian
          for (size_t i = 0; i < mesh.primitives.size(); i++)
          {
             const tinygltf::Primitive& glTFPrimitive = mesh.primitives[i];
-            Vk::Mesh* primitive = new Vk::Mesh(NULL); // Todo remove the Device* argument
+            Primitive* primitive = new Primitive(NULL); // Todo remove the Device* argument
             AppendVertexData(input, glTFPrimitive, primitive);
 
             bool hasIndices = (glTFPrimitive.indices != -1);
@@ -186,8 +186,8 @@ namespace Utopian
 
             primitive->BuildBuffers(device);
 
-            node->renderable.primitives.push_back(primitive);
-            node->renderable.materials.push_back(loadedMaterials[glTFPrimitive.material]);
+            node->mesh.primitives.push_back(primitive);
+            node->mesh.materials.push_back(loadedMaterials[glTFPrimitive.material]);
          }
       }
 
@@ -199,7 +199,7 @@ namespace Utopian
       }
    }
 
-   void glTFLoader::AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Vk::Mesh* primitive)
+   void glTFLoader::AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive)
    {
       const float* positionBuffer = nullptr;
       const float* normalsBuffer = nullptr;
@@ -278,7 +278,7 @@ namespace Utopian
       }
    }
 
-   void glTFLoader::AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Vk::Mesh* primitive)
+   void glTFLoader::AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive)
    {
       const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.indices];
       const tinygltf::BufferView& bufferView = input.bufferViews[accessor.bufferView];
@@ -318,9 +318,9 @@ namespace Utopian
       }
    }
 
-   Material2 glTFLoader::GetDefaultMaterial()
+   Material glTFLoader::GetDefaultMaterial()
    {
-      Material2 material;
+      Material material;
 
       material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, mMeshTexturesDescriptorSetLayout.get(),
                                                                    mMeshTexturesDescriptorPool.get());

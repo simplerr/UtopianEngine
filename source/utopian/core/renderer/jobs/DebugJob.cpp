@@ -53,7 +53,7 @@ namespace Utopian
 
          if (renderable->HasRenderFlags(RENDER_FLAG_COLOR))
          {
-            for (Vk::Mesh* mesh : model->mMeshes)
+            for (Primitive* mesh : model->mMeshes)
             {
                // Push the world matrix constant
                Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
@@ -69,7 +69,7 @@ namespace Utopian
 
          if (renderable->HasRenderFlags(RENDER_FLAG_NORMAL_DEBUG))
          {
-            for (Vk::Mesh* mesh : model->mMeshes)
+            for (Primitive* mesh : model->mMeshes)
             {
                // Push the world matrix constant
                Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());

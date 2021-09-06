@@ -1,8 +1,8 @@
 #include "SkinAnimator.h"
-#include "glTFModel.h"
+#include "Model.h"
 #include "core/Log.h"
+#include "core/glTFLoader.h"
 #include "vulkan/handles/Buffer.h"
-#include "glTFLoader.h"
 
 // Todo: remove
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -10,7 +10,7 @@
 
 namespace Utopian
 {
-   SkinAnimator::SkinAnimator(tinygltf::Model& input, glTFModel* model, Vk::Device* device)
+   SkinAnimator::SkinAnimator(tinygltf::Model& input, Model* model, Vk::Device* device)
    {
       LoadSkins(input, model, device);
       LoadAnimations(input, model);
@@ -21,7 +21,7 @@ namespace Utopian
 
    }
 
-   void SkinAnimator::LoadSkins(tinygltf::Model& input, glTFModel* model, Vk::Device* device)
+   void SkinAnimator::LoadSkins(tinygltf::Model& input, Model* model, Vk::Device* device)
    {
       mSkins.resize(input.skins.size());
 
@@ -63,7 +63,7 @@ namespace Utopian
       }
    }
 
-   void SkinAnimator::LoadAnimations(tinygltf::Model& input, glTFModel* model)
+   void SkinAnimator::LoadAnimations(tinygltf::Model& input, Model* model)
    {
       mAnimations.resize(input.animations.size());
 

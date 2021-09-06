@@ -10,7 +10,7 @@
 #include "TextureLoader.h"
 #include "vulkan/handles/Device.h"
 #include "ShaderFactory.h"
-#include "ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "handles/DescriptorSet.h"
 #include "handles/CommandBuffer.h"
 #include "handles/CommandPool.h"

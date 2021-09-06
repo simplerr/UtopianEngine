@@ -167,7 +167,7 @@ namespace Utopian
                commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
             }
 
-            for (Vk::Mesh* mesh : model->mMeshes)
+            for (Primitive* mesh : model->mMeshes)
             {
                VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
                VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
@@ -196,7 +196,7 @@ namespace Utopian
 
          Vk::StaticModel* model = renderable->GetModel();
 
-         for (Vk::Mesh* mesh : model->mMeshes)
+         for (Primitive* mesh : model->mMeshes)
          {
             // Push the world matrix constant
             GBufferPushConstants pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());

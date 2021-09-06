@@ -15,7 +15,7 @@ namespace Utopian::Vk
          delete mesh;
    }
 
-   void StaticModel::AddMesh(Mesh* mesh)
+   void StaticModel::AddMesh(Primitive* mesh)
    {
       mMeshes.push_back(mesh);
    }

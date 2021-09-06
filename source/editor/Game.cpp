@@ -14,7 +14,7 @@
 #include "Game.h"
 #include "core/Window.h"
 #include "vulkan/Debug.h"
-#include "vulkan/ModelLoader.h"
+#include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
 #include "core/renderer/Im3dRenderer.h"
 

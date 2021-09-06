@@ -2,6 +2,7 @@
 #include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Model.h"
 #include "vulkan/TextureLoader.h"
 
 namespace Utopian
@@ -40,7 +41,7 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
       mEffect->BindCombinedImage("samplerCubeMap", *mSkybox);
 
-      mCubeModel = Vk::gModelLoader().LoadBox();
+      mCubeModel = Vk::gModelLoader().LoadBox2();
    }
 
    void SkyboxJob::Render(const JobInput& jobInput)
@@ -54,9 +55,10 @@ namespace Utopian
       commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
       commandBuffer->CmdBindDescriptorSets(mEffect);
 
-      commandBuffer->CmdBindVertexBuffer(0, 1, mCubeModel->mMeshes[0]->GetVertxBuffer());
-      commandBuffer->CmdBindIndexBuffer(mCubeModel->mMeshes[0]->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-      commandBuffer->CmdDrawIndexed(mCubeModel->GetNumIndices(), 1, 0, 0, 0);
+      Primitive* primitive = mCubeModel->GetFirstPrimitive();
+      commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+      commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+      commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
 
       mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
    }
