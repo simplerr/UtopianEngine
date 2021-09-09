@@ -50,40 +50,18 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    mglTFLoader = std::make_shared<Utopian::glTFLoader>(mVulkanApp->GetDevice());
    mAssimpLoader = std::make_shared<Utopian::AssimpLoader>(mVulkanApp->GetDevice());
 
-   // AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
+   mglTFLoader->SetInverseTranslation(false);
+
+   AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
    //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
    AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
    AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    
-   // Test adding a manually created model
-   Utopian::Primitive* primitive = new Utopian::Primitive(nullptr);
-
    SceneNode sceneNode;
-   sceneNode.model = Vk::gModelLoader().LoadQuad();
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 1.0f, 1.0f)) *
-                           glm::mat4(glm::quat()) *
-                           glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
-   mSceneNodes.push_back(sceneNode);
-
-   // Test adding Assimp loaded model
-   sceneNode.model = mAssimpLoader->LoadModel("data/models/sponza/sponza.obj");
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 2.0f)) *
-                           glm::mat4(glm::quat()) *
-                           glm::scale(glm::mat4(1.0f), glm::vec3(0.025f));
-   mSceneNodes.push_back(sceneNode);
-
-   // Box test
-   sceneNode.model = Vk::gModelLoader().LoadBox2();
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.0f, 2.0f)) *
-                           glm::mat4(glm::quat()) *
-                           glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
-   mSceneNodes.push_back(sceneNode);
-
-   // Grid test
-   sceneNode.model = Vk::gModelLoader().LoadGrid2(1, 5);
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)) *
+   sceneNode.model = Vk::gModelLoader().LoadBox();
+   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f)) *
                            glm::mat4(glm::quat()) *
                            glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
    mSceneNodes.push_back(sceneNode);
@@ -215,13 +193,10 @@ void PhysicallyBasedRendering::DrawCallback()
          {
             Primitive* primitive = command.mesh->primitives[i];
 
-            if (primitive->GetNumIndices() > 0 || primitive->GetNumVertices() > 0)
-            {
-               VkDescriptorSet descriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
-               commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
+            VkDescriptorSet descriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+            commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
 
-               gRendererUtility().DrawPrimitive(commandBuffer, primitive);
-            }
+            gRendererUtility().DrawPrimitive(commandBuffer, primitive);
          }
       }
    }

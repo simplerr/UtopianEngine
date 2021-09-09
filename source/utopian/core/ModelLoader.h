@@ -29,28 +29,16 @@ namespace Utopian::Vk
       ModelLoader(Device* device);
       ~ModelLoader();
 
-      void CleanupModels(VkDevice device);
-
-      SharedPtr<StaticModel> LoadModel(std::string filename);
-      SharedPtr<StaticModel> LoadBox(std::string texture = PLACEHOLDER_TEXTURE_PATH);
-      SharedPtr<StaticModel> LoadGrid(float cellSize, int numCells);
-
-      SharedPtr<Model> LoadModel2(std::string filename);
-      SharedPtr<Model> LoadBox2(std::string texture = PLACEHOLDER_TEXTURE_PATH);
-      SharedPtr<Model> LoadGrid2(float cellSize, int numCells);
+      SharedPtr<Model> LoadModel(std::string filename);
+      SharedPtr<Model> LoadBox(std::string texture = PLACEHOLDER_TEXTURE_PATH);
+      SharedPtr<Model> LoadGrid(float cellSize, int numCells);
       SharedPtr<Model> LoadQuad();
 
       SharedPtr<DescriptorSetLayout> GetMeshTextureDescriptorSetLayout();
       SharedPtr<DescriptorPool> GetMeshTextureDescriptorPool();
    private:
-      std::string GetPath(aiMaterial* material, aiTextureType textureType, std::string filename);
-      int FindValidPath(aiString* texturePath, std::string modelPath);
-      bool TryLongerPath(char* szTemp, aiString* p_szString);
-      std::map<std::string, SharedPtr<StaticModel>> mModelMap;
-      std::map<std::string, SharedPtr<Model>> mModelMap2;
-      SharedPtr<StaticModel> mPlaceholderModel = nullptr;
-      SharedPtr<Model> mPlaceholderModel2 = nullptr;
-
+      std::map<std::string, SharedPtr<Model>> mModelMap;
+      SharedPtr<Model> mPlaceholderModel = nullptr;
       Device* mDevice;
       
       // The descriptor set layout that contains a diffuse and normal combined image sampler
@@ -69,4 +57,4 @@ namespace Utopian::Vk
    };
 
    ModelLoader& gModelLoader();
-} // VulkanLib namespace
+}

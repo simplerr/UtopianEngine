@@ -254,7 +254,7 @@ namespace Utopian
       return mInstanceBuffer.get();
    }
 
-   Vk::StaticModel* InstanceGroup::GetModel()
+   Model* InstanceGroup::GetModel()
    {
       return mModel.get();
    }

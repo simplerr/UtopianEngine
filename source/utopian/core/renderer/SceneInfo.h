@@ -45,13 +45,13 @@ namespace Utopian
       uint32_t GetAssetId();
       uint32_t GetNumInstances();
       Vk::Buffer* GetBuffer();
-      Vk::StaticModel* GetModel();
+      Model* GetModel();
       bool IsAnimated();
       bool IsCastingShadows();
 
    private:
       SharedPtr<Vk::Buffer> mInstanceBuffer;
-      SharedPtr<Vk::StaticModel> mModel;
+      SharedPtr<Model> mModel;
       std::vector<InstanceDataGPU> mInstances; // Uploaded to GPU
       std::vector<InstanceData> mInstanceData;
       uint32_t mAssetId;

@@ -2,6 +2,7 @@
 #include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Model.h"
 
 namespace Utopian
 {
@@ -49,37 +50,41 @@ namespace Utopian
          if (!renderable->IsVisible())
             continue;
 
-         Vk::StaticModel* model = renderable->GetModel();
+         Model* model = renderable->GetModel();
+         std::vector<RenderCommand> renderCommands;
+         model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
          if (renderable->HasRenderFlags(RENDER_FLAG_COLOR))
          {
-            for (Primitive* mesh : model->mMeshes)
-            {
-               // Push the world matrix constant
-               Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+            commandBuffer->CmdBindPipeline(mColorEffect->GetPipeline());
+            commandBuffer->CmdBindDescriptorSets(mColorEffect);
 
-               commandBuffer->CmdBindPipeline(mColorEffect->GetPipeline());
-               commandBuffer->CmdBindDescriptorSets(mColorEffect);
+            for (RenderCommand& command : renderCommands)
+            {
+               Vk::PushConstantBlock pushConsts(command.world, renderable->GetColor());
                commandBuffer->CmdPushConstants(mColorEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
-               commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-               commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-               commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+
+               for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+               {
+                  gRendererUtility().DrawPrimitive(commandBuffer, command.mesh->primitives[i]);
+               }
             }
          }
 
          if (renderable->HasRenderFlags(RENDER_FLAG_NORMAL_DEBUG))
          {
-            for (Primitive* mesh : model->mMeshes)
-            {
-               // Push the world matrix constant
-               Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix());
+            commandBuffer->CmdBindPipeline(mNormalEffect->GetPipeline());
+            commandBuffer->CmdBindDescriptorSets(mNormalEffect);
 
-               commandBuffer->CmdBindPipeline(mNormalEffect->GetPipeline());
-               commandBuffer->CmdBindDescriptorSets(mNormalEffect);
+            for (RenderCommand& command : renderCommands)
+            {
+               Vk::PushConstantBlock pushConsts(command.world, renderable->GetColor());
                commandBuffer->CmdPushConstants(mNormalEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
-               commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-               commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-               commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+
+               for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+               {
+                  gRendererUtility().DrawPrimitive(commandBuffer, command.mesh->primitives[i]);
+               }
             }
          }
       }

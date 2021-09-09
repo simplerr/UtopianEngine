@@ -5,7 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "vulkan/VulkanApp.h"
 #include "Debug.h"
-#include "StaticModel.h"
 #include "core/Camera.h"
 #include "TextureLoader.h"
 #include "vulkan/handles/Device.h"

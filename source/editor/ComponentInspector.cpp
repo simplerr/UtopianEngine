@@ -12,7 +12,6 @@
 #include "core/components/Actor.h"
 #include "core/Log.h"
 #include <glm/gtc/quaternion.hpp>
-#include "vulkan/StaticModel.h"
 #include "vulkan/Texture.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Image.h"
@@ -69,14 +68,15 @@ namespace Utopian
       mCastShadow = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_CAST_SHADOW);
       mVisible = renderable->IsVisible();
 
-      std::vector<Primitive*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
+      // Todo: MODEL UPDATE
+      //std::vector<Primitive*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
       std::vector<Vk::Texture*> allTextures;
 
-      for (auto& mesh : meshes)
-      {
-         std::vector<Vk::Texture*> textures = mesh->GetTextures();
-         allTextures.insert(std::end(allTextures), std::begin(textures), std::end(textures));
-      }
+      // for (auto& mesh : meshes)
+      // {
+      //    std::vector<Vk::Texture*> textures = mesh->GetTextures();
+      //    allTextures.insert(std::end(allTextures), std::begin(textures), std::end(textures));
+      // }
 
       std::sort(allTextures.begin(), allTextures.end(), [](Vk::Texture* textureA, Vk::Texture* textureB) {
          return textureA->GetPath() < textureB->GetPath();

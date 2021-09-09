@@ -50,7 +50,6 @@ namespace Utopian::Vk
    class ScreenQuadRenderer;
    class ShaderBuffer;
    class ShaderFactory;
-   class StaticModel;
    class TextureLoader;
    struct Vertex;
    class VertexAttribute;

@@ -1,10 +1,11 @@
 #include "core/renderer/jobs/ShadowJob.h"
 #include "core/renderer/jobs/BlurJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Model.h"
+#include "core/Profiler.h"
 #include "vulkan/handles/FrameBuffers.h"
 #include "vulkan/handles/QueryPoolTimestamp.h"
 #include "vulkan/Debug.h"
-#include "core/Profiler.h"
 
 namespace Utopian
 {
@@ -128,23 +129,30 @@ namespace Utopian
                   continue;
 
                Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
-               Vk::StaticModel* model = instanceGroup->GetModel();
+               Model* model = instanceGroup->GetModel();
 
                if (instanceBuffer != nullptr && model != nullptr)
                {
-                  for (Primitive* mesh : model->mMeshes)
+                  std::vector<RenderCommand> renderCommands;
+                  model->GetRenderCommands(renderCommands, glm::mat4());
+
+                  for (RenderCommand& command : renderCommands)
                   {
-                     CascadePushConst pushConst(glm::mat4(), cascadeIndex);
-                     mCommandBuffer->CmdPushConstants(mEffectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
+                     for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+                     {
+                        Primitive* primitive = command.mesh->primitives[i];
 
-                     VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-                     VkDescriptorSet descriptorSets[2] = { mEffectInstanced->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-                     mCommandBuffer->CmdBindDescriptorSet(mEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+                        CascadePushConst pushConst(glm::mat4(), cascadeIndex);
+                        mCommandBuffer->CmdPushConstants(mEffectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
-                     mCommandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-                     mCommandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
-                     mCommandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                     mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+                        VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                        VkDescriptorSet descriptorSets[2] = { mEffectInstanced->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
+                        mCommandBuffer->CmdBindDescriptorSet(mEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+                        mCommandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+                        mCommandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+                        mCommandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+                        mCommandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+                     }
                   }
                }
             }
@@ -157,20 +165,25 @@ namespace Utopian
                if (!renderable->IsVisible() || !renderable->HasRenderFlags(RENDER_FLAG_CAST_SHADOW))
                   continue;
 
-               Vk::StaticModel* model = renderable->GetModel();
+               Model* model = renderable->GetModel();
+               std::vector<RenderCommand> renderCommands;
+               model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
-               for (Primitive* mesh : model->mMeshes)
+               for (RenderCommand& command : renderCommands)
                {
-                  CascadePushConst pushConst(renderable->GetTransform().GetWorldMatrix(), cascadeIndex);
+                  CascadePushConst pushConst(command.world, cascadeIndex);
                   mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
-                  VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-                  VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-                  mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+                  for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+                  {
+                     Primitive* primitive = command.mesh->primitives[i];
 
-                  mCommandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-                  mCommandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                  mCommandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+                     VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                     VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
+                     mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+                     gRendererUtility().DrawPrimitive(mCommandBuffer.get(), primitive);
+                  }
                }
             }
          }

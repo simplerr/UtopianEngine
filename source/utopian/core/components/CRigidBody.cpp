@@ -4,7 +4,7 @@
 #include "core/components/Actor.h"
 #include "core/physics/Physics.h"
 #include "core/physics/BulletHelpers.h"
-#include "vulkan/StaticModel.h"
+#include "core/renderer/Model.h"
 #include "imgui/imgui.h"
 #include "im3d/im3d.h"
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
@@ -129,14 +129,14 @@ namespace Utopian
       }
       else if (mCollisionShapeType == CollisionShapeType::MESH)
       {
-         Primitive* primitive = mRenderable->GetInternal()->GetModel()->mMeshes[0];
+         Primitive* primitive = mRenderable->GetInternal()->GetModel()->GetFirstPrimitive();
          btTriangleMesh* triangleMesh = new btTriangleMesh();
 
          for (uint32_t i = 0; i < primitive->GetNumIndices() - 3; i += 3)
          {
-            btVector3 v1 = ToBulletVec3(primitive->vertexVector[primitive->indexVector[i]].pos);
-            btVector3 v2 = ToBulletVec3(primitive->vertexVector[primitive->indexVector[i+1]].pos);
-            btVector3 v3 = ToBulletVec3(primitive->vertexVector[primitive->indexVector[i+2]].pos);
+            btVector3 v1 = ToBulletVec3(primitive->vertices[primitive->indices[i]].pos);
+            btVector3 v2 = ToBulletVec3(primitive->vertices[primitive->indices[i+1]].pos);
+            btVector3 v3 = ToBulletVec3(primitive->vertices[primitive->indices[i+2]].pos);
             triangleMesh->addTriangle(-v1, -v2, -v3, true); // Note: negative signs, this is correct for prototype tool meshes
          }
 

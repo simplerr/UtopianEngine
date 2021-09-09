@@ -1,6 +1,7 @@
 #include "core/renderer/jobs/GeometryThicknessJob.h"
 #include "core/renderer/jobs/SSAOJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Model.h"
 
 namespace Utopian
 {
@@ -54,20 +55,25 @@ namespace Utopian
             if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
                continue;
 
-            Vk::StaticModel * model = renderable->GetModel();
+            Model* model = renderable->GetModel();
+            std::vector<RenderCommand> renderCommands;
+            model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
-            for (Primitive* mesh : model->mMeshes)
+            for (RenderCommand& command : renderCommands)
             {
-               Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+               Vk::PushConstantBlock pushConsts(command.world, renderable->GetColor());
                commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
-               VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-               VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-               commandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+               for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+               {
+                  Primitive* primitive = command.mesh->primitives[i];
 
-               commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-               commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-               commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+                  VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                  VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
+                  commandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+                  gRendererUtility().DrawPrimitive(commandBuffer, primitive);
+               }
             }
          }
       }

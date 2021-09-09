@@ -11,11 +11,13 @@ layout (location = 0) out vec4 OutColor;
 
 layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
+layout (set = 1, binding = 2) uniform sampler2D specularSampler;
 
 void main()
 {
    vec4 diffuse = texture(diffuseSampler, InTex);
    vec4 normal = texture(normalSampler, InTex);
+   vec4 specular = texture(specularSampler, InTex);
 
    if (diffuse.a < 0.5f)
       discard;

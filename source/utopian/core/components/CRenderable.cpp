@@ -1,7 +1,8 @@
-#include "core/components/CRenderable.h"
 #include "core/components/Actor.h"
-#include "core/renderer/Renderable.h"
+#include "core/components/CRenderable.h"
 #include "core/components/CTransform.h"
+#include "core/renderer/Renderable.h"
+#include "core/renderer/Model.h"
 #include "core/World.h"
 #include "core/ModelLoader.h"
 #include "im3d/im3d.h"
@@ -75,7 +76,7 @@ namespace Utopian
       mInternal->LoadModel(path);
    }
 
-   void CRenderable::SetModel(SharedPtr<Vk::StaticModel> model)
+   void CRenderable::SetModel(SharedPtr<Model> model)
    {
       // Note: Todo: How should ActorFactory that loads from Lua handle this?
       mPath = "Unknown";

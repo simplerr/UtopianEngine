@@ -1,8 +1,9 @@
 #include "core/renderer/jobs/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Model.h"
+#include "core/Camera.h"
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Queue.h"
-#include "core/Camera.h"
 
 namespace Utopian
 {
@@ -145,7 +146,7 @@ namespace Utopian
       {
          SharedPtr<InstanceGroup> instanceGroup = jobInput.sceneInfo.instanceGroups[i];
          Vk::Buffer* instanceBuffer = instanceGroup->GetBuffer();
-         Vk::StaticModel* model = instanceGroup->GetModel();
+         Model* model = instanceGroup->GetModel();
 
          if (instanceBuffer != nullptr && model != nullptr)
          {
@@ -167,18 +168,23 @@ namespace Utopian
                commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
             }
 
-            for (Primitive* mesh : model->mMeshes)
+            std::vector<RenderCommand> renderCommands;
+            model->GetRenderCommands(renderCommands, glm::mat4());
+            
+            for (RenderCommand& command : renderCommands)
             {
-               VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-               VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
+               for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+               {
+                  Primitive* primitive = command.mesh->primitives[i];
 
-               commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
-
-               // Note: Move out from if
-               commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-               commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
-               commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-               commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+                  VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                  VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
+                  commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+                  commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+                  commandBuffer->CmdBindVertexBuffer(1, 1, instanceBuffer);
+                  commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+                  commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), instanceGroup->GetNumInstances(), 0, 0, 0);
+               }
             }
          }
       }
@@ -186,7 +192,6 @@ namespace Utopian
       /* Render all renderables */
       for (auto& renderable : jobInput.sceneInfo.renderables)
       {
-         //if (!renderable->IsVisible() || ((renderable->GetRenderFlags() & RENDER_FLAG_DEFERRED) != RENDER_FLAG_DEFERRED))
          if (!renderable->IsVisible() || !(renderable->HasRenderFlags(RENDER_FLAG_DEFERRED) || renderable->HasRenderFlags(RENDER_FLAG_WIREFRAME)))
             continue;
 
@@ -194,24 +199,27 @@ namespace Utopian
          if (renderable->HasRenderFlags(RENDER_FLAG_WIREFRAME))
             effect = mGBufferEffectWireframe.get();
 
-         Vk::StaticModel* model = renderable->GetModel();
+         commandBuffer->CmdBindPipeline(effect->GetPipeline());
 
-         for (Primitive* mesh : model->mMeshes)
+         Model* model = renderable->GetModel();
+         std::vector<RenderCommand> renderCommands;
+         model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
+
+         for (RenderCommand& command : renderCommands)
          {
-            // Push the world matrix constant
-            GBufferPushConstants pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor(), renderable->GetTextureTiling());
-
-            VkDescriptorSet textureDescriptorSet = mesh->GetTextureDescriptorSet();
-            VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), textureDescriptorSet };
-
-            commandBuffer->CmdBindPipeline(effect->GetPipeline());
-            commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+            GBufferPushConstants pushConsts(command.world, renderable->GetColor(), renderable->GetTextureTiling());
             commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
-            // Note: Move out from if
-            commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-            commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-            commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+            for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+            {
+               Primitive* primitive = command.mesh->primitives[i];
+
+               VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+               VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
+               commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+               gRendererUtility().DrawPrimitive(commandBuffer, primitive);
+            }
          }
       }
 

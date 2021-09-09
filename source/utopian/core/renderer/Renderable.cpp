@@ -1,9 +1,9 @@
+#include <glm/gtc/matrix_transform.hpp>
 #include "core/renderer/Renderable.h"
 #include "core/renderer/Renderer.h"
-#include "vulkan/StaticModel.h"
-#include <glm/gtc/matrix_transform.hpp>
-#include "utility/math/BoundingBox.h"
+#include "core/renderer/Model.h"
 #include "core/ModelLoader.h"
+#include "utility/math/BoundingBox.h"
 
 namespace Utopian
 {
@@ -40,7 +40,7 @@ namespace Utopian
       Renderer::Instance().AddRenderable(this);
    }
 
-   Utopian::Vk::StaticModel* Renderable::GetModel()
+   Model* Renderable::GetModel()
    {
       return mModel.get();
    }
@@ -50,19 +50,21 @@ namespace Utopian
       mModel = Vk::gModelLoader().LoadModel(path);
    }
 
-   void Renderable::SetModel(SharedPtr<Vk::StaticModel> model)
+   void Renderable::SetModel(SharedPtr<Model> model)
    {
       mModel = model;
    }
 
    void Renderable::SetTexture(SharedPtr<Vk::Texture> texture)
    {
-      mModel->mMeshes[0]->SetTexture(texture);
+      // Todo: MODEL UPDATE
+      //mModel->mMeshes[0]->SetTexture(texture);
    }
 
    void Renderable::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
    {
-      mModel->mMeshes[0]->SetTexture(texture);
+      // Todo: MODEL UPDATE
+      //mModel->mMeshes[0]->SetTexture(texture);
    }
 
    void Renderable::SetTileFactor(glm::vec2 tileFactor)

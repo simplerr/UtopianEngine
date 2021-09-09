@@ -1,14 +1,13 @@
 #include <vector>
 
 #include "AssimpLoader.h"
-#include "vulkan/TextureLoader.h"
 #include "core/renderer/Primitive.h"
-#include "vulkan/handles/DescriptorSetLayout.h"
-#include "vulkan/handles/DescriptorSet.h"
-#include "vulkan/StaticModel.h"
 #include "core/Log.h"
 #include "core/renderer/Model.h"
 #include "vulkan/handles/Device.h"
+#include "vulkan/handles/DescriptorSetLayout.h"
+#include "vulkan/handles/DescriptorSet.h"
+#include "vulkan/TextureLoader.h"
 
 // TODO: Note that the format should be #include <assimp/Importer.hpp> but something in the project settings is wrong
 #include "../external/assimp/assimp/Importer.hpp"
@@ -26,6 +25,7 @@ namespace Utopian
       mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(mDevice);
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
+      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
       mMeshTexturesDescriptorSetLayout->Create();
 
       mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(mDevice);
@@ -44,7 +44,7 @@ namespace Utopian
       Assimp::Importer importer;
 
       // Load scene from the file.
-      const aiScene* scene = importer.ReadFile(filename, aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+      const aiScene* scene = importer.ReadFile(filename, aiProcess_FlipUVs | aiProcess_FlipWindingOrder | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
       if (scene != nullptr)
       {
@@ -178,8 +178,10 @@ namespace Utopian
 
             material.colorTexture = Vk::gTextureLoader().LoadTexture(diffuseTexturePath);
             material.normalTexture = Vk::gTextureLoader().LoadTexture(normalTexturePath);
+            material.specularTexture = Vk::gTextureLoader().LoadTexture(specularTexturePath);
             material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
             material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
+            material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
             material.descriptorSet->UpdateDescriptorSets();
 
             primitive->SetDebugName(filename);
@@ -191,6 +193,7 @@ namespace Utopian
          Node* node = new Node();
          node->mesh = mesh;
          model->AddNode(node);
+         model->Init();
       }
       else {
          // Loading of model failed

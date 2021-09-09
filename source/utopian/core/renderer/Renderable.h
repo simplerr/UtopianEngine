@@ -8,6 +8,7 @@
 namespace Utopian
 {
    class Actor;
+   class Model;
 
    enum RenderFlags
    {
@@ -33,7 +34,7 @@ namespace Utopian
 
       void LoadModel(std::string path);
 
-      void SetModel(SharedPtr<Vk::StaticModel> model);
+      void SetModel(SharedPtr<Model> model);
       void SetTexture(SharedPtr<Vk::Texture> texture);
       void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
       void SetTileFactor(glm::vec2 tileFactor);
@@ -44,7 +45,7 @@ namespace Utopian
       void AppendRenderFlags(uint32_t renderFlags);
       void RemoveRenderFlags(uint32_t renderFlags);
 
-      Utopian::Vk::StaticModel* GetModel();
+      Model* GetModel();
       const BoundingBox GetBoundingBox() const;
       const glm::vec4 GetColor() const;
       const bool IsVisible() const;
@@ -55,7 +56,7 @@ namespace Utopian
       const bool HasRenderFlags(uint32_t renderFlags) const;
 
    private:
-      SharedPtr<Utopian::Vk::StaticModel> mModel;
+      SharedPtr<Model> mModel;
       glm::vec4 mColor;
       glm::vec2 mTextureTileFactor;
       uint32_t mRenderFlags;

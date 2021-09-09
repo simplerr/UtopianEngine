@@ -28,6 +28,7 @@ namespace Utopian
       mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(mDevice);
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
+      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
       mMeshTexturesDescriptorSetLayout->Create();
 
       mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(mDevice);
@@ -76,6 +77,8 @@ namespace Utopian
       {
          UTO_LOG("Failed to load glTF model " + filename);
       }
+
+      model->Init();
 
       return model;
    }
@@ -128,6 +131,10 @@ namespace Utopian
             material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
          else 
             material.descriptorSet->BindCombinedImage(1, material.colorTexture->GetDescriptor());
+         if (material.specularTexture != nullptr)
+            material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
+         else 
+            material.descriptorSet->BindCombinedImage(2, material.colorTexture->GetDescriptor());
 
          material.descriptorSet->UpdateDescriptorSets();
 
@@ -151,6 +158,11 @@ namespace Utopian
       // It's either made up from translation, rotation, scale or a 4x4 matrix
       if (inputNode.translation.size() == 3) {
          node->translation = glm::make_vec3(inputNode.translation.data());
+
+         // Todo: remove
+         if (mInverseTranslation)
+            node->translation *= -1;
+
       }
       if (inputNode.rotation.size() == 4) {
          glm::quat q = glm::make_quat(inputNode.rotation.data());
@@ -161,6 +173,14 @@ namespace Utopian
       }
       if (inputNode.matrix.size() == 16) {
          node->matrix = glm::make_mat4x4(inputNode.matrix.data());
+
+         // Todo: remove
+         if (mInverseTranslation)
+         {
+            node->matrix[3][0] = -node->matrix[3][0];
+            node->matrix[3][1] = -node->matrix[3][1];
+            node->matrix[3][2] = -node->matrix[3][2];
+         }
       }
 
       // Load children
@@ -267,13 +287,13 @@ namespace Utopian
          UTO_LOG("Missing normals for model, calculating flat normals");
          for (size_t v = 0; v < primitive->GetNumVertices(); v += 3)
          {
-            std::vector<Vk::Vertex>& vertexVector = primitive->vertexVector;
-            glm::vec3 v1 = vertexVector[v].pos - vertexVector[v+1].pos;
-            glm::vec3 v2 = vertexVector[v].pos - vertexVector[v+2].pos;
+            std::vector<Vk::Vertex>& vertices = primitive->vertices;
+            glm::vec3 v1 = vertices[v].pos - vertices[v+1].pos;
+            glm::vec3 v2 = vertices[v].pos - vertices[v+2].pos;
             glm::vec3 normal = glm::cross(v1, v2);
-            vertexVector[v].normal = normal;
-            vertexVector[v+1].normal = normal;
-            vertexVector[v+2].normal = normal;
+            vertices[v].normal = normal;
+            vertices[v+1].normal = normal;
+            vertices[v+2].normal = normal;
          }
       }
    }
@@ -328,11 +348,18 @@ namespace Utopian
       // Todo: Move the default paths to Material.h
       material.colorTexture = Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.png");
       material.normalTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_NORMAL_MAP_TEXTURE);
+      material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
 
       material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
+      material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
       material.descriptorSet->UpdateDescriptorSets();
 
       return material;
+   }
+
+   void glTFLoader::SetInverseTranslation(bool inverse)
+   {
+      mInverseTranslation = inverse;
    }
 }

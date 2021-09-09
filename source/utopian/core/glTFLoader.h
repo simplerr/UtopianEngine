@@ -17,6 +17,8 @@ namespace Utopian
 
       Material GetDefaultMaterial();
 
+      void SetInverseTranslation(bool inverse);
+
    private:
       std::vector<Material> LoadMaterials(tinygltf::Model& input, Model* model);
       void LoadNode(Model* model, const tinygltf::Node& inputNode, std::vector<Material>& loadedMaterials,
@@ -31,5 +33,9 @@ namespace Utopian
       SharedPtr<Vk::DescriptorPool> mMeshTexturesDescriptorPool;
       SharedPtr<Vk::DescriptorPool> mMeshSkinningDescriptorPool;
       Vk::Device* mDevice;
+
+      // Todo: this is due to the coordinate system being inversed in the engine,
+      // needs to be fixed.
+      bool mInverseTranslation = true;
    };
 }

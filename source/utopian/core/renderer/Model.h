@@ -18,6 +18,7 @@ namespace Utopian
       glm::vec4 baseColorFactor = glm::vec4(1.0f);
       SharedPtr<Vk::Texture> colorTexture;
       SharedPtr<Vk::Texture> normalTexture;
+      SharedPtr<Vk::Texture> specularTexture;
       SharedPtr<Vk::DescriptorSet> descriptorSet;
    };
 
@@ -91,6 +92,8 @@ namespace Utopian
       Model();
       ~Model();
 
+      void Init();
+
       void AddNode(Node* node);
       void AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator);
 
@@ -107,11 +110,13 @@ namespace Utopian
       Node* NodeFromIndex(uint32_t index);
       Node* FindNode(Node* parent, uint32_t index);
 
-      // Todo: implement
       BoundingBox GetBoundingBox();
 
    private:
       void DestroyNode(Node* node);
+
+      // Todo: currently only returns the first primitive bounding box
+      BoundingBox CalculateBoundingBox(Node* node, glm::mat4 world);
 
    private:
       std::vector<Node*> mNodes;

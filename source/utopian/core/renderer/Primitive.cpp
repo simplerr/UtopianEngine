@@ -14,9 +14,6 @@ namespace Utopian
    Primitive::Primitive(Vk::Device* device)
    {
       mDevice = device;
-      mDiffuseTexture = nullptr;
-      mNormalTexture = nullptr;
-      mSpecularTexture = nullptr;
    }
 
    Primitive::~Primitive()
@@ -25,7 +22,7 @@ namespace Utopian
 
    void Primitive::AddVertex(Vk::Vertex vertex)
    {
-      vertexVector.push_back(vertex);
+      vertices.push_back(vertex);
    }
 
    void Primitive::AddVertex(glm::vec3 pos)
@@ -35,23 +32,23 @@ namespace Utopian
 
    void Primitive::AddLine(uint32_t v1, uint32_t v2)
    {
-      indexVector.push_back(v1);
-      indexVector.push_back(v2);
+      indices.push_back(v1);
+      indices.push_back(v2);
    }
 
    void Primitive::AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3)
    {
-      indexVector.push_back(v1);
-      indexVector.push_back(v2);
-      indexVector.push_back(v3);
+      indices.push_back(v1);
+      indices.push_back(v2);
+      indices.push_back(v3);
    }
 
    void Primitive::AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4)
    {
-      indexVector.push_back(v1);
-      indexVector.push_back(v2);
-      indexVector.push_back(v3);
-      indexVector.push_back(v4);
+      indices.push_back(v1);
+      indices.push_back(v2);
+      indices.push_back(v3);
+      indices.push_back(v4);
    }
 
    void Primitive::BuildBuffers(Vk::Device* device)
@@ -62,7 +59,7 @@ namespace Utopian
       Vk::BUFFER_CREATE_INFO stagingVertexCI;
       stagingVertexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
       stagingVertexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-      stagingVertexCI.data = vertexVector.data();
+      stagingVertexCI.data = vertices.data();
       stagingVertexCI.size = vertexBufferSize;
       stagingVertexCI.name = "Staging Vertex buffer: " + mDebugName;
       Vk::Buffer vertexStaging = Vk::Buffer(stagingVertexCI, device);
@@ -85,7 +82,7 @@ namespace Utopian
          Vk::BUFFER_CREATE_INFO stagingIndexCI;
          stagingIndexCI.usageFlags = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
          stagingIndexCI.memoryPropertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-         stagingIndexCI.data = indexVector.data();
+         stagingIndexCI.data = indices.data();
          stagingIndexCI.size = indexBufferSize;
          stagingIndexCI.name = "Staging Index buffer: " + mDebugName;
          Vk::Buffer indexStaging = Vk::Buffer(stagingIndexCI, device);
@@ -102,51 +99,18 @@ namespace Utopian
          indexStaging.Copy(&cmdBuffer, mIndexBuffer.get());
          cmdBuffer.Flush();
       }
-   }
 
-   void Primitive::BuildBuffers(const std::vector<Vk::Vertex>& vertices, std::vector<uint32_t>)
-   {
-   }
-
-   void Primitive::SetTexture(SharedPtr<Vk::Texture> texture)
-   {
-      mDiffuseTexture = texture;
-      CreateDescriptorSets(Vk::gModelLoader().GetMeshTextureDescriptorSetLayout(), Vk::gModelLoader().GetMeshTextureDescriptorPool());
-   }
-
-   void Primitive::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
-   {
-      mSpecularTexture = texture;
-      CreateDescriptorSets(Vk::gModelLoader().GetMeshTextureDescriptorSetLayout(), Vk::gModelLoader().GetMeshTextureDescriptorPool());
-   }
-
-   VkDescriptorSet Primitive::GetTextureDescriptorSet()
-   {
-      return mTextureDescriptorSet->GetVkHandle();
-   }
-
-   void Primitive::CreateDescriptorSets(SharedPtr<Vk::DescriptorSetLayout> descriptorSetLayout, SharedPtr<Vk::DescriptorPool> descriptorPool)
-   {
-      mTextureDescriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, descriptorSetLayout.get(), descriptorPool.get());
-      mTextureDescriptorSet->BindCombinedImage(0, mDiffuseTexture->GetDescriptor());
-      mTextureDescriptorSet->BindCombinedImage(1, mNormalTexture->GetDescriptor());
-      mTextureDescriptorSet->BindCombinedImage(2, mSpecularTexture->GetDescriptor());
-      mTextureDescriptorSet->UpdateDescriptorSets();
-   }
-
-   BoundingBox Primitive::GetBoundingBox()
-   {
-      return mBoundingBox;
+      mBoundingBox.Init(vertices);
    }
 
    uint32_t Primitive::GetNumVertices() const
    {
-      return vertexVector.size();
+      return vertices.size();
    }
 
    uint32_t Primitive::GetNumIndices() const
    {
-      return indexVector.size();
+      return indices.size();
    }
 
    Vk::Buffer* Primitive::GetVertxBuffer()
@@ -159,37 +123,9 @@ namespace Utopian
       return mIndexBuffer.get();
    }
 
-   Vk::Texture* Primitive::GetDiffuseTexture()
+   BoundingBox Primitive::GetBoundingBox()
    {
-       return mDiffuseTexture.get(); 
-   }
-
-   Vk::Texture* Primitive::GetNormalTexture()
-   {
-      return mNormalTexture.get();
-   }
-
-   Vk::Texture* Primitive::GetSpecularTexture()
-   {
-      return mSpecularTexture.get();
-   };
-
-   std::vector<Vk::Texture*> Primitive::GetTextures()
-   {
-      std::vector<Vk::Texture*> textures;
-      textures.push_back(mDiffuseTexture.get());
-      textures.push_back(mNormalTexture.get());
-      textures.push_back(mSpecularTexture.get());
-
-      return textures;
-   }
-
-   void Primitive::LoadTextures(std::string diffusePath, std::string normalPath, std::string specularPath)
-   {
-      mDiffuseTexture = Vk::gTextureLoader().LoadTexture(diffusePath);
-      mNormalTexture = Vk::gTextureLoader().LoadTexture(normalPath);
-      mSpecularTexture = Vk::gTextureLoader().LoadTexture(specularPath);
-      CreateDescriptorSets(Vk::gModelLoader().GetMeshTextureDescriptorSetLayout(), Vk::gModelLoader().GetMeshTextureDescriptorPool());
+      return mBoundingBox;
    }
 
    void Primitive::SetDebugName(std::string debugName)

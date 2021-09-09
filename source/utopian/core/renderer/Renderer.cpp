@@ -9,7 +9,6 @@
 #include "vulkan/handles/Image.h"
 #include "core/Camera.h"
 #include "core/renderer/Primitive.h"
-#include "vulkan/StaticModel.h"
 #include "core/renderer/Light.h"
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "vulkan/RenderTarget.h"

@@ -3,6 +3,7 @@
 #include "core/renderer/jobs/SkydomeJob.h"
 #include "core/renderer/jobs/AtmosphereJob.h"
 #include "core/renderer/CommonJobIncludes.h"
+#include "core/renderer/Model.h"
 #include "core/Camera.h"
 
 namespace Utopian
@@ -59,6 +60,7 @@ namespace Utopian
    {
       float sunInclination = glm::radians(jobInput.renderingSettings.sunInclination);
       glm::vec3 sunDir = jobInput.sceneInfo.sunInfo.direction;
+      // Todo: MODEL UPDATE
       float skydomeRadius = mSkydomeModel->GetBoundingBox().GetWidth() / 2.0f;
 
       // Note: Todo: Why -X here?

@@ -1,17 +1,17 @@
 #include "core/components/CPolyMesh.h"
 #include "core/components/Actor.h"
-#include "utility/math/Helpers.h"
 #include "core/Log.h"
 #include "core/LuaManager.h"
-#include "vulkan/StaticModel.h"
 #include "core/renderer/Renderer.h"
 #include <OpenMesh/Core/Mesh/Handles.hh>
 #include <OpenMesh/Core/Mesh/SmartHandles.hh>
 #include <core/components/CRenderable.h>
 #include <core/components/CRigidBody.h>
 #include <core/components/Component.h>
-#include <vulkan/TextureLoader.h>
+#include <core/renderer/Model.h>
 #include "OpenMesh/Core/IO/MeshIO.hh"
+#include "vulkan/TextureLoader.h"
+#include "utility/math/Helpers.h"
 
 namespace Utopian
 {
@@ -286,11 +286,11 @@ namespace Utopian
    void CPolyMesh::UpdateMeshBuffer()
    {
       CRenderable* renderable = GetParent()->GetComponent<CRenderable>();
-      Vk::StaticModel* model = renderable->GetInternal()->GetModel();
-      Primitive* primitive = model->mMeshes[0];
+      Model* model = renderable->GetInternal()->GetModel();
+      Primitive* primitive = model->GetFirstPrimitive();
 
-      primitive->vertexVector.clear();
-      primitive->indexVector.clear();
+      primitive->vertices.clear();
+      primitive->indices.clear();
 
       uint32_t faceOffset = 0u;
 
@@ -353,7 +353,7 @@ namespace Utopian
       }
 
       primitive->BuildBuffers(gRenderer().GetDevice());
-      model->Init(gRenderer().GetDevice());
+      model->Init();
    }
 
    std::vector<PolyMesh::VertexHandle> CPolyMesh::AddExtrusionVertices(float extrusion)

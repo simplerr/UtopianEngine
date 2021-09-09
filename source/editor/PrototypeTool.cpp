@@ -16,7 +16,6 @@
 #include "utility/math/Helpers.h"
 #include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
-#include "vulkan/StaticModel.h"
 #include "core/Log.h"
 #include <OpenMesh/Core/Mesh/Handles.hh>
 #include <OpenMesh/Core/Mesh/SmartHandles.hh>

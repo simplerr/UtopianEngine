@@ -4,6 +4,8 @@
 
 namespace Utopian
 {
+   class Model;
+
    class SunShaftJob : public BaseJob
    {
    public:
@@ -25,7 +27,7 @@ namespace Utopian
       RadialBlurParameters mRadialBlurParameters;
 
       // Todo: Note: This should not be here
-      SharedPtr<Vk::StaticModel> mSkydomeModel;
+      SharedPtr<Model> mSkydomeModel;
       const float mSkydomeScale = 1000.0f;
    };
 }

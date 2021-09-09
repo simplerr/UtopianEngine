@@ -33,6 +33,7 @@ namespace Utopian
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/atmosphere/atmosphere.vert";
       effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/atmosphere/atmosphere.frag";
+      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
       effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
       mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
@@ -43,7 +44,7 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
       mEffect->BindUniformBuffer("UBO_atmosphere", mParameterBlock);
 
-      mSkydomeModel = Vk::gModelLoader().LoadModel2("data/models/sphere.obj");
+      mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
 
       // const uint32_t size = 240;
       // gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());

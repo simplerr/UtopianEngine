@@ -1,8 +1,9 @@
 #include "core/renderer/jobs/OutlineJob.h"
 #include "core/renderer/jobs/TonemapJob.h"
 #include "core/renderer/CommonJobIncludes.h"
-#include "utility/math/Helpers.h"
 #include <core/renderer/Renderable.h>
+#include <core/renderer/Model.h>
+#include "utility/math/Helpers.h"
 #include <random>
 
 namespace Utopian
@@ -79,17 +80,23 @@ namespace Utopian
          {
             if (renderable->IsVisible() && renderable->HasRenderFlags(RENDER_FLAG_DRAW_OUTLINE))
             {
-               Vk::StaticModel* model = renderable->GetModel();
-               for (Primitive* mesh : model->mMeshes)
-               {
-                  Vk::PushConstantBlock pushConsts(renderable->GetTransform().GetWorldMatrix(), renderable->GetColor());
+               Model* model = renderable->GetModel();
+               std::vector<RenderCommand> renderCommands;
+               model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
-                  commandBuffer->CmdBindPipeline(mMaskPass.effect->GetPipeline());
-                  commandBuffer->CmdBindDescriptorSets(mMaskPass.effect);
+               commandBuffer->CmdBindPipeline(mMaskPass.effect->GetPipeline());
+               commandBuffer->CmdBindDescriptorSets(mMaskPass.effect);
+
+               for (RenderCommand& command : renderCommands)
+               {
+                  Vk::PushConstantBlock pushConsts(command.world, renderable->GetColor());
                   commandBuffer->CmdPushConstants(mMaskPass.effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
-                  commandBuffer->CmdBindVertexBuffer(0, 1, mesh->GetVertxBuffer());
-                  commandBuffer->CmdBindIndexBuffer(mesh->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                  commandBuffer->CmdDrawIndexed(mesh->GetNumIndices(), 1, 0, 0, 0);
+
+                  for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
+                  {
+                     Primitive* primitive = command.mesh->primitives[i];
+                     gRendererUtility().DrawPrimitive(commandBuffer, primitive);
+                  }
                }
             }
          }

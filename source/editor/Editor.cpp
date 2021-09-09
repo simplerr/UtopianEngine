@@ -549,6 +549,8 @@ namespace Utopian
    void Editor::AddPaths()
    {
       // Add paths to models that can be loaded
+      AddActorCreation("data/models/gltf/Fox/glTF/Fox.gltf");
+      AddActorCreation("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
       AddActorCreation("data/models/sheep/sheep.obj");
       AddActorCreation("data/models/adventure_village/CrateLong_reflective.obj");
       AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);

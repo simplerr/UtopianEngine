@@ -41,7 +41,7 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
       mEffect->BindCombinedImage("samplerCubeMap", *mSkybox);
 
-      mCubeModel = Vk::gModelLoader().LoadBox2();
+      mCubeModel = Vk::gModelLoader().LoadBox();
    }
 
    void SkyboxJob::Render(const JobInput& jobInput)

@@ -17,6 +17,7 @@
 #include "core/renderer/ScreenQuadRenderer.h"
 #include "core/renderer/ImGuiRenderer.h"
 #include "core/renderer/Renderer.h"
+#include "core/renderer/Model.h"
 #include "vulkan/TextureLoader.h"
 
 namespace Utopian
@@ -28,7 +29,7 @@ namespace Utopian
       mMaxSpeed = maxSpeed;
       mJumpStrength = jumpStrength;
 
-      SharedPtr<Vk::StaticModel> model = Vk::gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
+      SharedPtr<Model> model = Vk::gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
       mViewmodel = Renderable::Create();
       mViewmodel->SetModel(model);
       mViewmodel->AddRotation(glm::vec3(glm::pi<float>(), 0.0f, 0.0f));

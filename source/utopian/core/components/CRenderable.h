@@ -7,6 +7,7 @@
 namespace Utopian
 {
    class Actor;
+   class Model;
 
    class CRenderable : public Component
    {
@@ -22,7 +23,7 @@ namespace Utopian
       LuaPlus::LuaObject GetLuaObject() override;
 
       void LoadModel(std::string path);
-      void SetModel(SharedPtr<Vk::StaticModel> model);
+      void SetModel(SharedPtr<Model> model);
 
       /**
        * @brief Set the texture to use when drawing

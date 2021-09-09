@@ -39,6 +39,30 @@ namespace Utopian
       }
    }
 
+   void Model::Init()
+   {
+      for (auto& node : mNodes)
+      {
+         mBoundingBox = CalculateBoundingBox(node, glm::mat4());
+      }
+   }
+
+   BoundingBox Model::CalculateBoundingBox(Node* node, glm::mat4 world)
+   {
+      glm::mat4 nodeMatrix = world * node->GetLocalMatrix();
+      BoundingBox bb;
+
+      if (node->mesh.primitives.size() > 0)
+         return node->mesh.primitives[0]->GetBoundingBox();
+
+      for (auto& child : node->children)
+      {
+         bb = CalculateBoundingBox(child, nodeMatrix);
+      }
+
+      return bb;
+   }
+
    void Model::AddNode(Node* node)
    {
       mNodes.push_back(node);
