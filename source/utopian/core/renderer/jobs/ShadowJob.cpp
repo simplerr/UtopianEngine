@@ -145,7 +145,7 @@ namespace Utopian
                         CascadePushConst pushConst(glm::mat4(), cascadeIndex);
                         mCommandBuffer->CmdPushConstants(mEffectInstanced->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
-                        VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                        VkDescriptorSet materialDescriptorSet = command.mesh->materials[i]->descriptorSet->GetVkHandle();
                         VkDescriptorSet descriptorSets[2] = { mEffectInstanced->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
                         mCommandBuffer->CmdBindDescriptorSet(mEffectInstanced->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
                         mCommandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
@@ -178,7 +178,7 @@ namespace Utopian
                   {
                      Primitive* primitive = command.mesh->primitives[i];
 
-                     VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                     VkDescriptorSet materialDescriptorSet = command.mesh->materials[i]->descriptorSet->GetVkHandle();
                      VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
                      mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 

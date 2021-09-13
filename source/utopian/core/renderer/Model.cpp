@@ -33,15 +33,11 @@ namespace Utopian
 
    Model::~Model()
    {
-      for (Node* node : mNodes)
-      {
-         DestroyNode(node);
-      }
    }
 
    void Model::Init()
    {
-      for (auto& node : mNodes)
+      for (auto& node : mRootNodes)
       {
          mBoundingBox = CalculateBoundingBox(node, glm::mat4());
       }
@@ -63,9 +59,33 @@ namespace Utopian
       return bb;
    }
 
-   void Model::AddNode(Node* node)
+   Primitive* Model::AddPrimitive(const Primitive& primitive)
    {
+      SharedPtr<Primitive> prim = std::make_shared<Primitive>(primitive);
+      mPrimitives.push_back(prim);
+
+      return prim.get();
+   }
+
+   Material* Model::AddMaterial(const Material& material)
+   {
+      SharedPtr<Material> mat = std::make_shared<Material>(material);
+      mMaterials.push_back(mat);
+
+      return mat.get();
+   }
+
+   Node* Model::CreateNode()
+   {
+      SharedPtr<Node> node = std::make_shared<Node>();
       mNodes.push_back(node);
+
+      return node.get();
+   }
+
+   void Model::AddRootNode(Node* node)
+   {
+      mRootNodes.push_back(node);
 
       if (mFirstPrimitive == nullptr && node->mesh.primitives.size() > 0)
       {
@@ -78,25 +98,8 @@ namespace Utopian
       mSkinAnimator = skinAnimator;
 
       // Calculate initial pose
-      for (auto node : mNodes)
+      for (auto node : mRootNodes)
          mSkinAnimator->UpdateJoints(node);
-   }
-
-   void Model::DestroyNode(Node* node)
-   {
-      for (auto& primitive : node->mesh.primitives)
-      {
-         delete primitive;
-      }
-
-      node->mesh.materials.clear();
-
-      for (auto& child : node->children)
-      {
-        DestroyNode(child);
-      }
-
-      delete node;
    }
 
    void Model::UpdateAnimation(float deltaTime)
@@ -105,7 +108,7 @@ namespace Utopian
       {
          mSkinAnimator->UpdateAnimation(deltaTime);
 
-         for (auto node : mNodes)
+         for (auto node : mRootNodes)
             mSkinAnimator->UpdateJoints(node);
       }
    }
@@ -115,9 +118,14 @@ namespace Utopian
       return mFirstPrimitive;
    }
 
+   std::vector<SharedPtr<Material>>& Model::GetMaterials()
+   {
+      return mMaterials;
+   }
+
    void Model::GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix)
    {
-      for (auto& node : mNodes) {
+      for (auto& node : mRootNodes) {
          AppendRenderCommands(renderCommands, node, worldMatrix);
       }
    }
@@ -170,7 +178,7 @@ namespace Utopian
    {
       Node *nodeFound = nullptr;
 
-      for (auto &node : mNodes)
+      for (auto &node : mRootNodes)
       {
          nodeFound = FindNode(node, index);
          if (nodeFound)
@@ -180,6 +188,11 @@ namespace Utopian
       }
 
       return nodeFound;
+   }
+
+   void Model::SetFilename(std::string filename)
+   {
+      mFilename = filename;
    }
 
    bool Model::IsAnimated() const

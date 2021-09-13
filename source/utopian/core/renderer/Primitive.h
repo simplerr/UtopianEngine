@@ -17,7 +17,7 @@ namespace Utopian
    class Primitive
    {
    public:
-      Primitive(Vk::Device* device);
+      Primitive();
       ~Primitive();
 
       void AddVertex(Vk::Vertex vertex);
@@ -42,7 +42,6 @@ namespace Utopian
    private:
       SharedPtr<Vk::Buffer> mVertexBuffer;
       SharedPtr<Vk::Buffer> mIndexBuffer;
-      Vk::Device* mDevice;
       BoundingBox mBoundingBox;
       std::string mDebugName = "unnamed";
    };

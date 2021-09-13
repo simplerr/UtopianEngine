@@ -40,10 +40,10 @@ namespace Utopian
    SharedPtr<Model> AssimpLoader::LoadModel(std::string filename)
    {
       SharedPtr<Model> model = std::make_shared<Model>();
-
-      Assimp::Importer importer;
+      model->SetFilename(filename);
 
       // Load scene from the file.
+      Assimp::Importer importer;
       const aiScene* scene = importer.ReadFile(filename, aiProcess_FlipUVs | aiProcess_FlipWindingOrder | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
 
       if (scene != nullptr)
@@ -53,7 +53,7 @@ namespace Utopian
          // Loop over all meshes
          for (unsigned int meshId = 0u; meshId < scene->mNumMeshes; meshId++)
          {
-            Primitive* primitive = new Primitive(mDevice);
+            Primitive primitive;
             aiMesh* assimpMesh = scene->mMeshes[meshId];
 
             // Get the diffuse color
@@ -81,7 +81,7 @@ namespace Utopian
                vertex.tangent = glm::vec4(tangent.x, tangent.y, tangent.z, 1.0f);
                vertex.uv = glm::vec2(uv.x, uv.y);
                vertex.color = glm::vec3(color.r, color.g, color.b);
-               primitive->AddVertex(vertex);
+               primitive.AddVertex(vertex);
             }
 
             // Load indices
@@ -89,7 +89,7 @@ namespace Utopian
             {
                for (unsigned int indexId = 0u; indexId < assimpMesh->mFaces[faceId].mNumIndices; indexId+=3)
                {
-                  primitive->AddTriangle(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
+                  primitive.AddTriangle(assimpMesh->mFaces[faceId].mIndices[indexId], assimpMesh->mFaces[faceId].mIndices[indexId+1], assimpMesh->mFaces[faceId].mIndices[indexId+2]);
                }
             }
 
@@ -184,15 +184,18 @@ namespace Utopian
             material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
             material.descriptorSet->UpdateDescriptorSets();
 
-            primitive->SetDebugName(filename);
-            primitive->BuildBuffers(mDevice);
+            primitive.SetDebugName(filename);
+            primitive.BuildBuffers(mDevice);
 
-            mesh.AddPrimitive(primitive, material);
+            Primitive* prim = model->AddPrimitive(primitive);
+            Material* mat = model->AddMaterial(material);
+
+            mesh.AddPrimitive(prim, mat);
          }
 
-         Node* node = new Node();
+         Node* node = model->CreateNode();
          node->mesh = mesh;
-         model->AddNode(node);
+         model->AddRootNode(node);
          model->Init();
       }
       else {

@@ -25,14 +25,18 @@ namespace Utopian
    class Mesh
    {
    public:
-      void AddPrimitive(Primitive* primitive, Material material) {
+      Mesh() {}
+      Mesh(Primitive* primitive, Material* material) {
+         AddPrimitive(primitive, material);
+      }
+
+      void AddPrimitive(Primitive* primitive, Material* material) {
          primitives.push_back(primitive);
          materials.push_back(material);
       }
 
-   //private:
       std::vector<Primitive*> primitives;
-      std::vector<Material> materials;
+      std::vector<Material*> materials;
    };
 
    struct RenderCommand
@@ -94,17 +98,25 @@ namespace Utopian
 
       void Init();
 
-      void AddNode(Node* node);
+      Material* AddMaterial(const Material& material);
+      Primitive* AddPrimitive(const Primitive& primitive);
+      Node* CreateNode();
+
+      void AddRootNode(Node* node);
       void AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator);
 
       /** Convenience function when working with simple models only containing a single primitive. */
       Primitive* GetFirstPrimitive();
+
+      std::vector<SharedPtr<Material>>& GetMaterials();
 
       void GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix);
       void AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix);
 
       void UpdateAnimation(float deltaTime);
       bool IsAnimated() const;
+
+      void SetFilename(std::string filename);
 
       // Used by SkinAnimator to the node to animate
       Node* NodeFromIndex(uint32_t index);
@@ -113,13 +125,14 @@ namespace Utopian
       BoundingBox GetBoundingBox();
 
    private:
-      void DestroyNode(Node* node);
-
       // Todo: currently only returns the first primitive bounding box
       BoundingBox CalculateBoundingBox(Node* node, glm::mat4 world);
 
    private:
-      std::vector<Node*> mNodes;
+      std::vector<SharedPtr<Primitive>> mPrimitives;
+      std::vector<SharedPtr<Material>> mMaterials;
+      std::vector<SharedPtr<Node>> mNodes;
+      std::vector<Node*> mRootNodes;
       Primitive* mFirstPrimitive = nullptr;
       SharedPtr<SkinAnimator> mSkinAnimator = nullptr;
       std::string mFilename;

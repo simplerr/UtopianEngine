@@ -11,9 +11,8 @@
 
 namespace Utopian
 {
-   Primitive::Primitive(Vk::Device* device)
+   Primitive::Primitive()
    {
-      mDevice = device;
    }
 
    Primitive::~Primitive()

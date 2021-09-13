@@ -34,6 +34,8 @@ namespace Utopian::Vk
       SharedPtr<Model> LoadGrid(float cellSize, int numCells);
       SharedPtr<Model> LoadQuad();
 
+      void SetInverseTranslation(bool inverse);
+
       SharedPtr<DescriptorSetLayout> GetMeshTextureDescriptorSetLayout();
       SharedPtr<DescriptorPool> GetMeshTextureDescriptorPool();
    private:

@@ -66,6 +66,4 @@ private:
    VertexInputParameters mVertexInputParameters;
 
    std::vector<SceneNode> mSceneNodes;
-   SharedPtr<glTFLoader> mglTFLoader;
-   SharedPtr<AssimpLoader> mAssimpLoader;
 };

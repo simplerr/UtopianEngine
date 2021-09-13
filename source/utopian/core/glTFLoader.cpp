@@ -56,14 +56,15 @@ namespace Utopian
       if (fileLoaded)
       {
          model = std::make_shared<Model>();
+         model->SetFilename(filename);
 
-         std::vector<Material> materials = LoadMaterials(glTFInput, model.get());
+         LoadMaterials(glTFInput, model.get());
 
          const tinygltf::Scene& scene = glTFInput.scenes[0];
          for (size_t i = 0; i < scene.nodes.size(); i++)
          {
             const tinygltf::Node node = glTFInput.nodes[scene.nodes[i]];
-            LoadNode(model.get(), node, materials, glTFInput, nullptr, scene.nodes[i], device);
+            LoadNode(model.get(), node, glTFInput, nullptr, scene.nodes[i], device);
          }
 
          if (glTFInput.skins.size() > 0)
@@ -83,11 +84,10 @@ namespace Utopian
       return model;
    }
 
-   std::vector<Material> glTFLoader::LoadMaterials(tinygltf::Model& input, Model* model)
+   void glTFLoader::LoadMaterials(tinygltf::Model& input, Model* model)
    {
       std::vector<SharedPtr<Vk::Texture>> images;
       std::vector<int32_t> imageRefs;
-      std::vector<Material> loadedMaterials;
 
       for (size_t i = 0; i < input.images.size(); i++)
       {
@@ -138,16 +138,14 @@ namespace Utopian
 
          material.descriptorSet->UpdateDescriptorSets();
 
-         loadedMaterials.push_back(material);
+         model->AddMaterial(material);
       }
-
-      return loadedMaterials;
    }
 
-   void glTFLoader::LoadNode(Model* model, const tinygltf::Node& inputNode, std::vector<Material>& loadedMaterials,
-                             const tinygltf::Model& input, Node* parent, uint32_t nodeIndex, Vk::Device* device)
+   void glTFLoader::LoadNode(Model* model, const tinygltf::Node& inputNode, const tinygltf::Model& input,
+                             Node* parent, uint32_t nodeIndex, Vk::Device* device)
    {
-      Node* node = new Node();
+      Node* node = model->CreateNode();
       node->parent = parent;
       node->matrix = glm::mat4(1.0f);
       node->index = nodeIndex;
@@ -186,7 +184,7 @@ namespace Utopian
       // Load children
       if (inputNode.children.size() > 0) {
          for (size_t i = 0; i < inputNode.children.size(); i++) {
-            LoadNode(model, input.nodes[inputNode.children[i]], loadedMaterials, input , node, inputNode.children[i], device);
+            LoadNode(model, input.nodes[inputNode.children[i]], input , node, inputNode.children[i], device);
          }
       }
 
@@ -197,17 +195,18 @@ namespace Utopian
          for (size_t i = 0; i < mesh.primitives.size(); i++)
          {
             const tinygltf::Primitive& glTFPrimitive = mesh.primitives[i];
-            Primitive* primitive = new Primitive(NULL); // Todo remove the Device* argument
-            AppendVertexData(input, glTFPrimitive, primitive);
+            Primitive primitive;
+            AppendVertexData(input, glTFPrimitive, &primitive);
 
             bool hasIndices = (glTFPrimitive.indices != -1);
             if (hasIndices)
-               AppendIndexData(input, glTFPrimitive, primitive);
+               AppendIndexData(input, glTFPrimitive, &primitive);
 
-            primitive->BuildBuffers(device);
+            primitive.BuildBuffers(device);
 
-            node->mesh.primitives.push_back(primitive);
-            node->mesh.materials.push_back(loadedMaterials[glTFPrimitive.material]);
+            Primitive* addedPrimitive = model->AddPrimitive(primitive);
+
+            node->mesh.AddPrimitive(addedPrimitive, model->GetMaterials()[glTFPrimitive.material].get());
          }
       }
 
@@ -215,7 +214,7 @@ namespace Utopian
          parent->children.push_back(node);
       }
       else {
-         model->AddNode(node);
+         model->AddRootNode(node);
       }
    }
 

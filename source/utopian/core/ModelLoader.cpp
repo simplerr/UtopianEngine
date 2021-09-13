@@ -80,78 +80,79 @@ namespace Utopian::Vk
 
    SharedPtr<Model> ModelLoader::LoadBox(std::string texture)
    {
-      Primitive* primitive = new Primitive(mDevice);
+      Primitive primitive;
 
       // Front
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)));
 
       // Back
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(1.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.0f, -1.0f), glm::vec2(0.0f, 0.0f)));
 
       // Top
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
 
       // Bottom
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
 
       // Left
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
 
       // Right
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
-      primitive->AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 1.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f)));
+      primitive.AddVertex(Vertex(glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f)));
 
       // Front
-      primitive->AddTriangle(2, 0, 1);
-      primitive->AddTriangle(0, 2, 3);
+      primitive.AddTriangle(2, 0, 1);
+      primitive.AddTriangle(0, 2, 3);
 
       // Back
-      primitive->AddTriangle(4, 6, 5);
-      primitive->AddTriangle(6, 4, 7);
+      primitive.AddTriangle(4, 6, 5);
+      primitive.AddTriangle(6, 4, 7);
 
       // Top
-      primitive->AddTriangle(10, 8, 9);
-      primitive->AddTriangle(8, 10, 11);
+      primitive.AddTriangle(10, 8, 9);
+      primitive.AddTriangle(8, 10, 11);
 
       // Bottom
-      primitive->AddTriangle(12, 14, 13);
-      primitive->AddTriangle(14, 12, 15);
+      primitive.AddTriangle(12, 14, 13);
+      primitive.AddTriangle(14, 12, 15);
 
       // Left
-      primitive->AddTriangle(16, 18, 17);
-      primitive->AddTriangle(18, 16, 19);
+      primitive.AddTriangle(16, 18, 17);
+      primitive.AddTriangle(18, 16, 19);
 
       // Right
-      primitive->AddTriangle(22, 20, 21);
-      primitive->AddTriangle(20, 22, 23);
+      primitive.AddTriangle(22, 20, 21);
+      primitive.AddTriangle(20, 22, 23);
 
-      primitive->BuildBuffers(mDevice);
-
-      Mesh mesh;
-      mesh.AddPrimitive(primitive, mglTFLoader->GetDefaultMaterial());
-
-      Node* node = new Node();
-      node->mesh = mesh;
+      primitive.BuildBuffers(mDevice);
 
       SharedPtr<Model> model = std::make_shared<Model>();
-      model->AddNode(node);
+
+      Primitive* prim = model->AddPrimitive(primitive);
+      Material* material = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+
+      Node* node = model->CreateNode();
+      node->mesh = Mesh(prim, material);
+
+      model->AddRootNode(node);
       model->Init();
 
       return model;
@@ -159,7 +160,7 @@ namespace Utopian::Vk
 
    SharedPtr<Model> ModelLoader::LoadGrid(float cellSize, int numCells)
    {
-      Primitive* primitive = new Primitive(mDevice);
+      Primitive primitive;
 
       for (int x = 0; x < numCells; x++)
       {
@@ -171,7 +172,7 @@ namespace Utopian::Vk
             vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
             vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
             vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
-            primitive->AddVertex(vertex);
+            primitive.AddVertex(vertex);
          }
       }
 
@@ -179,60 +180,67 @@ namespace Utopian::Vk
       {
          for (int z = 0; z < numCells - 1; z++)
          {
-            primitive->AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
-            primitive->AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+            primitive.AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+            primitive.AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
          }
       }
 
-      primitive->BuildBuffers(mDevice);
-
-      Mesh mesh;
-      mesh.AddPrimitive(primitive, mglTFLoader->GetDefaultMaterial());
-
-      Node* node = new Node();
-      node->mesh = mesh;
+      primitive.BuildBuffers(mDevice);
 
       SharedPtr<Model> model = std::make_shared<Model>();
-      model->AddNode(node);
+
+      Primitive* prim = model->AddPrimitive(primitive);
+      Material* mat = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+
+      Node* node = model->CreateNode();
+      node->mesh = Mesh(prim, mat);
+
+      model->AddRootNode(node);
 
       return model;
    }
 
    SharedPtr<Model> ModelLoader::LoadQuad()
    {
-      Utopian::Primitive* primitive = new Utopian::Primitive(nullptr);
+      Primitive primitive;
 
       Vk::Vertex vertex = {};
       vertex.pos = glm::vec3(-0.5f, -0.5f, 0.5f);
       vertex.normal = glm::vec3(0.0f, 0.0f, 1.0f);
       vertex.uv = glm::vec2(0.0f, 1.0f);
-      primitive->AddVertex(vertex);
+      primitive.AddVertex(vertex);
 
       vertex.pos = glm::vec3(0.5f, -0.5f, 0.5f);
       vertex.uv = glm::vec2(1.0f, 1.0f);
-      primitive->AddVertex(vertex);
+      primitive.AddVertex(vertex);
 
       vertex.pos = glm::vec3(0.5f, 0.5f, 0.5f);
       vertex.uv = glm::vec2(1.0f, 0.0f);
-      primitive->AddVertex(vertex);
+      primitive.AddVertex(vertex);
 
       vertex.pos = glm::vec3(-0.5f, 0.5f, 0.5f);
       vertex.uv = glm::vec2(0.0f, 0.0f);
-      primitive->AddVertex(vertex);
+      primitive.AddVertex(vertex);
 
-      primitive->AddTriangle(2, 0, 1);
-      primitive->AddTriangle(0, 2, 3);
-      primitive->BuildBuffers(mDevice);
-      
-      Mesh mesh;
-      mesh.AddPrimitive(primitive, mglTFLoader->GetDefaultMaterial());
-      
-      Node* node = new Node();
-      node->mesh = mesh;
+      primitive.AddTriangle(2, 0, 1);
+      primitive.AddTriangle(0, 2, 3);
+      primitive.BuildBuffers(mDevice);
       
       SharedPtr<Model> model = std::make_shared<Model>();
-      model->AddNode(node);
+
+      Primitive* prim = model->AddPrimitive(primitive);
+      Material* mat = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+
+      Node* node = model->CreateNode();
+      node->mesh = Mesh(prim, mat);
+      
+      model->AddRootNode(node);
 
       return model;
    }
-}  // VulkanLib namespace
+
+   void ModelLoader::SetInverseTranslation(bool inverse)
+   {
+      mglTFLoader->SetInverseTranslation(inverse);
+   }
+}

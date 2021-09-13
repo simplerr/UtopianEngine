@@ -47,14 +47,11 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   mglTFLoader = std::make_shared<Utopian::glTFLoader>(mVulkanApp->GetDevice());
-   mAssimpLoader = std::make_shared<Utopian::AssimpLoader>(mVulkanApp->GetDevice());
-
-   mglTFLoader->SetInverseTranslation(false);
+   Vk::gModelLoader().SetInverseTranslation(false);
 
    AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
-   // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
-   //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
+   AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
+            glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
    AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
    AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
@@ -82,8 +79,6 @@ void PhysicallyBasedRendering::DestroyCallback()
    mOutputImage = nullptr;
    mDepthImage = nullptr;
    mSampler = nullptr;
-   mglTFLoader = nullptr;
-   mAssimpLoader = nullptr;
 
    for (auto& sceneNode : mSceneNodes)
       sceneNode.model = nullptr;
@@ -193,7 +188,7 @@ void PhysicallyBasedRendering::DrawCallback()
          {
             Primitive* primitive = command.mesh->primitives[i];
 
-            VkDescriptorSet descriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+            VkDescriptorSet descriptorSet = command.mesh->materials[i]->descriptorSet->GetVkHandle();
             commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &descriptorSet, VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
 
             gRendererUtility().DrawPrimitive(commandBuffer, primitive);
@@ -220,8 +215,7 @@ void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wPara
 void PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
 {
    SceneNode sceneNode;
-   sceneNode.model = std::make_shared<Model>();
-   sceneNode.model = mglTFLoader->LoadModel(filename, mVulkanApp->GetDevice());
+   sceneNode.model = Vk::gModelLoader().LoadModel(filename);
    sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), pos) *
                            glm::mat4(rotation) *
                            glm::scale(glm::mat4(1.0f), scale);

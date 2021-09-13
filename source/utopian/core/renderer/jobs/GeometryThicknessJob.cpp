@@ -68,7 +68,7 @@ namespace Utopian
                {
                   Primitive* primitive = command.mesh->primitives[i];
 
-                  VkDescriptorSet materialDescriptorSet = command.mesh->materials[i].descriptorSet->GetVkHandle();
+                  VkDescriptorSet materialDescriptorSet = command.mesh->materials[i]->descriptorSet->GetVkHandle();
                   VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
                   commandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 

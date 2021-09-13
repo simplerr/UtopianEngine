@@ -187,7 +187,7 @@ namespace Utopian
 
    Primitive* WaterJob::GeneratePatches(float cellSize, int numCells)
    {
-      Primitive* mesh = new Primitive(mDevice);
+      Primitive* mesh = new Primitive();
 
       // Vertices
       for (auto x = 0; x < numCells; x++)

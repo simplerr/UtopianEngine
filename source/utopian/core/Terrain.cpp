@@ -279,7 +279,7 @@ namespace Utopian
    {
       terrainSize = cellSize * (numCells - 1);
 
-      mQuadPrimitive = new Primitive(mDevice);
+      mQuadPrimitive = new Primitive();
       mQuadPrimitive->SetDebugName("Terrain patches");
 
       // Vertices

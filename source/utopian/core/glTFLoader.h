@@ -20,9 +20,9 @@ namespace Utopian
       void SetInverseTranslation(bool inverse);
 
    private:
-      std::vector<Material> LoadMaterials(tinygltf::Model& input, Model* model);
-      void LoadNode(Model* model, const tinygltf::Node& inputNode, std::vector<Material>& loadedMaterials,
-                    const tinygltf::Model& input, Node* parent, uint32_t nodeIndex, Vk::Device* device);
+      void LoadMaterials(tinygltf::Model& input, Model* model);
+      void LoadNode(Model* model, const tinygltf::Node& inputNode, const tinygltf::Model& input,
+                    Node* parent, uint32_t nodeIndex, Vk::Device* device);
       void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive);
       void AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive);
       void CreateDescriptorPools();
