@@ -4,6 +4,7 @@
 #include "core/renderer/Model.h"
 #include "core/ModelLoader.h"
 #include "utility/math/BoundingBox.h"
+#include "vulkan/handles/DescriptorSet.h"
 
 namespace Utopian
 {
@@ -55,16 +56,35 @@ namespace Utopian
       mModel = model;
    }
 
-   void Renderable::SetTexture(SharedPtr<Vk::Texture> texture)
+   void Renderable::SetDiffuseTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
-      // Todo: MODEL UPDATE
-      //mModel->mMeshes[0]->SetTexture(texture);
+      Material* material = mModel->GetMaterial(materialIdx);
+
+      material->colorTexture = texture;
+      material->descriptorSet->BindCombinedImage(0, material->colorTexture->GetDescriptor());
+
+      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
    }
 
-   void Renderable::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
+   void Renderable::SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
-      // Todo: MODEL UPDATE
-      //mModel->mMeshes[0]->SetTexture(texture);
+      Material* material = mModel->GetMaterial(materialIdx);
+
+      material->normalTexture = texture;
+      material->descriptorSet->BindCombinedImage(1, material->normalTexture->GetDescriptor());
+
+      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
+
+   }
+
+   void Renderable::SetSpecularTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
+   {
+      Material* material = mModel->GetMaterial(materialIdx);
+
+      material->specularTexture = texture;
+      material->descriptorSet->BindCombinedImage(2, material->specularTexture->GetDescriptor());
+
+      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
    }
 
    void Renderable::SetTileFactor(glm::vec2 tileFactor)

@@ -30,8 +30,9 @@ namespace Utopian
        *
        * @note Assmues the Model only consists of one Mesh
        */
-      void SetTexture(SharedPtr<Vk::Texture> texture);
-      void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
+      void SetDiffuseTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture);
+      void SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture);
+      void SetSpecularTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture);
       void SetTileFactor(glm::vec2 tileFactor);
       void SetColor(glm::vec4 color);
       void SetPushFoliage(bool push);

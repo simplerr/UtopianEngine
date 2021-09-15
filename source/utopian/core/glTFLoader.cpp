@@ -206,7 +206,7 @@ namespace Utopian
 
             Primitive* addedPrimitive = model->AddPrimitive(primitive);
 
-            node->mesh.AddPrimitive(addedPrimitive, model->GetMaterials()[glTFPrimitive.material].get());
+            node->mesh.AddPrimitive(addedPrimitive, model->GetMaterial(glTFPrimitive.material));
          }
       }
 

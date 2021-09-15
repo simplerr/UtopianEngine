@@ -83,7 +83,7 @@ namespace Utopian
    void CPolyMesh::PostInit()
    {
       CRenderable* renderable = GetParent()->GetComponent<CRenderable>();
-      renderable->SetTexture(Vk::gTextureLoader().LoadTexture(mTexturePath));
+      renderable->SetDiffuseTexture(0, Vk::gTextureLoader().LoadTexture(mTexturePath));
 
       UpdateMeshBuffer();
    }
@@ -287,7 +287,7 @@ namespace Utopian
    {
       CRenderable* renderable = GetParent()->GetComponent<CRenderable>();
       Model* model = renderable->GetInternal()->GetModel();
-      Primitive* primitive = model->GetFirstPrimitive();
+      Primitive* primitive = model->GetPrimitive(0);
 
       primitive->vertices.clear();
       primitive->indices.clear();

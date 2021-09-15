@@ -55,7 +55,7 @@ namespace Utopian
       commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
       commandBuffer->CmdBindDescriptorSets(mEffect);
 
-      Primitive* primitive = mCubeModel->GetFirstPrimitive();
+      Primitive* primitive = mCubeModel->GetPrimitive(0);
       commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
       commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
       commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);

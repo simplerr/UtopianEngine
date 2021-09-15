@@ -129,7 +129,7 @@ namespace Utopian
       }
       else if (mCollisionShapeType == CollisionShapeType::MESH)
       {
-         Primitive* primitive = mRenderable->GetInternal()->GetModel()->GetFirstPrimitive();
+         Primitive* primitive = mRenderable->GetInternal()->GetModel()->GetPrimitive(0);
          btTriangleMesh* triangleMesh = new btTriangleMesh();
 
          for (uint32_t i = 0; i < primitive->GetNumIndices() - 3; i += 3)

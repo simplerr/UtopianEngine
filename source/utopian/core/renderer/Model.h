@@ -63,32 +63,12 @@ namespace Utopian
    };
 
    /**
-    * Represents all models in the engine, based on the glTF model format.
-    * It can be viewed as a local scene graph containing a hierarchy of nodes.
+    * Represents all models in the engine.
+    * Model can be viewed as a local scene graph containing a hierarchy of nodes.
     *
     * Models can be created manually or from the ModelLoader that has both
     * a glTF loader and an Assimp loader. Skinning is only supported when loaded
     * as .gltf.
-    *
-    * Example of manual model creation:
-    *
-    * Primitive* primitive = new Primitive();
-    * primitive->AddVertex(glm::vec3(-0.5f, -0.5f, 0.5f));
-    * primitive->AddVertex(glm::vec3(0.5f, -0.5f, 0.5f));
-    * primitive->AddVertex(glm::vec3(0.5f, 0.5f, 0.5f));
-    * primitive->AddVertex(glm::vec3(-0.5f, 0.5f, 0.5f));
-    * primitive->AddTriangle(1, 2, 0);
-    * primitive->AddTriangle(3, 0, 2);
-    * primitive->BuildBuffers(device);
-    *
-    * Renderable renderable;
-    * renderable.AddPrimitive(primitive, gEngine().DefaultMaterial());
-    *
-    * Node* node = new Node();
-    * node->SetRenderable(renderable);
-    *
-    * Model* model = new Model();
-    * model->AddNode(node);
     */
    class Model
    {
@@ -105,10 +85,8 @@ namespace Utopian
       void AddRootNode(Node* node);
       void AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator);
 
-      /** Convenience function when working with simple models only containing a single primitive. */
-      Primitive* GetFirstPrimitive();
-
-      std::vector<SharedPtr<Material>>& GetMaterials();
+      Primitive* GetPrimitive(uint32_t index);
+      Material* GetMaterial(uint32_t index);
 
       void GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix);
       void AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix);
@@ -133,7 +111,6 @@ namespace Utopian
       std::vector<SharedPtr<Material>> mMaterials;
       std::vector<SharedPtr<Node>> mNodes;
       std::vector<Node*> mRootNodes;
-      Primitive* mFirstPrimitive = nullptr;
       SharedPtr<SkinAnimator> mSkinAnimator = nullptr;
       std::string mFilename;
       BoundingBox mBoundingBox;

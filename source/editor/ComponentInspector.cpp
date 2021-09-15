@@ -363,7 +363,7 @@ namespace Utopian
             if (ImGui::ImageButton(uiTexture.identifier, ImVec2(64, 64)))
             {
                CRenderable* renderable = mPolyMesh->GetParent()->GetComponent<CRenderable>();
-               renderable->SetTexture(Vk::gTextureLoader().LoadTexture(uiTexture.texture->GetPath()));
+               renderable->SetDiffuseTexture(0, Vk::gTextureLoader().LoadTexture(uiTexture.texture->GetPath()));
                mPolyMesh->SetTexturePath(uiTexture.texture->GetPath());
             }
 

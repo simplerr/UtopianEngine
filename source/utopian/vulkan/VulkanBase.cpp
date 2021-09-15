@@ -92,6 +92,7 @@ namespace Utopian::Vk
    void VulkanBase::PrepareFrame()
    {
       mDevice->GarbageCollect();
+      mDevice->UpdateDescriptorSets();
 
       Queue* queue = mDevice->GetQueue();
       Debug::ErrorCheck(mSwapChain.acquireNextImage(GetImageAvailableSemaphore()->GetVkHandle(),

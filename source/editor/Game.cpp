@@ -99,7 +99,7 @@ void Game::AddGround()
    SharedPtr<Utopian::Model> model = Utopian::Vk::gModelLoader().LoadGrid(1000, 2);
    renderable->SetModel(model);
    renderable->SetTileFactor(glm::vec2(500.0f));
-   renderable->SetTexture(Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
+   renderable->SetDiffuseTexture(0, Utopian::Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.ktx"));
 
    actor->PostInit();
    Utopian::World::Instance().SynchronizeNodeTransforms();

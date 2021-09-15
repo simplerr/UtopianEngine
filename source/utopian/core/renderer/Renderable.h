@@ -35,8 +35,9 @@ namespace Utopian
       void LoadModel(std::string path);
 
       void SetModel(SharedPtr<Model> model);
-      void SetTexture(SharedPtr<Vk::Texture> texture);
-      void SetSpecularTexture(SharedPtr<Vk::Texture> texture);
+      void SetDiffuseTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture);
+      void SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture);
+      void SetSpecularTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture);
       void SetTileFactor(glm::vec2 tileFactor);
       void SetColor(glm::vec4 color);
       void SetVisible(bool visible);

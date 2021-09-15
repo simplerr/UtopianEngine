@@ -41,6 +41,12 @@ namespace Utopian::Vk
       /** Destroys all Vulkan resources that have been added to the garbage collect list. */
       void GarbageCollect();
 
+      /** Queues an update of a descriptor set that is performed once no command buffer is active. */
+      void QueueDescriptorUpdate(SharedPtr<Vk::DescriptorSet>& descriptorSet);
+
+      /** Perform descriptor set update on queued objects. */
+      void UpdateDescriptorSets();
+
       /* Memory management. */
       VmaAllocation AllocateMemory(Image* image, VkMemoryPropertyFlags flags);
       VmaAllocation AllocateMemory(Buffer* buffer, VkMemoryPropertyFlags flags);
@@ -100,5 +106,8 @@ namespace Utopian::Vk
       // Garbage collection
       std::vector<SharedPtr<Vk::Buffer>> mBuffersToFree;
       std::vector<VkPipeline> mPipelinesToFree;
+
+      // Descriptor update
+      std::vector<SharedPtr<Vk::DescriptorSet>> mDescriptorSetUpdateQueue;
    };
 }

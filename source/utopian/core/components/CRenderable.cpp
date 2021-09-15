@@ -83,14 +83,19 @@ namespace Utopian
       mInternal->SetModel(model);
    }
 
-   void CRenderable::SetTexture(SharedPtr<Vk::Texture> texture)
+   void CRenderable::SetDiffuseTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
-      mInternal->SetTexture(texture);
+      mInternal->SetDiffuseTexture(materialIdx, texture);
    }
 
-   void CRenderable::SetSpecularTexture(SharedPtr<Vk::Texture> texture)
+   void CRenderable::SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
-      mInternal->SetSpecularTexture(texture);
+      mInternal->SetNormalTexture(materialIdx, texture);
+   }
+
+   void CRenderable::SetSpecularTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
+   {
+      mInternal->SetSpecularTexture(materialIdx, texture);
    }
 
    void CRenderable::SetTileFactor(glm::vec2 tileFactor)

@@ -6,6 +6,7 @@
 #include "vulkan/handles/CommandPool.h"
 #include "vulkan/handles/Buffer.h"
 #include "vulkan/handles/Image.h"
+#include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/Debug.h"
 #include "core/Log.h"
 #include <fstream>
@@ -247,6 +248,19 @@ namespace Utopian::Vk
 
       if (mPipelinesToFree.size() > 0)
          mPipelinesToFree.clear();
+   }
+
+   void Device::QueueDescriptorUpdate(SharedPtr<Vk::DescriptorSet>& descriptorSet)
+   {
+      mDescriptorSetUpdateQueue.push_back(descriptorSet);
+   }
+
+   void Device::UpdateDescriptorSets()
+   {
+      for (auto& descriptorSet : mDescriptorSetUpdateQueue)
+         descriptorSet->UpdateDescriptorSets();
+
+      mDescriptorSetUpdateQueue.clear();
    }
 
    VmaAllocation Device::AllocateMemory(Image* image, VkMemoryPropertyFlags flags)

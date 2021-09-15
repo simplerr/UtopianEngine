@@ -86,11 +86,6 @@ namespace Utopian
    void Model::AddRootNode(Node* node)
    {
       mRootNodes.push_back(node);
-
-      if (mFirstPrimitive == nullptr && node->mesh.primitives.size() > 0)
-      {
-         mFirstPrimitive = node->mesh.primitives[0];
-      }
    }
 
    void Model::AddSkinAnimator(SharedPtr<SkinAnimator> skinAnimator)
@@ -113,14 +108,18 @@ namespace Utopian
       }
    }
 
-   Primitive* Model::GetFirstPrimitive()
+   Primitive* Model::GetPrimitive(uint32_t index)
    {
-      return mFirstPrimitive;
+      assert(index < mPrimitives.size());
+
+      return mPrimitives[index].get();
    }
 
-   std::vector<SharedPtr<Material>>& Model::GetMaterials()
+   Material* Model::GetMaterial(uint32_t index)
    {
-      return mMaterials;
+      assert(index < mMaterials.size());
+
+      return mMaterials[index].get();
    }
 
    void Model::GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix)
