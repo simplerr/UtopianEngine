@@ -11,9 +11,6 @@
 
 struct aiMaterial;
 
-#define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
-#define PLACEHOLDER_TEXTURE_PATH "data/textures/prototype/Light/texture_12.png"
-
 namespace Utopian
 {
    class Model;
@@ -37,10 +34,6 @@ namespace Utopian
       std::string GetPath(aiMaterial* material, aiTextureType textureType, std::string filename);
       int FindValidPath(aiString* texturePath, std::string modelPath);
       bool TryLongerPath(char* szTemp, aiString* p_szString);
-
-      // Move this, duplicate with glTFLoader
-      SharedPtr<Vk::DescriptorSetLayout> mMeshTexturesDescriptorSetLayout;
-      SharedPtr<Vk::DescriptorPool> mMeshTexturesDescriptorPool;
 
       Vk::Device* mDevice;
    };

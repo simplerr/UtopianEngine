@@ -3,6 +3,7 @@
 #include "AssimpLoader.h"
 #include "core/renderer/Primitive.h"
 #include "core/Log.h"
+#include "core/ModelLoader.h"
 #include "core/renderer/Model.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -22,15 +23,6 @@ namespace Utopian
    AssimpLoader::AssimpLoader(Vk::Device* device)
       : mDevice(device)
    {
-      mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(mDevice);
-      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
-      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
-      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
-      mMeshTexturesDescriptorSetLayout->Create();
-
-      mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(mDevice);
-      mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 200);
-      mMeshTexturesDescriptorPool->Create();
    }
 
    AssimpLoader::~AssimpLoader()
@@ -100,7 +92,7 @@ namespace Utopian
             int numHeightMaps = aiMaterial->GetTextureCount(aiTextureType_HEIGHT);
             int numSpecularMaps = aiMaterial->GetTextureCount(aiTextureType_SPECULAR);
 
-            std::string diffuseTexturePath = PLACEHOLDER_TEXTURE_PATH;
+            std::string diffuseTexturePath = DEFAULT_COLOR_TEXTURE_PATH;
             std::string normalTexturePath = DEFAULT_NORMAL_MAP_TEXTURE;
             std::string specularTexturePath = DEFAULT_SPECULAR_MAP_TEXTURE;
 
@@ -148,7 +140,7 @@ namespace Utopian
 
                if (texture == nullptr)
                {
-                  texPath = PLACEHOLDER_TEXTURE_PATH;
+                  texPath = DEFAULT_COLOR_TEXTURE_PATH;
                }
             }
 
@@ -173,8 +165,8 @@ namespace Utopian
 
             Material material;
 
-            material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, mMeshTexturesDescriptorSetLayout.get(),
-                                                                         mMeshTexturesDescriptorPool.get());
+            material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
+                                                                         gModelLoader().GetMeshTextureDescriptorPool());
 
             material.colorTexture = Vk::gTextureLoader().LoadTexture(diffuseTexturePath);
             material.normalTexture = Vk::gTextureLoader().LoadTexture(normalTexturePath);

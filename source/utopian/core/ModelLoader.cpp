@@ -42,14 +42,14 @@ namespace Utopian
       return ModelLoader::Instance();
    }
 
-   SharedPtr<Vk::DescriptorSetLayout> ModelLoader::GetMeshTextureDescriptorSetLayout()
+   Vk::DescriptorSetLayout* ModelLoader::GetMeshTextureDescriptorSetLayout()
    {
-      return mMeshTexturesDescriptorSetLayout;
+      return mMeshTexturesDescriptorSetLayout.get();
    }
 
-   SharedPtr<Vk::DescriptorPool> ModelLoader::GetMeshTextureDescriptorPool()
+   Vk::DescriptorPool* ModelLoader::GetMeshTextureDescriptorPool()
    {
-      return mMeshTexturesDescriptorPool;
+      return mMeshTexturesDescriptorPool.get();
    }
 
    SharedPtr<Model> ModelLoader::LoadModel(std::string filename)
@@ -80,7 +80,49 @@ namespace Utopian
       return model;
    }
 
-   SharedPtr<Model> ModelLoader::LoadBox(std::string texture)
+   SharedPtr<Model> ModelLoader::LoadGrid(float cellSize, int numCells)
+   {
+      Primitive primitive;
+
+      for (int x = 0; x < numCells; x++)
+      {
+         for (int z = 0; z < numCells; z++)
+         {
+            Vk::Vertex vertex;
+            const float originOffset = (cellSize * numCells) / 2.0f - cellSize / 2;
+            vertex.pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
+            vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+            vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+            vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
+            primitive.AddVertex(vertex);
+         }
+      }
+
+      for (int x = 0; x < numCells - 1; x++)
+      {
+         for (int z = 0; z < numCells - 1; z++)
+         {
+            primitive.AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
+            primitive.AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
+         }
+      }
+
+      primitive.BuildBuffers(mDevice);
+
+      SharedPtr<Model> model = std::make_shared<Model>();
+
+      Primitive* prim = model->AddPrimitive(primitive);
+      Material* mat = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+
+      Node* node = model->CreateNode();
+      node->mesh = Mesh(prim, mat);
+
+      model->AddRootNode(node);
+
+      return model;
+   }
+
+   SharedPtr<Model> ModelLoader::LoadBox()
    {
       Primitive primitive;
 
@@ -156,48 +198,6 @@ namespace Utopian
 
       model->AddRootNode(node);
       model->Init();
-
-      return model;
-   }
-
-   SharedPtr<Model> ModelLoader::LoadGrid(float cellSize, int numCells)
-   {
-      Primitive primitive;
-
-      for (int x = 0; x < numCells; x++)
-      {
-         for (int z = 0; z < numCells; z++)
-         {
-            Vk::Vertex vertex;
-            const float originOffset = (cellSize * numCells) / 2.0f - cellSize / 2;
-            vertex.pos = glm::vec3(x * cellSize - originOffset, 0.0f, z * cellSize - originOffset);
-            vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-            vertex.tangent = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-            vertex.uv = glm::vec2((float)x / (numCells - 1), (float)z / (numCells - 1));
-            primitive.AddVertex(vertex);
-         }
-      }
-
-      for (int x = 0; x < numCells - 1; x++)
-      {
-         for (int z = 0; z < numCells - 1; z++)
-         {
-            primitive.AddTriangle(x * numCells + z, x * numCells + z + 1, (x + 1) * numCells + z);
-            primitive.AddTriangle((x + 1) * numCells + z, x * numCells + z + 1, (x + 1) * numCells + (z + 1));
-         }
-      }
-
-      primitive.BuildBuffers(mDevice);
-
-      SharedPtr<Model> model = std::make_shared<Model>();
-
-      Primitive* prim = model->AddPrimitive(primitive);
-      Material* mat = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
-
-      Node* node = model->CreateNode();
-      node->mesh = Mesh(prim, mat);
-
-      model->AddRootNode(node);
 
       return model;
    }

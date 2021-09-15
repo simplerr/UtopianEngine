@@ -71,7 +71,7 @@ namespace Utopian
          IntersectionInfo intersectInfo = gWorld().RayIntersection(ray);
          glm::vec3 position = ray.origin + ray.direction * intersectInfo.distance;
          position += glm::vec3(0.0f, 0.5f, 0.0f);
-         AddPolymesh(position, "data/textures/prototype/Orange/texture_01.ktx");
+         AddPolymesh(position);
       }
 
       if (mSelectedMesh != nullptr)
@@ -90,7 +90,7 @@ namespace Utopian
       }
    }
 
-   void PrototypeTool::AddPolymesh(glm::vec3 position, std::string texture)
+   void PrototypeTool::AddPolymesh(glm::vec3 position)
    {
       SharedPtr<Utopian::Actor> actor = Utopian::Actor::Create("Polymesh");
       Utopian::CTransform* transform = actor->AddComponent<Utopian::CTransform>(position);
@@ -98,7 +98,7 @@ namespace Utopian
       Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
       Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
 
-      auto model = Utopian::gModelLoader().LoadBox(texture);
+      auto model = Utopian::gModelLoader().LoadBox();
       renderable->SetModel(model);
 
       rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::MESH);

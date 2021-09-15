@@ -4,6 +4,7 @@
 #include "core/renderer/Model.h"
 #include "core/renderer/SkinAnimator.h"
 #include "core/Log.h"
+#include "core/ModelLoader.h"
 #include "tinygltf/tiny_gltf.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -25,16 +26,6 @@ namespace Utopian
 
    void glTFLoader::CreateDescriptorPools()
    {
-      mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(mDevice);
-      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
-      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
-      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
-      mMeshTexturesDescriptorSetLayout->Create();
-
-      mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(mDevice);
-      mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 200);
-      mMeshTexturesDescriptorPool->Create();
-
       mMeshSkinningDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(mDevice);
       mMeshSkinningDescriptorSetLayout->AddStorageBuffer(0, VK_SHADER_STAGE_ALL, 1); // jointMatrices
       mMeshSkinningDescriptorSetLayout->Create();
@@ -122,8 +113,8 @@ namespace Utopian
             material.normalTexture = images[imageRefs[normalTextureIndex]];
          }
 
-         material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, mMeshTexturesDescriptorSetLayout.get(),
-                                                                      mMeshTexturesDescriptorPool.get());
+         material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
+                                                                      gModelLoader().GetMeshTextureDescriptorPool());
          material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
 
          // Todo: Use default normal map if not present
@@ -341,11 +332,11 @@ namespace Utopian
    {
       Material material;
 
-      material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, mMeshTexturesDescriptorSetLayout.get(),
-                                                                   mMeshTexturesDescriptorPool.get());
+      material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
+                                                                   gModelLoader().GetMeshTextureDescriptorPool());
 
       // Todo: Move the default paths to Material.h
-      material.colorTexture = Vk::gTextureLoader().LoadTexture("data/textures/prototype/Light/texture_12.png");
+      material.colorTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_COLOR_TEXTURE_PATH);
       material.normalTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_NORMAL_MAP_TEXTURE);
       material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
 

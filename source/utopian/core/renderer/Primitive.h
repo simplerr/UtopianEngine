@@ -8,10 +8,6 @@
 #include "utility/math/BoundingBox.h"
 #include "utility/Common.h"
 
-// Todo: move these
-#define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
-#define DEFAULT_SPECULAR_MAP_TEXTURE "data/textures/default_specular_map.png"
-
 namespace Utopian
 {
    class Primitive

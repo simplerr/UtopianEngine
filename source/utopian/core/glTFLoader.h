@@ -7,6 +7,10 @@
 
 namespace Utopian
 {
+   /**
+    * The loader used for loading .gltf models.
+    * Supports PBR materials and skinning.
+    */
    class glTFLoader
    {
    public:
@@ -17,6 +21,8 @@ namespace Utopian
 
       Material GetDefaultMaterial();
 
+      // Todo: this is due to the coordinate system being inversed in the engine,
+      // needs to be fixed.
       void SetInverseTranslation(bool inverse);
 
    private:
@@ -28,14 +34,9 @@ namespace Utopian
       void CreateDescriptorPools();
 
    private:
-      SharedPtr<Vk::DescriptorSetLayout> mMeshTexturesDescriptorSetLayout;
       SharedPtr<Vk::DescriptorSetLayout> mMeshSkinningDescriptorSetLayout;
-      SharedPtr<Vk::DescriptorPool> mMeshTexturesDescriptorPool;
       SharedPtr<Vk::DescriptorPool> mMeshSkinningDescriptorPool;
       Vk::Device* mDevice;
-
-      // Todo: this is due to the coordinate system being inversed in the engine,
-      // needs to be fixed.
       bool mInverseTranslation = true;
    };
 }
