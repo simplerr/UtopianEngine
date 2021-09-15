@@ -53,14 +53,13 @@ namespace Utopian
       mRadialBlurEffect->BindUniformBuffer("UBO_parameters", mRadialBlurParameters);
       mRadialBlurEffect->BindCombinedImage("sunSampler", *sunImage, *mRadialBlurRenderTarget->GetSampler());
 
-      mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+      mSkydomeModel = gModelLoader().LoadModel("data/models/sphere.obj");
    }
 
    void SunShaftJob::Render(const JobInput& jobInput)
    {
       float sunInclination = glm::radians(jobInput.renderingSettings.sunInclination);
       glm::vec3 sunDir = jobInput.sceneInfo.sunInfo.direction;
-      // Todo: MODEL UPDATE
       float skydomeRadius = mSkydomeModel->GetBoundingBox().GetWidth() / 2.0f;
 
       // Note: Todo: Why -X here?

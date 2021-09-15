@@ -98,7 +98,7 @@ namespace Utopian
       Utopian::CRigidBody* rigidBody = actor->AddComponent<Utopian::CRigidBody>();
       Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>();
 
-      auto model = Utopian::Vk::gModelLoader().LoadBox(texture);
+      auto model = Utopian::gModelLoader().LoadBox(texture);
       renderable->SetModel(model);
 
       rigidBody->SetCollisionShapeType(Utopian::CollisionShapeType::MESH);

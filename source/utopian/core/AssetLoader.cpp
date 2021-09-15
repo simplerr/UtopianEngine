@@ -2,6 +2,8 @@
 #include "core/renderer/Model.h"
 #include "core/ModelLoader.h"
 #include "vulkan/TextureLoader.h"
+#include "vulkan/handles/DescriptorSet.h"
+#include "core/renderer/Renderer.h"
 
 namespace Utopian
 {
@@ -200,31 +202,33 @@ namespace Utopian
 
       std::string fullModelPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.model;
 
-      SharedPtr<Model> model = Vk::gModelLoader().LoadModel(fullModelPath);
-
-      return model;
-
-      // Todo: MODEL UPDATE
+      SharedPtr<Model> model = gModelLoader().LoadModel(fullModelPath);
 
       // Some assets are not properly storing texture paths so we need to set them manually
-      // if (asset.diffuseTexture != "-")
-      // {
-      //    std::string fullDiffusePath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.diffuseTexture;
-      //    std::string fullNormalPath = DEFAULT_NORMAL_MAP_TEXTURE;
+      if (asset.diffuseTexture != "-")
+      {
+         std::string fullDiffusePath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.diffuseTexture;
+         std::string fullNormalPath = DEFAULT_NORMAL_MAP_TEXTURE;
 
-      //    if (asset.normalMap != "-")
-      //       fullNormalPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.normalMap;
+         if (asset.normalMap != "-")
+            fullNormalPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.normalMap;
 
-      //    SharedPtr<Vk::Texture> diffuseTexture = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
-      //    SharedPtr<Vk::Texture> normalMap = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
+         SharedPtr<Vk::Texture> diffuseTexture = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
+         SharedPtr<Vk::Texture> normalMap = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
 
-      //    if (diffuseTexture != nullptr && normalMap != nullptr)
-      //    {
-      //       model->mMeshes[0]->LoadTextures(fullDiffusePath, fullNormalPath);
-      //    }
-      //    else
-      //       assert(0);
-      // }
+         if (diffuseTexture != nullptr && normalMap != nullptr)
+         {
+            Material* material = model->GetMaterial(0);
+            material->colorTexture = diffuseTexture;
+            material->normalTexture = normalMap;
+            material->descriptorSet->BindCombinedImage(0, material->colorTexture->GetDescriptor());
+            material->descriptorSet->BindCombinedImage(1, material->normalTexture->GetDescriptor());
+
+            gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
+         }
+         else
+            assert(0);
+      }
 
       return model;
    }

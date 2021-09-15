@@ -131,7 +131,7 @@ namespace Utopian
                   renderable->LoadModel(path);
                }
                else {
-                  renderable->SetModel(Vk::gModelLoader().LoadBox());
+                  renderable->SetModel(gModelLoader().LoadBox());
                }
                // Todo: Should support loading grids etc. as well.
             }

@@ -44,7 +44,7 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
       mEffect->BindUniformBuffer("UBO_atmosphere", mParameterBlock);
 
-      mSkydomeModel = Vk::gModelLoader().LoadModel("data/models/sphere.obj");
+      mSkydomeModel = gModelLoader().LoadModel("data/models/sphere.obj");
 
       // const uint32_t size = 240;
       // gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());

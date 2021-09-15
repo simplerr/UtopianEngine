@@ -56,7 +56,7 @@ namespace Utopian
       Vk::gShaderFactory().Destroy();
       Vk::gEffectManager().Destroy();
       Vk::gTextureLoader().Destroy();
-      Vk::gModelLoader().Destroy();
+      gModelLoader().Destroy();
 
       gTimer().Destroy();
       gInput().Destroy();
@@ -79,7 +79,7 @@ namespace Utopian
       Vk::Device* device = mVulkanApp->GetDevice();
       Vk::gEffectManager().Start();
       Vk::gTextureLoader().Start(device);
-      Vk::gModelLoader().Start(device);
+      gModelLoader().Start(device);
       Vk::gShaderFactory().Start(device);
       Vk::gShaderFactory().AddIncludeDirectory("data/shaders/include");
       Vk::gShaderFactory().AddIncludeDirectory("data/shaders/");

@@ -48,7 +48,7 @@ namespace Utopian
 
    void Renderable::LoadModel(std::string path)
    {
-      mModel = Vk::gModelLoader().LoadModel(path);
+      mModel = gModelLoader().LoadModel(path);
    }
 
    void Renderable::SetModel(SharedPtr<Model> model)

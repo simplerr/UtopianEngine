@@ -29,7 +29,7 @@ namespace Utopian
       mMaxSpeed = maxSpeed;
       mJumpStrength = jumpStrength;
 
-      SharedPtr<Model> model = Vk::gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
+      SharedPtr<Model> model = gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
       mViewmodel = Renderable::Create();
       mViewmodel->SetModel(model);
       mViewmodel->AddRotation(glm::vec3(glm::pi<float>(), 0.0f, 0.0f));

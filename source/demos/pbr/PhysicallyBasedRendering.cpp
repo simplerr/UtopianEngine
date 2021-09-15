@@ -47,7 +47,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    InitResources();
 
-   Vk::gModelLoader().SetInverseTranslation(false);
+   gModelLoader().SetInverseTranslation(false);
 
    AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
@@ -57,7 +57,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    
    SceneNode sceneNode;
-   sceneNode.model = Vk::gModelLoader().LoadBox();
+   sceneNode.model = gModelLoader().LoadBox();
    sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f)) *
                            glm::mat4(glm::quat()) *
                            glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
@@ -215,7 +215,7 @@ void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wPara
 void PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
 {
    SceneNode sceneNode;
-   sceneNode.model = Vk::gModelLoader().LoadModel(filename);
+   sceneNode.model = gModelLoader().LoadModel(filename);
    sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), pos) *
                            glm::mat4(rotation) *
                            glm::scale(glm::mat4(1.0f), scale);

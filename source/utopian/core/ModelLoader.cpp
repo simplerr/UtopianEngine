@@ -12,21 +12,23 @@
 #include "vulkan/TextureLoader.h"
 #include "utility/Utility.h"
 
-namespace Utopian::Vk
+namespace Utopian
 {
-   ModelLoader::ModelLoader(Device* device)
+   using Vk::Vertex;
+
+   ModelLoader::ModelLoader(Vk::Device* device)
       : mDevice(device)
    {
       mAssimpLoader = std::make_shared<AssimpLoader>(device);
       mglTFLoader = std::make_shared<glTFLoader>(device);
 
-      mMeshTexturesDescriptorSetLayout = std::make_shared<DescriptorSetLayout>(device);
+      mMeshTexturesDescriptorSetLayout = std::make_shared<Vk::DescriptorSetLayout>(device);
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
       mMeshTexturesDescriptorSetLayout->Create();
 
-      mMeshTexturesDescriptorPool = std::make_shared<DescriptorPool>(device);
+      mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(device);
       mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 512);
       mMeshTexturesDescriptorPool->Create();
    }
@@ -40,12 +42,12 @@ namespace Utopian::Vk
       return ModelLoader::Instance();
    }
 
-   SharedPtr<DescriptorSetLayout> ModelLoader::GetMeshTextureDescriptorSetLayout()
+   SharedPtr<Vk::DescriptorSetLayout> ModelLoader::GetMeshTextureDescriptorSetLayout()
    {
       return mMeshTexturesDescriptorSetLayout;
    }
 
-   SharedPtr<DescriptorPool> ModelLoader::GetMeshTextureDescriptorPool()
+   SharedPtr<Vk::DescriptorPool> ModelLoader::GetMeshTextureDescriptorPool()
    {
       return mMeshTexturesDescriptorPool;
    }
