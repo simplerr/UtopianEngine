@@ -178,7 +178,7 @@ namespace Utopian
          supportsBlit = false;
       }
 
-      // Check if the device supports blitting to linear images 
+      // Check if the device supports blitting to linear images
       vkGetPhysicalDeviceFormatProperties(device->GetPhysicalDevice(), dstImage.GetFormat(), &formatProps);
       if (!(formatProps.linearTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT)) {
          supportsBlit = false;

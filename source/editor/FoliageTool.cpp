@@ -16,10 +16,9 @@
 
 namespace Utopian
 {
-   FoliageTool::FoliageTool(Terrain* terrain, Vk::Device* device)
+   FoliageTool::FoliageTool(Terrain* terrain)
    {
       mTerrain = terrain;
-      mDevice = device;
       mLastAddTimestamp = gTimer().GetTimestamp();
       mVegetationSettings.continuous = true;
       mVegetationSettings.restrictedDeletion = true;

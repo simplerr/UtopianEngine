@@ -31,7 +31,7 @@ namespace Utopian
    class FoliageTool
    {
    public:
-      FoliageTool(Terrain* terrain, Vk::Device* device);
+      FoliageTool(Terrain* terrain);
       ~FoliageTool();
 
       // Uses brush settings from TerrainTool
@@ -46,7 +46,6 @@ namespace Utopian
    private:
       void AddVegetation(uint32_t assetId, glm::vec3 position, bool animated, bool castShadows, float scaleFactor = 1.0f);
    private:
-      Vk::Device* mDevice;
       Terrain* mTerrain;
       BrushSettings* mBrushSettings;
 

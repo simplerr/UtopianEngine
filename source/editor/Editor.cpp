@@ -39,7 +39,7 @@ namespace Utopian
       if (terrain != nullptr)
       {
          mTerrainTool = std::make_shared<TerrainTool>(terrain, gRenderer().GetDevice());
-         mFoliageTool = std::make_shared<FoliageTool>(terrain, gRenderer().GetDevice());
+         mFoliageTool = std::make_shared<FoliageTool>(terrain);
          mFoliageTool->SetBrushSettings(mTerrainTool->GetBrushSettings());
       }
 
