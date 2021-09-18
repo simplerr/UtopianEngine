@@ -1,4 +1,5 @@
 #include <vector>
+#include <vulkan/vulkan_core.h>
 
 #include "core/renderer/Primitive.h"
 #include "core/Log.h"
@@ -26,10 +27,12 @@ namespace Utopian
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(0, VK_SHADER_STAGE_ALL, 1); // diffuseSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
+      mMeshTexturesDescriptorSetLayout->AddUniformBuffer(3, VK_SHADER_STAGE_ALL, 1); // material properties
       mMeshTexturesDescriptorSetLayout->Create();
 
       mMeshTexturesDescriptorPool = std::make_shared<Vk::DescriptorPool>(device);
       mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 512);
+      mMeshTexturesDescriptorPool->AddDescriptor(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 512);
       mMeshTexturesDescriptorPool->Create();
    }
 
@@ -55,8 +58,8 @@ namespace Utopian
    SharedPtr<Model> ModelLoader::LoadModel(std::string filename)
    {
       // Check if the model already is loaded
-      if (mModelMap.find(filename) != mModelMap.end())
-         return mModelMap[filename];
+      // if (mModelMap.find(filename) != mModelMap.end())
+      //    return mModelMap[filename];
 
       SharedPtr<Model> model = nullptr;
 

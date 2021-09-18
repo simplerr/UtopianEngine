@@ -49,19 +49,35 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
 
    gModelLoader().SetInverseTranslation(false);
 
-   AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
-   AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
-            glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
-   AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
-   AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
+   //AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
+   // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
+   //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
+   // AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
+   AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    
-   SceneNode sceneNode;
-   sceneNode.model = gModelLoader().LoadBox();
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f)) *
-                           glm::mat4(glm::quat()) *
-                           glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
-   mSceneNodes.push_back(sceneNode);
+   // SceneNode sceneNode;
+   // sceneNode.model = gModelLoader().LoadBox();
+   // sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f)) *
+   //                         glm::mat4(glm::quat()) *
+   //                         glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
+   // mSceneNodes.push_back(sceneNode);
+
+   //AddModel("data/models/sphere.obj", glm::vec3(1.0f, 0.0f, 3), glm::vec3(0.02f));
+   const uint32_t max = 5;
+   for (uint32_t x = 0; x < max; x++)
+   {
+      for (uint32_t y = 0; y < max; y++)
+      {
+         Utopian::Model* model = AddModel("data/models/gltf/sphere.gltf", glm::vec3(x, y, 0.0f), glm::vec3(0.4f));
+         Utopian::Material* material = model->GetMaterial(0);
+         material->properties->data.albedo = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+         material->properties->data.metallic = (float)x / (float)max;
+         material->properties->data.roughness = (float)y / (float)max;
+         material->properties->data.ao = 0.5;
+         material->properties->UpdateMemory();
+      }
+   }
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -92,7 +108,7 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(0.31, 1.0, -0.86), glm::vec3(0, 0, 0), 0.01, 200, 0.009f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(1.31, 1.0, 5.58), glm::vec3(0, 0, 0), 0.01, 200, 0.009f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
@@ -125,8 +141,14 @@ void PhysicallyBasedRendering::UpdateCallback()
 {
    glm::vec3 cameraPos = mCamera->GetPosition();
 
+   Material* material = mSceneNodes[0].model->GetMaterial(0);
+
    ImGuiRenderer::BeginWindow("PBR Demo", glm::vec2(10, 150), 300.0f);
    ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
+   ImGui::ColorEdit4("Color", &material->properties->data.albedo.x);
+   ImGui::SliderFloat("Metallic", &material->properties->data.metallic, 0.0, 1.0f);
+   ImGui::SliderFloat("Roughness", &material->properties->data.roughness, 0.0, 1.0f);
+   ImGui::SliderFloat("Ambient occlusion", &material->properties->data.ao, 0.0, 1.0f);
    ImGuiRenderer::EndWindow();
 
    static double prevTime = Utopian::gTimer().GetTime();
@@ -155,6 +177,9 @@ void PhysicallyBasedRendering::DrawCallback()
    mVertexInputParameters.data.projection = mCamera->GetProjection();
    mVertexInputParameters.UpdateMemory();
 
+   Material* material = mSceneNodes[0].model->GetMaterial(0);
+   material->properties->UpdateMemory();
+
    mRenderTarget->Begin("PBR pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
    Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
@@ -178,7 +203,7 @@ void PhysicallyBasedRendering::DrawCallback()
          if (command.skinDescriptorSet != VK_NULL_HANDLE)
          {
             commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
-                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 2);
+                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 3);
          }
 
          commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
@@ -212,7 +237,7 @@ void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wPara
    Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
 }
 
-void PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
+Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
 {
    SceneNode sceneNode;
    sceneNode.model = gModelLoader().LoadModel(filename);
@@ -220,4 +245,6 @@ void PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm
                            glm::mat4(rotation) *
                            glm::scale(glm::mat4(1.0f), scale);
    mSceneNodes.push_back(sceneNode);
+
+   return sceneNode.model.get();
 }

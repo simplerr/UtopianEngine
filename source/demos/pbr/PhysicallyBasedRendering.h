@@ -47,7 +47,7 @@ public:
 
    void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-   void AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation = glm::quat());
+   Utopian::Model* AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation = glm::quat());
 private:
    void InitResources();
 

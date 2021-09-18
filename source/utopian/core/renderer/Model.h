@@ -8,13 +8,25 @@
 #include "vulkan/Texture.h"
 #include "vulkan/VulkanPrerequisites.h"
 #include "vulkan/Vertex.h"
+#include "vulkan/ShaderBuffer.h"
 #include "core/renderer/Primitive.h"
 #include "SkinAnimator.h"
 
 namespace Utopian
 {
+   UNIFORM_BLOCK_BEGIN(MaterialProperties)
+      UNIFORM_PARAM(glm::vec4, albedo)
+      UNIFORM_PARAM(float, metallic)
+      UNIFORM_PARAM(float, roughness)
+      UNIFORM_PARAM(float, ao)
+      UNIFORM_PARAM(float, pad)
+   UNIFORM_BLOCK_END()
+
    struct Material
    {
+      Material() {}
+
+      SharedPtr<MaterialProperties> properties = nullptr;
       glm::vec4 baseColorFactor = glm::vec4(1.0f);
       SharedPtr<Vk::Texture> colorTexture;
       SharedPtr<Vk::Texture> normalTexture;

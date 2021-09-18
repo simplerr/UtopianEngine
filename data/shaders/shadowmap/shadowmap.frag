@@ -11,6 +11,15 @@ layout (set = 1, binding = 0) uniform sampler2D texSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D specularSampler;
 
+layout (std140, set = 1, binding = 3) uniform UBO_material
+{
+   vec4 albedo;
+   float metallic;
+   float roughness;
+   float ao;
+   float pad;
+} material;
+
 float linearDepth(float depth)
 {
    float z = depth * 2.0f - 1.0f; 
@@ -24,6 +33,7 @@ void main()
    // Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
    vec4 hack = texture(normalSampler, InTex);
    vec4 hack2 = texture(specularSampler, InTex);
+   float hack3 = material.ao;
 
    if (color.a < 0.01f)
       discard;

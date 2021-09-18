@@ -101,6 +101,12 @@ namespace Utopian
 
          Material material;
 
+         material.properties = std::make_shared<MaterialProperties>();
+         material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+         material.properties->data = {};
+         material.properties->data.albedo = glm::vec4(1.0f);
+         material.properties->UpdateMemory();
+
          if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
             material.baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
          }
@@ -127,6 +133,7 @@ namespace Utopian
          else 
             material.descriptorSet->BindCombinedImage(2, material.colorTexture->GetDescriptor());
 
+         material.descriptorSet->BindUniformBuffer(3, material.properties->GetDescriptor());
          material.descriptorSet->UpdateDescriptorSets();
 
          model->AddMaterial(material);
@@ -196,8 +203,15 @@ namespace Utopian
             primitive.BuildBuffers(device);
 
             Primitive* addedPrimitive = model->AddPrimitive(primitive);
+            Material* material = nullptr;
 
-            node->mesh.AddPrimitive(addedPrimitive, model->GetMaterial(glTFPrimitive.material));
+            // Use the default material of missing from the primitive in the .gltf file
+            if (glTFPrimitive.material == -1)
+               material = model->AddMaterial(GetDefaultMaterial());
+            else
+               material = model->GetMaterial(glTFPrimitive.material);
+
+            node->mesh.AddPrimitive(addedPrimitive, material); 
          }
       }
 
@@ -335,7 +349,14 @@ namespace Utopian
       material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
                                                                    gModelLoader().GetMeshTextureDescriptorPool());
 
-      // Todo: Move the default paths to Material.h
+      material.properties = std::make_shared<MaterialProperties>();
+      material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      material.properties->data.albedo = glm::vec4(1.0f);
+      material.properties->data.metallic = 0.0f;
+      material.properties->data.roughness = 0.0f;
+      material.properties->data.ao = 0.0f;
+      material.properties->UpdateMemory();
+
       material.colorTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_COLOR_TEXTURE_PATH);
       material.normalTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_NORMAL_MAP_TEXTURE);
       material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
@@ -343,6 +364,7 @@ namespace Utopian
       material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
+      material.descriptorSet->BindUniformBuffer(3, material.properties->GetDescriptor());
       material.descriptorSet->UpdateDescriptorSets();
 
       return material;
