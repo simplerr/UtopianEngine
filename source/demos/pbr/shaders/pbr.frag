@@ -66,11 +66,20 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-   vec4 diffuse = texture(diffuseSampler, InTex);
+   vec4 baseColor = texture(diffuseSampler, InTex);
    vec4 normal = texture(normalSampler, InTex);
    vec4 specular = texture(specularSampler, InTex);
+   float metallic = texture(metallicRoughnessSampler, InTex).b;
+   float roughness = texture(metallicRoughnessSampler, InTex).g;
 
-   if (diffuse.a < 0.5f)
+   // From sRGB space to Linear space
+   baseColor.rgb = pow(baseColor.rgb, vec3(2.2));
+
+   baseColor *= material.baseColorFactor;
+   metallic *= material.metallicFactor;
+   roughness *= material.roughnessFactor;
+
+   if (baseColor.a < 0.5f)
       discard;
 
    // Calculate normal
@@ -86,7 +95,7 @@ void main()
    /* Implementation from https://learnopengl.com/PBR/Theory */
    vec3 V = normalize(InEyePosW - InPosW);
    vec3 F0 = vec3(0.04);
-   F0 = mix(F0, material.albedo.rgb, material.metallic);
+   F0 = mix(F0, baseColor.rgb, metallic);
 
    // Reflectance equation
    vec3 Lo = vec3(0.0);
@@ -100,13 +109,13 @@ void main()
       vec3 radiance     = lightColor * attenuation;
 
       // Cook-torrance brdf
-      float NDF = DistributionGGX(N, H, material.roughness);
-      float G   = GeometrySmith(N, V, L, material.roughness);
+      float NDF = DistributionGGX(N, H, roughness);
+      float G   = GeometrySmith(N, V, L, roughness);
       vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
       vec3 kS = F;
       vec3 kD = vec3(1.0) - kS;
-      kD *= 1.0 - material.metallic;
+      kD *= 1.0 - metallic;
 
       vec3 numerator    = NDF * G * F;
       float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
@@ -114,10 +123,10 @@ void main()
 
       // Add to outgoing radiance Lo
       float NdotL = max(dot(N, L), 0.0);
-      Lo += (kD * material.albedo.rgb / PI + specular) * radiance * NdotL;
+      Lo += (kD * baseColor.rgb / PI + specular) * radiance * NdotL;
    }
 
-   vec3 ambient = vec3(0.03) * material.albedo.rgb * material.ao;
+   vec3 ambient = vec3(0.03) * baseColor.rgb * material.ao;
    vec3 color = ambient + Lo;
 
    color = color / (color + vec3(1.0));

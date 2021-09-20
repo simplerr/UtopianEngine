@@ -170,16 +170,20 @@ namespace Utopian
 
             material.properties = std::make_shared<MaterialProperties>();
             material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-            material.properties->data.albedo = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+            material.properties->data.baseColorFactor = glm::vec4(1.0f);
+            material.properties->data.metallicFactor = 1.0f;
+            material.properties->data.roughnessFactor = 1.0f;
             material.properties->UpdateMemory();
 
             material.colorTexture = Vk::gTextureLoader().LoadTexture(diffuseTexturePath);
             material.normalTexture = Vk::gTextureLoader().LoadTexture(normalTexturePath);
             material.specularTexture = Vk::gTextureLoader().LoadTexture(specularTexturePath);
+            material.metallicRoughnessTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_METALLIC_ROUGHNESS_TEXTURE);
             material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
             material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
             material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-            material.descriptorSet->BindUniformBuffer(3, material.properties->GetDescriptor());
+            material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
+            material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
             material.descriptorSet->UpdateDescriptorSets();
 
             primitive.SetDebugName(filename);

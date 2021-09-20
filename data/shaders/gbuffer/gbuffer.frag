@@ -39,6 +39,7 @@ float linearDepth(float depth)
 void main()
 {
    float hack = material.ao;
+   hack = texture(metallicRoughnessSampler, InTex).b;
 
    vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
    vec4 specular = texture(specularSampler, InTex * InTextureTiling);

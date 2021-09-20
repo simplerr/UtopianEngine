@@ -71,9 +71,9 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
       {
          Utopian::Model* model = AddModel("data/models/gltf/sphere.gltf", glm::vec3(x, y, 0.0f), glm::vec3(0.4f));
          Utopian::Material* material = model->GetMaterial(0);
-         material->properties->data.albedo = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-         material->properties->data.metallic = (float)x / (float)max;
-         material->properties->data.roughness = (float)y / (float)max;
+         material->properties->data.baseColorFactor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+         material->properties->data.metallicFactor = (float)x / (float)max;
+         material->properties->data.roughnessFactor = (float)y / (float)max;
          material->properties->data.ao = 0.5;
          material->properties->UpdateMemory();
       }
@@ -145,9 +145,9 @@ void PhysicallyBasedRendering::UpdateCallback()
 
    ImGuiRenderer::BeginWindow("PBR Demo", glm::vec2(10, 150), 300.0f);
    ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
-   ImGui::ColorEdit4("Color", &material->properties->data.albedo.x);
-   ImGui::SliderFloat("Metallic", &material->properties->data.metallic, 0.0, 1.0f);
-   ImGui::SliderFloat("Roughness", &material->properties->data.roughness, 0.0, 1.0f);
+   ImGui::ColorEdit4("Color", &material->properties->data.baseColorFactor.x);
+   ImGui::SliderFloat("Metallic", &material->properties->data.metallicFactor, 0.0, 1.0f);
+   ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
    ImGui::SliderFloat("Ambient occlusion", &material->properties->data.ao, 0.0, 1.0f);
    ImGuiRenderer::EndWindow();
 

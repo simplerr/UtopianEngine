@@ -15,9 +15,9 @@
 namespace Utopian
 {
    UNIFORM_BLOCK_BEGIN(MaterialProperties)
-      UNIFORM_PARAM(glm::vec4, albedo)
-      UNIFORM_PARAM(float, metallic)
-      UNIFORM_PARAM(float, roughness)
+      UNIFORM_PARAM(glm::vec4, baseColorFactor)
+      UNIFORM_PARAM(float, metallicFactor)
+      UNIFORM_PARAM(float, roughnessFactor)
       UNIFORM_PARAM(float, ao)
       UNIFORM_PARAM(float, pad)
    UNIFORM_BLOCK_END()
@@ -27,10 +27,10 @@ namespace Utopian
       Material() {}
 
       SharedPtr<MaterialProperties> properties = nullptr;
-      glm::vec4 baseColorFactor = glm::vec4(1.0f);
       SharedPtr<Vk::Texture> colorTexture;
       SharedPtr<Vk::Texture> normalTexture;
       SharedPtr<Vk::Texture> specularTexture;
+      SharedPtr<Vk::Texture> metallicRoughnessTexture;
       SharedPtr<Vk::DescriptorSet> descriptorSet;
    };
 

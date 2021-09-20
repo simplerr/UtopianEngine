@@ -22,8 +22,9 @@ void main()
 
    // Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
    vec4 hack = texture(normalSampler, InTex);
-   vec4 hack2 = texture(specularSampler, InTex);
-   float hack3 = material.ao;
+   hack = texture(specularSampler, InTex);
+   float hack2 = material.ao;
+   hack2 = texture(metallicRoughnessSampler, InTex).b;
 
    if (color.a < 0.01f)
       discard;

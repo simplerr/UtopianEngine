@@ -104,15 +104,27 @@ namespace Utopian
          material.properties = std::make_shared<MaterialProperties>();
          material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
          material.properties->data = {};
-         material.properties->data.albedo = glm::vec4(1.0f);
+         material.properties->data.baseColorFactor = glm::vec4(1.0f);
+         material.properties->data.metallicFactor = 1.0f;
+         material.properties->data.roughnessFactor = 1.0f;
          material.properties->UpdateMemory();
 
          if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
-            material.baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
+            material.properties->data.baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
+         }
+         if (glTFMaterial.values.find("roughnessFactor") != glTFMaterial.values.end()) {
+            material.properties->data.roughnessFactor = static_cast<float>(glTFMaterial.values["roughnessFactor"].Factor());
+         }
+         if (glTFMaterial.values.find("metallicFactor") != glTFMaterial.values.end()) {
+            material.properties->data.metallicFactor = static_cast<float>(glTFMaterial.values["metallicFactor"].Factor());
          }
          if (glTFMaterial.values.find("baseColorTexture") != glTFMaterial.values.end()) {
             uint32_t baseColorTextureIndex = glTFMaterial.values["baseColorTexture"].TextureIndex();
             material.colorTexture = images[imageRefs[baseColorTextureIndex]];
+         }
+         if (glTFMaterial.values.find("metallicRoughnessTexture") != glTFMaterial.values.end()) {
+            uint32_t metallicRoughnessTextureIndex = glTFMaterial.values["metallicRoughnessTexture"].TextureIndex();
+            material.metallicRoughnessTexture = images[imageRefs[metallicRoughnessTextureIndex]];
          }
          if (glTFMaterial.additionalValues.find("normalTexture") != glTFMaterial.additionalValues.end()) {
             uint32_t normalTextureIndex = glTFMaterial.additionalValues["normalTexture"].TextureIndex();
@@ -126,14 +138,18 @@ namespace Utopian
          // Todo: Use default normal map if not present
          if (material.normalTexture != nullptr)
             material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
-         else 
+         else
             material.descriptorSet->BindCombinedImage(1, material.colorTexture->GetDescriptor());
          if (material.specularTexture != nullptr)
             material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-         else 
+         else
             material.descriptorSet->BindCombinedImage(2, material.colorTexture->GetDescriptor());
+         if (material.metallicRoughnessTexture != nullptr)
+            material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
+         else
+            material.descriptorSet->BindCombinedImage(3, material.colorTexture->GetDescriptor());
 
-         material.descriptorSet->BindUniformBuffer(3, material.properties->GetDescriptor());
+         material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
          material.descriptorSet->UpdateDescriptorSets();
 
          model->AddMaterial(material);
@@ -351,20 +367,22 @@ namespace Utopian
 
       material.properties = std::make_shared<MaterialProperties>();
       material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-      material.properties->data.albedo = glm::vec4(1.0f);
-      material.properties->data.metallic = 0.0f;
-      material.properties->data.roughness = 0.0f;
+      material.properties->data.baseColorFactor = glm::vec4(1.0f);
+      material.properties->data.metallicFactor = 1.0f;
+      material.properties->data.roughnessFactor = 1.0f;
       material.properties->data.ao = 0.0f;
       material.properties->UpdateMemory();
 
       material.colorTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_COLOR_TEXTURE_PATH);
       material.normalTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_NORMAL_MAP_TEXTURE);
       material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
+      material.metallicRoughnessTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_METALLIC_ROUGHNESS_TEXTURE);
 
       material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-      material.descriptorSet->BindUniformBuffer(3, material.properties->GetDescriptor());
+      material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
+      material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
       material.descriptorSet->UpdateDescriptorSets();
 
       return material;
