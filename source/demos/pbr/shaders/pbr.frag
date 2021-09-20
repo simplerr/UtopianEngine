@@ -1,4 +1,7 @@
 #version 450
+#extension GL_GOOGLE_include_directive : enable
+
+#include "material.glsl"
 
 layout (location = 0) in vec3 InPosW;
 layout (location = 1) in vec3 InNormalW;
@@ -8,19 +11,6 @@ layout (location = 4) in vec2 InTex;
 layout (location = 5) in vec4 InTangentL;
 
 layout (location = 0) out vec4 OutColor;
-
-layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
-layout (set = 1, binding = 1) uniform sampler2D normalSampler;
-layout (set = 1, binding = 2) uniform sampler2D specularSampler;
-
-layout (std140, set = 1, binding = 3) uniform UBO_material
-{
-   vec4 albedo;
-   float metallic;
-   float roughness;
-   float ao;
-   float pad;
-} material;
 
 const int numLights = 4;
 vec3 lightPositions[numLights] = {

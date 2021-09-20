@@ -2,6 +2,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "material_types.glsl"
+#include "material.glsl"
 
 layout (location = 0) in vec4 InColor;
 layout (location = 1) in vec3 InPosW;
@@ -20,19 +21,6 @@ layout (location = 2) out vec4 outAlbedo;
 // for normals in world space vs view space.
 layout (location = 3) out vec4 outNormalV;
 layout (location = 4) out vec4 outSpecular;
-
-layout (set = 1, binding = 0) uniform sampler2D diffuseSampler;
-layout (set = 1, binding = 1) uniform sampler2D normalSampler;
-layout (set = 1, binding = 2) uniform sampler2D specularSampler;
-
-layout (std140, set = 1, binding = 3) uniform UBO_material
-{
-   vec4 albedo;
-   float metallic;
-   float roughness;
-   float ao;
-   float pad;
-} material;
 
 layout (std140, set = 0, binding = 1) uniform UBO_settings
 {

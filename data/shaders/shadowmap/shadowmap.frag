@@ -1,4 +1,7 @@
 #version 450
+#extension GL_GOOGLE_include_directive : enable
+
+#include "material.glsl"
 
 layout (location = 0) in vec2 InTex;
 
@@ -6,19 +9,6 @@ layout (location = 0) out float OutColor;
 
 const float NEAR_PLANE = 1.0f; //todo: specialization const
 const float FAR_PLANE = 10000.0f; //todo: specialization const 
-
-layout (set = 1, binding = 0) uniform sampler2D texSampler;
-layout (set = 1, binding = 1) uniform sampler2D normalSampler;
-layout (set = 1, binding = 2) uniform sampler2D specularSampler;
-
-layout (std140, set = 1, binding = 3) uniform UBO_material
-{
-   vec4 albedo;
-   float metallic;
-   float roughness;
-   float ao;
-   float pad;
-} material;
 
 float linearDepth(float depth)
 {
@@ -28,7 +18,7 @@ float linearDepth(float depth)
 
 void main()
 {
-   vec4 color = texture(texSampler, InTex);
+   vec4 color = texture(diffuseSampler, InTex);
 
    // Todo: Remove, use to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
    vec4 hack = texture(normalSampler, InTex);

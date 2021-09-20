@@ -1,6 +1,7 @@
 #version 450
 #extension GL_GOOGLE_include_directive : enable
 
+#include "material.glsl"
 #include "material_types.glsl"
 #include "shared_variables.glsl"
 
@@ -14,19 +15,6 @@ const float FAR_PLANE = 256000.0f;
 
 layout (set = 0, binding = 1) uniform sampler2D depthSampler;
 
-layout (set = 1, binding = 0) uniform sampler2D texSampler;
-layout (set = 1, binding = 1) uniform sampler2D normalSampler;
-layout (set = 1, binding = 2) uniform sampler2D specularSampler;
-
-layout (std140, set = 1, binding = 3) uniform UBO_material
-{
-   vec4 albedo;
-   float metallic;
-   float roughness;
-   float ao;
-   float pad;
-} material;
-
 // Todo: Move to common file
 float eye_z_from_depth(float depth, mat4 Proj)
 {
@@ -35,7 +23,7 @@ float eye_z_from_depth(float depth, mat4 Proj)
 
 void main()
 {
-   vec4 color = texture(texSampler, InTex);
+   vec4 color = texture(diffuseSampler, InTex);
 
    if (color.a < 0.01f)
       discard;
