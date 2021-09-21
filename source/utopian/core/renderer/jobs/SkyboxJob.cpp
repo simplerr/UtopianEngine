@@ -26,7 +26,7 @@ namespace Utopian
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 
-      mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx");
+      mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx", VK_FORMAT_R8G8B8A8_UNORM);
 
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";

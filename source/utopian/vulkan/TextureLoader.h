@@ -30,7 +30,7 @@ namespace Utopian::Vk
        *
        * \note TextureLoader handles the memory deallocation of the texture.
        */
-      SharedPtr<Texture> LoadCubemapTexture(std::string path);
+      SharedPtr<Texture> LoadCubemapTexture(std::string path, VkFormat format = VK_FORMAT_R8G8B8A8_UNORM);
 
       /** \brief Creates a texture from arbitrary data
        *

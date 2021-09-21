@@ -251,12 +251,11 @@ namespace Utopian::Vk
       return texture;
    }
 
-   SharedPtr<Texture> TextureLoader::LoadCubemapTexture(std::string path)
+   SharedPtr<Texture> TextureLoader::LoadCubemapTexture(std::string path, VkFormat format)
    {
       // These might be needed as parameters
       VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
       VkImageUsageFlags imageUsageFlags = VK_IMAGE_USAGE_SAMPLED_BIT;
-      VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
 
       gli::texture_cube texCube(gli::load(path));
 

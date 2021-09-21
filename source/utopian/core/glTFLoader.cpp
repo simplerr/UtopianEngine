@@ -99,15 +99,7 @@ namespace Utopian
       {
          tinygltf::Material glTFMaterial = input.materials[i];
 
-         Material material;
-
-         material.properties = std::make_shared<MaterialProperties>();
-         material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-         material.properties->data = {};
-         material.properties->data.baseColorFactor = glm::vec4(1.0f);
-         material.properties->data.metallicFactor = 1.0f;
-         material.properties->data.roughnessFactor = 1.0f;
-         material.properties->UpdateMemory();
+         Material material = GetDefaultMaterial();
 
          if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
             material.properties->data.baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
@@ -131,24 +123,12 @@ namespace Utopian
             material.normalTexture = images[imageRefs[normalTextureIndex]];
          }
 
-         material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
-                                                                      gModelLoader().GetMeshTextureDescriptorPool());
+         material.properties->UpdateMemory();
+
          material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
-
-         // Todo: Use default normal map if not present
-         if (material.normalTexture != nullptr)
-            material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
-         else
-            material.descriptorSet->BindCombinedImage(1, material.colorTexture->GetDescriptor());
-         if (material.specularTexture != nullptr)
-            material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-         else
-            material.descriptorSet->BindCombinedImage(2, material.colorTexture->GetDescriptor());
-         if (material.metallicRoughnessTexture != nullptr)
-            material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
-         else
-            material.descriptorSet->BindCombinedImage(3, material.colorTexture->GetDescriptor());
-
+         material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
+         material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
+         material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
          material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
          material.descriptorSet->UpdateDescriptorSets();
 
@@ -365,12 +345,7 @@ namespace Utopian
       material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
                                                                    gModelLoader().GetMeshTextureDescriptorPool());
 
-      material.properties = std::make_shared<MaterialProperties>();
       material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-      material.properties->data.baseColorFactor = glm::vec4(1.0f);
-      material.properties->data.metallicFactor = 1.0f;
-      material.properties->data.roughnessFactor = 1.0f;
-      material.properties->data.ao = 0.0f;
       material.properties->UpdateMemory();
 
       material.colorTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_COLOR_TEXTURE_PATH);

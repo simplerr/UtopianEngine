@@ -163,22 +163,11 @@ namespace Utopian
                specularTexturePath = GetPath(aiMaterial, aiTextureType_SPECULAR, filename);
             }
 
-            Material material;
-
-            material.descriptorSet = std::make_shared<Vk::DescriptorSet>(mDevice, gModelLoader().GetMeshTextureDescriptorSetLayout(),
-                                                                         gModelLoader().GetMeshTextureDescriptorPool());
-
-            material.properties = std::make_shared<MaterialProperties>();
-            material.properties->Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-            material.properties->data.baseColorFactor = glm::vec4(1.0f);
-            material.properties->data.metallicFactor = 1.0f;
-            material.properties->data.roughnessFactor = 1.0f;
-            material.properties->UpdateMemory();
+            Material material = gModelLoader().GetDefaultMaterial();
 
             material.colorTexture = Vk::gTextureLoader().LoadTexture(diffuseTexturePath);
             material.normalTexture = Vk::gTextureLoader().LoadTexture(normalTexturePath);
             material.specularTexture = Vk::gTextureLoader().LoadTexture(specularTexturePath);
-            material.metallicRoughnessTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_METALLIC_ROUGHNESS_TEXTURE);
             material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
             material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
             material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());

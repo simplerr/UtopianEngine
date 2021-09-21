@@ -52,7 +52,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    //AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
    //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
-   // AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
+   AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
    AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    
@@ -95,11 +95,16 @@ void PhysicallyBasedRendering::DestroyCallback()
    mOutputImage = nullptr;
    mDepthImage = nullptr;
    mSampler = nullptr;
+   mSkybox.effect = nullptr;
+   mSkybox.model = nullptr;
+   mSkybox.texture = nullptr;
 
    for (auto& sceneNode : mSceneNodes)
       sceneNode.model = nullptr;
 
    mVertexInputParameters.GetBuffer()->Destroy();
+   mSkybox.inputBlock.GetBuffer()->Destroy();
+   mSkybox.shaderVariables.GetBuffer()->Destroy();
 }
 
 void PhysicallyBasedRendering::InitResources()
@@ -108,7 +113,7 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(1.31, 1.0, 5.58), glm::vec3(0, 0, 0), 0.01, 200, 0.009f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(1.31, 1.0, 5.58), glm::vec3(0, 0, 0), 0.01, 20000, 0.009f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
@@ -133,6 +138,8 @@ void PhysicallyBasedRendering::InitResources()
 
    mEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
    mSkinningEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
+
+   InitSkybox();
 
    gScreenQuadUi().AddQuad(0, 0, width, height, mOutputImage.get(), mSampler.get());
 }
@@ -203,7 +210,7 @@ void PhysicallyBasedRendering::DrawCallback()
          if (command.skinDescriptorSet != VK_NULL_HANDLE)
          {
             commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
-                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 3);
+                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 2);
          }
 
          commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
@@ -221,6 +228,8 @@ void PhysicallyBasedRendering::DrawCallback()
       }
    }
 
+   RenderSkybox(commandBuffer);
+
    mRenderTarget->End(mVulkanApp->GetImageAvailableSemaphore(), mPhysicallyBasedRenderingComplete);
 
    // Todo: Should be in Engine somewhere
@@ -235,6 +244,54 @@ void PhysicallyBasedRendering::Run()
 void PhysicallyBasedRendering::HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
    Utopian::gEngine().HandleMessages(hWnd, uMsg, wParam, lParam);
+}
+
+void PhysicallyBasedRendering::InitSkybox()
+{
+   Vk::Device* device = mVulkanApp->GetDevice();
+
+   //mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx");
+   //mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/gcanyon_cube.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
+   mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
+   mSkybox.model = gModelLoader().LoadBox();
+
+   Vk::EffectCreateInfo effectDesc;
+   effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";
+   effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
+   effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
+   effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+   effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
+   mSkybox.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
+
+   mSkybox.inputBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+   mSkybox.shaderVariables.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+   mSkybox.effect->BindUniformBuffer("UBO_sharedVariables", mSkybox.shaderVariables);
+   mSkybox.effect->BindUniformBuffer("UBO_input", mSkybox.inputBlock);
+   mSkybox.effect->BindCombinedImage("samplerCubeMap", *mSkybox.texture);
+}
+
+void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
+{
+   mSkybox.shaderVariables.data.viewMatrix = mCamera->GetView();
+   mSkybox.shaderVariables.data.projectionMatrix = mCamera->GetProjection();
+   mSkybox.shaderVariables.data.inverseProjectionMatrix = glm::inverse(glm::mat3(mCamera->GetProjection()));
+   mSkybox.shaderVariables.data.eyePos = glm::vec4(mCamera->GetPosition(), 1.0f);
+   mSkybox.shaderVariables.data.mouseUV = gInput().GetMousePosition();
+   mSkybox.shaderVariables.data.time = (float)gTimer().GetTime();
+   mSkybox.shaderVariables.data.viewportSize = glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight());
+   mSkybox.shaderVariables.UpdateMemory();
+
+   mSkybox.inputBlock.data.world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
+   mSkybox.inputBlock.UpdateMemory();
+
+   commandBuffer->CmdBindPipeline(mSkybox.effect->GetPipeline());
+   commandBuffer->CmdBindDescriptorSets(mSkybox.effect);
+
+   Primitive* primitive = mSkybox.model->GetPrimitive(0);
+   commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+   commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+   commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
 }
 
 Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)

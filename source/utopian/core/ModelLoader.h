@@ -3,9 +3,7 @@
 #include <string>
 #include <map>
 #include "vulkan/VulkanPrerequisites.h"
-#include "../external/assimp/assimp/Importer.hpp"
-#include "../external/assimp/assimp/material.h"
-#include "core/AssimpLoader.h"
+#include "core/renderer/Model.h"
 #include "vulkan/Vertex.h"
 #include "utility/Module.h"
 #include "utility/Common.h"
@@ -19,6 +17,7 @@
 namespace Utopian
 {
    class Model;
+   class AssimpLoader;
    class glTFLoader;
 
    /**
@@ -35,6 +34,8 @@ namespace Utopian
       SharedPtr<Model> LoadGrid(float cellSize, int numCells);
       SharedPtr<Model> LoadBox();
       SharedPtr<Model> LoadQuad();
+
+      Material GetDefaultMaterial();
 
       void SetInverseTranslation(bool inverse);
 

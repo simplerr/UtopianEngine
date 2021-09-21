@@ -3,7 +3,7 @@
 
 #include "core/renderer/Primitive.h"
 #include "core/Log.h"
-#include "core/renderer/Model.h"
+#include "core/AssimpLoader.h"
 #include "core/glTFLoader.h"
 #include "core/ModelLoader.h"
 #include "core/renderer/Model.h"
@@ -116,7 +116,7 @@ namespace Utopian
       SharedPtr<Model> model = std::make_shared<Model>();
 
       Primitive* prim = model->AddPrimitive(primitive);
-      Material* mat = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+      Material* mat = model->AddMaterial(GetDefaultMaterial());
 
       Node* node = model->CreateNode();
       node->mesh = Mesh(prim, mat);
@@ -195,7 +195,7 @@ namespace Utopian
       SharedPtr<Model> model = std::make_shared<Model>();
 
       Primitive* prim = model->AddPrimitive(primitive);
-      Material* material = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+      Material* material = model->AddMaterial(GetDefaultMaterial());
 
       Node* node = model->CreateNode();
       node->mesh = Mesh(prim, material);
@@ -235,7 +235,7 @@ namespace Utopian
       SharedPtr<Model> model = std::make_shared<Model>();
 
       Primitive* prim = model->AddPrimitive(primitive);
-      Material* mat = model->AddMaterial(mglTFLoader->GetDefaultMaterial());
+      Material* mat = model->AddMaterial(GetDefaultMaterial());
 
       Node* node = model->CreateNode();
       node->mesh = Mesh(prim, mat);
@@ -243,6 +243,11 @@ namespace Utopian
       model->AddRootNode(node);
 
       return model;
+   }
+
+   Material ModelLoader::GetDefaultMaterial()
+   {
+      return mglTFLoader->GetDefaultMaterial();
    }
 
    void ModelLoader::SetInverseTranslation(bool inverse)

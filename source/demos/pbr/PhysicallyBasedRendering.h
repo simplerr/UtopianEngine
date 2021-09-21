@@ -9,6 +9,7 @@
 #include "vulkan/ShaderBuffer.h"
 #include "utility/Common.h"
 #include "core/renderer/Model.h"
+#include "core/renderer/SceneInfo.h"
 
 using namespace Utopian;
 
@@ -50,6 +51,8 @@ public:
    Utopian::Model* AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation = glm::quat());
 private:
    void InitResources();
+   void InitSkybox();
+   void RenderSkybox(Vk::CommandBuffer* commandBuffer);
 
    Vk::VulkanApp* mVulkanApp;
    Utopian::Window* mWindow;
@@ -66,4 +69,17 @@ private:
    VertexInputParameters mVertexInputParameters;
 
    std::vector<SceneNode> mSceneNodes;
+
+   // Skybox
+   struct Skybox {
+      UNIFORM_BLOCK_BEGIN(SkyboxInput)
+         UNIFORM_PARAM(glm::mat4, world)
+      UNIFORM_BLOCK_END()
+
+      SharedPtr<Vk::Texture> texture;
+      SharedPtr<Model> model;
+      SharedPtr<Vk::Effect> effect;
+      Utopian::SharedShaderVariables shaderVariables;
+      SkyboxInput inputBlock;
+   } mSkybox;
 };
