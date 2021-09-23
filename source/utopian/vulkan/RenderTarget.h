@@ -26,6 +26,10 @@ namespace Utopian::Vk
       void End(const SharedPtr<Semaphore>& waitSemaphore, const SharedPtr<Semaphore>& signalSemaphore);
       void EndAndFlush();
 
+      void BeginRenderPass();
+      void BeginDebugLabelAndQueries(std::string debugName, glm::vec4 debugColor);
+      void EndDebugLabelAndQueries();
+
       void SetClearColor(float r, float g, float b, float a = 0.0f);
 
       void AddReadWriteColorAttachment(const SharedPtr<Image>& image,
@@ -69,10 +73,7 @@ namespace Utopian::Vk
 
    private:
       void BeginCommandBuffer();
-      void BeginRenderPass();
 
-      void BeginDebugLabelAndQueries(std::string debugName, glm::vec4 debugColor);
-      void EndDebugLabelAndQueries();
    private:
       SharedPtr<FrameBuffers> mFrameBuffer;
       SharedPtr<RenderPass> mRenderPass;

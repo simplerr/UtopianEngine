@@ -27,7 +27,7 @@ layout (std140, set = 0, binding = 0) uniform UBO_input
    float pad;
 } per_frame_vs;
 
-layout(std430, set = 2, binding = 0) readonly buffer JointMatrices {
+layout(std430, set = 3, binding = 0) readonly buffer JointMatrices {
    mat4 jointMatrices[];
 };
 

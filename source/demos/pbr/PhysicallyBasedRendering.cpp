@@ -28,6 +28,7 @@
 #include "core/AssimpLoader.h"
 #include "utility/Timer.h"
 #include "core/renderer/Primitive.h"
+#include "core/renderer/ScreenQuadRenderer.h"
 
 PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    : mWindow(window)
@@ -52,8 +53,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    //AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
    //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
-   AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
-   AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
+   //AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    
    // SceneNode sceneNode;
@@ -78,6 +78,8 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
          material->properties->UpdateMemory();
       }
    }
+
+   AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(0.0f), glm::vec3(0.01f));
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -98,6 +100,8 @@ void PhysicallyBasedRendering::DestroyCallback()
    mSkybox.effect = nullptr;
    mSkybox.model = nullptr;
    mSkybox.texture = nullptr;
+   mIrradianceCube.irradianceMap = nullptr;
+   mIrradianceCube.sampler = nullptr;
 
    for (auto& sceneNode : mSceneNodes)
       sceneNode.model = nullptr;
@@ -140,6 +144,11 @@ void PhysicallyBasedRendering::InitResources()
    mSkinningEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
 
    InitSkybox();
+   GenerateIrradianceMap();
+
+   mSkybox.effect->BindCombinedImage("samplerCubeMap", *mIrradianceCube.irradianceMap, *mIrradianceCube.sampler);
+   mEffect->BindCombinedImage("irradianceMap", *mIrradianceCube.irradianceMap, *mIrradianceCube.sampler);
+   mSkinningEffect->BindCombinedImage("irradianceMap", *mIrradianceCube.irradianceMap, *mIrradianceCube.sampler);
 
    gScreenQuadUi().AddQuad(0, 0, width, height, mOutputImage.get(), mSampler.get());
 }
@@ -210,7 +219,7 @@ void PhysicallyBasedRendering::DrawCallback()
          if (command.skinDescriptorSet != VK_NULL_HANDLE)
          {
             commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
-                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 2);
+                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 3);
          }
 
          commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,
@@ -250,17 +259,12 @@ void PhysicallyBasedRendering::InitSkybox()
 {
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   //mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx");
-   //mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/gcanyon_cube.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
    mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
    mSkybox.model = gModelLoader().LoadBox();
 
    Vk::EffectCreateInfo effectDesc;
    effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";
    effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
-   effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
-   effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-   effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
    mSkybox.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
 
    mSkybox.inputBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -268,7 +272,7 @@ void PhysicallyBasedRendering::InitSkybox()
 
    mSkybox.effect->BindUniformBuffer("UBO_sharedVariables", mSkybox.shaderVariables);
    mSkybox.effect->BindUniformBuffer("UBO_input", mSkybox.inputBlock);
-   mSkybox.effect->BindCombinedImage("samplerCubeMap", *mSkybox.texture);
+   //mSkybox.effect->BindCombinedImage("samplerCubeMap", *mSkybox.texture);
 }
 
 void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
@@ -292,6 +296,126 @@ void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
    commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
    commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
    commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
+}
+
+void PhysicallyBasedRendering::GenerateIrradianceMap()
+{
+   const uint32_t dimension = 64;
+   const uint32_t numMipLevels = static_cast<uint32_t>(floor(log2(dimension))) + 1;
+   Vk::Device* device = mVulkanApp->GetDevice();
+
+   // Offscreen framebuffer
+   SharedPtr<Vk::Image> offscreen = std::make_shared<Vk::ImageColor>(device, dimension,
+      dimension, VK_FORMAT_R32G32B32A32_SFLOAT, "Offscreen irradiance image");
+
+   SharedPtr<Vk::RenderTarget> renderTarget = std::make_shared<Vk::RenderTarget>(device, dimension, dimension);
+   renderTarget->AddWriteOnlyColorAttachment(offscreen);
+   renderTarget->SetClearColor(1, 1, 1, 1);
+   renderTarget->Create();
+
+   Vk::EffectCreateInfo effectDesc;
+   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.vert";
+   effectDesc.shaderDesc.fragmentShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag";
+   SharedPtr<Vk::Effect> effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
+
+   effect->BindCombinedImage("samplerEnv", *mSkybox.texture);
+
+   // Irradiance cubemap texture
+   Vk::IMAGE_CREATE_INFO imageDesc;
+   imageDesc.width = dimension;
+   imageDesc.height = dimension;
+   imageDesc.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+   imageDesc.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+   imageDesc.mipLevels = numMipLevels;
+   imageDesc.arrayLayers = 6;
+   imageDesc.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+   mIrradianceCube.irradianceMap = std::make_shared<Vk::Image>(imageDesc, device);
+
+   mIrradianceCube.sampler = std::make_shared<Vk::Sampler>(device, false);
+   mIrradianceCube.sampler->createInfo.minLod = 0.0f;
+   mIrradianceCube.sampler->createInfo.maxLod = (float)numMipLevels;
+   mIrradianceCube.sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+   mIrradianceCube.sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+   mIrradianceCube.sampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+   mIrradianceCube.sampler->createInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+   mIrradianceCube.sampler->Create();
+
+   mIrradianceCube.descriptorInfo.sampler = mSampler->GetVkHandle();
+   mIrradianceCube.descriptorInfo.imageView = mIrradianceCube.irradianceMap->GetView();
+   mIrradianceCube.descriptorInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+   glm::mat4 matrices[] =
+   {
+      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+   };
+
+   Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+   commandBuffer->Begin();
+   renderTarget->BeginDebugLabelAndQueries("Irradiance cubemap generation", glm::vec4(1.0f));
+
+   mIrradianceCube.irradianceMap->LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+   for (uint32_t mipLevel = 0; mipLevel < numMipLevels; mipLevel++)
+   {
+      for (uint32_t face = 0; face < 6; face++)
+      {
+         renderTarget->BeginRenderPass();
+
+         float viewportSize = dimension * std::pow(0.5f, mipLevel);
+         commandBuffer->CmdSetViewPort(viewportSize, viewportSize);
+
+         glm::mat4 world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
+         glm::mat4 mvp = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, 20000.0f) * matrices[face] * world;
+         commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(glm::mat4), &mvp);
+
+         commandBuffer->CmdBindPipeline(effect->GetPipeline());
+         commandBuffer->CmdBindDescriptorSets(effect);
+
+         Primitive* primitive = mSkybox.model->GetPrimitive(0);
+         commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+         commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+         commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
+
+         commandBuffer->CmdEndRenderPass();
+
+         // Copy region for transfer from framebuffer to cube face
+         VkImageCopy copyRegion = {};
+
+         copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+         copyRegion.srcSubresource.baseArrayLayer = 0;
+         copyRegion.srcSubresource.mipLevel = 0;
+         copyRegion.srcSubresource.layerCount = 1;
+         copyRegion.srcOffset = { 0, 0, 0 };
+
+         copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+         copyRegion.dstSubresource.baseArrayLayer = face;
+         copyRegion.dstSubresource.mipLevel = mipLevel;
+         copyRegion.dstSubresource.layerCount = 1;
+         copyRegion.dstOffset = { 0, 0, 0 };
+
+         copyRegion.extent.width = static_cast<uint32_t>(viewportSize);
+         copyRegion.extent.height = static_cast<uint32_t>(viewportSize);
+         copyRegion.extent.depth = 1;
+
+         offscreen->LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+
+         vkCmdCopyImage(commandBuffer->GetVkHandle(), offscreen->GetVkHandle(),
+                        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mIrradianceCube.irradianceMap->GetVkHandle(),
+                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+
+         offscreen->LayoutTransition(*commandBuffer, offscreen->GetFinalLayout());
+      }
+   }
+
+   mIrradianceCube.irradianceMap->LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+   renderTarget->EndDebugLabelAndQueries();
+   commandBuffer->Flush();
 }
 
 Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)

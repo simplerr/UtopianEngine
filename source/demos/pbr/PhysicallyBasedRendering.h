@@ -53,6 +53,7 @@ private:
    void InitResources();
    void InitSkybox();
    void RenderSkybox(Vk::CommandBuffer* commandBuffer);
+   void GenerateIrradianceMap();
 
    Vk::VulkanApp* mVulkanApp;
    Utopian::Window* mWindow;
@@ -70,7 +71,6 @@ private:
 
    std::vector<SceneNode> mSceneNodes;
 
-   // Skybox
    struct Skybox {
       UNIFORM_BLOCK_BEGIN(SkyboxInput)
          UNIFORM_PARAM(glm::mat4, world)
@@ -82,4 +82,10 @@ private:
       Utopian::SharedShaderVariables shaderVariables;
       SkyboxInput inputBlock;
    } mSkybox;
+
+   struct IrradianceCube {
+      SharedPtr<Vk::Image> irradianceMap;
+      SharedPtr<Vk::Sampler> sampler;
+      VkDescriptorImageInfo descriptorInfo;
+   } mIrradianceCube;
 };

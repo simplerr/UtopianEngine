@@ -12,6 +12,8 @@ layout (location = 5) in vec4 InTangentL;
 
 layout (location = 0) out vec4 OutColor;
 
+layout (set = 2, binding = 0) uniform samplerCube irradianceMap;
+
 const int numLights = 4;
 vec3 lightPositions[numLights] = {
    vec3(0.0f, 1.0f, 10.0f),
@@ -62,6 +64,11 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 void main()
@@ -126,7 +133,12 @@ void main()
       Lo += (kD * baseColor.rgb / PI + specular) * radiance * NdotL;
    }
 
-   vec3 ambient = vec3(0.03) * baseColor.rgb * material.ao;
+   vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+   vec3 kD = 1.0 - kS;
+   vec3 irradiance = texture(irradianceMap, -N).rgb;
+   vec3 diffuse    = irradiance * baseColor.rgb;
+   vec3 ambient    = (kD * diffuse) * material.ao;
+
    vec3 color = ambient + Lo;
 
    color = color / (color + vec3(1.0));
