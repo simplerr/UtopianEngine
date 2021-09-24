@@ -132,10 +132,10 @@ void PhysicallyBasedRendering::InitResources()
    mRenderTarget->SetClearColor(1, 1, 1, 1);
    mRenderTarget->Create();
 
+   // Note: Todo: Hardcoded path to C:/Git/UtopianEngine/.
    Vk::EffectCreateInfo effectDesc;
    effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr.vert";
    effectDesc.shaderDesc.fragmentShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr.frag";
-   // Note: Not the default winding order
    effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
    mEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
 

@@ -111,6 +111,7 @@ UpgradeLog*.htm
 vulkanCapsViewer/vulkanreport.json
 
 # Don't ignore 3d models in obj format
+!data/models/polymesh/*.obj
 !data/models/*.obj
 !data/models/lowpoly/*.obj
 !data/models/voyager/*.obj

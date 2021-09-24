@@ -48,9 +48,11 @@ It is written in C++ and uses Vulkan as the rendering API.
 
 ## Building
 
-Currently the engine only runs on Windows.
+Currently the project only runs on Windows.
 
-Run the `generate_workspace.bat` script to generate a Visual Studio 2019 solution.
+Run `git submodule update --init --recursive` to checkout the required submodules.
+
+Run `./generate_workspace.bat` script to generate a Visual Studio 2019 solution.
 If you want to generate a solution for another VS version run `tools/premake5.exe` manually.
 
 Pre compiled libraries for MSVC x64 Debug are included in the `libs/` folder.
