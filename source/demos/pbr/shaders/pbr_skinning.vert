@@ -17,6 +17,7 @@ layout (location = 2) out vec3 OutEyePosW;
 layout (location = 3) out vec3 OutColor;
 layout (location = 4) out vec2 OutTex;
 layout (location = 5) out vec4 OutTangentL;
+layout (location = 6) out int OutDebugChannel;
 
 layout (std140, set = 0, binding = 0) uniform UBO_input
 {
@@ -24,7 +25,7 @@ layout (std140, set = 0, binding = 0) uniform UBO_input
    mat4 projection;
    mat4 view;
    vec3 eyePos;
-   float pad;
+   int debugChannel;
 } per_frame_vs;
 
 layout(std430, set = 3, binding = 0) readonly buffer JointMatrices {
@@ -49,6 +50,7 @@ void main(void)
    OutEyePosW = per_frame_vs.eyePos;
    OutTex = InTex;
    OutTangentL = InTangentL;
+   OutDebugChannel = per_frame_vs.debugChannel;
 
    gl_Position = per_frame_vs.projection * per_frame_vs.view * pushConsts.world * skinMat * vec4(InPosL.xyz, 1.0);
 }

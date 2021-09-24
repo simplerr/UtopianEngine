@@ -250,7 +250,7 @@ namespace Utopian::Vk
          mPipelinesToFree.clear();
    }
 
-   void Device::QueueDescriptorUpdate(SharedPtr<Vk::DescriptorSet>& descriptorSet)
+   void Device::QueueDescriptorUpdate(Vk::DescriptorSet* descriptorSet)
    {
       mDescriptorSetUpdateQueue.push_back(descriptorSet);
    }

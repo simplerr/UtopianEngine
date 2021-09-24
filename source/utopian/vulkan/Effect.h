@@ -56,6 +56,7 @@ namespace Utopian::Vk
        * @note This should only be used in rare cases.
        */
       const DescriptorSet& GetDescriptorSet(uint32_t set) const;
+      DescriptorSet& GetDescriptorSetFromName(std::string name);
 
       /** Returns a pointer to the Pipeline object. It is expected to be modified. */
       Pipeline* GetPipeline();

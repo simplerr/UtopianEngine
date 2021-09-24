@@ -28,7 +28,7 @@ public:
       UNIFORM_PARAM(glm::mat4, projection)
       UNIFORM_PARAM(glm::mat4, view)
       UNIFORM_PARAM(glm::vec3, eyePos)
-      UNIFORM_PARAM(float, pad)
+      UNIFORM_PARAM(int, debugChannel)
    UNIFORM_BLOCK_END()
 
    struct SceneNode

@@ -195,6 +195,12 @@ namespace Utopian::Vk
       return mDescriptorSets[set];
    }
 
+   DescriptorSet& Effect::GetDescriptorSetFromName(std::string name)
+   {
+      DescriptorSet& descriptorSet = mDescriptorSets[mShader->NameToSet(name)];
+      return descriptorSet;
+   }
+
    PipelineInterface* Effect::GetPipelineInterface()
    {
       return mPipelineInterface.get();

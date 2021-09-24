@@ -4,6 +4,7 @@
 #include <glm/matrix.hpp>
 #include <string>
 #include <time.h>
+#include <vulkan/handles/DescriptorSet.h>
 #include <vulkan/vulkan_core.h>
 #include "core/Input.h"
 #include "core/Log.h"
@@ -53,7 +54,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    //AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
    //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
-   //AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
+   AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
    
    // SceneNode sceneNode;
@@ -123,6 +124,7 @@ void PhysicallyBasedRendering::InitResources()
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
    mSampler = std::make_shared<Vk::Sampler>(device);
    mVertexInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+   mVertexInputParameters.data.debugChannel = 0;
 
    mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
    mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
@@ -165,6 +167,25 @@ void PhysicallyBasedRendering::UpdateCallback()
    ImGui::SliderFloat("Metallic", &material->properties->data.metallicFactor, 0.0, 1.0f);
    ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
    ImGui::SliderFloat("Ambient occlusion", &material->properties->data.ao, 0.0, 1.0f);
+
+   static int selectedCubemap = 0u;
+   if (ImGui::Combo("Skybox", &selectedCubemap, "Irradiance\0Environment\0"))
+   {
+      Vk::DescriptorSet& descriptorSet = mSkybox.effect->GetDescriptorSetFromName("samplerCubeMap");
+
+      if (selectedCubemap == 0) {
+         descriptorSet.BindCombinedImage("samplerCubeMap", *mIrradianceCube.irradianceMap, *mIrradianceCube.sampler);
+         mVulkanApp->GetDevice()->QueueDescriptorUpdate(&descriptorSet);
+      }
+      else {
+         descriptorSet.BindCombinedImage("samplerCubeMap", mSkybox.texture->GetDescriptor());
+         mVulkanApp->GetDevice()->QueueDescriptorUpdate(&descriptorSet);
+      }
+   }
+
+   ImGui::Combo("Debug channel", &mVertexInputParameters.data.debugChannel,
+                "None\0Base color\0Metallic\0Roughness\0Normal\0Tangent\0Occlusion\0Irradiance\0Ambient\0");
+
    ImGuiRenderer::EndWindow();
 
    static double prevTime = Utopian::gTimer().GetTime();

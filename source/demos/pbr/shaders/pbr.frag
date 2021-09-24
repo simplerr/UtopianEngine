@@ -9,6 +9,7 @@ layout (location = 2) in vec3 InEyePosW;
 layout (location = 3) in vec3 InColor;
 layout (location = 4) in vec2 InTex;
 layout (location = 5) in vec4 InTangentL;
+layout (location = 6) flat in int InDebugChannel;
 
 layout (location = 0) out vec4 OutColor;
 
@@ -144,4 +145,21 @@ void main()
    color = color / (color + vec3(1.0));
    color = pow(color, vec3(1.0/2.2));
    OutColor = vec4(color, 1.0f);
+
+   if (InDebugChannel == 1)
+      OutColor = vec4(baseColor.rgb, 1.0);
+   if (InDebugChannel == 2)
+      OutColor = vec4(vec3(metallic), 1.0);
+   else if (InDebugChannel == 3)
+      OutColor = vec4(vec3(roughness), 1.0);
+   else if (InDebugChannel == 4)
+      OutColor = vec4(N, 1.0);
+   else if (InDebugChannel == 5)
+      OutColor = vec4(normalize(InTangentL.xyz), 1.0);
+   else if (InDebugChannel == 6)
+      OutColor = vec4(vec3(material.ao), 1.0);
+   else if (InDebugChannel == 7)
+      OutColor = vec4(irradiance, 1.0);
+   else if (InDebugChannel == 8)
+      OutColor = vec4(ambient, 1.0);
 }

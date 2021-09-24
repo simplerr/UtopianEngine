@@ -42,7 +42,7 @@ namespace Utopian::Vk
       void GarbageCollect();
 
       /** Queues an update of a descriptor set that is performed once no command buffer is active. */
-      void QueueDescriptorUpdate(SharedPtr<Vk::DescriptorSet>& descriptorSet);
+      void QueueDescriptorUpdate(Vk::DescriptorSet* descriptorSet);
 
       /** Perform descriptor set update on queued objects. */
       void UpdateDescriptorSets();
@@ -108,6 +108,6 @@ namespace Utopian::Vk
       std::vector<VkPipeline> mPipelinesToFree;
 
       // Descriptor update
-      std::vector<SharedPtr<Vk::DescriptorSet>> mDescriptorSetUpdateQueue;
+      std::vector<Vk::DescriptorSet*> mDescriptorSetUpdateQueue;
    };
 }

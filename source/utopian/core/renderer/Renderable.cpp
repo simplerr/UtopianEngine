@@ -63,7 +63,7 @@ namespace Utopian
       material->colorTexture = texture;
       material->descriptorSet->BindCombinedImage(0, material->colorTexture->GetDescriptor());
 
-      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
+      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
    }
 
    void Renderable::SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
@@ -73,7 +73,7 @@ namespace Utopian
       material->normalTexture = texture;
       material->descriptorSet->BindCombinedImage(1, material->normalTexture->GetDescriptor());
 
-      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
+      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
 
    }
 
@@ -84,7 +84,7 @@ namespace Utopian
       material->specularTexture = texture;
       material->descriptorSet->BindCombinedImage(2, material->specularTexture->GetDescriptor());
 
-      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
+      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
    }
 
    void Renderable::SetTileFactor(glm::vec2 tileFactor)

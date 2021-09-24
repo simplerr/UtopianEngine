@@ -224,7 +224,7 @@ namespace Utopian
             material->descriptorSet->BindCombinedImage(0, material->colorTexture->GetDescriptor());
             material->descriptorSet->BindCombinedImage(1, material->normalTexture->GetDescriptor());
 
-            gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet);
+            gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
          }
          else
             assert(0);
