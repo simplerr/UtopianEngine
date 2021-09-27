@@ -14,6 +14,8 @@ layout (location = 6) flat in int InDebugChannel;
 layout (location = 0) out vec4 OutColor;
 
 layout (set = 2, binding = 0) uniform samplerCube irradianceMap;
+layout (set = 2, binding = 1) uniform samplerCube specularMap;
+layout (set = 2, binding = 2) uniform sampler2D brdfLut;
 
 const int numLights = 4;
 vec3 lightPositions[numLights] = {
@@ -76,7 +78,7 @@ void main()
 {
    vec4 baseColor = texture(diffuseSampler, InTex);
    vec4 normal = texture(normalSampler, InTex);
-   vec4 specular = texture(specularSampler, InTex);
+   vec4 specularRemoveThis = texture(specularSampler, InTex);
    float metallic = texture(metallicRoughnessSampler, InTex).b;
    float roughness = texture(metallicRoughnessSampler, InTex).g;
 
@@ -102,6 +104,8 @@ void main()
 
    /* Implementation from https://learnopengl.com/PBR/Theory */
    vec3 V = normalize(InEyePosW - InPosW);
+   vec3 R = reflect(V, N);
+
    vec3 F0 = vec3(0.04);
    F0 = mix(F0, baseColor.rgb, metallic);
 
@@ -134,14 +138,25 @@ void main()
       Lo += (kD * baseColor.rgb / PI + specular) * radiance * NdotL;
    }
 
-   vec3 kS = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+   vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+   vec3 kS = F;
    vec3 kD = 1.0 - kS;
+   kD *= 1.0 - metallic;
+
    vec3 irradiance = texture(irradianceMap, -N).rgb;
    vec3 diffuse    = irradiance * baseColor.rgb;
-   vec3 ambient    = (kD * diffuse) * material.ao;
+
+   // Sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+   const float MAX_REFLECTION_LOD = 7.0;
+   vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+   vec2 brdf = texture(brdfLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
+   vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+
+   vec3 ambient = (kD * diffuse + specular) * material.ao;
 
    vec3 color = ambient + Lo;
 
+   // Tonemapping
    color = color / (color + vec3(1.0));
    color = pow(color, vec3(1.0/2.2));
    OutColor = vec4(color, 1.0f);
@@ -162,4 +177,6 @@ void main()
       OutColor = vec4(irradiance, 1.0);
    else if (InDebugChannel == 8)
       OutColor = vec4(ambient, 1.0);
+   else if (InDebugChannel == 9)
+      OutColor = vec4(prefilteredColor, 1.0);
 }

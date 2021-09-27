@@ -335,4 +335,36 @@ namespace Utopian::Vk
 
       return texture;
    }
+
+   SharedPtr<Texture> TextureLoader::CreateCubemapTexture(VkFormat format, uint32_t width, uint32_t height, uint32_t numMipLevels)
+   {
+      // Irradiance cubemap texture
+      Vk::IMAGE_CREATE_INFO imageDesc;
+      imageDesc.width = width;
+      imageDesc.height = height;
+      imageDesc.format = format;
+      imageDesc.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+      imageDesc.mipLevels = numMipLevels;
+      imageDesc.arrayLayers = 6;
+      imageDesc.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+      SharedPtr<Image> image = std::make_shared<Vk::Image>(imageDesc, mDevice);
+
+      SharedPtr<Sampler> sampler = std::make_shared<Vk::Sampler>(mDevice, false);
+      sampler->createInfo.minLod = 0.0f;
+      sampler->createInfo.maxLod = (float)numMipLevels;
+      sampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      sampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      sampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      sampler->createInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+      sampler->Create();
+
+      SharedPtr<Texture> texture = std::make_shared<Texture>(mDevice);
+      texture->mImage = image;
+      texture->mSampler = sampler;
+      texture->mWidth = width;
+      texture->mHeight = height;
+      texture->UpdateDescriptor();
+
+      return texture;
+   }
 }

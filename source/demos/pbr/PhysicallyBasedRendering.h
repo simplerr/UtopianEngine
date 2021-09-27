@@ -53,7 +53,7 @@ private:
    void InitResources();
    void InitSkybox();
    void RenderSkybox(Vk::CommandBuffer* commandBuffer);
-   void GenerateIrradianceMap();
+   SharedPtr<Vk::Texture> FilterCubemap(uint32_t dimension, VkFormat format, Vk::Texture* inputCubemap, std::string filterShader);
 
    Vk::VulkanApp* mVulkanApp;
    Utopian::Window* mWindow;
@@ -83,9 +83,7 @@ private:
       SkyboxInput inputBlock;
    } mSkybox;
 
-   struct IrradianceCube {
-      SharedPtr<Vk::Image> irradianceMap;
-      SharedPtr<Vk::Sampler> sampler;
-      VkDescriptorImageInfo descriptorInfo;
-   } mIrradianceCube;
+   SharedPtr<Vk::Texture> mIrradianceMap;
+   SharedPtr<Vk::Texture> mSpecularMap;
+   SharedPtr<Vk::Texture> mBRDFLut;
 };
