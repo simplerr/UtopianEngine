@@ -28,6 +28,7 @@ namespace Utopian
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(1, VK_SHADER_STAGE_ALL, 1); // normalSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(2, VK_SHADER_STAGE_ALL, 1); // specularSampler
       mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(3, VK_SHADER_STAGE_ALL, 1); // metallicRoughnessSampler
+      mMeshTexturesDescriptorSetLayout->AddCombinedImageSampler(4, VK_SHADER_STAGE_ALL, 1); // occlusionSampler
       mMeshTexturesDescriptorSetLayout->AddUniformBuffer(20, VK_SHADER_STAGE_ALL, 1); // material properties
       mMeshTexturesDescriptorSetLayout->Create();
 

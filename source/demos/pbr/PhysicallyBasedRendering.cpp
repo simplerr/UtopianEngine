@@ -55,7 +55,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
    //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
    // AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
-   // AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(2.0f, 1.0f, 0.0f), glm::vec3(1.0f));
+   AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(-1.5f, 1.0f, 0.0f), glm::vec3(1.0f));
    
    // SceneNode sceneNode;
    // sceneNode.model = gModelLoader().LoadBox();
@@ -75,7 +75,7 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
          material->properties->data.baseColorFactor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
          material->properties->data.metallicFactor = (float)y / (float)max;
          material->properties->data.roughnessFactor = 1.0f - ((float)x / (float)max);
-         material->properties->data.ao = 0.5;
+         material->properties->data.occlusionFactor = 0.5;
          material->properties->UpdateMemory();
       }
    }
@@ -185,7 +185,7 @@ void PhysicallyBasedRendering::UpdateCallback()
    ImGui::ColorEdit4("Color", &material->properties->data.baseColorFactor.x);
    ImGui::SliderFloat("Metallic", &material->properties->data.metallicFactor, 0.0, 1.0f);
    ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
-   ImGui::SliderFloat("Ambient occlusion", &material->properties->data.ao, 0.0, 1.0f);
+   ImGui::SliderFloat("Ambient occlusion", &material->properties->data.occlusionFactor, 0.0, 1.0f);
 
    static int selectedCubemap = 0u;
    if (ImGui::Combo("Skybox", &selectedCubemap, "Irradiance\0Specular\0Environment\0"))
@@ -207,7 +207,7 @@ void PhysicallyBasedRendering::UpdateCallback()
    }
 
    ImGui::Combo("Debug channel", &mVertexInputParameters.data.debugChannel,
-                "None\0Base color\0Metallic\0Roughness\0Normal\0Tangent\0Occlusion\0Irradiance\0Ambient\0Specular\0");
+                "None\0Base color\0Metallic\0Roughness\0Normal\0Tangent\0Ambient Occlusion\0Irradiance\0Ambient\0Specular\0");
 
    ImGuiRenderer::EndWindow();
 

@@ -31,8 +31,9 @@ void main()
    // Todo: Remove, used to get a descriptor set layout that matches mMeshTexturesDescriptorSetLayout in ModelLoader
    vec4 hack = texture(normalSampler, InTex);
    hack = texture(specularSampler, InTex);
-   float hack2 = material.ao;
+   float hack2 = material.occlusionFactor;
    hack2 = texture(metallicRoughnessSampler, InTex).b;
+   hack2 = texture(occlusionSampler, InTex).r;
 
    /* Project texture coordinates */
    vec4 clipSpace = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * vec4(InPosW.xyz, 1.0f);

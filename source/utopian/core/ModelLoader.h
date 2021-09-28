@@ -10,8 +10,9 @@
 
 #define DEFAULT_COLOR_TEXTURE_PATH "data/textures/prototype/Light/texture_12.png"
 #define DEFAULT_NORMAL_MAP_TEXTURE "data/textures/flat_normalmap.png"
-#define DEFAULT_METALLIC_ROUGHNESS_TEXTURE "data/textures/default_metallic_rougness_map.png"
-#define DEFAULT_SPECULAR_MAP_TEXTURE "data/textures/default_specular_map.png"
+#define DEFAULT_METALLIC_ROUGHNESS_TEXTURE "data/textures/white_texture.png"
+#define DEFAULT_SPECULAR_MAP_TEXTURE "data/textures/black_texture.png"
+#define DEFAULT_OCCLUSION_TEXTURE "data/textures/white_texture.png"
 #define PLACEHOLDER_MODEL_PATH "data/models/teapot.obj"
 
 namespace Utopian

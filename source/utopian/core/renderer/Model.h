@@ -18,7 +18,7 @@ namespace Utopian
       UNIFORM_PARAM(glm::vec4, baseColorFactor)
       UNIFORM_PARAM(float, metallicFactor)
       UNIFORM_PARAM(float, roughnessFactor)
-      UNIFORM_PARAM(float, ao)
+      UNIFORM_PARAM(float, occlusionFactor)
       UNIFORM_PARAM(float, pad)
    UNIFORM_BLOCK_END()
 
@@ -29,7 +29,7 @@ namespace Utopian
          properties->data.baseColorFactor = glm::vec4(1.0f);
          properties->data.metallicFactor = 1.0f;
          properties->data.roughnessFactor = 1.0f;
-         properties->data.ao = 0.0f;
+         properties->data.occlusionFactor = 1.0f;
       }
 
       SharedPtr<MaterialProperties> properties = nullptr;
@@ -37,6 +37,7 @@ namespace Utopian
       SharedPtr<Vk::Texture> normalTexture;
       SharedPtr<Vk::Texture> specularTexture;
       SharedPtr<Vk::Texture> metallicRoughnessTexture;
+      SharedPtr<Vk::Texture> occlusionTexture;
       SharedPtr<Vk::DescriptorSet> descriptorSet;
    };
 

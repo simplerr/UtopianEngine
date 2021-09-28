@@ -122,6 +122,10 @@ namespace Utopian
             uint32_t normalTextureIndex = glTFMaterial.additionalValues["normalTexture"].TextureIndex();
             material.normalTexture = images[imageRefs[normalTextureIndex]];
          }
+         if (glTFMaterial.additionalValues.find("occlusionTexture") != glTFMaterial.additionalValues.end()) {
+            uint32_t occlusionTextureIndex = glTFMaterial.additionalValues["occlusionTexture"].TextureIndex();
+            material.occlusionTexture = images[imageRefs[occlusionTextureIndex]];
+         }
 
          material.properties->UpdateMemory();
 
@@ -129,6 +133,7 @@ namespace Utopian
          material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
          material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
          material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
+         material.descriptorSet->BindCombinedImage(4, material.occlusionTexture->GetDescriptor());
          material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
          material.descriptorSet->UpdateDescriptorSets();
 
@@ -352,11 +357,13 @@ namespace Utopian
       material.normalTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_NORMAL_MAP_TEXTURE);
       material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
       material.metallicRoughnessTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_METALLIC_ROUGHNESS_TEXTURE);
+      material.occlusionTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_OCCLUSION_TEXTURE);
 
       material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
       material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
+      material.descriptorSet->BindCombinedImage(4, material.occlusionTexture->GetDescriptor());
       material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
       material.descriptorSet->UpdateDescriptorSets();
 

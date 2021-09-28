@@ -81,6 +81,7 @@ void main()
    vec4 specularRemoveThis = texture(specularSampler, InTex);
    float metallic = texture(metallicRoughnessSampler, InTex).b;
    float roughness = texture(metallicRoughnessSampler, InTex).g;
+   float ambientOcclusion = texture(occlusionSampler, InTex).r;
 
    // From sRGB space to Linear space
    baseColor.rgb = pow(baseColor.rgb, vec3(2.2));
@@ -88,6 +89,7 @@ void main()
    baseColor *= material.baseColorFactor;
    metallic *= material.metallicFactor;
    roughness *= material.roughnessFactor;
+   ambientOcclusion *= material.occlusionFactor;
 
    if (baseColor.a < 0.5f)
       discard;
@@ -152,7 +154,7 @@ void main()
    vec2 brdf = texture(brdfLut, vec2(max(dot(N, V), 0.0), roughness)).rg;
    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-   vec3 ambient = (kD * diffuse + specular) * material.ao;
+   vec3 ambient = (kD * diffuse + specular) * ambientOcclusion;
 
    vec3 color = ambient + Lo;
 
@@ -172,7 +174,7 @@ void main()
    else if (InDebugChannel == 5)
       OutColor = vec4(normalize(InTangentL.xyz), 1.0);
    else if (InDebugChannel == 6)
-      OutColor = vec4(vec3(material.ao), 1.0);
+      OutColor = vec4(vec3(ambientOcclusion), 1.0);
    else if (InDebugChannel == 7)
       OutColor = vec4(irradiance, 1.0);
    else if (InDebugChannel == 8)
