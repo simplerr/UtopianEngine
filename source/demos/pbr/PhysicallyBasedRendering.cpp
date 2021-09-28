@@ -109,6 +109,7 @@ void PhysicallyBasedRendering::DestroyCallback()
       sceneNode.model = nullptr;
 
    mVertexInputParameters.GetBuffer()->Destroy();
+   mPbrSettings.GetBuffer()->Destroy();
    mSkybox.inputBlock.GetBuffer()->Destroy();
    mSkybox.shaderVariables.GetBuffer()->Destroy();
 }
@@ -125,7 +126,9 @@ void PhysicallyBasedRendering::InitResources()
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
    mSampler = std::make_shared<Vk::Sampler>(device);
    mVertexInputParameters.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-   mVertexInputParameters.data.debugChannel = 0;
+   mPbrSettings.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+   mPbrSettings.data.debugChannel = 0;
+   mPbrSettings.data.useIBL = 1;
 
    mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
    mRenderTarget->AddWriteOnlyColorAttachment(mOutputImage);
@@ -144,7 +147,9 @@ void PhysicallyBasedRendering::InitResources()
    mSkinningEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
 
    mEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
+   mEffect->BindUniformBuffer("UBO_settings", mPbrSettings);
    mSkinningEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
+   mSkinningEffect->BindUniformBuffer("UBO_settings", mPbrSettings);
 
    InitSkybox();
 
@@ -206,8 +211,12 @@ void PhysicallyBasedRendering::UpdateCallback()
       }
    }
 
-   ImGui::Combo("Debug channel", &mVertexInputParameters.data.debugChannel,
+   ImGui::Combo("Debug channel", &mPbrSettings.data.debugChannel,
                 "None\0Base color\0Metallic\0Roughness\0Normal\0Tangent\0Ambient Occlusion\0Irradiance\0Ambient\0Specular\0");
+
+   static bool useIBL = mPbrSettings.data.useIBL;
+   ImGui::Checkbox("IBL", &useIBL);
+   mPbrSettings.data.useIBL = useIBL;
 
    ImGuiRenderer::EndWindow();
 
@@ -237,6 +246,8 @@ void PhysicallyBasedRendering::DrawCallback()
    mVertexInputParameters.data.projection = mCamera->GetProjection();
    mVertexInputParameters.UpdateMemory();
 
+   mPbrSettings.UpdateMemory();
+
    Material* material = mSceneNodes[0].model->GetMaterial(0);
    material->properties->UpdateMemory();
 
@@ -263,7 +274,7 @@ void PhysicallyBasedRendering::DrawCallback()
          if (command.skinDescriptorSet != VK_NULL_HANDLE)
          {
             commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
-                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 3);
+                                                VK_PIPELINE_BIND_POINT_GRAPHICS, 4);
          }
 
          commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL,

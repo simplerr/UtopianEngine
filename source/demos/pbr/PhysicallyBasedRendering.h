@@ -28,7 +28,12 @@ public:
       UNIFORM_PARAM(glm::mat4, projection)
       UNIFORM_PARAM(glm::mat4, view)
       UNIFORM_PARAM(glm::vec3, eyePos)
+      UNIFORM_PARAM(int, pad)
+   UNIFORM_BLOCK_END()
+
+   UNIFORM_BLOCK_BEGIN(PbrSettings)
       UNIFORM_PARAM(int, debugChannel)
+      UNIFORM_PARAM(int, useIBL)
    UNIFORM_BLOCK_END()
 
    struct SceneNode
@@ -68,6 +73,7 @@ private:
 
    SharedPtr<MiniCamera> mCamera;
    VertexInputParameters mVertexInputParameters;
+   PbrSettings mPbrSettings;
 
    std::vector<SceneNode> mSceneNodes;
 

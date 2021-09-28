@@ -9,13 +9,18 @@ layout (location = 2) in vec3 InEyePosW;
 layout (location = 3) in vec3 InColor;
 layout (location = 4) in vec2 InTex;
 layout (location = 5) in vec4 InTangentL;
-layout (location = 6) flat in int InDebugChannel;
 
 layout (location = 0) out vec4 OutColor;
 
 layout (set = 2, binding = 0) uniform samplerCube irradianceMap;
 layout (set = 2, binding = 1) uniform samplerCube specularMap;
 layout (set = 2, binding = 2) uniform sampler2D brdfLut;
+
+layout (std140, set = 3, binding = 0) uniform UBO_settings
+{
+   int debugChannel;
+   int useIBL;
+} per_frame_fs;
 
 const int numLights = 4;
 vec3 lightPositions[numLights] = {
@@ -156,6 +161,11 @@ void main()
 
    vec3 ambient = (kD * diffuse + specular) * ambientOcclusion;
 
+   if (per_frame_fs.useIBL == 0)
+   {
+      ambient = vec3(0.03) * baseColor.rgb * ambientOcclusion;
+   }
+
    vec3 color = ambient + Lo;
 
    // Tonemapping
@@ -163,22 +173,24 @@ void main()
    color = pow(color, vec3(1.0/2.2));
    OutColor = vec4(color, 1.0f);
 
-   if (InDebugChannel == 1)
+   int debugChannel = per_frame_fs.debugChannel;
+
+   if (debugChannel == 1)
       OutColor = vec4(baseColor.rgb, 1.0);
-   if (InDebugChannel == 2)
+   if (debugChannel == 2)
       OutColor = vec4(vec3(metallic), 1.0);
-   else if (InDebugChannel == 3)
+   else if (debugChannel == 3)
       OutColor = vec4(vec3(roughness), 1.0);
-   else if (InDebugChannel == 4)
+   else if (debugChannel == 4)
       OutColor = vec4(N, 1.0);
-   else if (InDebugChannel == 5)
+   else if (debugChannel == 5)
       OutColor = vec4(normalize(InTangentL.xyz), 1.0);
-   else if (InDebugChannel == 6)
+   else if (debugChannel == 6)
       OutColor = vec4(vec3(ambientOcclusion), 1.0);
-   else if (InDebugChannel == 7)
+   else if (debugChannel == 7)
       OutColor = vec4(irradiance, 1.0);
-   else if (InDebugChannel == 8)
+   else if (debugChannel == 8)
       OutColor = vec4(ambient, 1.0);
-   else if (InDebugChannel == 9)
+   else if (debugChannel == 9)
       OutColor = vec4(prefilteredColor, 1.0);
 }
