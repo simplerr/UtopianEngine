@@ -152,12 +152,7 @@ void PhysicallyBasedRendering::InitResources()
    mSkinningEffect->BindUniformBuffer("UBO_settings", mPbrSettings);
 
    InitSkybox();
-
-   mIrradianceMap = FilterCubemap(64, VK_FORMAT_R32G32B32A32_SFLOAT, mSkybox.texture.get(),
-                                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
-
-   mSpecularMap = FilterCubemap(512, VK_FORMAT_R16G16B16A16_SFLOAT, mSkybox.texture.get(),
-                                "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
+   GenerateFilteredCubemaps();
 
    mBRDFLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
    mBRDFLut->GetSampler().createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
@@ -179,6 +174,23 @@ void PhysicallyBasedRendering::InitResources()
    gScreenQuadUi().AddQuad(0, 0, width, height, mOutputImage.get(), mSampler.get());
 }
 
+void PhysicallyBasedRendering::UpdateCubemapBindings()
+{
+   Vk::DescriptorSet& descriptorSet = mSkybox.effect->GetDescriptorSetFromName("samplerCubeMap");
+   descriptorSet.BindCombinedImage("samplerCubeMap", mIrradianceMap->GetDescriptor());
+   mVulkanApp->GetDevice()->QueueDescriptorUpdate(&descriptorSet);
+
+   Vk::DescriptorSet& descriptorSet1 = mEffect->GetDescriptorSetFromName("irradianceMap");
+   descriptorSet1.BindCombinedImage("irradianceMap", mIrradianceMap->GetDescriptor());
+   descriptorSet1.BindCombinedImage("specularMap", mSpecularMap->GetDescriptor());
+   mVulkanApp->GetDevice()->QueueDescriptorUpdate(&descriptorSet1);
+
+   Vk::DescriptorSet& descriptorSet2 = mSkinningEffect->GetDescriptorSetFromName("irradianceMap");
+   descriptorSet2.BindCombinedImage("irradianceMap", mIrradianceMap->GetDescriptor());
+   descriptorSet2.BindCombinedImage("specularMap", mSpecularMap->GetDescriptor());
+   mVulkanApp->GetDevice()->QueueDescriptorUpdate(&descriptorSet2);
+}
+
 void PhysicallyBasedRendering::UpdateCallback()
 {
    glm::vec3 cameraPos = mCamera->GetPosition();
@@ -192,8 +204,23 @@ void PhysicallyBasedRendering::UpdateCallback()
    ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
    ImGui::SliderFloat("Ambient occlusion", &material->properties->data.occlusionFactor, 0.0, 1.0f);
 
+   static int selectedEnvironment = 0u;
+   if (ImGui::Combo("Environment", &selectedEnvironment, "Papermill\0Uffizi\0"))
+   {
+      std::string environment;
+      if (selectedEnvironment == 0)
+         environment = "data/textures/environments/papermill.ktx";
+      else if (selectedEnvironment == 1)
+         environment = "data/textures/environments/uffizi_cube.ktx";
+
+      mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture(environment, VK_FORMAT_R16G16B16A16_SFLOAT);
+
+      GenerateFilteredCubemaps();
+      UpdateCubemapBindings();
+   }
+
    static int selectedCubemap = 0u;
-   if (ImGui::Combo("Skybox", &selectedCubemap, "Irradiance\0Specular\0Environment\0"))
+   if (ImGui::Combo("Skybox style", &selectedCubemap, "Irradiance\0Specular\0Environment\0"))
    {
       Vk::DescriptorSet& descriptorSet = mSkybox.effect->GetDescriptorSetFromName("samplerCubeMap");
 
@@ -351,6 +378,15 @@ void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
    commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
    commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
    commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
+}
+
+void PhysicallyBasedRendering::GenerateFilteredCubemaps()
+{
+   mIrradianceMap = FilterCubemap(64, VK_FORMAT_R32G32B32A32_SFLOAT, mSkybox.texture.get(),
+                                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+
+   mSpecularMap = FilterCubemap(512, VK_FORMAT_R16G16B16A16_SFLOAT, mSkybox.texture.get(),
+                                "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
 }
 
 SharedPtr<Vk::Texture> PhysicallyBasedRendering::FilterCubemap(uint32_t dimension, VkFormat format, Vk::Texture* inputCubemap,

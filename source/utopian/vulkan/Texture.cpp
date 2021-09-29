@@ -12,6 +12,8 @@ namespace Utopian::Vk
 
    Texture::~Texture()
    {
+      mDevice->QueueDestroy(mImage);
+      mDevice->QueueDestroy(mSampler);
    }
 
    const VkDescriptorImageInfo* Texture::GetDescriptor() const

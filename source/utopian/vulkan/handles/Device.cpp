@@ -234,13 +234,33 @@ namespace Utopian::Vk
    void Device::QueueDestroy(VkPipeline pipeline)
    {
       mPipelinesToFree.push_back(pipeline);
-    }
+   }
+
+   void Device::QueueDestroy(SharedPtr<Vk::Image> image)
+   {
+      mImagesToFree.push_back(image);
+   }
+
+   void Device::QueueDestroy(SharedPtr<Vk::Sampler> sampler)
+   {
+      mSamplersToFree.push_back(sampler);
+   }
 
    void Device::GarbageCollect()
    {
       if (mBuffersToFree.size() > 0)
       {
          mBuffersToFree.clear();
+      }
+
+      if (mImagesToFree.size() > 0)
+      {
+         mImagesToFree.clear();
+      }
+
+      if (mSamplersToFree.size() > 0)
+      {
+         mSamplersToFree.clear();
       }
 
       for (auto& pipeline : mPipelinesToFree)

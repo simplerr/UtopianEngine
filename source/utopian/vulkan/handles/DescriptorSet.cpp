@@ -97,15 +97,28 @@ namespace Utopian::Vk
 
    void DescriptorSet::BindCombinedImage(uint32_t binding, const VkDescriptorImageInfo* imageInfo, uint32_t descriptorCount)
    {
-      VkWriteDescriptorSet writeDescriptorSet = {};
-      writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      writeDescriptorSet.dstSet = mDescriptorSet;
-      writeDescriptorSet.descriptorCount = descriptorCount;
-      writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      writeDescriptorSet.pImageInfo = imageInfo;
-      writeDescriptorSet.dstBinding = binding;           
+      bool existing = false;
+      for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+      {
+         if (mWriteDescriptorSets[i].dstBinding == binding)
+         {
+            mWriteDescriptorSets[i].pImageInfo = imageInfo;
+            existing = true;
+         }
+      }
 
-      mWriteDescriptorSets.push_back(writeDescriptorSet);
+      if (!existing)
+      {
+         VkWriteDescriptorSet writeDescriptorSet = {};
+         writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+         writeDescriptorSet.dstSet = mDescriptorSet;
+         writeDescriptorSet.descriptorCount = descriptorCount;
+         writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+         writeDescriptorSet.pImageInfo = imageInfo;
+         writeDescriptorSet.dstBinding = binding;           
+
+         mWriteDescriptorSets.push_back(writeDescriptorSet);
+      }
    }
 
    void DescriptorSet::BindCombinedImage(uint32_t binding, VkImageView imageView, VkSampler sampler, VkImageLayout imageLayout)
@@ -130,15 +143,28 @@ namespace Utopian::Vk
          mImageInfoMap[binding] = imageInfo;
       }
 
-      VkWriteDescriptorSet writeDescriptorSet = {};
-      writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      writeDescriptorSet.dstSet = mDescriptorSet;
-      writeDescriptorSet.descriptorCount = 1;
-      writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-      writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
-      writeDescriptorSet.dstBinding = binding;
+      bool existing = false;
+      for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+      {
+         if (mWriteDescriptorSets[i].dstBinding == binding)
+         {
+            mWriteDescriptorSets[i].pImageInfo = &mImageInfoMap[binding];
+            existing = true;
+         }
+      }
 
-      mWriteDescriptorSets.push_back(writeDescriptorSet);
+      if (!existing)
+      {
+         VkWriteDescriptorSet writeDescriptorSet = {};
+         writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+         writeDescriptorSet.dstSet = mDescriptorSet;
+         writeDescriptorSet.descriptorCount = 1;
+         writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+         writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
+         writeDescriptorSet.dstBinding = binding;
+
+         mWriteDescriptorSets.push_back(writeDescriptorSet);
+      }
    }
 
    void DescriptorSet::BindImage(uint32_t binding, VkImageView imageView, VkImageLayout imageLayout)
@@ -163,15 +189,28 @@ namespace Utopian::Vk
          mImageInfoMap[binding] = imageInfo;
       }
 
-      VkWriteDescriptorSet writeDescriptorSet = {};
-      writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-      writeDescriptorSet.dstSet = mDescriptorSet;
-      writeDescriptorSet.descriptorCount = 1;
-      writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-      writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
-      writeDescriptorSet.dstBinding = binding;
+      bool existing = false;
+      for (int i = 0; i < mWriteDescriptorSets.size(); i++)
+      {
+         if (mWriteDescriptorSets[i].dstBinding == binding)
+         {
+            mWriteDescriptorSets[i].pImageInfo = &mImageInfoMap[binding];
+            existing = true;
+         }
+      }
 
-      mWriteDescriptorSets.push_back(writeDescriptorSet);
+      if (!existing)
+      {
+         VkWriteDescriptorSet writeDescriptorSet = {};
+         writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+         writeDescriptorSet.dstSet = mDescriptorSet;
+         writeDescriptorSet.descriptorCount = 1;
+         writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+         writeDescriptorSet.pImageInfo = &mImageInfoMap[binding];
+         writeDescriptorSet.dstBinding = binding;
+
+         mWriteDescriptorSets.push_back(writeDescriptorSet);
+      }
    }
 
    void DescriptorSet::BindCombinedImage(uint32_t binding, const Image& image, const Sampler& sampler)
