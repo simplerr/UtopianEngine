@@ -21,6 +21,31 @@ namespace Utopian
 
 class MiniCamera;
 
+class ModelInspector
+{
+public:
+   struct TextureInfo
+   {
+      TextureInfo(ImTextureID id, std::string _path) {
+         textureId = id;
+         path = _path;
+      }
+
+      ImTextureID textureId;
+      std::string path;
+   };
+
+   ModelInspector(Utopian::Model* model);
+   ~ModelInspector();
+
+   void UpdateUi();
+   void ClearTextures();
+   void AddTextures(uint32_t materialIndex);
+private:
+   Utopian::Model* model;
+   std::vector<TextureInfo> textureInfos;
+};
+
 class PhysicallyBasedRendering
 {
 public:
@@ -78,6 +103,7 @@ private:
    PbrSettings mPbrSettings;
 
    std::vector<SceneNode> mSceneNodes;
+   SharedPtr<ModelInspector> mModelInspector;
 
    struct Skybox {
       UNIFORM_BLOCK_BEGIN(SkyboxInput)

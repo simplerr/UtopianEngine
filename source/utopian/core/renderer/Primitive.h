@@ -31,6 +31,7 @@ namespace Utopian
       BoundingBox GetBoundingBox();
 
       void SetDebugName(std::string debugName);
+      std::string GetDebugName() const;
 
       std::vector<Vk::Vertex> vertices;
       std::vector<unsigned int> indices;

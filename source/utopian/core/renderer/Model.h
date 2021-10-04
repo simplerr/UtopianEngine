@@ -39,6 +39,7 @@ namespace Utopian
       SharedPtr<Vk::Texture> metallicRoughnessTexture;
       SharedPtr<Vk::Texture> occlusionTexture;
       SharedPtr<Vk::DescriptorSet> descriptorSet;
+      std::string name = "Material_unknown";
    };
 
    class Mesh
@@ -120,6 +121,8 @@ namespace Utopian
       Node* FindNode(Node* parent, uint32_t index);
 
       BoundingBox GetBoundingBox();
+      uint32_t GetNumPrimitives() const;
+      uint32_t GetNumMaterials() const;
 
    private:
       // Todo: currently only returns the first primitive bounding box

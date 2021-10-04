@@ -203,4 +203,14 @@ namespace Utopian
    {
       return mBoundingBox;
    }
+
+   uint32_t Model::GetNumPrimitives() const
+   {
+      return mPrimitives.size();
+   }
+
+   uint32_t Model::GetNumMaterials() const
+   {
+      return mMaterials.size();
+   }
 }

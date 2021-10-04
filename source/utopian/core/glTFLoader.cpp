@@ -86,6 +86,7 @@ namespace Utopian
 
          SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().CreateTexture(&glTFImage.image[0], VK_FORMAT_R8G8B8A8_UNORM,
                                                                              glTFImage.width, glTFImage.height, 1, sizeof(uint32_t));
+         texture->SetPath(glTFImage.uri);
          images.push_back(texture);
       }
 
@@ -100,6 +101,7 @@ namespace Utopian
          tinygltf::Material glTFMaterial = input.materials[i];
 
          Material material = GetDefaultMaterial();
+         material.name = glTFMaterial.name;
 
          if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
             material.properties->data.baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
@@ -202,6 +204,7 @@ namespace Utopian
                AppendIndexData(input, glTFPrimitive, &primitive);
 
             primitive.BuildBuffers(device);
+            primitive.SetDebugName(mesh.name);
 
             Primitive* addedPrimitive = model->AddPrimitive(primitive);
             Material* material = nullptr;

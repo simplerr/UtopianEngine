@@ -131,4 +131,9 @@ namespace Utopian
    {
       mDebugName = debugName;
    }
+
+   std::string Primitive::GetDebugName() const
+   {
+      return mDebugName;
+   }
 }

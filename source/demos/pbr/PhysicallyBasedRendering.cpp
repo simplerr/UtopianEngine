@@ -2,6 +2,7 @@
 #include "core/renderer/Model.h"
 #include "core/glTFLoader.h"
 #include <glm/matrix.hpp>
+#include <imgui/imgui.h>
 #include <string>
 #include <time.h>
 #include <vulkan/handles/DescriptorSet.h>
@@ -54,8 +55,9 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    //AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
    // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
    //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
-   // AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f));
-   AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(-1.5f, 1.0f, 0.0f), glm::vec3(1.0f));
+   Utopian::Model* model = AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(-1.5f, 1.0f, 0.0f), glm::vec3(1.0f));
+   mModelInspector = std::make_shared<ModelInspector>(model);
+   //mSelectedModel = AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(-1.5f, 1.0f, 0.0f), glm::vec3(1.0f));
    
    // SceneNode sceneNode;
    // sceneNode.model = gModelLoader().LoadBox();
@@ -195,14 +197,8 @@ void PhysicallyBasedRendering::UpdateCallback()
 {
    glm::vec3 cameraPos = mCamera->GetPosition();
 
-   Material* material = mSceneNodes[0].model->GetMaterial(0);
-
    ImGuiRenderer::BeginWindow("PBR Demo", glm::vec2(10, 150), 300.0f);
    ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
-   ImGui::ColorEdit4("Color", &material->properties->data.baseColorFactor.x);
-   ImGui::SliderFloat("Metallic", &material->properties->data.metallicFactor, 0.0, 1.0f);
-   ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
-   ImGui::SliderFloat("Ambient occlusion", &material->properties->data.occlusionFactor, 0.0, 1.0f);
 
    static int selectedEnvironment = 0u;
    if (ImGui::Combo("Environment", &selectedEnvironment, "Papermill\0Uffizi\0"))
@@ -245,6 +241,8 @@ void PhysicallyBasedRendering::UpdateCallback()
    ImGui::Checkbox("IBL", &useIBL);
    mPbrSettings.data.useIBL = useIBL;
 
+   mModelInspector->UpdateUi();
+
    ImGuiRenderer::EndWindow();
 
    static double prevTime = Utopian::gTimer().GetTime();
@@ -275,8 +273,8 @@ void PhysicallyBasedRendering::DrawCallback()
 
    mPbrSettings.UpdateMemory();
 
-   Material* material = mSceneNodes[0].model->GetMaterial(0);
-   material->properties->UpdateMemory();
+   // Material* material = mSceneNodes[0].model->GetMaterial(0);
+   // material->properties->UpdateMemory();
 
    mRenderTarget->Begin("PBR pass", glm::vec4(0.3, 0.6, 0.9, 1.0));
    Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
@@ -505,4 +503,102 @@ Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::ve
    mSceneNodes.push_back(sceneNode);
 
    return sceneNode.model.get();
+}
+
+ModelInspector::ModelInspector(Utopian::Model* model)
+{
+   this->model = model;
+}
+
+ModelInspector::~ModelInspector()
+{
+}
+
+void ModelInspector::UpdateUi()
+{
+   if (ImGui::CollapsingHeader("Primitives", ImGuiTreeNodeFlags_DefaultOpen))
+   {
+      for (uint32_t index = 0; index < model->GetNumPrimitives(); index++)
+      {
+         Utopian::Primitive* primitive = model->GetPrimitive(index);
+
+         if (ImGui::TreeNodeEx(primitive->GetDebugName().c_str()))
+         {
+            ImGui::Text("Num vertices: %u", primitive->GetNumVertices());
+            ImGui::Text("Num indices: %u", primitive->GetNumIndices());
+            ImGui::TreePop();
+         }
+      }
+   }
+
+   static uint32_t selectedMaterial = 0;
+   if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
+   {
+      for (uint32_t index = 0; index < model->GetNumMaterials(); index++)
+      {
+         Utopian::Material* material = model->GetMaterial(index);
+
+         ImGuiTreeNodeFlags flags = 0;
+         if (selectedMaterial == index)
+            flags = ImGuiTreeNodeFlags_Selected;
+
+         if (ImGui::TreeNodeEx(material->name.c_str(), flags))
+         {
+            ImGui::TreePop();
+         }
+
+         if (ImGui::IsItemClicked())
+         {
+            selectedMaterial = index;
+            ClearTextures();
+            AddTextures(selectedMaterial);
+         }
+      }
+   }
+
+   if (ImGui::CollapsingHeader("Selected material", ImGuiTreeNodeFlags_DefaultOpen))
+   {
+      Material* material = model->GetMaterial(selectedMaterial);
+
+      ImGui::Text("Name: %s", material->name.c_str());
+      ImGui::ColorEdit4("Color", &material->properties->data.baseColorFactor.x);
+      ImGui::SliderFloat("Metallic", &material->properties->data.metallicFactor, 0.0, 1.0f);
+      ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
+      ImGui::SliderFloat("Ambient occlusion", &material->properties->data.occlusionFactor, 0.0, 1.0f);
+      material->properties->UpdateMemory();
+
+      if (ImGui::CollapsingHeader("Textures"))
+      {
+         for (auto& textureInfo : textureInfos)
+         {
+            ImGui::Text(textureInfo.path.c_str());
+            if (ImGui::ImageButton(textureInfo.textureId, ImVec2(64, 64)))
+            {
+               // Nothing
+            }
+         }
+      }
+   }
+}
+
+void ModelInspector::ClearTextures()
+{
+   for (auto& textureInfo : textureInfos)
+   {
+       gEngine().GetImGuiRenderer()->FreeTexture(textureInfo.textureId);
+   }
+
+   textureInfos.clear();
+}
+
+void ModelInspector::AddTextures(uint32_t materialIndex)
+{
+   Material* material = model->GetMaterial(materialIndex);
+   Utopian::ImGuiRenderer* ui = gEngine().GetImGuiRenderer();
+
+   textureInfos.push_back(TextureInfo(ui->AddImage(material->colorTexture->GetImage()), material->colorTexture->GetPath()));
+   textureInfos.push_back(TextureInfo(ui->AddImage(material->normalTexture->GetImage()), material->normalTexture->GetPath()));
+   textureInfos.push_back(TextureInfo(ui->AddImage(material->specularTexture->GetImage()), material->specularTexture->GetPath()));
+   textureInfos.push_back(TextureInfo(ui->AddImage(material->metallicRoughnessTexture->GetImage()), material->metallicRoughnessTexture->GetPath()));
+   textureInfos.push_back(TextureInfo(ui->AddImage(material->occlusionTexture->GetImage()), material->occlusionTexture->GetPath()));
 }
