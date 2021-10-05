@@ -26,13 +26,10 @@ class ModelInspector
 public:
    struct TextureInfo
    {
-      TextureInfo(ImTextureID id, std::string _path) {
-         textureId = id;
-         path = _path;
-      }
+      TextureInfo(SharedPtr<Vk::Texture> texture);
 
+      SharedPtr<Vk::Texture> texture;
       ImTextureID textureId;
-      std::string path;
    };
 
    ModelInspector(Utopian::Model* model);

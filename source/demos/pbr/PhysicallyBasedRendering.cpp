@@ -107,6 +107,7 @@ void PhysicallyBasedRendering::DestroyCallback()
    mIrradianceMap = nullptr;
    mSpecularMap = nullptr;
    mBRDFLut = nullptr;
+   mModelInspector = nullptr;
 
    for (auto& sceneNode : mSceneNodes)
       sceneNode.model = nullptr;
@@ -524,10 +525,12 @@ Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::ve
 ModelInspector::ModelInspector(Utopian::Model* model)
 {
    this->model = model;
+   AddTextures(0);
 }
 
 ModelInspector::~ModelInspector()
 {
+   ClearTextures();
 }
 
 void ModelInspector::UpdateUi()
@@ -572,6 +575,18 @@ void ModelInspector::UpdateUi()
       }
    }
 
+   // Since it's inside the ImGui::ImageButton we are changing the texture
+   // we cannot change the UI texture immedietly has that would make the
+   // descriptor set used in ImGuiRenderer::UpdateCommandBuffers() invalid.
+   static bool changedTexture = false;
+
+   if (changedTexture) {
+      ClearTextures();
+      AddTextures(selectedMaterial);
+   }
+
+   changedTexture = false;
+
    if (ImGui::CollapsingHeader("Selected material", ImGuiTreeNodeFlags_DefaultOpen))
    {
       Material* material = model->GetMaterial(selectedMaterial);
@@ -583,14 +598,28 @@ void ModelInspector::UpdateUi()
       ImGui::SliderFloat("Ambient occlusion", &material->properties->data.occlusionFactor, 0.0, 1.0f);
       material->properties->UpdateMemory();
 
-      if (ImGui::CollapsingHeader("Textures"))
+      if (ImGui::CollapsingHeader("Textures", ImGuiTreeNodeFlags_DefaultOpen))
       {
-         for (auto& textureInfo : textureInfos)
+         for (uint32_t i = 0; i < textureInfos.size(); i++)
          {
-            ImGui::Text(textureInfo.path.c_str());
+            TextureInfo textureInfo = textureInfos[i];
+            ImGui::Text(textureInfo.texture->GetPath().c_str());
             if (ImGui::ImageButton(textureInfo.textureId, ImVec2(64, 64)))
             {
-               // Nothing
+               nfdchar_t* outPath = NULL;
+               nfdresult_t result = NFD_OpenDialog(NULL, NULL, &outPath);
+               SharedPtr<Vk::Texture> loadedTexture = Vk::gTextureLoader().LoadTexture(std::string(outPath));
+               //textureInfo.texture = Vk::gTextureLoader().LoadTexture(std::string(outPath));
+               switch (i) {
+                  case 0: material->colorTexture = loadedTexture; break;
+                  case 1: material->normalTexture = loadedTexture; break;
+                  case 2: material->specularTexture = loadedTexture; break;
+                  case 3: material->metallicRoughnessTexture = loadedTexture; break;
+                  case 4: material->occlusionTexture = loadedTexture; break;
+               }
+               
+               material->BindTextureDescriptors(Utopian::gEngine().GetVulkanApp()->GetDevice());
+               changedTexture = true;
             }
          }
       }
@@ -612,9 +641,17 @@ void ModelInspector::AddTextures(uint32_t materialIndex)
    Material* material = model->GetMaterial(materialIndex);
    Utopian::ImGuiRenderer* ui = gEngine().GetImGuiRenderer();
 
-   textureInfos.push_back(TextureInfo(ui->AddImage(material->colorTexture->GetImage()), material->colorTexture->GetPath()));
-   textureInfos.push_back(TextureInfo(ui->AddImage(material->normalTexture->GetImage()), material->normalTexture->GetPath()));
-   textureInfos.push_back(TextureInfo(ui->AddImage(material->specularTexture->GetImage()), material->specularTexture->GetPath()));
-   textureInfos.push_back(TextureInfo(ui->AddImage(material->metallicRoughnessTexture->GetImage()), material->metallicRoughnessTexture->GetPath()));
-   textureInfos.push_back(TextureInfo(ui->AddImage(material->occlusionTexture->GetImage()), material->occlusionTexture->GetPath()));
+   textureInfos.push_back(TextureInfo(material->colorTexture));
+   textureInfos.push_back(TextureInfo(material->normalTexture));
+   textureInfos.push_back(TextureInfo(material->specularTexture));
+   textureInfos.push_back(TextureInfo(material->metallicRoughnessTexture));
+   textureInfos.push_back(TextureInfo(material->occlusionTexture));
+}
+
+ModelInspector::TextureInfo::TextureInfo(SharedPtr<Vk::Texture> texture)
+{
+   Utopian::ImGuiRenderer* ui = gEngine().GetImGuiRenderer();
+
+   this->textureId = ui->AddImage(texture->GetImage());
+   this->texture = texture;
 }

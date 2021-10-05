@@ -59,32 +59,22 @@ namespace Utopian
    void Renderable::SetDiffuseTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
       Material* material = mModel->GetMaterial(materialIdx);
-
       material->colorTexture = texture;
-      material->descriptorSet->BindCombinedImage(0, material->colorTexture->GetDescriptor());
-
-      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
+      material->BindTextureDescriptors(gRenderer().GetDevice());
    }
 
    void Renderable::SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
       Material* material = mModel->GetMaterial(materialIdx);
-
       material->normalTexture = texture;
-      material->descriptorSet->BindCombinedImage(1, material->normalTexture->GetDescriptor());
-
-      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
-
+      material->BindTextureDescriptors(gRenderer().GetDevice());
    }
 
    void Renderable::SetSpecularTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
       Material* material = mModel->GetMaterial(materialIdx);
-
       material->specularTexture = texture;
-      material->descriptorSet->BindCombinedImage(2, material->specularTexture->GetDescriptor());
-
-      gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
+      material->BindTextureDescriptors(gRenderer().GetDevice());
    }
 
    void Renderable::SetTileFactor(glm::vec2 tileFactor)

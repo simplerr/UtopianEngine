@@ -24,13 +24,9 @@ namespace Utopian
 
    struct Material
    {
-      Material() {
-         properties = std::make_shared<MaterialProperties>();
-         properties->data.baseColorFactor = glm::vec4(1.0f);
-         properties->data.metallicFactor = 1.0f;
-         properties->data.roughnessFactor = 1.0f;
-         properties->data.occlusionFactor = 1.0f;
-      }
+      Material();
+
+      void BindTextureDescriptors(Vk::Device* device);
 
       SharedPtr<MaterialProperties> properties = nullptr;
       SharedPtr<Vk::Texture> colorTexture;

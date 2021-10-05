@@ -168,12 +168,7 @@ namespace Utopian
             material.colorTexture = Vk::gTextureLoader().LoadTexture(diffuseTexturePath);
             material.normalTexture = Vk::gTextureLoader().LoadTexture(normalTexturePath);
             material.specularTexture = Vk::gTextureLoader().LoadTexture(specularTexturePath);
-            material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
-            material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
-            material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-            material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
-            material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
-            material.descriptorSet->UpdateDescriptorSets();
+            material.BindTextureDescriptors(mDevice);
 
             primitive.SetDebugName(filename);
             primitive.BuildBuffers(mDevice);

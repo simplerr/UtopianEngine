@@ -221,10 +221,7 @@ namespace Utopian
             Material* material = model->GetMaterial(0);
             material->colorTexture = diffuseTexture;
             material->normalTexture = normalMap;
-            material->descriptorSet->BindCombinedImage(0, material->colorTexture->GetDescriptor());
-            material->descriptorSet->BindCombinedImage(1, material->normalTexture->GetDescriptor());
-
-            gRenderer().GetDevice()->QueueDescriptorUpdate(material->descriptorSet.get());
+            material->BindTextureDescriptors(gRenderer().GetDevice());
          }
          else
             assert(0);

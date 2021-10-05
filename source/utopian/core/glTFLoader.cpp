@@ -130,14 +130,7 @@ namespace Utopian
          }
 
          material.properties->UpdateMemory();
-
-         material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
-         material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
-         material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-         material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
-         material.descriptorSet->BindCombinedImage(4, material.occlusionTexture->GetDescriptor());
-         material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
-         material.descriptorSet->UpdateDescriptorSets();
+         material.BindTextureDescriptors(mDevice);
 
          model->AddMaterial(material);
       }
@@ -361,14 +354,7 @@ namespace Utopian
       material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
       material.metallicRoughnessTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_METALLIC_ROUGHNESS_TEXTURE);
       material.occlusionTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_OCCLUSION_TEXTURE);
-
-      material.descriptorSet->BindCombinedImage(0, material.colorTexture->GetDescriptor());
-      material.descriptorSet->BindCombinedImage(1, material.normalTexture->GetDescriptor());
-      material.descriptorSet->BindCombinedImage(2, material.specularTexture->GetDescriptor());
-      material.descriptorSet->BindCombinedImage(3, material.metallicRoughnessTexture->GetDescriptor());
-      material.descriptorSet->BindCombinedImage(4, material.occlusionTexture->GetDescriptor());
-      material.descriptorSet->BindUniformBuffer(20, material.properties->GetDescriptor());
-      material.descriptorSet->UpdateDescriptorSets();
+      material.BindTextureDescriptors(mDevice);
 
       return material;
    }

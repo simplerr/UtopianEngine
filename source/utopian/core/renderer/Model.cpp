@@ -8,6 +8,7 @@
 #include "vulkan/PipelineInterface.h"
 #include "vulkan/handles/Buffer.h"
 #include "Model.h"
+#include "core/Engine.h"
 
 // Todo: remove
 #include "vulkan/handles/DescriptorSetLayout.h"
@@ -24,6 +25,27 @@ namespace Utopian
              glm::mat4(rotation) *
              glm::scale(glm::mat4(1.0f), scale) *
              matrix;
+   }
+
+   Material::Material()
+   {
+      properties = std::make_shared<MaterialProperties>();
+      properties->data.baseColorFactor = glm::vec4(1.0f);
+      properties->data.metallicFactor = 1.0f;
+      properties->data.roughnessFactor = 1.0f;
+      properties->data.occlusionFactor = 1.0f;
+   }
+
+   void Material::BindTextureDescriptors(Vk::Device* device)
+   {
+      descriptorSet->BindCombinedImage(0, colorTexture->GetDescriptor());
+      descriptorSet->BindCombinedImage(1, normalTexture->GetDescriptor());
+      descriptorSet->BindCombinedImage(2, specularTexture->GetDescriptor());
+      descriptorSet->BindCombinedImage(3, metallicRoughnessTexture->GetDescriptor());
+      descriptorSet->BindCombinedImage(4, occlusionTexture->GetDescriptor());
+      descriptorSet->BindUniformBuffer(20, properties->GetDescriptor());
+
+      device->QueueDescriptorUpdate(descriptorSet.get());
    }
 
    Model::Model()
