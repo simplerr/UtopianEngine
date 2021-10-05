@@ -35,6 +35,7 @@ public:
    ModelInspector(Utopian::Model* model);
    ~ModelInspector();
 
+   void SetModel(Utopian::Model* model);
    void UpdateUi();
    void ClearTextures();
    void AddTextures(uint32_t materialIndex);

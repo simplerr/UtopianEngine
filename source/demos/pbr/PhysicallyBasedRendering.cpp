@@ -52,20 +52,11 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    InitResources();
 
    gModelLoader().SetInverseTranslation(false);
-
-   //AddModel("data/models/gltf/Sponza/glTF/Sponza.gltf", glm::vec3(0.0f), glm::vec3(1.0f));
-   // AddModel("data/models/gltf/CesiumMan.gltf", glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(1.0f),
-   //          glm::angleAxis(glm::radians(-90.f), glm::vec3(1.f, 0.f, 0.f)));
-   Utopian::Model* model = AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(-1.5f, 1.0f, 0.0f), glm::vec3(1.0f));
-   mModelInspector = std::make_shared<ModelInspector>(model);
-   //mSelectedModel = AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf", glm::vec3(-1.5f, 1.0f, 0.0f), glm::vec3(1.0f));
    
-   // SceneNode sceneNode;
-   // sceneNode.model = gModelLoader().LoadBox();
-   // sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f)) *
-   //                         glm::mat4(glm::quat()) *
-   //                         glm::scale(glm::mat4(1.0f), glm::vec3(1.0));
-   // mSceneNodes.push_back(sceneNode);
+   SceneNode sceneNode;
+   sceneNode.model = gModelLoader().LoadBox();
+   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f));
+   mSceneNodes.push_back(sceneNode);
 
    //AddModel("data/models/sphere.obj", glm::vec3(1.0f, 0.0f, 3), glm::vec3(0.02f));
    const uint32_t max = 5;
@@ -84,6 +75,9 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    }
 
    AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(2.0f, 0.25f, 1.78f), glm::vec3(0.01f));
+
+   Utopian::Model* model = AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.5f, 1.0f, 3.0f), glm::vec3(1.0f));
+   mModelInspector = std::make_shared<ModelInspector>(model);
 }
 
 PhysicallyBasedRendering::~PhysicallyBasedRendering()
@@ -201,6 +195,17 @@ void PhysicallyBasedRendering::UpdateCallback()
 
    ImGuiRenderer::BeginWindow("PBR Demo", glm::vec2(10, 150), 300.0f);
    ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
+
+   if (ImGui::Button("Load model"))
+   {
+      nfdchar_t* outPath = NULL;
+      nfdresult_t result = NFD_OpenDialog(NULL, NULL, &outPath);
+      if (result == NFD_OKAY) {
+         mSceneNodes.pop_back();
+         Utopian::Model* model = AddModel(std::string(outPath), glm::vec3(0.5f, 1.0f, 3.0f), glm::vec3(1.0f));
+         mModelInspector->SetModel(model);
+      }
+   }
 
    static int selectedEnvironment = 0u;
    if (ImGui::Combo("Environment", &selectedEnvironment, "Papermill\0Uffizi\0...\0"))
@@ -524,13 +529,20 @@ Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::ve
 
 ModelInspector::ModelInspector(Utopian::Model* model)
 {
-   this->model = model;
-   AddTextures(0);
+   SetModel(model);
 }
 
 ModelInspector::~ModelInspector()
 {
    ClearTextures();
+}
+
+void ModelInspector::SetModel(Utopian::Model* model)
+{
+   ClearTextures();
+
+   this->model = model;
+   AddTextures(0);
 }
 
 void ModelInspector::UpdateUi()
