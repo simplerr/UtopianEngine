@@ -31,6 +31,7 @@
 #include "utility/Timer.h"
 #include "core/renderer/Primitive.h"
 #include "core/renderer/ScreenQuadRenderer.h"
+#include "nativefiledialog/nfd.h"
 
 PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    : mWindow(window)
@@ -201,18 +202,33 @@ void PhysicallyBasedRendering::UpdateCallback()
    ImGui::Text("Camera pos: (%.2f %.2f %.2f)", cameraPos.x, cameraPos.y, cameraPos.z);
 
    static int selectedEnvironment = 0u;
-   if (ImGui::Combo("Environment", &selectedEnvironment, "Papermill\0Uffizi\0"))
+   if (ImGui::Combo("Environment", &selectedEnvironment, "Papermill\0Uffizi\0...\0"))
    {
       std::string environment;
-      if (selectedEnvironment == 0)
+      bool status = true;
+      if (selectedEnvironment == 0) {
          environment = "data/textures/environments/papermill.ktx";
-      else if (selectedEnvironment == 1)
+      }
+      else if (selectedEnvironment == 1) {
          environment = "data/textures/environments/uffizi_cube.ktx";
+      }
+      else if (selectedEnvironment == 2) {
+         nfdchar_t* outPath = NULL;
+         nfdresult_t result = NFD_OpenDialog(NULL, NULL, &outPath);
+         if (result == NFD_OKAY)
+            environment = outPath;
+         else
+            status = false;
+      }
 
-      mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture(environment, VK_FORMAT_R16G16B16A16_SFLOAT);
+      if (status) {
+         mSkybox.texture = Vk::gTextureLoader().LoadCubemapTexture(environment, VK_FORMAT_R16G16B16A16_SFLOAT);
 
-      GenerateFilteredCubemaps();
-      UpdateCubemapBindings();
+         GenerateFilteredCubemaps();
+         UpdateCubemapBindings();
+      }
+      else
+         UTO_LOG("Error selecting environment map");
    }
 
    static int selectedCubemap = 0u;

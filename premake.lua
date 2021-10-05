@@ -70,7 +70,8 @@ project "Engine"
          "external/LegitProfiler/*.h",
          "external/LegitProfiler/*.cpp",
          "external/tinygltf/tiny_gltf.h",
-         "external/tinygltf/json.hpp"
+         "external/tinygltf/json.hpp",
+         "external/nativefiledialog/nfd.h"
       }
    
       removefiles { "**/marching_cubes_legacy/**" }
@@ -97,6 +98,7 @@ project "Engine"
       libdirs { "libs/vulkan" }
       libdirs { "libs/ktx" }
       libdirs { "libs/OpenMesh" }
+      libdirs { "libs/nativefiledialog" }
    
       -- "Debug"
       filter "configurations:Debug"
@@ -121,6 +123,7 @@ project "Engine"
          links { "libktx.gl" }
          links { "OpenMeshCored" }
          links { "OpenMeshToolsd" }
+         links { "nfd_d" }
    
       -- "Release"
       filter "configurations:Release"
