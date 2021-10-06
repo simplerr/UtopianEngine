@@ -25,6 +25,8 @@ Game::Game(Utopian::Window* window)
    renderingSettings.terrainEnabled = false;
    renderingSettings.waterEnabled = true;
 
+   Utopian::gModelLoader().SetFlipWindingOrder(true);
+
    Utopian::gEngine().Start(window, "Utopian Engine (v0.3)");
    Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
    Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>("data/settings.lua"));

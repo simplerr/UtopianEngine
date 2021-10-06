@@ -60,21 +60,21 @@ namespace Utopian
    {
       Material* material = mModel->GetMaterial(materialIdx);
       material->colorTexture = texture;
-      material->BindTextureDescriptors(gRenderer().GetDevice());
+      material->UpdateTextureDescriptors(gRenderer().GetDevice());
    }
 
    void Renderable::SetNormalTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
       Material* material = mModel->GetMaterial(materialIdx);
       material->normalTexture = texture;
-      material->BindTextureDescriptors(gRenderer().GetDevice());
+      material->UpdateTextureDescriptors(gRenderer().GetDevice());
    }
 
    void Renderable::SetSpecularTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
       Material* material = mModel->GetMaterial(materialIdx);
       material->specularTexture = texture;
-      material->BindTextureDescriptors(gRenderer().GetDevice());
+      material->UpdateTextureDescriptors(gRenderer().GetDevice());
    }
 
    void Renderable::SetTileFactor(glm::vec2 tileFactor)

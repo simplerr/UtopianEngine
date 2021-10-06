@@ -36,7 +36,7 @@ namespace Utopian
       properties->data.occlusionFactor = 1.0f;
    }
 
-   void Material::BindTextureDescriptors(Vk::Device* device)
+   void Material::UpdateTextureDescriptors(Vk::Device* device)
    {
       descriptorSet->BindCombinedImage(0, colorTexture->GetDescriptor());
       descriptorSet->BindCombinedImage(1, normalTexture->GetDescriptor());

@@ -29,7 +29,7 @@ namespace Utopian
       void LoadMaterials(tinygltf::Model& input, Model* model);
       void LoadNode(Model* model, const tinygltf::Node& inputNode, const tinygltf::Model& input,
                     Node* parent, uint32_t nodeIndex, Vk::Device* device);
-      void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive);
+      void AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive, bool hasIndices);
       void AppendIndexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive);
       void CreateDescriptorPools();
 

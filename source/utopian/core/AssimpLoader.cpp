@@ -34,9 +34,14 @@ namespace Utopian
       SharedPtr<Model> model = std::make_shared<Model>();
       model->SetFilename(filename);
 
+      uint32_t flags = aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices;
+
+      if (gModelLoader().GetFlipWindingOrder())
+         flags |= aiProcess_FlipWindingOrder;
+
       // Load scene from the file.
       Assimp::Importer importer;
-      const aiScene* scene = importer.ReadFile(filename, aiProcess_FlipUVs | aiProcess_FlipWindingOrder | aiProcess_Triangulate | aiProcess_PreTransformVertices | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices);
+      const aiScene* scene = importer.ReadFile(filename, flags);
 
       if (scene != nullptr)
       {
@@ -168,7 +173,7 @@ namespace Utopian
             material.colorTexture = Vk::gTextureLoader().LoadTexture(diffuseTexturePath);
             material.normalTexture = Vk::gTextureLoader().LoadTexture(normalTexturePath);
             material.specularTexture = Vk::gTextureLoader().LoadTexture(specularTexturePath);
-            material.BindTextureDescriptors(mDevice);
+            material.UpdateTextureDescriptors(mDevice);
 
             primitive.SetDebugName(filename);
             primitive.BuildBuffers(mDevice);

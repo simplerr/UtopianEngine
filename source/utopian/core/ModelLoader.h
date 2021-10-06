@@ -42,6 +42,9 @@ namespace Utopian
 
       Vk::DescriptorSetLayout* GetMeshTextureDescriptorSetLayout();
       Vk::DescriptorPool* GetMeshTextureDescriptorPool();
+
+      static void SetFlipWindingOrder(bool flipWindingOrder);
+      static bool GetFlipWindingOrder();
    private:
       std::map<std::string, SharedPtr<Model>> mModelMap;
       SharedPtr<Model> mPlaceholderModel = nullptr;
@@ -49,7 +52,8 @@ namespace Utopian
 
       SharedPtr<AssimpLoader> mAssimpLoader;
       SharedPtr<glTFLoader> mglTFLoader;
-      
+      static bool mFlipWindingOrder;
+
       // The descriptor set layout that contains the PBR textures used when rendering models.
       // It is expected to be used in multiple shaders so instead of relying on the 
       // shader reflection we manually create a layout that every shader

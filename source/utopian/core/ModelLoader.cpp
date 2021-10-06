@@ -1,6 +1,5 @@
 #include <vector>
 #include <vulkan/vulkan_core.h>
-
 #include "core/renderer/Primitive.h"
 #include "core/Log.h"
 #include "core/AssimpLoader.h"
@@ -16,6 +15,7 @@
 namespace Utopian
 {
    using Vk::Vertex;
+   bool ModelLoader::mFlipWindingOrder = false;
 
    ModelLoader::ModelLoader(Vk::Device* device)
       : mDevice(device)
@@ -254,5 +254,15 @@ namespace Utopian
    void ModelLoader::SetInverseTranslation(bool inverse)
    {
       mglTFLoader->SetInverseTranslation(inverse);
+   }
+
+   void ModelLoader::SetFlipWindingOrder(bool flipWindingOrder)
+   {
+      mFlipWindingOrder = flipWindingOrder;
+   }
+
+   bool ModelLoader::GetFlipWindingOrder()
+   {
+      return mFlipWindingOrder;
    }
 }

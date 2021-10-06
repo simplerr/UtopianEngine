@@ -630,7 +630,7 @@ void ModelInspector::UpdateUi()
                   case 4: material->occlusionTexture = loadedTexture; break;
                }
                
-               material->BindTextureDescriptors(Utopian::gEngine().GetVulkanApp()->GetDevice());
+               material->UpdateTextureDescriptors(Utopian::gEngine().GetVulkanApp()->GetDevice());
                changedTexture = true;
             }
          }

@@ -130,7 +130,7 @@ namespace Utopian
          }
 
          material.properties->UpdateMemory();
-         material.BindTextureDescriptors(mDevice);
+         material.UpdateTextureDescriptors(mDevice);
 
          model->AddMaterial(material);
       }
@@ -189,10 +189,11 @@ namespace Utopian
          for (size_t i = 0; i < mesh.primitives.size(); i++)
          {
             const tinygltf::Primitive& glTFPrimitive = mesh.primitives[i];
-            Primitive primitive;
-            AppendVertexData(input, glTFPrimitive, &primitive);
-
             bool hasIndices = (glTFPrimitive.indices != -1);
+
+            Primitive primitive;
+            AppendVertexData(input, glTFPrimitive, &primitive, hasIndices);
+
             if (hasIndices)
                AppendIndexData(input, glTFPrimitive, &primitive);
 
@@ -220,7 +221,7 @@ namespace Utopian
       }
    }
 
-   void glTFLoader::AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive)
+   void glTFLoader::AppendVertexData(const tinygltf::Model& input, const tinygltf::Primitive& glTFPrimitive, Primitive* primitive, bool hasIndices)
    {
       const float* positionBuffer = nullptr;
       const float* normalsBuffer = nullptr;
@@ -283,6 +284,18 @@ namespace Utopian
          primitive->AddVertex(vert);
       }
 
+      // Flip winding order
+      if (!hasIndices && gModelLoader().GetFlipWindingOrder())
+      {
+         std::vector<Vk::Vertex>& vertices = primitive->vertices;
+         for (size_t v = 0; v < vertexCount - 3; v += 3)
+         {
+            Vk::Vertex v1 = vertices[v];
+            vertices[v] = vertices[v+2];
+            vertices[v+2] = v1;
+         }
+      }
+
       if (normalsBuffer == nullptr)
       {
          UTO_LOG("Missing normals for model, calculating flat normals");
@@ -337,6 +350,18 @@ namespace Utopian
          UTO_LOG("Index component type " + std::to_string(accessor.componentType) + " not supported!");
          assert(0);
       }
+
+      // Flip winding order
+      if (gModelLoader().GetFlipWindingOrder())
+      {
+         std::vector<unsigned int>& indices = primitive->indices;
+         for (size_t i = 0; i < primitive->GetNumIndices() - 3; i += 3)
+         {
+            unsigned int i1 = indices[i];
+            indices[i] = indices[i+2];
+            indices[i+2] = i1;
+         }
+      }
    }
 
    Material glTFLoader::GetDefaultMaterial()
@@ -354,7 +379,7 @@ namespace Utopian
       material.specularTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_SPECULAR_MAP_TEXTURE);
       material.metallicRoughnessTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_METALLIC_ROUGHNESS_TEXTURE);
       material.occlusionTexture = Vk::gTextureLoader().LoadTexture(DEFAULT_OCCLUSION_TEXTURE);
-      material.BindTextureDescriptors(mDevice);
+      material.UpdateTextureDescriptors(mDevice);
 
       return material;
    }

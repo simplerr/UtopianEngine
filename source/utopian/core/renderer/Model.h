@@ -26,7 +26,7 @@ namespace Utopian
    {
       Material();
 
-      void BindTextureDescriptors(Vk::Device* device);
+      void UpdateTextureDescriptors(Vk::Device* device);
 
       SharedPtr<MaterialProperties> properties = nullptr;
       SharedPtr<Vk::Texture> colorTexture;
