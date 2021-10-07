@@ -50,6 +50,8 @@ namespace Utopian
          FXAA_INDEX
       };
 
+      enum DebugChannel {NONE, POSITION, NORMAL, NORMAL_VIEW, ALBEDO};
+
       JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, const RenderingSettings& renderingSettings);
       ~JobGraph();
 
@@ -57,6 +59,8 @@ namespace Utopian
       void Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);
       void Update();
       void EnableJob(JobIndex jobIndex, bool enabled);
+
+      void SetDebugChannel(DebugChannel debugChannel);
 
       const GBuffer& GetGBuffer() const;
 
@@ -68,5 +72,6 @@ namespace Utopian
       GBuffer mGBuffer;
       
       GBufferDebugDescriptorSets mDebugDescriptorSets;
+      DebugChannel mDebugChannel = DebugChannel::NONE;
    };
 }

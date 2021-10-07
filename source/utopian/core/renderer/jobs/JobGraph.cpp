@@ -110,6 +110,28 @@ namespace Utopian
          job->Update();
       }
 
+      // Fullscreen debug texture
+      if (mDebugChannel != DebugChannel::NONE)
+      {
+         static ImTextureID textureId = mDebugDescriptorSets.position;
+         switch (mDebugChannel)
+         {
+            case DebugChannel::POSITION: textureId = mDebugDescriptorSets.position; break;
+            case DebugChannel::NORMAL: textureId = mDebugDescriptorSets.normal; break;
+            case DebugChannel::NORMAL_VIEW: textureId = mDebugDescriptorSets.normalView; break;
+            case DebugChannel::ALBEDO: textureId = mDebugDescriptorSets.albedo; break;
+         }
+
+         ImVec2 pos = ImVec2(0, 0);
+         ImVec2 maxPos = ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y);
+         ImGui::GetWindowDrawList()->AddImage(
+            textureId,
+            ImVec2(pos.x, pos.y),
+            ImVec2(maxPos),
+            ImVec2(0, 0), ImVec2(1, 1)
+         );
+      }
+
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
       {
          ImGuiRenderer::BeginWindow("Render targets:", glm::vec2(300.0f, 10.0f), 400.0f);
@@ -141,6 +163,11 @@ namespace Utopian
 
          ImGuiRenderer::EndWindow();
       }
+   }
+
+   void JobGraph::SetDebugChannel(DebugChannel debugChannel)
+   {
+      mDebugChannel = debugChannel;
    }
 
    void JobGraph::AddJob(BaseJob* job)

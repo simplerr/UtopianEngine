@@ -38,6 +38,7 @@
 
 #include <fstream>
 #include <glm/gtx/string_cast.hpp>
+#include <imgui/imgui.h>
 
 namespace Utopian
 {
@@ -191,7 +192,7 @@ namespace Utopian
          ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 0.0078f, 0.4f);
       }
 
-      if (ImGui::CollapsingHeader("Water settings", ImGuiTreeNodeFlags_DefaultOpen))
+      if (ImGui::CollapsingHeader("Water settings"))
       {
          ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -15.0f, 15.0f);
          ImGui::ColorEdit3("Water color", &mRenderingSettings.waterColor.x);
@@ -204,6 +205,15 @@ namespace Utopian
          ImGui::SliderFloat("Water specularity", &mRenderingSettings.waterSpecularity, 1.0f, 1024.0f);
          ImGui::SliderFloat("Water transparency", &mRenderingSettings.waterTransparency, 0.0f, 1.0f);
          ImGui::SliderFloat("Underwater view distance", &mRenderingSettings.underwaterViewDistance, 0.0f, 40.0f);
+      }
+
+      if (ImGui::CollapsingHeader("Debug"), ImGuiTreeNodeFlags_DefaultOpen)
+      {
+         static int debugChannel = JobGraph::DebugChannel::NONE;
+         if (ImGui::Combo("Texture channel", &debugChannel, "None\0Position\0Normal\0Normal view space\0Albedo"))
+         {
+            mJobGraph->SetDebugChannel((JobGraph::DebugChannel)debugChannel);
+         }
       }
 
       mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
