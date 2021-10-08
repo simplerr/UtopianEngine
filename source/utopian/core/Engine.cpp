@@ -270,6 +270,13 @@ namespace Utopian
       if (luaSettings.IsNil())
          assert(0);
 
+      mRenderingSettings.shadingMethod = ShadingMethod::PHONG;
+      std::string shadingMethod = luaSettings["shadingMethod"].ToString();
+      if (shadingMethod == "phong")
+         mRenderingSettings.shadingMethod = ShadingMethod::PHONG;
+      else if (shadingMethod == "pbr")
+         mRenderingSettings.shadingMethod = ShadingMethod::PBR;
+
       mRenderingSettings.sky = luaSettings["sky"].ToString();
       mRenderingSettings.fogColor = glm::vec4(luaSettings["fogColor_r"].ToNumber(),
                                               luaSettings["fogColor_g"].ToNumber(),

@@ -22,6 +22,7 @@ namespace Utopian
          ImTextureID normal;
          ImTextureID normalView;
          ImTextureID albedo;
+         ImTextureID pbr;
       };
 
       enum JobIndex
@@ -50,7 +51,7 @@ namespace Utopian
          FXAA_INDEX
       };
 
-      enum DebugChannel {NONE, POSITION, NORMAL, NORMAL_VIEW, ALBEDO};
+      enum DebugChannel {NONE, POSITION, NORMAL, NORMAL_VIEW, ALBEDO, PBR};
 
       JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, const RenderingSettings& renderingSettings);
       ~JobGraph();

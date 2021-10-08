@@ -1,4 +1,4 @@
-layout (set = 1, binding = 4) uniform sampler2DArray shadowSampler;
+layout (set = 1, binding = 5) uniform sampler2DArray shadowSampler;
 
 layout (std140, set = 0, binding = 4) uniform UBO_cascades
 {

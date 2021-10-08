@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_GOOGLE_include_directive : enable
 
+#include "brdf.glsl"
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"
 #include "shared_variables.glsl"
@@ -15,6 +16,7 @@ layout (set = 1, binding = 0) uniform sampler2D positionSampler;
 layout (set = 1, binding = 1) uniform sampler2D normalSampler;
 layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
+layout (set = 1, binding = 4) uniform sampler2D pbrSampler;
 
 // UBO_lights from phong_lighting.glsl is at slot = 0, binding = 1
 
@@ -31,8 +33,11 @@ void main()
 {
    vec3 position = texture(positionSampler, InTex).xyz;
    vec3 normal = texture(normalSampler, InTex).rgb;
-   vec3 albedo = texture(albedoSampler, InTex).rgb;
+   vec3 baseColor = texture(albedoSampler, InTex).rgb;
    float specularIntensity = texture(albedoSampler, InTex).a;
+   float occlusion = texture(pbrSampler, InTex).r;
+   float roughness = texture(pbrSampler, InTex).g;
+   float metallic = texture(pbrSampler, InTex).b;
 
    // Todo: Note: the + sign is due to the fragment world position is negated for some reason
    // this is a left over from an old problem
@@ -43,13 +48,7 @@ void main()
    uint cascadeIndex = 0;
    float shadow = calculateShadow(position, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
-   PhongMaterial material;
-   material.ambient = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-   material.diffuse = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-   material.specular = vec4(1.0f, 1.0f, 1.0f, 1024.0f);
-
-   vec4 litColor;
-   ApplyLighting(material, position, normal, toEyeW, vec4(albedo, 1.0f), shadow, litColor);
+   vec4 litColor = vec4(1.0f, 0.0f, 0.0f, 0.0f);
 
    // Apply fogging.
    float distToEye = length(sharedVariables.eyePos.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.

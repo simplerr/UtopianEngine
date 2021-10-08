@@ -19,7 +19,8 @@ namespace Utopian
       SharedPtr<Vk::BasicRenderTarget> renderTarget;
    private:
       SharedPtr<Vk::Sampler> mDepthSampler;
-      SharedPtr<Vk::Effect> mEffect;
+      SharedPtr<Vk::Effect> mPhongEffect;
+      SharedPtr<Vk::Effect> mPbrEffect;
       SharedPtr<Vk::Sampler> mSampler;
       LightUniformBuffer light_ubo;
       SettingsUniformBuffer settings_ubo;

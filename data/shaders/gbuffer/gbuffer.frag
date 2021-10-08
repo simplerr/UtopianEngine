@@ -21,6 +21,7 @@ layout (location = 2) out vec4 outAlbedo;
 // for normals in world space vs view space.
 layout (location = 3) out vec4 outNormalV;
 layout (location = 4) out vec4 outSpecular;
+layout (location = 5) out vec4 outPbr;
 
 layout (std140, set = 0, binding = 1) uniform UBO_settings
 {
@@ -39,11 +40,16 @@ float linearDepth(float depth)
 void main()
 {
    float hack = material.occlusionFactor;
-   hack = texture(metallicRoughnessSampler, InTex).b;
-   hack = texture(occlusionSampler, InTex).r;
 
    vec4 diffuse = texture(diffuseSampler, InTex * InTextureTiling);
    vec4 specular = texture(specularSampler, InTex * InTextureTiling);
+   float occlusion = texture(occlusionSampler, InTex * InTextureTiling).r;
+   float roughness = texture(metallicRoughnessSampler, InTex * InTextureTiling).g;
+   float metallic = texture(metallicRoughnessSampler, InTex * InTextureTiling).b;
+
+   occlusion *= material.occlusionFactor;
+   roughness *= material.roughnessFactor;
+   metallic *= material.metallicFactor;
 
    if (diffuse.a < 0.01f)
       discard;
@@ -72,4 +78,5 @@ void main()
    outAlbedo = vec4(diffuse.rgb, 1.0f);
    outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
    outSpecular = vec4(specular.r, MATERIAL_TYPE_OBJECT, 0, 0);
+   outPbr = vec4(occlusion, metallic, roughness, 1.0f);
 }

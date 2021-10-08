@@ -21,9 +21,9 @@ namespace Utopian
       SharedPtr<Vk::Image> albedoImage;
       SharedPtr<Vk::Image> depthImage;
       SharedPtr<Vk::Image> specularImage; // R = specularity, G = material type, B = water depth, A = undefined
+      SharedPtr<Vk::Image> pbrImage; // R = occlusion, G = roughness, B = metallic, A = undefined
    };
 
-   
    struct JobInput
    {
       JobInput(const SceneInfo& sceneInfo, const std::vector<BaseJob*>& jobs, const RenderingSettings& renderingSettings) 

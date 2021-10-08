@@ -42,6 +42,7 @@ namespace Utopian
       mGBuffer.albedoImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "G-buffer albedo image");
       mGBuffer.depthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "G-buffer depth image");
       mGBuffer.specularImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "G-buffer specular image");
+      mGBuffer.pbrImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "G-buffer PBR image");
 
       /* Add jobs */
       GBufferTerrainJob* gbufferTerrainJob = new GBufferTerrainJob(device, terrain, width, height);
@@ -82,6 +83,7 @@ namespace Utopian
       mDebugDescriptorSets.normal = imGuiRenderer->AddImage(*mGBuffer.normalImage);
       mDebugDescriptorSets.normalView = imGuiRenderer->AddImage(*mGBuffer.normalViewImage);
       mDebugDescriptorSets.albedo = imGuiRenderer->AddImage(*mGBuffer.albedoImage);
+      mDebugDescriptorSets.pbr = imGuiRenderer->AddImage(*mGBuffer.pbrImage);
 
       EnableJob(JobGraph::JobIndex::PIXEL_DEBUG_INDEX, false);
    }
@@ -120,16 +122,13 @@ namespace Utopian
             case DebugChannel::NORMAL: textureId = mDebugDescriptorSets.normal; break;
             case DebugChannel::NORMAL_VIEW: textureId = mDebugDescriptorSets.normalView; break;
             case DebugChannel::ALBEDO: textureId = mDebugDescriptorSets.albedo; break;
+            case DebugChannel::PBR: textureId = mDebugDescriptorSets.pbr; break;
          }
 
          ImVec2 pos = ImVec2(0, 0);
          ImVec2 maxPos = ImVec2(pos.x + ImGui::GetWindowSize().x, pos.y + ImGui::GetWindowSize().y);
-         ImGui::GetWindowDrawList()->AddImage(
-            textureId,
-            ImVec2(pos.x, pos.y),
-            ImVec2(maxPos),
-            ImVec2(0, 0), ImVec2(1, 1)
-         );
+         ImGui::GetWindowDrawList()->AddImage(textureId, ImVec2(pos.x, pos.y),
+                                              ImVec2(maxPos), ImVec2(0, 0), ImVec2(1, 1));
       }
 
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)

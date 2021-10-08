@@ -3,6 +3,7 @@
 #include "core/renderer/jobs/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/Effect.h"
+#include <core/renderer/RenderSettings.h>
 
 namespace Utopian
 {
@@ -11,11 +12,16 @@ namespace Utopian
    {
       renderTarget = std::make_shared<Vk::BasicRenderTarget>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred.frag";
+      Vk::EffectCreateInfo effectDescPhong;
+      effectDescPhong.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+      effectDescPhong.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_phong.frag";
 
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
+      Vk::EffectCreateInfo effectDescPbr;
+      effectDescPbr.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+      effectDescPbr.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_pbr.frag";
+
+      mPhongEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDescPhong);
+      mPbrEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDescPbr);
 
       // Create sampler that returns 1.0 when sampling outside the depth image
       mDepthSampler = std::make_shared<Vk::Sampler>(device, false);
@@ -45,17 +51,31 @@ namespace Utopian
       cascade_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       atmosphere_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
 
-      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mEffect->BindUniformBuffer("UBO_lights", light_ubo);
-      mEffect->BindUniformBuffer("UBO_settings", settings_ubo);
-      mEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
-      mEffect->BindUniformBuffer("UBO_atmosphere", atmosphere_ubo);
+      mPhongEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mPhongEffect->BindUniformBuffer("UBO_lights", light_ubo);
+      mPhongEffect->BindUniformBuffer("UBO_settings", settings_ubo);
+      mPhongEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
+      mPhongEffect->BindUniformBuffer("UBO_atmosphere", atmosphere_ubo);
 
-      mEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
-      mEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mSampler);
-      mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *mSampler);
-      mEffect->BindCombinedImage("ssaoSampler", *blurJob->blurImage, *mSampler);
-      mEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
+      mPhongEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
+      mPhongEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mSampler);
+      mPhongEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *mSampler);
+      mPhongEffect->BindCombinedImage("ssaoSampler", *blurJob->blurImage, *mSampler);
+      mPhongEffect->BindCombinedImage("pbrSampler", *gbuffer.pbrImage, *mSampler);
+      mPhongEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
+
+      mPbrEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mPbrEffect->BindUniformBuffer("UBO_lights", light_ubo);
+      mPbrEffect->BindUniformBuffer("UBO_settings", settings_ubo);
+      mPbrEffect->BindUniformBuffer("UBO_cascades", cascade_ubo);
+      mPbrEffect->BindUniformBuffer("UBO_atmosphere", atmosphere_ubo);
+
+      mPbrEffect->BindCombinedImage("positionSampler", *gbuffer.positionImage, *mSampler);
+      mPbrEffect->BindCombinedImage("normalSampler", *gbuffer.normalImage, *mSampler);
+      mPbrEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *mSampler);
+      mPbrEffect->BindCombinedImage("ssaoSampler", *blurJob->blurImage, *mSampler);
+      mPbrEffect->BindCombinedImage("pbrSampler", *gbuffer.pbrImage, *mSampler);
+      mPbrEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
    }
 
    void DeferredJob::Render(const JobInput& jobInput)
@@ -106,9 +126,15 @@ namespace Utopian
       renderTarget->Begin("Deferred pass", glm::vec4(0.0, 1.0, 1.0, 1.0));
       Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
 
+      SharedPtr<Vk::Effect> effect = nullptr;
+      if (jobInput.renderingSettings.shadingMethod == ShadingMethod::PHONG)
+         effect = mPhongEffect;
+      else
+         effect = mPbrEffect;
+
       // Todo: Should this be moved to the effect instead?
-      commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-      commandBuffer->CmdBindDescriptorSets(mEffect);
+      commandBuffer->CmdBindPipeline(effect->GetPipeline());
+      commandBuffer->CmdBindDescriptorSets(effect);
 
       gRendererUtility().DrawFullscreenQuad(commandBuffer);
 

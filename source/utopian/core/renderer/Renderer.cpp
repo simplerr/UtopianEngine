@@ -132,6 +132,12 @@ namespace Utopian
 
       if (ImGui::CollapsingHeader("Features", ImGuiTreeNodeFlags_DefaultOpen))
       {
+         static int shadingMethod = mRenderingSettings.shadingMethod;
+         if (ImGui::Combo("Shading method", &shadingMethod, "Phong\0PBR\0"))
+         {
+            mRenderingSettings.shadingMethod = (ShadingMethod)shadingMethod;
+         }
+
          ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
          ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
          ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
@@ -210,7 +216,7 @@ namespace Utopian
       if (ImGui::CollapsingHeader("Debug"), ImGuiTreeNodeFlags_DefaultOpen)
       {
          static int debugChannel = JobGraph::DebugChannel::NONE;
-         if (ImGui::Combo("Texture channel", &debugChannel, "None\0Position\0Normal\0Normal view space\0Albedo"))
+         if (ImGui::Combo("Texture channel", &debugChannel, "None\0Position\0Normal\0Normal view space\0Albedo\0PBR"))
          {
             mJobGraph->SetDebugChannel((JobGraph::DebugChannel)debugChannel);
          }

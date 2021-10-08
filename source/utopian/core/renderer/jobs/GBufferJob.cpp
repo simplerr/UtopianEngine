@@ -47,6 +47,7 @@ namespace Utopian
       mRenderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       mRenderTarget->AddReadWriteColorAttachment(gbuffer.normalViewImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       mRenderTarget->AddReadWriteColorAttachment(gbuffer.specularImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mRenderTarget->AddReadWriteColorAttachment(gbuffer.pbrImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
       mRenderTarget->SetClearColor(0, 0, 0, 1);
       mRenderTarget->Create();

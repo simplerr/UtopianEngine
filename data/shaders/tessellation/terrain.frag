@@ -19,6 +19,7 @@ layout (location = 0) out vec4 OutPosition;
 layout (location = 1) out vec4 OutNormal;
 layout (location = 2) out vec4 OutAlbedo;
 layout (location = 4) out vec4 OutSpecular;
+layout (location = 5) out vec4 OutPbr;
 
 // Output normals in view space so that the SSAO pass can use them.
 // Should be reworked so that you don't have to use two separate textures
@@ -166,4 +167,5 @@ void main()
    //OutColor = vec4(InTex.x, InTex.y, 0, 1);
 
    OutSpecular = vec4(0.0f, MATERIAL_TYPE_TERRAIN, 0.0f, 0.0f);
+   OutPbr = vec4(0.0f, 1.0, 0.0, 1.0f);
 }
