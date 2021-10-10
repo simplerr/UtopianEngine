@@ -55,7 +55,8 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    
    SceneNode sceneNode;
    sceneNode.model = gModelLoader().LoadBox();
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.5f, 0.0f, 0.0f));
+   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)) *
+                                          glm::scale(glm::mat4(1.0f), glm::vec3(100.0f, 1.0f, 100.0f));
    mSceneNodes.push_back(sceneNode);
 
    //AddModel("data/models/sphere.obj", glm::vec3(1.0f, 0.0f, 3), glm::vec3(0.02f));

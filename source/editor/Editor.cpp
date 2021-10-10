@@ -268,7 +268,7 @@ namespace Utopian
                CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
 
                glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
-               light->SetLightColor(color);
+               light->SetColor(color);
                renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
             }
             else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
@@ -304,7 +304,7 @@ namespace Utopian
                CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
 
                glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
-               light->SetLightColor(color);
+               light->SetColor(color);
                renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
             }
             else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)

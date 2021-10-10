@@ -9,7 +9,7 @@ struct PhongMaterial
 struct Light
 {
    // Color
-   PhongMaterial material;
+   vec4 color;
 
    vec3 pos;
    float range;

@@ -21,9 +21,7 @@ namespace Utopian
       static SharedPtr<Light> Create();
 
       void SetLightData(const Utopian::LightData& lightData);
-      void SetLightColors(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular);
-      void SetLightColor(const glm::vec4& color);
-      void SetLightColor(const Utopian::LightColor& color);
+      void SetColor(const glm::vec4& color);
 
       void SetDirection(const glm::vec3& direction);
       void SetRange(float range);
@@ -37,9 +35,9 @@ namespace Utopian
       const glm::vec3& GetDirection() const;
       const glm::vec3& GetAtt() const;
       const glm::vec3& GetIntensity() const;
+      const glm::vec4& GetColor() const;
       Utopian::LightData* GetLightDataPtr();
       const Utopian::LightData& GetLightData() const;
-      Utopian::LightColor GetLightColor() const;
       float GetRange() const;
       float GetSpot() const;
       int GetType() const;

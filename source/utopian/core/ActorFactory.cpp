@@ -86,7 +86,7 @@ namespace Utopian
                float range = (float)componentData["range"].ToNumber();
 
                CLight* light = actor->AddComponent<CLight>();
-               light->SetLightColor(glm::vec4(color, 1.0f));
+               light->SetColor(glm::vec4(color, 1.0f));
                light->SetDirection(dir);
                light->SetAtt(att.x, att.y, att.z);
                light->SetIntensity(intensity);

@@ -23,15 +23,15 @@ void ComputeDirectionalLight(PhongMaterial material, int lightIndex, vec3 normal
    vec3 lightVec = normalize(light.dir);
 
    // Add ambient term.
-   ambient = material.ambient * light.material.ambient * light.intensity.x;   
+   ambient = material.ambient * light.color * light.intensity.x;
 
    float diffuseFactor = max(dot(lightVec, normal), 0.0f);
 
    vec3 v = reflect(lightVec, normal);
    float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
 
-   diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-   spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+   diffuse = diffuseFactor * material.diffuse * light.color * light.intensity.y;
+   spec    = specFactor * material.specular * light.color * light.intensity.z;
 }
 
 //! Computes the colors for a point light.
@@ -61,7 +61,7 @@ void ComputePointLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 no
    lightVec = normalize(lightVec);
 
    // Ambient term.
-   ambient = material.ambient * light.material.ambient * light.intensity.x;   
+   ambient = material.ambient * light.color * light.intensity.x;
 
    // Add diffuse and specular term, provided the surface is in 
    // the line of site of the light.
@@ -71,8 +71,8 @@ void ComputePointLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 no
    vec3 v = reflect(-lightVec, normal);
    float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
 
-   diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-   spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+   diffuse = diffuseFactor * material.diffuse * light.color * light.intensity.y;
+   spec    = specFactor * material.specular * light.color * light.intensity.z;
 
    // Attenuate
    // See http://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation for good constant values
@@ -110,7 +110,7 @@ void ComputeSpotLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 nor
    lightVec = normalize(lightVec);
 
    // Ambient term.
-   ambient = material.ambient * light.material.ambient * light.intensity.x;   
+   ambient = material.ambient * light.color * light.intensity.x;   
 
    // Add diffuse and specular term, provided the surface is in 
    // the line of site of the light.
@@ -120,8 +120,8 @@ void ComputeSpotLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 nor
    vec3 v = reflect(-lightVec, normal);
    float specFactor = pow(max(dot(v, toEye), 0.0f), material.specular.w);
             
-   diffuse = diffuseFactor * material.diffuse * light.material.diffuse * light.intensity.y;
-   spec    = specFactor * material.specular * light.material.specular * light.intensity.z;
+   diffuse = diffuseFactor * material.diffuse * light.color * light.intensity.y;
+   spec    = specFactor * material.specular * light.color * light.intensity.z;
    
    // Scale by spotlight factor and attenuate.
    float spot = pow(max(dot(lightVec, normalize(light.dir)), 0.0f), light.spot);

@@ -6,7 +6,7 @@ namespace Utopian
    Light::Light()
    {
       // Default values
-      SetLightColor(glm::vec4(1.0f));
+      SetColor(glm::vec4(1.0f));
       SetDirection(glm::vec3(1.0f, 1.0f, 0.0f));
       SetAtt(0.4f, 0.86f, 0.0f);
       SetRange(80.0f);
@@ -50,21 +50,9 @@ namespace Utopian
       return mLightData;
    }
 
-   void Light::SetLightColors(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular)
+   void Light::SetColor(const glm::vec4& color)
    {
-      mLightData.lightColor = Utopian::LightColor(ambient, diffuse, specular);
-      mLightData.intensity = glm::vec3(0.0f, 1.0f, 0.0f);
-   }
-
-   void Light::SetLightColor(const glm::vec4& color)
-   {
-      mLightData.lightColor = Utopian::LightColor(color);
-      mLightData.intensity = glm::vec3(0.0f, 1.0f, 0.0f);
-   }
-
-   void Light::SetLightColor(const Utopian::LightColor & material)
-   {
-      mLightData.lightColor = material;
+      mLightData.color = color;
    }
 
    void Light::SetDirection(const glm::vec3& direction)
@@ -122,9 +110,9 @@ namespace Utopian
       return mLightData;
    }
 
-   Utopian::LightColor Light::GetLightColor() const
+   const glm::vec4& Light::GetColor() const
    {
-      return mLightData.lightColor;
+      return mLightData.color;
    }
 
    float Light::GetRange() const

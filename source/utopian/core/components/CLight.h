@@ -23,10 +23,7 @@ namespace Utopian
       LuaPlus::LuaObject GetLuaObject() override;
 
       // Setters
-      void SetLightColors(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular);
-      void SetLightColor(const glm::vec4& color);
-      void SetLightColor(const Utopian::LightColor& lightColor);
-
+      void SetColor(const glm::vec4& color);
       void SetDirection(const glm::vec3& direction);
       void SetDirection(float x, float y, float z);
       void SetRange(float range);
@@ -43,7 +40,7 @@ namespace Utopian
       const glm::vec3& GetDirection() const;
       const glm::vec3& GetAtt() const;
       const glm::vec3& GetIntensity() const;
-      Utopian::LightColor GetLightColor() const;
+      const glm::vec4& GetColor() const;
       float  GetRange() const;
       float  GetSpot() const;
       int    GetLightType() const;
