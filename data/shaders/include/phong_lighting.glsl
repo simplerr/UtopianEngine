@@ -1,4 +1,3 @@
-#include "common_types.glsl"
 
 layout (std140, set = 0, binding = 1) uniform UBO_lights 
 {
@@ -8,6 +7,13 @@ layout (std140, set = 0, binding = 1) uniform UBO_lights
 
    Light lights[10];
 } light_ubo;
+
+struct PhongMaterial
+{
+   vec4 ambient;
+   vec4 diffuse;
+   vec4 specular;
+};
 
 //! Computes the colors for directional light.
 void ComputeDirectionalLight(PhongMaterial material, int lightIndex, vec3 normal, vec3 toEye, out vec4 ambient, out vec4 diffuse, out vec4 spec)
@@ -138,7 +144,7 @@ void ComputeSpotLight(PhongMaterial material, int lightIndex, vec3 pos, vec3 nor
 void ApplyLighting(PhongMaterial material, vec3 posW, vec3 normalW, vec3 toEyeW, vec4 texColor,
                    float shadow, out vec4 litColor)
 {
-   // Start with a sum of zero. 
+   // Start with a sum of zero.
    vec4 ambient = vec4(0.0f, 0.0f, 0.0f, 0.0f);
    vec4 diffuse = vec4(0.0f, 0.0f, 0.0f, 0.0f);
    vec4 spec    = vec4(0.0f, 0.0f, 0.0f, 0.0f);

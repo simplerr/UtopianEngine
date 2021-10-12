@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_GOOGLE_include_directive : enable
 
+#include "common_types.glsl"
 #include "shared_water.glsl"
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"

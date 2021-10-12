@@ -78,5 +78,5 @@ void main()
    outAlbedo = vec4(diffuse.rgb, 1.0f);
    outNormalV = vec4(normalize(InNormalV) * 0.5 + 0.5, 1.0f);
    outSpecular = vec4(specular.r, MATERIAL_TYPE_OBJECT, 0, 0);
-   outPbr = vec4(occlusion, metallic, roughness, 1.0f);
+   outPbr = vec4(occlusion, roughness, metallic, 1.0f);
 }

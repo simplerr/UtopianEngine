@@ -1,11 +1,3 @@
-//! Corresponds to the C++ class LightColor. Stores the ambient, diffuse and specular colors for a material.
-struct PhongMaterial
-{
-   vec4 ambient;
-   vec4 diffuse;
-   vec4 specular;
-};
-
 struct Light
 {
    // Color

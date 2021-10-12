@@ -2,7 +2,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #include "material.glsl"
-#include "brdf.glsl"
+#include "pbr_lighting.glsl"
 
 layout (location = 0) in vec3 InPosW;
 layout (location = 1) in vec3 InNormalW;
@@ -23,15 +23,16 @@ layout (std140, set = 3, binding = 0) uniform UBO_settings
    int useIBL;
 } per_frame_fs;
 
-const int numLights = 4;
-vec3 lightPositions[numLights] = {
-   vec3(0.0f, 1.0f, 10.0f),
-   vec3(0.0f, 10.0f, 10.0f),
-   vec3(10.0f, 1.0f, 10.0f),
-   vec3(10.0f, 10.0f, 10.0f)
-};
 
-vec3 lightColor = vec3(150.0f);
+vec4 lightColor = vec4(vec3(150.0f), 1.0f);
+const int numLights = 4;
+
+Light lights[numLights] = {
+   Light(lightColor, vec3(0.0f, 1.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
+   Light(lightColor, vec3(0.0f, 10.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
+   Light(lightColor, vec3(10.0f, 1.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
+   Light(lightColor, vec3(10.0f, 10.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f))
+};
 
 void main()
 {
@@ -63,41 +64,26 @@ void main()
       N = TBN * normalize(normal.xyz * 2.0 - vec3(1.0));
    }
 
-   /* Implementation from https://learnopengl.com/PBR/Theory */
+   PixelParams pixel;
+   pixel.position = InPosW;
+   pixel.baseColor = baseColor.rgb;
+   pixel.normal = N;
+   pixel.metallic = metallic;
+   pixel.roughness = roughness;
+
+   /* Direct lighting */
+   vec3 Lo = vec3(0.0);
+   for (int i = 0; i < numLights; i++)
+   {
+      Lo += surfaceShading(pixel, lights[i], InEyePosW, 1.0f);
+   }
+
+   /* Indirect IBL lighting */
    vec3 V = normalize(InEyePosW - InPosW);
    vec3 R = reflect(V, N);
 
    vec3 F0 = vec3(0.04);
    F0 = mix(F0, baseColor.rgb, metallic);
-
-   // Reflectance equation
-   vec3 Lo = vec3(0.0);
-   for (int i = 0; i < numLights; i++)
-   {
-      // Calculate per-light radiance
-      vec3 L = normalize(lightPositions[i] - InPosW);
-      vec3 H = normalize(V + L);
-      float distance    = length(lightPositions[i] - InPosW);
-      float attenuation = 1.0 / (distance * distance);
-      vec3 radiance     = lightColor * attenuation;
-
-      // Cook-torrance brdf
-      float NDF = DistributionGGX(N, H, roughness);
-      float G   = GeometrySmith(N, V, L, roughness);
-      vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
-
-      vec3 kS = F;
-      vec3 kD = vec3(1.0) - kS;
-      kD *= 1.0 - metallic;
-
-      vec3 numerator    = NDF * G * F;
-      float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
-      vec3 specular     = numerator / denominator;
-
-      // Add to outgoing radiance Lo
-      float NdotL = max(dot(N, L), 0.0);
-      Lo += (kD * baseColor.rgb / PI + specular) * radiance * NdotL;
-   }
 
    vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
    vec3 kS = F;
@@ -122,7 +108,7 @@ void main()
 
    vec3 color = ambient + Lo;
 
-   // Tonemapping
+   /* Tonemapping */
    color = color / (color + vec3(1.0));
    color = pow(color, vec3(1.0/2.2));
    OutColor = vec4(color, 1.0f);

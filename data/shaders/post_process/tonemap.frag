@@ -72,12 +72,9 @@ void main()
       mapped = ACESFilm(hdrColor);
 
    // Gamma correction
-   // Note: This makes the image gray and washed out
-   // if (settings_ubo.tonemapping != 3)
-   // {
-   //    const float gamma = 2.2;
-   //    mapped = pow(mapped, vec3(1.0 / gamma));
-   // }
+   // Todo: this gives washed out colors
+   // const float gamma = 2.2;
+   // mapped = pow(mapped, vec3(1.0 / gamma));
 
    OutColor = vec4(mapped, 1.0);
 }

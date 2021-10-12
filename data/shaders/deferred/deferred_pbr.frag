@@ -2,8 +2,8 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_GOOGLE_include_directive : enable
 
-#include "brdf.glsl"
-#include "phong_lighting.glsl"
+#include "pbr_lighting.glsl"
+#include "phong_lighting.glsl" // Todo: Should remove this
 #include "calculate_shadow.glsl"
 #include "shared_variables.glsl"
 #include "atmosphere/atmosphere_inc.glsl"
@@ -39,6 +39,10 @@ void main()
    float roughness = texture(pbrSampler, InTex).g;
    float metallic = texture(pbrSampler, InTex).b;
 
+   // From sRGB space to Linear space
+   // Todo: this together with the tonemapping in tonemap.frag gives washed out colors
+   // baseColor.rgb = pow(baseColor.rgb, vec3(2.2));
+
    // Todo: Note: the + sign is due to the fragment world position is negated for some reason
    // this is a left over from an old problem
    vec3 toEyeW = normalize(sharedVariables.eyePos.xyz + position);
@@ -48,14 +52,33 @@ void main()
    uint cascadeIndex = 0;
    float shadow = calculateShadow(position, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
-   vec4 litColor = vec4(1.0f, 0.0f, 0.0f, 0.0f);
+   PixelParams pixel;
+   pixel.position = position;
+   pixel.baseColor = baseColor;
+   pixel.normal = normal;
+   pixel.metallic = metallic;
+   pixel.roughness = roughness;
+
+   // Todo: Note: Legacy workaround from old problem
+   pixel.normal.xz *= -1;
+   pixel.position *= -1;
+
+   /* Direct lighting */
+   vec3 litColor = vec3(0.0);
+   for(int i = 0; i < light_ubo.numLights; i++)
+   {
+      litColor += shadow * surfaceShading(pixel, light_ubo.lights[i], sharedVariables.eyePos.xyz, 150.0f);
+   }
+
+   vec3 ambient = vec3(0.03) * baseColor * occlusion;
+   litColor += ambient;
 
    // Apply fogging.
    float distToEye = length(sharedVariables.eyePos.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
    float fogLerp = clamp((distToEye - settings_ubo.fogStart) / settings_ubo.fogDistance, 0.0, 1.0);
 
    // Blend the fog color and the lit color.
-   litColor = vec4(mix(litColor.rgb, settings_ubo.fogColor, fogLerp), 1.0f);
+   litColor = mix(litColor, settings_ubo.fogColor, fogLerp);
 
    float ssao = texture(ssaoSampler, InTex).r;
 
@@ -67,10 +90,10 @@ void main()
    {
       vec3 sunDir = ubo_atmosphere.sunDir;
       vec3 lightTransmittance = Absorb(IntegrateOpticalDepth(position, sunDir));
-      litColor.rgb *= lightTransmittance;
+      litColor *= lightTransmittance;
    }
 
-   OutFragColor = litColor * ssao;
+   OutFragColor = vec4(litColor * ssao, 1.0f);
 
    if (settings_ubo.cascadeColorDebug == 1)
    {

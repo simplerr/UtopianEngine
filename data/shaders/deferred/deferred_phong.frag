@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : enable
 #extension GL_GOOGLE_include_directive : enable
 
+#include "common_types.glsl"
 #include "phong_lighting.glsl"
 #include "calculate_shadow.glsl"
 #include "shared_variables.glsl"
@@ -37,6 +38,9 @@ void main()
    float occlusion = texture(pbrSampler, InTex).r;
    float roughness = texture(pbrSampler, InTex).g;
    float metallic = texture(pbrSampler, InTex).b;
+
+   // From sRGB space to Linear space
+   //albedo.rgb = pow(albedo.rgb, vec3(2.2));
 
    // Todo: Note: the + sign is due to the fragment world position is negated for some reason
    // this is a left over from an old problem
