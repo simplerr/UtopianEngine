@@ -67,10 +67,10 @@ void main()
    vec3 litColor = vec3(0.0);
    for(int i = 0; i < light_ubo.numLights; i++)
    {
-      litColor += shadow * surfaceShading(pixel, light_ubo.lights[i], sharedVariables.eyePos.xyz, 150.0f);
+      litColor += shadow * surfaceShading(pixel, light_ubo.lights[i], sharedVariables.eyePos.xyz, 5.0f);
    }
 
-   vec3 ambient = vec3(0.03) * baseColor * occlusion;
+   vec3 ambient = vec3(0.33) * baseColor * occlusion;
    litColor += ambient;
 
    // Apply fogging.

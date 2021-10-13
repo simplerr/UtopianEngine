@@ -28,10 +28,10 @@ vec4 lightColor = vec4(vec3(150.0f), 1.0f);
 const int numLights = 4;
 
 Light lights[numLights] = {
-   Light(lightColor, vec3(0.0f, 1.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
-   Light(lightColor, vec3(0.0f, 10.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
-   Light(lightColor, vec3(10.0f, 1.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
-   Light(lightColor, vec3(10.0f, 10.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0.0f), 0.0f, vec4(0.0f))
+   Light(lightColor, vec3(0.0f, 1.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0,0,1), 1.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
+   Light(lightColor, vec3(0.0f, 10.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0,0,1), 1.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
+   Light(lightColor, vec3(10.0f, 1.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0,0,1), 1.0f, vec3(0.0f), 0.0f, vec4(0.0f)),
+   Light(lightColor, vec3(10.0f, 10.0f, 10.0f), 0.0f, vec3(0.0f), 0.0f, vec3(0,0,1), 1.0f, vec3(0.0f), 0.0f, vec4(0.0f))
 };
 
 void main()

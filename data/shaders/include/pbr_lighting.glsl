@@ -25,13 +25,33 @@ vec3 surfaceShading(const PixelParams pixel, const Light light, const vec3 eyePo
    vec3 F0 = vec3(0.04);
    F0 = mix(F0, pixel.baseColor, pixel.metallic);
 
+   vec3 L = vec3(0.0);
+   float attenuation = 1.0f;
+   vec3 posToLight = light.pos - pixel.position;
+
+   if(light.type == 0.0f) // Directional light
+   {
+      L = normalize(light.dir * vec3(-1,1,-1));
+      attenuation = 1.0f;
+   }
+   else if(light.type == 1.0f) // Point light
+   {
+      L = normalize(posToLight);
+      float d = length(posToLight);
+      attenuation = 1.0f / dot(light.att, vec3(1.0f, d, d*d));
+   }
+   else if(light.type == 2.0f) // Spot light
+   {
+      L = normalize(posToLight);
+      float d = length(posToLight);
+      float spot = pow(max(dot(L, normalize(light.dir)), 0.0f), light.spot);
+      attenuation = spot / dot(light.att, vec3(1.0f, d, d*d));
+   }
+
    // Reflectance equation
    vec3 Lo = vec3(0.0);
-   // Calculate per-light radiance
-   vec3 L = normalize(light.pos - pixel.position);
+
    vec3 H = normalize(V + L);
-   float distance    = length(light.pos - pixel.position);
-   float attenuation = 1.0 / (distance * distance);
    vec3 radiance     = light.color.rgb * attenuation * lightColorFactor;
 
    // Cook-torrance brdf

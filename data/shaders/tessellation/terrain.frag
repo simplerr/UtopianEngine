@@ -167,5 +167,5 @@ void main()
    //OutColor = vec4(InTex.x, InTex.y, 0, 1);
 
    OutSpecular = vec4(0.0f, MATERIAL_TYPE_TERRAIN, 0.0f, 0.0f);
-   OutPbr = vec4(0.0f, 1.0, 0.0, 1.0f);
+   OutPbr = vec4(1.0f, 1.0, 0.0, 1.0f);
 }
