@@ -10,6 +10,15 @@ namespace Utopian
    SkyboxJob::SkyboxJob(Vk::Device* device, uint32_t width, uint32_t height)
       : BaseJob(device, width, height)
    {
+      Vk::IMAGE_CREATE_INFO createInfo;
+      createInfo.width = width;
+      createInfo.height = height;
+      createInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
+      createInfo.name = "Skybox sun image";
+      createInfo.finalImageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+      createInfo.transitionToFinalLayout = true;
+
+      sunImage = std::make_shared<Vk::Image>(createInfo, device);
    }
 
    SkyboxJob::~SkyboxJob()
@@ -22,16 +31,16 @@ namespace Utopian
 
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
       mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-      mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
+      mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 
-      mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/cubemap_space.ktx", VK_FORMAT_R8G8B8A8_UNORM);
+      mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
 
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";
       effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
-      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
       effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
       mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
@@ -46,10 +55,10 @@ namespace Utopian
 
    void SkyboxJob::Render(const JobInput& jobInput)
    {
-      mInputBlock.data.world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
+      mInputBlock.data.world = glm::scale(glm::mat4(), glm::vec3(300.0f));
       mInputBlock.UpdateMemory();
 
-      mRenderTarget->Begin();
+      mRenderTarget->Begin("Skybox pass", glm::vec4(0.3, 0.8, 1.0, 1.0));
       Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
       commandBuffer->CmdBindPipeline(mEffect->GetPipeline());

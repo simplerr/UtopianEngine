@@ -55,8 +55,10 @@ namespace Utopian
       AddJob(new ShadowJob(device, width, height));
       AddJob(new DeferredJob(device, width, height));
 
-      if (renderingSettings.sky == SKY_SIMPLE)
+      if (renderingSettings.sky == SKY_DOME)
          AddJob(new SkydomeJob(device, width, height));
+      else if (renderingSettings.sky == SKY_BOX)
+         AddJob(new SkyboxJob(device, width, height));
       else
          AddJob(new AtmosphereJob(device, width, height));
 

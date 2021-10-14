@@ -4,7 +4,8 @@
 
 namespace Utopian
 {
-   const std::string SKY_SIMPLE = "simple";
+   const std::string SKY_DOME = "dome";
+   const std::string SKY_BOX = "box";
    const std::string SKY_ATMOSPHERE = "atmosphere";
 
    enum ShadingMethod {PHONG, PBR};
@@ -12,7 +13,7 @@ namespace Utopian
    struct RenderingSettings
    {
       ShadingMethod shadingMethod = ShadingMethod::PHONG;
-      std::string sky = SKY_SIMPLE;
+      std::string sky = SKY_DOME;
       glm::vec4 fogColor = glm::vec4(113 / 255.0f, 129 / 255.0f, 232 / 255.0f, 1.0f);
       bool deferredPipeline = true;
       float fogStart = 200.0f;

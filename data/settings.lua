@@ -1,7 +1,7 @@
 settings = 
 {
     shadingMethod = "phong", -- "phong", "pbr"
-    sky = "atmosphere", -- "simple", "atmosphere"
+    sky = "atmosphere", -- "dome", "atmosphere", "box"
     fogColor_r = 0.44,
     fogColor_g = 0.5,
     fogColor_b = 0.9,

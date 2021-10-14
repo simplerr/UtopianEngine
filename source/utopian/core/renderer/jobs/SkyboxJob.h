@@ -20,6 +20,7 @@ namespace Utopian
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void Render(const JobInput& jobInput) override;
 
+      SharedPtr<Vk::Image> sunImage;
    private:
       SharedPtr<Vk::Texture> mSkybox;
       SharedPtr<Vk::RenderTarget> mRenderTarget;

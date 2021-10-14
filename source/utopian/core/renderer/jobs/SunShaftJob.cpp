@@ -1,6 +1,7 @@
 #include "core/renderer/jobs/SunShaftJob.h"
 #include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/SkydomeJob.h"
+#include "core/renderer/jobs/SkyboxJob.h"
 #include "core/renderer/jobs/AtmosphereJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Model.h"
@@ -25,15 +26,14 @@ namespace Utopian
       // depending on the job graph configuration
       SharedPtr<Vk::Image> sunImage = nullptr;
       SkydomeJob* skydomeJob = dynamic_cast<SkydomeJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+      AtmosphereJob* atmosphereJob = dynamic_cast<AtmosphereJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+      SkyboxJob* skyboxJob = dynamic_cast<SkyboxJob*>(jobs[JobGraph::SKYDOME_INDEX]);
       if (skydomeJob != nullptr)
-      {
          sunImage = skydomeJob->sunImage;
-      }
-      else
-      {
-         AtmosphereJob* atmosphereJob = dynamic_cast<AtmosphereJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+      else if(atmosphereJob != nullptr)
          sunImage = atmosphereJob->sunImage;
-      }
+      else
+         sunImage = skyboxJob->sunImage;
 
       assert(sunImage);
 
