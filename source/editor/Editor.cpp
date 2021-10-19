@@ -20,6 +20,7 @@
 #include "editor/PrototypeTool.h"
 #include "core/ActorFactory.h"
 #include "core/renderer/Renderer.h"
+#include "core/renderer/Model.h"
 #include "core/physics/Physics.h"
 #include "utility/math/Helpers.h"
 #include "im3d/im3d.h"
@@ -318,6 +319,22 @@ namespace Utopian
                renderable->LoadModel("data/models/spawn_cylinder.fbx");
                actor->AddComponent<CFinishPoint>();
             }
+            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::PBR_SPHERE)
+            {
+               transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+
+               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+
+               renderable->LoadModel(mModelPaths[mSelectedModel]);
+
+               Utopian::Model* model = renderable->GetInternal()->GetModel();
+               Utopian::Material* material = model->GetMaterial(0);
+               material->properties->data.baseColorFactor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+               material->properties->data.metallicFactor = 1.0f;
+               material->properties->data.roughnessFactor = 0.0;
+               material->properties->data.occlusionFactor = 0.5;
+               material->properties->UpdateMemory();
+            }
 
             World::Instance().SynchronizeNodeTransforms();
             actor->PostInit();
@@ -551,7 +568,8 @@ namespace Utopian
       // Add paths to models that can be loaded
       AddActorCreation("data/models/gltf/Fox/glTF/Fox.gltf");
       AddActorCreation("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
-      AddActorCreation("data/models/gltf/sphere.gltf");
+      AddActorCreation("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf");
+      AddActorCreation("data/models/gltf/sphere.gltf", ActorTemplate::PBR_SPHERE);
       AddActorCreation("data/models/sheep/sheep.obj");
       AddActorCreation("data/models/adventure_village/CrateLong_reflective.obj");
       AddActorCreation("data/models/sphere_lowres.obj", ActorTemplate::RIGID_SPHERE);

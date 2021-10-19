@@ -2,8 +2,14 @@
 #include "vulkan/handles/CommandBuffer.h"
 #include "vulkan/handles/Image.h"
 #include "vulkan/handles/Pipeline.h"
+#include "vulkan/EffectManager.h"
+#include "vulkan/TextureLoader.h"
+#include "vulkan/Texture.h"
+#include "vulkan/RenderTarget.h"
 #include "utopian/utility/Utility.h"
 #include "utopian/core/Log.h"
+#include "utopian/core/ModelLoader.h"
+#include <core/Engine.h>
 #include <fstream>
 #include <utility/Utility.h>
 #include "ktx.h"
@@ -22,6 +28,11 @@ namespace Utopian
    RendererUtility& gRendererUtility()
    {
       return RendererUtility::Instance();
+   }
+
+   RendererUtility::RendererUtility()
+   {
+      mCubemapModel = gModelLoader().LoadBox();
    }
 
    void RendererUtility::DrawFullscreenQuad(Vk::CommandBuffer* commandBuffer)
@@ -205,5 +216,112 @@ namespace Utopian
       srcImage.LayoutTransition(commandBuffer, srcImage.GetFinalLayout());
 
       commandBuffer.Flush();
+   }
+
+   SharedPtr<Vk::Texture> RendererUtility::FilterCubemap(Vk::Texture* inputCubemap, uint32_t dimension,
+                                                         VkFormat format, std::string filterShader)
+   {
+      Vk::Device* device = gEngine().GetVulkanApp()->GetDevice();
+
+      const uint32_t numMipLevels = static_cast<uint32_t>(floor(log2(dimension))) + 1;
+
+      // Offscreen framebuffer
+      SharedPtr<Vk::Image> offscreen = std::make_shared<Vk::ImageColor>(device, dimension,
+         dimension, format, "Offscreen irradiance image");
+
+      SharedPtr<Vk::RenderTarget> renderTarget = std::make_shared<Vk::RenderTarget>(device, dimension, dimension);
+      renderTarget->AddWriteOnlyColorAttachment(offscreen);
+      renderTarget->SetClearColor(1, 1, 1, 1);
+      renderTarget->Create();
+
+      Vk::EffectCreateInfo effectDesc;
+      effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/cubemap_filter.vert";
+      effectDesc.shaderDesc.fragmentShaderPath = filterShader;
+      SharedPtr<Vk::Effect> effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
+
+      effect->BindCombinedImage("samplerEnv", *inputCubemap);
+
+      SharedPtr<Vk::Texture> outputCubemap = Vk::gTextureLoader().CreateCubemapTexture(format, dimension, dimension, numMipLevels);
+
+      glm::mat4 matrices[] =
+      {
+         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+      };
+
+      Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
+      commandBuffer->Begin();
+      renderTarget->BeginDebugLabelAndQueries("Irradiance cubemap generation", glm::vec4(1.0f));
+
+      outputCubemap->GetImage().LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+      for (uint32_t mipLevel = 0; mipLevel < numMipLevels; mipLevel++)
+      {
+         for (uint32_t face = 0; face < 6; face++)
+         {
+            renderTarget->BeginRenderPass();
+
+            float viewportSize = dimension * std::pow(0.5f, mipLevel);
+            commandBuffer->CmdSetViewPort(viewportSize, viewportSize);
+
+            struct PushConsts {
+               glm::mat4 mvp;
+               float roughness;
+            } pushConsts;
+
+            glm::mat4 world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
+            pushConsts.mvp = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, 20000.0f) * matrices[face] * world;
+            pushConsts.roughness = (float)mipLevel / (float)(numMipLevels - 1);
+            commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(PushConsts), &pushConsts.mvp);
+
+            commandBuffer->CmdBindPipeline(effect->GetPipeline());
+            commandBuffer->CmdBindDescriptorSets(effect);
+
+            Primitive* primitive = mCubemapModel->GetPrimitive(0);
+            commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
+            commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
+            commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
+
+            commandBuffer->CmdEndRenderPass();
+
+            // Copy region for transfer from framebuffer to cube face
+            VkImageCopy copyRegion = {};
+
+            copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            copyRegion.srcSubresource.baseArrayLayer = 0;
+            copyRegion.srcSubresource.mipLevel = 0;
+            copyRegion.srcSubresource.layerCount = 1;
+            copyRegion.srcOffset = { 0, 0, 0 };
+
+            copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            copyRegion.dstSubresource.baseArrayLayer = face;
+            copyRegion.dstSubresource.mipLevel = mipLevel;
+            copyRegion.dstSubresource.layerCount = 1;
+            copyRegion.dstOffset = { 0, 0, 0 };
+
+            copyRegion.extent.width = static_cast<uint32_t>(viewportSize);
+            copyRegion.extent.height = static_cast<uint32_t>(viewportSize);
+            copyRegion.extent.depth = 1;
+
+            offscreen->LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+
+            vkCmdCopyImage(commandBuffer->GetVkHandle(), offscreen->GetVkHandle(),
+                           VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, outputCubemap->GetImage().GetVkHandle(),
+                           VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+
+            offscreen->LayoutTransition(*commandBuffer, offscreen->GetFinalLayout());
+         }
+      }
+
+      outputCubemap->GetImage().LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+      renderTarget->EndDebugLabelAndQueries();
+      commandBuffer->Flush();
+
+      return outputCubemap;
    }
 }

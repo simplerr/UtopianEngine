@@ -40,7 +40,7 @@ void main()
    float metallic = texture(pbrSampler, InTex).b;
 
    // From sRGB space to Linear space
-   //albedo.rgb = pow(albedo.rgb, vec3(2.2));
+   albedo.rgb = pow(albedo.rgb, vec3(2.2));
 
    // Todo: Note: the + sign is due to the fragment world position is negated for some reason
    // this is a left over from an old problem

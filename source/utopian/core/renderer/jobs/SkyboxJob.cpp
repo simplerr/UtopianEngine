@@ -35,7 +35,13 @@ namespace Utopian
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 
-      mSkybox = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
+      mTexture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
+
+      mIrradianceMap = gRendererUtility().FilterCubemap(mTexture.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
+                    "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+
+      mSpecularMap = gRendererUtility().FilterCubemap(mTexture.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
+                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
 
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";
@@ -48,7 +54,8 @@ namespace Utopian
 
       mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mEffect->BindUniformBuffer("UBO_input", mInputBlock);
-      mEffect->BindCombinedImage("samplerCubeMap", *mSkybox);
+      mEffect->BindCombinedImage("samplerCubeMap", *mTexture);
+      //mEffect->BindCombinedImage("samplerCubeMap", *mIrradianceMap);
 
       mCubeModel = gModelLoader().LoadBox();
    }

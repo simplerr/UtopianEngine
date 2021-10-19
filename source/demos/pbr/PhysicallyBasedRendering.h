@@ -83,7 +83,6 @@ private:
    void RenderSkybox(Vk::CommandBuffer* commandBuffer);
    void UpdateCubemapBindings();
    void GenerateFilteredCubemaps();
-   SharedPtr<Vk::Texture> FilterCubemap(uint32_t dimension, VkFormat format, Vk::Texture* inputCubemap, std::string filterShader);
 
    Vk::VulkanApp* mVulkanApp;
    Utopian::Window* mWindow;

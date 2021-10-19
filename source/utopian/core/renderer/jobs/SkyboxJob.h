@@ -22,7 +22,9 @@ namespace Utopian
 
       SharedPtr<Vk::Image> sunImage;
    private:
-      SharedPtr<Vk::Texture> mSkybox;
+      SharedPtr<Vk::Texture> mTexture;
+      SharedPtr<Vk::Texture> mIrradianceMap;
+      SharedPtr<Vk::Texture> mSpecularMap;
       SharedPtr<Vk::RenderTarget> mRenderTarget;
       SharedPtr<Vk::Effect> mEffect;
       SharedPtr<Model> mCubeModel;

@@ -72,9 +72,8 @@ void main()
       mapped = ACESFilm(hdrColor);
 
    // Gamma correction
-   // Todo: this gives washed out colors
-   // const float gamma = 2.2;
-   // mapped = pow(mapped, vec3(1.0 / gamma));
+   const float gamma = 2.2;
+   mapped = pow(mapped, vec3(1.0 / gamma));
 
    OutColor = vec4(mapped, 1.0);
 }

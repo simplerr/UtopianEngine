@@ -25,6 +25,9 @@ void main()
    vec3 transmittance;
    vec3 color = IntegrateScattering(rayStart, rayDir, rayLength, sunDir, lightColor, transmittance);
 
+   // To get more vivid colors
+   color = pow(color, vec3(2.2));
+
    OutFragColor = vec4(vec3(color), 1.0f);
 
    // This is to get the input for the SunShaftJob. It's not physically correct

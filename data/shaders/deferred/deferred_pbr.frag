@@ -18,6 +18,10 @@ layout (set = 1, binding = 2) uniform sampler2D albedoSampler;
 layout (set = 1, binding = 3) uniform sampler2D ssaoSampler;
 layout (set = 1, binding = 4) uniform sampler2D pbrSampler;
 
+layout (set = 2, binding = 0) uniform samplerCube irradianceMap;
+layout (set = 2, binding = 1) uniform samplerCube specularMap;
+layout (set = 2, binding = 2) uniform sampler2D brdfLut;
+
 // UBO_lights from phong_lighting.glsl is at slot = 0, binding = 1
 
 layout (std140, set = 0, binding = 2) uniform UBO_settings
@@ -40,8 +44,7 @@ void main()
    float metallic = texture(pbrSampler, InTex).b;
 
    // From sRGB space to Linear space
-   // Todo: this together with the tonemapping in tonemap.frag gives washed out colors
-   // baseColor.rgb = pow(baseColor.rgb, vec3(2.2));
+   baseColor.rgb = pow(baseColor.rgb, vec3(2.2));
 
    // Todo: Note: the + sign is due to the fragment world position is negated for some reason
    // this is a left over from an old problem
@@ -52,16 +55,16 @@ void main()
    uint cascadeIndex = 0;
    float shadow = calculateShadow(position, normal, normalize(light_ubo.lights[0].dir), cascadeIndex);
 
+   // Todo: Note: Legacy workaround from old problem
+   normal.xz *= -1;
+   position *= -1;
+
    PixelParams pixel;
    pixel.position = position;
    pixel.baseColor = baseColor;
    pixel.normal = normal;
    pixel.metallic = metallic;
    pixel.roughness = roughness;
-
-   // Todo: Note: Legacy workaround from old problem
-   pixel.normal.xz *= -1;
-   pixel.position *= -1;
 
    /* Direct lighting */
    vec3 litColor = vec3(0.0);
@@ -70,8 +73,34 @@ void main()
       litColor += shadow * surfaceShading(pixel, light_ubo.lights[i], sharedVariables.eyePos.xyz, 5.0f);
    }
 
-   vec3 ambient = vec3(0.33) * baseColor * occlusion;
-   litColor += ambient;
+   /* Indirect IBL lighting */
+   vec3 V = normalize(sharedVariables.eyePos.xyz - position);
+   vec3 R = reflect(V, normal);
+
+   vec3 F0 = vec3(0.04);
+   F0 = mix(F0, baseColor, metallic);
+
+   vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+   vec3 kS = F;
+   vec3 kD = 1.0 - kS;
+   kD *= 1.0 - metallic;
+
+   vec3 irradiance = texture(irradianceMap, -normal).rgb;
+   vec3 diffuse    = irradiance * baseColor;
+
+   // Sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+   // Note: 1 - roughness, same as Vulkan-glTF-PBR but differs from LearnOpenGL
+   const float MAX_REFLECTION_LOD = 7.0;
+   vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+   vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), 1.0f - roughness)).rg;
+   vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+
+   vec3 ambient = (kD * diffuse + specular) * occlusion;
+
+   // Todo: if not IBL active
+   //ambient = vec3(0.33) * baseColor * occlusion;
+
+   litColor = litColor + ambient;
 
    // Apply fogging.
    float distToEye = length(sharedVariables.eyePos.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
@@ -90,6 +119,7 @@ void main()
    {
       vec3 sunDir = ubo_atmosphere.sunDir;
       vec3 lightTransmittance = Absorb(IntegrateOpticalDepth(position, sunDir));
+      lightTransmittance = pow(lightTransmittance, vec3(2.2));
       litColor *= lightTransmittance;
    }
 

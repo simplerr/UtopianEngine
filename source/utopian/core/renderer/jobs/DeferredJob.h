@@ -26,5 +26,12 @@ namespace Utopian
       SettingsUniformBuffer settings_ubo;
       CascadeBlock cascade_ubo;
       AtmosphereJob::ParameterBlock atmosphere_ubo;
+
+      struct ImageBasedLighting {
+         SharedPtr<Vk::Texture> environmentMap;
+         SharedPtr<Vk::Texture> irradianceMap;
+         SharedPtr<Vk::Texture> specularMap;
+         SharedPtr<Vk::Texture> brdfLut;
+      } mIbl;
    };
 }

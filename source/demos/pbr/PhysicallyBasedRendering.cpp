@@ -59,7 +59,6 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
                                           glm::scale(glm::mat4(1.0f), glm::vec3(100.0f, 1.0f, 100.0f));
    mSceneNodes.push_back(sceneNode);
 
-   //AddModel("data/models/sphere.obj", glm::vec3(1.0f, 0.0f, 3), glm::vec3(0.02f));
    const uint32_t max = 5;
    for (uint32_t x = 0; x < max; x++)
    {
@@ -366,8 +365,8 @@ void PhysicallyBasedRendering::InitSkybox()
    mSkybox.model = gModelLoader().LoadBox();
 
    Vk::EffectCreateInfo effectDesc;
-   effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";
-   effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/skybox/skybox.frag";
+   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/skybox.vert";
+   effectDesc.shaderDesc.fragmentShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/skybox.frag";
    mSkybox.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
 
    mSkybox.inputBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -403,117 +402,11 @@ void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
 
 void PhysicallyBasedRendering::GenerateFilteredCubemaps()
 {
-   mIrradianceMap = FilterCubemap(64, VK_FORMAT_R32G32B32A32_SFLOAT, mSkybox.texture.get(),
-                                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+   mIrradianceMap = gRendererUtility().FilterCubemap(mSkybox.texture.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
+                    "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
 
-   mSpecularMap = FilterCubemap(512, VK_FORMAT_R16G16B16A16_SFLOAT, mSkybox.texture.get(),
-                                "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
-}
-
-SharedPtr<Vk::Texture> PhysicallyBasedRendering::FilterCubemap(uint32_t dimension, VkFormat format, Vk::Texture* inputCubemap,
-                                                               std::string filterShader)
-{
-   const uint32_t numMipLevels = static_cast<uint32_t>(floor(log2(dimension))) + 1;
-   Vk::Device* device = mVulkanApp->GetDevice();
-
-   // Offscreen framebuffer
-   SharedPtr<Vk::Image> offscreen = std::make_shared<Vk::ImageColor>(device, dimension,
-      dimension, format, "Offscreen irradiance image");
-
-   SharedPtr<Vk::RenderTarget> renderTarget = std::make_shared<Vk::RenderTarget>(device, dimension, dimension);
-   renderTarget->AddWriteOnlyColorAttachment(offscreen);
-   renderTarget->SetClearColor(1, 1, 1, 1);
-   renderTarget->Create();
-
-   Vk::EffectCreateInfo effectDesc;
-   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/cubemap_filter.vert";
-   effectDesc.shaderDesc.fragmentShaderPath = filterShader;
-   SharedPtr<Vk::Effect> effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
-
-   effect->BindCombinedImage("samplerEnv", *inputCubemap);
-
-   SharedPtr<Vk::Texture> outputCubemap = Vk::gTextureLoader().CreateCubemapTexture(format, dimension, dimension, numMipLevels);
-
-   glm::mat4 matrices[] =
-   {
-      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-      glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-   };
-
-   Vk::CommandBuffer* commandBuffer = renderTarget->GetCommandBuffer();
-   commandBuffer->Begin();
-   renderTarget->BeginDebugLabelAndQueries("Irradiance cubemap generation", glm::vec4(1.0f));
-
-   outputCubemap->GetImage().LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-   for (uint32_t mipLevel = 0; mipLevel < numMipLevels; mipLevel++)
-   {
-      for (uint32_t face = 0; face < 6; face++)
-      {
-         renderTarget->BeginRenderPass();
-
-         float viewportSize = dimension * std::pow(0.5f, mipLevel);
-         commandBuffer->CmdSetViewPort(viewportSize, viewportSize);
-
-         struct PushConsts {
-            glm::mat4 mvp;
-            float roughness;
-         } pushConsts;
-
-         glm::mat4 world = glm::scale(glm::mat4(), glm::vec3(10000.0f));
-         pushConsts.mvp = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, 20000.0f) * matrices[face] * world;
-         pushConsts.roughness = (float)mipLevel / (float)(numMipLevels - 1);
-         commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(PushConsts), &pushConsts.mvp);
-
-         commandBuffer->CmdBindPipeline(effect->GetPipeline());
-         commandBuffer->CmdBindDescriptorSets(effect);
-
-         Primitive* primitive = mSkybox.model->GetPrimitive(0);
-         commandBuffer->CmdBindVertexBuffer(0, 1, primitive->GetVertxBuffer());
-         commandBuffer->CmdBindIndexBuffer(primitive->GetIndexBuffer(), 0, VK_INDEX_TYPE_UINT32);
-         commandBuffer->CmdDrawIndexed(primitive->GetNumIndices(), 1, 0, 0, 0);
-
-         commandBuffer->CmdEndRenderPass();
-
-         // Copy region for transfer from framebuffer to cube face
-         VkImageCopy copyRegion = {};
-
-         copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-         copyRegion.srcSubresource.baseArrayLayer = 0;
-         copyRegion.srcSubresource.mipLevel = 0;
-         copyRegion.srcSubresource.layerCount = 1;
-         copyRegion.srcOffset = { 0, 0, 0 };
-
-         copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-         copyRegion.dstSubresource.baseArrayLayer = face;
-         copyRegion.dstSubresource.mipLevel = mipLevel;
-         copyRegion.dstSubresource.layerCount = 1;
-         copyRegion.dstOffset = { 0, 0, 0 };
-
-         copyRegion.extent.width = static_cast<uint32_t>(viewportSize);
-         copyRegion.extent.height = static_cast<uint32_t>(viewportSize);
-         copyRegion.extent.depth = 1;
-
-         offscreen->LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-
-         vkCmdCopyImage(commandBuffer->GetVkHandle(), offscreen->GetVkHandle(),
-                        VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, outputCubemap->GetImage().GetVkHandle(),
-                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
-
-         offscreen->LayoutTransition(*commandBuffer, offscreen->GetFinalLayout());
-      }
-   }
-
-   outputCubemap->GetImage().LayoutTransition(*commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-   renderTarget->EndDebugLabelAndQueries();
-   commandBuffer->Flush();
-
-   return outputCubemap;
+   mSpecularMap = gRendererUtility().FilterCubemap(mSkybox.texture.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
+                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
 }
 
 Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)

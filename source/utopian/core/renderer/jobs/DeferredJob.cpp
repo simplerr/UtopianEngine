@@ -76,6 +76,25 @@ namespace Utopian
       mPbrEffect->BindCombinedImage("ssaoSampler", *blurJob->blurImage, *mSampler);
       mPbrEffect->BindCombinedImage("pbrSampler", *gbuffer.pbrImage, *mSampler);
       mPbrEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
+
+      mIbl.environmentMap = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
+
+      mIbl.irradianceMap = gRendererUtility().FilterCubemap(mIbl.environmentMap.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
+                           "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+
+      mIbl.specularMap = gRendererUtility().FilterCubemap(mIbl.environmentMap.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
+                         "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
+
+      mIbl.brdfLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
+      mIbl.brdfLut->GetSampler().createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mIbl.brdfLut->GetSampler().createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mIbl.brdfLut->GetSampler().createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mIbl.brdfLut->GetSampler().Create();
+      mIbl.brdfLut->UpdateDescriptor();
+
+      mPbrEffect->BindCombinedImage("irradianceMap", *mIbl.irradianceMap);
+      mPbrEffect->BindCombinedImage("specularMap", *mIbl.specularMap);
+      mPbrEffect->BindCombinedImage("brdfLut", *mIbl.brdfLut);
    }
 
    void DeferredJob::Render(const JobInput& jobInput)
