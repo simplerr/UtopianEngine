@@ -14,7 +14,8 @@ layout (location = 2) out vec3 OutNormalW;
 layout (location = 3) out vec2 OutTex;
 layout (location = 4) out vec3 OutNormalV;
 layout (location = 5) out vec2 OutTextureTiling;
-layout (location = 6) out mat3 OutTBN;
+layout (location = 6) out vec3 OutTangentL;
+layout (location = 7) out mat3 OutTBN;
 
 out gl_PerVertex
 {
@@ -36,6 +37,7 @@ void main()
    OutNormalV = normalMatrix * InNormalL;
    OutTex = InTex;
    OutTextureTiling = vec2(1.0, 1.0);
+   OutTangentL = InTangentL.xyz;
 
    gl_Position = sharedVariables.projectionMatrix * sharedVariables.viewMatrix * InInstanceWorld * vec4(InPosL.xyz, 1.0);
 }

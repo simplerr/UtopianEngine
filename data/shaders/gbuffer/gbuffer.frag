@@ -10,7 +10,8 @@ layout (location = 2) in vec3 InNormalW;
 layout (location = 3) in vec2 InTex;
 layout (location = 4) in vec3 InNormalV;
 layout (location = 5) in vec2 InTextureTiling;
-layout (location = 6) in mat3 InTBN;
+layout (location = 6) in vec3 InTangentL;
+layout (location = 7) in mat3 InTBN;
 
 layout (location = 0) out vec4 outPosition;
 layout (location = 1) out vec4 outNormal;
@@ -57,7 +58,7 @@ void main()
 
    outPosition = vec4(InPosW, linearDepth(gl_FragCoord.z));
 
-   if (settings_ubo.normalMapping == 1)
+   if (settings_ubo.normalMapping == 1 && InTangentL != vec3(0.0f))
    {
       vec3 normal = texture(normalSampler, InTex * InTextureTiling).rgb;
 
