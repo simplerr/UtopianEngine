@@ -83,6 +83,11 @@ namespace Utopian
       mInternal->SetModel(model);
    }
 
+   Model* CRenderable::GetModel()
+   {
+      return mInternal->GetModel();
+   }
+
    void CRenderable::SetDiffuseTexture(uint32_t materialIdx, SharedPtr<Vk::Texture> texture)
    {
       mInternal->SetDiffuseTexture(materialIdx, texture);

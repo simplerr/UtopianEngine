@@ -24,6 +24,7 @@ namespace Utopian
 
       void LoadModel(std::string path);
       void SetModel(SharedPtr<Model> model);
+      Model* GetModel();
 
       /**
        * @brief Set the texture to use when drawing

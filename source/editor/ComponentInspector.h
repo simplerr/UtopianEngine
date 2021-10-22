@@ -16,6 +16,7 @@ namespace Utopian
    class CPolyMesh;
    class CPlayerControl;
    class CNoClip;
+   class Model;
 
    class ComponentInspector
    {
@@ -41,15 +42,28 @@ namespace Utopian
    class RenderableInspector : public ComponentInspector
    {
    public:
-      struct TextureInfo
+      class ModelInspector
       {
-         TextureInfo(ImTextureID id, std::string _path) {
-            textureId = id;
-            path = _path;
-         }
+      public:
+         struct TextureInfo
+         {
+            TextureInfo(SharedPtr<Vk::Texture> texture);
 
-         ImTextureID textureId;
-         std::string path;
+            SharedPtr<Vk::Texture> texture;
+            ImTextureID textureId;
+         };
+
+         ModelInspector(Utopian::Model* model);
+         ~ModelInspector();
+
+         void SetModel(Utopian::Model* model);
+         void UpdateUi();
+         void ClearTextures();
+         void AddTextures(uint32_t materialIndex);
+      private:
+         Utopian::Model* model;
+         std::vector<TextureInfo> textureInfos;
+         uint32_t selectedMaterial;
       };
 
       RenderableInspector(CRenderable* renderable);
@@ -58,6 +72,7 @@ namespace Utopian
       virtual void UpdateUi() override;
    private:
       CRenderable* mRenderable;
+      SharedPtr<ModelInspector> mModelInspector;
       float mTextureTiling;
       bool mDeferred;
       bool mColor;
@@ -66,9 +81,6 @@ namespace Utopian
       bool mWireframe;
       bool mCastShadow;
       bool mVisible;
-
-      // For ImGui debug drawing
-      std::vector<TextureInfo> textureInfos;
    };
 
    class LightInspector : public ComponentInspector

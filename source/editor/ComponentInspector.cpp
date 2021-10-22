@@ -11,12 +11,16 @@
 #include "core/components/CNoClip.h"
 #include "core/components/Actor.h"
 #include "core/Log.h"
+#include "core/Engine.h"
 #include <glm/gtc/quaternion.hpp>
 #include "vulkan/Texture.h"
 #include "vulkan/TextureLoader.h"
 #include "vulkan/handles/Image.h"
 #include "core/renderer/Renderer.h"
+#include "core/renderer/Model.h"
+#include "nativefiledialog/nfd.h"
 #include <algorithm>
+#include <imgui/imgui.h>
 
 namespace Utopian
 {
@@ -53,7 +57,150 @@ namespace Utopian
          mComponent->SetPosition(mTransform.mPosition);
          mComponent->SetScale(mTransform.GetScale());
          mComponent->AddRotation(rotation, localRotation);
+
+         ImGui::Separator();
       }
+   }
+
+   RenderableInspector::ModelInspector::ModelInspector(Utopian::Model* model)
+   {
+      SetModel(model);
+      selectedMaterial = 0;
+   }
+
+   RenderableInspector::ModelInspector::~ModelInspector()
+   {
+      ClearTextures();
+   }
+
+   void RenderableInspector::ModelInspector::SetModel(Utopian::Model* model)
+   {
+      ClearTextures();
+
+      this->model = model;
+      AddTextures(0);
+   }
+
+   void RenderableInspector::ModelInspector::UpdateUi()
+   {
+      if (ImGui::CollapsingHeader("Primitives"))
+      {
+         for (uint32_t index = 0; index < model->GetNumPrimitives(); index++)
+         {
+            Utopian::Primitive* primitive = model->GetPrimitive(index);
+
+            if (ImGui::TreeNodeEx(primitive->GetDebugName().c_str()))
+            {
+               ImGui::Text("Num vertices: %u", primitive->GetNumVertices());
+               ImGui::Text("Num indices: %u", primitive->GetNumIndices());
+               ImGui::TreePop();
+            }
+         }
+      }
+
+      if (ImGui::CollapsingHeader("Materials"))
+      {
+         for (uint32_t index = 0; index < model->GetNumMaterials(); index++)
+         {
+            Utopian::Material* material = model->GetMaterial(index);
+
+            ImGuiTreeNodeFlags flags = 0;
+            if (selectedMaterial == index)
+               flags = ImGuiTreeNodeFlags_Selected;
+
+            if (ImGui::TreeNodeEx(material->name.c_str(), flags))
+            {
+               ImGui::TreePop();
+            }
+
+            if (ImGui::IsItemClicked())
+            {
+               selectedMaterial = index;
+               ClearTextures();
+               AddTextures(selectedMaterial);
+            }
+         }
+      }
+
+      // Since it's inside the ImGui::ImageButton we are changing the texture
+      // we cannot change the UI texture immedietly has that would make the
+      // descriptor set used in ImGuiRenderer::UpdateCommandBuffers() invalid.
+      static bool changedTexture = false;
+
+      if (changedTexture) {
+         ClearTextures();
+         AddTextures(selectedMaterial);
+      }
+
+      changedTexture = false;
+
+      if (ImGui::CollapsingHeader("Selected material", ImGuiTreeNodeFlags_DefaultOpen))
+      {
+         Material* material = model->GetMaterial(selectedMaterial);
+
+         ImGui::Text("Name: %s", material->name.c_str());
+         ImGui::ColorEdit4("Base color", &material->properties->data.baseColorFactor.x);
+         ImGui::SliderFloat("Metallic", &material->properties->data.metallicFactor, 0.0, 1.0f);
+         ImGui::SliderFloat("Roughness", &material->properties->data.roughnessFactor, 0.0, 1.0f);
+         ImGui::SliderFloat("Ambient occlusion", &material->properties->data.occlusionFactor, 0.0, 1.0f);
+         material->properties->UpdateMemory();
+
+         if (ImGui::CollapsingHeader("Textures"))
+         {
+            for (uint32_t i = 0; i < textureInfos.size(); i++)
+            {
+               TextureInfo textureInfo = textureInfos[i];
+               ImGui::Text(textureInfo.texture->GetPath().c_str());
+               if (ImGui::ImageButton(textureInfo.textureId, ImVec2(64, 64)))
+               {
+                  nfdchar_t* outPath = NULL;
+                  nfdresult_t result = NFD_OpenDialog(NULL, NULL, &outPath);
+                  SharedPtr<Vk::Texture> loadedTexture = Vk::gTextureLoader().LoadTexture(std::string(outPath));
+                  //textureInfo.texture = Vk::gTextureLoader().LoadTexture(std::string(outPath));
+                  switch (i) {
+                     case 0: material->colorTexture = loadedTexture; break;
+                     case 1: material->normalTexture = loadedTexture; break;
+                     case 2: material->specularTexture = loadedTexture; break;
+                     case 3: material->metallicRoughnessTexture = loadedTexture; break;
+                     case 4: material->occlusionTexture = loadedTexture; break;
+                  }
+                  
+                  material->UpdateTextureDescriptors(Utopian::gEngine().GetVulkanApp()->GetDevice());
+                  changedTexture = true;
+               }
+            }
+         }
+      }
+   }
+
+   void RenderableInspector::ModelInspector::ClearTextures()
+   {
+      for (auto& textureInfo : textureInfos)
+      {
+         gEngine().GetImGuiRenderer()->FreeTexture(textureInfo.textureId);
+      }
+
+      textureInfos.clear();
+   }
+
+   void RenderableInspector::ModelInspector::AddTextures(uint32_t materialIndex)
+   {
+      Material* material = model->GetMaterial(materialIndex);
+      Utopian::ImGuiRenderer* ui = gEngine().GetImGuiRenderer();
+
+      textureInfos.push_back(TextureInfo(material->colorTexture));
+      textureInfos.push_back(TextureInfo(material->normalTexture));
+      textureInfos.push_back(TextureInfo(material->specularTexture));
+      textureInfos.push_back(TextureInfo(material->metallicRoughnessTexture));
+      textureInfos.push_back(TextureInfo(material->occlusionTexture));
+   }
+
+   RenderableInspector::ModelInspector::TextureInfo::TextureInfo(SharedPtr<Vk::Texture> texture)
+   {
+      Utopian::ImGuiRenderer* ui = gEngine().GetImGuiRenderer();
+
+      this->textureId = ui->AddImage(texture->GetImage());
+      this->texture = texture;
    }
 
    RenderableInspector::RenderableInspector(CRenderable* renderable)
@@ -67,41 +214,11 @@ namespace Utopian
       mWireframe = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_WIREFRAME);
       mCastShadow = renderable->HasRenderFlags(RenderFlags::RENDER_FLAG_CAST_SHADOW);
       mVisible = renderable->IsVisible();
-
-      // Todo: MODEL UPDATE
-      //std::vector<Primitive*>& meshes = renderable->GetInternal()->GetModel()->mMeshes;
-      std::vector<Vk::Texture*> allTextures;
-
-      // for (auto& mesh : meshes)
-      // {
-      //    std::vector<Vk::Texture*> textures = mesh->GetTextures();
-      //    allTextures.insert(std::end(allTextures), std::begin(textures), std::end(textures));
-      // }
-
-      std::sort(allTextures.begin(), allTextures.end(), [](Vk::Texture* textureA, Vk::Texture* textureB) {
-         return textureA->GetPath() < textureB->GetPath();
-      });
-
-      auto iter = std::unique(allTextures.begin(), allTextures.end(), [](Vk::Texture* textureA, Vk::Texture* textureB) {
-         return textureA->GetPath() == textureB->GetPath();
-      });
-
-      allTextures.erase(iter, allTextures.end());
-
-      for (auto& texture : allTextures)
-      {
-         textureInfos.push_back(TextureInfo(gRenderer().GetUiOverlay()->AddImage(texture->GetImage()), texture->GetPath()));
-      }
+      mModelInspector = std::make_shared<ModelInspector>(renderable->GetModel());
    }
 
    RenderableInspector::~RenderableInspector()
    {
-      for (auto& textureInfo : textureInfos)
-      {
-         gRenderer().GetUiOverlay()->FreeTexture(textureInfo.textureId);
-      }
-
-      textureInfos.clear();
    }
 
    void RenderableInspector::UpdateUi()
@@ -196,20 +313,12 @@ namespace Utopian
          mRenderable->SetColor(color);
 
          ImGui::SliderFloat("Tiling", &mTextureTiling, 0.5, 50);
-
          mRenderable->SetTileFactor(glm::vec2(mTextureTiling));
 
-         if (ImGui::CollapsingHeader("Textures"))
-         {
-            for (auto& textureInfo : textureInfos)
-            {
-               ImGui::Text(textureInfo.path.c_str());
-               if (ImGui::ImageButton(textureInfo.textureId, ImVec2(64, 64)))
-               {
-                  // Nothing
-               }
-            }
-         }
+         // Displays UI elements for all primitives and materials in a model
+         mModelInspector->UpdateUi();
+
+         ImGui::Separator();
       }
    }
 
@@ -240,6 +349,8 @@ namespace Utopian
          mLight->SetSpot(mLightData.spot);
          mLight->SetAttenuation(mLightData.att);
          mLight->SetType((Utopian::LightType)mType);
+
+         ImGui::Separator();
       }
    }
 
@@ -272,6 +383,8 @@ namespace Utopian
          mRigidBody->SetRollingFriction(rollingFriction);
          mRigidBody->SetAnisotropicFriction(anisotropicFriction);
          mRigidBody->SetRestitution(restitution);
+
+         ImGui::Separator();
       }
    }
 
@@ -311,6 +424,8 @@ namespace Utopian
          mCatmullSpline->SetActive(isActive);
          mCatmullSpline->SetDrawDebug(isDrawingDebug);
          mCatmullSpline->SetTimePerSegment(timePerSegment);
+
+         ImGui::Separator();
       }
    }
 
@@ -369,6 +484,8 @@ namespace Utopian
 
             i++;
          }
+
+         ImGui::Separator();
       }
    }
 
@@ -399,6 +516,8 @@ namespace Utopian
          mPlayerController->SetJumpStrength(jumpStrength);
          mPlayerController->SetAirAccelerate(airAccelerate);
          mPlayerController->SetAirSpeedCap(airSpeedCap);
+
+         ImGui::Separator();
       }
    }
 
