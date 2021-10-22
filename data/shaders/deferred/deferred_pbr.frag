@@ -27,10 +27,10 @@ layout (set = 2, binding = 2) uniform sampler2D brdfLut;
 layout (std140, set = 0, binding = 2) uniform UBO_settings
 {
    vec3 fogColor;
-   float padding;
    float fogStart;
    float fogDistance;
    int cascadeColorDebug;
+   int useIBL;
 } settings_ubo;
 
 void main()
@@ -73,32 +73,34 @@ void main()
       litColor += shadow * surfaceShading(pixel, light_ubo.lights[i], sharedVariables.eyePos.xyz, 5.0f);
    }
 
+   vec3 ambient = vec3(0.33) * baseColor * occlusion;
+
    /* Indirect IBL lighting */
-   vec3 V = normalize(sharedVariables.eyePos.xyz - position);
-   vec3 R = reflect(V, normal);
+   if (settings_ubo.useIBL == 1)
+   {
+      vec3 V = normalize(sharedVariables.eyePos.xyz - position);
+      vec3 R = reflect(V, normal);
 
-   vec3 F0 = vec3(0.04);
-   F0 = mix(F0, baseColor, metallic);
+      vec3 F0 = vec3(0.04);
+      F0 = mix(F0, baseColor, metallic);
 
-   vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
-   vec3 kS = F;
-   vec3 kD = 1.0 - kS;
-   kD *= 1.0 - metallic;
+      vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+      vec3 kS = F;
+      vec3 kD = 1.0 - kS;
+      kD *= 1.0 - metallic;
 
-   vec3 irradiance = texture(irradianceMap, -normal).rgb;
-   vec3 diffuse    = irradiance * baseColor;
+      vec3 irradiance = texture(irradianceMap, -normal).rgb;
+      vec3 diffuse    = irradiance * baseColor;
 
-   // Sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
-   // Note: 1 - roughness, same as Vulkan-glTF-PBR but differs from LearnOpenGL
-   const float MAX_REFLECTION_LOD = 7.0;
-   vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
-   vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), 1.0f - roughness)).rg;
-   vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+      // Sample both the pre-filter map and the BRDF lut and combine them together as per the Split-Sum approximation to get the IBL specular part.
+      // Note: 1 - roughness, same as Vulkan-glTF-PBR but differs from LearnOpenGL
+      const float MAX_REFLECTION_LOD = 7.0;
+      vec3 prefilteredColor = textureLod(specularMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+      vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), 1.0f - roughness)).rg;
+      vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-   vec3 ambient = (kD * diffuse + specular) * occlusion;
-
-   // Todo: if not IBL active
-   //ambient = vec3(0.33) * baseColor * occlusion;
+      ambient = (kD * diffuse + specular) * occlusion;
+   }
 
    litColor = litColor + ambient;
 

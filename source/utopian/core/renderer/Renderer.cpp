@@ -142,6 +142,7 @@ namespace Utopian
          ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
          ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
          ImGui::Checkbox("SSR", &mRenderingSettings.ssrEnabled);
+         ImGui::Checkbox("IBL", &mRenderingSettings.iblEnabled);
          ImGui::Checkbox("Bloom", &mRenderingSettings.bloomEnabled);
          ImGui::Checkbox("Skybox reflections", &mRenderingSettings.skyboxReflections);
          ImGui::Checkbox("Water", &mRenderingSettings.waterEnabled);

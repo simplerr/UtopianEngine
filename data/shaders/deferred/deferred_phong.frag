@@ -23,10 +23,10 @@ layout (set = 1, binding = 4) uniform sampler2D pbrSampler;
 layout (std140, set = 0, binding = 2) uniform UBO_settings
 {
    vec3 fogColor;
-   float padding;
    float fogStart;
    float fogDistance;
    int cascadeColorDebug;
+   int useIBL;
 } settings_ubo;
 
 void main()

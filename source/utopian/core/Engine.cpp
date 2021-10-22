@@ -293,6 +293,7 @@ namespace Utopian
       mRenderingSettings.normalMapping = luaSettings["normalMapping"].GetBoolean();
       mRenderingSettings.ssaoEnabled = luaSettings["ssaoEnabled"].GetBoolean();
       mRenderingSettings.ssrEnabled = luaSettings["ssrEnabled"].GetBoolean();
+      mRenderingSettings.iblEnabled = luaSettings["iblEnabled"].GetBoolean();
       mRenderingSettings.bloomEnabled = luaSettings["bloomEnabled"].GetBoolean();
       mRenderingSettings.skyboxReflections = luaSettings["skyboxReflections"].GetBoolean();
       mRenderingSettings.waterEnabled = luaSettings["waterEnabled"].GetBoolean();

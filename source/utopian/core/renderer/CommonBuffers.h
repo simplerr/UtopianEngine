@@ -71,10 +71,10 @@ namespace Utopian
 
       struct {
          glm::vec3 fogColor;
-         float padding;
          float fogStart;
          float fogDistance;
          int cascadeColorDebug;
+         int useIBL;
       } data;
    };
 
