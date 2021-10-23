@@ -360,11 +360,7 @@ namespace Utopian
       // Deferred pipeline
       if (mRenderingSettings.deferredPipeline == true)
       {
-         mSceneInfo.viewMatrix = mMainCamera->GetView();
-         mSceneInfo.projectionMatrix = mMainCamera->GetProjection();
-         mSceneInfo.eyePos = mMainCamera->GetPosition();
          mSceneInfo.im3dVertices = mIm3dRenderer->GetVertexBuffer();
-
          mSceneInfo.sharedVariables.data.viewMatrix = mMainCamera->GetView();
          mSceneInfo.sharedVariables.data.projectionMatrix = mMainCamera->GetProjection();
          mSceneInfo.sharedVariables.data.inverseProjectionMatrix = glm::inverse(glm::mat3(mMainCamera->GetProjection()));

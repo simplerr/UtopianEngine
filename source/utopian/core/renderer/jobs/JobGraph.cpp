@@ -44,6 +44,9 @@ namespace Utopian
       mGBuffer.specularImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "G-buffer specular image");
       mGBuffer.pbrImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "G-buffer PBR image");
 
+      /* Create the main offscreen render target */
+      mGBuffer.mainImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "Main image");
+
       /* Add jobs */
       GBufferTerrainJob* gbufferTerrainJob = new GBufferTerrainJob(device, terrain, width, height);
       gbufferTerrainJob->SetWaitSemaphore(vulkanApp->GetImageAvailableSemaphore());

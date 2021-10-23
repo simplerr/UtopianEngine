@@ -16,7 +16,6 @@ namespace Utopian
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void Render(const JobInput& jobInput) override;
 
-      SharedPtr<Vk::BasicRenderTarget> renderTarget;
    private:
       SharedPtr<Vk::Sampler> mDepthSampler;
       SharedPtr<Vk::Effect> mPhongEffect;
@@ -26,6 +25,7 @@ namespace Utopian
       SettingsUniformBuffer settings_ubo;
       CascadeBlock cascade_ubo;
       AtmosphereJob::ParameterBlock atmosphere_ubo;
+      SharedPtr<Vk::RenderTarget> renderTarget;
 
       struct ImageBasedLighting {
          SharedPtr<Vk::Texture> environmentMap;

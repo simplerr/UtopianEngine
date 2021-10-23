@@ -45,12 +45,11 @@ namespace Utopian
 
       mTraceSSREffect = Vk::Effect::Create(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
 
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
       GeometryThicknessJob* geometryThicknessJob = static_cast<GeometryThicknessJob*>(jobs[JobGraph::GEOMETRY_THICKNESS_INDEX]);
       OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
 
       const Vk::Sampler& sampler = *mTraceRenderTarget->GetSampler();
-      mTraceSSREffect->BindCombinedImage("_MainTex", *deferredJob->renderTarget->GetColorImage(), sampler);
+      mTraceSSREffect->BindCombinedImage("_MainTex", *gbuffer.mainImage, sampler);
       mTraceSSREffect->BindCombinedImage("_CameraDepthTexture", *opaqueCopyJob->opaqueDepthImage, sampler);
       mTraceSSREffect->BindCombinedImage("_BackFaceDepthTex", *geometryThicknessJob->geometryThicknessImage, sampler);
       mTraceSSREffect->BindCombinedImage("_CameraGBufferTexture1", *gbuffer.specularImage, sampler);
@@ -86,8 +85,6 @@ namespace Utopian
 
    void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-
       ssrBlurImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "SSR blur image");
 
       mBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -115,7 +112,7 @@ namespace Utopian
 
    void SSRJob::RenderTracePass(const JobInput& jobInput)
    {
-      mSSRSettingsBlock.data._NormalMatrix = glm::transpose(glm::inverse(glm::mat3(jobInput.sceneInfo.viewMatrix)));
+      mSSRSettingsBlock.data._NormalMatrix = glm::transpose(glm::inverse(glm::mat3(jobInput.sceneInfo.sharedVariables.data.viewMatrix)));
       mSSRSettingsBlock.data._RenderBufferSize = glm::vec2(mWidth, mHeight);
       mSSRSettingsBlock.data._OneDividedByRenderBufferSize = glm::vec2(1.0f / mWidth, 1.0f / mHeight);
       mSSRSettingsBlock.data._SSREnabled = jobInput.renderingSettings.ssrEnabled;

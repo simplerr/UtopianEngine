@@ -1,5 +1,4 @@
 #include "core/renderer/jobs/BloomJob.h"
-#include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/handles/Sampler.h"
@@ -68,9 +67,7 @@ namespace Utopian
 
    void BloomJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-
-      mExtractEffect->BindCombinedImage("hdrSampler", *deferredJob->renderTarget->GetColorImage(), *mExtractRenderTarget->GetSampler());
+      mExtractEffect->BindCombinedImage("hdrSampler", *gbuffer.mainImage, *mExtractRenderTarget->GetSampler());
    }
 
    void BloomJob::RenderExtractPass(const JobInput& jobInput)

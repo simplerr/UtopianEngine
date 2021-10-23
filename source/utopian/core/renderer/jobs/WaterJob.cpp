@@ -1,5 +1,4 @@
 #include "core/renderer/jobs/WaterJob.h"
-#include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/OpaqueCopyJob.h"
 #include "core/renderer/jobs/ShadowJob.h"
 #include "core/renderer/CommonJobIncludes.h"
@@ -42,14 +41,13 @@ namespace Utopian
 
    void WaterJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
       OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
       ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 
       distortionImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16_SFLOAT, "Distortion image");
 
       renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      renderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      renderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       renderTarget->AddReadWriteColorAttachment(gbuffer.positionImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       renderTarget->AddReadWriteColorAttachment(gbuffer.normalImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       renderTarget->AddReadWriteColorAttachment(gbuffer.albedoImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -135,7 +133,7 @@ namespace Utopian
 
       // Note: This should probably be moved. We need the fragment position in view space
       // when comparing it's Z value to find out which shadow map cascade it should sample from.
-      mCascadeBlock.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+      mCascadeBlock.data.cameraViewMat = jobInput.sceneInfo.sharedVariables.data.viewMatrix;
       mCascadeBlock.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
       mCascadeBlock.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
       mCascadeBlock.UpdateMemory();

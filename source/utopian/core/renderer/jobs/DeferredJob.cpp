@@ -10,31 +10,6 @@ namespace Utopian
    DeferredJob::DeferredJob(Vk::Device* device, uint32_t width, uint32_t height)
       : BaseJob(device, width, height)
    {
-      renderTarget = std::make_shared<Vk::BasicRenderTarget>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT);
-
-      Vk::EffectCreateInfo effectDescPhong;
-      effectDescPhong.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDescPhong.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_phong.frag";
-
-      Vk::EffectCreateInfo effectDescPbr;
-      effectDescPbr.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDescPbr.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_pbr.frag";
-
-      mPhongEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDescPhong);
-      mPbrEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDescPbr);
-
-      // Create sampler that returns 1.0 when sampling outside the depth image
-      mDepthSampler = std::make_shared<Vk::Sampler>(device, false);
-      mDepthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropic filter causes artifacts at the edge between cascades
-      mDepthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-      mDepthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-      mDepthSampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-      mDepthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
-      mDepthSampler->Create();
-
-      mSampler = std::make_shared<Vk::Sampler>(mDevice);
-
-      //mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
    }
 
    DeferredJob::~DeferredJob()
@@ -45,6 +20,35 @@ namespace Utopian
    {
       BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
       ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
+
+      renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      renderTarget->AddWriteOnlyColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      renderTarget->SetClearColor(1, 1, 1, 1);
+      renderTarget->Create();
+
+      Vk::EffectCreateInfo effectDescPhong;
+      effectDescPhong.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+      effectDescPhong.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_phong.frag";
+
+      Vk::EffectCreateInfo effectDescPbr;
+      effectDescPbr.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+      effectDescPbr.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_pbr.frag";
+
+      mPhongEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDescPhong);
+      mPbrEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDescPbr);
+
+      // Create sampler that returns 1.0 when sampling outside the depth image
+      mDepthSampler = std::make_shared<Vk::Sampler>(mDevice, false);
+      mDepthSampler->createInfo.anisotropyEnable = VK_FALSE; // Anistropic filter causes artifacts at the edge between cascades
+      mDepthSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+      mDepthSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+      mDepthSampler->createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+      mDepthSampler->createInfo.borderColor = VkBorderColor::VK_BORDER_COLOR_INT_OPAQUE_WHITE;
+      mDepthSampler->Create();
+
+      mSampler = std::make_shared<Vk::Sampler>(mDevice);
+
+      //mScreenQuad = gScreenQuadUi().AddQuad(0u, 0u, width, height, renderTarget->GetColorImage().get(), renderTarget->GetSampler(), 1u);
 
       light_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       settings_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -127,7 +131,7 @@ namespace Utopian
 
       // Note: This should probably be moved. We need the fragment position in view space
       // when comparing it's Z value to find out which shadow map cascade it should sample from.
-      cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.viewMatrix;
+      cascade_ubo.data.cameraViewMat = jobInput.sceneInfo.sharedVariables.data.viewMatrix;
       cascade_ubo.data.shadowSampleSize = jobInput.renderingSettings.shadowSampleSize;
       cascade_ubo.data.shadowsEnabled = jobInput.renderingSettings.shadowsEnabled;
       cascade_ubo.UpdateMemory();

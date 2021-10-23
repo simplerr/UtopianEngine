@@ -21,7 +21,7 @@ namespace Utopian
       DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
 
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();

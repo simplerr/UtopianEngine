@@ -93,10 +93,6 @@ namespace Utopian
       // Currently assumes that there only is one directional light in the scene
       Light* directionalLight;
 
-      // Todo: Remove these
-      glm::mat4 viewMatrix;
-      glm::mat4 projectionMatrix;
-      glm::vec3 eyePos;
       SharedShaderVariables sharedVariables;
 
       struct SunInfo

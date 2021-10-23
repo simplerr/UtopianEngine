@@ -1,6 +1,5 @@
 #include "core/renderer/jobs/FresnelJob.h"
 #include "core/renderer/CommonJobIncludes.h"
-#include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/SSRJob.h"
 #include "core/renderer/jobs/WaterJob.h"
 #include "core/renderer/jobs/OpaqueCopyJob.h"
@@ -18,13 +17,12 @@ namespace Utopian
 
    void FresnelJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
       SSRJob* ssrJob = static_cast<SSRJob*>(jobs[JobGraph::SSR_INDEX]);
       OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
       WaterJob* waterJob = static_cast<WaterJob*>(jobs[JobGraph::WATER_INDEX]);
 
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       mRenderTarget->Create();
 
       Vk::EffectCreateInfo effectDesc;

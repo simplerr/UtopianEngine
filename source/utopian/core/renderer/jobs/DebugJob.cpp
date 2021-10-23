@@ -1,5 +1,4 @@
 #include "core/renderer/jobs/DebugJob.h"
-#include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/GBufferJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "core/renderer/Model.h"
@@ -17,10 +16,8 @@ namespace Utopian
 
    void DebugJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       //renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();

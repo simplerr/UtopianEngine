@@ -1,5 +1,4 @@
 #include "core/renderer/jobs/FXAAJob.h"
-#include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/TonemapJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/RenderTarget.h"

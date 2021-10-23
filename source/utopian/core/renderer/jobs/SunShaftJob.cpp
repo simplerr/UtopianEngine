@@ -1,5 +1,4 @@
 #include "core/renderer/jobs/SunShaftJob.h"
-#include "core/renderer/jobs/DeferredJob.h"
 #include "core/renderer/jobs/SkydomeJob.h"
 #include "core/renderer/jobs/SkyboxJob.h"
 #include "core/renderer/jobs/AtmosphereJob.h"
@@ -20,8 +19,6 @@ namespace Utopian
 
    void SunShaftJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      DeferredJob* deferredJob = static_cast<DeferredJob*>(jobs[JobGraph::DEFERRED_INDEX]);
-
       // A workaround since both SkydomeJob and Atmosphere can produce the sun image,
       // depending on the job graph configuration
       SharedPtr<Vk::Image> sunImage = nullptr;
@@ -39,7 +36,7 @@ namespace Utopian
 
       // Note: Todo: Probably don't need to be the native window size
       mRadialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRadialBlurRenderTarget->AddReadWriteColorAttachment(deferredJob->renderTarget->GetColorImage(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      mRadialBlurRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       mRadialBlurRenderTarget->Create();
 
       Vk::EffectCreateInfo effectDesc;
@@ -64,8 +61,10 @@ namespace Utopian
 
       // Note: Todo: Why -X here?
       // Note: Todo: Why - camera position?
-      glm::vec3 sunWorldPos = glm::vec3(-1, 1, 1) * sunDir * skydomeRadius * mSkydomeScale - jobInput.sceneInfo.eyePos;
-      glm::vec4 clipPos = jobInput.sceneInfo.projectionMatrix * jobInput.sceneInfo.viewMatrix * glm::vec4(sunWorldPos, 1.0f);
+      glm::vec3 sunWorldPos = glm::vec3(-1, 1, 1) * sunDir * skydomeRadius * mSkydomeScale
+                              - glm::vec3(jobInput.sceneInfo.sharedVariables.data.eyePos);
+      glm::vec4 clipPos = jobInput.sceneInfo.sharedVariables.data.projectionMatrix *
+                          jobInput.sceneInfo.sharedVariables.data.viewMatrix * glm::vec4(sunWorldPos, 1.0f);
       glm::vec4 ndcPos = clipPos / clipPos.w;
       glm::vec2 texCoord = glm::vec2(ndcPos) / 2.0f + 0.5f;
 

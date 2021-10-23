@@ -22,6 +22,10 @@ namespace Utopian
       SharedPtr<Vk::Image> depthImage;
       SharedPtr<Vk::Image> specularImage; // R = specularity, G = material type, B = water depth, A = undefined
       SharedPtr<Vk::Image> pbrImage; // R = occlusion, G = roughness, B = metallic, A = undefined
+
+      // The main render target where the entire scene is rendered to after
+      // the G-buffer pass.
+      SharedPtr<Vk::Image> mainImage;
    };
 
    struct JobInput
