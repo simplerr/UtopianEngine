@@ -38,10 +38,10 @@ namespace Utopian
       mTexture = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
 
       mIrradianceMap = gRendererUtility().FilterCubemap(mTexture.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
-                    "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+                    "data/shaders/ibl_filtering/irradiance_filter.frag");
 
       mSpecularMap = gRendererUtility().FilterCubemap(mTexture.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
-                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
+                  "data/shaders/ibl_filtering/specular_filter.frag");
 
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/skybox/skybox.vert";

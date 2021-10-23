@@ -46,6 +46,7 @@ void main()
    float roughness = texture(metallicRoughnessSampler, InTex * InTextureTiling).g;
    float metallic = texture(metallicRoughnessSampler, InTex * InTextureTiling).b;
 
+   diffuse *= material.baseColorFactor;
    occlusion *= material.occlusionFactor;
    roughness *= material.roughnessFactor;
    metallic *= material.metallicFactor;

@@ -80,10 +80,10 @@ namespace Utopian
       mIbl.environmentMap = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
 
       mIbl.irradianceMap = gRendererUtility().FilterCubemap(mIbl.environmentMap.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
-                           "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+                           "data/shaders/ibl_filtering/irradiance_filter.frag");
 
       mIbl.specularMap = gRendererUtility().FilterCubemap(mIbl.environmentMap.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
-                         "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
+                         "data/shaders/ibl_filtering/specular_filter.frag");
 
       mIbl.brdfLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
       mIbl.brdfLut->GetSampler().createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;

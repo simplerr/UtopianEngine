@@ -134,14 +134,13 @@ void PhysicallyBasedRendering::InitResources()
    mRenderTarget->SetClearColor(1, 1, 1, 1);
    mRenderTarget->Create();
 
-   // Note: Todo: Hardcoded path to C:/Git/UtopianEngine/.
    Vk::EffectCreateInfo effectDesc;
-   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr.vert";
-   effectDesc.shaderDesc.fragmentShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr.frag";
+   effectDesc.shaderDesc.vertexShaderPath = "source/demos/pbr/shaders/pbr.vert";
+   effectDesc.shaderDesc.fragmentShaderPath = "source/demos/pbr/shaders/pbr.frag";
    effectDesc.pipelineDesc.rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
    mEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
 
-   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/pbr_skinning.vert";
+   effectDesc.shaderDesc.vertexShaderPath = "source/demos/pbr/shaders/pbr_skinning.vert";
    mSkinningEffect = Vk::Effect::Create(device, mRenderTarget->GetRenderPass(), effectDesc);
 
    mEffect->BindUniformBuffer("UBO_input", mVertexInputParameters);
@@ -365,8 +364,8 @@ void PhysicallyBasedRendering::InitSkybox()
    mSkybox.model = gModelLoader().LoadBox();
 
    Vk::EffectCreateInfo effectDesc;
-   effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/skybox.vert";
-   effectDesc.shaderDesc.fragmentShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/skybox.frag";
+   effectDesc.shaderDesc.vertexShaderPath = "source/demos/pbr/shaders/skybox.vert";
+   effectDesc.shaderDesc.fragmentShaderPath = "source/demos/pbr/shaders/skybox.frag";
    mSkybox.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
 
    mSkybox.inputBlock.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -403,10 +402,10 @@ void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
 void PhysicallyBasedRendering::GenerateFilteredCubemaps()
 {
    mIrradianceMap = gRendererUtility().FilterCubemap(mSkybox.texture.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
-                    "C:/Git/UtopianEngine/source/demos/pbr/shaders/irradiance_filter.frag");
+                    "data/shaders/ibl_filtering/irradiance_filter.frag");
 
    mSpecularMap = gRendererUtility().FilterCubemap(mSkybox.texture.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
-                  "C:/Git/UtopianEngine/source/demos/pbr/shaders/specular_filter.frag");
+                  "data/shaders/ibl_filtering/specular_filter.frag");
 }
 
 Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)

@@ -235,7 +235,7 @@ namespace Utopian
       renderTarget->Create();
 
       Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "C:/Git/UtopianEngine/source/demos/pbr/shaders/cubemap_filter.vert";
+      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/ibl_filtering/cubemap_filter.vert";
       effectDesc.shaderDesc.fragmentShaderPath = filterShader;
       SharedPtr<Vk::Effect> effect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
 
