@@ -81,14 +81,6 @@ namespace Utopian
       mPbrEffect->BindCombinedImage("pbrSampler", *gbuffer.pbrImage, *mSampler);
       mPbrEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
 
-      mIbl.environmentMap = Vk::gTextureLoader().LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
-
-      mIbl.irradianceMap = gRendererUtility().FilterCubemap(mIbl.environmentMap.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
-                           "data/shaders/ibl_filtering/irradiance_filter.frag");
-
-      mIbl.specularMap = gRendererUtility().FilterCubemap(mIbl.environmentMap.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
-                         "data/shaders/ibl_filtering/specular_filter.frag");
-
       mIbl.brdfLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
       mIbl.brdfLut->GetSampler().createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
       mIbl.brdfLut->GetSampler().createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
@@ -96,9 +88,34 @@ namespace Utopian
       mIbl.brdfLut->GetSampler().Create();
       mIbl.brdfLut->UpdateDescriptor();
 
-      mPbrEffect->BindCombinedImage("irradianceMap", *mIbl.irradianceMap);
-      mPbrEffect->BindCombinedImage("specularMap", *mIbl.specularMap);
       mPbrEffect->BindCombinedImage("brdfLut", *mIbl.brdfLut);
+   }
+
+   void DeferredJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      AtmosphereJob* atmosphereJob = dynamic_cast<AtmosphereJob*>(jobs[JobGraph::SKYDOME_INDEX]);
+
+      if (atmosphereJob != nullptr)
+      {
+         mPbrEffect->BindCombinedImage("irradianceMap", *atmosphereJob->irradianceMap);
+         mPbrEffect->BindCombinedImage("specularMap", *atmosphereJob->specularMap);
+      }
+      else
+      {
+         Vk::TextureLoader& tl = Vk::gTextureLoader();
+         mIbl.defaultEnvironmentMap = tl.LoadCubemapTexture("data/textures/environments/papermill.ktx", VK_FORMAT_R16G16B16A16_SFLOAT);
+         mIbl.irradianceMap = tl.CreateCubemapTexture(VK_FORMAT_R32G32B32A32_SFLOAT, 64, 64, (uint32_t)floor(log2(64)) + 1);
+         mIbl.specularMap = tl.CreateCubemapTexture(VK_FORMAT_R16G16B16A16_SFLOAT, 512, 512, (uint32_t)floor(log2(512)) + 1);
+
+         gRendererUtility().FilterCubemap(mIbl.defaultEnvironmentMap.get(), mIbl.irradianceMap.get(),
+            "data/shaders/ibl_filtering/irradiance_filter.frag");
+
+         gRendererUtility().FilterCubemap(mIbl.defaultEnvironmentMap.get(), mIbl.specularMap.get(),
+            "data/shaders/ibl_filtering/specular_filter.frag");
+
+         mPbrEffect->BindCombinedImage("irradianceMap", *mIbl.irradianceMap);
+         mPbrEffect->BindCombinedImage("specularMap", *mIbl.specularMap);
+      }
    }
 
    void DeferredJob::Render(const JobInput& jobInput)

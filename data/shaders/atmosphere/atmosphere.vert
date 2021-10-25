@@ -8,10 +8,11 @@
 #include "vertex.glsl"
 #include "shared_variables.glsl"
 
-layout (set = 0, binding = 0) uniform UBO_input
-{
+layout(push_constant) uniform PushConsts {
+   mat4 projection;
+   mat4 view;
    mat4 world;
-} input_ubo;
+} pushConsts;
 
 layout (location = 0) out vec3 OutPosW;
 layout (location = 1) out vec3 OutPosL;
@@ -24,11 +25,11 @@ out gl_PerVertex
 
 void main()
 {
-   OutPosW = (input_ubo.world * vec4(InPosL.xyz, 1.0)).xyz;
+   OutPosW = (pushConsts.world * vec4(InPosL.xyz, 1.0)).xyz;
    OutPosL = InPosL.xyz;
    OutTex = InTex;
 
    // Removes the translation components of the matrix to always keep the skybox at the same distance
-   mat4 viewNoTranslation = mat4(mat3(sharedVariables.viewMatrix));
-   gl_Position = sharedVariables.projectionMatrix * viewNoTranslation * input_ubo.world * vec4(InPosL.xyz, 1.0);
+   mat4 viewNoTranslation = mat4(mat3(pushConsts.view));
+   gl_Position = pushConsts.projection * viewNoTranslation * pushConsts.world * vec4(InPosL.xyz, 1.0);
 }

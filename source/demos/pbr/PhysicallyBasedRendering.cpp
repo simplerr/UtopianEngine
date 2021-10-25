@@ -149,6 +149,9 @@ void PhysicallyBasedRendering::InitResources()
    mSkinningEffect->BindUniformBuffer("UBO_settings", mPbrSettings);
 
    InitSkybox();
+
+   mIrradianceMap = Vk::gTextureLoader().CreateCubemapTexture(VK_FORMAT_R32G32B32A32_SFLOAT, 64, 64, floor(log2(64)) + 1);
+   mSpecularMap = Vk::gTextureLoader().CreateCubemapTexture(VK_FORMAT_R16G16B16A16_SFLOAT, 512, 512, floor(log2(512)) + 1);
    GenerateFilteredCubemaps();
 
    mBRDFLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
@@ -401,11 +404,11 @@ void PhysicallyBasedRendering::RenderSkybox(Vk::CommandBuffer* commandBuffer)
 
 void PhysicallyBasedRendering::GenerateFilteredCubemaps()
 {
-   mIrradianceMap = gRendererUtility().FilterCubemap(mSkybox.texture.get(), 64, VK_FORMAT_R32G32B32A32_SFLOAT,
-                    "data/shaders/ibl_filtering/irradiance_filter.frag");
+   gRendererUtility().FilterCubemap(mSkybox.texture.get(), mIrradianceMap.get(),
+      "data/shaders/ibl_filtering/irradiance_filter.frag");
 
-   mSpecularMap = gRendererUtility().FilterCubemap(mSkybox.texture.get(), 512, VK_FORMAT_R16G16B16A16_SFLOAT,
-                  "data/shaders/ibl_filtering/specular_filter.frag");
+   gRendererUtility().FilterCubemap(mSkybox.texture.get(), mSpecularMap.get(),
+      "data/shaders/ibl_filtering/specular_filter.frag");
 }
 
 Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)

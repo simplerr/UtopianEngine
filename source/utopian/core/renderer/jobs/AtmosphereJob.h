@@ -9,11 +9,6 @@ namespace Utopian
    class AtmosphereJob : public BaseJob
    {
    public:
-
-      UNIFORM_BLOCK_BEGIN(SkydomeInput)
-         UNIFORM_PARAM(glm::mat4, world)
-      UNIFORM_BLOCK_END()
-
       UNIFORM_BLOCK_BEGIN(ParameterBlock)
          UNIFORM_PARAM(glm::vec3, sunDir)
          UNIFORM_PARAM(int, atmosphericScattering);
@@ -23,14 +18,20 @@ namespace Utopian
       ~AtmosphereJob();
 
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
+      void PreRender(const JobInput& jobInput) override;
       void Render(const JobInput& jobInput) override;
 
       SharedPtr<Vk::Image> sunImage;
+      SharedPtr<Vk::Texture> environmentCube;
+      SharedPtr<Vk::Texture> irradianceMap;
+      SharedPtr<Vk::Texture> specularMap;
+   private:
+      void CaptureEnvironmentCubemap(glm::vec3 sunDir);
    private:
       SharedPtr<Vk::RenderTarget> mRenderTarget;
       SharedPtr<Vk::Effect> mEffect;
-      SkydomeInput mInputBlock;
       ParameterBlock mParameterBlock;
       SharedPtr<Model> mSkydomeModel;
+      bool mEnvironmentGenerated;
    };
 }

@@ -31,8 +31,7 @@ namespace Utopian
       SharedPtr<Vk::Image> CreateHostVisibleImage(Vk::Device* device, const SharedPtr<Vk::Image>& srcImage,
                                                   uint32_t width, uint32_t height, VkFormat format);
 
-      SharedPtr<Vk::Texture> FilterCubemap(Vk::Texture* inputCubemap, uint32_t dimension,
-                                           VkFormat format, std::string filterShader);
+      void FilterCubemap(Vk::Texture* inputCubemap, Vk::Texture* outputCubemap, std::string filterShader);
 
    private:
       void SaveToFileKtx(std::string filename, const char* data, uint32_t width, uint32_t height, VkSubresourceLayout layout, VkFormat format);

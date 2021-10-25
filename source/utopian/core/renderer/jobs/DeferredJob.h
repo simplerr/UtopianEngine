@@ -14,6 +14,7 @@ namespace Utopian
       ~DeferredJob();
 
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
+      void PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void Render(const JobInput& jobInput) override;
 
    private:
@@ -28,7 +29,7 @@ namespace Utopian
       SharedPtr<Vk::RenderTarget> renderTarget;
 
       struct ImageBasedLighting {
-         SharedPtr<Vk::Texture> environmentMap;
+         SharedPtr<Vk::Texture> defaultEnvironmentMap;
          SharedPtr<Vk::Texture> irradianceMap;
          SharedPtr<Vk::Texture> specularMap;
          SharedPtr<Vk::Texture> brdfLut;

@@ -218,11 +218,12 @@ namespace Utopian
       commandBuffer.Flush();
    }
 
-   SharedPtr<Vk::Texture> RendererUtility::FilterCubemap(Vk::Texture* inputCubemap, uint32_t dimension,
-                                                         VkFormat format, std::string filterShader)
+   void RendererUtility::FilterCubemap(Vk::Texture* inputCubemap, Vk::Texture* outputCubemap, std::string filterShader)
    {
       Vk::Device* device = gEngine().GetVulkanApp()->GetDevice();
 
+      const VkFormat format = outputCubemap->GetImage().GetFormat();
+      const uint32_t dimension = outputCubemap->GetWidth();
       const uint32_t numMipLevels = static_cast<uint32_t>(floor(log2(dimension))) + 1;
 
       // Offscreen framebuffer
@@ -241,7 +242,7 @@ namespace Utopian
 
       effect->BindCombinedImage("samplerEnv", *inputCubemap);
 
-      SharedPtr<Vk::Texture> outputCubemap = Vk::gTextureLoader().CreateCubemapTexture(format, dimension, dimension, numMipLevels);
+      //SharedPtr<Vk::Texture> outputCubemap = Vk::gTextureLoader().CreateCubemapTexture(format, dimension, dimension, numMipLevels);
 
       glm::mat4 matrices[] =
       {
@@ -321,7 +322,5 @@ namespace Utopian
 
       renderTarget->EndDebugLabelAndQueries();
       commandBuffer->Flush();
-
-      return outputCubemap;
    }
 }

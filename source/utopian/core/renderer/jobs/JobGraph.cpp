@@ -82,6 +82,16 @@ namespace Utopian
       vulkanApp->SetWaitSubmitSemaphore(fxaaJob->GetCompletedSemahore());
       AddJob(fxaaJob);
 
+      for(auto job : mJobs)
+      {
+         job->Init(mJobs, mGBuffer);
+      }
+
+      for(auto job : mJobs)
+      {
+         job->PostInit(mJobs, mGBuffer);
+      }
+
       /* Add debug render targets */
       ImGuiRenderer* imGuiRenderer = gRenderer().GetUiOverlay();
       mDebugDescriptorSets.position = imGuiRenderer->AddImage(*mGBuffer.positionImage);
@@ -104,6 +114,12 @@ namespace Utopian
    void JobGraph::Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings)
    {
       JobInput jobInput(sceneInfo, mJobs, renderingSettings);
+
+      for (auto& job : mJobs)
+      {
+         job->PreRender(jobInput);
+      }
+
       for (auto& job : mJobs)
       {
          job->Render(jobInput);
@@ -184,7 +200,6 @@ namespace Utopian
       }
 
       mJobs.push_back(job);
-      job->Init(mJobs, mGBuffer);
    }
 
    void JobGraph::EnableJob(JobIndex jobIndex, bool enabled)

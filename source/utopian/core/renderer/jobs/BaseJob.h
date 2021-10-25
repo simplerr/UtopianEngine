@@ -58,7 +58,9 @@ namespace Utopian
        * it should be done inside of this function.
        */
       virtual void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) = 0;
+      virtual void PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) {};
 
+      virtual void PreRender(const JobInput& jobInput) {};
       virtual void Render(const JobInput& jobInput) = 0;
       virtual void Update() {};
 
