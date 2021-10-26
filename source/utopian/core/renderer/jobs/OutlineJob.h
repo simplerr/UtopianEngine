@@ -29,6 +29,7 @@ namespace Utopian
    private:
       struct {
          SharedPtr<Vk::Effect> effect;
+         SharedPtr<Vk::Effect> effectSkinning;
          SharedPtr<Vk::RenderTarget> renderTarget;
          SharedPtr<Vk::Image> image;
          SharedPtr<Vk::Semaphore> semaphore;

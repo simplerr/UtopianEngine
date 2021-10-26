@@ -12,6 +12,8 @@
 #include "core/renderer/Primitive.h"
 #include "SkinAnimator.h"
 
+#define JOINT_MATRICES_DESCRIPTOR_SET (2u)
+
 namespace Utopian
 {
    UNIFORM_BLOCK_BEGIN(MaterialProperties)

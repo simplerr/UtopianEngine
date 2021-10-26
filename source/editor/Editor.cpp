@@ -567,6 +567,7 @@ namespace Utopian
    {
       // Add paths to models that can be loaded
       AddActorCreation("data/models/gltf/Fox/glTF/Fox.gltf");
+      AddActorCreation("data/models/gltf/CesiumMan.gltf");
       AddActorCreation("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
       AddActorCreation("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf");
       AddActorCreation("data/models/gltf/sphere.gltf", ActorTemplate::PBR_SPHERE);

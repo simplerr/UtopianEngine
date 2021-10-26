@@ -48,6 +48,7 @@ namespace Utopian
       std::vector<VkClearValue> mClearValues;
       SharedPtr<Vk::Image> mDepthImage;
       SharedPtr<Vk::Effect> mEffect;
+      SharedPtr<Vk::Effect> mEffectSkinning;
       SharedPtr<Vk::Effect> mEffectInstanced;
       CascadeTransforms mCascadeTransforms;
       const uint32_t SHADOWMAP_DIMENSION = 4096;

@@ -91,6 +91,7 @@ namespace Utopian
       SharedPtr<Vk::Effect> mGBufferEffectWireframe;
       SharedPtr<Vk::Effect> mInstancedAnimationEffect;
       SharedPtr<Vk::Effect> mGBufferEffectInstanced;
+      SharedPtr<Vk::Effect> mGBufferEffectSkinning;
 
       SettingsBlock mSettingsBlock;
       SphereUniformBuffer mFoliageSpheresBlock;

@@ -44,6 +44,7 @@ namespace Utopian
       double mFrameTime = 0.0;
       double mAverageFrameTime = 0.0;
       float mFrameTimeSamplePeriod = 1000.0f;
+      double mDeltaTime = 0.0;
    };
 
    Timer& gTimer();

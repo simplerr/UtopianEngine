@@ -5,6 +5,7 @@
 #include "core/renderer/Model.h"
 #include "core/World.h"
 #include "core/ModelLoader.h"
+#include "utility/Timer.h"
 #include "im3d/im3d.h"
 
 namespace Utopian
@@ -22,6 +23,8 @@ namespace Utopian
 
    void CRenderable::Update()
    {
+      mInternal->UpdateAnimation(gTimer().GetFrameTime());
+
       if (HasRenderFlags(RENDER_FLAG_BOUNDING_BOX))
       {
          glm::vec3 position = mInternal->GetTransform().GetPosition();

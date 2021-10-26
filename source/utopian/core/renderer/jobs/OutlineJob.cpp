@@ -43,7 +43,11 @@ namespace Utopian
       effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/color/color.frag";
       mMaskPass.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mMaskPass.renderTarget->GetRenderPass(), effectDesc);
 
+      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/color/color_skinning.vert";
+      mMaskPass.effectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mMaskPass.renderTarget->GetRenderPass(), effectDesc);
+
       mMaskPass.effect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mMaskPass.effectSkinning->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
    }
 
    void OutlineJob::InitEdgePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -84,13 +88,25 @@ namespace Utopian
                std::vector<RenderCommand> renderCommands;
                model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
-               commandBuffer->CmdBindPipeline(mMaskPass.effect->GetPipeline());
-               commandBuffer->CmdBindDescriptorSets(mMaskPass.effect);
+               Vk::Effect* effect = mMaskPass.effect.get();
+               if (model->IsAnimated())
+                  effect = mMaskPass.effectSkinning.get();
+
+               commandBuffer->CmdBindPipeline(effect->GetPipeline());
+
+               VkDescriptorSet descriptorSets[1] = { effect->GetDescriptorSet(0).GetVkHandle() };
+               commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS, 0);
 
                for (RenderCommand& command : renderCommands)
                {
+                  if (command.skinDescriptorSet != VK_NULL_HANDLE)
+                  {
+                     commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
+                                                         VK_PIPELINE_BIND_POINT_GRAPHICS, 1);
+                  }
+
                   Vk::PushConstantBlock pushConsts(command.world, renderable->GetColor());
-                  commandBuffer->CmdPushConstants(mMaskPass.effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
+                  commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
                   for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
                   {

@@ -8,10 +8,6 @@
 layout (push_constant) uniform PushConstants {
    mat4 world;
    vec4 color;
-
-   // These exceeds the 128 byte limit
-   // vec2 textureTiling;
-   // vec2 pad;
 } pushConstants;
 
 layout (location = 0) out vec4 OutColor;

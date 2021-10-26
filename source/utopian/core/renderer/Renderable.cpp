@@ -41,6 +41,11 @@ namespace Utopian
       Renderer::Instance().AddRenderable(this);
    }
 
+   void Renderable::UpdateAnimation(float deltaTime)
+   {
+      mModel->UpdateAnimation(deltaTime / 1000.0f);
+   }
+
    Model* Renderable::GetModel()
    {
       return mModel.get();

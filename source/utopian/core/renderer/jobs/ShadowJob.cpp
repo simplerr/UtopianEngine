@@ -50,6 +50,9 @@ namespace Utopian
       effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
       mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderPass.get(), effectDesc);
 
+      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/shadowmap/shadowmap_skinning.vert";
+      mEffectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderPass.get(), effectDesc);
+
       // Custom vertex description due to instancing
       SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
       vertexDescription->AddBinding(BINDING_1, sizeof(InstanceDataGPU), VK_VERTEX_INPUT_RATE_INSTANCE);
@@ -66,6 +69,7 @@ namespace Utopian
 
       mCascadeTransforms.Create(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mEffect->BindUniformBuffer("UBO_cascadeTransforms", mCascadeTransforms);
+      mEffectSkinning->BindUniformBuffer("UBO_cascadeTransforms", mCascadeTransforms);
       mEffectInstanced->BindUniformBuffer("UBO_cascadeTransforms", mCascadeTransforms);
 
       mQueryPool = std::make_shared<Vk::QueryPoolTimestamp>(device);
@@ -157,8 +161,6 @@ namespace Utopian
                }
             }
 
-            mCommandBuffer->CmdBindPipeline(mEffect->GetPipeline());
-
             /* Render all renderables */
             for (auto& renderable : jobInput.sceneInfo.renderables)
             {
@@ -169,18 +171,32 @@ namespace Utopian
                std::vector<RenderCommand> renderCommands;
                model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
+               Vk::Effect* effect = mEffect.get();
+               if (model->IsAnimated())
+                  effect = mEffectSkinning.get();
+
+               // Note: Todo: all renderables with animation should be sorted
+               // so that we don't have to change the pipeline between each renderable.
+               mCommandBuffer->CmdBindPipeline(effect->GetPipeline());
+
                for (RenderCommand& command : renderCommands)
                {
+                  if (command.skinDescriptorSet != VK_NULL_HANDLE)
+                  {
+                     mCommandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
+                                                          VK_PIPELINE_BIND_POINT_GRAPHICS, JOINT_MATRICES_DESCRIPTOR_SET);
+                  }
+
                   CascadePushConst pushConst(command.world, cascadeIndex);
-                  mCommandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
+                  mCommandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(CascadePushConst), &pushConst);
 
                   for (uint32_t i = 0; i < command.mesh->primitives.size(); i++)
                   {
                      Primitive* primitive = command.mesh->primitives[i];
 
                      VkDescriptorSet materialDescriptorSet = command.mesh->materials[i]->descriptorSet->GetVkHandle();
-                     VkDescriptorSet descriptorSets[2] = { mEffect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
-                     mCommandBuffer->CmdBindDescriptorSet(mEffect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
+                     VkDescriptorSet descriptorSets[2] = { effect->GetDescriptorSet(0).GetVkHandle(), materialDescriptorSet };
+                     mCommandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 2, descriptorSets, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
                      gRendererUtility().DrawPrimitive(mCommandBuffer.get(), primitive);
                   }

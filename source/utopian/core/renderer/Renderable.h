@@ -32,6 +32,7 @@ namespace Utopian
 
       static SharedPtr<Renderable> Create();
 
+      void UpdateAnimation(float deltaTime);
       void LoadModel(std::string path);
 
       void SetModel(SharedPtr<Model> model);

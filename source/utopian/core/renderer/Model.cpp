@@ -121,6 +121,8 @@ namespace Utopian
 
    void Model::UpdateAnimation(float deltaTime)
    {
+      // Note: Todo: Updating the animation is very slow and needs to be
+      // improved, see #135.
       if (IsAnimated())
       {
          mSkinAnimator->UpdateAnimation(deltaTime);

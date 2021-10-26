@@ -57,6 +57,11 @@ namespace Utopian
       effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
       mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
 
+      Vk::EffectCreateInfo effectDescSkinning;
+      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_skinning.vert";
+      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+      mGBufferEffectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+
       Vk::EffectCreateInfo effectDescLine;
       effectDescLine.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
       effectDescLine.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
@@ -85,13 +90,15 @@ namespace Utopian
       effectDescInstancing.pipelineDesc.OverrideVertexInput(vertexDescription);
       mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancing);
 
+      mGBufferEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mGBufferEffectSkinning->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mInstancedAnimationEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mGBufferEffectInstanced->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mGBufferEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mGBufferEffectWireframe->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
 
       mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mGBufferEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
+      mGBufferEffectSkinning->BindUniformBuffer("UBO_settings", mSettingsBlock);
       mGBufferEffectWireframe->BindUniformBuffer("UBO_settings", mSettingsBlock);
       mInstancedAnimationEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
       mGBufferEffectInstanced->BindUniformBuffer("UBO_settings", mSettingsBlock);
@@ -196,18 +203,27 @@ namespace Utopian
          if (!renderable->IsVisible() || !(renderable->HasRenderFlags(RENDER_FLAG_DEFERRED) || renderable->HasRenderFlags(RENDER_FLAG_WIREFRAME)))
             continue;
 
+         Model* model = renderable->GetModel();
+
          Vk::Effect* effect = mGBufferEffect.get();
          if (renderable->HasRenderFlags(RENDER_FLAG_WIREFRAME))
             effect = mGBufferEffectWireframe.get();
+         else if(model->IsAnimated())
+            effect = mGBufferEffectSkinning.get();
 
          commandBuffer->CmdBindPipeline(effect->GetPipeline());
 
-         Model* model = renderable->GetModel();
          std::vector<RenderCommand> renderCommands;
          model->GetRenderCommands(renderCommands, renderable->GetTransform().GetWorldMatrix());
 
          for (RenderCommand& command : renderCommands)
          {
+            if (command.skinDescriptorSet != VK_NULL_HANDLE)
+            {
+               commandBuffer->CmdBindDescriptorSet(effect->GetPipelineInterface(), 1, &command.skinDescriptorSet,
+                                                   VK_PIPELINE_BIND_POINT_GRAPHICS, JOINT_MATRICES_DESCRIPTOR_SET);
+            }
+
             GBufferPushConstants pushConsts(command.world, renderable->GetColor(), renderable->GetTextureTiling());
             commandBuffer->CmdPushConstants(effect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(pushConsts), &pushConsts);
 
