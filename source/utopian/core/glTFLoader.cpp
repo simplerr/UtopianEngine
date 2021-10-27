@@ -64,13 +64,13 @@ namespace Utopian
             skinAnimator->CreateSkinningDescriptorSet(device, mMeshSkinningDescriptorSetLayout.get(), mMeshSkinningDescriptorPool.get());
             model->AddSkinAnimator(skinAnimator);
          }
+
+         model->Init();
       }
       else
       {
          UTO_LOG("Failed to load glTF model " + filename);
       }
-
-      model->Init();
 
       return model;
    }
