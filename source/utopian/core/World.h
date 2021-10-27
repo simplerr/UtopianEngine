@@ -48,6 +48,7 @@ namespace Utopian
       ~World();
    
       void Update();
+      void RemoveDeadActors();
       void AddActor(const SharedPtr<Actor>& actor);
       void AddComponent(const SharedPtr<Component>& component);
       void SetPlayerActor(Actor* playerActor);

@@ -155,6 +155,7 @@ namespace Utopian
       if (mVulkanApp->PreviousFrameComplete())
       {
          mImGuiRenderer->GarbageCollect();
+         gWorld().RemoveDeadActors();
 
          if (mPreFrameCallback != nullptr)
             mPreFrameCallback();

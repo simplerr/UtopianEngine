@@ -111,24 +111,6 @@ namespace Utopian
 
    void World::Update()
    {
-      // Loop through actors and check if any should be removed
-      for (auto iter = mActors.begin(); iter != mActors.end();)
-      {
-         SharedPtr<Actor> actor = (*iter);
-         if (!actor->IsAlive())
-         {
-            std::vector<Component*> components = actor->GetComponents();
-            for (auto& component : components)
-               component->OnDestroyed();
-
-            iter = mActors.erase(iter);
-         }
-         else
-         {
-            iter++;
-         }
-      }
-
       SynchronizeNodeTransforms();
       
       // Update every active component
@@ -137,6 +119,39 @@ namespace Utopian
          if (entry->IsActive())
          {
             entry->Update();
+         }
+      }
+   }
+
+   void World::RemoveDeadActors()
+   {
+      // Loop through actors and check if any should be removed
+      for (auto actorIter = mActors.begin(); actorIter != mActors.end();)
+      {
+         SharedPtr<Actor> actor = (*actorIter);
+         if (!actor->IsAlive())
+         {
+            std::vector<Component*> actorComponents = actor->GetComponents();
+            for (auto& actorComponent : actorComponents)
+            {
+               actorComponent->OnDestroyed();
+
+               // Remove the component from the World as well
+               for (auto componentIter = mComponents.begin(); componentIter != mComponents.end();)
+               {
+                  SharedPtr<Component> worldComponent = (*componentIter);
+                  if (actorComponent == worldComponent.get())
+                     componentIter = mComponents.erase(componentIter);
+                  else
+                     componentIter++;
+               }
+            }
+
+            actorIter = mActors.erase(actorIter);
+         }
+         else
+         {
+            actorIter++;
          }
       }
    }

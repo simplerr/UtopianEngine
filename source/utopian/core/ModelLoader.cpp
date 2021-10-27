@@ -57,11 +57,11 @@ namespace Utopian
       return mMeshTexturesDescriptorPool.get();
    }
 
-   SharedPtr<Model> ModelLoader::LoadModel(std::string filename)
+   SharedPtr<Model> ModelLoader::LoadModel(std::string filename, bool uniqueInstance)
    {
       // Check if the model already is loaded
-      // if (mModelMap.find(filename) != mModelMap.end())
-      //    return mModelMap[filename];
+      if (!uniqueInstance && (mModelMap.find(filename) != mModelMap.end()))
+         return mModelMap[filename];
 
       SharedPtr<Model> model = nullptr;
 
@@ -79,7 +79,7 @@ namespace Utopian
 
          model = mPlaceholderModel;
       }
-      else
+      else if(!uniqueInstance)
          mModelMap[filename] = model;
 
       return model;

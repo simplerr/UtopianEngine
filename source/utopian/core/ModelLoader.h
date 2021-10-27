@@ -31,7 +31,7 @@ namespace Utopian
       ModelLoader(Vk::Device* device);
       ~ModelLoader();
 
-      SharedPtr<Model> LoadModel(std::string filename);
+      SharedPtr<Model> LoadModel(std::string filename, bool uniqueInstance = true);
       SharedPtr<Model> LoadGrid(float cellSize, int numCells);
       SharedPtr<Model> LoadBox();
       SharedPtr<Model> LoadQuad();
