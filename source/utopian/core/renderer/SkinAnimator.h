@@ -56,17 +56,25 @@ namespace Utopian
       void LoadSkins(tinygltf::Model& input, Model* model, Vk::Device* device);
       void LoadAnimations(tinygltf::Model& input, Model* model);
 
-      VkDescriptorSet GetJointMatricesDescriptorSet(int32_t skin);
-
-      void CreateSkinningDescriptorSet(Vk::Device* device, Vk::DescriptorSetLayout* setLayout, Vk::DescriptorPool* pool);
-
       void UpdateAnimation(float deltaTime);
       void UpdateJoints(Node* node);
       glm::mat4 GetNodeMatrix(Node* node);
+
+      VkDescriptorSet GetJointMatricesDescriptorSet(int32_t skin);
+      uint32_t GetNumAnimations() const;
+      uint32_t GetActiveAnimation() const;
+      std::string GetAnimationName(uint32_t index) const;
+      bool GetPaused() const;
+
+      void SetAnimation(uint32_t index);
+      void SetPaused(bool paused);
+
+      void CreateSkinningDescriptorSet(Vk::Device* device, Vk::DescriptorSetLayout* setLayout, Vk::DescriptorPool* pool);
 
    private:
       std::vector<Skin> mSkins;
       std::vector<Animation> mAnimations;
       uint32_t mActiveAnimation = 0;
+      bool mPaused = false;
    };
 }

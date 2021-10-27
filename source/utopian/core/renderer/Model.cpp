@@ -146,6 +146,14 @@ namespace Utopian
       return mMaterials[index].get();
    }
 
+   SkinAnimator* Model::GetAnimator()
+   {
+      if (IsAnimated())
+         return mSkinAnimator.get();
+      else
+         return nullptr;
+   }
+
    void Model::GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix)
    {
       for (auto& node : mRootNodes) {

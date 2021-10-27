@@ -70,7 +70,11 @@ namespace Utopian
       for (size_t i = 0; i < input.animations.size(); i++)
       {
          tinygltf::Animation glTFAnimation = input.animations[i];
-         mAnimations[i].name = glTFAnimation.name;
+
+         if (glTFAnimation.name != "")
+            mAnimations[i].name = glTFAnimation.name;
+         else
+            mAnimations[i].name = "animation_" + std::to_string(i);
 
          // Samplers
          mAnimations[i].samplers.resize(glTFAnimation.samplers.size());
@@ -150,21 +154,6 @@ namespace Utopian
       }
    }
 
-   void SkinAnimator::CreateSkinningDescriptorSet(Vk::Device* device, Vk::DescriptorSetLayout* setLayout, Vk::DescriptorPool* pool)
-   {
-      for (auto& skin : mSkins)
-      {
-         VkDescriptorBufferInfo descriptor;
-         descriptor.buffer = skin.ssbo->GetVkHandle();
-         descriptor.range = sizeof(glm::mat4) * skin.inverseBindMatrices.size();;
-         descriptor.offset = 0;
-
-         skin.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, setLayout, pool);
-         skin.descriptorSet->BindStorageBuffer(0, &descriptor);
-         skin.descriptorSet->UpdateDescriptorSets();
-      }
-   }
-
    void SkinAnimator::UpdateAnimation(float deltaTime)
    {
       if (mAnimations.size() == 0)
@@ -175,6 +164,9 @@ namespace Utopian
          UTO_LOG("No animation with index " + std::to_string(mActiveAnimation));
          return;
       }
+
+      if (GetPaused())
+         return;
 
       Animation &animation = mAnimations[mActiveAnimation];
       animation.currentTime += deltaTime;
@@ -251,13 +243,6 @@ namespace Utopian
       }
    }
 
-   VkDescriptorSet SkinAnimator::GetJointMatricesDescriptorSet(int32_t skin)
-   {
-      assert(skin < mSkins.size());
-
-      return mSkins[skin].descriptorSet->GetVkHandle();
-   }
-
    glm::mat4 SkinAnimator::GetNodeMatrix(Node* node)
    {
       glm::mat4 nodeMatrix = node->GetLocalMatrix();
@@ -270,5 +255,68 @@ namespace Utopian
       }
 
       return nodeMatrix;
+   }
+
+   VkDescriptorSet SkinAnimator::GetJointMatricesDescriptorSet(int32_t skin)
+   {
+      assert(skin < mSkins.size());
+
+      return mSkins[skin].descriptorSet->GetVkHandle();
+   }
+
+   uint32_t SkinAnimator::GetNumAnimations() const
+   {
+      return mAnimations.size();
+   }
+
+   uint32_t SkinAnimator::GetActiveAnimation() const
+   {
+      return mActiveAnimation;
+   }
+
+   std::string SkinAnimator::GetAnimationName(uint32_t index) const
+   {
+      if (index > static_cast<uint32_t>(mAnimations.size()) - 1)
+      {
+         UTO_LOG("No animation with index " + std::to_string(index));
+         return "invalid_animation";
+      }
+      else
+         return mAnimations[index].name;
+   }
+
+   bool SkinAnimator::GetPaused() const
+   {
+      return mPaused;
+   }
+
+   void SkinAnimator::SetAnimation(uint32_t index)
+   {
+      if (index > static_cast<uint32_t>(mAnimations.size()) - 1)
+      {
+         UTO_LOG("No animation with index " + std::to_string(index));
+      }
+
+      mActiveAnimation = index;
+   }
+   
+   void SkinAnimator::SetPaused(bool paused)
+   {
+      mPaused = paused;
+   }
+
+   void SkinAnimator::CreateSkinningDescriptorSet(Vk::Device* device, Vk::DescriptorSetLayout* setLayout, Vk::DescriptorPool* pool)
+   {
+      for (auto& skin : mSkins)
+      {
+         VkDescriptorBufferInfo descriptor;
+         descriptor.buffer = skin.ssbo->GetVkHandle();
+         descriptor.range = sizeof(glm::mat4) * skin.inverseBindMatrices.size();;
+         descriptor.offset = 0;
+
+         skin.descriptorSet = std::make_shared<Vk::DescriptorSet>(device, setLayout, pool);
+         skin.descriptorSet->BindStorageBuffer(0, &descriptor);
+         skin.descriptorSet->UpdateDescriptorSets();
+      }
    }
 }

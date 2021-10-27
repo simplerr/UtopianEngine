@@ -105,6 +105,7 @@ namespace Utopian
 
       Primitive* GetPrimitive(uint32_t index);
       Material* GetMaterial(uint32_t index);
+      SkinAnimator* GetAnimator();
 
       void GetRenderCommands(std::vector<RenderCommand>& renderCommands, glm::mat4 worldMatrix);
       void AppendRenderCommands(std::vector<RenderCommand>& renderCommands, Node* node, glm::mat4 worldMatrix);

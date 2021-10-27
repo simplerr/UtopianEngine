@@ -122,6 +122,28 @@ namespace Utopian
          }
       }
 
+      if (model->IsAnimated())
+      {
+         if (ImGui::CollapsingHeader("Animations"))
+         {
+            SkinAnimator* animator = model->GetAnimator();
+
+            bool paused = animator->GetPaused();
+            ImGui::Checkbox("Paused", &paused);
+            animator->SetPaused(paused);
+
+            std::string uiString = "";
+            for (uint32_t i = 0; i < animator->GetNumAnimations(); i++)
+               uiString += animator->GetAnimationName(i) + '\0';
+
+            int activeAnimation = animator->GetActiveAnimation();
+            if (ImGui::Combo("Active animation", &activeAnimation, uiString.c_str()))
+            {
+               animator->SetAnimation(activeAnimation);
+            }
+         }
+      }
+
       // Since it's inside the ImGui::ImageButton we are changing the texture
       // we cannot change the UI texture immedietly has that would make the
       // descriptor set used in ImGuiRenderer::UpdateCommandBuffers() invalid.
