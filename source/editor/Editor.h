@@ -3,6 +3,7 @@
 #include "utility/Common.h"
 #include <vector>
 #include <string>
+#include <glm/glm.hpp>
 #include "ui/Console.h"
 
 namespace Utopian
@@ -47,7 +48,8 @@ namespace Utopian
       void Draw();
       void PreFrame();
 
-      void AddActorCreation(std::string path, ActorTemplate actorTemplate = STATIC_MODEL);
+      void CreateActor(std::string modelPath, ActorTemplate actorTemplate, glm::vec3 position);
+      void AddActorCreation(std::string modelPath, ActorTemplate actorTemplate = STATIC_MODEL);
    private:
       void UpdateSelectionType();
       void DrawGizmo();

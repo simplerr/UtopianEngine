@@ -26,6 +26,7 @@
 #include "im3d/im3d.h"
 #include "core/Log.h"
 #include <imgui/imgui.h>
+#include "nativefiledialog/nfd.h"
 #include <random>
 
 namespace Utopian
@@ -242,116 +243,7 @@ namespace Utopian
 
          if (addActor)
          {
-            SharedPtr<Actor> actor = Actor::Create("EditorActor");
-            CTransform* transform = actor->AddComponent<CTransform>(creationPosition);
-            CRenderable* renderable = actor->AddComponent<CRenderable>();
-
-            /*
-            * Todo:
-            * These are just some example templates for creating actors
-            * It will be extended so that new actor templates can be 
-            * configured completly in Lua and show up in the editor.
-            */
-            if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
-            {
-               transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-
-               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-
-               renderable->LoadModel(mModelPaths[mSelectedModel]);
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_POINT_LIGHT)
-            {
-               renderable->LoadModel("data/models/teapot.obj");
-               renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
-
-               CLight* light = actor->AddComponent<CLight>();
-               CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
-
-               glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
-               light->SetColor(color);
-               renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_BOX)
-            {
-               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-               rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
-
-               renderable->LoadModel(mModelPaths[mSelectedModel]);
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE)
-            {
-               float scale = Math::GetRandom(20.0, 20.0f);
-
-               transform->SetScale(glm::vec3(scale));
-
-               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-               rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
-               renderable->LoadModel(mModelPaths[mSelectedModel]);
-               renderable->SetPushFoliage(true);
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::RIGID_SPHERE_LIGHT)
-            {
-               transform->SetScale(glm::vec3(20));
-
-               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-               rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
-               renderable->LoadModel("data/models/sphere_lowres.obj");
-               renderable->SetPushFoliage(true);
-               renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
-
-               // Copy paste from static light
-               CLight* light = actor->AddComponent<CLight>();
-               CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
-
-               glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
-               light->SetColor(color);
-               renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::SPAWN_POINT)
-            {
-               transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-               renderable->LoadModel("data/models/spawn_cone.fbx");
-               actor->AddComponent<CSpawnPoint>();
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::FINISH_POINT)
-            {
-               renderable->LoadModel("data/models/spawn_cylinder.fbx");
-               actor->AddComponent<CFinishPoint>();
-            }
-            else if (mTemplateTypes[mSelectedModel] == ActorTemplate::PBR_SPHERE)
-            {
-               transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
-
-               CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
-
-               renderable->LoadModel(mModelPaths[mSelectedModel]);
-
-               Utopian::Model* model = renderable->GetInternal()->GetModel();
-               Utopian::Material* material = model->GetMaterial(0);
-               material->properties->data.baseColorFactor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-               material->properties->data.metallicFactor = 1.0f;
-               material->properties->data.roughnessFactor = 0.0;
-               material->properties->data.occlusionFactor = 0.5;
-               material->properties->UpdateMemory();
-            }
-
-            World::Instance().SynchronizeNodeTransforms();
-            actor->PostInit();
-
-            CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
-            if (rigidBody != nullptr)
-            {
-               const float impulse = 10.0f;
-               rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
-
-               // Hack:
-               if (mTemplateTypes[mSelectedModel] == ActorTemplate::STATIC_MODEL)
-               {
-                  // Must be called after PostInit() since it needs the Renderable component
-                  rigidBody->SetKinematic(true);
-               }
-            }
+            CreateActor(mModelPaths[mSelectedModel], mTemplateTypes[mSelectedModel], creationPosition);
          }
       }
    }
@@ -382,6 +274,15 @@ namespace Utopian
    {
       if (ImGui::CollapsingHeader("Create", ImGuiTreeNodeFlags_DefaultOpen))
       {
+         if (ImGui::Button("Load model from file ..."))
+         {
+            nfdchar_t* modelPath = NULL;
+            if (NFD_OpenDialog(NULL, NULL, &modelPath) == NFD_OKAY)
+            {
+               CreateActor(std::string(modelPath), STATIC_MODEL, glm::vec3(0.0f));
+            }
+         }
+
          ImGui::PushItemWidth(ImGui::GetWindowWidth());
          ImGui::Text("Models:");
          ImGui::BeginChild(ImGui::GetID("create_object_scroll"), ImVec2(0, 250));
@@ -561,6 +462,125 @@ namespace Utopian
 
       // Create inspector UI
       mActorInspector->SetActor(mSelectedActor);
+   }
+
+   void Editor::CreateActor(std::string modelPath, ActorTemplate actorTemplate, glm::vec3 position)
+   {
+      std::string name = modelPath.substr(modelPath.find_last_of("/") + 1);
+      name = name.substr(name.find_last_of("\\") + 1);
+
+      SharedPtr<Actor> actor = Actor::Create(name);
+      CTransform* transform = actor->AddComponent<CTransform>(position);
+      CRenderable* renderable = actor->AddComponent<CRenderable>();
+
+      /*
+      * Todo:
+      * These are just some example templates for creating actors
+      * It will be extended so that new actor templates can be 
+      * configured completly in Lua and show up in the editor.
+      */
+      if (actorTemplate == ActorTemplate::STATIC_MODEL)
+      {
+         transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+
+         CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+
+         renderable->LoadModel(modelPath);
+      }
+      else if (actorTemplate == ActorTemplate::STATIC_POINT_LIGHT)
+      {
+         renderable->LoadModel("data/models/teapot.obj");
+         renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
+
+         CLight* light = actor->AddComponent<CLight>();
+         CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
+
+         glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
+         light->SetColor(color);
+         renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
+      }
+      else if (actorTemplate == ActorTemplate::RIGID_BOX)
+      {
+         CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+         rigidBody->SetCollisionShapeType(CollisionShapeType::BOX);
+
+         renderable->LoadModel(modelPath);
+      }
+      else if (actorTemplate == ActorTemplate::RIGID_SPHERE)
+      {
+         float scale = Math::GetRandom(20.0, 20.0f);
+
+         transform->SetScale(glm::vec3(scale));
+
+         CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+         rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
+         renderable->LoadModel(modelPath);
+         renderable->SetPushFoliage(true);
+      }
+      else if (actorTemplate == ActorTemplate::RIGID_SPHERE_LIGHT)
+      {
+         transform->SetScale(glm::vec3(20));
+
+         CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+         rigidBody->SetCollisionShapeType(CollisionShapeType::SPHERE);
+         renderable->LoadModel("data/models/sphere_lowres.obj");
+         renderable->SetPushFoliage(true);
+         renderable->SetRenderFlags(RenderFlags::RENDER_FLAG_COLOR);
+
+         // Copy paste from static light
+         CLight* light = actor->AddComponent<CLight>();
+         CBloomLight* bloomLight = actor->AddComponent<CBloomLight>();
+
+         glm::vec4 color = glm::vec4(Math::GetRandomVec3(1.0f, 1.0f), 0.0f);
+         light->SetColor(color);
+         renderable->SetColor(glm::vec4(color.r, color.g, color.g, 2.4));
+      }
+      else if (actorTemplate == ActorTemplate::SPAWN_POINT)
+      {
+         transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+         renderable->LoadModel("data/models/spawn_cone.fbx");
+         actor->AddComponent<CSpawnPoint>();
+      }
+      else if (actorTemplate == ActorTemplate::FINISH_POINT)
+      {
+         renderable->LoadModel("data/models/spawn_cylinder.fbx");
+         actor->AddComponent<CFinishPoint>();
+      }
+      else if (actorTemplate == ActorTemplate::PBR_SPHERE)
+      {
+         transform->AddRotation(glm::vec3(glm::pi<float>(), 0, 0));
+
+         CRigidBody* rigidBody = actor->AddComponent<CRigidBody>();
+
+         renderable->LoadModel(modelPath);
+
+         Utopian::Model* model = renderable->GetInternal()->GetModel();
+         Utopian::Material* material = model->GetMaterial(0);
+         material->properties->data.baseColorFactor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+         material->properties->data.metallicFactor = 1.0f;
+         material->properties->data.roughnessFactor = 0.0;
+         material->properties->data.occlusionFactor = 0.5;
+         material->properties->UpdateMemory();
+      }
+
+      World::Instance().SynchronizeNodeTransforms();
+      actor->PostInit();
+
+      CRigidBody* rigidBody = actor->GetComponent<CRigidBody>();
+      if (rigidBody != nullptr)
+      {
+         const float impulse = 10.0f;
+         rigidBody->ApplyCentralImpulse(gRenderer().GetMainCamera()->GetDirection() * impulse);
+
+         // Hack:
+         if (actorTemplate == ActorTemplate::STATIC_MODEL)
+         {
+            // Must be called after PostInit() since it needs the Renderable component
+            rigidBody->SetKinematic(true);
+         }
+      }
+
+      OnActorSelected(actor.get());
    }
 
    void Editor::AddPaths()
