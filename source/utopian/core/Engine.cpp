@@ -155,7 +155,6 @@ namespace Utopian
       if (mVulkanApp->PreviousFrameComplete())
       {
          mImGuiRenderer->GarbageCollect();
-         gWorld().RemoveDeadActors();
 
          if (mPreFrameCallback != nullptr)
             mPreFrameCallback();
@@ -347,7 +346,7 @@ namespace Utopian
    void ECSPlugin::PostInit(Engine* engine)
    {
       ActorFactory::LoadFromFile(engine->GetVulkanApp()->GetWindow(), "data/scene.lua");
-      gWorld().LoadScene();
+      gWorld().LoadProceduralAssets();
 
       ScriptExports::Register();
       ScriptImports::Register();
@@ -369,6 +368,7 @@ namespace Utopian
 
    void ECSPlugin::Draw()
    {
+      gWorld().RemoveDeadActors();
    }
 
    void ECSPlugin::NewFrame()

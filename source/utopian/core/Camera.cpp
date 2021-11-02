@@ -19,6 +19,11 @@ namespace Utopian
       mWindow = window;
    }
 
+   Camera::~Camera()
+   {
+
+   }
+
    SharedPtr<Camera> Camera::Create(Utopian::Window* window, glm::vec3 position, float fieldOfView, float nearPlane, float farPlane)
    {
       SharedPtr<Camera> instance(new Camera(window, position, fieldOfView, nearPlane, farPlane));
@@ -32,14 +37,14 @@ namespace Utopian
       mFrustum.Update(GetProjection() * GetView());
    }
 
-   void Camera::SetMainCamera()
-   {
-      Utopian::Renderer::Instance().SetMainCamera(this);
-   }
-
    void Camera::Initialize()
    {
       Utopian::Renderer::Instance().AddCamera(this);
+   }
+
+   void Camera::OnDestroyed()
+   {
+      Renderer::Instance().RemoveCamera(this);
    }
 
    void Camera::SetFov(float fov)

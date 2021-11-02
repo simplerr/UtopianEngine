@@ -42,6 +42,7 @@ namespace Utopian
 
    CPlayerControl::~CPlayerControl()
    {
+      mViewmodel->OnDestroyed();
    }
 
    void CPlayerControl::PostInit()

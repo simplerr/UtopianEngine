@@ -2,6 +2,7 @@
 #include "core/World.h"
 #include "core/components/Actor.h"
 #include "core/Camera.h"
+#include "core/Renderer/Renderer.h"
 
 namespace Utopian
 {
@@ -31,8 +32,7 @@ namespace Utopian
 
    void CCamera::OnDestroyed()
    {
-      // Todo:
-      assert(0);
+      mInternal->OnDestroyed();
       World::Instance().RemoveNode(mInternal);
    }
 
@@ -99,7 +99,7 @@ namespace Utopian
    
    void CCamera::SetMainCamera()
    {
-      mInternal->SetMainCamera();
+      Utopian::Renderer::Instance().SetMainCamera(mInternal);
    }
 
    glm::vec3 CCamera::GetDirection() const

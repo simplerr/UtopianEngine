@@ -3,6 +3,7 @@
 #include "vulkan/VulkanApp.h"
 #include "core/Camera.h"
 #include "core/World.h"
+#include "core/Engine.h"
 #include "core/components/Actor.h"
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
@@ -31,8 +32,8 @@
 
 namespace Utopian
 {
-   Editor::Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, Terrain* terrain)
-      : mImGuiRenderer(imGuiRenderer), mCamera(camera), mWorld(world), mTerrain(terrain)
+   Editor::Editor(ImGuiRenderer* imGuiRenderer, World* world, Terrain* terrain)
+      : mImGuiRenderer(imGuiRenderer), mWorld(world), mTerrain(terrain)
    {
       mSelectedActor = nullptr;
       mSelectedActorIndex = 0u;
@@ -162,7 +163,7 @@ namespace Utopian
    {
       if (gInput().KeyPressed(VK_LBUTTON) && gInput().KeyDown(VK_LCONTROL))
       {
-         Ray ray = mCamera->GetPickingRay();
+         Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
          IntersectionInfo intersectInfo = mWorld->RayIntersection(ray);
 
          if (intersectInfo.actor != nullptr)
@@ -338,11 +339,52 @@ namespace Utopian
 
    void Editor::RenderLoadSaveUi()
    {
+      auto clearActors = [&]()
+      {
+         World::Instance().RemoveActors();
+         OnActorSelected(nullptr);
+         mPrototypeTool->ActorSelected(nullptr);
+      };
+
       if (ImGui::CollapsingHeader("Load and save", ImGuiTreeNodeFlags_DefaultOpen))
       {
          if (ImGui::Button("Save scene"))
-         {
             ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
+
+         ImGui::SameLine();
+
+         if (ImGui::Button("Save scene as ..."))
+         {
+            nfdchar_t* scenePath = NULL;
+            if (NFD_SaveDialog(NULL, NULL, &scenePath))
+               ActorFactory::SaveToFile(std::string(scenePath), World::Instance().GetActors());
+         }
+
+         if (ImGui::Button("Load scene"))
+         {
+            clearActors();
+            ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), "data/scene.lua");
+         }
+
+         ImGui::SameLine();
+
+         if (ImGui::Button("Load scene ..."))
+         {
+            nfdchar_t* scenePath = NULL;
+            if (NFD_OpenDialog(NULL, NULL, &scenePath) == NFD_OKAY)
+            {
+               clearActors();
+               ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), std::string(scenePath));
+            }
+         }
+
+         ImGui::SameLine();
+
+         if (ImGui::Button("Clear scene"))
+            clearActors();
+
+         if (ImGui::Button("Save terrain"))
+         {
             gRenderer().SaveInstancesToFile("data/instances.txt");
 
             if(mTerrain != nullptr)
@@ -352,19 +394,12 @@ namespace Utopian
             }
          }
 
-         if (ImGui::Button("Clear scene"))
-            World::Instance().RemoveActors();
+         ImGui::SameLine();
 
          if (ImGui::Button("Reload foliage"))
          {
             World::Instance().RemoveActors();
-            World::Instance().LoadScene();
-         }
-
-         if (ImGui::Button("Reload scene"))
-         {
-            World::Instance().RemoveActors();
-            World::Instance().LoadScene();
+            World::Instance().LoadProceduralAssets();
          }
       }
    }

@@ -16,9 +16,11 @@ namespace Utopian
    {
    public:
       Camera(Utopian::Window* window, glm::vec3 position, float fieldOfView, float nearPlane, float farPlane);
+      ~Camera();
 
       static SharedPtr<Camera> Create(Utopian::Window* window, glm::vec3 position, float fieldOfView, float nearPlane, float farPlane);
       void Initialize();
+      void OnDestroyed();
 
       void UpdateFrustum();
 
@@ -52,8 +54,6 @@ namespace Utopian
       void SetOrientation(float yaw, float pitch);
       void LookAt(glm::vec3 target);
       void CapAngles();
-
-      void SetMainCamera();
 
       // [NOTE][HACK] Vulkan & OpenGL have different pitch movement
       int hack = 1;

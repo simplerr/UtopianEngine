@@ -41,7 +41,6 @@ Game::Game(Utopian::Window* window)
 
    // Note: Needs to be called after a camera have been added to the scene
    mEditor = std::make_shared<Utopian::Editor>(Utopian::gRenderer().GetUiOverlay(),
-                                               Utopian::gRenderer().GetMainCamera(),
                                                &Utopian::World::Instance(),
                                                Utopian::Renderer::Instance().GetTerrain());
 }

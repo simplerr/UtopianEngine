@@ -64,7 +64,7 @@ namespace Utopian
       void RemoveCamera(Camera* camera);
 
       /** Sets the main camera of the scene. */
-      void SetMainCamera(Camera* camera);
+      void SetMainCamera(SharedPtr<Camera> camera);
 
       /** Returns the main camera of the scene. */
       Camera* GetMainCamera() const;
@@ -120,7 +120,7 @@ namespace Utopian
       SceneInfo mSceneInfo;
       Vk::VulkanApp* mVulkanApp;
       Vk::Device* mDevice;
-      Camera* mMainCamera;
+      SharedPtr<Camera> mMainCamera;
       ImGuiRenderer* mImGuiRenderer;
       uint32_t mNextNodeId;
 

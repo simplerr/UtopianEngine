@@ -160,9 +160,7 @@ namespace Utopian
    {
       for (auto iter = mActors.begin(); iter != mActors.end(); iter++)
       {
-         // Todo: Don't remove the camera and light
-         if (!(*iter)->HasComponent<CCamera>() && !(*iter)->HasComponent<CLight>())
-            (*iter)->SetAlive(false);
+         (*iter)->SetAlive(false);
       }
    }
 
@@ -185,7 +183,7 @@ namespace Utopian
       mPlayerActor = playerActor;
    }
 
-   void World::LoadScene()
+   void World::LoadProceduralAssets()
    {
       // Execute Lua script
       gLuaManager().ExecuteFile("data/scripts/procedural_assets.lua");

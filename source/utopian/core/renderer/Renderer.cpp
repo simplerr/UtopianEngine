@@ -320,7 +320,12 @@ namespace Utopian
          glm::vec3 minExtents = -maxExtents;
 
          // Todo: Note: vec3(-1, 1, -1) is needed to make the shadows match phong shading
-         glm::vec3 lightDir = glm::vec3(-1, 1, -1) * glm::normalize(mSceneInfo.directionalLight->GetDirection());
+         glm::vec3 lightDir;
+         if (mSceneInfo.directionalLight != nullptr)
+            lightDir = glm::vec3(-1, 1, -1) * glm::normalize(mSceneInfo.directionalLight->GetDirection());
+         else
+            lightDir = glm::vec3(0.0f);
+
          glm::mat4 lightViewMatrix = glm::lookAt(frustumCenter - lightDir * -minExtents.z, frustumCenter, glm::vec3(0.0f, 1.0f, 0.0f));
 
          // glm::mat4 lightOrthoMatrix = glm::ortho(minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, 0.0f, maxExtents.z - minExtents.z);
@@ -348,7 +353,8 @@ namespace Utopian
                                                sin(sunInclination) * sin(mSceneInfo.sunInfo.azimuth));
 
       // Note: Negation of Z
-      mSceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * mSceneInfo.sunInfo.direction);
+      if (mSceneInfo.directionalLight != nullptr)
+         mSceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * mSceneInfo.sunInfo.direction);
    }
 
    void Renderer::Render()
@@ -393,10 +399,12 @@ namespace Utopian
    }
 
    void Renderer::AddLight(Light* light)
-   {
-      if (light->GetType() == 0) { // Directional
-         if (mSceneInfo.directionalLight == nullptr)
-            mSceneInfo.directionalLight = light;
+   { 
+      // Directional
+      if (light->GetType() == 0)
+      {
+         mSceneInfo.directionalLight = light;
+         mSceneInfo.directionalLight->SetDirection(glm::vec3(1, 1, -1) * mSceneInfo.sunInfo.direction);
       }
 
       light->SetId(mNextNodeId++);
@@ -432,6 +440,9 @@ namespace Utopian
             break;
          }
       }
+
+      if (mSceneInfo.directionalLight == light)
+         mSceneInfo.directionalLight = nullptr;
    }
 
    void Renderer::RemoveCamera(Camera* camera)
@@ -481,7 +492,7 @@ namespace Utopian
       mInstancingManager->BuildAllInstances();
    }
 
-   void Renderer::SetMainCamera(Camera* camera)
+   void Renderer::SetMainCamera(SharedPtr<Camera> camera)
    {
       mMainCamera = camera;
    }
@@ -518,7 +529,7 @@ namespace Utopian
 
    Camera* Renderer::GetMainCamera() const
    {
-      return mMainCamera;
+      return mMainCamera.get();
    }
 
    Vk::Device* Renderer::GetDevice() const

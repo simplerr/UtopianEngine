@@ -160,9 +160,24 @@ namespace Utopian
 
    void AtmosphereJob::PreRender(const JobInput& jobInput)
    {
-      if (!mEnvironmentGenerated || gInput().KeyPressed('R'))
+      // If there is a new directional light in the scene then the
+      // environment map needs to be recaptured. Note: if the environment
+      // capturing is moved to somewhere else this could be cleaned up.
+      static Light* directionalLight = jobInput.sceneInfo.directionalLight;
+      bool newLight = false;
+      if (directionalLight != jobInput.sceneInfo.directionalLight)
       {
-         CaptureEnvironmentCubemap(jobInput.sceneInfo.directionalLight->GetDirection());
+         newLight = true;
+         directionalLight = jobInput.sceneInfo.directionalLight;
+      }
+
+      if (newLight || !mEnvironmentGenerated || gInput().KeyPressed('R'))
+      {
+         glm::vec3 sunDir = glm::vec3(0.0f);
+         if (jobInput.sceneInfo.directionalLight != nullptr)
+            sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+
+         CaptureEnvironmentCubemap(sunDir);
 
          gRendererUtility().FilterCubemap(environmentCube.get(), irradianceMap.get(),
             "data/shaders/ibl_filtering/irradiance_filter.frag");
@@ -176,7 +191,11 @@ namespace Utopian
 
    void AtmosphereJob::Render(const JobInput& jobInput)
    {
-      mParameterBlock.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+      if (jobInput.sceneInfo.directionalLight != nullptr)
+         mParameterBlock.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+      else
+         mParameterBlock.data.sunDir = glm::vec3(0.0f);
+
       mParameterBlock.UpdateMemory();
 
       mRenderTarget->Begin("Atmosphere pass", glm::vec4(0.1, 0.8, 0.8, 1.0));

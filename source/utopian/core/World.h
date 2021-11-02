@@ -61,7 +61,7 @@ namespace Utopian
 
       void RemoveActor(Actor* actor);
       void RemoveActors();
-      void LoadScene();
+      void LoadProceduralAssets();
 
       IntersectionInfo RayIntersection(const Ray& ray, SceneLayer sceneLayer = DefaultSceneLayer);
       std::vector<SharedPtr<Actor>>& GetActors();

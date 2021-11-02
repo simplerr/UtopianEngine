@@ -131,7 +131,11 @@ namespace Utopian
       else
          atmosphere_ubo.data.atmosphericScattering = false;
 
-      atmosphere_ubo.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+      if (jobInput.sceneInfo.directionalLight != nullptr)
+         atmosphere_ubo.data.sunDir = jobInput.sceneInfo.directionalLight->GetDirection();
+      else
+         atmosphere_ubo.data.sunDir = glm::vec3(0.0f);
+
       atmosphere_ubo.UpdateMemory();
       
       mTraceRenderTarget->Begin("SSR trace pass", glm::vec4(0.2, 1.0, 0.0, 1.0));

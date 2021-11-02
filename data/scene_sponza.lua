@@ -632,7 +632,7 @@ actor_list =
 	},
 	
 	{
-		actor_name = "EditorActor",
+		actor_name = "Finish point",
 		components = 
 		{
 			CFinishPoint = 
@@ -665,7 +665,7 @@ actor_list =
 	},
 	
 	{
-		actor_name = "EditorActor",
+		actor_name = "Spawn Point",
 		components = 
 		{
 			CRenderable = 

@@ -40,7 +40,7 @@ namespace Utopian
    class Editor
    {
    public:
-      Editor(ImGuiRenderer* imGuiRenderer, Camera* camera, World* world, Terrain* terrain);
+      Editor(ImGuiRenderer* imGuiRenderer, World* world, Terrain* terrain);
       ~Editor();
 
       void Update();
@@ -68,7 +68,6 @@ namespace Utopian
 
       World* mWorld;
       Terrain* mTerrain;
-      Camera* mCamera;
       ImGuiRenderer* mImGuiRenderer;
       ActorInspector* mActorInspector;
       SharedPtr<TerrainTool> mTerrainTool;

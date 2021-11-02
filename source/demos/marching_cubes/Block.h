@@ -15,7 +15,7 @@ struct GeometryVertex
    glm::vec4 pos;
    glm::vec4 normal;
 };
-   
+
 class VertexSSBO : public Utopian::Vk::ShaderBuffer
 {
 public:
