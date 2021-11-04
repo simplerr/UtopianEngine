@@ -31,6 +31,7 @@ layout (std140, set = 0, binding = 2) uniform UBO_settings
    float fogDistance;
    int cascadeColorDebug;
    int useIBL;
+   float ambientIntensity;
 } settings_ubo;
 
 void main()
@@ -101,6 +102,8 @@ void main()
 
       ambient = (kD * diffuse + specular) * occlusion;
    }
+
+   ambient = ambient * settings_ubo.ambientIntensity;
 
    litColor = litColor + ambient;
 

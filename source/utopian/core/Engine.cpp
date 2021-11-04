@@ -278,6 +278,7 @@ namespace Utopian
          mRenderingSettings.shadingMethod = ShadingMethod::PBR;
 
       mRenderingSettings.sky = luaSettings["sky"].ToString();
+      mRenderingSettings.ambientIntensity = luaSettings["ambientIntensity"].ToNumber();
       mRenderingSettings.fogColor = glm::vec4(luaSettings["fogColor_r"].ToNumber(),
                                               luaSettings["fogColor_g"].ToNumber(),
                                               luaSettings["fogColor_b"].ToNumber(), 1.0f);

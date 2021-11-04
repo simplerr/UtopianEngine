@@ -169,6 +169,7 @@ namespace Utopian
 
       if (ImGui::CollapsingHeader("Mixed settings"))
       {
+         ImGui::SliderFloat("Ambient intensity", &mRenderingSettings.ambientIntensity, 0.0f, 1.0f);
          ImGui::SliderFloat("FXAA threshold", &mRenderingSettings.fxaaThreshold, 0.0f, 1.5f);
          ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 0.15f);
          ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);

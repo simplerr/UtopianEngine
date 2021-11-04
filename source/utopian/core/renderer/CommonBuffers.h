@@ -47,37 +47,6 @@ namespace Utopian
       std::vector<Utopian::LightData> lights;
    };
 
-   class SettingsUniformBuffer : public Utopian::Vk::ShaderBuffer
-   {
-   public:
-      virtual void UpdateMemory()
-      {
-         // Map uniform buffer and update it
-         uint8_t *mapped;
-         mBuffer->MapMemory((void**)&mapped);
-         memcpy(mapped, &data, sizeof(data));
-         mBuffer->UnmapMemory();
-      }
-
-      virtual std::string GetDebugName()
-      {
-         return "SettingsUniformBuffer";
-      }
-
-      virtual int GetSize()
-      {
-         return sizeof(data);
-      }
-
-      struct {
-         glm::vec3 fogColor;
-         float fogStart;
-         float fogDistance;
-         int cascadeColorDebug;
-         int useIBL;
-      } data;
-   };
-
    UNIFORM_BLOCK_BEGIN(CascadeBlock)
       UNIFORM_PARAM(float, cascadeSplits[4])
       UNIFORM_PARAM(glm::mat4, cascadeViewProjMat[4])

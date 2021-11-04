@@ -126,6 +126,7 @@ namespace Utopian
       settings_ubo.data.fogDistance = jobInput.renderingSettings.fogDistance;
       settings_ubo.data.cascadeColorDebug = jobInput.renderingSettings.cascadeColorDebug;
       settings_ubo.data.useIBL = jobInput.renderingSettings.iblEnabled;
+      settings_ubo.data.ambientIntensity = jobInput.renderingSettings.ambientIntensity;
 
       settings_ubo.UpdateMemory();
 

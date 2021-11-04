@@ -10,6 +10,15 @@ namespace Utopian
    class DeferredJob : public BaseJob
    {
    public:
+      UNIFORM_BLOCK_BEGIN(SettingsUniformBuffer)
+         UNIFORM_PARAM(glm::vec3, fogColor)
+         UNIFORM_PARAM(float, fogStart)
+         UNIFORM_PARAM(float, fogDistance)
+         UNIFORM_PARAM(int, cascadeColorDebug)
+         UNIFORM_PARAM(int, useIBL)
+         UNIFORM_PARAM(float, ambientIntensity)
+      UNIFORM_BLOCK_END()
+
       DeferredJob(Vk::Device* device, uint32_t width, uint32_t height);
       ~DeferredJob();
 
