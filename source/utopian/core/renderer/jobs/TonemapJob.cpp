@@ -1,5 +1,6 @@
 #include "core/renderer/jobs/TonemapJob.h"
 #include "core/renderer/jobs/BloomJob.h"
+#include "core/renderer/jobs/DepthOfFieldJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/handles/Sampler.h"
@@ -12,7 +13,7 @@ namespace Utopian
       outputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R16G16B16A16_SFLOAT, "Tonemap image");
 
       mRenderTarget = std::make_shared<Vk::RenderTarget>(device, width, height);
-      mRenderTarget->AddWriteOnlyColorAttachment(outputImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mRenderTarget->AddWriteOnlyColorAttachment(outputImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 
@@ -33,12 +34,13 @@ namespace Utopian
    void TonemapJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       BloomJob* bloomJob = static_cast<BloomJob*>(jobs[JobGraph::BLOOM_INDEX]);
+      DepthOfFieldJob* depthOfFieldJob = static_cast<DepthOfFieldJob*>(jobs[JobGraph::DOF_INDEX]);
 
       mSampler = std::make_shared<Vk::Sampler>(mDevice, false);
       mSampler->createInfo.anisotropyEnable = VK_FALSE;
       mSampler->Create();
 
-      mEffect->BindCombinedImage("hdrSampler", *gbuffer.mainImage, *mSampler);
+      mEffect->BindCombinedImage("hdrSampler", *depthOfFieldJob->outputImage, *mSampler);
       mEffect->BindCombinedImage("bloomSampler", *bloomJob->outputImage, *mSampler);
    }
 

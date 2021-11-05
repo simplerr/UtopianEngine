@@ -18,8 +18,8 @@ namespace Utopian
    void Im3dJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-      mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 

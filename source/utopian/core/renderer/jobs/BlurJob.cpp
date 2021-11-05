@@ -36,7 +36,7 @@ namespace Utopian
       settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
       mEffect->BindUniformBuffer("UBO_settings", settingsBlock);
 
-      mEffect->BindCombinedImage("samplerSSAO", *ssaoJob->ssaoImage, *ssaoJob->renderTarget->GetSampler());
+      mEffect->BindCombinedImage("inputTexture", *ssaoJob->ssaoImage, *ssaoJob->renderTarget->GetSampler());
    }
 
    void BlurJob::Render(const JobInput& jobInput)

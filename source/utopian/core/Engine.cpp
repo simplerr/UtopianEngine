@@ -302,6 +302,9 @@ namespace Utopian
       mRenderingSettings.fxaaEnabled = luaSettings["fxaaEnabled"].GetBoolean();
       mRenderingSettings.fxaaDebug = luaSettings["fxaaDebug"].GetBoolean();
       mRenderingSettings.godRaysEnabled = luaSettings["godRaysEnabled"].GetBoolean();
+      mRenderingSettings.dofEnabled = luaSettings["dofEnabled"].GetBoolean();
+      mRenderingSettings.dofStart = (float)luaSettings["dofStart"].ToNumber();
+      mRenderingSettings.dofRange = (float)luaSettings["dofRange"].ToNumber();
       mRenderingSettings.fxaaThreshold = (float)luaSettings["fxaaThreshold"].ToNumber();
       mRenderingSettings.shadowSampleSize = (int)luaSettings["shadowSampleSize"].ToInteger();
       mRenderingSettings.cascadeColorDebug = (float)luaSettings["cascadeColorDebug"].ToNumber();

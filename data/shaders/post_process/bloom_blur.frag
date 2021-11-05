@@ -20,12 +20,12 @@ void main()
    int n = 0;
    vec2 texelSize = 1.0 / vec2(textureSize(hdrSampler, 0));
    vec3 result = vec3(0.0);
-   for (int x = -blurRange; x < blurRange; x++) 
+   for (int x = -blurRange; x < blurRange; x++)
    {
-      for (int y = -blurRange; y < blurRange; y++) 
+      for (int y = -blurRange; y < blurRange; y++)
       {
          vec2 offset = vec2(float(x), float(y)) * texelSize;
-         result += texture(hdrSampler, InTex + offset).rgb;
+         result += max(vec3(0.0f), texture(hdrSampler, InTex + offset).rgb);
          n++;
       }
    }

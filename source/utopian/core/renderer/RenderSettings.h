@@ -36,6 +36,9 @@ namespace Utopian
       bool fxaaEnabled = true;
       bool fxaaDebug = false;
       bool godRaysEnabled = true;
+      bool dofEnabled = true;
+      float dofStart = 10.0f;
+      float dofRange = 10.0f;
       float fxaaThreshold = 0.125;
       int shadowSampleSize = 1;
       bool cascadeColorDebug = 0;

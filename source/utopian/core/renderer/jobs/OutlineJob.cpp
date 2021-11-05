@@ -1,5 +1,5 @@
 #include "core/renderer/jobs/OutlineJob.h"
-#include "core/renderer/jobs/TonemapJob.h"
+#include "core/renderer/jobs/DepthOfFieldJob.h"
 #include "core/renderer/CommonJobIncludes.h"
 #include <core/renderer/Renderable.h>
 #include <core/renderer/Model.h>
@@ -52,12 +52,12 @@ namespace Utopian
 
    void OutlineJob::InitEdgePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      TonemapJob* tonemapJob = static_cast<TonemapJob*>(jobs[JobGraph::TONEMAP_INDEX]);
+      DepthOfFieldJob* depthOfFieldJob = static_cast<DepthOfFieldJob*>(jobs[JobGraph::DOF_INDEX]);
 
       mEdgePass.image = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "Edge image");
 
       mEdgePass.renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mEdgePass.renderTarget->AddReadWriteColorAttachment(tonemapJob->outputImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+      mEdgePass.renderTarget->AddReadWriteColorAttachment(depthOfFieldJob->outputImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       mEdgePass.renderTarget->SetClearColor(0, 0, 0, 1);
       mEdgePass.renderTarget->Create();
 

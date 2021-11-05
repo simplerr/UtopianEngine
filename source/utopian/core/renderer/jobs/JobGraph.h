@@ -45,8 +45,9 @@ namespace Utopian
          DEBUG_INDEX,
          IM3D_INDEX,
          BLOOM_INDEX,
-         TONEMAP_INDEX,
+         DOF_INDEX,
          OUTLINE_INDEX,
+         TONEMAP_INDEX,
          PIXEL_DEBUG_INDEX,
          FXAA_INDEX
       };

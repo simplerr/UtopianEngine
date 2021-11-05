@@ -24,6 +24,7 @@
 #include "core/renderer/jobs/WaterJob.h"
 #include "core/renderer/jobs/AtmosphereJob.h"
 #include "core/renderer/jobs/OutlineJob.h"
+#include "core/renderer/jobs/DepthOfFieldJob.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
@@ -74,8 +75,9 @@ namespace Utopian
       AddJob(new DebugJob(device, width, height));
       AddJob(new Im3dJob(device, width, height));
       AddJob(new BloomJob(device, width, height));
-      AddJob(new TonemapJob(device, width, height));
+      AddJob(new DepthOfFieldJob(device, width, height));
       AddJob(new OutlineJob(device, width, height));
+      AddJob(new TonemapJob(device, width, height));
       AddJob(new PixelDebugJob(device, width, height));
 
       FXAAJob* fxaaJob = new FXAAJob(device, width, height);

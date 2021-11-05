@@ -154,6 +154,13 @@ namespace Utopian
          ImGui::Checkbox("Wind enabled", &mRenderingSettings.windEnabled);
       }
 
+      if (ImGui::CollapsingHeader("Depth of Field settings"))
+      {
+         ImGui::Checkbox("DOF enabled", &mRenderingSettings.dofEnabled);
+         ImGui::SliderFloat("DOF start", &mRenderingSettings.dofStart, 0.0f, 50.0f);
+         ImGui::SliderFloat("DOF range", &mRenderingSettings.dofRange, 0.0f, 50.0f);
+      }
+
       if (ImGui::CollapsingHeader("Fog settings"))
       {
          ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
@@ -234,6 +241,7 @@ namespace Utopian
       mJobGraph->EnableJob(JobGraph::JobIndex::OPAQUE_COPY_INDEX, mRenderingSettings.waterEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
       mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
+      mJobGraph->EnableJob(JobGraph::JobIndex::DOF_INDEX, mRenderingSettings.dofEnabled);
 
       if (ImGui::Button("Dump memory statistics"))
       {
