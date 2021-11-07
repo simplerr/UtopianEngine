@@ -8,7 +8,8 @@ namespace Utopian
    {
    public:
       UNIFORM_BLOCK_BEGIN(BlurSettings)
-         UNIFORM_PARAM(int, size)
+         UNIFORM_PARAM(float, blurScale)
+         UNIFORM_PARAM(float, blurStrength)
       UNIFORM_BLOCK_END()
 
       UNIFORM_BLOCK_BEGIN(DOFSettings)
@@ -26,15 +27,19 @@ namespace Utopian
 
       SharedPtr<Vk::Image> outputImage;
    private:
-      void InitBlurPass();
+      void InitBlurPasses();
       void InitFocusPass();
-      void RenderBlurPass(const JobInput& jobInput);
+      void RenderHorizontalBlurPass(const JobInput& jobInput);
+      void RenderVerticalBlurPass(const JobInput& jobInput);
       void RenderFocusPass(const JobInput& jobInput);
    private:
       struct {
-         SharedPtr<Vk::Effect> effect;
-         SharedPtr<Vk::RenderTarget> renderTarget;
-         SharedPtr<Vk::Image> image;
+         SharedPtr<Vk::Effect> horizontalEffect;
+         SharedPtr<Vk::Effect> combinedEffect;
+         SharedPtr<Vk::RenderTarget> horizontalRenderTarget;
+         SharedPtr<Vk::RenderTarget> combinedRenderTarget;
+         SharedPtr<Vk::Image> horizontalImage;
+         SharedPtr<Vk::Image> combinedImage;
          BlurSettings settings;
       } mBlur;
 
@@ -44,6 +49,7 @@ namespace Utopian
          DOFSettings settings;
       } mFocus;
 
-      SharedPtr<Vk::Semaphore> mWaitBlurPassSemaphore;
+      SharedPtr<Vk::Semaphore> mWaitHorizontalBlurPassSemaphore;
+      SharedPtr<Vk::Semaphore> mWaitVerticalBlurPassSemaphore;
    };
 }

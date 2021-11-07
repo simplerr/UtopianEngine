@@ -2,39 +2,49 @@
 #include "core/renderer/CommonJobIncludes.h"
 #include "vulkan/RenderTarget.h"
 #include "vulkan/handles/Sampler.h"
+#include <vulkan/vulkan_core.h>
 
 namespace Utopian
 {
    DepthOfFieldJob::DepthOfFieldJob(Vk::Device* device, uint32_t width, uint32_t height)
       : BaseJob(device, width, height)
    {
-      InitBlurPass();
+      InitBlurPasses();
       InitFocusPass();
 
-      mWaitBlurPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
+      mWaitHorizontalBlurPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
+      mWaitVerticalBlurPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
    }
 
    DepthOfFieldJob::~DepthOfFieldJob()
    {
    }
 
-   void DepthOfFieldJob::InitBlurPass()
+   void DepthOfFieldJob::InitBlurPasses()
    {
-      mBlur.image = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "DOF blur image");
+      mBlur.horizontalImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "DOF horizontal blur image");
+      mBlur.combinedImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "DOF combined blur image");
 
-      mBlur.renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mBlur.renderTarget->AddWriteOnlyColorAttachment(mBlur.image);
-      mBlur.renderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-      mBlur.renderTarget->Create();
+      mBlur.horizontalRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mBlur.horizontalRenderTarget->AddWriteOnlyColorAttachment(mBlur.horizontalImage);
+      mBlur.horizontalRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      mBlur.horizontalRenderTarget->Create();
+
+      mBlur.combinedRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mBlur.combinedRenderTarget->AddWriteOnlyColorAttachment(mBlur.combinedImage);
+      mBlur.combinedRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      mBlur.combinedRenderTarget->Create();
 
       Vk::EffectCreateInfo effectDesc;
       effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_blur.frag";
+      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/gaussian_blur.frag";
 
-      mBlur.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlur.renderTarget->GetRenderPass(), effectDesc);
+      mBlur.horizontalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlur.horizontalRenderTarget->GetRenderPass(), effectDesc);
+      mBlur.combinedEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlur.combinedRenderTarget->GetRenderPass(), effectDesc);
 
       mBlur.settings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-      mBlur.effect->BindUniformBuffer("UBO_settings", mBlur.settings);
+      mBlur.horizontalEffect->BindUniformBuffer("UBO_settings", mBlur.settings);
+      mBlur.combinedEffect->BindUniformBuffer("UBO_settings", mBlur.settings);
    }
 
    void DepthOfFieldJob::InitFocusPass()
@@ -58,29 +68,50 @@ namespace Utopian
 
    void DepthOfFieldJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      mBlur.effect->BindCombinedImage("hdrSampler", *gbuffer.mainImage, *mBlur.renderTarget->GetSampler());
+      mBlur.horizontalEffect->BindCombinedImage("hdrSampler", *gbuffer.mainImage, *mBlur.horizontalRenderTarget->GetSampler());
+      mBlur.combinedEffect->BindCombinedImage("hdrSampler", *mBlur.horizontalImage, *mBlur.combinedRenderTarget->GetSampler());
 
       mFocus.effect->BindCombinedImage("normalTexture", *gbuffer.mainImage, *mFocus.renderTarget->GetSampler());
-      mFocus.effect->BindCombinedImage("blurredTexture", *mBlur.image, *mFocus.renderTarget->GetSampler());
+      mFocus.effect->BindCombinedImage("blurredTexture", *mBlur.combinedImage, *mFocus.renderTarget->GetSampler());
       mFocus.effect->BindCombinedImage("depthTexture", *gbuffer.depthImage, *mFocus.renderTarget->GetSampler());
    }
 
-   void DepthOfFieldJob::RenderBlurPass(const JobInput& jobInput)
+   void DepthOfFieldJob::RenderHorizontalBlurPass(const JobInput& jobInput)
    {
-      mBlur.settings.data.size = 5;
+      mBlur.settings.data.blurScale = 1.0f;
+      mBlur.settings.data.blurStrength = 1.0f;
       mBlur.settings.UpdateMemory();
 
-      mBlur.renderTarget->Begin("DOF blur pass", glm::vec4(0.1f, 0.5f, 0.9f, 1.0f));
+      mBlur.horizontalRenderTarget->Begin("DOF horizontal blur pass", glm::vec4(0.1f, 0.5f, 0.9f, 1.0f));
 
       if (IsEnabled())
       {
-         Vk::CommandBuffer* commandBuffer = mBlur.renderTarget->GetCommandBuffer();
-         commandBuffer->CmdBindPipeline(mBlur.effect->GetPipeline());
-         commandBuffer->CmdBindDescriptorSets(mBlur.effect);
+         int direction = 0; // Horizontal
+         Vk::CommandBuffer* commandBuffer = mBlur.horizontalRenderTarget->GetCommandBuffer();
+         commandBuffer->CmdBindPipeline(mBlur.horizontalEffect->GetPipeline());
+         commandBuffer->CmdPushConstants(mBlur.horizontalEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(int), &direction);
+         commandBuffer->CmdBindDescriptorSets(mBlur.horizontalEffect);
          gRendererUtility().DrawFullscreenQuad(commandBuffer);
       }
 
-      mBlur.renderTarget->End(GetWaitSemahore(), mWaitBlurPassSemaphore);
+      mBlur.horizontalRenderTarget->End(GetWaitSemahore(), mWaitHorizontalBlurPassSemaphore);
+   }
+
+   void DepthOfFieldJob::RenderVerticalBlurPass(const JobInput& jobInput)
+   {
+      mBlur.combinedRenderTarget->Begin("DOF vertical blur pass", glm::vec4(0.1f, 0.5f, 0.9f, 1.0f));
+
+      if (IsEnabled())
+      {
+         int direction = 1; // Vertical
+         Vk::CommandBuffer* commandBuffer = mBlur.combinedRenderTarget->GetCommandBuffer();
+         commandBuffer->CmdBindPipeline(mBlur.combinedEffect->GetPipeline());
+         commandBuffer->CmdPushConstants(mBlur.combinedEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(int), &direction);
+         commandBuffer->CmdBindDescriptorSets(mBlur.combinedEffect);
+         gRendererUtility().DrawFullscreenQuad(commandBuffer);
+      }
+
+      mBlur.combinedRenderTarget->End(mWaitHorizontalBlurPassSemaphore, mWaitVerticalBlurPassSemaphore);
    }
 
    void DepthOfFieldJob::RenderFocusPass(const JobInput& jobInput)
@@ -97,12 +128,13 @@ namespace Utopian
       commandBuffer->CmdBindDescriptorSets(mFocus.effect);
       gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-      mFocus.renderTarget->End(mWaitBlurPassSemaphore, GetCompletedSemahore());
+      mFocus.renderTarget->End(mWaitVerticalBlurPassSemaphore, GetCompletedSemahore());
    }
 
    void DepthOfFieldJob::Render(const JobInput& jobInput)
    {
-      RenderBlurPass(jobInput);
+      RenderHorizontalBlurPass(jobInput);
+      RenderVerticalBlurPass(jobInput);
       RenderFocusPass(jobInput);
    }
 }
