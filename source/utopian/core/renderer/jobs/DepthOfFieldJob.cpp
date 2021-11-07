@@ -10,10 +10,12 @@ namespace Utopian
       : BaseJob(device, width, height)
    {
       InitBlurPasses();
+      InitDilatePass();
       InitFocusPass();
 
       mWaitHorizontalBlurPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
       mWaitVerticalBlurPassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
+      mWaitDilatePassSemaphore = std::make_shared<Vk::Semaphore>(mDevice);
    }
 
    DepthOfFieldJob::~DepthOfFieldJob()
@@ -47,6 +49,22 @@ namespace Utopian
       mBlur.combinedEffect->BindUniformBuffer("UBO_settings", mBlur.settings);
    }
 
+   void DepthOfFieldJob::InitDilatePass()
+   {
+      mDilate.image = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "DOF dilate output");
+
+      mDilate.renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mDilate.renderTarget->AddWriteOnlyColorAttachment(mDilate.image);
+      mDilate.renderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+      mDilate.renderTarget->Create();
+
+      Vk::EffectCreateInfo effectDesc;
+      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/dilate.frag";
+
+      mDilate.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mDilate.renderTarget->GetRenderPass(), effectDesc);
+   }
+
    void DepthOfFieldJob::InitFocusPass()
    {
       outputImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "DOF output");
@@ -71,8 +89,10 @@ namespace Utopian
       mBlur.horizontalEffect->BindCombinedImage("hdrSampler", *gbuffer.mainImage, *mBlur.horizontalRenderTarget->GetSampler());
       mBlur.combinedEffect->BindCombinedImage("hdrSampler", *mBlur.horizontalImage, *mBlur.combinedRenderTarget->GetSampler());
 
+      mDilate.effect->BindCombinedImage("inputTexture", *mBlur.combinedImage, *mDilate.renderTarget->GetSampler());
+
       mFocus.effect->BindCombinedImage("normalTexture", *gbuffer.mainImage, *mFocus.renderTarget->GetSampler());
-      mFocus.effect->BindCombinedImage("blurredTexture", *mBlur.combinedImage, *mFocus.renderTarget->GetSampler());
+      mFocus.effect->BindCombinedImage("blurredTexture", *mDilate.image, *mFocus.renderTarget->GetSampler());
       mFocus.effect->BindCombinedImage("depthTexture", *gbuffer.depthImage, *mFocus.renderTarget->GetSampler());
    }
 
@@ -114,6 +134,21 @@ namespace Utopian
       mBlur.combinedRenderTarget->End(mWaitHorizontalBlurPassSemaphore, mWaitVerticalBlurPassSemaphore);
    }
 
+   void DepthOfFieldJob::RenderDilatePass(const JobInput& jobInput)
+   {
+      mDilate.renderTarget->Begin("DOF dilate pass", glm::vec4(0.1f, 0.0f, 0.3f, 1.0f));
+
+      if (IsEnabled())
+      {
+         Vk::CommandBuffer* commandBuffer = mDilate.renderTarget->GetCommandBuffer();
+         commandBuffer->CmdBindPipeline(mDilate.effect->GetPipeline());
+         commandBuffer->CmdBindDescriptorSets(mDilate.effect);
+         gRendererUtility().DrawFullscreenQuad(commandBuffer);
+      }
+
+      mDilate.renderTarget->End(mWaitVerticalBlurPassSemaphore, mWaitDilatePassSemaphore);
+   }
+
    void DepthOfFieldJob::RenderFocusPass(const JobInput& jobInput)
    {
       mFocus.settings.data.projection = jobInput.sceneInfo.sharedVariables.data.projectionMatrix;
@@ -128,13 +163,14 @@ namespace Utopian
       commandBuffer->CmdBindDescriptorSets(mFocus.effect);
       gRendererUtility().DrawFullscreenQuad(commandBuffer);
 
-      mFocus.renderTarget->End(mWaitVerticalBlurPassSemaphore, GetCompletedSemahore());
+      mFocus.renderTarget->End(mWaitDilatePassSemaphore, GetCompletedSemahore());
    }
 
    void DepthOfFieldJob::Render(const JobInput& jobInput)
    {
       RenderHorizontalBlurPass(jobInput);
       RenderVerticalBlurPass(jobInput);
+      RenderDilatePass(jobInput);
       RenderFocusPass(jobInput);
    }
 }

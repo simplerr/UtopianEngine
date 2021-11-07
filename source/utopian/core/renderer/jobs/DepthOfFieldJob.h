@@ -28,9 +28,11 @@ namespace Utopian
       SharedPtr<Vk::Image> outputImage;
    private:
       void InitBlurPasses();
+      void InitDilatePass();
       void InitFocusPass();
       void RenderHorizontalBlurPass(const JobInput& jobInput);
       void RenderVerticalBlurPass(const JobInput& jobInput);
+      void RenderDilatePass(const JobInput& jobInput);
       void RenderFocusPass(const JobInput& jobInput);
    private:
       struct {
@@ -46,10 +48,17 @@ namespace Utopian
       struct {
          SharedPtr<Vk::Effect> effect;
          SharedPtr<Vk::RenderTarget> renderTarget;
+         SharedPtr<Vk::Image> image;
+      } mDilate;
+
+      struct {
+         SharedPtr<Vk::Effect> effect;
+         SharedPtr<Vk::RenderTarget> renderTarget;
          DOFSettings settings;
       } mFocus;
 
       SharedPtr<Vk::Semaphore> mWaitHorizontalBlurPassSemaphore;
       SharedPtr<Vk::Semaphore> mWaitVerticalBlurPassSemaphore;
+      SharedPtr<Vk::Semaphore> mWaitDilatePassSemaphore;
    };
 }
