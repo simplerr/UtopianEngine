@@ -20,6 +20,24 @@ namespace Utopian
    {
    }
 
+   void BloomJob::LoadResources()
+   {
+      auto loadShaders = [&]()
+      {
+         Vk::EffectCreateInfo effectDescExtract;
+         effectDescExtract.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDescExtract.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_extract.frag";
+         mExtractEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mExtractRenderTarget->GetRenderPass(), effectDescExtract);
+
+         Vk::EffectCreateInfo effectDescBlur;
+         effectDescBlur.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDescBlur.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_blur.frag";
+         mBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDescBlur);
+      };
+
+      loadShaders();
+   }
+
    void BloomJob::InitExtractPass()
    {
       mBrightColorsImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth / OFFSCREEN_RATIO, mHeight / OFFSCREEN_RATIO, VK_FORMAT_R16G16B16A16_SFLOAT, "Bloom bright image");
@@ -28,15 +46,6 @@ namespace Utopian
       mExtractRenderTarget->AddWriteOnlyColorAttachment(mBrightColorsImage);
       mExtractRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       mExtractRenderTarget->Create();
-
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_extract.frag";
-
-      mExtractEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mExtractRenderTarget->GetRenderPass(), effectDesc);
-
-      mExtractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-      mExtractEffect->BindUniformBuffer("UBO_settings", mExtractSettings);
 
       //const uint32_t size = 240;
       //gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (size + 10), size, size, brightColorsImage.get(), extractRenderTarget->GetSampler());
@@ -51,23 +60,23 @@ namespace Utopian
       mBlurRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
       mBlurRenderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/bloom_blur.frag";
-
-      mBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDesc);
-
-      mBlurSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-      mBlurEffect->BindUniformBuffer("UBO_settings", mBlurSettings);
-      mBlurEffect->BindCombinedImage("hdrSampler", *mBrightColorsImage, *mBlurRenderTarget->GetSampler());
-
       /*const uint32_t size = 240;
       gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, outputImage.get(), blurRenderTarget->GetSampler());*/
    }
 
    void BloomJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
+   }
+
+   void BloomJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      mExtractSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      mExtractEffect->BindUniformBuffer("UBO_settings", mExtractSettings);
       mExtractEffect->BindCombinedImage("hdrSampler", *gbuffer.mainImage, *mExtractRenderTarget->GetSampler());
+
+      mBlurSettings.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      mBlurEffect->BindUniformBuffer("UBO_settings", mBlurSettings);
+      mBlurEffect->BindCombinedImage("hdrSampler", *mBrightColorsImage, *mBlurRenderTarget->GetSampler());
    }
 
    void BloomJob::RenderExtractPass(const JobInput& jobInput)

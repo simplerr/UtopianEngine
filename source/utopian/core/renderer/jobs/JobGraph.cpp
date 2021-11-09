@@ -25,14 +25,19 @@
 #include "core/renderer/jobs/AtmosphereJob.h"
 #include "core/renderer/jobs/OutlineJob.h"
 #include "core/renderer/jobs/DepthOfFieldJob.h"
+#include "core/Log.h"
 #include "vulkan/VulkanApp.h"
 #include "vulkan/handles/Device.h"
 #include "vulkan/handles/Image.h"
+#include <thread>
+#include <algorithm>
 
 namespace Utopian
 {
    JobGraph::JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, const RenderingSettings& renderingSettings)
    {
+      Timestamp start = gTimer().GetTimestamp();
+
       uint32_t width = vulkanApp->GetWindowWidth();
       uint32_t height = vulkanApp->GetWindowHeight();
 
@@ -78,7 +83,7 @@ namespace Utopian
       AddJob(new DepthOfFieldJob(device, width, height));
       AddJob(new OutlineJob(device, width, height));
       AddJob(new TonemapJob(device, width, height));
-      AddJob(new PixelDebugJob(device, width, height));
+      //AddJob(new PixelDebugJob(device, width, height));
 
       FXAAJob* fxaaJob = new FXAAJob(device, width, height);
       vulkanApp->SetWaitSubmitSemaphore(fxaaJob->GetCompletedSemahore());
@@ -88,6 +93,8 @@ namespace Utopian
       {
          job->Init(mJobs, mGBuffer);
       }
+
+      AsynchronousResourceLoading();
 
       for(auto job : mJobs)
       {
@@ -102,7 +109,9 @@ namespace Utopian
       mDebugDescriptorSets.albedo = imGuiRenderer->AddImage(*mGBuffer.albedoImage);
       mDebugDescriptorSets.pbr = imGuiRenderer->AddImage(*mGBuffer.pbrImage);
 
-      EnableJob(JobGraph::JobIndex::PIXEL_DEBUG_INDEX, false);
+      //EnableJob(JobGraph::JobIndex::PIXEL_DEBUG_INDEX, false);
+
+      UTO_LOG("Create JobGraph elapsed time: " + std::to_string(gTimer().GetElapsedTime(start)));
    }
 
    JobGraph::~JobGraph()
@@ -111,6 +120,36 @@ namespace Utopian
       {
          delete job;
       }
+   }
+
+   void JobGraph::AsynchronousResourceLoading()
+   {
+      // Splits the resource loading work from all jobs in the graph evenly
+      // across the number of threads configured for asyncrhonous loading.
+      auto work = [&](int currentThread, int numThreads)
+      {
+         uint32_t functionsInThreads = mJobs.size() / numThreads;
+         uint32_t functionsInCurrentThread = functionsInThreads;
+         if (currentThread == numThreads - 1)
+            functionsInCurrentThread = mJobs.size() - ((numThreads - 1) * functionsInThreads);
+
+         for (uint32_t j = 0; j < functionsInCurrentThread; j++)
+         {
+            mJobs[currentThread * functionsInThreads + j]->LoadResources();
+         }
+      };
+
+      // From testing 4 threads shows the best performance.
+      const uint32_t numThreads = 4;
+      std::vector<std::thread> workerThreads;
+
+      for (uint32_t i = 0; i < numThreads; i++)
+      {
+         workerThreads.push_back(std::thread(work, i, numThreads));
+      }
+
+      // Wait for all shader compilation worker threads to finish
+      std::for_each(workerThreads.begin(), workerThreads.end(), [](std::thread& t) { t.join(); });
    }
 
    void JobGraph::Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings)

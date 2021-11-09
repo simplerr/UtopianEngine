@@ -15,6 +15,20 @@ namespace Utopian
    {
    }
 
+   void GeometryThicknessJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/geometry_thickness/geometry_thickness.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/geometry_thickness/geometry_thickness.frag";
+         effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void GeometryThicknessJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       geometryThicknessImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R32G32_SFLOAT, "Geometry thickness image");
@@ -24,17 +38,14 @@ namespace Utopian
       mRenderTarget->SetClearColor(DEFAULT_THICKNESS, 0.0f, 0.0f, 0.0f);
       mRenderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/geometry_thickness/geometry_thickness.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/geometry_thickness/geometry_thickness.frag";
-      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
-      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mEffect->BindCombinedImage("depthSampler", *gbuffer.depthImage, *mRenderTarget->GetSampler());
-
       // const uint32_t size = 640;
       // gScreenQuadUi().AddQuad(10, mHeight - (size + 10), size, size, geometryThicknessImage.get(), mRenderTarget->GetSampler());
+   }
+
+   void GeometryThicknessJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mEffect->BindCombinedImage("depthSampler", *gbuffer.depthImage, *mRenderTarget->GetSampler());
    }
 
    void GeometryThicknessJob::Render(const JobInput& jobInput)

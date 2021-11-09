@@ -207,6 +207,7 @@ namespace Utopian::Vk
    ShaderFactory::ShaderFactory(Device* device)
       : mDevice(device)
    {
+      glslang::InitializeProcess();
    }
 
    ShaderFactory::~ShaderFactory()
@@ -284,8 +285,6 @@ namespace Utopian::Vk
    {
       SharedPtr<CompiledShader> compiledShader = nullptr;
       bool error = false;
-
-      glslang::InitializeProcess();
 
       std::ifstream file(filename);
 

@@ -39,11 +39,28 @@ namespace Utopian
       delete mWaterMesh;
    }
 
+   void WaterJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/water.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/water.frag";
+         effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/water.tesc";
+         effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/water.tese";
+         effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/water.geom";
+         effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
+         effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+         effectDesc.pipelineDesc.AddTessellationState(4);
+
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void WaterJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
-      ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
-
       distortionImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16_SFLOAT, "Distortion image");
 
       renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -59,18 +76,12 @@ namespace Utopian
 
       mQueryPool = std::make_shared<Vk::QueryPoolStatistics>(mDevice);
       renderTarget->AddStatisticsQuery(mQueryPool);
+   }
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/water.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/water.frag";
-      effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/water.tesc";
-      effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/water.tese";
-      effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/water.geom";
-      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ALPHA;
-      effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
-      effectDesc.pipelineDesc.AddTessellationState(4);
-
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
+   void WaterJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
+      ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
 
       mFrustumPlanesBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);

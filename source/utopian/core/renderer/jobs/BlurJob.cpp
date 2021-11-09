@@ -15,12 +15,6 @@ namespace Utopian
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/blur/blur.frag";
-
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, mRenderTarget->GetRenderPass(), effectDesc);
-
       /*const uint32_t size = 240;
       gScreenQuadUi().AddQuad(10, height - (size + 10), size, size, blurImage.get(), renderTarget->GetSampler());*/
    }
@@ -29,7 +23,20 @@ namespace Utopian
    {
    }
 
-   void BlurJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   void BlurJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/blur/blur.frag";
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
+   void BlurJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       SSAOJob* ssaoJob = static_cast<SSAOJob*>(jobs[JobGraph::SSAO_INDEX]);
 
@@ -37,6 +44,10 @@ namespace Utopian
       mEffect->BindUniformBuffer("UBO_settings", settingsBlock);
 
       mEffect->BindCombinedImage("inputTexture", *ssaoJob->ssaoImage, *ssaoJob->renderTarget->GetSampler());
+   }
+
+   void BlurJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
    }
 
    void BlurJob::Render(const JobInput& jobInput)

@@ -18,13 +18,25 @@ namespace Utopian
    {
    }
 
-   void SSRJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   void SSRJob::LoadResources()
    {
-      InitTracePass(jobs, gbuffer);
-      InitBlurPass(jobs, gbuffer);
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
+         mTraceSSREffect = Vk::Effect::Create(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
+
+         Vk::EffectCreateInfo effectDescBlur;
+         effectDescBlur.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDescBlur.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr_blur.frag";
+         mBlurSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDescBlur);
+      };
+
+      loadShader();
    }
 
-   void SSRJob::InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   void SSRJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       ssrImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "SSR image");
       rayOriginImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "SSR ray origin debug image");
@@ -39,12 +51,22 @@ namespace Utopian
       mTraceRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
       mTraceRenderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr.frag";
+      ssrBlurImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "SSR blur image");
 
-      mTraceSSREffect = Vk::Effect::Create(mDevice, mTraceRenderTarget->GetRenderPass(), effectDesc);
+      mBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mBlurRenderTarget->AddWriteOnlyColorAttachment(ssrBlurImage);
+      mBlurRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+      mBlurRenderTarget->Create();
+   }
 
+   void SSRJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      InitTracePass(jobs, gbuffer);
+      InitBlurPass(jobs, gbuffer);
+   }
+
+   void SSRJob::InitTracePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
       GeometryThicknessJob* geometryThicknessJob = static_cast<GeometryThicknessJob*>(jobs[JobGraph::GEOMETRY_THICKNESS_INDEX]);
       OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
 
@@ -85,19 +107,6 @@ namespace Utopian
 
    void SSRJob::InitBlurPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      ssrBlurImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "SSR blur image");
-
-      mBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mBlurRenderTarget->AddWriteOnlyColorAttachment(ssrBlurImage);
-      mBlurRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-      mBlurRenderTarget->Create();
-
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssr/ssr_blur.frag";
-
-      mBlurSSREffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mBlurRenderTarget->GetRenderPass(), effectDesc);
-
       mBlurSSREffect->BindCombinedImage("samplerSSAO", *ssrImage, *mTraceRenderTarget->GetSampler());
 
       // const uint32_t size = 640;

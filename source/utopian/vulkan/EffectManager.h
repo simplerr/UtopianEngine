@@ -8,6 +8,7 @@
 #include <functional>
 #include <string>
 #include <ctime>
+#include <mutex>
 
 namespace Utopian::Vk
 {
@@ -50,6 +51,7 @@ namespace Utopian::Vk
    private:
       std::vector<TrackedEffect> mEffects;
       std::vector<std::function<void(std::string)>> mRecompileCallbacks;
+      std::mutex mEffectListMutex;
    };
 
    EffectManager& gEffectManager();
@@ -78,7 +80,12 @@ namespace Utopian::Vk
       trackedEffect.effect = std::make_shared<T>(device, renderPass, effectCreateInfo);
       trackedEffect.lastModification = GetLatestModification(effectCreateInfo.shaderDesc);
 
-      mEffects.push_back(trackedEffect);
+      // Multi-thread safety
+      {
+         const std::lock_guard<std::mutex> lock(mEffectListMutex);
+         mEffects.push_back(trackedEffect);
+      }
+
       return trackedEffect.effect;
    }
 }

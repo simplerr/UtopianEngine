@@ -48,7 +48,7 @@ namespace Utopian
          DOF_INDEX,
          OUTLINE_INDEX,
          TONEMAP_INDEX,
-         PIXEL_DEBUG_INDEX,
+         //PIXEL_DEBUG_INDEX,
          FXAA_INDEX
       };
 
@@ -56,6 +56,8 @@ namespace Utopian
 
       JobGraph(Vk::VulkanApp* vulkanApp, Terrain* terrain, Vk::Device* device, const RenderingSettings& renderingSettings);
       ~JobGraph();
+
+      void AsynchronousResourceLoading();
 
       /** Renders all jobs added to the graph. */
       void Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);

@@ -12,6 +12,19 @@ namespace Utopian
    {
    }
 
+   void OpaqueCopyJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/gbuffer_copy.frag";
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void OpaqueCopyJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       opaqueLitImage = std::make_shared<Vk::ImageColor>(mDevice, mWidth, mHeight, VK_FORMAT_R16G16B16A16_SFLOAT, "Opaque copy HDR image");
@@ -23,12 +36,10 @@ namespace Utopian
       mRenderTarget->SetClearColor(0.0f, 0.0f, 0.0f, 0.0f);
       mRenderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/gbuffer_copy.frag";
+   }
 
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
+   void OpaqueCopyJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
       mEffect->BindCombinedImage("lightSampler", *gbuffer.mainImage, *mRenderTarget->GetSampler());
       mEffect->BindCombinedImage("depthSampler", *gbuffer.depthImage, *mRenderTarget->GetSampler());
    }

@@ -14,6 +14,25 @@ namespace Utopian
    {
    }
 
+   void DebugJob::LoadResources()
+   {
+      auto loadShaders = [&]()
+      {
+         Vk::EffectCreateInfo effectDescColor;
+         effectDescColor.shaderDesc.vertexShaderPath = "data/shaders/color/color.vert";
+         effectDescColor.shaderDesc.fragmentShaderPath = "data/shaders/color/color.frag";
+         mColorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescColor);
+
+         Vk::EffectCreateInfo effectDescNormal;
+         effectDescNormal.shaderDesc.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
+         effectDescNormal.shaderDesc.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
+         effectDescNormal.shaderDesc.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
+         mNormalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescNormal);
+      };
+
+      loadShaders();
+   }
+
    void DebugJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -21,17 +40,10 @@ namespace Utopian
       //renderTarget->AddDepthAttachment(gbuffer.depthImage, VK_ATTACHMENT_LOAD_OP_LOAD);
       mRenderTarget->SetClearColor(1, 1, 1, 1);
       mRenderTarget->Create();
+   }
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/color/color.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/color/color.frag";
-      mColorEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/normal_debug/normal_debug.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/normal_debug/normal_debug.frag";
-      effectDesc.shaderDesc.geometryShaderPath = "data/shaders/normal_debug/normal_debug.geom";
-      mNormalEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
+   void DebugJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
       mColorEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mNormalEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
    }

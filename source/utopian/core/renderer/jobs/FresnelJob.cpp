@@ -15,24 +15,36 @@ namespace Utopian
    {
    }
 
+   void FresnelJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/fresnel.frag";
+         effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
+
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void FresnelJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      mRenderTarget->Create();
+
+      mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+   }
+
+   void FresnelJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       SSRJob* ssrJob = static_cast<SSRJob*>(jobs[JobGraph::SSR_INDEX]);
       OpaqueCopyJob* opaqueCopyJob = static_cast<OpaqueCopyJob*>(jobs[JobGraph::OPAQUE_COPY_INDEX]);
       WaterJob* waterJob = static_cast<WaterJob*>(jobs[JobGraph::WATER_INDEX]);
 
-      mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-      mRenderTarget->Create();
-
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/post_process/fresnel.frag";
-      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
-
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
-      mUniformBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mEffect->BindUniformBuffer("UBO_parameters", mUniformBlock);
 

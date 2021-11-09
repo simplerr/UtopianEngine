@@ -20,7 +20,7 @@ namespace Utopian
     * E.g .fbx, .obj, .dae, .mdl, .md2, .md3 etc.
     *
     * @note Does not load PBR materials, use .gltf models for that.
-    * @note Does not support loading of animations
+    * @note Does not support loading of animations.
     */
    class AssimpLoader
    {

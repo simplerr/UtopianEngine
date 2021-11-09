@@ -39,6 +39,52 @@ namespace Utopian
    {
    }
 
+   void GBufferJob::LoadResources()
+   {
+      auto loadShaders = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+         mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+
+         Vk::EffectCreateInfo effectDescLine;
+         effectDescLine.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
+         effectDescLine.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+         effectDescLine.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
+         mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescLine);
+
+         Vk::EffectCreateInfo effectDescSkinning;
+         effectDescSkinning.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_skinning.vert";
+         effectDescSkinning.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+         mGBufferEffectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescSkinning);
+
+         // Override vertex description for instancing shaders
+         SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
+         vertexDescription->AddBinding(BINDING_1, sizeof(InstanceDataGPU), VK_VERTEX_INPUT_RATE_INSTANCE);
+         vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 0 : InInstanceWorld
+         vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 1 : InInstanceWorld
+         vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 2 : InInstanceWorld
+         vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 3 : InInstanceWorld
+
+         Vk::EffectCreateInfo effectDescInstancingAnimation;
+         effectDescInstancingAnimation.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
+         effectDescInstancingAnimation.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+         effectDescInstancingAnimation.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+         effectDescInstancingAnimation.pipelineDesc.OverrideVertexInput(vertexDescription);
+         mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancingAnimation);
+
+         Vk::EffectCreateInfo effectDescInstancing;
+         effectDescInstancing.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
+         effectDescInstancing.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
+         effectDescInstancing.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+         effectDescInstancing.pipelineDesc.OverrideVertexInput(vertexDescription);
+         mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancing);
+      };
+
+      loadShaders();
+   }
+
    void GBufferJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -51,45 +97,10 @@ namespace Utopian
       mRenderTarget->AddReadWriteDepthAttachment(gbuffer.depthImage);
       mRenderTarget->SetClearColor(0, 0, 0, 1);
       mRenderTarget->Create();
+   }
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-      mGBufferEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
-      Vk::EffectCreateInfo effectDescSkinning;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_skinning.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-      mGBufferEffectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
-      Vk::EffectCreateInfo effectDescLine;
-      effectDescLine.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer.vert";
-      effectDescLine.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-      effectDescLine.pipelineDesc.rasterizationState.polygonMode = VK_POLYGON_MODE_LINE;
-      mGBufferEffectWireframe = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescLine);
-
-      // Override vertex description for instancing shaders
-      SharedPtr<Vk::VertexDescription> vertexDescription = std::make_shared<Vk::VertexDescription>(Vk::Vertex::GetDescription());
-      vertexDescription->AddBinding(BINDING_1, sizeof(InstanceDataGPU), VK_VERTEX_INPUT_RATE_INSTANCE);
-      vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 0 : InInstanceWorld
-      vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 1 : InInstanceWorld
-      vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 2 : InInstanceWorld
-      vertexDescription->AddAttribute(BINDING_1, Vk::Vec4Attribute());  // Location 3 : InInstanceWorld
-
-      Vk::EffectCreateInfo effectDescInstancingAnimation;
-      effectDescInstancingAnimation.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing_animation.vert";
-      effectDescInstancingAnimation.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-      effectDescInstancingAnimation.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-      effectDescInstancingAnimation.pipelineDesc.OverrideVertexInput(vertexDescription);
-      mInstancedAnimationEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancingAnimation);
-
-      Vk::EffectCreateInfo effectDescInstancing;
-      effectDescInstancing.shaderDesc.vertexShaderPath = "data/shaders/gbuffer/gbuffer_instancing.vert";
-      effectDescInstancing.shaderDesc.fragmentShaderPath = "data/shaders/gbuffer/gbuffer.frag";
-      effectDescInstancing.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-      effectDescInstancing.pipelineDesc.OverrideVertexInput(vertexDescription);
-      mGBufferEffectInstanced = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDescInstancing);
-
+   void GBufferJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
       mGBufferEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mGBufferEffectSkinning->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mInstancedAnimationEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());

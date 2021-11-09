@@ -17,7 +17,10 @@ namespace Utopian
       AtmosphereJob(Vk::Device* device, uint32_t width, uint32_t height);
       ~AtmosphereJob();
 
+      void LoadResources() override;
+
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
+      void PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void PreRender(const JobInput& jobInput) override;
       void Render(const JobInput& jobInput) override;
 

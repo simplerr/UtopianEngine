@@ -15,12 +15,6 @@ namespace Utopian
       renderTarget->SetClearColor(1, 1, 1, 1);
       renderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
-
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(device, renderTarget->GetRenderPass(), effectDesc);
-
       mSampler = std::make_shared<Vk::Sampler>(mDevice);
    }
 
@@ -28,7 +22,20 @@ namespace Utopian
    {
    }
 
-   void SSAOJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   void SSAOJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/ssao/ssao.frag";
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
+   void SSAOJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       mKernelSampleBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
@@ -43,6 +50,10 @@ namespace Utopian
       mEffect->BindCombinedImage("albedoSampler", *gbuffer.albedoImage, *mSampler);
 
       CreateKernelSamples();
+   }
+
+   void SSAOJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
    }
 
    void SSAOJob::Render(const JobInput& jobInput)

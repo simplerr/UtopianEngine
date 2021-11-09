@@ -23,6 +23,24 @@ namespace Utopian
    {
    }
 
+   void GBufferTerrainJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
+         effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/terrain.tesc";
+         effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/terrain.tese";
+         effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/terrain.geom";
+         effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
+         effectDesc.pipelineDesc.AddTessellationState(4);
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void GBufferTerrainJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -45,24 +63,9 @@ namespace Utopian
       if (mTerrain == nullptr)
          return;
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/tessellation/terrain.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/tessellation/terrain.frag";
-      effectDesc.shaderDesc.tescShaderPath = "data/shaders/tessellation/terrain.tesc";
-      effectDesc.shaderDesc.teseShaderPath = "data/shaders/tessellation/terrain.tese";
-      effectDesc.shaderDesc.geometryShaderPath = "data/shaders/tessellation/terrain.geom";
-      effectDesc.pipelineDesc.inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
-      effectDesc.pipelineDesc.AddTessellationState(4);
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDesc);
-
       mFrustumPlanesBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mSettingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mBrushBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
-      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mEffect->BindUniformBuffer("UBO_frustum", mFrustumPlanesBlock);
-      mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
-      mEffect->BindUniformBuffer("UBO_brush", *mTerrain->GetBrushBlock());
 
       TerrainMaterial material = mTerrain->GetMaterial("grass");
       mDiffuseTextureArray.AddTexture(material.diffuse);
@@ -88,6 +91,14 @@ namespace Utopian
       mSampler->createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
       mSampler->createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
       mSampler->Create();
+   }
+
+   void GBufferTerrainJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mEffect->BindUniformBuffer("UBO_frustum", mFrustumPlanesBlock);
+      mEffect->BindUniformBuffer("UBO_settings", mSettingsBlock);
+      mEffect->BindUniformBuffer("UBO_brush", *mTerrain->GetBrushBlock());
 
       // Bind terrain height and normal maps
       mEffect->BindCombinedImage("samplerHeightmap", *mTerrain->GetHeightmapImage(), *mSampler);

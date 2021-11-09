@@ -16,26 +16,30 @@ namespace Utopian
    {
    }
 
+   void DeferredJob::LoadResources()
+   {
+      auto loadShaders = [&]()
+      {
+         Vk::EffectCreateInfo effectDescPhong;
+         effectDescPhong.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDescPhong.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_phong.frag";
+         mPhongEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDescPhong);
+
+         Vk::EffectCreateInfo effectDescPbr;
+         effectDescPbr.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDescPbr.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_pbr.frag";
+         mPbrEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDescPbr);
+      };
+
+      loadShaders();
+   }
+
    void DeferredJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
-      ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
-
       renderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
       renderTarget->AddWriteOnlyColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       renderTarget->SetClearColor(1, 1, 1, 1);
       renderTarget->Create();
-
-      Vk::EffectCreateInfo effectDescPhong;
-      effectDescPhong.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDescPhong.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_phong.frag";
-
-      Vk::EffectCreateInfo effectDescPbr;
-      effectDescPbr.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDescPbr.shaderDesc.fragmentShaderPath = "data/shaders/deferred/deferred_pbr.frag";
-
-      mPhongEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDescPhong);
-      mPbrEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, renderTarget->GetRenderPass(), effectDescPbr);
 
       // Create sampler that returns 1.0 when sampling outside the depth image
       mDepthSampler = std::make_shared<Vk::Sampler>(mDevice, false);
@@ -54,6 +58,20 @@ namespace Utopian
       settings_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       cascade_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       atmosphere_ubo.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+      mIbl.brdfLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
+      mIbl.brdfLut->GetSampler().createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mIbl.brdfLut->GetSampler().createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mIbl.brdfLut->GetSampler().createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+      mIbl.brdfLut->GetSampler().Create();
+      mIbl.brdfLut->UpdateDescriptor();
+   }
+
+   void DeferredJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      BlurJob* blurJob = static_cast<BlurJob*>(jobs[JobGraph::BLUR_INDEX]);
+      ShadowJob* shadowJob = static_cast<ShadowJob*>(jobs[JobGraph::SHADOW_INDEX]);
+      AtmosphereJob* atmosphereJob = dynamic_cast<AtmosphereJob*>(jobs[JobGraph::SKYDOME_INDEX]);
 
       mPhongEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mPhongEffect->BindUniformBuffer("UBO_lights", light_ubo);
@@ -81,19 +99,7 @@ namespace Utopian
       mPbrEffect->BindCombinedImage("pbrSampler", *gbuffer.pbrImage, *mSampler);
       mPbrEffect->BindCombinedImage("shadowSampler", *shadowJob->depthColorImage, *mDepthSampler);
 
-      mIbl.brdfLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);
-      mIbl.brdfLut->GetSampler().createInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-      mIbl.brdfLut->GetSampler().createInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-      mIbl.brdfLut->GetSampler().createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-      mIbl.brdfLut->GetSampler().Create();
-      mIbl.brdfLut->UpdateDescriptor();
-
       mPbrEffect->BindCombinedImage("brdfLut", *mIbl.brdfLut);
-   }
-
-   void DeferredJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
-   {
-      AtmosphereJob* atmosphereJob = dynamic_cast<AtmosphereJob*>(jobs[JobGraph::SKYDOME_INDEX]);
 
       if (atmosphereJob != nullptr)
       {

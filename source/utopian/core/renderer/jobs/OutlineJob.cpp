@@ -17,16 +17,44 @@ namespace Utopian
    {
    }
 
+   void OutlineJob::LoadResources()
+   {
+      auto loadShaders = [&]()
+      {
+         Vk::EffectCreateInfo effectDescMask;
+         effectDescMask.shaderDesc.vertexShaderPath = "data/shaders/color/color.vert";
+         effectDescMask.shaderDesc.fragmentShaderPath = "data/shaders/color/color.frag";
+         mMaskPass.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mMaskPass.renderTarget->GetRenderPass(), effectDescMask);
+
+         effectDescMask.shaderDesc.vertexShaderPath = "data/shaders/color/color_skinning.vert";
+         mMaskPass.effectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mMaskPass.renderTarget->GetRenderPass(), effectDescMask);
+
+         Vk::EffectCreateInfo effectDescEdge;
+         effectDescEdge.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDescEdge.shaderDesc.fragmentShaderPath = "data/shaders/outline/outline.frag";
+         effectDescEdge.pipelineDesc.blendingType = Vk::BLENDING_ALPHA;
+         mEdgePass.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mEdgePass.renderTarget->GetRenderPass(), effectDescEdge);
+
+      };
+
+      loadShaders();
+   }
+
    void OutlineJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       InitMaskPass(jobs, gbuffer);
       InitEdgePass(jobs, gbuffer);
    }
 
-   void OutlineJob::Render(const JobInput& jobInput)
+   void OutlineJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
-      RenderMaskPass(jobInput);
-      RenderEdgePass(jobInput);
+      mMaskPass.effect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mMaskPass.effectSkinning->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+
+      mEdgePass.settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      mEdgePass.effect->BindUniformBuffer("UBO_settings", mEdgePass.settingsBlock);
+      mEdgePass.effect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mEdgePass.effect->BindCombinedImage("maskSampler", *mMaskPass.image, *mMaskPass.renderTarget->GetSampler());
    }
 
    void OutlineJob::InitMaskPass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -37,17 +65,6 @@ namespace Utopian
       mMaskPass.renderTarget->AddWriteOnlyColorAttachment(mMaskPass.image);
       mMaskPass.renderTarget->SetClearColor(0, 0, 0, 0);
       mMaskPass.renderTarget->Create();
-
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/color/color.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/color/color.frag";
-      mMaskPass.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mMaskPass.renderTarget->GetRenderPass(), effectDesc);
-
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/color/color_skinning.vert";
-      mMaskPass.effectSkinning = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mMaskPass.renderTarget->GetRenderPass(), effectDesc);
-
-      mMaskPass.effect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mMaskPass.effectSkinning->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
    }
 
    void OutlineJob::InitEdgePass(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
@@ -60,17 +77,12 @@ namespace Utopian
       mEdgePass.renderTarget->AddReadWriteColorAttachment(depthOfFieldJob->outputImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
       mEdgePass.renderTarget->SetClearColor(0, 0, 0, 1);
       mEdgePass.renderTarget->Create();
+   }
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/outline/outline.frag";
-      effectDesc.pipelineDesc.blendingType = Vk::BLENDING_ALPHA;
-      mEdgePass.effect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mEdgePass.renderTarget->GetRenderPass(), effectDesc);
-
-      mEdgePass.settingsBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-      mEdgePass.effect->BindUniformBuffer("UBO_settings", mEdgePass.settingsBlock);
-      mEdgePass.effect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mEdgePass.effect->BindCombinedImage("maskSampler", *mMaskPass.image, *mMaskPass.renderTarget->GetSampler());
+   void OutlineJob::Render(const JobInput& jobInput)
+   {
+      RenderMaskPass(jobInput);
+      RenderEdgePass(jobInput);
    }
 
    void OutlineJob::RenderMaskPass(const JobInput& jobInput)

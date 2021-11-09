@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <thread>
 #include "core/renderer/SceneInfo.h"
 #include "core/renderer/RenderSettings.h"
 #include "vulkan/handles/Semaphore.h"
@@ -53,7 +54,13 @@ namespace Utopian
 
       virtual ~BaseJob() {};
 
-      /*
+      /**
+       * Create and add worker threads for multithreaded resource loading.
+       * @note Currently only shader compilation is tested and supports multithreading.
+       */
+      virtual void LoadResources() {};
+
+      /**
        * If a job needs to query information from another job that's already added
        * it should be done inside of this function.
        */

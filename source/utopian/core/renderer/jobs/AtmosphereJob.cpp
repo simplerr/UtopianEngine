@@ -21,6 +21,21 @@ namespace Utopian
    {
    }
 
+   void AtmosphereJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/atmosphere/atmosphere.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/atmosphere/atmosphere.frag";
+         effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
+         effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
+         mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void AtmosphereJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       mRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
@@ -30,17 +45,7 @@ namespace Utopian
       mRenderTarget->SetClearColor(0, 0, 0);
       mRenderTarget->Create();
 
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/atmosphere/atmosphere.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/atmosphere/atmosphere.frag";
-      effectDesc.pipelineDesc.rasterizationState.cullMode = VK_CULL_MODE_FRONT_BIT;
-      effectDesc.pipelineDesc.depthStencilState.depthWriteEnable = VK_FALSE;
-      mEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRenderTarget->GetRenderPass(), effectDesc);
-
       mParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
-
-      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
-      mEffect->BindUniformBuffer("UBO_atmosphere", mParameterBlock);
 
       mSkydomeModel = gModelLoader().LoadModel("data/models/sphere.obj");
 
@@ -51,6 +56,12 @@ namespace Utopian
 
       // const uint32_t size = 240;
       // gScreenQuadUi().AddQuad(5 * (size + 10) + 10, mHeight - (2 * size + 10), size, size, sunImage.get(), mRenderTarget->GetSampler());
+   }
+
+   void AtmosphereJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
+      mEffect->BindUniformBuffer("UBO_atmosphere", mParameterBlock);
    }
 
    void AtmosphereJob::CaptureEnvironmentCubemap(glm::vec3 sunDir)

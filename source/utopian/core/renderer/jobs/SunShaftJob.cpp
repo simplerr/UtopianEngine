@@ -17,7 +17,33 @@ namespace Utopian
    {
    }
 
+   void SunShaftJob::LoadResources()
+   {
+      auto loadShader = [&]()
+      {
+         Vk::EffectCreateInfo effectDesc;
+         effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
+         effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/sun_shafts/sun_shafts.frag";
+         effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
+         mRadialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRadialBlurRenderTarget->GetRenderPass(), effectDesc);
+      };
+
+      loadShader();
+   }
+
    void SunShaftJob::Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
+   {
+      // Note: Todo: Probably don't need to be the native window size
+      mRadialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
+      mRadialBlurRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+      mRadialBlurRenderTarget->Create();
+
+      mRadialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+      mSkydomeModel = gModelLoader().LoadModel("data/models/sphere.obj");
+   }
+
+   void SunShaftJob::PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer)
    {
       // A workaround since both SkydomeJob and Atmosphere can produce the sun image,
       // depending on the job graph configuration
@@ -33,24 +59,8 @@ namespace Utopian
          sunImage = skyboxJob->sunImage;
 
       assert(sunImage);
-
-      // Note: Todo: Probably don't need to be the native window size
-      mRadialBlurRenderTarget = std::make_shared<Vk::RenderTarget>(mDevice, mWidth, mHeight);
-      mRadialBlurRenderTarget->AddReadWriteColorAttachment(gbuffer.mainImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-      mRadialBlurRenderTarget->Create();
-
-      Vk::EffectCreateInfo effectDesc;
-      effectDesc.shaderDesc.vertexShaderPath = "data/shaders/common/fullscreen.vert";
-      effectDesc.shaderDesc.fragmentShaderPath = "data/shaders/sun_shafts/sun_shafts.frag";
-      effectDesc.pipelineDesc.blendingType = Vk::BlendingType::BLENDING_ADDITIVE;
-
-      mRadialBlurEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mDevice, mRadialBlurRenderTarget->GetRenderPass(), effectDesc);
-
-      mRadialBlurParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
       mRadialBlurEffect->BindUniformBuffer("UBO_parameters", mRadialBlurParameters);
       mRadialBlurEffect->BindCombinedImage("sunSampler", *sunImage, *mRadialBlurRenderTarget->GetSampler());
-
-      mSkydomeModel = gModelLoader().LoadModel("data/models/sphere.obj");
    }
 
    void SunShaftJob::Render(const JobInput& jobInput)

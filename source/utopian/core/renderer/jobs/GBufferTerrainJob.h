@@ -30,7 +30,10 @@ namespace Utopian
       GBufferTerrainJob(Vk::Device* device, Terrain* terrain, uint32_t width, uint32_t height);
       ~GBufferTerrainJob();
 
+      void LoadResources() override;
+
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
+      void PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void Render(const JobInput& jobInput) override;
       void Update() override;
 
