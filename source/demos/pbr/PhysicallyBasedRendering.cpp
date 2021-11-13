@@ -118,7 +118,7 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(1.31, 1.0, 5.58), glm::vec3(0, 0, 0), 0.01, 20000, 0.009f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(1.31f, 1.0f, 5.58f), glm::vec3(0.0f, 0.0f, 0.0f), 0.01f, 20000.0f, 0.009f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
@@ -150,8 +150,8 @@ void PhysicallyBasedRendering::InitResources()
 
    InitSkybox();
 
-   mIrradianceMap = Vk::gTextureLoader().CreateCubemapTexture(VK_FORMAT_R32G32B32A32_SFLOAT, 64, 64, floor(log2(64)) + 1);
-   mSpecularMap = Vk::gTextureLoader().CreateCubemapTexture(VK_FORMAT_R16G16B16A16_SFLOAT, 512, 512, floor(log2(512)) + 1);
+   mIrradianceMap = Vk::gTextureLoader().CreateCubemapTexture(VK_FORMAT_R32G32B32A32_SFLOAT, 64, 64, (uint32_t)floor(log2(64)) + 1);
+   mSpecularMap = Vk::gTextureLoader().CreateCubemapTexture(VK_FORMAT_R16G16B16A16_SFLOAT, 512, 512, (uint32_t)floor(log2(512)) + 1);
    GenerateFilteredCubemaps();
 
    mBRDFLut = Vk::gTextureLoader().LoadTexture("data/textures/brdf_lut.ktx", VK_FORMAT_R16G16_SFLOAT);

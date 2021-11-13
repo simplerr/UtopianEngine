@@ -126,12 +126,14 @@ namespace Utopian
    {
       // Splits the resource loading work from all jobs in the graph evenly
       // across the number of threads configured for asyncrhonous loading.
-      auto work = [&](int currentThread, int numThreads)
+      auto work = [&](uint32_t currentThread, uint32_t numThreads)
       {
-         uint32_t functionsInThreads = mJobs.size() / numThreads;
+         uint32_t functionsInThreads = (uint32_t)mJobs.size() / numThreads;
          uint32_t functionsInCurrentThread = functionsInThreads;
+
+         // Last thread needs to contain remaining tasks if not evenly divided.
          if (currentThread == numThreads - 1)
-            functionsInCurrentThread = mJobs.size() - ((numThreads - 1) * functionsInThreads);
+            functionsInCurrentThread = (uint32_t)mJobs.size() - ((numThreads - 1) * functionsInThreads);
 
          for (uint32_t j = 0; j < functionsInCurrentThread; j++)
          {
