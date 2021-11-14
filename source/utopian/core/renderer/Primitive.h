@@ -16,12 +16,15 @@ namespace Utopian
       Primitive();
       ~Primitive();
 
-      void AddVertex(Vk::Vertex vertex);
+      void AddVertex(const Vk::Vertex& vertex);
       void AddVertex(glm::vec3 pos);
       void AddLine(uint32_t v1, uint32_t v2);
       void AddTriangle(uint32_t v1, uint32_t v2, uint32_t v3);
       void AddQuad(uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4);
       void BuildBuffers(Vk::Device* device);
+
+      void ReserveVertices(uint32_t numVertices);
+      void ReserveIndices(uint32_t numIndices);
 
       uint32_t GetNumIndices() const;
       uint32_t GetNumVertices() const;

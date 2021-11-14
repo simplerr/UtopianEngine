@@ -29,12 +29,14 @@ namespace Utopian
       mMaxSpeed = maxSpeed;
       mJumpStrength = jumpStrength;
 
-      SharedPtr<Model> model = gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
       mViewmodel = Renderable::Create();
-      mViewmodel->SetModel(model);
       mViewmodel->AddRotation(glm::vec3(glm::pi<float>(), 0.0f, 0.0f));
       mViewmodel->SetVisible(false);
       mViewmodel->RemoveRenderFlags(RENDER_FLAG_CAST_SHADOW);
+
+      // Note: temporarily disabled due to slow loading and unstable movement
+      // SharedPtr<Model> model = gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
+      // mViewmodel->SetModel(model);
 
       // Update the Player reference in World
       gWorld().SetPlayerActor(parent);
@@ -78,7 +80,9 @@ namespace Utopian
       mRigidBody->SetKinematic(playMode);
       gInput().SetVisibleCursor(playMode);
       mCrosshair.quad->visible = !playMode;
-      mViewmodel->SetVisible(!playMode);
+
+      // Note: temporarily disabled due to slow loading and unstable movement
+      //mViewmodel->SetVisible(!playMode);
 
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
          ImGuiRenderer::SetMode(UI_MODE_GAME);

@@ -281,6 +281,8 @@ namespace Utopian
 
       mQuadPrimitive = new Primitive();
       mQuadPrimitive->SetDebugName("Terrain patches");
+      mQuadPrimitive->ReserveVertices(numCells * numCells);
+      mQuadPrimitive->ReserveIndices(((numCells - 1) * (numCells - 1)) * 4);
 
       // Vertices
       for (auto x = 0; x < numCells; x++)

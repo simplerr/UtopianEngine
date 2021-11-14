@@ -19,7 +19,7 @@ namespace Utopian
    {
    }
 
-   void Primitive::AddVertex(Vk::Vertex vertex)
+   void Primitive::AddVertex(const Vk::Vertex& vertex)
    {
       vertices.push_back(vertex);
    }
@@ -48,6 +48,16 @@ namespace Utopian
       indices.push_back(v2);
       indices.push_back(v3);
       indices.push_back(v4);
+   }
+
+   void Primitive::ReserveVertices(uint32_t numVertices)
+   {
+      vertices.reserve(numVertices);
+   }
+
+   void Primitive::ReserveIndices(uint32_t numIndices)
+   {
+      indices.reserve(numIndices);
    }
 
    void Primitive::BuildBuffers(Vk::Device* device)
