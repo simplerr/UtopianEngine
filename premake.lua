@@ -105,6 +105,7 @@ project "Engine"
          defines { "DEBUG" }
          symbols "On"
          debugformat "c7"
+         optimize "Speed"
          links { "BulletCollision_x64_debug" }
          links { "BulletDynamics_x64_debug" }
          links { "BulletSoftBody_x64_debug" }
