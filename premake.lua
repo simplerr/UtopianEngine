@@ -120,7 +120,7 @@ project "Engine"
          links { "SPIRVd" }
          links { "SPVRemapperd" }
          links { "vulkan-1" }
-         links { "assimp" }
+         links { "assimp-vc142-mtd" }
          links { "libktx.gl" }
          links { "OpenMeshCored" }
          links { "OpenMeshToolsd" }
