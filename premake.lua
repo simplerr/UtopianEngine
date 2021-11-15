@@ -77,7 +77,7 @@ project "Engine"
       removefiles { "**/marching_cubes_legacy/**" }
    
       -- Includes
-      includedirs { "external/bullet3-2.88" }
+      includedirs { "external/bullet3" }
       includedirs { "external/luaplus" }
       includedirs { "external/luaplus/lua53-luaplus/src" }
       includedirs { "external/glslang/StandAlone" }
@@ -92,7 +92,7 @@ project "Engine"
    
       -- Libraries
       libdirs { "libs/assimp" }
-      libdirs { "libs/bullet3-2.88" }
+      libdirs { "libs/bullet3" }
       libdirs { "libs/glslang" }
       libdirs { "libs/luaplus" }
       libdirs { "libs/vulkan" }
@@ -150,7 +150,7 @@ project "Editor"
    removefiles { "**/marching_cubes_legacy/**" }
 
    -- Includes
-   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/bullet3" }
    includedirs { "external/luaplus" }
    includedirs { "external/luaplus/lua53-luaplus/src" }
    includedirs { "external/glslang/StandAlone" }
@@ -197,7 +197,7 @@ project "Raytrace Demo"
    }
 
    -- Includes
-   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/bullet3" }
    includedirs { "external/luaplus" }
    includedirs { "external/luaplus/lua53-luaplus/src" }
    includedirs { "external/glslang/StandAlone" }
@@ -244,7 +244,7 @@ project "Marching Cubes Demo"
    }
 
    -- Includes
-   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/bullet3" }
    includedirs { "external/luaplus" }
    includedirs { "external/luaplus/lua53-luaplus/src" }
    includedirs { "external/glslang/StandAlone" }
@@ -291,7 +291,7 @@ project "PBR Demo"
    }
 
    -- Includes
-   includedirs { "external/bullet3-2.88" }
+   includedirs { "external/bullet3" }
    includedirs { "external/luaplus" }
    includedirs { "external/luaplus/lua53-luaplus/src" }
    includedirs { "external/glslang/StandAlone" }
