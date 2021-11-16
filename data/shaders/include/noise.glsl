@@ -1,6 +1,24 @@
+// Note: when using the 496.76 Nvidia driver this function causes
+// artifacts when used in the terrain fbm. The hash() function works.
 float random(vec2 st)
 {
    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+}
+
+// Precision-adjusted variations of https://www.shadertoy.com/view/4djSRW
+float hash(float p)
+{
+   p = fract(p * 0.011);
+   p *= p + 7.5;
+   p *= p + p;
+   return fract(p);
+}
+
+float hash(vec2 p)
+{
+   vec3 p3 = fract(vec3(p.xyx) * 0.13);
+   p3 += dot(p3, p3.yzx + 3.333);
+   return fract((p3.x + p3.y) * p3.z);
 }
 
 /**
@@ -11,16 +29,16 @@ float random(vec2 st)
  * Other noise function that might be worth looking into:
  * http://www.kamend.com/2012/06/perlin-noise-and-glsl/
  */
-float noise (in vec2 st)
+float noise(in vec2 st)
 {
    vec2 i = floor(st);
    vec2 f = fract(st);
 
    // Four corners in 2D of a tile
-   float a = random(i);
-   float b = random(i + vec2(1.0, 0.0));
-   float c = random(i + vec2(0.0, 1.0));
-   float d = random(i + vec2(1.0, 1.0));
+   float a = hash(i);
+   float b = hash(i + vec2(1.0, 0.0));
+   float c = hash(i + vec2(0.0, 1.0));
+   float d = hash(i + vec2(1.0, 1.0));
 
    vec2 u = f * f * (3.0 - 2.0 * f);
 
@@ -31,7 +49,7 @@ float noise (in vec2 st)
    // Ridge noise
 #ifdef RIDGE_NOISE
    n = (n * 2) - 1;
-   return -abs(n); 
+   return -abs(n);
 #else
    return n;
 #endif
@@ -51,10 +69,6 @@ float fbm (vec2 st) {
    }
    return value;
 }
-
-// Precision-adjusted variations of https://www.shadertoy.com/view/4djSRW
-float hash(float p) { p = fract(p * 0.011); p *= p + 7.5; p *= p + p; return fract(p); }
-float hash(vec2 p) {vec3 p3 = fract(vec3(p.xyx) * 0.13); p3 += dot(p3, p3.yzx + 3.333); return fract((p3.x + p3.y) * p3.z); }
 
 float noise(vec3 x) {
    const vec3 step = vec3(110, 241, 171);
