@@ -61,8 +61,8 @@ project "Engine"
          "external/vk_mem_alloc.h",
          "external/stb_image.h",
          "external/stb_image_write.h",
-         "external/ktx.h",
-         "external/ktxvulkan.h",
+         "external/libktx/ktx.h",
+         "external/libktx/ktxvulkan.h",
          "external/im3d/*.h",
          "external/im3d/*.cpp",
          "external/imgui/*.h",
@@ -86,6 +86,7 @@ project "Engine"
       includedirs { "external/gli" }
       includedirs { "external/assimp" }
       includedirs { "external/tinygltf" }
+      includedirs { "external/libktx" }
       includedirs { "external" }
       includedirs { "source/utopian" }
       includedirs { "source" }
@@ -96,7 +97,7 @@ project "Engine"
       libdirs { "libs/glslang" }
       libdirs { "libs/luaplus" }
       libdirs { "libs/vulkan" }
-      libdirs { "libs/ktx" }
+      libdirs { "libs/libktx" }
       libdirs { "libs/OpenMesh" }
       libdirs { "libs/nativefiledialog" }
    
@@ -121,7 +122,7 @@ project "Engine"
          links { "SPVRemapperd" }
          links { "vulkan-1" }
          links { "assimp-vc142-mtd" }
-         links { "libktx.gl" }
+         links { "libktx.gl.debug" }
          links { "OpenMeshCored" }
          links { "OpenMeshToolsd" }
          links { "nfd_d" }
