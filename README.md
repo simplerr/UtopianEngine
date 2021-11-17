@@ -55,7 +55,7 @@ Run `git submodule update --init --recursive` to checkout the required submodule
 Run `./generate_workspace.bat` script to generate a Visual Studio 2019 solution.
 If you want to generate a solution for another VS version run `tools/premake5.exe` manually.
 
-Pre compiled libraries for MSVC x64 Debug are included in the `libs/` folder.
+Pre compiled libraries for MSVC x64 Debug and Release are included in the `libs/` folder.
 
 ## Folder structure
 

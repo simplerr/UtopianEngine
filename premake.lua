@@ -13,7 +13,6 @@ workspace "UtopianEngine"
       "BT_USE_DOUBLE_PRECISION",
       "GLM_FORCE_CTOR_INIT",
       "WIN32",
-      "_DEBUG",
       "_WINDOWS",
       "VK_USE_PLATFORM_WIN32_KHR",
       "_USE_MATH_DEFINES",
@@ -27,7 +26,7 @@ workspace "UtopianEngine"
 
    -- "Debug"
    filter "configurations:Debug"
-      defines { "DEBUG" }
+      defines { "DEBUG", "_DEBUG" }
       flags { "MultiProcessorCompile", }
       symbols "On"
       linkoptions { "-IGNORE:4099" } -- Ignore "Missing .pdb debug file" warnings for libs used
@@ -43,6 +42,7 @@ workspace "UtopianEngine"
       flags { "MultiProcessorCompile", "LinkTimeOptimization" }
       symbols "Off"
       optimize "Full"
+      linkoptions { "-IGNORE:4006" } -- Ignore "Already defined in" warnings (some Assimp function are defined twice)
 
 -- =========================================
 -- ================ Engine =================
@@ -106,7 +106,6 @@ project "Engine"
          defines { "DEBUG" }
          symbols "On"
          debugformat "c7"
-         optimize "Speed"
          links { "BulletCollision_x64_debug" }
          links { "BulletDynamics_x64_debug" }
          links { "BulletSoftBody_x64_debug" }
@@ -124,13 +123,30 @@ project "Engine"
          links { "assimp-vc142-mtd" }
          links { "libktx.gl.debug" }
          links { "OpenMeshCored" }
-         links { "OpenMeshToolsd" }
          links { "nfd_d" }
    
       -- "Release"
       filter "configurations:Release"
          defines { "NDEBUG" }
-         optimize "On"
+         optimize "Full"
+         links { "BulletCollision_x64_release" }
+         links { "BulletDynamics_x64_release" }
+         links { "BulletSoftBody_x64_release" }
+         links { "LinearMath_x64_release" }
+         links { "lua53-luaplus-static" }
+         links { "GenericCodeGen" }
+         links { "glslang" }
+         links { "HLSL" }
+         links { "MachineIndependent" }
+         links { "OGLCompiler" }
+         links { "OSDependent" }
+         links { "SPIRV" }
+         links { "SPVRemapper" }
+         links { "vulkan-1" }
+         links { "assimp-vc142-mt" }
+         links { "libktx.gl.release" }
+         links { "OpenMeshCore" }
+         links { "nfd" }
 
 -- =========================================
 -- ================ Editor =================

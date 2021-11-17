@@ -18,7 +18,7 @@
 #include "vulkan/TextureLoader.h"
 #include "core/Log.h"
 #include <OpenMesh/Core/Mesh/Handles.hh>
-#include <OpenMesh/Core/Mesh/SmartHandles.hh>
+#include <OpenMesh/Core/Mesh/PolyConnectivity.hh>
 #include <core/components/CRandomPaths.h>
 #include <im3d/im3d.h>
 #include <vulkan/VulkanPrerequisites.h>

@@ -54,7 +54,6 @@
 
 #include <OpenMesh/Core/System/config.h>
 #include <OpenMesh/Core/Mesh/Status.hh>
-#include <OpenMesh/Core/Mesh/SmartHandles.hh>
 #include <cassert>
 #include <cstddef>
 #include <iterator>

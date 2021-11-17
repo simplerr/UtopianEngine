@@ -65,7 +65,7 @@
 // ----------------------------------------------------------------------------
 
 
-#define OM_VERSION 0x80100
+#define OM_VERSION 0x90000
 //#define OM_VERSION 0x70200
 
 #define OM_GET_VER ((OM_VERSION & 0xf0000) >> 16)
@@ -83,7 +83,12 @@
 #  endif
 #endif
 
-#if defined(_MSC_VER)
+//! define OM_SUPPRESS_DEPRECATED to suppress deprecated code warnings
+#if defined(OM_SUPPRESS_DEPRECATED)
+#pragma message( \
+    "OpenMesh deprecated code warnings suppressed, please fix your code soon")
+#  define OM_DEPRECATED(msg)
+#elif defined(_MSC_VER)
 #  define OM_DEPRECATED(msg) __declspec(deprecated(msg))
 #elif defined(__GNUC__)
 #  if (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__) >= 40500 /* Test for GCC >= 4.5.0 */

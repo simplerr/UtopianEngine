@@ -53,7 +53,6 @@
 //== INCLUDES =================================================================
 
 #include <OpenMesh/Core/System/config.h>
-#include <OpenMesh/Core/Mesh/SmartHandles.hh>
 #include <cassert>
 #include <cstddef>
 #include <iterator>
@@ -196,7 +195,7 @@ class GenericCirculatorBaseT {
     public:
         GenericCirculatorBaseT() : mesh_(0), lap_counter_(0) {}
 
-        GenericCirculatorBaseT(mesh_ref mesh, HalfedgeHandle heh, bool end = false) :
+        GenericCirculatorBaseT(mesh_ref mesh, typename Mesh::HalfedgeHandle heh, bool end = false) :
             mesh_(&mesh), start_(heh), heh_(heh), lap_counter_(static_cast<int>(end && heh.is_valid())) {}
 
         GenericCirculatorBaseT(const GenericCirculatorBaseT &rhs) :
@@ -275,7 +274,7 @@ class GenericCirculatorT : protected GenericCirculatorBaseT<typename GenericCirc
 
             GenericCirculator_ValueHandleFns::init(this->mesh_, this->heh_, this->start_, this->lap_counter_);
         }
-        GenericCirculatorT(mesh_ref mesh, HalfedgeHandle heh, bool end = false) :
+        GenericCirculatorT(mesh_ref mesh, typename Mesh::HalfedgeHandle heh, bool end = false) :
             GenericCirculatorBaseT<Mesh>(mesh, heh, end) {
 
             GenericCirculator_ValueHandleFns::init(this->mesh_, this->heh_, this->start_, this->lap_counter_);
@@ -448,7 +447,7 @@ class GenericCirculatorT_DEPRECATED : protected GenericCirculatorBaseT<typename 
 
           GenericCirculator_ValueHandleFns::init(this->mesh_, this->heh_, this->start_, this->lap_counter_);
         }
-        GenericCirculatorT_DEPRECATED(mesh_ref mesh, HalfedgeHandle heh, bool end = false) :
+        GenericCirculatorT_DEPRECATED(mesh_ref mesh, typename Mesh::HalfedgeHandle heh, bool end = false) :
             GenericCirculatorBaseT<Mesh>(mesh, heh, end) {
 
           GenericCirculator_ValueHandleFns::init(this->mesh_, this->heh_, this->start_, this->lap_counter_);
@@ -548,7 +547,7 @@ class GenericCirculatorT_DEPRECATED : protected GenericCirculatorBaseT<typename 
          * current_halfedge_handle() is an implementation detail and should not
          * be accessed from outside the iterator class.
          */
-        const HalfedgeHandle &current_halfedge_handle() const {
+        const typename Mesh::HalfedgeHandle &current_halfedge_handle() const {
             return this->heh_;
         }
 

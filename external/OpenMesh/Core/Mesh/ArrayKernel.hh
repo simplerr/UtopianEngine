@@ -741,12 +741,12 @@ public:
     { handles_.reserve(_capacity_hint); }
 
     ~ExtStatusSetT()
-    { clear(); }
+    { Base::clear(); }
 
     // Complexity: O(1)
     inline void insert(Handle _hnd)
     {
-      if (!is_in(_hnd))
+      if (!Base::is_in(_hnd))
       {
         Base::insert(_hnd);
         handles_.push_back(_hnd);
@@ -766,7 +766,8 @@ public:
     //! Complexity: O(1)
     inline void erase(iterator _it)
     {
-      assert(_it != const_cast<const ExtStatusSetT*>(this)->end() && is_in(*_it));
+      assert(_it != const_cast<const ExtStatusSetT*>(this)->end() &&
+             Base::is_in(*_it));
       Base::erase(*_it);
       *_it = handles_.back();
       _it.pop_back();
@@ -776,7 +777,7 @@ public:
     {
       for (iterator it = begin(); it != end(); ++it)
       {
-        assert(is_in(*it));
+        assert(Base::is_in(*it));
         Base::erase(*it);
       }
       handles_.clear();

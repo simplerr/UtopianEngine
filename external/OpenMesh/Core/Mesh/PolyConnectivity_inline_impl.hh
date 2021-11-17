@@ -39,13 +39,12 @@
  *                                                                           *
  * ========================================================================= */
 
-#ifndef OPENMESH_POLYCONNECTIVITY_INLINE_IMPL_HH
-#define OPENMESH_POLYCONNECTIVITY_INLINE_IMPL_HH
+#ifndef OPENMESH_POLYCONNECTIVITY_INTERFACE_INCLUDE
+#error Do not include this directly, include instead PolyConnectivity.hh
+#endif // OPENMESH_POLYCONNECTIVITY_INTERFACE_INCLUDE
 
-#include <OpenMesh/Core/Mesh/PolyConnectivity.hh>
 #include <OpenMesh/Core/Mesh/IteratorsT.hh>
 #include <OpenMesh/Core/Mesh/CirculatorsT.hh>
-#include <OpenMesh/Core/Mesh/SmartHandles.hh>
 
 namespace OpenMesh {
 
@@ -164,6 +163,11 @@ inline PolyConnectivity::ConstFaceEdgeRange PolyConnectivity::fe_range(FaceHandl
 inline PolyConnectivity::ConstFaceFaceRange PolyConnectivity::ff_range(FaceHandle _fh) const {
     return ConstFaceFaceRange(*this, _fh);
 }
+
+inline PolyConnectivity::ConstHalfedgeLoopRange PolyConnectivity::hl_range(HalfedgeHandle _heh) const {
+    return ConstHalfedgeLoopRange(*this, _heh);
+}
+
 
 
 
@@ -772,7 +776,70 @@ inline PolyConnectivity::ConstHalfedgeLoopCCWIter PolyConnectivity::chl_ccwend(H
 { return ConstHalfedgeLoopCCWIter(*this, _heh, true); }
 
 
+inline PolyConnectivity::ConstVertexFaceRange SmartVertexHandle::faces() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->vf_range(*this);
+}
+
+inline PolyConnectivity::ConstVertexEdgeRange SmartVertexHandle::edges() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->ve_range(*this);
+}
+
+inline PolyConnectivity::ConstVertexVertexRange
+SmartVertexHandle::vertices() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->vv_range(*this);
+}
+
+inline PolyConnectivity::ConstVertexIHalfedgeRange
+SmartVertexHandle::incoming_halfedges() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->vih_range(*this);
+}
+
+inline PolyConnectivity::ConstVertexOHalfedgeRange
+SmartVertexHandle::outgoing_halfedges() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->voh_range(*this);
+}
+
+inline PolyConnectivity::ConstHalfedgeLoopRange
+SmartHalfedgeHandle::loop() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->hl_range(*this);
+}
+
+
+inline PolyConnectivity::ConstFaceVertexRange SmartFaceHandle::vertices() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->fv_range(*this);
+}
+
+inline PolyConnectivity::ConstFaceHalfedgeRange
+SmartFaceHandle::halfedges() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->fh_range(*this);
+}
+
+inline PolyConnectivity::ConstFaceEdgeRange SmartFaceHandle::edges() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->fe_range(*this);
+}
+
+inline PolyConnectivity::ConstFaceFaceRange SmartFaceHandle::faces() const
+{
+  assert(mesh() != nullptr);
+  return mesh()->ff_range(*this);
+}
+
 }//namespace OpenMesh
-
-#endif // OPENMESH_POLYCONNECTIVITY_INLINE_IMPL_HH
-

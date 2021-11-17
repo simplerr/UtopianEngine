@@ -1230,6 +1230,13 @@ public:
           FaceHandle,
           &PolyConnectivity::cff_begin,
           &PolyConnectivity::cff_end>> ConstFaceFaceRange;
+  typedef CirculatorRange<CirculatorRangeTraitT<
+          PolyConnectivity,
+          ConstHalfedgeLoopIter,
+          HalfedgeHandle,
+          HalfedgeHandle,
+          &PolyConnectivity::chl_begin,
+          &PolyConnectivity::chl_end>> ConstHalfedgeLoopRange;
 
   /**
    * @return The vertices adjacent to the specified vertex
@@ -1284,6 +1291,12 @@ public:
    * as a range object suitable for C++11 range based for loops.
    */
   ConstFaceFaceRange ff_range(FaceHandle _fh) const;
+
+  /**
+   * @return The halfedges in the face
+   * as a range object suitable for C++11 range based for loops.
+   */
+  ConstHalfedgeLoopRange hl_range(HalfedgeHandle _heh) const;
 
   //@}
 
@@ -1567,6 +1580,9 @@ struct PolyConnectivity::ElementRange<FaceHandle>
 
 }//namespace OpenMesh
 
+#define OPENMESH_POLYCONNECTIVITY_INTERFACE_INCLUDE
+#include <OpenMesh/Core/Mesh/SmartHandles.hh>
 #include <OpenMesh/Core/Mesh/PolyConnectivity_inline_impl.hh>
+#undef OPENMESH_POLYCONNECTIVITY_INTERFACE_INCLUDE
 
 #endif//OPENMESH_POLYCONNECTIVITY_HH

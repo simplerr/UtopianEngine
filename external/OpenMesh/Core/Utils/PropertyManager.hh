@@ -56,10 +56,6 @@ namespace OpenMesh {
  * It also defines convenience operators to access the encapsulated
  * property's value.
  *
- * It is recommended to use the factory functions
- * makeTemporaryProperty(), getProperty(), and getOrMakeProperty()
- * to construct a PropertyManager, e.g.
- *
  * Note that the second template parameter is depcretated.
  *
  * \code
@@ -89,14 +85,17 @@ class PropertyManager {
 
     private:
         // Mesh properties (MPropHandleT<...>) are stored differently than the other properties.
-        // This class implements different behavior when copying or swapping data from one
-        // property manager to a another one.
+        // This class implements different behavior when initializing a property or when
+        // copying or swapping data from one property manager to a another one.
         template <typename PropertyManager2, typename PropHandleT>
         struct StorageT;
 
         // specialization for Mesh Properties
         template <typename PropertyManager2>
         struct StorageT<PropertyManager2, MPropHandleT<Value>> {
+          static void initialize(PropertyManager<PROPTYPE, MeshT>& pm, const Value& initial_value ) {
+            pm() = initial_value;
+          }
           static void copy(const PropertyManager<PROPTYPE, MeshT>& from, PropertyManager2& to) {
             *to = *from;
           }
@@ -114,10 +113,13 @@ class PropertyManager {
         // definition for other Mesh Properties
         template <typename PropertyManager2, typename PropHandleT>
         struct StorageT {
-          static void copy(const PropertyManager<PROPTYPE, MeshT>& from, PropertyManager2& to) {
+          static void initialize(PropertyManager<PROPTYPE, MeshT>& pm, const Value& initial_value ) {
+            pm.set_range(pm.mesh_.template all_elements<Handle>(), initial_value);
+          }
+          static void copy(const PropertyManager& from, PropertyManager2& to) {
             from.copy_to(from.mesh_.template all_elements<Handle>(), to, to.mesh_.template all_elements<Handle>());
           }
-          static void swap(PropertyManager<PROPTYPE, MeshT>& lhs, PropertyManager2& rhs) {
+          static void swap(PropertyManager& lhs, PropertyManager2& rhs) {
             std::swap(lhs.mesh().property(lhs.prop_).data_vector(), rhs.mesh().property(rhs.prop_).data_vector());
             // resize the property to the correct size
             lhs.mesh().property(lhs.prop_).resize(lhs.mesh().template n_elements<Handle>());
@@ -194,7 +196,7 @@ class PropertyManager {
         PropertyManager(const Value& initial_value, PolyConnectivity& mesh, const char *propname) : mesh_(mesh), retain_(true), name_(propname) {
             if (!mesh_.get_property_handle(prop_, propname)) {
               PropertyManager::mesh().add_property(prop_, propname);
-              set_range(mesh_.all_elements<Handle>(), initial_value);
+              Storage::initialize(*this, initial_value);
             }
         }
 
@@ -219,7 +221,7 @@ class PropertyManager {
          */
         PropertyManager(const Value& initial_value, const PolyConnectivity& mesh) : mesh_(mesh), retain_(false), name_("") {
             PropertyManager::mesh().add_property(prop_, name_);
-            set_range(mesh_.all_elements<Handle>(), initial_value);
+            Storage::initialize(*this, initial_value);
         }
 
         /**
@@ -542,22 +544,22 @@ class PropertyManager {
          * @param dst_end End iterator. (Exclusive.)
          * Will be used with dst_propmanager. Used to double check the bounds.
          */
-        template<typename HandleTypeIterator, typename PROPTYPE_2,
-                 typename HandleTypeIterator_2>
+        template<typename HandleTypeIterator, typename PropertyManager2,
+                 typename HandleTypeIterator2>
         void copy_to(HandleTypeIterator begin, HandleTypeIterator end,
-                PropertyManager<PROPTYPE_2> &dst_propmanager,
-                HandleTypeIterator_2 dst_begin, HandleTypeIterator_2 dst_end) const {
+                PropertyManager2 &dst_propmanager,
+                HandleTypeIterator2 dst_begin, HandleTypeIterator2 dst_end) const {
 
             for (; begin != end && dst_begin != dst_end; ++begin, ++dst_begin) {
                 dst_propmanager[*dst_begin] = (*this)[*begin];
             }
         }
 
-        template<typename RangeType, typename PROPTYPE_2,
-                 typename RangeType_2>
+        template<typename RangeType, typename PropertyManager2,
+                 typename RangeType2>
         void copy_to(const RangeType &range,
-                PropertyManager<PROPTYPE_2> &dst_propmanager,
-                const RangeType_2 &dst_range) const {
+                PropertyManager2 &dst_propmanager,
+                const RangeType2 &dst_range) const {
             copy_to(range.begin(), range.end(), dst_propmanager,
                     dst_range.begin(), dst_range.end());
         }
@@ -577,10 +579,10 @@ class PropertyManager {
          * @param dst_mesh Destination mesh on which to copy.
          * @param dst_range Destination range.
          */
-        template<typename RangeType, typename RangeType_2>
+        template<typename RangeType, typename RangeType2>
         static void copy(const char *prop_name,
                 PolyConnectivity &src_mesh, const RangeType &src_range,
-                PolyConnectivity &dst_mesh, const RangeType_2 &dst_range) {
+                PolyConnectivity &dst_mesh, const RangeType2 &dst_range) {
 
             typedef OpenMesh::PropertyManager<PROPTYPE> DstPM;
             DstPM dst(DstPM::createIfNotExists(dst_mesh, prop_name));

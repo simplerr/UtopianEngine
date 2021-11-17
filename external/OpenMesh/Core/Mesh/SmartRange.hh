@@ -124,6 +124,34 @@ struct SmartRangeT
     return (1.0 / n_elements) * result;
   }
 
+  /** @brief Computes the weighted average of elements.
+   *
+   * Computes the weighted average of all elements in the range after applying the functor \p f.
+   *
+   *  @param f Functor that is applied to all elements before computing the average.
+   *  @param w Functor returning element weight.
+   */
+  template <typename Functor, typename WeightFunctor>
+  auto avg(Functor&& f, WeightFunctor&& w) -> typename std::decay<decltype ((1.0/(w(std::declval<HandleT>())+w(std::declval<HandleT>())))*f(std::declval<HandleT>()))>::type
+  {
+    auto range = static_cast<const RangeT*>(this);
+    auto begin = range->begin();
+    auto end   = range->end();
+    assert(begin != end);
+    typename std::decay<decltype (w(*begin))>::type weight = w(*begin);
+    typename std::decay<decltype (w(*begin)*f(*begin))>::type result = weight * f(*begin);
+    typename std::decay<decltype (w(*begin)+w(*begin))>::type weight_sum = weight;
+    auto it = begin;
+    ++it;
+    for (; it != end; ++it)
+    {
+      weight = w(*it);
+      result += weight*f(*it);
+      weight_sum += weight;
+    }
+    return (1.0 / weight_sum) * result;
+  }
+
   /** @brief Check if any element fulfils condition.
   *
   * Checks if functor \p f returns true for any of the elements in the range.
@@ -400,14 +428,11 @@ struct SmartRangeT
    * @param f Functor that needs to be evaluated to true if the element should not be skipped.
    */
   template <typename Functor>
-  auto filtered(Functor&& f) -> FilteredSmartRangeT<SmartRange, Handle, typename std::decay<Functor>::type>
+  auto filtered(Functor&& f) -> FilteredSmartRangeT<SmartRange, Handle, Functor>
   {
     auto range = static_cast<const RangeT*>(this);
-    auto b = (*range).begin();
-    auto e = (*range).end();
-    return FilteredSmartRangeT<SmartRange, Handle, typename std::decay<Functor>::type>(f, b, e);
+    return FilteredSmartRangeT<SmartRange, Handle, Functor>(std::forward<Functor>(f), (*range).begin(), (*range).end());
   }
-
 };
 
 
@@ -423,8 +448,15 @@ struct FilteredSmartRangeT : public SmartRangeT<FilteredSmartRangeT<RangeT, Hand
 
     FilteredIterator(Functor f, BaseIterator it, BaseIterator end): BaseIterator(it), f_(f), end_(end)
     {
-      if (!f_(*(*this))) // if start is not valid go to first valid one
+      if (!BaseIterator::operator==(end_) && !f_(*(*this))) // if start is not valid go to first valid one
         operator++();
+    }
+
+    FilteredIterator& operator=(const FilteredIterator& other)
+    {
+      BaseIterator::operator=(other);
+      end_ = other.end_;
+      return *this;
     }
 
     FilteredIterator& operator++()
@@ -439,11 +471,12 @@ struct FilteredSmartRangeT : public SmartRangeT<FilteredSmartRangeT<RangeT, Hand
       return *this;
     }
 
-    Functor f_;
+    Functor f_;        // Should iterators always get a reference to filter stored in range?
+                       // Should iterators stay valid after range goes out of scope?
     BaseIterator end_;
   };
 
-  FilteredSmartRangeT(Functor f, BaseIterator begin, BaseIterator end) : f_(f), begin_(begin), end_(end){}
+  FilteredSmartRangeT(Functor&& f, BaseIterator begin, BaseIterator end) : f_(std::forward<Functor>(f)), begin_(std::move(begin)), end_(std::move(end)){}
   FilteredIterator begin() const { return FilteredIterator(f_, begin_, end_); }
   FilteredIterator end()   const { return FilteredIterator(f_, end_, end_); }
 

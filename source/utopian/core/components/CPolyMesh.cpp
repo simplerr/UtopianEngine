@@ -4,7 +4,7 @@
 #include "core/LuaManager.h"
 #include "core/renderer/Renderer.h"
 #include <OpenMesh/Core/Mesh/Handles.hh>
-#include <OpenMesh/Core/Mesh/SmartHandles.hh>
+#include <OpenMesh/Core/Mesh/PolyConnectivity.hh>
 #include <core/components/CRenderable.h>
 #include <core/components/CRigidBody.h>
 #include <core/components/Component.h>
