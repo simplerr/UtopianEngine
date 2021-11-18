@@ -9,7 +9,8 @@
             "args": [
                 "UtopianEngine.sln",
                 "/property:GenerateFullPaths=true",
-                "/t:build"
+                "/t:build",
+                "/p:Configuration=Release"
             ],
             "group": {
                 "kind": "build",
@@ -18,12 +19,7 @@
         },
         {
             "label": "Run Editor",
-            "command": "C:/Git/UtopianEngine/bin/Debug/Editor.exe",
-            "dependsOn": ["Build Solution"],
-        },
-        {
-            "label": "Run PBR demo",
-            "command": "C:/Git/UtopianEngine/bin/Debug/PBR Demo.exe",
+            "command": "C:/Git/UtopianEngine/bin/Release/Editor.exe",
             "dependsOn": ["Build Solution"],
             "group": {
                 "kind": "test",
@@ -31,13 +27,18 @@
             }
         },
         {
+            "label": "Run PBR demo",
+            "command": "C:/Git/UtopianEngine/bin/Release/PBR Demo.exe",
+            "dependsOn": ["Build Solution"],
+        },
+        {
             "label": "Run Raytrace demo",
-            "command": "C:/Git/UtopianEngine/bin/Debug/Raytrace Demo.exe",
+            "command": "C:/Git/UtopianEngine/bin/Release/Raytrace Demo.exe",
             "dependsOn": ["Build Solution"],
         },
         {
             "label": "Run Marching Cubes demo",
-            "command": "C:/Git/UtopianEngine/bin/Debug/Marching Cubes Demo.exe",
+            "command": "C:/Git/UtopianEngine/bin/Release/Marching Cubes Demo.exe",
             "dependsOn": ["Build Solution"],
         }
     ]

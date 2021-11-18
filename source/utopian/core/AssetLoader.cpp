@@ -214,7 +214,7 @@ namespace Utopian
             fullNormalPath = "data/NatureManufacture/Meadow Environment Dynamic Nature/" + asset.normalMap;
 
          SharedPtr<Vk::Texture> diffuseTexture = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
-         SharedPtr<Vk::Texture> normalMap = Vk::gTextureLoader().LoadTexture(fullDiffusePath);
+         SharedPtr<Vk::Texture> normalMap = Vk::gTextureLoader().LoadTexture(fullNormalPath);
 
          if (diffuseTexture != nullptr && normalMap != nullptr)
          {
