@@ -25,6 +25,7 @@
 #include "vulkan/Debug.h"
 #include "core/Input.h"
 #include "core/renderer/RendererUtility.h"
+#include "IconFontCppHeaders/IconsFontAwesome4.h"
 
 #define MOUSE_WHEEL_SCALING 150.0f
 
@@ -81,6 +82,12 @@ namespace Utopian
 
       io.Fonts->AddFontFromFileTTF("data/fonts/Roboto-Regular.ttf", 15.0f);
 
+      ImFontConfig config;
+      config.MergeMode = true;
+      config.GlyphMinAdvanceX = 13.0f;
+      static const ImWchar iconRanges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+      io.Fonts->AddFontFromFileTTF("data/fonts/fontawesome-webfont.ttf", 13.0f, &config, iconRanges);
+
       // Create font texture
       unsigned char* fontData;
       int texWidth, texHeight, pixelSize;
@@ -104,7 +111,7 @@ namespace Utopian
       mImguiEffect = Vk::gEffectManager().AddEffect<Vk::Effect>(mVulkanApp->GetDevice(), mVulkanApp->GetRenderPass(), effectDesc);
 
       mTexture = Vk::gTextureLoader().CreateTexture(fontData, VK_FORMAT_R8G8B8A8_UNORM, texWidth, texHeight,
-                                                   1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT, "ImGui font image");
+                                                    1, pixelSize, VK_IMAGE_ASPECT_COLOR_BIT, "ImGui font image");
       mImguiEffect->BindCombinedImage("fontSampler", *mTexture);
 
       io.Fonts->TexID = (ImTextureID)AddImage(mTexture->GetImage());
@@ -530,7 +537,8 @@ namespace Utopian
    {
       // From Raikiris comment in https://github.com/ocornut/imgui/issues/707
       ImVec4* colors = ImGui::GetStyle().Colors;
-      colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
+      //colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
+      colors[ImGuiCol_Text] = ImVec4(200.0f / 255.0f, 200.0f / 255.0f, 200.0f / 255.0f, 1.00f);
       colors[ImGuiCol_TextDisabled] = ImVec4(0.36f, 0.42f, 0.47f, 1.00f);
       colors[ImGuiCol_WindowBg] = ImVec4(0.11f, 0.15f, 0.17f, 1.00f);
       colors[ImGuiCol_ChildBg] = ImVec4(0.15f, 0.18f, 0.22f, 1.00f);

@@ -16,3 +16,6 @@
 [submodule "external/tinygltf"]
 	path = external/tinygltf
 	url = git@github.com:syoyo/tinygltf.git
+[submodule "external/IconFontCppHeaders"]
+	path = external/IconFontCppHeaders
+	url = git@github.com:juliettef/IconFontCppHeaders.git

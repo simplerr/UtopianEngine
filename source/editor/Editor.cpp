@@ -5,6 +5,7 @@
 #include "core/World.h"
 #include "core/Engine.h"
 #include "core/components/Actor.h"
+#include "core/components/CCamera.h"
 #include "core/components/CTransform.h"
 #include "core/components/CRenderable.h"
 #include "core/components/CLight.h"
@@ -24,6 +25,7 @@
 #include "core/renderer/Model.h"
 #include "core/physics/Physics.h"
 #include "utility/math/Helpers.h"
+#include "IconFontCppHeaders/IconsFontAwesome4.h"
 #include "im3d/im3d.h"
 #include "core/Log.h"
 #include <imgui/imgui.h>
@@ -319,11 +321,18 @@ namespace Utopian
             {
                std::string name = actor->GetName();
 
-               ImGuiTreeNodeFlags flags = 0;
+               ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Leaf;
                if (mSelectedActor == actor.get())
                   flags = ImGuiTreeNodeFlags_Selected;
+
+               std::string icon = ICON_FA_CUBE;
+
+               if (actor->HasComponent<CLight>())
+                  icon = ICON_FA_LIGHTBULB_O;
+               else if (actor->HasComponent<CCamera>())
+                  icon = ICON_FA_CAMERA;
                  
-               if (ImGui::TreeNodeEx(actor.get(), flags, name.c_str()))
+               if (ImGui::TreeNodeEx(actor.get(), flags, (icon + " " + name).c_str()))
                   ImGui::TreePop();
 
                if (ImGui::IsItemClicked())

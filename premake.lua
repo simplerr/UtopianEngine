@@ -39,7 +39,7 @@ workspace "UtopianEngine"
    -- "Release"
    filter "configurations:Release"
       defines { "NDEBUG" }
-      flags { "MultiProcessorCompile", "LinkTimeOptimization" }
+      flags { "MultiProcessorCompile" } -- , "LinkTimeOptimization" }
       symbols "Off"
       optimize "Full"
       linkoptions { "-IGNORE:4006" } -- Ignore "Already defined in" warnings (some Assimp function are defined twice)
@@ -71,7 +71,8 @@ project "Engine"
          "external/LegitProfiler/*.cpp",
          "external/tinygltf/tiny_gltf.h",
          "external/tinygltf/json.hpp",
-         "external/nativefiledialog/nfd.h"
+         "external/nativefiledialog/nfd.h",
+         "external/IconFontCppHeaders/*.h"
       }
    
       removefiles { "**/marching_cubes_legacy/**" }
