@@ -54,7 +54,7 @@ namespace Utopian
 
    }
 
-   void TerrainTool::Update()
+   void TerrainTool::Update(double deltaTime)
    {
       glm::vec3 cameraPos = gRenderer().GetMainCamera()->GetPosition();
       static glm::vec3 intersection = glm::vec3(0.0);

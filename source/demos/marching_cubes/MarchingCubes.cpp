@@ -445,9 +445,9 @@ void MarchingCubes::ActivateBlockRegeneration()
       blockIter.second->modified = true;
 }
 
-void MarchingCubes::UpdateCallback()
+void MarchingCubes::UpdateCallback(double deltaTime)
 {
-   mCamera->Update();
+   mCamera->Update(deltaTime);
    UpdateUi();
 
    if (gInput().KeyPressed(VK_SPACE))

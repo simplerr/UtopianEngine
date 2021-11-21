@@ -61,7 +61,7 @@ namespace Utopian
 
       /** Renders all jobs added to the graph. */
       void Render(const SceneInfo& sceneInfo, const RenderingSettings& renderingSettings);
-      void Update();
+      void Update(double deltaTime);
       void EnableJob(JobIndex jobIndex, bool enabled);
 
       void SetDebugChannel(DebugChannel debugChannel);

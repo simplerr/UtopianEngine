@@ -169,11 +169,11 @@ namespace Utopian
       }
    }
 
-   void JobGraph::Update()
+   void JobGraph::Update(double deltaTime)
    {
       for (auto& job : mJobs)
       {
-         job->Update();
+         job->Update(deltaTime);
       }
 
       // Fullscreen debug texture

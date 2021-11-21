@@ -31,7 +31,7 @@ namespace Utopian::Vk
       SharedPtr<T> AddEffect(Device* device, RenderPass* renderPass, const EffectCreateInfo& effectCreateInfo);
 
       /** Recompiles shaders if requested from the UI. */
-      void Update();
+      void Update(double deltaTime);
 
       void RecompileModifiedShaders();
       void RecompileAllShaders();

@@ -19,7 +19,7 @@ namespace Utopian
    {
    }
 
-   void CSpawnPoint::Update()
+   void CSpawnPoint::Update(double deltaTime)
    {
       if (gInput().KeyPressed('Y'))
       {

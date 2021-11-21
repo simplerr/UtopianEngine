@@ -88,16 +88,16 @@ namespace Utopian
       BuildAllInstances();
    }
 
-   void Renderer::Update()
+   void Renderer::Update(double deltaTime)
    {
       UpdateCascades();
       UpdateSun();
 
       if (mSceneInfo.terrain != nullptr)
-         mSceneInfo.terrain->Update();
+         mSceneInfo.terrain->Update(deltaTime);
 
       mMainCamera->UpdateFrustum();
-      mJobGraph->Update();
+      mJobGraph->Update(deltaTime);
 
       //BuildAllInstances();
 

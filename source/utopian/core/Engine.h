@@ -19,7 +19,7 @@ namespace Utopian
       virtual void Start(Engine* engine) = 0;
       virtual void PostInit(Engine* engine) = 0;
       virtual void Destroy() = 0;
-      virtual void Update() = 0;
+      virtual void Update(double deltaTime) = 0;
       virtual void Draw() {};
       virtual void NewFrame() {};
       virtual void EndFrame() {};
@@ -32,7 +32,7 @@ namespace Utopian
       virtual void Start(Engine* engine) override;
       virtual void PostInit(Engine* engine) override;
       virtual void Destroy() override;
-      virtual void Update() override;
+      virtual void Update(double deltaTime) override;
       virtual void Draw() override;
       virtual void NewFrame() override;
       virtual void EndFrame() override;
@@ -50,7 +50,7 @@ namespace Utopian
       virtual void Start(Engine* engine) override;
       virtual void PostInit(Engine* engine) override;
       virtual void Destroy() override;
-      virtual void Update() override;
+      virtual void Update(double deltaTime) override;
       virtual void Draw() override;
       virtual void NewFrame() override;
       virtual void EndFrame() override;
@@ -72,7 +72,7 @@ namespace Utopian
       template<class ...Args>
       void RegisterUpdateCallback(Args &&...args)
       {
-         mUpdateCallback = std::bind(std::forward<Args>(args)...);
+         mUpdateCallback = std::bind(std::forward<Args>(args)..., std::placeholders::_1);
       }
 
       /** Registers a callback function to be called in Engine::Render(). */
@@ -116,7 +116,7 @@ namespace Utopian
       void Tick();
 
       /** Updates all modules included in the engine. */
-      void Update();
+      void Update(double deltaTime);
 
       /** Renders all modules included in the engine. */
       void Render();
@@ -126,12 +126,12 @@ namespace Utopian
       SharedPtr<ImGuiRenderer> mImGuiRenderer;
       std::vector<SharedPtr<EnginePlugin>> mPlugins;
       Window* mWindow;
-      std::function<void()> mUpdateCallback = nullptr;
+      std::function<void(double)> mUpdateCallback = nullptr;
       std::function<void()> mRenderCallback = nullptr;
       std::function<void()> mDestroyCallback = nullptr;
       std::function<void()> mPreFrameCallback = nullptr;
       std::string mAppName;
-      double mFrameTime = 0.0;
+      Timestamp mLastFrameTime;
    };
 
    /** Returns an instance to the Engine module. */

@@ -21,7 +21,7 @@ namespace Utopian
 
    }
 
-   void CRenderable::Update()
+   void CRenderable::Update(double deltaTime)
    {
       mInternal->UpdateAnimation(gTimer().GetFrameTime());
 

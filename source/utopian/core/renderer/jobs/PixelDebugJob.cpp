@@ -81,7 +81,7 @@ namespace Utopian
       mRenderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
    }
 
-   void PixelDebugJob::Update()
+   void PixelDebugJob::Update(double deltaTime)
    {
       return;
 

@@ -176,7 +176,7 @@ namespace Utopian
       mBlurRenderTarget->End(mTracePassSemaphore, GetCompletedSemahore());
    }
 
-   void SSRJob::Update()
+   void SSRJob::Update(double deltaTime)
    {
       static bool displayConfiguration = false;
 

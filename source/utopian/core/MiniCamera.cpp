@@ -21,7 +21,7 @@ MiniCamera::MiniCamera(glm::vec3 position, glm::vec3 target, float nearPlane, fl
    mFov = 60.0f;
 }
 
-void MiniCamera::Update()
+void MiniCamera::Update(double deltaTime)
 {
    // Move the camera using user input
    if (Utopian::gInput().KeyDown('A'))

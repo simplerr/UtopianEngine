@@ -153,7 +153,7 @@ namespace Utopian
       renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
    }
 
-   void GBufferTerrainJob::Update()
+   void GBufferTerrainJob::Update(double deltaTime)
    {
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
       {

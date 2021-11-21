@@ -40,7 +40,7 @@ namespace Utopian
 
       void AddAssetToUi(uint32_t assetId, std::string previewPath, float scaleFactor = 0.008f, bool animated = true);
 
-      void Update();
+      void Update(double deltaTime);
       void RenderUi();
 
    private:

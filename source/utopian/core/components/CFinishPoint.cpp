@@ -18,7 +18,7 @@ namespace Utopian
    {
    }
 
-   void CFinishPoint::Update()
+   void CFinishPoint::Update(double deltaTime)
    {
       Actor* playerActor = gWorld().GetPlayerActor();
       Transform& playerTransform = playerActor->GetTransform();

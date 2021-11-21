@@ -21,7 +21,7 @@ namespace Utopian
       CBloomLight(Actor* parent);
       ~CBloomLight();
 
-      void Update() override;
+      void Update(double deltaTime) override;
       void OnCreated() override;
       void OnDestroyed() override;
       void PostInit() override;

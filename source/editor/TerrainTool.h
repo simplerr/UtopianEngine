@@ -46,7 +46,7 @@ namespace Utopian
       TerrainTool(Terrain* terrain, Vk::Device* device);
       ~TerrainTool();
 
-      void Update();
+      void Update(double deltaTime);
       void RenderUi();
 
       void EffectRecompiledCallback(std::string name);

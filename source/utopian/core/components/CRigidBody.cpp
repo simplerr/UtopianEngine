@@ -72,7 +72,7 @@ namespace Utopian
    {
    }
 
-   void CRigidBody::Update()
+   void CRigidBody::Update(double deltaTime)
    {
       //glm::vec3 position = GetTransform().GetPosition();
       //BoundingBox aabb = mRenderable->GetBoundingBox();

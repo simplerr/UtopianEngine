@@ -55,9 +55,9 @@ void Game::DestroyCallback()
    mEditor = nullptr;
 }
 
-void Game::UpdateCallback()
+void Game::UpdateCallback(double deltaTime)
 {
-   mEditor->Update();
+   mEditor->Update(deltaTime);
 
    Im3d::SetSize(3.0f);
    Im3d::DrawLine(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f), 5.0f, Im3d::Color_Red);

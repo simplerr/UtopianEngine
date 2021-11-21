@@ -35,7 +35,7 @@ namespace Utopian
       void Init(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void PostInit(const std::vector<BaseJob*>& jobs, const GBuffer& gbuffer) override;
       void Render(const JobInput& jobInput) override;
-      void Update() override;
+      void Update(double deltaTime) override;
 
       SharedPtr<Vk::RenderTarget> renderTarget;
    private:

@@ -16,7 +16,7 @@ namespace Utopian
 
    }
 
-   void CLight::Update()
+   void CLight::Update(double deltaTime)
    {
    }
 

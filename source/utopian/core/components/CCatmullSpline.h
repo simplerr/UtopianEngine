@@ -14,7 +14,7 @@ namespace Utopian
       CCatmullSpline(Actor* parent, std::string filename);
       ~CCatmullSpline();
 
-      void Update() override;
+      void Update(double deltaTime) override;
       void OnCreated() override;
       void OnDestroyed() override;
       void PostInit() override;

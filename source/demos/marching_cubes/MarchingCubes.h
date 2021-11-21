@@ -42,7 +42,7 @@ public:
    void Run();
 
    void DestroyCallback();
-   void UpdateCallback();
+   void UpdateCallback(double deltaTime);
    void DrawCallback();
 
    /** Adds the blocks within the viewing distance range. */

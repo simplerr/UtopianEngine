@@ -191,7 +191,7 @@ void PhysicallyBasedRendering::UpdateCubemapBindings()
    mVulkanApp->GetDevice()->QueueDescriptorUpdate(&descriptorSet2);
 }
 
-void PhysicallyBasedRendering::UpdateCallback()
+void PhysicallyBasedRendering::UpdateCallback(double deltaTime)
 {
    glm::vec3 cameraPos = mCamera->GetPosition();
 
@@ -269,14 +269,8 @@ void PhysicallyBasedRendering::UpdateCallback()
 
    ImGuiRenderer::EndWindow();
 
-   static double prevTime = Utopian::gTimer().GetTime();
-   double currentTime = Utopian::gTimer().GetTime();
-   
-   double deltaTime = currentTime - prevTime;
-   prevTime = currentTime;
-
    for (auto& sceneNode : mSceneNodes)
-      sceneNode.model->UpdateAnimation((float)deltaTime / 1000.0f);
+      sceneNode.model->UpdateAnimation((float)deltaTime);
 
    // Recompile shaders
    if (gInput().KeyPressed('R'))
@@ -284,7 +278,7 @@ void PhysicallyBasedRendering::UpdateCallback()
       Vk::gEffectManager().RecompileModifiedShaders();
    }
 
-   mCamera->Update();
+   mCamera->Update(deltaTime);
 }
 
 void PhysicallyBasedRendering::DrawCallback()

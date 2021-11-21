@@ -28,7 +28,7 @@ namespace Utopian
       ~Renderer();
 
       /** Updates the cascade frustums, ImGui interface and the terrain. */
-      void Update();
+      void Update(double deltaTime);
 
       /** Executes the job graph to render the scene. */
       void Render();

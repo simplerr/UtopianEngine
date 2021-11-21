@@ -30,7 +30,7 @@ namespace Utopian
    {
    }
 
-   void Profiler::Update()
+   void Profiler::Update(double deltaTime)
    {
       if (gInput().KeyPressed('P'))
          mEnabled = !mEnabled;

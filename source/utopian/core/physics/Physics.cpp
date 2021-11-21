@@ -51,13 +51,8 @@ namespace Utopian
       delete mTerrainBody;
    }
 
-   void Physics::Update()
+   void Physics::Update(double deltaTime)
    {
-      // Update elapsed time
-      double deltaTime = gTimer().GetElapsedTime(mLastFrameTime);
-      deltaTime /= 1000.0f; // To seconds
-      mLastFrameTime = gTimer().GetTimestamp();
-
       if (IsEnabled())
       {
          mDynamicsWorld->stepSimulation(deltaTime, 5);

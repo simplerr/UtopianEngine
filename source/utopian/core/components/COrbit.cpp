@@ -20,7 +20,7 @@ namespace Utopian
    {
    }
 
-   void COrbit::Update()
+   void COrbit::Update(double deltaTime)
    {
       float x = cosf(mCounter) * mRadius;
       float z = sinf(mCounter) * mRadius;

@@ -30,7 +30,7 @@ namespace Utopian
    {
    }
 
-   void CCatmullSpline::Update()
+   void CCatmullSpline::Update(double deltaTime)
    {
       float time = (float)gTimer().GetTime();
 

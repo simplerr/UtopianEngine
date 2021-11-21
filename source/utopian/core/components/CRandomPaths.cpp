@@ -21,7 +21,7 @@ namespace Utopian
    {
    }
 
-   void CRandomPaths::Update()
+   void CRandomPaths::Update(double deltaTime)
    {
       glm::vec2 pos = glm::vec2(mTransform->GetPosition().x, mTransform->GetPosition().z);
       glm::vec2 delta = glm::vec2(mTarget.x - pos.x, mTarget.y - pos.y);

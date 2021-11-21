@@ -90,7 +90,7 @@ namespace Utopian
          ImGuiRenderer::SetMode(UI_MODE_EDITOR);
    }
 
-   void CPlayerControl::Update()
+   void CPlayerControl::Update(double deltaTime)
    {
       // If not kinematic then the CNoClip component will control the
       // components movement instead.

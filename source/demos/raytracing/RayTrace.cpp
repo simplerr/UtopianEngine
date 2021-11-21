@@ -86,7 +86,7 @@ void RayTrace::InitResources()
    mSettingParameters.data.maxTraceDepth = 4;
 }
 
-void RayTrace::UpdateCallback()
+void RayTrace::UpdateCallback(double deltaTime)
 {
    ImGuiRenderer::BeginWindow("Raytracing Demo", glm::vec2(10, 150), 300.0f);
    ImGui::SliderInt("Max trace depth", &mSettingParameters.data.maxTraceDepth, 1, 8);
@@ -98,7 +98,7 @@ void RayTrace::UpdateCallback()
       Vk::gEffectManager().RecompileModifiedShaders();
    }
 
-   mCamera->Update();
+   mCamera->Update(deltaTime);
 }
 
 void RayTrace::DrawCallback()

@@ -43,7 +43,7 @@ namespace Utopian
       Editor(ImGuiRenderer* imGuiRenderer, World* world, Terrain* terrain);
       ~Editor();
 
-      void Update();
+      void Update(double deltaTime);
       void UpdateUi();
       void Draw();
       void PreFrame();

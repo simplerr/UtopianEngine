@@ -179,7 +179,7 @@ namespace Utopian
       renderTarget->End(GetWaitSemahore(), GetCompletedSemahore());
    }
 
-   void WaterJob::Update()
+   void WaterJob::Update(double deltaTime)
    {
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
       {

@@ -56,7 +56,7 @@ namespace Utopian
 
    }
 
-   void FoliageTool::Update()
+   void FoliageTool::Update(double deltaTime)
    {
       if (mBrushSettings->mode == BrushSettings::Mode::VEGETATION)
       {

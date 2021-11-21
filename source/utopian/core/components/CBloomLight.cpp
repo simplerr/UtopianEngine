@@ -17,7 +17,7 @@ namespace Utopian
    {
    }
 
-   void CBloomLight::Update()
+   void CBloomLight::Update(double deltaTime)
    {
       float renderableBrightness = mRenderable->GetColor().w;
       glm::vec4 lightColor = mLight->GetColor();

@@ -34,7 +34,7 @@ public:
    void Run();
 
    void DestroyCallback();
-   void UpdateCallback();
+   void UpdateCallback(double deltaTime);
    void DrawCallback();
 
    void HandleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

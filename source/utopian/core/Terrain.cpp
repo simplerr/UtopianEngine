@@ -59,7 +59,7 @@ namespace Utopian
       delete mQuadPrimitive;
    }
 
-   void Terrain::Update()
+   void Terrain::Update(double deltaTime)
    {
       // Experimentation
       if (gInput().KeyPressed('U'))

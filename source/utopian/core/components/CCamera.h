@@ -15,7 +15,7 @@ namespace Utopian
       CCamera(Actor* parent, Utopian::Window* window, float fieldOfView, float nearPlane, float farPlane);
       ~CCamera();
 
-      void Update() override;
+      void Update(double deltaTime) override;
       void OnCreated() override;
       void OnDestroyed() override;
       void PostInit() override;

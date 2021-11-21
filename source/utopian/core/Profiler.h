@@ -29,7 +29,7 @@ namespace Utopian
       Profiler(Vk::VulkanApp* vulkanApp);
       ~Profiler();
 
-      void Update();
+      void Update(double deltaTime);
       void AddProfilerTask(const std::string& name, float taskTime, const glm::vec4& color);
       void SetEnabled(bool enabled);
 

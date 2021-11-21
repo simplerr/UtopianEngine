@@ -7,7 +7,7 @@ class MiniCamera
 public:
    MiniCamera(glm::vec3 position, glm::vec3 target, float nearPlane, float farPlane, float speed, int windowWidth, int windowHeight);
 
-   void Update();
+   void Update(double deltaTime);
 
    glm::mat4 GetView();
    glm::mat4 GetProjection();

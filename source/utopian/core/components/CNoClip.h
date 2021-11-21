@@ -17,7 +17,7 @@ namespace Utopian
       CNoClip(Actor* parent, float speed);
       ~CNoClip();
 
-      void Update() override;
+      void Update(double deltaTime) override;
       void OnCreated() override;
       void OnDestroyed() override;
       void PostInit() override;

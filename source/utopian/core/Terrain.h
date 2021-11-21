@@ -46,7 +46,7 @@ namespace Utopian
       Terrain(Vk::Device* device);
       ~Terrain();
 
-      void Update();
+      void Update(double deltaTime);
 
       glm::vec2 TransformToUv(float x, float z);
 

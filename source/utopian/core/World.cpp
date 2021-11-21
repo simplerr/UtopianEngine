@@ -109,7 +109,7 @@ namespace Utopian
       }
    }
 
-   void World::Update()
+   void World::Update(double deltaTime)
    {
       SynchronizeNodeTransforms();
       
@@ -118,7 +118,7 @@ namespace Utopian
       {
          if (entry->IsActive())
          {
-            entry->Update();
+            entry->Update(deltaTime);
          }
       }
    }

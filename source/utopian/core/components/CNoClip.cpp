@@ -18,7 +18,7 @@ namespace Utopian
    {
    }
 
-   void CNoClip::Update()
+   void CNoClip::Update(double deltaTime)
    {
       if (gInput().KeyDown('W')) {
          glm::vec3 dir = mCamera->GetDirection();

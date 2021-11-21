@@ -20,7 +20,7 @@ public:
    void Run();
 
    void DestroyCallback();
-   void UpdateCallback();
+   void UpdateCallback(double deltaTime);
    void DrawCallback();
    void PreFrameCallback();
 

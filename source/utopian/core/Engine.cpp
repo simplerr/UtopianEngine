@@ -40,6 +40,8 @@ namespace Utopian
       mVulkanApp = std::make_shared<Utopian::Vk::VulkanApp>(window);
       mVulkanApp->Prepare();
 
+      mLastFrameTime = gTimer().GetTimestamp();
+
       UTO_LOG(mAppName);
    }
    
@@ -121,13 +123,17 @@ namespace Utopian
 
    void Engine::Tick()
    {
-      Update();
+      double deltaTime = gTimer().GetElapsedTime(mLastFrameTime);
+      deltaTime /= 1000.0f; // To seconds
+      mLastFrameTime = gTimer().GetTimestamp();
+
+      Update(deltaTime);
       Render();
 
       gInput().Update(0);
    }
 
-   void Engine::Update()
+   void Engine::Update(double deltaTime)
    {
       for(auto& plugin : mPlugins)
          plugin->NewFrame();
@@ -135,14 +141,14 @@ namespace Utopian
       mImGuiRenderer->NewFrame();
 
       for(auto& plugin : mPlugins)
-         plugin->Update();
+         plugin->Update(deltaTime);
 
-      gProfiler().Update();
+      gProfiler().Update(deltaTime);
 
-      Vk::gEffectManager().Update();
+      Vk::gEffectManager().Update(deltaTime);
 
       // Call the application Update() function
-      mUpdateCallback();
+      mUpdateCallback(deltaTime);
 
       for(auto& plugin : mPlugins)
          plugin->EndFrame();
@@ -242,9 +248,9 @@ namespace Utopian
       gRenderer().Destroy();
    }
 
-   void DeferredRenderingPlugin::Update()
+   void DeferredRenderingPlugin::Update(double deltaTime)
    {
-      gRenderer().Update();
+      gRenderer().Update(deltaTime);
    }
 
    void DeferredRenderingPlugin::Draw()
@@ -364,10 +370,10 @@ namespace Utopian
       gPhysics().Destroy();
    }
 
-   void ECSPlugin::Update()
+   void ECSPlugin::Update(double deltaTime)
    {
-      gWorld().Update();
-      gPhysics().Update();
+      gWorld().Update(deltaTime);
+      gPhysics().Update(deltaTime);
    }
 
    void ECSPlugin::Draw()

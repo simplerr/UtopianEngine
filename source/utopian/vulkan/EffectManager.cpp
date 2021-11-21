@@ -19,7 +19,7 @@ namespace Utopian::Vk
       return EffectManager::Instance();
    }
 
-   void EffectManager::Update()
+   void EffectManager::Update(double deltaTime)
    {
    }
 

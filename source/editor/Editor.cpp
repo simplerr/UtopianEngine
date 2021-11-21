@@ -73,12 +73,12 @@ namespace Utopian
       mPrototypeTool->PreFrame();
    }
 
-   void Editor::Update()
+   void Editor::Update(double deltaTime)
    {
       if (mTerrain != nullptr)
       {
-         mTerrainTool->Update();
-         mFoliageTool->Update();
+         mTerrainTool->Update(deltaTime);
+         mFoliageTool->Update(deltaTime);
       }
 
       UpdateSelectionType();

@@ -59,7 +59,7 @@ namespace Utopian
    {
    }
 
-   void CPolyMesh::Update()
+   void CPolyMesh::Update(double deltaTime)
    {
       if (mFirstFrame)
       {

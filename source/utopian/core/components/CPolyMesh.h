@@ -20,7 +20,7 @@ namespace Utopian
       CPolyMesh(Actor* parent, std::string modelPath, std::string texturePath);
       ~CPolyMesh();
 
-      void Update() override;
+      void Update(double deltaTime) override;
       void OnCreated() override;
       void OnDestroyed() override;
       void PostInit() override;

@@ -20,7 +20,7 @@ namespace Utopian
 
    }
 
-   void CCamera::Update()
+   void CCamera::Update(double deltaTime)
    {
 
    }

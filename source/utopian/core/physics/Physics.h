@@ -23,7 +23,7 @@ namespace Utopian
       Physics();
       ~Physics();
 
-      void Update();
+      void Update(double deltaTime);
       void Draw();
       void EnableSimulation(bool enable);
       void EnableDebugDraw(bool enable);

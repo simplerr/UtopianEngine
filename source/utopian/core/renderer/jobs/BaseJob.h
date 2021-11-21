@@ -69,7 +69,7 @@ namespace Utopian
 
       virtual void PreRender(const JobInput& jobInput) {};
       virtual void Render(const JobInput& jobInput) = 0;
-      virtual void Update() {};
+      virtual void Update(double deltaTime) {};
 
       void SetWaitSemaphore(const SharedPtr<Vk::Semaphore>& waitSemaphore) { mWaitSemaphore = waitSemaphore; };
       void SetEnabled(bool enabled) { mEnabled = enabled; };
