@@ -35,6 +35,7 @@ namespace Utopian
       virtual void OnCreated() { };
       virtual void OnDestroyed() { };
       virtual void Update(double deltaTime) { };
+      virtual void Render() { };
       virtual void PostInit() = 0;
 
       virtual LuaPlus::LuaObject GetLuaObject() { return LuaPlus::LuaObject(); };

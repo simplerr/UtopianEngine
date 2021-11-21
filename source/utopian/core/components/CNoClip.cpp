@@ -20,24 +20,26 @@ namespace Utopian
 
    void CNoClip::Update(double deltaTime)
    {
+      float speed = mSpeed * (float)deltaTime;
+
       if (gInput().KeyDown('W')) {
          glm::vec3 dir = mCamera->GetDirection();
-         mTransform->AddTranslation(mSpeed * dir);
+         mTransform->AddTranslation(speed * dir);
 
       }
       if (gInput().KeyDown('S')) {
          glm::vec3 dir = mCamera->GetDirection();
-         mTransform->AddTranslation(mSpeed * -dir);
+         mTransform->AddTranslation(speed * -dir);
 
       }
       if (gInput().KeyDown('A')) {
          glm::vec3 right = mCamera->GetRight();
-         mTransform->AddTranslation(mSpeed * right);
+         mTransform->AddTranslation(speed * right);
 
       }
       if (gInput().KeyDown('D')) {
          glm::vec3 right = mCamera->GetRight();
-         mTransform->AddTranslation(mSpeed * -right);
+         mTransform->AddTranslation(speed * -right);
       }
 
       // Todo: Mousewheel broken

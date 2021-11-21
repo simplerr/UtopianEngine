@@ -522,12 +522,14 @@ namespace Utopian
       {
          float maxSpeed = mPlayerController->GetMaxSpeed();
          float jumpStrength = mPlayerController->GetJumpStrength();
-         float airAccelerate = mPlayerController->GetAirAccelerate();
+         float airAcceleration = mPlayerController->GetAirAcceleration();
+         float groundAcceleration = mPlayerController->GetGroundAcceleration();
          float airSpeedCap = mPlayerController->GetAirSpeedCap();
 
          ImGui::SliderFloat("Max speed", &maxSpeed, 0.5f, 10.0f);
          ImGui::SliderFloat("Jump strength", &jumpStrength, 0.5f, 20.0f);
-         ImGui::SliderFloat("Air accelerate", &airAccelerate, 0.005f, 0.3f);
+         ImGui::SliderFloat("Air acceleration", &airAcceleration, 0.5f, 500.0f);
+         ImGui::SliderFloat("Ground acceleration", &groundAcceleration, 0.5f, 500.0f);
          ImGui::SliderFloat("Air speed cap", &airSpeedCap, 0.05f, 1.0f);
          ImGui::Text("Movement state: %u", mPlayerController->GetMovementState());
          ImGui::Text("Speed %.2f", mPlayerController->GetCurrentSpeed());
@@ -536,7 +538,8 @@ namespace Utopian
 
          mPlayerController->SetMaxSpeed(maxSpeed);
          mPlayerController->SetJumpStrength(jumpStrength);
-         mPlayerController->SetAirAccelerate(airAccelerate);
+         mPlayerController->SetAirAcceleration(airAcceleration);
+         mPlayerController->SetGroundAcceleration(groundAcceleration);
          mPlayerController->SetAirSpeedCap(airSpeedCap);
 
          ImGui::Separator();

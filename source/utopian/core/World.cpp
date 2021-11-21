@@ -112,13 +112,28 @@ namespace Utopian
    void World::Update(double deltaTime)
    {
       SynchronizeNodeTransforms();
-      
+
       // Update every active component
       for (auto& entry : mComponents)
       {
          if (entry->IsActive())
          {
             entry->Update(deltaTime);
+         }
+      }
+   }
+
+   void World::Render()
+   {
+      // Note: Usually this is not where the actual rendering takes place
+      // as that is handled by the internal representations of the renderable components
+      // that are added to the scene and rendered in Renderer::Render().
+      // This can however be used to do work at the same periodicity as the rendering framerate.
+      for (auto& entry : mComponents)
+      {
+         if (entry->IsActive())
+         {
+            entry->Render();
          }
       }
    }

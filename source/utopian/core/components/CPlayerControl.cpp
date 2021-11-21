@@ -35,8 +35,8 @@ namespace Utopian
       mViewmodel->RemoveRenderFlags(RENDER_FLAG_CAST_SHADOW);
 
       // Note: temporarily disabled due to slow loading and unstable movement
-      // SharedPtr<Model> model = gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
-      // mViewmodel->SetModel(model);
+      SharedPtr<Model> model = gModelLoader().LoadModel("data/models/fps_hands/fps_hands.obj");
+      mViewmodel->SetModel(model);
 
       // Update the Player reference in World
       gWorld().SetPlayerActor(parent);
@@ -80,9 +80,7 @@ namespace Utopian
       mRigidBody->SetKinematic(playMode);
       gInput().SetVisibleCursor(playMode);
       mCrosshair.quad->visible = !playMode;
-
-      // Note: temporarily disabled due to slow loading and unstable movement
-      //mViewmodel->SetVisible(!playMode);
+      mViewmodel->SetVisible(!playMode);
 
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
          ImGuiRenderer::SetMode(UI_MODE_GAME);
@@ -97,10 +95,9 @@ namespace Utopian
       if (gInput().KeyPressed('V') || gInput().KeyPressed(VK_ESCAPE))
          SetPlayMode(!mRigidBody->IsKinematic());
 
-      HandleMovement();
+      HandleMovement(deltaTime);
       HandleJumping();
       DrawJumpTrail();
-      UpdateViewmodel();
 
       // No rotation
       mRigidBody->SetAngularVelocity(glm::vec3(0.0f));
@@ -121,6 +118,13 @@ namespace Utopian
       }
    }
 
+   void CPlayerControl::Render()
+   {
+      // The rotation of the viewmodel needs to be applied here instead
+      // of in the update function otherwise the movement gets jittery.
+      UpdateViewmodel();
+   }
+
    /**
     * This function implements Quake style movement with similar airstrafing calculations.
     * References:
@@ -130,7 +134,7 @@ namespace Utopian
     * http://adrianb.io/2015/02/14/bunnyhop.html
     * https://steamcommunity.com/sharedfiles/filedetails/?id=184184420
     */
-   void CPlayerControl::HandleMovement()
+   void CPlayerControl::HandleMovement(double deltaTime)
    {
       glm::vec3 wishVel = CalculateWishVelocity();
       glm::vec3 wishDir = glm::normalize(wishVel);
@@ -145,11 +149,11 @@ namespace Utopian
 
          if (gPhysics().IsOnGround(mRigidBody))
          {
-            acceleration = Accelerate(wishDir, wishSpeed, mGroundAcceleration, false);
+            acceleration = Accelerate(wishDir, wishSpeed, mGroundAcceleration * (float)deltaTime, false);
          }
          else
          {
-            acceleration = Accelerate(wishDir, wishSpeed, mAirAcceleration, true);
+            acceleration = Accelerate(wishDir, wishSpeed, mAirAcceleration * (float)deltaTime, true);
          }
 
          if (acceleration != glm::vec3(0.0f))
@@ -351,9 +355,14 @@ namespace Utopian
       mJumpStrength = jumpStrength;
    }
 
-   void CPlayerControl::SetAirAccelerate(float airAccelerate)
+   void CPlayerControl::SetAirAcceleration(float airAcceleration)
    {
-      mAirAcceleration = airAccelerate;
+      mAirAcceleration = airAcceleration;
+   }
+
+   void CPlayerControl::SetGroundAcceleration(float groundAcceleration)
+   {
+      mGroundAcceleration = groundAcceleration;
    }
 
    void CPlayerControl::SetAirSpeedCap(float airSpeedCap)
@@ -371,9 +380,14 @@ namespace Utopian
       return mJumpStrength;
    }
 
-   float CPlayerControl::GetAirAccelerate() const
+   float CPlayerControl::GetAirAcceleration() const
    {
       return mAirAcceleration;
+   }
+
+   float CPlayerControl::GetGroundAcceleration() const
+   {
+      return mGroundAcceleration;
    }
 
    float CPlayerControl::GetAirSpeedCap() const

@@ -379,6 +379,7 @@ namespace Utopian
    void ECSPlugin::Draw()
    {
       gWorld().RemoveDeadActors();
+      gWorld().Render();
    }
 
    void ECSPlugin::NewFrame()

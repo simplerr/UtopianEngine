@@ -34,6 +34,7 @@ namespace Utopian
       ~CPlayerControl();
 
       void Update(double deltaTime) override;
+      void Render() override;
       void PostInit() override;
 
       void StartLevelTimer();
@@ -43,13 +44,15 @@ namespace Utopian
       
       void SetMaxSpeed(float maxSpeed);
       void SetJumpStrength(float jumpStrength);
-      void SetAirAccelerate(float airAccelerate);
+      void SetAirAcceleration(float airAcceleration);
+      void SetGroundAcceleration(float groundAcceleration);
       void SetAirSpeedCap(float airSpeedCap);
       void SetPlayMode(bool playMode);
 
       float GetMaxSpeed() const;
       float GetJumpStrength() const;
-      float GetAirAccelerate() const;
+      float GetAirAcceleration() const;
+      float GetGroundAcceleration() const;
       float GetAirSpeedCap() const;
       MovementState GetMovementState() const;
       float GetCurrentSpeed() const;
@@ -64,7 +67,7 @@ namespace Utopian
       }
 
    private:
-      void HandleMovement();
+      void HandleMovement(double deltaTime);
       void HandleJumping();
       glm::vec3 CalculateWishVelocity();
       glm::vec3 Accelerate(glm::vec3 wishDir, float wishSpeed, float airAccelerate, bool inAir);
@@ -79,8 +82,8 @@ namespace Utopian
       float mMaxSpeed = 3.0f;
       float mJumpStrength = 5.0f;
 
-      float mGroundAcceleration = 0.1f;
-      float mAirAcceleration = 0.1f;
+      float mGroundAcceleration = 25.0f;
+      float mAirAcceleration = 50.0f;
       float mAirSpeedCap = 0.3f;
 
       // Jumping with reduced friction
