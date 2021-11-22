@@ -3,6 +3,7 @@
 #include "core/components/CTransform.h"
 #include "core/components/Actor.h"
 #include "core/Input.h"
+#include "core/renderer/ImGuiRenderer.h"
 
 namespace Utopian
 {
@@ -43,7 +44,7 @@ namespace Utopian
       }
 
       // Todo: Mousewheel broken
-      if (gInput().KeyDown(VK_RBUTTON))
+      if (ImGuiRenderer::GetMode() == UiMode::UI_MODE_GAME || gInput().KeyDown(VK_RBUTTON))
       {
          float deltaYaw = gInput().MouseDx() * mSensitivity;
          float deltaPitch = gInput().MouseDy() * mSensitivity;

@@ -108,7 +108,7 @@ void main()
    litColor = litColor + ambient;
 
    // Apply fogging.
-   float distToEye = length(sharedVariables.eyePos.xyz + position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
+   float distToEye = length(sharedVariables.eyePos.xyz - position); // TODO: NOTE: This should be "-". Related to the negation of the world matrix push constant.
    float fogLerp = clamp((distToEye - settings_ubo.fogStart) / settings_ubo.fogDistance, 0.0, 1.0);
 
    // Blend the fog color and the lit color.

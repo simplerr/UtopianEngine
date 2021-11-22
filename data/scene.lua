@@ -478,7 +478,7 @@ actor_list =
 				color_g = 1,
 				color_r = 1,
 				path = "data/models/adventure_village/CrateSquare_1.obj",
-				render_flags = 64,
+				render_flags = 0,
 			},
 			CRigidBody = 
 			{
