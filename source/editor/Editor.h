@@ -15,7 +15,6 @@ namespace Utopian
    class TerrainTool;
    class FoliageTool;
    class PrototypeTool;
-   class PrototypeTool2;
    class ImGuiRenderer;
 
    enum ActorTemplate
@@ -60,6 +59,7 @@ namespace Utopian
 
       bool IsActorSelected();
       void OnActorSelected(Actor* actor);
+      void DeselectActor();
       void RenderActorCreationUi();
       void RenderActorSelectionUi();
       void RenderLoadSaveUi();

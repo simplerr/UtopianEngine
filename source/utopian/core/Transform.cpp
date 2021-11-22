@@ -38,6 +38,7 @@ namespace Utopian
    void Transform::SetScale(const glm::vec3& scale)
    {
       mScale = scale;
+      mScale = glm::max(glm::vec3(0.0f), mScale);
       RebuildWorldMatrix();
    }
 
@@ -67,6 +68,7 @@ namespace Utopian
    void Transform::AddScale(const glm::vec3& scale)
    {
       mScale += scale;
+      mScale = glm::max(glm::vec3(0.0f), mScale);
       RebuildWorldMatrix();
    }
 

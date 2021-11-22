@@ -75,12 +75,6 @@ namespace Utopian
 
    void Editor::Update(double deltaTime)
    {
-      if (mTerrain != nullptr)
-      {
-         mTerrainTool->Update(deltaTime);
-         mFoliageTool->Update(deltaTime);
-      }
-
       UpdateSelectionType();
       DrawGizmo();
       SelectActor();
@@ -88,11 +82,17 @@ namespace Utopian
       RemoveActorFromScene();
       ScaleSelectedActor();
 
+      if (mTerrain != nullptr)
+      {
+         mTerrainTool->Update(deltaTime);
+         mFoliageTool->Update(deltaTime);
+      }
+
       // Deselect Actor
       if (gInput().KeyPressed(VK_ESCAPE))
       {
-         OnActorSelected(nullptr);
-         mPrototypeTool->ActorSelected(nullptr);
+         DeselectActor();
+         mTerrainTool->DeactivateBrush();
       }
 
       // Hide/show UI
@@ -171,6 +171,7 @@ namespace Utopian
          if (intersectInfo.actor != nullptr)
          {
             mPrototypeTool->ActorSelected(intersectInfo.actor);
+            mTerrainTool->DeactivateBrush();
 
             if (intersectInfo.actor != mSelectedActor)
             {
@@ -256,8 +257,7 @@ namespace Utopian
       if (gInput().KeyPressed(VK_DELETE) && mSelectedActor != nullptr)
       {
          mSelectedActor->SetAlive(false);
-         OnActorSelected(nullptr);
-         mPrototypeTool->ActorSelected(nullptr);
+         DeselectActor();
       }
    }
 
@@ -351,8 +351,7 @@ namespace Utopian
       auto clearActors = [&]()
       {
          World::Instance().RemoveActors();
-         OnActorSelected(nullptr);
-         mPrototypeTool->ActorSelected(nullptr);
+         DeselectActor();
       };
 
       if (ImGui::CollapsingHeader("Load and save", ImGuiTreeNodeFlags_DefaultOpen))
@@ -429,8 +428,16 @@ namespace Utopian
 
          if (mTerrain != nullptr)
          {
+            BrushSettings::Mode previousMode = mTerrainTool->GetBrushMode();
+
             mTerrainTool->RenderUi();
             mFoliageTool->RenderUi();
+
+            if (previousMode == BrushSettings::Mode::INACTIVE &&
+                mTerrainTool->GetBrushMode() != BrushSettings::Mode::INACTIVE)
+            {
+               DeselectActor();
+            }
          }
 
          mPrototypeTool->RenderUi();
@@ -506,6 +513,12 @@ namespace Utopian
 
       // Create inspector UI
       mActorInspector->SetActor(mSelectedActor);
+   }
+
+   void Editor::DeselectActor()
+   {
+      OnActorSelected(nullptr);
+      mPrototypeTool->ActorSelected(nullptr);
    }
 
    void Editor::CreateActor(std::string modelPath, ActorTemplate actorTemplate, glm::vec3 position)

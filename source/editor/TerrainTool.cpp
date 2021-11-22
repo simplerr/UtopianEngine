@@ -30,8 +30,7 @@ namespace Utopian
 
       Vk::gEffectManager().RegisterRecompileCallback(&TerrainTool::EffectRecompiledCallback, this);
 
-      // Temporary:
-      brushSettings.mode = BrushSettings::Mode::BLEND;
+      brushSettings.mode = BrushSettings::Mode::INACTIVE;
       brushSettings.operation = BrushSettings::Operation::ADD;
       brushSettings.blendLayer = BrushSettings::BlendLayer::GRASS;
       brushSettings.strength = 2.0f;
@@ -62,8 +61,12 @@ namespace Utopian
       Ray ray = gRenderer().GetMainCamera()->GetPickingRay();
       intersection = mTerrain->GetIntersectPoint(ray);
       brushSettings.position = mTerrain->TransformToUv(intersection.x, intersection.z);
-      brushSettings.radius += gInput().MouseDz() / 100.0f;
-      brushSettings.radius = glm::clamp(brushSettings.radius, 0.0f, 30.0f);
+
+      if (brushSettings.mode != BrushSettings::Mode::INACTIVE)
+      {
+         brushSettings.radius += gInput().MouseDz() / 100.0f;
+         brushSettings.radius = glm::clamp(brushSettings.radius, 0.0f, 30.0f);
+      }
 
       UpdateBrushUniform();
 
@@ -179,6 +182,11 @@ namespace Utopian
       }
    }
 
+   void TerrainTool::DeactivateBrush()
+   {
+      brushSettings.mode = BrushSettings::Mode::INACTIVE;
+   }
+
    void TerrainTool::EffectRecompiledCallback(std::string name)
    {
       RenderBlendmapBrush();
@@ -254,5 +262,10 @@ namespace Utopian
    BrushSettings* TerrainTool::GetBrushSettings()
    {
       return &brushSettings;
+   }
+
+   BrushSettings::Mode TerrainTool::GetBrushMode() const
+   {
+      return brushSettings.mode;
    }
 }

@@ -17,7 +17,8 @@ namespace Utopian
          HEIGHT = 0,
          BLEND = 1,
          VEGETATION = 2,
-         HEIGHT_FLAT
+         HEIGHT_FLAT = 3,
+         INACTIVE = 4
       };
 
       enum Operation {
@@ -48,6 +49,7 @@ namespace Utopian
 
       void Update(double deltaTime);
       void RenderUi();
+      void DeactivateBrush();
 
       void EffectRecompiledCallback(std::string name);
 
@@ -60,6 +62,7 @@ namespace Utopian
       // Used by FoliageTool
       // Note: Todo: Remove dependency
       BrushSettings* GetBrushSettings();
+      BrushSettings::Mode GetBrushMode() const;
 
    private:
       void UpdateBrushUniform();
