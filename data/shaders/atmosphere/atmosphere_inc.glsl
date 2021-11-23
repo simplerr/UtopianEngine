@@ -208,7 +208,12 @@ vec3 IntegrateScattering (vec3 rayStart, vec3 rayDir, float rayLength, vec3 ligh
 
    transmittance = Absorb(opticalDepth);
 
-   return (rayleigh * C_RAYLEIGH + mie * C_MIE) * lightColor * EXPOSURE;
+   vec3 color = (rayleigh * C_RAYLEIGH + mie * C_MIE) * lightColor * EXPOSURE;
+
+   // To get more vivid colors
+   color = pow(color, vec3(2.2));
+
+   return color;
 }
 
 #endif // ATMOSPHERE_INCLUDED
