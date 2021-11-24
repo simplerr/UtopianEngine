@@ -83,9 +83,14 @@ namespace Utopian
       mViewmodel->SetVisible(!playMode);
 
       if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
+      {
          ImGuiRenderer::SetMode(UI_MODE_GAME);
+      }
       else
+      {
          ImGuiRenderer::SetMode(UI_MODE_EDITOR);
+         mRigidBody->SetFriction(mFrictionRestoreValue);
+      }
    }
 
    void CPlayerControl::Update(double deltaTime)
