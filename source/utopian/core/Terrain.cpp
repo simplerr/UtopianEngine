@@ -116,6 +116,10 @@ namespace Utopian
    {
       SharedPtr<Vk::Texture> texture = Vk::gTextureLoader().LoadTexture(filename, VK_FORMAT_R32_SFLOAT, false);
       gRendererUtility().CopyImage(mDevice, *heightmapImage, texture->GetImage());
+
+      RetrieveHeightmap();
+      UpdatePhysicsHeightmap();
+      RenderNormalmap();
    }
 
    void Terrain::LoadBlendmap(std::string filename)

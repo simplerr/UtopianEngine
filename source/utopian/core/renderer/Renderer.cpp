@@ -34,7 +34,9 @@
 #include "core/Log.h"
 #include "utility/math/Helpers.h"
 #include "utility/Timer.h"
+#include "utility/Utility.h"
 #include "core/Input.h"
+#include "core/Engine.h"
 
 #include <fstream>
 #include <glm/gtx/string_cast.hpp>
@@ -73,10 +75,18 @@ namespace Utopian
 
    void Renderer::PostWorldInit()
    {
+      // Note: Todo: move code in this function to a better place
+
       mInstancingManager = std::make_shared<InstancingManager>(this);
 
+      std::string sceneDirectory = Utopian::ExtractFileDirectory(Utopian::gEngine().GetSceneSource());
+
       if (mRenderingSettings.terrainEnabled)
+      {
          mSceneInfo.terrain = std::make_shared<Terrain>(mDevice);
+         mSceneInfo.terrain->LoadHeightmap(sceneDirectory + "heightmap.ktx");
+         mSceneInfo.terrain->LoadBlendmap(sceneDirectory + "blendmap.ktx");
+      }
       else
          mSceneInfo.terrain = nullptr;
 
@@ -84,7 +94,7 @@ namespace Utopian
 
       mJobGraph = std::make_shared<JobGraph>(mVulkanApp, GetTerrain(), mDevice, mRenderingSettings);
 
-      LoadInstancesFromFile("data/instances.txt");
+      LoadInstancesFromFile(sceneDirectory + "instances.txt");
       BuildAllInstances();
    }
 

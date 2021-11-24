@@ -147,38 +147,6 @@ namespace Utopian
             brushSettings.mode = BrushSettings::Mode::BLEND;
             brushSettings.blendLayer = BrushSettings::BlendLayer::ROAD;
          }
-
-         /* Heightmap and Blendmap load/save UI */
-         ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
-         ImGui::InputText("Heightmap", heightmapPath, IM_ARRAYSIZE(heightmapPath), ImGuiInputTextFlags_EnterReturnsTrue);
-
-         if (ImGui::Button("Save"))
-         {
-            mTerrain->SaveHeightmap(heightmapPath);
-         }
-
-         ImGui::SameLine();
-
-         if (ImGui::Button("Load"))
-         {
-            mTerrain->LoadHeightmap(heightmapPath);
-         }
-
-         ImGui::InputText("Blendmap", blendmapPath, IM_ARRAYSIZE(blendmapPath), ImGuiInputTextFlags_EnterReturnsTrue);
-
-         if (ImGui::Button("Save##blend"))
-         {
-            mTerrain->SaveBlendmap(blendmapPath);
-         }
-
-         ImGui::SameLine();
-
-         if (ImGui::Button("Load##blend"))
-         {
-            mTerrain->LoadBlendmap(blendmapPath);
-         }
-
-         ImGui::PopItemWidth();
       }
    }
 

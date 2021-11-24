@@ -1,5 +1,6 @@
 settings = 
 {
+    sceneSource = "data/scenes/outdoor_1/scene.lua",
     shadingMethod = "pbr", -- "phong", "pbr"
     sky = "atmosphere", -- "dome", "atmosphere", "box"
     ambientIntensity = 1.0,

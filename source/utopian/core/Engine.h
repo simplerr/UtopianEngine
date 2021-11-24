@@ -38,7 +38,7 @@ namespace Utopian
       virtual void EndFrame() override;
 
    private:
-      void LoadSettingsFromFile();
+      void LoadSettingsFromFile(Engine* engine);
    private:
       RenderingSettings mRenderingSettings;
       std::string mSettingsFile;
@@ -104,8 +104,12 @@ namespace Utopian
 
       void AddPlugin(SharedPtr<EnginePlugin> plugin);
 
+      /** Sets the source .lua file for the current scene. */
+      void SetSceneSource(std::string sceneSource);
+
       Vk::VulkanApp* GetVulkanApp();
       ImGuiRenderer* GetImGuiRenderer();
+      std::string GetSceneSource() const;
 
    private:
       /**
@@ -131,6 +135,7 @@ namespace Utopian
       std::function<void()> mDestroyCallback = nullptr;
       std::function<void()> mPreFrameCallback = nullptr;
       std::string mAppName;
+      std::string mSceneSource;
       Timestamp mLastFrameTime;
    };
 

@@ -63,6 +63,8 @@ namespace Utopian
       void RenderActorCreationUi();
       void RenderActorSelectionUi();
       void RenderLoadSaveUi();
+      void SaveTerrain();
+      void LoadTerrain();
 
       void AddPaths();
 

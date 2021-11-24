@@ -214,6 +214,16 @@ namespace Utopian
       return mImGuiRenderer.get();
    }
 
+   void Engine::SetSceneSource(std::string sceneSource)
+   {
+      mSceneSource = sceneSource;
+   }
+
+   std::string Engine::GetSceneSource() const
+   {
+      return mSceneSource;
+   }
+
    Engine& gEngine()
    {
       return Engine::Instance();
@@ -227,7 +237,7 @@ namespace Utopian
 
    void DeferredRenderingPlugin::Start(Engine* engine)
    {
-      LoadSettingsFromFile();
+      LoadSettingsFromFile(engine);
 
       gRenderer().Start(engine->GetVulkanApp());
       gRenderer().SetUiOverlay(engine->GetImGuiRenderer());
@@ -268,13 +278,16 @@ namespace Utopian
       gRenderer().EndUiFrame();
    }
 
-   void DeferredRenderingPlugin::LoadSettingsFromFile()
+   void DeferredRenderingPlugin::LoadSettingsFromFile(Engine* engine)
    {
       gLuaManager().ExecuteFile(mSettingsFile.c_str());
 
       LuaPlus::LuaObject luaSettings = gLuaManager().GetLuaState()->GetGlobal("settings");
       if (luaSettings.IsNil())
          assert(0);
+
+      // Note: the sceneSource configuration should not be handled by DeferredRenderingPlugin
+      engine->SetSceneSource(luaSettings["sceneSource"].ToString());
 
       mRenderingSettings.shadingMethod = ShadingMethod::PHONG;
       std::string shadingMethod = luaSettings["shadingMethod"].ToString();
@@ -355,7 +368,7 @@ namespace Utopian
 
    void ECSPlugin::PostInit(Engine* engine)
    {
-      ActorFactory::LoadFromFile(engine->GetVulkanApp()->GetWindow(), "data/scene.lua");
+      ActorFactory::LoadFromFile(engine->GetVulkanApp()->GetWindow(), engine->GetSceneSource());
       gWorld().LoadProceduralAssets();
 
       ScriptExports::Register();

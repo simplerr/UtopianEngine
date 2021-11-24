@@ -25,6 +25,7 @@
 #include "core/renderer/Model.h"
 #include "core/physics/Physics.h"
 #include "utility/math/Helpers.h"
+#include "utility/Utility.h"
 #include "IconFontCppHeaders/IconsFontAwesome4.h"
 #include "im3d/im3d.h"
 #include "core/Log.h"
@@ -55,7 +56,7 @@ namespace Utopian
       AddActorCreation("Static point light", ActorTemplate::STATIC_POINT_LIGHT);
       AddActorCreation("Physics point light", ActorTemplate::RIGID_SPHERE_LIGHT);
 
-      mSelectedModel = 4; // Physics sphere
+      mSelectedModel = 11; // Physics sphere
 
       AddPaths();
    }
@@ -348,16 +349,22 @@ namespace Utopian
 
    void Editor::RenderLoadSaveUi()
    {
-      auto clearActors = [&]()
+      auto clearScene = [&]()
       {
          World::Instance().RemoveActors();
+         gRenderer().ClearInstanceGroups();
          DeselectActor();
       };
 
       if (ImGui::CollapsingHeader("Load and save", ImGuiTreeNodeFlags_DefaultOpen))
       {
+         ImGui::Text(gEngine().GetSceneSource().c_str());
+
          if (ImGui::Button("Save scene"))
-            ActorFactory::SaveToFile("data/scene.lua", World::Instance().GetActors());
+         {
+            ActorFactory::SaveToFile(Utopian::gEngine().GetSceneSource(), World::Instance().GetActors());
+            SaveTerrain();
+         }
 
          ImGui::SameLine();
 
@@ -365,13 +372,18 @@ namespace Utopian
          {
             nfdchar_t* scenePath = NULL;
             if (NFD_SaveDialog(NULL, NULL, &scenePath))
+            {
+               Utopian::gEngine().SetSceneSource(scenePath);
                ActorFactory::SaveToFile(std::string(scenePath), World::Instance().GetActors());
+               SaveTerrain();
+            }
          }
 
          if (ImGui::Button("Load scene"))
          {
-            clearActors();
-            ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), "data/scene.lua");
+            clearScene();
+            ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), Utopian::gEngine().GetSceneSource());
+            LoadTerrain();
          }
 
          ImGui::SameLine();
@@ -381,25 +393,28 @@ namespace Utopian
             nfdchar_t* scenePath = NULL;
             if (NFD_OpenDialog(NULL, NULL, &scenePath) == NFD_OKAY)
             {
-               clearActors();
+               clearScene();
                ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), std::string(scenePath));
+               Utopian::gEngine().SetSceneSource(scenePath);
+               LoadTerrain();
             }
          }
 
          ImGui::SameLine();
 
          if (ImGui::Button("Clear scene"))
-            clearActors();
+            clearScene();
 
          if (ImGui::Button("Save terrain"))
          {
-            gRenderer().SaveInstancesToFile("data/instances.txt");
+            SaveTerrain();
+         }
 
-            if(mTerrain != nullptr)
-            {
-               mTerrain->SaveHeightmap("data/heightmap.ktx");
-               mTerrain->SaveBlendmap("data/blendmap.ktx");
-            }
+         ImGui::SameLine();
+
+         if (ImGui::Button("Load terrain"))
+         {
+            LoadTerrain();
          }
 
          ImGui::SameLine();
@@ -638,6 +653,31 @@ namespace Utopian
       }
 
       OnActorSelected(actor.get());
+   }
+
+   void Editor::SaveTerrain()
+   {
+      std::string sceneDirectory = Utopian::ExtractFileDirectory(Utopian::gEngine().GetSceneSource());
+      gRenderer().SaveInstancesToFile(sceneDirectory + "instances.txt");
+
+      if(mTerrain != nullptr)
+      {
+         mTerrain->SaveHeightmap(sceneDirectory + "heightmap.ktx");
+         mTerrain->SaveBlendmap(sceneDirectory + "blendmap.ktx");
+      }
+   }
+
+   void Editor::LoadTerrain()
+   {
+      std::string sceneDirectory = Utopian::ExtractFileDirectory(Utopian::gEngine().GetSceneSource());
+      gRenderer().LoadInstancesFromFile(sceneDirectory + "instances.txt");
+      gRenderer().BuildAllInstances();
+
+      if(mTerrain != nullptr)
+      {
+         mTerrain->LoadHeightmap(sceneDirectory + "heightmap.ktx");
+         mTerrain->LoadBlendmap(sceneDirectory + "blendmap.ktx");
+      }
    }
 
    void Editor::AddPaths()

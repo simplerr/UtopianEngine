@@ -79,9 +79,6 @@ namespace Utopian
       SharedPtr<Vk::Texture> heightToolTexture;
       SharedPtr<Vk::Texture> heightToolFlatTexture;
 
-      char heightmapPath[256] = "data/heightmap.ktx";
-      char blendmapPath[256] = "data/blendmap.ktx";
-
       struct TextureIdentifiers
       {
          ImTextureID grass;

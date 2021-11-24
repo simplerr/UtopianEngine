@@ -38,6 +38,12 @@ namespace Utopian
 
       return path;
    }
+
+   std::string ExtractFileDirectory(std::string path)
+   {
+      size_t found = path.find_last_of("/\\");
+      return path.substr(0, found+1);
+   }
    
    std::string GetFileExtension(std::string filename)
    {
