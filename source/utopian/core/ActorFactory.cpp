@@ -166,9 +166,9 @@ namespace Utopian
             }
             else if (name == "CPolyMesh")
             {
-               std::string modelPath = componentData["modelPath"].ToString();
+               std::string modelName = componentData["modelName"].ToString();
                std::string texturePath = componentData["texturePath"].ToString();
-               Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>(modelPath, texturePath);
+               Utopian::CPolyMesh* polyMesh = actor->AddComponent<Utopian::CPolyMesh>(modelName, texturePath);
             }
             else if (name == "CSpawnPoint")
             {

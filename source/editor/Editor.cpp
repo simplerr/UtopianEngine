@@ -393,10 +393,15 @@ namespace Utopian
             nfdchar_t* scenePath = NULL;
             if (NFD_OpenDialog(NULL, NULL, &scenePath) == NFD_OKAY)
             {
-               clearScene();
-               ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), std::string(scenePath));
-               Utopian::gEngine().SetSceneSource(scenePath);
-               LoadTerrain();
+               if (GetFileExtension(std::string(scenePath)) == ".lua")
+               {
+                  clearScene();
+                  Utopian::gEngine().SetSceneSource(scenePath);
+                  ActorFactory::LoadFromFile(Utopian::gEngine().GetVulkanApp()->GetWindow(), std::string(scenePath));
+                  LoadTerrain();
+               }
+               else
+                  UTO_LOG("Please pick a scene file with .lua extension");
             }
          }
 

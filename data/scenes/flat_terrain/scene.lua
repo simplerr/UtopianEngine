@@ -2,6 +2,53 @@ actor_list =
 {
 	
 	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelName = "polymesh-9481131577501143676.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 97,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 25.36480140686,
+				pos_y = 1.5125598907471,
+				pos_z = -6.0404009819031,
+				scale_x = 2.7999997138977,
+				scale_y = 2.7999997138977,
+				scale_z = 2.7999997138977,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
 		actor_name = "Player",
 		components = 
 		{
@@ -56,9 +103,9 @@ actor_list =
 				orientation_x = 1,
 				orientation_y = 0.00010023208596976,
 				orientation_z = 1.1216277906456e-11,
-				pos_x = 20.629434585571,
-				pos_y = 3.2499997615814,
-				pos_z = 6.018753528595,
+				pos_x = 32.475288391113,
+				pos_y = 10.053175926208,
+				pos_z = -19.389081954956,
 				scale_x = 2.4999997615814,
 				scale_y = 2.4999997615814,
 				scale_z = 2.4999997615814,

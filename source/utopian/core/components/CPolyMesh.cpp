@@ -3,6 +3,7 @@
 #include "core/Log.h"
 #include "core/LuaManager.h"
 #include "core/renderer/Renderer.h"
+#include "core/Engine.h"
 #include <OpenMesh/Core/Mesh/Handles.hh>
 #include <OpenMesh/Core/Mesh/PolyConnectivity.hh>
 #include <core/components/CRenderable.h>
@@ -12,6 +13,7 @@
 #include "OpenMesh/Core/IO/MeshIO.hh"
 #include "vulkan/TextureLoader.h"
 #include "utility/math/Helpers.h"
+#include "utility/Utility.h"
 
 namespace Utopian
 {
@@ -30,7 +32,7 @@ namespace Utopian
       uint64_t id = Math::GetRandom();
       std::string name = "polymesh-" + std::to_string(id) + ".obj";
 
-      SetModelPath("data/models/polymesh/" + name);
+      SetModelName(name);
       SetTexturePath("data/textures/prototype/Orange/texture_01.ktx");
 
       mPolyMesh.request_face_status();
@@ -40,19 +42,19 @@ namespace Utopian
       CreateCube();
    }
    
-   CPolyMesh::CPolyMesh(Actor* parent, std::string modelPath, std::string texturePath)
+   CPolyMesh::CPolyMesh(Actor* parent, std::string modelName, std::string texturePath)
       : Component(parent)
    {
       SetName("CPolyMesh");
 
-      SetModelPath(modelPath);
+      SetModelName(modelName);
       SetTexturePath(texturePath);
 
       mPolyMesh.request_face_status();
       mPolyMesh.request_edge_status();
       mPolyMesh.request_vertex_status();
 
-      LoadFromFile(modelPath);
+      LoadFromFile(GetModelPath());
    }
 
    CPolyMesh::~CPolyMesh()
@@ -107,7 +109,7 @@ namespace Utopian
       LuaPlus::LuaObject luaObject;
       luaObject.AssignNewTable(gLuaManager().GetLuaState());
 
-      luaObject.SetString("modelPath", mModelPath.c_str());
+      luaObject.SetString("modelName", mModelName.c_str());
       luaObject.SetString("texturePath", mTexturePath.c_str());
 
       return luaObject;
@@ -493,7 +495,10 @@ namespace Utopian
 
    std::string CPolyMesh::GetModelPath() const
    {
-      return mModelPath;
+      std::string sceneDirectory = Utopian::ExtractFileDirectory(Utopian::gEngine().GetSceneSource());
+      std::string path = sceneDirectory + "polymesh/" + mModelName;
+
+      return path;
    }
 
    std::string CPolyMesh::GetTexturePath() const
@@ -501,9 +506,9 @@ namespace Utopian
       return mTexturePath;
    }
 
-   void CPolyMesh::SetModelPath(std::string modelPath)
+   void CPolyMesh::SetModelName(std::string modelName)
    {
-      mModelPath = modelPath;
+      mModelName = modelName;
    }
 
    void CPolyMesh::SetTexturePath(std::string texturePath)

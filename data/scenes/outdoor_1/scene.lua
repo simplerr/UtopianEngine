@@ -7,106 +7,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-17494236645830452077.obj",
-				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
-			},
-			CRenderable = 
-			{
-				color_a = 1,
-				color_b = 1,
-				color_g = 1,
-				color_r = 1,
-				path = "Unknown",
-				render_flags = 33,
-			},
-			CRigidBody = 
-			{
-				anisotropic_friciton_x = 1,
-				anisotropic_friciton_y = 1,
-				anisotropic_friciton_z = 1,
-				collisionShapeType = 2,
-				friction = 0.5,
-				kinematic = true,
-				mass = 1,
-				restitution = 0,
-				rollingFriction = 0,
-			},
-			CTransform = 
-			{
-				orientation_w = 1,
-				orientation_x = 0,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 0.30923891067505,
-				pos_y = 0.5531325340271,
-				pos_z = -13.527480125427,
-				scale_x = 1,
-				scale_y = 1,
-				scale_z = 1,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
-		actor_name = "Directional light",
-		components = 
-		{
-			CBloomLight = 
-			{
-				empty = 0,
-			},
-			CLight = 
-			{
-				att_x = 0.20000000298023,
-				att_y = 0.0013999999500811,
-				att_z = 0,
-				color_b = 0.88532823324203,
-				color_g = 0.93212097883224,
-				color_r = 0.9367088675499,
-				dir_x = -0.5735764503479,
-				dir_y = 0.81915205717087,
-				dir_z = 0,
-				intensity_x = 0.34900000691414,
-				intensity_y = 0.84300005435944,
-				intensity_z = 0.58300000429153,
-				range = 100000,
-				spot = 4,
-				type = 0,
-			},
-			CRenderable = 
-			{
-				color_a = 8.6999998092651,
-				color_b = 0.88532823324203,
-				color_g = 0.93212097883224,
-				color_r = 0.9367088675499,
-				path = "data/models/teapot.obj",
-				render_flags = 1,
-			},
-			CTransform = 
-			{
-				orientation_w = -0.019197400659323,
-				orientation_x = 0.99981570243835,
-				orientation_y = 0,
-				orientation_z = 0,
-				pos_x = 7.698205947876,
-				pos_y = 3.7239489555359,
-				pos_z = 31.354467391968,
-				scale_x = 1.2000000476837,
-				scale_y = 1.2000000476837,
-				scale_z = 1.2000000476837,
-			},
-		},
-		scene_layer = 0,
-	},
-	
-	{
-		actor_name = "Polymesh",
-		components = 
-		{
-			CPolyMesh = 
-			{
-				modelPath = "data/models/polymesh/polymesh-11459721058600981566.obj",
+				modelName = "polymesh-11459721058600981566.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -153,7 +54,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-12131933794639897382.obj",
+				modelName = "polymesh-12131933794639897382.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -200,7 +101,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-11791782650475262833.obj",
+				modelName = "polymesh-11791782650475262833.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -247,7 +148,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-1152098208628123170.obj",
+				modelName = "polymesh-1152098208628123170.obj",
 				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
 			},
 			CRenderable = 
@@ -360,7 +261,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-6539226537533311710.obj",
+				modelName = "polymesh-6539226537533311710.obj",
 				texturePath = "data/textures/prototype/Green/texture_02.ktx",
 			},
 			CRenderable = 
@@ -407,7 +308,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-16056933003588629411.obj",
+				modelName = "polymesh-16056933003588629411.obj",
 				texturePath = "data/textures/prototype/Purple/texture_02.ktx",
 			},
 			CRenderable = 
@@ -454,7 +355,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-11995561671828378483.obj",
+				modelName = "polymesh-11995561671828378483.obj",
 				texturePath = "data/textures/prototype/Orange/texture_02.ktx",
 			},
 			CRenderable = 
@@ -501,7 +402,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-12020006925761106761.obj",
+				modelName = "polymesh-12020006925761106761.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -548,7 +449,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-14962720857644198438.obj",
+				modelName = "polymesh-14962720857644198438.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -644,9 +545,9 @@ actor_list =
 				orientation_x = 1,
 				orientation_y = 0.00010023208596976,
 				orientation_z = 1.1216277906456e-11,
-				pos_x = -9.9615364074707,
-				pos_y = 2.301673412323,
-				pos_z = 11.271608352661,
+				pos_x = -11.514996528625,
+				pos_y = 1.7288094758987,
+				pos_z = 6.9954733848572,
 				scale_x = 2.4999997615814,
 				scale_y = 2.4999997615814,
 				scale_z = 2.4999997615814,
@@ -661,7 +562,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-15909781919773930011.obj",
+				modelName = "polymesh-15909781919773930011.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -708,7 +609,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-15852522237019152163.obj",
+				modelName = "polymesh-15852522237019152163.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -755,7 +656,7 @@ actor_list =
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-5338942149808433577.obj",
+				modelName = "polymesh-5338942149808433577.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -794,15 +695,15 @@ actor_list =
 			},
 		},
 		scene_layer = 0,
-	}, 
-	[0] = 
+	},
+	
 	{
 		actor_name = "Polymesh",
 		components = 
 		{
 			CPolyMesh = 
 			{
-				modelPath = "data/models/polymesh/polymesh-195757556382754712.obj",
+				modelName = "polymesh-195757556382754712.obj",
 				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
 			},
 			CRenderable = 
@@ -838,6 +739,105 @@ actor_list =
 				scale_x = 1,
 				scale_y = 1,
 				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	},
+	
+	{
+		actor_name = "Polymesh",
+		components = 
+		{
+			CPolyMesh = 
+			{
+				modelName = "polymesh-17494236645830452077.obj",
+				texturePath = "data/textures/prototype/Orange/texture_01.ktx",
+			},
+			CRenderable = 
+			{
+				color_a = 1,
+				color_b = 1,
+				color_g = 1,
+				color_r = 1,
+				path = "Unknown",
+				render_flags = 33,
+			},
+			CRigidBody = 
+			{
+				anisotropic_friciton_x = 1,
+				anisotropic_friciton_y = 1,
+				anisotropic_friciton_z = 1,
+				collisionShapeType = 2,
+				friction = 0.5,
+				kinematic = true,
+				mass = 1,
+				restitution = 0,
+				rollingFriction = 0,
+			},
+			CTransform = 
+			{
+				orientation_w = 1,
+				orientation_x = 0,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 0.30923891067505,
+				pos_y = 0.5531325340271,
+				pos_z = -13.527480125427,
+				scale_x = 1,
+				scale_y = 1,
+				scale_z = 1,
+			},
+		},
+		scene_layer = 0,
+	}, 
+	[0] = 
+	{
+		actor_name = "Directional light",
+		components = 
+		{
+			CBloomLight = 
+			{
+				empty = 0,
+			},
+			CLight = 
+			{
+				att_x = 0.20000000298023,
+				att_y = 0.0013999999500811,
+				att_z = 0,
+				color_b = 0.88532823324203,
+				color_g = 0.93212097883224,
+				color_r = 0.9367088675499,
+				dir_x = -0.5735764503479,
+				dir_y = 0.81915205717087,
+				dir_z = 0,
+				intensity_x = 0.34900000691414,
+				intensity_y = 0.84300005435944,
+				intensity_z = 0.58300000429153,
+				range = 100000,
+				spot = 4,
+				type = 0,
+			},
+			CRenderable = 
+			{
+				color_a = 8.6999998092651,
+				color_b = 0.88532823324203,
+				color_g = 0.93212097883224,
+				color_r = 0.9367088675499,
+				path = "data/models/teapot.obj",
+				render_flags = 1,
+			},
+			CTransform = 
+			{
+				orientation_w = -0.019197400659323,
+				orientation_x = 0.99981570243835,
+				orientation_y = 0,
+				orientation_z = 0,
+				pos_x = 7.698205947876,
+				pos_y = 3.7239489555359,
+				pos_z = 31.354467391968,
+				scale_x = 1.2000000476837,
+				scale_y = 1.2000000476837,
+				scale_z = 1.2000000476837,
 			},
 		},
 		scene_layer = 0,

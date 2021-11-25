@@ -17,7 +17,7 @@ namespace Utopian
    {
    public:
       CPolyMesh(Actor* parent);
-      CPolyMesh(Actor* parent, std::string modelPath, std::string texturePath);
+      CPolyMesh(Actor* parent, std::string modelName, std::string texturePath);
       ~CPolyMesh();
 
       void Update(double deltaTime) override;
@@ -47,7 +47,7 @@ namespace Utopian
       std::string GetModelPath() const;
       std::string GetTexturePath() const;
 
-      void SetModelPath(std::string modelPath);
+      void SetModelName(std::string modelName);
       void SetTexturePath(std::string texturePath);
 
       // Type identification
@@ -71,7 +71,7 @@ namespace Utopian
       OpenMesh::SmartFaceHandle mSelectedFace;
       OpenMesh::SmartHalfedgeHandle mSelectedEdge;
       bool mRebuildMeshBuffer = false;
-      std::string mModelPath;
+      std::string mModelName;
       std::string mTexturePath;
 
       // Todo: "Fix component PostInit order #120"
