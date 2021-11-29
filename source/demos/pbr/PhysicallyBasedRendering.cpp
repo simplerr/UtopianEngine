@@ -2,6 +2,7 @@
 #include "core/renderer/Model.h"
 #include "core/glTFLoader.h"
 #include <glm/matrix.hpp>
+#include <glm/gtc/constants.hpp>
 #include <imgui/imgui.h>
 #include <string>
 #include <time.h>
@@ -52,14 +53,8 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
    InitResources();
 
    gModelLoader().SetInverseTranslation(false);
-   
-   SceneNode sceneNode;
-   sceneNode.model = gModelLoader().LoadBox();
-   sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)) *
-                                          glm::scale(glm::mat4(1.0f), glm::vec3(100.0f, 1.0f, 100.0f));
-   mSceneNodes.push_back(sceneNode);
 
-   const uint32_t max = 5;
+   const uint32_t max = 7;
    for (uint32_t x = 0; x < max; x++)
    {
       for (uint32_t y = 0; y < max; y++)
@@ -74,9 +69,13 @@ PhysicallyBasedRendering::PhysicallyBasedRendering(Utopian::Window* window)
       }
    }
 
-   AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(2.0f, 0.25f, 1.78f), glm::vec3(0.01f));
+   //AddModel("data/models/gltf/Fox/glTF/Fox.gltf", glm::vec3(2.0f, 0.25f, 1.78f), glm::vec3(0.01f));
 
-   Utopian::Model* model = AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.5f, 1.0f, 3.0f), glm::vec3(1.0f));
+   //Utopian::Model* model = AddModel("data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf", glm::vec3(0.5f, 1.0f, 3.0f), glm::vec3(2.0f));
+   Utopian::Model* model = AddModel("data/models/gltf/DamagedHelmet/glTF/DamagedHelmet.gltf",
+                                    glm::vec3(7.5f, 2.5f, 3.3f),
+                                    glm::vec3(2.0f),
+                                    glm::angleAxis(-45.0f * (glm::pi<float>() / 180.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
    mModelInspector = std::make_shared<ModelInspector>(model);
 }
 
@@ -118,7 +117,7 @@ void PhysicallyBasedRendering::InitResources()
    uint32_t height = mWindow->GetHeight();
    Vk::Device* device = mVulkanApp->GetDevice();
 
-   mCamera = std::make_shared<MiniCamera>(glm::vec3(1.31f, 1.0f, 5.58f), glm::vec3(0.0f, 0.0f, 0.0f), 0.01f, 20000.0f, 0.009f, width, height);
+   mCamera = std::make_shared<MiniCamera>(glm::vec3(-0.85f, 3.19f, 8.05), glm::vec3(0.0f, 0.0f, 0.0f), 0.01f, 20000.0f, 0.009f, width, height);
 
    mOutputImage = std::make_shared<Vk::ImageColor>(device, width, height, VK_FORMAT_R32G32B32A32_SFLOAT, "PhysicallyBasedRendering image");
    mDepthImage = std::make_shared<Vk::ImageDepth>(device, width, height, VK_FORMAT_D32_SFLOAT_S8_UINT, "Depth image");
@@ -408,7 +407,7 @@ void PhysicallyBasedRendering::GenerateFilteredCubemaps()
 Utopian::Model* PhysicallyBasedRendering::AddModel(std::string filename, glm::vec3 pos, glm::vec3 scale, glm::quat rotation)
 {
    SceneNode sceneNode;
-   sceneNode.model = gModelLoader().LoadModel(filename);
+   sceneNode.model = gModelLoader().LoadModel(filename, true);
    sceneNode.worldMatrix = glm::translate(glm::mat4(1.0f), pos) *
                            glm::mat4(rotation) *
                            glm::scale(glm::mat4(1.0f), scale);

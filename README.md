@@ -8,26 +8,28 @@ It is written in C++ and uses Vulkan as the rendering API.
 
 [Demo on youtube](https://youtu.be/428gfVBfCms)
 
-![Image](data/printscreens/readme-print.png)
-![Image](data/printscreens/terrain-texturing-2.png)
-![Image](data/printscreens/prototype-level.png)
+![Image](data/printscreens/terrain-foliage.png)
+![Image](data/printscreens/prototype-level-2.png)
+![Image](data/printscreens/pbr_demo.png)
 ![Image](data/printscreens/water-ssr-8.png)
-![Image](data/printscreens/marching-cubes.png)
 
 ## Features
 + Vulkan backend
 + Deferred shading
++ PBR rendering
 + Casacade shadow mapping
 + Screen Space Reflections
-+ Quake inspired player movement
 + Normal mapping
 + God rays
 + SSAO
 + Instancing
++ Animations
++ Atmospheric scattering
 + Runtime shader compilation
 + Shader reflection
 + Basic Lua scripting
 + Terrain generation
++ Quake inspired player movement
 + Skydome with sun
 + ImGui user interface
 + ECS layer
@@ -40,8 +42,6 @@ It is written in C++ and uses Vulkan as the rendering API.
 + Bullet Physics integration
 
 ## Planned features
-+ Atmospheric scattering
-+ HDR
 + Particle systems
 + LOD
 + Clouds
