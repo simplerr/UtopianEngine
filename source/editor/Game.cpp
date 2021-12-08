@@ -27,7 +27,7 @@ Game::Game(Utopian::Window* window)
 
    Utopian::gModelLoader().SetFlipWindingOrder(true);
 
-   Utopian::gEngine().Start(window, "Utopian Engine (v0.3)");
+   Utopian::gEngine().Start(window, "Utopian Engine (v0.4)");
    Utopian::gEngine().AddPlugin(std::make_shared<Utopian::ECSPlugin>());
    Utopian::gEngine().AddPlugin(std::make_shared<Utopian::DeferredRenderingPlugin>("data/settings.lua"));
    Utopian::gEngine().StartModules();

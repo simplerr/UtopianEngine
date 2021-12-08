@@ -12,7 +12,7 @@ namespace Utopian
 
    Log::Log()
    {
-      SetupConsole("Utopian Engine (v0.3)");
+      SetupConsole("Utopian Engine (v0.4)");
    }
 
    Log::~Log()
