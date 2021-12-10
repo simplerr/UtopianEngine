@@ -3,14 +3,13 @@
 ### Technical debt
 * Investigate performance issues
 * Vulkan synchronization
+* General cleanups
 
 ### New features
-* Import glTF models
-* Skinned meshes
-* Physically Based Rendering
-* Prefab system
-* Loading + saving complete scene to file
+* Lua scripting
+* Linux support
 * Improve foliage rendering
+* Prefab system
 * Larger terrain with different patch sizes
 * Volumetric clouds
 * Particle effects

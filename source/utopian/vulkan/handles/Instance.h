@@ -6,7 +6,7 @@
 namespace Utopian::Vk
 {
    /** Wrapper for the Vulkan instance. */
-   class Instance 
+   class Instance
    {
    public:
       Instance(std::string appName, bool enableValidation);

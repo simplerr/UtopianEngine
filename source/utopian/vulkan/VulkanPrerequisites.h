@@ -21,7 +21,6 @@ namespace Utopian::Vk
    class Buffer;
    class CommandBuffer;
    class CommandPool;
-   class ComputePipeline;
    class DescriptorSet;
    class DescriptorPool;
    class DescriptorSetLayout;

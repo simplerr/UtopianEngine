@@ -16,6 +16,7 @@ namespace Utopian::Vk
       VkDeviceSize size = 0;
    };
 
+   /** Wrapper for VkBuffer. */
    class Buffer : public Handle<VkBuffer>
    {
    public:

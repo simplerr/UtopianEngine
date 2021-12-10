@@ -11,11 +11,11 @@ namespace Utopian::Vk
     * Wrapper for handling framebuffers.
     * Supports both creating multiple framebuffer when used in the swapchain
     * and also manually adding multiple attachments to the same framebuffer.
-    * 
+    *
     * Todo: Note: It's a bit weird that this has special implementation when used
     * in the swapchain. Ugly that the number of framebuffers are hardcoded to 1
     * in the other case. For example the ShadowJob uses multiple framebuffers as well.
-    * 
+    *
     * Should perhaps just contain 1 VkFrameBuffer and then on a higher level have the vector.
     */
    class FrameBuffers

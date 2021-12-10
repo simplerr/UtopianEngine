@@ -6,7 +6,7 @@
 
 namespace Utopian::Vk
 {
-   /** 
+   /**
     * Wrapper for handling pipeline layouts.
     * @note This is currently not used by PipelineInterface.
     */

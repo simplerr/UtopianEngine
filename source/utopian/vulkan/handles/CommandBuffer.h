@@ -6,7 +6,7 @@
 
 namespace Utopian::Vk
 {
-   /** Wrapper for VkCommandBuffer. See Vulkan specification for documentation. */
+   /** Wrapper for VkCommandBuffer. */
    class CommandBuffer : public Handle<VkCommandBuffer>
    {
    public:
@@ -29,7 +29,6 @@ namespace Utopian::Vk
       void CmdSetViewPort(float width, float height);
       void CmdSetScissor(uint32_t width, uint32_t height);
       void CmdSetScissor(const VkRect2D& rect);
-      void CmdBindPipeline(ComputePipeline* pipeline);
       void CmdBindPipeline(VkPipeline pipeline);
       void CmdBindPipeline(const Pipeline* pipeline);
       void CmdBindDescriptorSet(const PipelineLayout* pipelineLayout, DescriptorSet* descriptorSet);

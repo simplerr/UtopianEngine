@@ -39,15 +39,16 @@ namespace Utopian::Vk
       BlendingType blendingType = BLENDING_NONE;
    };
 
-   /**
-    * Wrapper for VkPipeline.
-    * Sets up default values for the rasterization, input assembly, depth stencil
-    * and blend states. If other values are wanted the public member variables can
-    * be modified as needed before creating the pipeline.
-    */
+   /** Wrapper for VkPipeline. */
    class Pipeline : public Handle<VkPipeline>
    {
    public:
+      /**
+       * Creates the pipeline.
+       * @param pipelineDesc the description of the pipeline to be created.
+       * @param renderPass the renderpass related to the pipeline.
+       * @note does not create the pipeline object, that is done in Create().
+       */
       Pipeline(const PipelineDesc& pipelineDesc, Device* device, RenderPass* renderPass);
 
       /**

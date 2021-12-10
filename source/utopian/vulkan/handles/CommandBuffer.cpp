@@ -1,6 +1,5 @@
 #include "vulkan/Debug.h"
 #include "vulkan/handles/Device.h"
-#include "vulkan/handles/ComputePipeline.h"
 #include "vulkan/handles/PipelineLayout.h"
 #include "vulkan/handles/DescriptorSet.h"
 #include "vulkan/handles/Buffer.h"

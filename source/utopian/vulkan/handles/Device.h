@@ -29,7 +29,7 @@ namespace Utopian::Vk
 
       /**
        * Returns the graphics queue associated with the device.
-       * 
+       *
        * @note Currently only one queue is fetched from the device.
        */
       Queue* GetQueue() const;

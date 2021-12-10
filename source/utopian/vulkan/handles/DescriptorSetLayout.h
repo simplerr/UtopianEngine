@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Handle.h" 
+#include "Handle.h"
 #include "vulkan/VulkanPrerequisites.h"
 
 namespace Utopian::Vk
@@ -20,8 +20,8 @@ namespace Utopian::Vk
       void AddStorageBuffer(uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1);
       void AddCombinedImageSampler(uint32_t binding, VkShaderStageFlags stageFlags, uint32_t descriptorCount = 1);
 
-      /** 
-       * Creates the descriptor set layout. 
+      /**
+       * Creates the descriptor set layout.
        * @note This must be called after all needed descriptor
        * types have been added to the layout.
        */

@@ -28,8 +28,8 @@ namespace Utopian::Vk
       };
 
       QueryPoolStatistics(Device* device);
-   
-      /** 
+
+      /**
        * Retrieves the result of the submitted statistics query. 
        * @note Must be called before calling GetStatistics().
        * The results are not available immedietly. 

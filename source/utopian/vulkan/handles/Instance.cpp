@@ -16,7 +16,7 @@ namespace Utopian::Vk
 
       std::vector<const char*> enabledExtensions = { VK_KHR_SURFACE_EXTENSION_NAME };
 
-      // Extension for the Win32 surface 
+      // Extension for the Win32 surface
 #if defined(_WIN32)
       enabledExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 #elif defined(__ANDROID__)
