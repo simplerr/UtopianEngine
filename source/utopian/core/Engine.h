@@ -8,53 +8,7 @@
 
 namespace Utopian
 {
-   class Engine;
-
-   class EnginePlugin
-   {
-   public:
-      EnginePlugin() {};
-      virtual ~EnginePlugin() {};
-
-      virtual void Start(Engine* engine) = 0;
-      virtual void PostInit(Engine* engine) = 0;
-      virtual void Destroy() = 0;
-      virtual void Update(double deltaTime) = 0;
-      virtual void Draw() {};
-      virtual void NewFrame() {};
-      virtual void EndFrame() {};
-   };
-
-   class DeferredRenderingPlugin : public EnginePlugin
-   {
-   public:
-      DeferredRenderingPlugin(const std::string& settingsFile);
-      virtual void Start(Engine* engine) override;
-      virtual void PostInit(Engine* engine) override;
-      virtual void Destroy() override;
-      virtual void Update(double deltaTime) override;
-      virtual void Draw() override;
-      virtual void NewFrame() override;
-      virtual void EndFrame() override;
-
-   private:
-      void LoadSettingsFromFile(Engine* engine);
-   private:
-      RenderingSettings mRenderingSettings;
-      std::string mSettingsFile;
-   };
-
-   class ECSPlugin : public EnginePlugin
-   {
-   public:
-      virtual void Start(Engine* engine) override;
-      virtual void PostInit(Engine* engine) override;
-      virtual void Destroy() override;
-      virtual void Update(double deltaTime) override;
-      virtual void Draw() override;
-      virtual void NewFrame() override;
-      virtual void EndFrame() override;
-   };
+   class EnginePlugin;
 
    class Engine : public Module<Engine>
    {
@@ -138,6 +92,51 @@ namespace Utopian
       std::string mSceneSource;
       Timestamp mLastFrameTime;
    };
+
+   class EnginePlugin
+   {
+   public:
+      EnginePlugin() {};
+      virtual ~EnginePlugin() {};
+
+      virtual void Start(Engine* engine) = 0;
+      virtual void PostInit(Engine* engine) = 0;
+      virtual void Destroy() = 0;
+      virtual void Update(double deltaTime) = 0;
+      virtual void Draw() {};
+      virtual void NewFrame() {};
+      virtual void EndFrame() {};
+   };
+
+   class DeferredRenderingPlugin : public EnginePlugin
+   {
+   public:
+      DeferredRenderingPlugin(const std::string& settingsFile);
+      virtual void Start(Engine* engine) override;
+      virtual void PostInit(Engine* engine) override;
+      virtual void Destroy() override;
+      virtual void Update(double deltaTime) override;
+      virtual void Draw() override;
+      virtual void NewFrame() override;
+      virtual void EndFrame() override;
+
+   private:
+      RenderingSettings mRenderingSettings;
+      std::string mSettingsFile;
+   };
+
+   class ECSPlugin : public EnginePlugin
+   {
+   public:
+      virtual void Start(Engine* engine) override;
+      virtual void PostInit(Engine* engine) override;
+      virtual void Destroy() override;
+      virtual void Update(double deltaTime) override;
+      virtual void Draw() override;
+      virtual void NewFrame() override;
+      virtual void EndFrame() override;
+   };
+
 
    /** Returns an instance to the Engine module. */
    Engine& gEngine();

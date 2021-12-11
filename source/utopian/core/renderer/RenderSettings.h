@@ -4,6 +4,9 @@
 
 namespace Utopian
 {
+   class Terrain;
+   class Engine;
+
    const std::string SKY_DOME = "dome";
    const std::string SKY_BOX = "box";
    const std::string SKY_ATMOSPHERE = "atmosphere";
@@ -73,4 +76,7 @@ namespace Utopian
 
       float outlineWidth = 1.0f;
    };
+
+   void DisplayRenderSettings(RenderingSettings& renderSettings, Terrain* terrain);
+   void LoadSettingsFromFile(RenderingSettings& renderSettings, Engine* engine, std::string fileName);
 }

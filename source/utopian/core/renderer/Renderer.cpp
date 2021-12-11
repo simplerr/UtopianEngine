@@ -59,11 +59,10 @@ namespace Utopian
       mDevice = vulkanApp->GetDevice();
 
       mSceneInfo.directionalLight = nullptr;
-
-      // Todo: Figure out where these belong
-      mIm3dRenderer = std::make_shared<Im3dRenderer>(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
-
       mSceneInfo.sharedVariables.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+      mIm3dRenderer = std::make_shared<Im3dRenderer>(mVulkanApp, glm::vec2(mVulkanApp->GetWindowWidth(), mVulkanApp->GetWindowHeight()));
+      mInstancingManager = std::make_shared<InstancingManager>(this);
    }
 
    Renderer::~Renderer()
@@ -75,10 +74,6 @@ namespace Utopian
 
    void Renderer::PostWorldInit()
    {
-      // Note: Todo: move code in this function to a better place
-
-      mInstancingManager = std::make_shared<InstancingManager>(this);
-
       std::string sceneDirectory = Utopian::ExtractFileDirectory(Utopian::gEngine().GetSceneSource());
 
       if (mRenderingSettings.terrainEnabled)
@@ -109,8 +104,6 @@ namespace Utopian
       mMainCamera->UpdateFrustum();
       mJobGraph->Update(deltaTime);
 
-      //BuildAllInstances();
-
       UpdateUi();
    }
 
@@ -131,134 +124,41 @@ namespace Utopian
       ImGuiRenderer::TextV("Models: %u, Lights: %u", mSceneInfo.renderables.size(), mSceneInfo.lights.size());
 
       ImGuiRenderer::EndWindow();
-      if (ImGuiRenderer::GetMode() != UI_MODE_EDITOR)
-         return;
 
-      // Draw UI overlay for rendering settings
-      // It's expected that each rendering node might have it's own settings that can be configured
-      ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
-
-      ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.50f);
-
-      if (ImGui::CollapsingHeader("Features", ImGuiTreeNodeFlags_DefaultOpen))
+      if (ImGuiRenderer::GetMode() == UI_MODE_EDITOR)
       {
-         static int shadingMethod = mRenderingSettings.shadingMethod;
-         if (ImGui::Combo("Shading method", &shadingMethod, "Phong\0PBR\0"))
+         ImGuiRenderer::BeginWindow("Rendering settings", glm::vec2(10, 150), 300.0f);
+
+         DisplayRenderSettings(mRenderingSettings, mSceneInfo.terrain.get());
+
+         if (ImGui::CollapsingHeader("Debug"), ImGuiTreeNodeFlags_DefaultOpen)
          {
-            mRenderingSettings.shadingMethod = (ShadingMethod)shadingMethod;
+            static int debugChannel = JobGraph::DebugChannel::NONE;
+            if (ImGui::Combo("Texture channel", &debugChannel, "None\0Position\0Normal\0Normal view space\0Albedo\0PBR"))
+            {
+               mJobGraph->SetDebugChannel((JobGraph::DebugChannel)debugChannel);
+            }
          }
 
-         ImGui::Checkbox("Shadows", &mRenderingSettings.shadowsEnabled);
-         ImGui::Checkbox("Normal mapping", &mRenderingSettings.normalMapping);
-         ImGui::Checkbox("SSAO", &mRenderingSettings.ssaoEnabled);
-         ImGui::Checkbox("SSR", &mRenderingSettings.ssrEnabled);
-         ImGui::Checkbox("IBL", &mRenderingSettings.iblEnabled);
-         ImGui::Checkbox("Bloom", &mRenderingSettings.bloomEnabled);
-         ImGui::Checkbox("Skybox reflections", &mRenderingSettings.skyboxReflections);
-         ImGui::Checkbox("Water", &mRenderingSettings.waterEnabled);
-         ImGui::Checkbox("God rays", &mRenderingSettings.godRaysEnabled);
-         ImGui::Checkbox("FXAA", &mRenderingSettings.fxaaEnabled);
-         ImGui::Checkbox("FXAA debug", &mRenderingSettings.fxaaDebug);
-         ImGui::Checkbox("Cascade color debug", &mRenderingSettings.cascadeColorDebug);
-         ImGui::Checkbox("Terrain wireframe", &mRenderingSettings.terrainWireframe);
-         ImGui::Checkbox("Wind enabled", &mRenderingSettings.windEnabled);
-      }
+         mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::SSR_INDEX, mRenderingSettings.ssrEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::BLOOM_INDEX, mRenderingSettings.bloomEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::GEOMETRY_THICKNESS_INDEX, mRenderingSettings.ssrEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::WATER_INDEX, mRenderingSettings.waterEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::FRESNEL_INDEX, mRenderingSettings.waterEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::OPAQUE_COPY_INDEX, mRenderingSettings.waterEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
+         mJobGraph->EnableJob(JobGraph::JobIndex::DOF_INDEX, mRenderingSettings.dofEnabled);
 
-      if (ImGui::CollapsingHeader("Depth of Field settings"))
-      {
-         ImGui::Checkbox("DOF enabled", &mRenderingSettings.dofEnabled);
-         ImGui::SliderFloat("DOF start", &mRenderingSettings.dofStart, 0.0f, 50.0f);
-         ImGui::SliderFloat("DOF range", &mRenderingSettings.dofRange, 0.0f, 50.0f);
-      }
-
-      if (ImGui::CollapsingHeader("Fog settings"))
-      {
-         ImGui::ColorEdit4("Fog color", &mRenderingSettings.fogColor.x);
-         ImGui::SliderFloat("Fog start", &mRenderingSettings.fogStart, 0.0f, 800.0f);
-         ImGui::SliderFloat("Fog distance", &mRenderingSettings.fogDistance, 0.0f, 800.0f);
-      }
-
-      //ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 20.0f);
-      //ImGui::SliderFloat("SSAO bias", &mRenderingSettings.ssaoBias, 0.0f, 10.0f);
-      //ImGui::SliderInt("SSAO blur radius", &mRenderingSettings.blurRadius, 1, 20);
-      //ImGui::SliderInt("Block view distance", &mRenderingSettings.blockViewDistance, 1, 10);
-      //ImGui::SliderFloat("Grass view distance", &mRenderingSettings.grassViewDistance, 0.0f, 10000.0f);
-
-      if (ImGui::CollapsingHeader("Mixed settings"))
-      {
-         ImGui::SliderFloat("Ambient intensity", &mRenderingSettings.ambientIntensity, 0.0f, 1.0f);
-         ImGui::SliderFloat("FXAA threshold", &mRenderingSettings.fxaaThreshold, 0.0f, 1.5f);
-         ImGui::SliderFloat("SSAO radius", &mRenderingSettings.ssaoRadius, 0.0f, 0.15f);
-         ImGui::SliderInt("Shadow sample size", &mRenderingSettings.shadowSampleSize, 0, 10);
-         ImGui::SliderFloat("Cascade split lambda", &mRenderingSettings.cascadeSplitLambda, 0.0f, 1.0f);
-         ImGui::SliderFloat("Sun inclination", &mRenderingSettings.sunInclination, -90.0f, 90.0f);
-         //ImGui::SliderFloat("Sun azimuth", &mRenderingSettings.sunAzimuth, -180.0f, 180.0f);
-         ImGui::SliderFloat("Sun speed", &mRenderingSettings.sunSpeed, 0.0f, 10.0f);
-         ImGui::SliderFloat("Exposure", &mRenderingSettings.exposure, 0.0f, 5.0f);
-         ImGui::Combo("Tonemapping", &mRenderingSettings.tonemapping, "Reinhard\0Uncharted 2\0Exposure\0None\0ACES\0");
-         ImGui::SliderFloat("Bloom threshold", &mRenderingSettings.bloomThreshold, 0.5f, 10.0f);
-         ImGui::SliderFloat("Wind strength", &mRenderingSettings.windStrength, 0.0f, 25.0f);
-         ImGui::SliderFloat("Wind frequency", &mRenderingSettings.windFrequency, 0.0f, 30000.0f);
-         ImGui::SliderFloat("Outline width", &mRenderingSettings.outlineWidth, 1.0f, 20.0f);
-      }
-
-      if (ImGui::CollapsingHeader("Terrain settings"))
-      {
-         ImGui::SliderFloat("Tessellation factor", &mRenderingSettings.tessellationFactor, 0.0f, 5.0f);
-
-         float amplitudeScaling = mSceneInfo.terrain->GetAmplitudeScaling();
-         if (ImGui::SliderFloat("Terrain amplitude", &amplitudeScaling, 0.4f, 100))
+         if (ImGui::Button("Dump memory statistics"))
          {
-            mSceneInfo.terrain->SetAmplitudeScaling(amplitudeScaling);
-            //UpdateInstanceAltitudes(); Can't do this because the buffer is in use by a command buffer
+            mDevice->DumpMemoryStats("memory-statistics.json");
          }
 
-         ImGui::SliderFloat("Terrain texture scaling", &mRenderingSettings.terrainTextureScaling, 1.0f, 600.0f);
-         ImGui::SliderFloat("Terrain bumpmap amplitude", &mRenderingSettings.terrainBumpmapAmplitude, 0.0078f, 0.4f);
+         ImGuiRenderer::EndWindow();
       }
-
-      if (ImGui::CollapsingHeader("Water settings"))
-      {
-         ImGui::SliderFloat("Water level", &mRenderingSettings.waterLevel, -15.0f, 15.0f);
-         ImGui::ColorEdit3("Water color", &mRenderingSettings.waterColor.x);
-         ImGui::ColorEdit3("Foam color", &mRenderingSettings.foamColor.x);
-         ImGui::SliderFloat("Wave speed", &mRenderingSettings.waveSpeed, 0.1f, 10.0f);
-         ImGui::SliderFloat("Foam speed", &mRenderingSettings.foamSpeed, 0.1f, 10.0f);
-         ImGui::SliderFloat("Distortion strength", &mRenderingSettings.waterDistortionStrength, 0.005f, 0.1f);
-         ImGui::SliderFloat("Shoreline depth", &mRenderingSettings.shorelineDepth, 0.0f, 8.0f);
-         ImGui::SliderFloat("Wave frequency", &mRenderingSettings.waveFrequency, 0.0f, 5.0f);
-         ImGui::SliderFloat("Water specularity", &mRenderingSettings.waterSpecularity, 1.0f, 1024.0f);
-         ImGui::SliderFloat("Water transparency", &mRenderingSettings.waterTransparency, 0.0f, 1.0f);
-         ImGui::SliderFloat("Underwater view distance", &mRenderingSettings.underwaterViewDistance, 0.0f, 40.0f);
-      }
-
-      if (ImGui::CollapsingHeader("Debug"), ImGuiTreeNodeFlags_DefaultOpen)
-      {
-         static int debugChannel = JobGraph::DebugChannel::NONE;
-         if (ImGui::Combo("Texture channel", &debugChannel, "None\0Position\0Normal\0Normal view space\0Albedo\0PBR"))
-         {
-            mJobGraph->SetDebugChannel((JobGraph::DebugChannel)debugChannel);
-         }
-      }
-
-      mJobGraph->EnableJob(JobGraph::JobIndex::SSAO_INDEX, mRenderingSettings.ssaoEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::BLUR_INDEX, mRenderingSettings.ssaoEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::SSR_INDEX, mRenderingSettings.ssrEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::BLOOM_INDEX, mRenderingSettings.bloomEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::GEOMETRY_THICKNESS_INDEX, mRenderingSettings.ssrEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::WATER_INDEX, mRenderingSettings.waterEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::FRESNEL_INDEX, mRenderingSettings.waterEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::OPAQUE_COPY_INDEX, mRenderingSettings.waterEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::SHADOW_INDEX, mRenderingSettings.shadowsEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::SUN_SHAFT_INDEX, mRenderingSettings.godRaysEnabled);
-      mJobGraph->EnableJob(JobGraph::JobIndex::DOF_INDEX, mRenderingSettings.dofEnabled);
-
-      if (ImGui::Button("Dump memory statistics"))
-      {
-         mDevice->DumpMemoryStats("memory-statistics.json");
-      }
-
-      ImGuiRenderer::EndWindow();
    }
 
    /*
