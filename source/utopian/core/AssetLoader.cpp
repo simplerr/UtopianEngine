@@ -223,8 +223,6 @@ namespace Utopian
             material->normalTexture = normalMap;
             material->UpdateTextureDescriptors(gRenderer().GetDevice());
          }
-         else
-            assert(0);
       }
 
       return model;
