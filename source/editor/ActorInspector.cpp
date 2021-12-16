@@ -1,16 +1,16 @@
+#include <imgui/imgui.h>
+#include "utopian/core/components/Actor.h"
+#include "utopian/core/components/CLight.h"
+#include "utopian/core/components/CTransform.h"
+#include "utopian/core/components/CRenderable.h"
+#include "utopian/core/components/CRigidBody.h"
+#include "utopian/core/components/CCatmullSpline.h"
+#include "utopian/core/components/CPolyMesh.h"
+#include "utopian/core/components/CPlayerControl.h"
+#include "utopian/core/components/CNoClip.h"
+#include "utopian/core/renderer/ImGuiRenderer.h"
 #include "ActorInspector.h"
-#include "core/components/Actor.h"
-#include "core/components/CLight.h"
-#include "core/components/CTransform.h"
-#include "core/components/CRenderable.h"
-#include "core/components/CRigidBody.h"
-#include "core/components/CCatmullSpline.h"
-#include "core/components/CPolyMesh.h"
-#include "core/components/CPlayerControl.h"
-#include "core/components/CNoClip.h"
-#include "editor/ComponentInspector.h"
-#include "imgui/imgui.h"
-#include "core/renderer/ImGuiRenderer.h"
+#include "ComponentInspector.h"
 
 namespace Utopian
 {

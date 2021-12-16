@@ -2,8 +2,8 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include "core/World.h"
-#include "editor/Editor.h"
+#include "utopian/core/World.h"
+#include "Editor.h"
 
 namespace Utopian
 {

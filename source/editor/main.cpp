@@ -1,5 +1,5 @@
-#include "utility/Platform.h"
-#include "core/Window.h"
+#include "utopian/utility/Platform.h"
+#include "utopian/core/Window.h"
 #include "Game.h"
 
 Game* gGame = nullptr;

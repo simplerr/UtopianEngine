@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
-#include "utility/Common.h"
-#include "vulkan/VulkanPrerequisites.h"
-#include "vulkan/ShaderBuffer.h"
-#include "core/Terrain.h"
-#include "imgui/imgui.h"
+#include <imgui/imgui.h>
+#include "utopian/utility/Common.h"
+#include "utopian/vulkan/VulkanPrerequisites.h"
+#include "utopian/vulkan/ShaderBuffer.h"
+#include "utopian/core/Terrain.h"
 
 namespace Utopian
 {

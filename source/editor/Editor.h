@@ -1,10 +1,10 @@
 #pragma once
-#include "vulkan/VulkanPrerequisites.h"
-#include "utility/Common.h"
+#include "utopian/vulkan/VulkanPrerequisites.h"
+#include "utopian/utility/Common.h"
+#include "utopian/ui/Console.h"
 #include <vector>
 #include <string>
 #include <glm/glm.hpp>
-#include "ui/Console.h"
 
 namespace Utopian
 {
