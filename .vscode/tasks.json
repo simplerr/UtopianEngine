@@ -19,7 +19,7 @@
         },
         {
             "label": "Run Editor",
-            "command": "C:/Git/UtopianEngine/bin/Release/Editor.exe",
+            "command": "bin/Release/Editor.exe",
             "dependsOn": ["Build Solution"],
             "group": {
                 "kind": "test",
@@ -28,18 +28,30 @@
         },
         {
             "label": "Run PBR demo",
-            "command": "C:/Git/UtopianEngine/bin/Release/PBR Demo.exe",
+            "command": "bin/Release/PBR Demo.exe",
             "dependsOn": ["Build Solution"],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            }
         },
         {
             "label": "Run Raytrace demo",
-            "command": "C:/Git/UtopianEngine/bin/Release/Raytrace Demo.exe",
+            "command": "bin/Release/Raytrace Demo.exe",
             "dependsOn": ["Build Solution"],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            }
         },
         {
             "label": "Run Marching Cubes demo",
-            "command": "C:/Git/UtopianEngine/bin/Release/Marching Cubes Demo.exe",
+            "command": "bin/Release/Marching Cubes Demo.exe",
             "dependsOn": ["Build Solution"],
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            }
         }
     ]
 }
