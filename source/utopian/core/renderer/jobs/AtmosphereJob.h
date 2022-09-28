@@ -14,6 +14,11 @@ namespace Utopian
          UNIFORM_PARAM(int, atmosphericScattering);
       UNIFORM_BLOCK_END()
 
+      UNIFORM_BLOCK_BEGIN(ConstantParameters)
+         UNIFORM_PARAM(glm::mat4, projection)
+         UNIFORM_PARAM(glm::mat4, world);
+      UNIFORM_BLOCK_END()
+
       AtmosphereJob(Vk::Device* device, uint32_t width, uint32_t height);
       ~AtmosphereJob();
 
@@ -34,6 +39,7 @@ namespace Utopian
       SharedPtr<Vk::RenderTarget> mRenderTarget;
       SharedPtr<Vk::Effect> mEffect;
       ParameterBlock mParameterBlock;
+      ConstantParameters mConstantParameters;
       SharedPtr<Model> mSkydomeModel;
       bool mEnvironmentGenerated;
    };

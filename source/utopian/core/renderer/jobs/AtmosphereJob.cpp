@@ -46,6 +46,10 @@ namespace Utopian
       mRenderTarget->Create();
 
       mParameterBlock.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+      mConstantParameters.Create(mDevice, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+
+      glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+      mConstantParameters.data.world = glm::scale(world, glm::vec3(16.0f));
 
       mSkydomeModel = gModelLoader().LoadModel("data/models/sphere.obj");
 
@@ -62,12 +66,16 @@ namespace Utopian
    {
       mEffect->BindUniformBuffer("UBO_sharedVariables", gRenderer().GetSharedShaderVariables());
       mEffect->BindUniformBuffer("UBO_atmosphere", mParameterBlock);
+      mEffect->BindUniformBuffer("UBO_constants", mConstantParameters);
    }
 
    void AtmosphereJob::CaptureEnvironmentCubemap(glm::vec3 sunDir)
    {
       mParameterBlock.data.sunDir = sunDir;
       mParameterBlock.UpdateMemory();
+      
+      mConstantParameters.data.projection = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, 20000.0f);
+      mConstantParameters.UpdateMemory();
 
       const uint32_t dimension = environmentCube->GetWidth();
       const VkFormat format = environmentCube->GetImage().GetFormat();
@@ -111,18 +119,7 @@ namespace Utopian
             float viewportSize = dimension * (float)std::pow(0.5f, mipLevel);
             commandBuffer->CmdSetViewPort(viewportSize, viewportSize);
 
-            struct PushConsts {
-               glm::mat4 projection;
-               glm::mat4 view;
-               glm::mat4 world;
-            } pushConsts;
-
-            pushConsts.view = matrices[face];
-            pushConsts.projection = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, 20000.0f);
-            glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-            pushConsts.world = glm::scale(world, glm::vec3(16.0f));
-
-            commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(PushConsts), &pushConsts.projection);
+            commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(glm::mat4), &matrices[face]);
 
             commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
             commandBuffer->CmdBindDescriptorSets(mEffect);
@@ -209,21 +206,19 @@ namespace Utopian
 
       mParameterBlock.UpdateMemory();
 
+      mConstantParameters.data.projection = gRenderer().GetMainCamera()->GetProjection();
+      mConstantParameters.UpdateMemory();
+
       mRenderTarget->Begin("Atmosphere pass", glm::vec4(0.1, 0.8, 0.8, 1.0));
       Vk::CommandBuffer* commandBuffer = mRenderTarget->GetCommandBuffer();
 
       struct PushConsts {
-         glm::mat4 projection;
          glm::mat4 view;
-         glm::mat4 world;
       } pushConsts;
 
       pushConsts.view = gRenderer().GetMainCamera()->GetView();
-      pushConsts.projection = gRenderer().GetMainCamera()->GetProjection();
-      glm::mat4 world = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-      pushConsts.world = glm::scale(world, glm::vec3(16.0f));
 
-      commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(PushConsts), &pushConsts.projection);
+      commandBuffer->CmdPushConstants(mEffect->GetPipelineInterface(), VK_SHADER_STAGE_ALL, sizeof(PushConsts), &pushConsts.view);
 
       // Todo: Should this be moved to the effect instead?
       commandBuffer->CmdBindPipeline(mEffect->GetPipeline());
